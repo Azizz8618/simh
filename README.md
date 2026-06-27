@@ -1,3 +1,9 @@
+Экспериментальное хранилище для расширения возможностей эмулятора БЭСМ-6 и СВС, а также их адаптации для решения учебный задач  
+
+
+
+
+
 # SIMH v4.0 - 19-01 Current
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/11982/badge.svg)](https://scan.coverity.com/projects/simh)
@@ -99,7 +105,7 @@
 
 #### CDC 1700 simulator from John Forecast
 
-#### Hans-�ke Lund has implemented an SCELBI (SCientic-ELectronics-BIology) simulator.
+#### Hans-Åke Lund has implemented an SCELBI (SCientic-ELectronics-BIology) simulator.
 
 #### IBM 650 simulator from Roberto Sancho Villa
 
