@@ -1,0 +1,21 @@
+ШИФР 419999 ЗС5^
+ОЗУ 32^ТРА 100^АЦП 64^ДИС 67(2048)^
+EEВ1А3
+*NAME примерa
+*ftn
+*     EDIT THE PROGRAM BELOW
+      program main
+      a=3
+      b=5
+      c=2
+      d=(a-b)*c
+      print 10,d 
+   10 format ('d= ',f10.5)
+      ЕND
+*     EDIT THE PROGRAM ABOVE
+*no load list
+*execute
+*end file
+``````
+еконец
+

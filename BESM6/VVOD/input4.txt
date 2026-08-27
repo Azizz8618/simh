@@ -1,0 +1,31 @@
+ШИФP 410301 ЗC5^  
+AЦП 64^  
+ЛИCT 0-37^  
+ЛEH 32(1C)^  
+ЛEH 33(ДОKУM)^  
+EEB1A3  
+*NAME  
+*PERSО:330000  
+*LIBRA:13  
+*EXECUTE  
+$W--
+$A  
+B HACTОЯЩEM ДОKУMEHTE  
+ОПИCЫBAЮTCЯ ОCHОBHЫE BОЗMОЖHОCTИ  
+CИCTEMЫ KОMПAC -  
+ИHCTPУMEHTAЛЬHОГО KОMПЛEKCA  
+ABTОMATИЗAЦИИ CОЗДAHИЯ И CОПPОBОЖДEHИЯ  
+ИHФОPMAЦИОHHЫX CИCTEM.  
+CИCTEMA ОБECПEЧИBAET  
+CОЗДAHИE, ПОДДEPЖKУ И  
+ИCПОЛЬЗОBAHИE БAЗ ДAHHЫX ЧEPEЗ ЯЗЫKИ  
+ПPОГPAMMИPОBAHИЯ ИЛИ HEПОCPEДCTBEHHО ЧEPEЗ ABTОHОMHЫЙ MОДУЛЬ  
+TEPMИHAЛЬHО-ПAKETHОГО ДОCTУПA.  
+$A  
+ДОKУMEHTAЦИЯ ПPEДHAЗHAЧEHA  
+ДЛЯ AДMИHИCTPATОPОB И ПОЛЬЗОBATEЛEЙ CИCTEMЫ  
+KОMПAC.    
+$E  
+*END FILE 
+``````
+еконец

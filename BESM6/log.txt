@@ -1,0 +1,245 @@
+Logging to file "log.txt"
+Logging to file "log.txt" at Sat Mar  5 20:45:37 2022
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-2> set console debug=log
+%SIM-INFO: Debug output to "log.txt"
+Debug output to "log.txt" at Sat Mar  5 20:45:37 2022
+БЭСМ-6 simulator V4.0-0 Current        git commit id: 8881ea5b+uncommitted-changes
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-14> attach -n drum0 drum1x.bin
+%SIM-INFO: DRUM0: creating new file: drum1x.bin
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-15> attach -n drum1 drum2x.bin
+%SIM-INFO: DRUM1: creating new file: drum2x.bin
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-20> attach -n md06 2052
+%SIM-INFO: MD06: creating new file: 2052
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-20> attach -n md06 2052
+%SIM-INFO: MD06: formatting disk volume 2052
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-27> attach -r md00 2048
+%SIM-INFO: MD00: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-28> attach -r md01 2248
+%SIM-INFO: MD01: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-29> attach -r md02 2148
+%SIM-INFO: MD02: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-30> attach -r md03 2113
+%SIM-INFO: MD03: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-33> attach -r md17 4001
+%SIM-INFO: MD17: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-34> attach -r md10 4023
+%SIM-INFO: MD10: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-40> attach -r mg30 209
+%SIM-ERROR: MG30: Can't open '209': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-40> attach -r mg30 209
+%SIM-ERROR: Error opening SIMH format tape image: '209' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-40> attach -r mg30 209
+%SIM-ERROR: MG30: Can't open '209': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-40> attach -r mg30 209
+%SIM-ERROR: Error opening SIMH format tape image: '209' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-41> attach -r mg31 211
+%SIM-ERROR: MG31: Can't open '211': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-41> attach -r mg31 211
+%SIM-ERROR: Error opening SIMH format tape image: '211' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-41> attach -r mg31 211
+%SIM-ERROR: MG31: Can't open '211': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-41> attach -r mg31 211
+%SIM-ERROR: Error opening SIMH format tape image: '211' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-42> attach -r mg32 212
+%SIM-ERROR: MG32: Can't open '212': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-42> attach -r mg32 212
+%SIM-ERROR: Error opening SIMH format tape image: '212' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-42> attach -r mg32 212
+%SIM-ERROR: MG32: Can't open '212': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-42> attach -r mg32 212
+%SIM-ERROR: Error opening SIMH format tape image: '212' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-43> attach -r mg33 213
+%SIM-ERROR: MG33: Can't open '213': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-43> attach -r mg33 213
+%SIM-ERROR: Error opening SIMH format tape image: '213' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-43> attach -r mg33 213
+%SIM-ERROR: MG33: Can't open '213': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-43> attach -r mg33 213
+%SIM-ERROR: Error opening SIMH format tape image: '213' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-44> attach -r mg34 214
+%SIM-ERROR: MG34: Can't open '214': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-44> attach -r mg34 214
+%SIM-ERROR: Error opening SIMH format tape image: '214' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-44> attach -r mg34 214
+%SIM-ERROR: MG34: Can't open '214': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-44> attach -r mg34 214
+%SIM-ERROR: Error opening SIMH format tape image: '214' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-45> attach -r mg35 202
+%SIM-INFO: MG35: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-45> attach -r mg35 202
+%SIM-INFO: MG35: Tape Image '202' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-45> attach -r mg35 202
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-45> attach -r mg35 202
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-45> attach -r mg35 202
+%SIM-INFO: The tape format (SIMH) might not be correct for the '202' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-46> attach -r mg36 203
+%SIM-INFO: MG36: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-46> attach -r mg36 203
+%SIM-INFO: MG36: Tape Image '203' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-46> attach -r mg36 203
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-46> attach -r mg36 203
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-46> attach -r mg36 203
+%SIM-INFO: The tape format (SIMH) might not be correct for the '203' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-47> attach -r mg37 204
+%SIM-ERROR: MG37: Can't open '204': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-47> attach -r mg37 204
+%SIM-ERROR: Error opening SIMH format tape image: '204' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-47> attach -r mg37 204
+%SIM-ERROR: MG37: Can't open '204': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-47> attach -r mg37 204
+%SIM-ERROR: Error opening SIMH format tape image: '204' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-48> attach -e mg40 209
+%SIM-ERROR: MG40: Can't open '209': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-48> attach -e mg40 209
+%SIM-ERROR: Error opening SIMH format tape image: '209' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-49> attach -r mg41 206
+%SIM-INFO: MG41: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-49> attach -r mg41 206
+%SIM-INFO: MG41: Tape Image '206' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-49> attach -r mg41 206
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-49> attach -r mg41 206
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-49> attach -r mg41 206
+%SIM-INFO: The tape format (SIMH) might not be correct for the '206' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-50> attach -r mg42 207
+%SIM-INFO: MG42: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-50> attach -r mg42 207
+%SIM-INFO: MG42: Tape Image '207' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-50> attach -r mg42 207
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-50> attach -r mg42 207
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-50> attach -r mg42 207
+%SIM-INFO: The tape format (SIMH) might not be correct for the '207' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-51> attach -r mg43 208
+%SIM-ERROR: MG43: Can't open '208': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-51> attach -r mg43 208
+%SIM-ERROR: Error opening SIMH format tape image: '208' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-51> attach -r mg43 208
+%SIM-ERROR: MG43: Can't open '208': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-51> attach -r mg43 208
+%SIM-ERROR: Error opening SIMH format tape image: '208' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-52> attach -r mg44 210
+%SIM-ERROR: MG44: Can't open '210': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-52> attach -r mg44 210
+%SIM-ERROR: Error opening SIMH format tape image: '210' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-52> attach -r mg44 210
+%SIM-ERROR: MG44: Can't open '210': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-52> attach -r mg44 210
+%SIM-ERROR: Error opening SIMH format tape image: '210' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-56> attach -e prn0 output.txt
+%SIM-ERROR: PRN0: Can't open 'output.txt': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-57> attach -e vu0 punchcard.txt
+%SIM-ERROR: VU0: Can't open 'punchcard.txt': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-58> attach -e pi0 punchcard1.txt
+%SIM-ERROR: PI0: Can't open 'punchcard1.txt': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-59> attach -e pl0 punch.txt
+%SIM-ERROR: PL0: Can't open 'punch.txt': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-64> attach tty 4199
+%SIM-ERROR: Unit disabled: TTY0
+/home/besm-operator/Yandex.Disk/simh/BESM6/dispak.ini-65> attach tty5 4202
+%SIM-INFO: Listening on port 4202
+*** console on T001
+###
+### Zeroing out the first page of RAM (as would be entered from
+### switch registers after powering up the machine,
+### likely about once a year or less).
+###
+БРЗ [7] = '                                                '
+БРЗ [6] = '                                                '
+БРЗ [5] = '                                                '
+БРЗ [4] = '                                                '
+БРЗ [3] = '                                                '
+БРЗ [2] = '                                                '
+БРЗ [1] = '                                                '
+БРЗ [0] = '                                                '
+
+Останов, СчАС: 00004 (-> зп, зп)
+###
+### Done; data cache registers are displayed above. An error message
+### would be usually displayed there after a STOP instruction.
+### Naturally, at the moment they all contain zeros. Booting the OS now...
+###
+Resetting all devices...  This may not have been your intention.
+The GO and CONTINUE commands do not reset devices.
+  2048 - 00
+ 05.03.92   20.30.00
+ 1HMБ-01234567     2HMБ-34567      
+  PEC:  1710
+ ECTЬ
+ ДATA:05.03.22 BPEMЯ:20.45.00
+ ЧП(003) 419919810623 20.44 M=000
+ CM1П:00.00.ЭBM-3  ДATA:05.03.22 BPEMЯ:20.45.00  000.00
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+
+ 3,T001
+ЫФЯ
+ ОШИБ
+НАЙ 2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ HET
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ЫФЯ[D
+ ОШИБ
+НАЙ 2063
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+  MД 05-2063
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+ УCT.MД APXИBA
+ УCT CPЧ.K40Б2095
+
+Simulation stopped, СчАС: 04440 (-> цикл 4440(15), цикл 4432(1))
+sim> show md
+-0> show md
+%SIM-ERROR: Non-existent device: MD
+-0> show md
+%SIM-ERROR: Non-existent device: MD
+sim> show disks
+-0> show disks
+%SIM-ERROR: Non-existent device: DISKS
+-0> show disks
+%SIM-ERROR: Non-existent device: DISKS
+sim> show disk
+-0> show disk
+%SIM-ERROR: Non-existent device: DISK
+-0> show disk
+%SIM-ERROR: Non-existent device: DISK
+sim> show mg
+-0> show mg
+%SIM-ERROR: Non-existent device: MG
+-0> show mg
+%SIM-ERROR: Non-existent device: MG
+sim> q
+Goodbye
+%SIM-INFO: Debug output disabled
+Log file closed

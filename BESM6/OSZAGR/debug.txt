@@ -1,0 +1,186 @@
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-2> set console debug=debug.txt
+%SIM-INFO: Debug output to "debug.txt"
+Debug output to "debug.txt" at Sat Jun 27 10:55:47 2026
+БЭСМ-6 simulator V4.0-0 Current        git commit id: 36f98c05
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-5> set throttle=1m
+%SIM-ERROR: Non-existent device: THROTTLE
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-22> attach -n md06 ~/Yandex.Disk/simh/BESM6/MD/2052
+%SIM-INFO: MD06: creating new file: ~/Yandex.Disk/simh/BESM6/MD/2052
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-22> attach -n md06 ~/Yandex.Disk/simh/BESM6/MD/2052
+%SIM-INFO: MD06: formatting disk volume 2052
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-31> attach -r md02 ~/Yandex.Disk/simh/BESM6/MD/2248
+%SIM-INFO: MD02: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-47> attach -r mg50 ~/Yandex.Disk/simh/BESM6/ML/209
+%SIM-INFO: MG50: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-47> attach -r mg50 ~/Yandex.Disk/simh/BESM6/ML/209
+%SIM-INFO: MG50: Tape Image '~/Yandex.Disk/simh/BESM6/ML/209' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-47> attach -r mg50 ~/Yandex.Disk/simh/BESM6/ML/209
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-47> attach -r mg50 ~/Yandex.Disk/simh/BESM6/ML/209
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-47> attach -r mg50 ~/Yandex.Disk/simh/BESM6/ML/209
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/209' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-48> attach -r mg51 ~/Yandex.Disk/simh/BESM6/ML/211
+%SIM-INFO: MG51: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-48> attach -r mg51 ~/Yandex.Disk/simh/BESM6/ML/211
+%SIM-INFO: MG51: Tape Image '~/Yandex.Disk/simh/BESM6/ML/211' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-48> attach -r mg51 ~/Yandex.Disk/simh/BESM6/ML/211
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-48> attach -r mg51 ~/Yandex.Disk/simh/BESM6/ML/211
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-48> attach -r mg51 ~/Yandex.Disk/simh/BESM6/ML/211
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/211' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-49> attach -r mg52 ~/Yandex.Disk/simh/BESM6/ML/212
+%SIM-INFO: MG52: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-49> attach -r mg52 ~/Yandex.Disk/simh/BESM6/ML/212
+%SIM-INFO: MG52: Tape Image '~/Yandex.Disk/simh/BESM6/ML/212' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-49> attach -r mg52 ~/Yandex.Disk/simh/BESM6/ML/212
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-49> attach -r mg52 ~/Yandex.Disk/simh/BESM6/ML/212
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-49> attach -r mg52 ~/Yandex.Disk/simh/BESM6/ML/212
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/212' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-50> attach -r mg53 ~/Yandex.Disk/simh/BESM6/ML/213
+%SIM-INFO: MG53: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-50> attach -r mg53 ~/Yandex.Disk/simh/BESM6/ML/213
+%SIM-INFO: MG53: Tape Image '~/Yandex.Disk/simh/BESM6/ML/213' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-50> attach -r mg53 ~/Yandex.Disk/simh/BESM6/ML/213
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-50> attach -r mg53 ~/Yandex.Disk/simh/BESM6/ML/213
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-50> attach -r mg53 ~/Yandex.Disk/simh/BESM6/ML/213
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/213' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-51> attach -r mg54 ~/Yandex.Disk/simh/BESM6/ML/214
+%SIM-INFO: MG54: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-51> attach -r mg54 ~/Yandex.Disk/simh/BESM6/ML/214
+%SIM-INFO: MG54: Tape Image '~/Yandex.Disk/simh/BESM6/ML/214' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-51> attach -r mg54 ~/Yandex.Disk/simh/BESM6/ML/214
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-51> attach -r mg54 ~/Yandex.Disk/simh/BESM6/ML/214
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-51> attach -r mg54 ~/Yandex.Disk/simh/BESM6/ML/214
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/214' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-52> attach -e mg55 ~/Yandex.Disk/simh/BESM6/ML/202
+%SIM-INFO: MG55: Tape Image '~/Yandex.Disk/simh/BESM6/ML/202' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-52> attach -e mg55 ~/Yandex.Disk/simh/BESM6/ML/202
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-52> attach -e mg55 ~/Yandex.Disk/simh/BESM6/ML/202
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-52> attach -e mg55 ~/Yandex.Disk/simh/BESM6/ML/202
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/202' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-53> attach -e mg56 ~/Yandex.Disk/simh/BESM6/ML/203
+%SIM-INFO: MG56: Tape Image '~/Yandex.Disk/simh/BESM6/ML/203' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-53> attach -e mg56 ~/Yandex.Disk/simh/BESM6/ML/203
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-53> attach -e mg56 ~/Yandex.Disk/simh/BESM6/ML/203
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-53> attach -e mg56 ~/Yandex.Disk/simh/BESM6/ML/203
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/203' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-54> attach -e mg57 ~/Yandex.Disk/simh/BESM6/ML/204
+%SIM-ERROR: MG57: Can't open '~/Yandex.Disk/simh/BESM6/ML/204': No such file or directory
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-54> attach -e mg57 ~/Yandex.Disk/simh/BESM6/ML/204
+%SIM-ERROR: Error opening SIMH format tape image: '~/Yandex.Disk/simh/BESM6/ML/204' - Success
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-55> attach -r mg61 ~/Yandex.Disk/simh/BESM6/ML/206
+%SIM-INFO: MG61: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-55> attach -r mg61 ~/Yandex.Disk/simh/BESM6/ML/206
+%SIM-INFO: MG61: Tape Image '~/Yandex.Disk/simh/BESM6/ML/206' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-55> attach -r mg61 ~/Yandex.Disk/simh/BESM6/ML/206
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-55> attach -r mg61 ~/Yandex.Disk/simh/BESM6/ML/206
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-55> attach -r mg61 ~/Yandex.Disk/simh/BESM6/ML/206
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/206' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-56> attach -r mg62 ~/Yandex.Disk/simh/BESM6/ML/207
+%SIM-INFO: MG62: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-56> attach -r mg62 ~/Yandex.Disk/simh/BESM6/ML/207
+%SIM-INFO: MG62: Tape Image '~/Yandex.Disk/simh/BESM6/ML/207' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-56> attach -r mg62 ~/Yandex.Disk/simh/BESM6/ML/207
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-56> attach -r mg62 ~/Yandex.Disk/simh/BESM6/ML/207
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-56> attach -r mg62 ~/Yandex.Disk/simh/BESM6/ML/207
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/207' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-57> attach -r mg63 ~/Yandex.Disk/simh/BESM6/ML/208
+%SIM-INFO: MG63: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-57> attach -r mg63 ~/Yandex.Disk/simh/BESM6/ML/208
+%SIM-INFO: MG63: Tape Image '~/Yandex.Disk/simh/BESM6/ML/208' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-57> attach -r mg63 ~/Yandex.Disk/simh/BESM6/ML/208
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-57> attach -r mg63 ~/Yandex.Disk/simh/BESM6/ML/208
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-57> attach -r mg63 ~/Yandex.Disk/simh/BESM6/ML/208
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/208' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-58> attach -r mg64 ~/Yandex.Disk/simh/BESM6/ML/210
+%SIM-INFO: MG64: unit is read only
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-58> attach -r mg64 ~/Yandex.Disk/simh/BESM6/ML/210
+%SIM-INFO: MG64: Tape Image '~/Yandex.Disk/simh/BESM6/ML/210' scanned as SIMH format
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-58> attach -r mg64 ~/Yandex.Disk/simh/BESM6/ML/210
+%SIM-INFO: contains 8520192 bytes of tape data (1032 records, 0 tapemarks)
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-58> attach -r mg64 ~/Yandex.Disk/simh/BESM6/ML/210
+%SIM-INFO: A potentially unreasonable number of record sizes(1) vs tape marks (0) have been found
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-58> attach -r mg64 ~/Yandex.Disk/simh/BESM6/ML/210
+%SIM-INFO: The tape format (SIMH) might not be correct for the '~/Yandex.Disk/simh/BESM6/ML/210' tape image
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-63> attach -n prn1 ~/Yandex.Disk/simh/BESM6/ACPU/output1.txt
+%SIM-INFO: PRN1: creating new file: ~/Yandex.Disk/simh/BESM6/ACPU/output1.txt
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-64> attach -n vu0 ~/Yandex.Disk/simh/BESM6/UVU/punchcard.txt
+%SIM-INFO: VU0: creating new file: ~/Yandex.Disk/simh/BESM6/UVU/punchcard.txt
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-65> attach -n pi0 ~/Yandex.Disk/simh/BESM6/UVU/punchcard1.txt
+%SIM-INFO: PI0: creating new file: ~/Yandex.Disk/simh/BESM6/UVU/punchcard1.txt
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-66> attach -n pl0 ~/Yandex.Disk/simh/BESM6/UVU/punch.txt
+%SIM-INFO: PL0: creating new file: ~/Yandex.Disk/simh/BESM6/UVU/punch.txt
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-72> attach tty1 4202
+%SIM-INFO: Listening on port 4202
+*** console on T001
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-108> set tty6
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-109> set tty7
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-110> set tty8
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-111> set tty9
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-112> set tty10
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-113> set tty11
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-114> set tty12
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-115> set tty13
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-116> set tty14
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-117> set tty15
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-118> set tty16
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-119> set tty17
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-120> set tty18
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-121> set tty19
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-122> set tty20
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-123> set tty21
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-124> set tty22
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-125> set tty23
+Too few arguments
+/home/besm-operator/Yandex.Disk/simh/BESM6/OSZAGR/dispak.ini-126> set tty24
+Too few arguments
+###
+### Zeroing out the first page of RAM (as would be entered from
+### switch registers after powering up the machine,
+### likely about once a year or less).
+###
+
+Останов, "СчАС": 00004 (-> зп, зп)
+###
+### Done; data cache registers are displayed above. An error message
+### would be usually displayed there after a STOP instruction.
+### Naturally, at the moment they all contain zeros. Booting the OS now...
+###
+Resetting all devices...  This may not have been your intention.
+The GO and CONTINUE commands do not reset devices.
+>>> MUX: clear, PRP = 01400
