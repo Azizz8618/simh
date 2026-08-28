@@ -489,6 +489,21 @@ t_value besm6_unpack (t_value val, t_value mask);
 #define PRP_MUX_INPUT     000000100             /* 7 */
 #define PRP_MUX_DONE      000000040             /* 6 */
 
+/*
+ * Bits of the peripheral interrupt register ПРП for DKS (КАДОПАМ-КРК)
+ * Based on RUKDKS documentation and SVYAZ7 module
+ * 
+ * DKS uses the same PRP bits as CONSOL/MUX since it's a compatible system:
+ * - PRP12 (E12) = S-terminal request (connection) - same as CONS1_INPUT
+ * - PRP7 (E7) = H-terminal request (character input) - same as MUX_INPUT  
+ * - PRP6 (E6) = Receive ready (slow exchange) - same as MUX_DONE
+ */
+#define PRP_DKS_SREQ      000004000             /* 12 - Запрос ввода S-терминала (подключение) */
+#define PRP_DKS_TERMREQ   000000100             /* 7  - Запрос ввода H-терминала (символ) */
+#define PRP_DKS_XMIT      000000200             /* 8  - Готовность к передаче (быстрый обмен) */
+#define PRP_DKS_RECV      000000040             /* 6  - Готовность приёма (медленный обмен) */
+#define PRP_DKS_ATTN      000000020             /* 5  - Внимание (быстрый обмен) */
+
 /* Номер блока ОЗУ или номер страницы, вызвавших прерывание */
 extern uint32 iintr_data;
 extern uint32 trace_counter;

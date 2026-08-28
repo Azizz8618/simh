@@ -186,6 +186,108 @@ TMXR tty_desc = { LINES_MAX+1, 0, 0, tty_line, tty_lnorder };        /* mux desc
 #define TTY_CMDLINE_MASK        (1<<(UNIT_V_UF+5))
 #define TTY_INVERSE_READY       (1<<(UNIT_V_UF+6))
 #define TTY_MUX_MODE            (1<<(UNIT_V_UF+7))
+#define TTY_DKS_MODE            (1<<(UNIT_V_UF+8))
+
+/*
+ * Memory of the Electronika-60 microcomputer (КАДОПАМ)
+ * Used for communication with DKS terminals
+ */
+unsigned short kadopam_mem[65536];
+
+/* DKS terminal tracking structure */
+typedef struct {
+    int unit;           /* Logical unit number */
+    int base_addr;      /* Base address in kadopam_mem */
+    int active;         /* Is terminal active */
+} dks_term_t;
+
+static dks_term_t dks_terminals[TTY_MAX+1];
+static int dks_next_base = 0x2000;  /* Starting address for S-terminal buffers */
+
+/*
+ * Register a new DKS terminal and generate interrupt
+ * Called when a new telnet connection is established on a DKS line
+ */
+void dks_register(int num, TMLN *line)
+{
+    dks_term_t *term;
+    int base_addr;
+    
+    if (num < 1 || num > TTY_MAX)
+        return;
+    
+    if (!(tty_unit[num].flags & TTY_DKS_MODE))
+        return;
+    
+    term = &dks_terminals[num];
+    
+    /* Allocate buffer space in kadopam_mem */
+    if (term->active) {
+        /* Already registered, just re-activate */
+        base_addr = term->base_addr;
+    } else {
+        base_addr = dks_next_base;
+        dks_next_base += 0x100;  /* 256 words per terminal buffer */
+        if (dks_next_base >= 65536) {
+            besm6_debug(">>> DKS: out of buffer space");
+            return;
+        }
+        term->unit = num;
+        term->base_addr = base_addr;
+        term->active = 1;
+    }
+    
+    /* Write connection command to system buffer (addresses 0154-0156) */
+    kadopam_mem[0154] = 1;              /* Command 1 = connect */
+    kadopam_mem[0155] = num;            /* Logical terminal number */
+    kadopam_mem[0156] = base_addr;      /* S-terminal buffer address */
+    
+    besm6_debug(">>> DKS: terminal %d registered, base=0x%04x", num, base_addr);
+    
+    /* Generate interrupt PRP12 (SREQ - S-terminal request) */
+    PRP |= PRP_DKS_SREQ;
+    GRP |= GRP_SLAVE;
+    
+    besm6_debug(">>> DKS: PRP=%06o, MPRP=%06o, PRP&MPRP=%06o, GRP_SLAVE=%s",
+                PRP, MPRP, PRP & MPRP, (GRP & GRP_SLAVE) ? "SET" : "clear");
+}
+
+/*
+ * Poll DKS terminals for input characters
+ * Generate interrupt when a character is received
+ */
+void dks_poll(void)
+{
+    int num, c;
+    dks_term_t *term;
+    
+    for (num = 1; num <= TTY_MAX; ++num) {
+        if (!(tty_unit[num].flags & TTY_DKS_MODE))
+            continue;
+        
+        term = &dks_terminals[num];
+        if (!term->active)
+            continue;
+        
+        if (!tty_line[num].conn)
+            continue;
+        
+        /* Check for input character */
+        c = tmxr_getc_ln(&tty_line[num]);
+        if (c & TMXR_VALID) {
+            c &= 0377;  /* Extract the character */
+            /* Store character in kadopam_mem */
+            kadopam_mem[term->base_addr] = (unsigned short)c;
+            
+            besm6_debug(">>> DKS: char '%c' (0%03o) from terminal %d at 0x%04x",
+                        c >= ' ' ? c : '?', c, num, term->base_addr);
+            
+            /* Generate interrupt PRP7 (TERMREQ - H-terminal request) */
+            PRP |= PRP_DKS_TERMREQ;
+            GRP |= GRP_SLAVE;
+        }
+    }
+}
 
 static void reset_line(int num)
 {
@@ -201,6 +303,8 @@ t_stat tty_reset (DEVICE *dptr)
     memset(tty_sym, 0, sizeof(tty_sym));
     memset(tty_typed, 0, sizeof(tty_typed));
     memset(tty_instate, 0, sizeof(tty_instate));
+    memset(dks_terminals, 0, sizeof(dks_terminals));
+    dks_next_base = 0x2000;
     vt_sending = vt_receiving = 0;
     TTY_IN = TTY_OUT = 0;
     CONSUL_IN[0] = CONSUL_IN[1] = 0;
@@ -236,6 +340,7 @@ t_stat vt_clk (UNIT * this)
     vt_receive();
     consul_receive();
     mux_receive();
+    dks_poll();
 
     /* Are there any new network connections? */
     num = tmxr_poll_conn (&tty_desc);
@@ -248,7 +353,11 @@ t_stat vt_clk (UNIT * this)
         t->rcve = 1;
         tty_unit[num].flags &= ~TTY_STATE_MASK;
         tty_unit[num].flags |= TTY_VT340_STATE;
-        if (num <= TTY_MAX && !(tty_unit[num].flags & TTY_MUX_MODE)) {
+        
+        /* Check if this is a DKS line and register it */
+        if (tty_unit[num].flags & TTY_DKS_MODE) {
+            dks_register(num, t);
+        } else if (num <= TTY_MAX && !(tty_unit[num].flags & TTY_MUX_MODE)) {
 	    old = vt_mask & (1 << (TTY_MAX - num));
             vt_mask |= 1 << (TTY_MAX - num);
 	}
@@ -520,6 +629,8 @@ MTAB tty_mod[] = {
       "REGREADY" },
     { TTY_MUX_MODE, TTY_MUX_MODE, "treat as connected via UART mux",
       "MUX" },
+    { TTY_DKS_MODE, TTY_DKS_MODE, "treat as connected via DKS (КАДОПАМ)",
+      "DKS" },
     { MTAB_XTD | MTAB_VDV | MTAB_VALR, 1, NULL,
       "DISCONNECT", &tmxr_dscln, NULL, (void*) &tty_desc, "terminates telnet connection" },
     { MTAB_XTD | MTAB_VDV | MTAB_VALR, 1, "RATE",

@@ -661,7 +661,9 @@ static uint32 readmap[32768], writemap[32768];
         /* Запись в МПРП */
 /*              besm6_debug(">>> запись в МПРП");*/
         MPRP = ACC & 077777777;
-	// besm6_debug("MPRP = %016llo", MPRP);
+        /* Бит 37 в MGRP разрешает прерывания от ПРП */
+        MGRP |= GRP_SLAVE;
+        // besm6_debug("MPRP = %016llo", MPRP);
         break;
     case 035:
         /* TODO: управление режимом имитации обмена
@@ -955,6 +957,12 @@ t_stat cpu_show_autotime (FILE *st, UNIT *up, int32 v, CONST void *dp)
     return SCPE_OK;
 }
 
+/*
+ * Memory of the Electronika-60 microcomputer (КАДОПАМ)
+ * Declared in besm6_tty.c, used for DKS communication
+ */
+extern unsigned short kadopam_mem[65536];
+
 static unsigned short extmem[32768];
 static unsigned short last;
 
@@ -980,6 +988,11 @@ void write_032(int addr, t_value val) {
 	}
 	break;
     default:
+        /* Write to kadopam_mem for addresses < 65536 */
+        if (addr < 65536) {
+            kadopam_mem[addr] = v;
+            besm6_debug(">>> KDP write: kadopam_mem[%05o] = %06o", addr, v);
+        }
 	last = extmem[addr] = v;
     }
 }
@@ -991,7 +1004,13 @@ t_value read_032(int addr) {
 	return 0400;		/* ready */
     case 2:
 	return last;
-    default: return extmem[addr];
+    default: 
+        /* Read from kadopam_mem for addresses < 65536 */
+        if (addr < 65536) {
+            besm6_debug(">>> KDP read: kadopam_mem[%05o] = %06o", addr, kadopam_mem[addr]);
+            return kadopam_mem[addr];
+        }
+        return extmem[addr];
     }
 }
 
