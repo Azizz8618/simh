@@ -217,6 +217,50 @@ nano ~/Yandex.Disk/re_dispak/re-dispak/gens/gens_custom.b6
 - Названия — заглавными буквами
 - Параметры разделены запятыми
 
+### 7.3. Трансляция конфигурации через dispak
+
+Реальная смена конфигурации выполняется пакетным эмулятором `dispak`,
+который транслирует файл `.b6` и **перезаписывает диск 2053** на месте.
+
+**Важно:** образ диска 2053 хранится в каталоге переменной `BESM6_PATH`
+(по умолчанию `/usr/local/share/besm6`). Эмулятор `dispak` ищет диски
+именно там. Корректность задания `BESM6_PATH` проверяется командой:
+
+```bash
+besmtool list
+```
+
+Диск 2053 должен присутствовать в списке.
+
+#### Ручной запуск
+
+```bash
+cd ~/Yandex.Disk/re_dispak/re-dispak/gens
+dispak --path="$BESM6_PATH" gens_exp.b6
+```
+
+`dispak` модифицирует диск 2053 напрямую — перед запуском рекомендуется
+сделать резервную копию.
+
+#### Запуск через скрипт (рекомендуется)
+
+```bash
+./scripts/gens.sh run gens_exp     # транслировать (с авто-резервной копией)
+./scripts/gens.sh status           # проверить BESM6_PATH и диск 2053
+./scripts/gens.sh list             # список доступных конфигураций
+./scripts/gens.sh configs          # терминалы каждой конфигурации
+./scripts/gens.sh backup           # резервная копия диска 2053
+./scripts/gens.sh restore          # восстановить диск 2053 (последняя копия)
+```
+
+Скрипт `scripts/gens.sh` перед трансляцией:
+1. проверяет `BESM6_PATH` и наличие диска 2053 (`besmtool list`);
+2. создаёт резервную копию диска 2053 в `scripts/.gens_backups/`;
+3. запускает `dispak --path="$BESM6_PATH" <config>.b6`;
+4. сообщает результат и хвост вывода (`/tmp/gens_run.log`).
+
+При ошибке диск мог быть изменён частично — откат: `./scripts/gens.sh restore`.
+
 ---
 
 ## 8. Сценарии отладки
@@ -371,6 +415,8 @@ diff gens/gens.b6 gens/gens_rab.b6
 | INI эмулятора | `~/Yandex.Disk/simh/BESM6/dispak.ini` |
 | Образы дисков | `~/Yandex.Disk/simh/BESM6/disks/` |
 | Документация ДКС | `~/Yandex.Disk/re_dispak/re-dispak/RUKDKS` |
+| Скрипт ГЕНС | `~/Yandex.Disk/simh/BESM6/scripts/gens.sh` |
+| Резервные копии диска 2053 | `~/Yandex.Disk/simh/BESM6/scripts/.gens_backups/` |
 
 ---
 
