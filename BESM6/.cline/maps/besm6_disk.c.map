@@ -1,0 +1,80 @@
+=== besm6_disk.c — 1001 строк ===
+Источник: besm6_disk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_disk.c -nt .cline/maps/besm6_disk.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| KMD | 78-90 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| syslog | 191 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DISK_BLOCK | 0740000000   /* номер блока памя... | 38 |
+| DISK_READ_SYSDATA | 004000000   /* считывание только... | 39 |
+| DISK_PAGE_MODE | 001000000   /* обмен целой стран... | 40 |
+| DISK_READ | 000400000   /* чтение с диска в ... | 41 |
+| DISK_PAGE | 000370000   /* номер страницы па... | 42 |
+| DISK_HALFPAGE | 000004000   /* выбор половины ли... | 43 |
+| DISK_UNIT | 000001600   /* номер устройства */ | 44 |
+| DISK_HALFZONE | 000000001   /* выбор половины зо... | 45 |
+| STATUS_SEEK | 000000377   /* "Seek done" mask,... | 50 |
+| STATUS_READY | 000000400   /* Selected unit is ... | 51 |
+| STATUS_SEEK_FAIL | 000001000   /* Head location unk... | 52 |
+| STATUS_CHECKSUM | 000002000   /* Bad checksum on r... | 53 |
+| STATUS_FAILURE | 000004000   /* Failure, OR of so... | 54 |
+| STATUS_MAYDAY | 000010000   /* Unspecified failu... | 55 |
+| STATUS_NO_AMRK | 000020000   /* Address marker no... | 56 |
+| STATUS_WRONG_CYL | 000040000   /* Wrong address mar... | 57 |
+| STATUS_WRONG_ID | 000100000   /* Bad track ID */ | 58 |
+| STATUS_BAD_ACSUM | 000200000   /* Bad checksum of t... | 59 |
+| STATUS_UNFINISHED | 000400000   /* IO not finished a... | 60 |
+| STATUS_TRK_PARITY | 001000000   /* Track parity in t... | 61 |
+| STATUS_READONLY | 002000000   /* The selected unit... | 62 |
+| STATUS_POWERUP | 004000000   /* The unit is power... | 63 |
+| STATUS_ABSENT | 010000000   /* The unit is not c... | 64 |
+| STATUS_BUF_ERR | 020000000   /* Transfer buffer n... | 65 |
+| SYSTEM_VOLUME_ID | 2053 | 74 |
+| DISK_TYPE_MASK | (1 << UNIT_V_UF) | 205 |
+| DISK_TYPE_7_25M | 0 | 206 |
+| DISK_TYPE_29M | (1 << UNIT_V_UF) | 207 |
+| IS_29MB(u) | (((u)->flags & DISK_TYPE_MASK) =... | 208 |
+| DEB_OPS | 000001 | 245 |
+| DEB_RRD | 000002 | 246 |
+| DEB_RWR | 000004 | 247 |
+| DEB_INT | 000010 | 248 |
+| DEB_TRC | 000020 | 249 |
+| DEB_DAT | 000040 | 250 |
+| DEB_STA | 000100 | 251 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| disk_setsyslog | 192-209 |  |
+| disk_set_type | 210-224 |  |
+| disk_show_type | 225-317 |  |
+| unit_to_ctlr | 318-325 | Определение контроллера по устройству. |
+| disk_reset | 326-343 | Reset routine |
+| disk_attach | 344-412 |  |
+| disk_detach | 413-418 |  |
+| spread | 419-433 |  |
+| log_data | 434-455 | Отладочная печать массива данных обмена. |
+| sum_with_right_carry | 456-470 | Сложение с переносом вправо. |
+| disk_write | 471-492 | Запись на диск. |
+| disk_write_track | 493-514 |  |
+| disk_format | 515-560 | Форматирование дорожки. |
+| disk_read | 561-592 | Чтение с диска. |
+| collect | 593-604 |  |
+| disk_read_track | 605-635 |  |
+| disk_read_header | 636-685 | Чтение заголовка дорожки. |
+| disk_io | 686-711 | Номера дисковода и дорожки будут выданы позже, командой 033 0023(0024). |
+| has_debug | 712-721 |  |
+| disk_ctl | 722-966 | Управление диском: команда 00 033 0023(0024). |
+| disk_state | 967-982 | Запрос состояния контроллера. |
+| disk_event | 983-993 | Устанавливаем флаг прерывания. |
+| disk_errors | 994-1001 | Опрос ошибок обмена командой 033 4035. |

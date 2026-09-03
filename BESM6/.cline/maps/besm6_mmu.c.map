@@ -1,0 +1,47 @@
+=== besm6_mmu.c — 765 строк ===
+Источник: besm6_mmu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_mmu.c -nt .cline/maps/besm6_mmu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| BRZ | 43 | |
+| BAZ | 44 | |
+| BRS | 46 | |
+| BAS | 47 | |
+| BRSLRU | 48 | |
+| RP | 56 | |
+| TLB | 57 | |
+| pult_packet_switch | 68 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ORDATAVM(nm,loc,wd) | REGDATA(nm,(loc),8,wd,0,1,NULL,N... | 157 |
+| ORDATAH(nm,loc,wd) | REGDATA(nm,(loc),8,wd,0,1,NULL,N... | 158 |
+| CACHE_ENB | 1 | 208 |
+| CHECK_ENB | 2 | 209 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mmu_examine | 221-237 |  |
+| mmu_reset | 238-294 | Reset routine |
+| mmu_protection_check | 295-309 |  |
+| mmu_flush | 310-329 |  |
+| mmu_update_oldest | 330-342 |  |
+| mmu_match | 343-359 |  |
+| mmu_flush_by_age | 360-377 | с mmu_flush_by_age(). |
+| mmu_flush_by_number | 378-399 |  |
+| mmu_store | 400-458 | Запись слова в память |
+| mmu_memaccess | 459-498 |  |
+| mmu_load | 499-579 | Чтение операнда |
+| mmu_fetch_check | 580-600 |  |
+| mmu_prefetch | 601-657 | Предвыборка команды на БРС |
+| mmu_fetch | 658-693 | Выборка команды |
+| mmu_setrp | 694-722 |  |
+| mmu_setup | 723-736 |  |
+| mmu_setprotection | 737-744 |  |
+| mmu_setcache | 745-749 |  |
+| mmu_getcache | 750-754 |  |
+| mmu_print_brz | 755-765 |  |

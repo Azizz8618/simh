@@ -1,0 +1,238 @@
+=== besm6_defs.h — 510 строк ===
+Источник: besm6_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_defs.h -nt .cline/maps/besm6_defs.h.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 129 | |
+| tty_unit | 130 | |
+| clocks | 131 | |
+| memory | 132 | |
+| pult | 133 | |
+| PC | 136 | |
+| BRZ | 138 | |
+| PRP | 139 | |
+| ACC | 140 | |
+| BAZ | 141 | |
+| cpu_dev | 144 | |
+| md_dev | 145 | |
+| clock_dev | 146 | |
+| printer_dev | 147 | |
+| tty_dev | 148 | |
+| fs_dev | 149 | |
+| pl_dev | 150 | |
+| vu_dev | 151 | |
+| pi_dev | 152 | |
+| mg_dev | 153 | |
+| cpu_halt | 154 | |
+| iintr_data | 508 | |
+| trace_counter | 509 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| _BESM6_DEFS_H_ | 0 | 31 |
+| PC | PC_Global | 39 |
+| NREGS | 30                      /* numbe... | 44 |
+| MEMSIZE | (512 * 1024)            /* memor... | 45 |
+| ZONE_SIZE | (8 + 1024)              /* 1kwor... | 54 |
+| DRUM_SIZE | (256 * ZONE_SIZE)       /* drum ... | 55 |
+| DISK_SIZE | (1024 * ZONE_SIZE)      /* disk ... | 56 |
+| BBIT(n) | (1 << (n-1))            /* один ... | 87 |
+| BIT40 | 000010000000000000LL    /* 40-й ... | 88 |
+| BIT41 | 000020000000000000LL    /* 41-й ... | 89 |
+| BIT42 | 000040000000000000LL    /* 42-й ... | 90 |
+| BIT48 | 004000000000000000LL    /* 48-й ... | 91 |
+| BIT49 | 010000000000000000LL    /* бит 4... | 92 |
+| BITS(n) | (~0U >> (32-n))         /* маска... | 93 |
+| BITS40 | 00017777777777777LL     /* биты ... | 94 |
+| BITS41 | 00037777777777777LL     /* биты ... | 95 |
+| BITS42 | 00077777777777777LL     /* биты ... | 96 |
+| BITS48 | 07777777777777777LL     /* биты ... | 97 |
+| BITS48_42 | 07740000000000000LL     /* биты ... | 98 |
+| ADDR(x) | ((x) & BITS(15))        /* адрес... | 99 |
+| PARITY_INSN | 1 | 109 |
+| PARITY_NUMBER | 2 | 110 |
+| SET_PARITY(x, | c)        (((x) & BITS48) \| (((c... | 111 |
+| IS_INSN(x) | (((x) >> 48) == PARITY_INSN) | 112 |
+| IS_NUMBER(x) | (((x) >> 48) == PARITY_INSN \|\|   | 113 |
+| MEAN_TIME(x,y) | (x>y ? x+y/2 : x/2+y) | 122 |
+| USEC | 1               /* 1 microsecond */ | 124 |
+| MSEC | (1000*USEC)     /* 1 millisecond */ | 125 |
+| CLK_TPS | 250           /* Fast Clock Tick... | 126 |
+| CLK_DELAY | 4000          /* Uncalibrated in... | 127 |
+| RAU_NORM_DISABLE | 001     /* блокировка нормализац... | 159 |
+| RAU_ROUND_DISABLE | 002     /* блокировка округления */ | 160 |
+| RAU_LOG | 004     /* признак логической гр... | 161 |
+| RAU_MULT | 010     /* признак группы умноже... | 162 |
+| RAU_ADD | 020     /* признак группы слоден... | 163 |
+| RAU_OVF_DISABLE | 040     /* блокировка переполнен... | 164 |
+| RAU_MODE | (RAU_LOG \| RAU_MULT \| RAU_ADD) | 166 |
+| SET_MODE(x,m) | (((x) & ~RAU_MODE) \| (m)) | 167 |
+| SET_LOGICAL(x) | (((x) & ~RAU_MODE) \| RAU_LOG) | 168 |
+| SET_MULTIPLICATIVE(x) | (((x) & ~RAU_MODE) \| RAU_MULT) | 169 |
+| SET_ADDITIVE(x) | (((x) & ~RAU_MODE) \| RAU_ADD) | 170 |
+| IS_LOGICAL(x) | (((x) & RAU_MODE) == RAU_LOG) | 171 |
+| IS_MULTIPLICATIVE(x) | (((x) & (RAU_ADD \| RAU_MULT)) ==... | 172 |
+| IS_ADDITIVE(x) | ((x) & RAU_ADD) | 173 |
+| RUU_PARITY_RIGHT | 000001  /* ПКП - признак контрол... | 178 |
+| RUU_PARITY_LEFT | 000002  /* ПКЛ - признак контрол... | 179 |
+| RUU_EXTRACODE | 000004  /* РежЭ - режим экстрако... | 180 |
+| RUU_INTERRUPT | 000010  /* РежПр - режим прерыва... | 181 |
+| RUU_MOD_RK | 000020  /* ПрИК - модификация ре... | 182 |
+| RUU_AVOST_DISABLE | 000040  /* БРО - блокировка режи... | 183 |
+| RUU_RIGHT_INSTR | 000400  /* ПрК - признак правой ... | 184 |
+| IS_SUPERVISOR(x) | ((x) & (RUU_EXTRACODE \| RUU_INTE... | 186 |
+| SET_SUPERVISOR(x,m) | (((x) & ~(RUU_EXTRACODE \| RUU_IN... | 187 |
+| MOD | 020     /* модификатор адреса */ | 192 |
+| PSW | 021     /* режимы УУ */ | 193 |
+| SPSW | 027     /* упрятывание режимов У... | 194 |
+| ERET | 032     /* адрес возврата из экс... | 195 |
+| IRET | 033     /* адрес возврата из пре... | 196 |
+| IBP | 034     /* адрес прерывания по в... | 197 |
+| DWP | 035     /* адрес прерывания по ч... | 198 |
+| PSW_MMAP_DISABLE | 000001  /* БлП - блокировка прип... | 204 |
+| PSW_PROT_DISABLE | 000002  /* БлЗ - блокировка защи... | 205 |
+| PSW_INTR_HALT | 000004  /* ПоП - признак останов... | 206 |
+| PSW_CHECK_HALT | 000010  /* ПоК - признак останов... | 208 |
+| PSW_WRITE_WATCH | 000020  /* Зп(М29) - признак сов... | 210 |
+| PSW_INTR_DISABLE | 002000  /* БлПр - блокировка вне... | 213 |
+| PSW_AUT_B | 004000  /* АвтБ - признак режима... | 214 |
+| SPSW_MMAP_DISABLE | 000001  /* БлП - блокировка прип... | 220 |
+| SPSW_PROT_DISABLE | 000002  /* БлЗ - блокировка защи... | 221 |
+| SPSW_EXTRACODE | 000004  /* РежЭ - режим экстрако... | 222 |
+| SPSW_INTERRUPT | 000010  /* РежПр - режим прерыва... | 223 |
+| SPSW_MOD_RK | 000020  /* ПрИК(РК) - на регистр... | 224 |
+| SPSW_MOD_RR | 000040  /* ПрИК(РР) - на регистр... | 227 |
+| SPSW_UNKNOWN | 000100  /* НОК? вписано карандаш... | 229 |
+| SPSW_RIGHT_INSTR | 000400  /* ПрК - признак правой ... | 230 |
+| SPSW_NEXT_RK | 001000  /* ГД./ДК2 - на регистр ... | 231 |
+| SPSW_INTR_DISABLE | 002000  /* БлПр - блокировка вне... | 234 |
+| CYRILLIC_CAPITAL_LETTER_A | 0x0410 | 239 |
+| CYRILLIC_CAPITAL_LETTER_BE | 0x0411 | 240 |
+| CYRILLIC_CAPITAL_LETTER_VE | 0x0412 | 241 |
+| CYRILLIC_CAPITAL_LETTER_GHE | 0x0413 | 242 |
+| CYRILLIC_CAPITAL_LETTER_DE | 0x0414 | 243 |
+| CYRILLIC_CAPITAL_LETTER_IE | 0x0415 | 244 |
+| CYRILLIC_CAPITAL_LETTER_ZHE | 0x0416 | 245 |
+| CYRILLIC_CAPITAL_LETTER_ZE | 0x0417 | 246 |
+| CYRILLIC_CAPITAL_LETTER_I | 0x0418 | 247 |
+| CYRILLIC_CAPITAL_LETTER_SHORT_I | 0x0419 | 248 |
+| CYRILLIC_CAPITAL_LETTER_KA | 0x041a | 249 |
+| CYRILLIC_CAPITAL_LETTER_EL | 0x041b | 250 |
+| CYRILLIC_CAPITAL_LETTER_EM | 0x041c | 251 |
+| CYRILLIC_CAPITAL_LETTER_EN | 0x041d | 252 |
+| CYRILLIC_CAPITAL_LETTER_O | 0x041e | 253 |
+| CYRILLIC_CAPITAL_LETTER_PE | 0x041f | 254 |
+| CYRILLIC_CAPITAL_LETTER_ER | 0x0420 | 255 |
+| CYRILLIC_CAPITAL_LETTER_ES | 0x0421 | 256 |
+| CYRILLIC_CAPITAL_LETTER_TE | 0x0422 | 257 |
+| CYRILLIC_CAPITAL_LETTER_U | 0x0423 | 258 |
+| CYRILLIC_CAPITAL_LETTER_EF | 0x0424 | 259 |
+| CYRILLIC_CAPITAL_LETTER_HA | 0x0425 | 260 |
+| CYRILLIC_CAPITAL_LETTER_TSE | 0x0426 | 261 |
+| CYRILLIC_CAPITAL_LETTER_CHE | 0x0427 | 262 |
+| CYRILLIC_CAPITAL_LETTER_SHA | 0x0428 | 263 |
+| CYRILLIC_CAPITAL_LETTER_SHCHA | 0x0429 | 264 |
+| CYRILLIC_CAPITAL_LETTER_HARD_SIGN | 0x042a | 265 |
+| CYRILLIC_CAPITAL_LETTER_YERU | 0x042b | 266 |
+| CYRILLIC_CAPITAL_LETTER_SOFT_SIGN | 0x042c | 267 |
+| CYRILLIC_CAPITAL_LETTER_E | 0x042d | 268 |
+| CYRILLIC_CAPITAL_LETTER_YU | 0x042e | 269 |
+| CYRILLIC_CAPITAL_LETTER_YA | 0x042f | 270 |
+| CYRILLIC_SMALL_LETTER_A | 0x0430 | 271 |
+| CYRILLIC_SMALL_LETTER_BE | 0x0431 | 272 |
+| CYRILLIC_SMALL_LETTER_VE | 0x0432 | 273 |
+| CYRILLIC_SMALL_LETTER_GHE | 0x0433 | 274 |
+| CYRILLIC_SMALL_LETTER_DE | 0x0434 | 275 |
+| CYRILLIC_SMALL_LETTER_IE | 0x0435 | 276 |
+| CYRILLIC_SMALL_LETTER_ZHE | 0x0436 | 277 |
+| CYRILLIC_SMALL_LETTER_ZE | 0x0437 | 278 |
+| CYRILLIC_SMALL_LETTER_I | 0x0438 | 279 |
+| CYRILLIC_SMALL_LETTER_SHORT_I | 0x0439 | 280 |
+| CYRILLIC_SMALL_LETTER_KA | 0x043a | 281 |
+| CYRILLIC_SMALL_LETTER_EL | 0x043b | 282 |
+| CYRILLIC_SMALL_LETTER_EM | 0x043c | 283 |
+| CYRILLIC_SMALL_LETTER_EN | 0x043d | 284 |
+| CYRILLIC_SMALL_LETTER_O | 0x043e | 285 |
+| CYRILLIC_SMALL_LETTER_PE | 0x043f | 286 |
+| CYRILLIC_SMALL_LETTER_ER | 0x0440 | 287 |
+| CYRILLIC_SMALL_LETTER_ES | 0x0441 | 288 |
+| CYRILLIC_SMALL_LETTER_TE | 0x0442 | 289 |
+| CYRILLIC_SMALL_LETTER_U | 0x0443 | 290 |
+| CYRILLIC_SMALL_LETTER_EF | 0x0444 | 291 |
+| CYRILLIC_SMALL_LETTER_HA | 0x0445 | 292 |
+| CYRILLIC_SMALL_LETTER_TSE | 0x0446 | 293 |
+| CYRILLIC_SMALL_LETTER_CHE | 0x0447 | 294 |
+| CYRILLIC_SMALL_LETTER_SHA | 0x0448 | 295 |
+| CYRILLIC_SMALL_LETTER_SHCHA | 0x0449 | 296 |
+| CYRILLIC_SMALL_LETTER_HARD_SIGN | 0x044a | 297 |
+| CYRILLIC_SMALL_LETTER_YERU | 0x044b | 298 |
+| CYRILLIC_SMALL_LETTER_SOFT_SIGN | 0x044c | 299 |
+| CYRILLIC_SMALL_LETTER_E | 0x044d | 300 |
+| CYRILLIC_SMALL_LETTER_YU | 0x044e | 301 |
+| CYRILLIC_SMALL_LETTER_YA | 0x044f | 302 |
+| GRP_PRN1_SYNC | 04000000000000000LL     /* 48 */ | 426 |
+| GRP_PRN2_SYNC | 02000000000000000LL     /* 47 */ | 427 |
+| GRP_DRUM1_FREE | 01000000000000000LL     /* 46 */ | 428 |
+| GRP_DRUM2_FREE | 00400000000000000LL     /* 45 */ | 429 |
+| GRP_VU1_SYNC | 00200000000000000LL     /* 44 */ | 430 |
+| GRP_VU2_SYNC | 00100000000000000LL     /* 43 */ | 431 |
+| GRP_FS1_SYNC | 00040000000000000LL     /* 42 */ | 432 |
+| GRP_FS2_SYNC | 00020000000000000LL     /* 41 */ | 433 |
+| GRP_TIMER | 00010000000000000LL     /* 40 */ | 434 |
+| GRP_PRN1_ZERO | 00004000000000000LL     /* 39 */ | 435 |
+| GRP_PRN2_ZERO | 00002000000000000LL     /* 38 */ | 436 |
+| GRP_SLAVE | 00001000000000000LL     /* 37 */ | 437 |
+| GRP_CHAN3_DONE | 00000400000000000LL     /* 36 */ | 438 |
+| GRP_CHAN4_DONE | 00000200000000000LL     /* 35 */ | 439 |
+| GRP_CHAN5_DONE | 00000100000000000LL     /* 34 */ | 440 |
+| GRP_CHAN6_DONE | 00000040000000000LL     /* 33 */ | 441 |
+| GRP_PANEL_REQ | 00000020000000000LL     /* 32 */ | 442 |
+| GRP_TTY_START | 00000010000000000LL     /* 31 */ | 443 |
+| GRP_IMITATION | 00000004000000000LL     /* 30 */ | 444 |
+| GRP_CHAN3_FREE | 00000002000000000LL     /* 29 */ | 445 |
+| GRP_CHAN4_FREE | 00000001000000000LL     /* 28 */ | 446 |
+| GRP_CHAN5_FREE | 00000000400000000LL     /* 27 */ | 447 |
+| GRP_CHAN6_FREE | 00000000200000000LL     /* 26 */ | 448 |
+| GRP_CHAN7_FREE | 00000000100000000LL     /* 25 */ | 449 |
+| GRP_SERIAL | 00000000001000000LL     /* 19, n... | 450 |
+| GRP_WATCHDOG | 00000000000002000LL     /* 11 */ | 451 |
+| GRP_SLOW_CLK | 00000000000001000LL     /* 10, n... | 452 |
+| GRP_DIVZERO | 00000000034000000LL     /* 23-21 */ | 454 |
+| GRP_OVERFLOW | 00000000014000000LL     /* 22-21 */ | 455 |
+| GRP_CHECK | 00000000004000000LL     /* 21 */ | 456 |
+| GRP_OPRND_PROT | 00000000002000000LL     /* 20 */ | 457 |
+| GRP_WATCHPT_W | 00000000000200000LL     /* 17 */ | 458 |
+| GRP_WATCHPT_R | 00000000000100000LL     /* 16 */ | 459 |
+| GRP_INSN_CHECK | 00000000000040000LL     /* 15 */ | 460 |
+| GRP_INSN_PROT | 00000000000020000LL     /* 14 */ | 461 |
+| GRP_ILL_INSN | 00000000000010000LL     /* 13 */ | 462 |
+| GRP_BREAKPOINT | 00000000000004000LL     /* 12 */ | 463 |
+| GRP_PAGE_MASK | 00000000000000760LL     /* 9-5 */ | 464 |
+| GRP_RAM_CHECK | 00000000000000010LL     /* 4 */ | 465 |
+| GRP_BLOCK_MASK | 00000000000000007LL     /* 3-1 */ | 466 |
+| GRP_SET_BLOCK(x,m) | (((x) & ~GRP_BLOCK_MASK) \| ((m) ... | 468 |
+| GRP_SET_PAGE(x,m) | (((x) & ~GRP_PAGE_MASK) \| (((m)<... | 469 |
+| PRP_VU1_END | 010000000             /* 22 */ | 474 |
+| PRP_VU2_END | 004000000             /* 21 */ | 475 |
+| PRP_PCARD1_CHECK | 002000000             /* 20 */ | 476 |
+| PRP_PCARD2_CHECK | 001000000             /* 19 */ | 477 |
+| PRP_PCARD1_PUNCH | 000400000             /* 18 */ | 478 |
+| PRP_PCARD2_PUNCH | 000200000             /* 17 */ | 479 |
+| PRP_PTAPE1_PUNCH | 000100000             /* 16 */ | 480 |
+| PRP_PTAPE2_PUNCH | 000040000             /* 15 */ | 481 |
+| PRP_CONS1_INPUT | 000004000             /* 12 */ | 483 |
+| PRP_CONS2_INPUT | 000002000             /* 11 */ | 484 |
+| PRP_CONS1_DONE | 000001000             /* 10 */ | 485 |
+| PRP_CONS2_DONE | 000000400             /* 9 */ | 486 |
+| PRP_PLOTTER | 000000200             /* 8 */ | 488 |
+| PRP_MUX_INPUT | 000000100             /* 7 */ | 489 |
+| PRP_MUX_DONE | 000000040             /* 6 */ | 490 |
+| PRP_DKS_SREQ | 000004000             /* 12 - За... | 501 |
+| PRP_DKS_TERMREQ | 000000100             /* 7  - За... | 502 |
+| PRP_DKS_XMIT | 000000200             /* 8  - Го... | 503 |
+| PRP_DKS_RECV | 000000040             /* 6  - Го... | 504 |
+| PRP_DKS_ATTN | 000000020             /* 5  - Вн... | 505 |
+

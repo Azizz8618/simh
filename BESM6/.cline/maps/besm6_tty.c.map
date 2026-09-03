@@ -1,0 +1,114 @@
+=== besm6_tty.c — 1709 строк ===
+Источник: besm6_tty.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_tty.c -nt .cline/maps/besm6_tty.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| dks_term_t | 198-202 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| reg | 61 | |
+| tty_active | 84 | |
+| tty_typed | 85 | |
+| tty_last_time | 88 | |
+| tty_idle_count | 89 | |
+| tty_lnorder | 90 | |
+| tty_rate | 93 | |
+| tty_turbo | 96 | |
+| vt_sending | 98 | |
+| tt_sending | 99 | |
+| tt_mask | 102 | |
+| TTY_OUT | 104 | |
+| CONSUL_IN | 105 | |
+| MUX_SYLLABLE | 106 | |
+| CONS_CAN_PRINT | 108 | |
+| CONS_HAS_INPUT | 109 | |
+| CONS_READY | 111 | |
+| vt_cbuf | 113 | |
+| vt_cptr | 114 | |
+| attached_console | 123 | |
+| tty_line | 170 | |
+| kadopam_mem | 195 | |
+| dks_terminals | 204 | |
+| cons_is_printing | 1571 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TTY_MAX | 24              /* Serial TTY li... | 34 |
+| LINES_MAX | TTY_MAX + 2     /* Including par... | 35 |
+| TTY_UNICODE_CHARSET | 0 | 173 |
+| TTY_KOI7_JCUKEN_CHARSET | (1<<UNIT_V_UF) | 174 |
+| TTY_KOI7_QWERTY_CHARSET | (2<<UNIT_V_UF) | 175 |
+| TTY_RAW_CHARSET | (3<<UNIT_V_UF) | 176 |
+| TTY_CHARSET_MASK | (3<<UNIT_V_UF) | 177 |
+| TTY_OFFLINE_STATE | 0 | 178 |
+| TTY_TELETYPE_STATE | (1<<(UNIT_V_UF+2)) | 179 |
+| TTY_VT340_STATE | (2<<(UNIT_V_UF+2)) | 180 |
+| TTY_CONSUL_STATE | (3<<(UNIT_V_UF+2)) | 181 |
+| TTY_STATE_MASK | (3<<(UNIT_V_UF+2)) | 182 |
+| TTY_DESTRUCTIVE_BSPACE | 0 | 183 |
+| TTY_AUTHENTIC_BSPACE | (1<<(UNIT_V_UF+4)) | 184 |
+| TTY_BSPACE_MASK | (1<<(UNIT_V_UF+4)) | 185 |
+| TTY_CMDLINE_MASK | (1<<(UNIT_V_UF+5)) | 186 |
+| TTY_INVERSE_READY | (1<<(UNIT_V_UF+6)) | 187 |
+| TTY_MUX_MODE | (1<<(UNIT_V_UF+7)) | 188 |
+| TTY_DKS_MODE | (1<<(UNIT_V_UF+8)) | 189 |
+| DIRECT |  | 1491 |
+| TT_CLEAR(x,y) | x &= ~(y) | 1493 |
+| TT_SET(x,y) | x \|= (y) | 1494 |
+| TT_SET(x,y) | x &= ~(y) | 1496 |
+| TT_CLEAR(x,y) | x \|= (y) | 1497 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tomtk2 | 49-62 |  |
+| process | 63-215 |  |
+| dks_register | 216-263 | kadopam_mem[0156] = адрес буфера S-терминала |
+| dks_poll | 264-296 | Generate interrupt when a character is received |
+| reset_line | 297-304 |  |
+| tty_reset | 305-329 |  |
+| vt_clk | 330-438 | Bit 19 of GRP, should be <tty_rate> Hz |
+| tty_setmode | 439-512 |  |
+| tty_attach | 513-564 | Where <port> is the port number for telnet, e.g. 4199. |
+| tty_detach | 565-569 |  |
+| tty_showrate | 570-574 |  |
+| tty_showturbo | 575-579 |  |
+| tty_setrate | 580-594 |  |
+| tty_setturbo | 595-684 |  |
+| tty_send | 685-695 |  |
+| vt_putc | 696-713 | Sending a character to a terminal with the given number. |
+| vt_puts | 714-736 | Sending a string to a terminal with the given number. |
+| vt_send | 737-810 | Videoton-340 employed single byte control codes rather than ESC sequences. |
+| vt_print | 811-857 | Handling output to all connected terminals. |
+| tt_print | 858-905 |  |
+| unicode_to_koi7 | 906-949 | Returns -1 if unsuccessful. |
+| cmd_set | 950-1000 | Set command |
+| cmd_show | 1001-1045 | Show command |
+| cmd_exit | 1046-1085 | Exit command |
+| lookup_cmd | 1086-1101 | Find command routine |
+| cmd_help | 1102-1132 | Help command |
+| vt_cmd_exec | 1133-1160 | Executing a command. |
+| vt_cmd_loop | 1161-1232 | Command line interface mode. |
+| vt_getc | 1233-1300 | Returns -1 if there is no char to input. |
+| vt_kbd_input_unicode | 1301-1337 | If no input, returns -1. |
+| vt_kbd_input_koi7 | 1338-1389 | Semicolon is }, quote is \|. |
+| odd_parity | 1390-1401 |  |
+| vt_fix | 1402-1416 | unless the mode is RAW. |
+| getsym | 1417-1433 | Receive a character (in KOI-7) from a line. |
+| vt_receive | 1434-1502 | Handling input from all connected terminals. |
+| tt_receive | 1503-1559 | Input from Baudot teletypes. |
+| vt_is_idle | 1560-1564 | SIMH should not enter idle mode until they are. |
+| tty_query | 1565-1572 |  |
+| consul_print | 1573-1601 |  |
+| consul_receive | 1602-1627 |  |
+| consul_read | 1628-1634 |  |
+| mux_read | 1635-1641 |  |
+| mux_event | 1642-1646 |  |
+| mux_send | 1647-1675 |  |
+| mux_receive | 1676-1699 |  |
+| mux_clear | 1700-1709 |  |

@@ -1,0 +1,56 @@
+=== besm6_cpu.c — 2105 строк ===
+Источник: besm6_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_cpu.c -nt .cline/maps/besm6_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| memory | 58 | |
+| PC | 59 | |
+| ACC | 60 | |
+| PRP | 61 | |
+| trace_counter | 64 | |
+| corr_stack | 82 | |
+| redraw_panel | 83 | |
+| autotime | 84 | |
+| cpu_halt | 85 | |
+| sim_name | 274 | |
+| sim_PC | 276 | |
+| tableau | 599 | |
+| totreads | 600 | |
+| readmap | 601 | |
+| kadopam_mem | 964 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| GRP_WIRED_BITS | (GRP_DRUM1_FREE \| GRP_DRUM2_FREE \| | 71 |
+| PRP_WIRED_BITS | (PRP_VU1_END \| PRP_VU2_END \| | 78 |
+| ORDATAVM(nm,loc,wd) | REGDATA(nm,(loc),8,wd,0,1,NULL,N... | 108 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_examine | 325-346 | Memory examine |
+| cpu_deposit | 347-360 | Memory deposit |
+| dump_touched | 361-388 |  |
+| cpu_reset | 389-424 | Reset routine |
+| cpu_req | 425-433 | Request routine |
+| cpu_set_pult | 434-452 | Hardwired program selector validation |
+| cpu_show_pult | 453-466 |  |
+| utf8_putc | 467-486 |  |
+| besm6_okno | 487-514 | системе "Дубна", которая печатала полное состояние всех регистров. |
+| cmd_002 | 515-584 | Команда "рег" |
+| dump | 585-596 |  |
+| cmd_033 | 597-871 | Команда "увв" |
+| check_initial_setup | 872-940 |  |
+| cpu_set_autotime | 941-953 | Automatic time setup.  |
+| cpu_show_autotime | 954-970 |  |
+| write_032 | 971-1020 |  |
+| read_032 | 1021-1050 |  |
+| cpu_one_inst | 1051-1783 | sending a stop code. |
+| op_int_1 | 1784-1805 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
+| op_int_2 | 1806-1824 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
+| sim_instr | 1825-2041 | Main instruction fetch/decode loop |
+| fast_clk | 2042-2084 | for a better user time/system time ratio. |
+| clk_reset | 2085-2105 |  |
