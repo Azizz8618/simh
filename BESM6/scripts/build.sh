@@ -13,12 +13,13 @@ echo ""
 
 cd "$PROJECT_ROOT"
 
-# Очистка предыдущей сборки
-make clean 2>/dev/null || true
+# Очистка и сборка: ТОЛЬКО из папки simh (make besm6)!
+# make из папки BESM6 НЕ пересобирает эмулятор.
+cd /home/azizz/Yandex.Disk/simh
 
 # Сборка в фоне
-echo "Запуск сборки в фоне..."
-make > "$BUILD_LOG" 2>&1 &
+echo "Запуск сборки (make besm6 из simh)..."
+make besm6 > "$BUILD_LOG" 2>&1 &
 BUILD_PID=$!
 
 echo "PID процесса: $BUILD_PID"

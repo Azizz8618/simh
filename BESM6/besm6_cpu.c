@@ -987,7 +987,26 @@ static unsigned short rks_slr = 0;          /* 077777 - последнее зн�
 void rks_count_interrupt(void)
 {
     rks_adr = (rks_adr + 1) & 0xFFFF;
-    besm6_debug(">>> RKS: interrupt counter (077775) = %06o", rks_adr);
+    /*
+     * Слово РКС формируется извне ЭВМ микро-ЭВМ "Электроника-60"
+     * (сторона S-машины). Эмулятор должен имитировать эту работу:
+     * при каждом прерывании от ДКС ставятся биты готовности
+     * направлений в слове РКС (слркс0, читается по 032 из регистра
+     * 077777, а также по адресу 0). Свядкс (konfus.be) анализирует
+     * эти флаги и по активному биту 6 вызывает УСТПРП и пб загруз.
+     *   бит 12 (04000) - ПРП12: запрос S-терминала
+     *   бит  6 (00040) - ПРП6:  готовность приёма (медленный обмен)
+     *   бит  7 (00100) - ПРП7:  запрос ввода H-терминала
+     *   бит  8 (00200) - ПРП8:  готовность к передаче
+     *   бит  5 (00020) - ПРП5:  внимание (быстрый обмен)
+     */
+    if (PRP & PRP_DKS_SREQ)    rks_slr |= 04000;
+    if (PRP & PRP_DKS_RECV)    rks_slr |= 00040;
+    if (PRP & PRP_DKS_TERMREQ) rks_slr |= 00100;
+    if (PRP & PRP_DKS_XMIT)    rks_slr |= 00200;
+    if (PRP & PRP_DKS_ATTN)    rks_slr |= 00020;
+    besm6_debug(">>> RKS: interrupt counter (077775) = %06o, слркс0=%06o",
+                rks_adr, rks_slr);
 }
 
 void write_032(int addr, t_value val) {
@@ -1052,8 +1071,10 @@ t_value read_032(int addr) {
     
     switch (addr) {
     case 0:
-        /* Регистр 0 - статус КРК (бит 8 = готовность) */
-        result = krk_status | (krk_counter & 0377);
+        /* Регистр 0 - статус КРК (бит 8 = готовность).
+         * Слово РКС формируется микро-ЭВМ: старшие разряды -
+         * флаги готовности направлений (см. rks_count_interrupt). */
+        result = krk_status | rks_slr | (krk_counter & 0377);
         besm6_debug(">>> KDP read status: %06o", result);
         return result;
         
@@ -1066,8 +1087,8 @@ t_value read_032(int addr) {
         besm6_debug(">>> RKS read 077775 (адркс0) = %06o", result);
         return result;
         
-    case 077777:  /* = 32767: слркс0 */
-        result = rks_slr;
+    case 077777:  /* = 32767: слркс0 - слово РКС (формируется Э-60) */
+        result = rks_slr | (rks_adr & 0377);
         besm6_debug(">>> RKS read 077777 (слркс0) = %06o", result);
         return result;
         

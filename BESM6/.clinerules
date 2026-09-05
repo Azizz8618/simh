@@ -165,7 +165,9 @@ KADOPAM_SIZE = 0x100
 GRP_SLAVE    = 04000000000000000000000ULL
 
 # Команды проекта
-BUILD_CMD   = make > /tmp/besm6_build.log 2>&1 &
+BUILD_CMD   = cd /home/azizz/Yandex.Disk/simh && make besm6 > /tmp/besm6_build.log 2>&1
+# ВАЖНО: сборка ТОЛЬКО из папки simh (make besm6), после КАЖДОЙ правки
+# исходников; make из папки BESM6 НЕ пересобирает эмулятор.
 CHECK_CMD   = tail -20 /tmp/besm6_build.log
 RUN_CMD     = ./BIN/besm6 dispak.ini
 DEBUG_CMD   = tail -f debug.txt | grep -iE "(DKS|KDP|PRP)"

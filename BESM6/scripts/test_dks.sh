@@ -32,10 +32,12 @@ echo $! > "$PID_FILE"
 echo "✓ Эмулятор запущен, PID $(cat $PID_FILE), лог: $RUN_LOG"
 
 # 4. Ожидание регистрации ДКС (не фиксированный sleep, а поллинг)
+# ОС Диспак грузится 1-3 мин до первых 032-чтений: длинный таймаут,
+# редкие проверки (sleep 10) — экономия токенов на пустых запросах.
 echo -n "Ожидание «DKS: terminal registered»... "
-for i in $(seq 1 30); do
+for i in $(seq 1 60); do
     grep -q 'DKS: terminal registered' "$DEBUG_LOG" 2>/dev/null && break
-    sleep 1
+    sleep 10
 done
 grep -q 'DKS: terminal registered' "$DEBUG_LOG" 2>/dev/null \
     && echo "✓" || echo "✗ (см. $RUN_LOG)"
