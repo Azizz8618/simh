@@ -968,6 +968,28 @@ static unsigned short krk_counter = 0;      /* Счётчик прерывани
 static unsigned short krk_last_write = 0;   /* Последнее записанное значение */
 static unsigned short krk_status = 0400;    /* Статус КРК (регистр 0 при чтении) */
 
+/*
+ * Регистры РКС (адресное пространство 077770-077777):
+ *   077775 (адркс0) - счётчик запросов прерываний ПРП.
+ *     Диспетчер ОС (страница 0471, см. tr1.txt) читает его,
+ *     чтобы идентифицировать источник прерывания. Растёт при
+ *     каждой установке бита ПРП от ДКС (см. rks_count_interrupt).
+ *   077777 (слркс0) - служебный регистр гашения прерываний.
+ */
+static unsigned short rks_adr = 0;          /* 077775 - счётчик запросов */
+static unsigned short rks_slr = 0;          /* 077777 - последнее значение слркс0 */
+
+/*
+ * Увеличить счётчик запросов РКС (077775).
+ * Вызывается из besm6_tty.c при каждой установке бита ПРП
+ * (dks_register - ПРП12, dks_poll - ПРП7).
+ */
+void rks_count_interrupt(void)
+{
+    rks_adr = (rks_adr + 1) & 0xFFFF;
+    besm6_debug(">>> RKS: interrupt counter (077775) = %06o", rks_adr);
+}
+
 void write_032(int addr, t_value val) {
     int v = val & 077777777;
     
@@ -997,12 +1019,19 @@ void write_032(int addr, t_value val) {
         kadopam_mem[2] = v;
         break;
         
-    case 077777:  /* = 32767 */
-        /* Управление прерываниями */
+    case 077775:  /* = 32765: адркс0 - счётчик запросов (запись = гашение) */
+        rks_adr = v & 0xFFFF;
+        besm6_debug(">>> RKS write 077775 (адркс0) = %06o", rks_adr);
+        break;
+        
+    case 077777:  /* = 32767: слркс0 - гашение прерываний */
+        rks_slr = v & 0xFFFF;
+        besm6_debug(">>> RKS write 077777 (слркс0) = %06o", rks_slr);
         /* Бит 8 (0400) - запрос прерывания от КАДОПАМ */
         if (v & 0400) {
             PRP |= PRP_DKS_SREQ;
             GRP |= GRP_SLAVE;
+            rks_count_interrupt();
             besm6_debug(">>> KDP: set PRP_DKS_SREQ interrupt");
         }
         break;
@@ -1031,6 +1060,16 @@ t_value read_032(int addr) {
     case 2:
         /* Регистр 2 - последнее записанное значение */
         return krk_last_write;
+        
+    case 077775:  /* = 32765: адркс0 - счётчик запросов ПРП */
+        result = rks_adr;
+        besm6_debug(">>> RKS read 077775 (адркс0) = %06o", result);
+        return result;
+        
+    case 077777:  /* = 32767: слркс0 */
+        result = rks_slr;
+        besm6_debug(">>> RKS read 077777 (слркс0) = %06o", result);
+        return result;
         
     default:
         /* Чтение из памяти КАДОПАМ */

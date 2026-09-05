@@ -12,7 +12,7 @@ echo "=== Тестирование ДКС терминала ==="
 echo ""
 
 # Проверка существования эмулятора
-if [ ! -f "$PROJECT_ROOT/BIN/besm6" ]; then
+if [ ! -f "$PROJECT_ROOT/../BIN/besm6" ]; then
     echo "✗ Эмулятор не найден. Запустите ./scripts/build.sh"
     exit 1
 fi
@@ -36,7 +36,7 @@ rm -f "$PROJECT_ROOT/output.txt"
 cd "$PROJECT_ROOT"
 
 echo "Запуск эмулятора..."
-./BIN/besm6 dispak.ini &
+../BIN/besm6 dispak.ini &
 BESM6_PID=$!
 echo $BESM6_PID > "$PID_FILE"
 

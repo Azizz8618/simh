@@ -31,6 +31,8 @@
 #include "sim_sock.h"
 #include "sim_tmxr.h"
 
+extern void rks_count_interrupt(void);   /* besm6_cpu.c: RKS counter 077775 */
+
 #define TTY_MAX         24              /* Serial TTY lines */
 #define LINES_MAX       TTY_MAX + 2     /* Including parallel "Consul" typewriters */
 /*
@@ -253,6 +255,7 @@ void dks_register(int num, TMLN *line)
     /* Generate interrupt PRP12 (SREQ - S-terminal request) */
     PRP |= PRP_DKS_SREQ;
     GRP |= GRP_SLAVE;
+    rks_count_interrupt();   /*increment RKS interrupt counter (077775) */
     
     besm6_debug(">>> DKS: PRP=%06o, MPRP=%06o, PRP&MPRP=%06o", PRP, MPRP, PRP & MPRP);
 }
@@ -290,6 +293,7 @@ void dks_poll(void)
             /* Generate interrupt PRP7 (TERMREQ - H-terminal request) */
             PRP |= PRP_DKS_TERMREQ;
             GRP |= GRP_SLAVE;
+            rks_count_interrupt();   /* increment RKS interrupt counter (077775) */
         }
     }
 }
