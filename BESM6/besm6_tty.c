@@ -459,6 +459,9 @@ t_stat tty_setmode (UNIT *u, int32 val, CONST char *cptr, void *desc)
             u->flags &= ~TTY_MUX_MODE;
             vt_mask &= ~mask;
             tt_mask &= ~mask;
+            /* DKS line must accept incoming telnet connections:
+             * clear the fake "always connected" mark set by tt/vt modes. */
+            tty_line[num].conn = 0;
         }
         return SCPE_OK;
     }
