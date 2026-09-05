@@ -123,7 +123,7 @@ extern const char *get_sim_sw (const char *cptr);
 int attached_console;
 
 UNIT tty_unit [] = {
-    { UDATA (vt_clk, UNIT_DIS|UNIT_IDLE, 0) },       /* fake unit, clock */
+    { UDATA (vt_clk, UNIT_ATTABLE|UNIT_IDLE, 0) },    /* fake unit, clock and mux master */
     { UDATA (mux_event, UNIT_SEQ, 0) },
     { UDATA (mux_event, UNIT_SEQ, 0) },
     { UDATA (mux_event, UNIT_SEQ, 0) },
@@ -207,6 +207,11 @@ static int dks_next_base = 0x2000;  /* Starting address for S-terminal buffers *
 /*
  * Register a new DKS terminal and generate interrupt
  * Called when a new telnet connection is established on a DKS line
+ * 
+ * Формат буфера системных запросов S-терминала (SPREQ, адреса 0154-0156):
+ *   kadopam_mem[0154] = код команды (1 = подключение)
+ *   kadopam_mem[0155] = номер терминала
+ *   kadopam_mem[0156] = адрес буфера S-терминала
  */
 void dks_register(int num, TMLN *line)
 {
@@ -227,7 +232,7 @@ void dks_register(int num, TMLN *line)
         base_addr = term->base_addr;
     } else {
         base_addr = dks_next_base;
-        dks_next_base += 0x100;  /* 256 words per terminal buffer */
+        dks_next_base += 0x100;  /* 64 words per terminal buffer */
         if (dks_next_base >= 65536) {
             besm6_debug(">>> DKS: out of buffer space");
             return;
@@ -237,19 +242,19 @@ void dks_register(int num, TMLN *line)
         term->active = 1;
     }
     
-    /* Write connection command to system buffer (addresses 0154-0156) */
-    kadopam_mem[0154] = 1;              /* Command 1 = connect */
-    kadopam_mem[0155] = num;            /* Logical terminal number */
-    kadopam_mem[0156] = base_addr;      /* S-terminal buffer address */
+    /* Write connection request to SPREQ buffer (0154-0156 восьмеричные = 108-110 десятичные) */
+    kadopam_mem[108] = 1;              /* Command 1 = connect */
+    kadopam_mem[109] = num;            /* Logical terminal number */
+    kadopam_mem[110] = base_addr;      /* S-terminal buffer address */
     
-    besm6_debug(">>> DKS: terminal %d registered, base=0x%04x", num, base_addr);
+    besm6_debug(">>> DKS: terminal %d registered, base=0x%04x (%05o), SPREQ[108-110]=%06o,%06o,%06o", 
+                num, base_addr, base_addr, kadopam_mem[108], kadopam_mem[109], kadopam_mem[110]);
     
     /* Generate interrupt PRP12 (SREQ - S-terminal request) */
     PRP |= PRP_DKS_SREQ;
     GRP |= GRP_SLAVE;
     
-    besm6_debug(">>> DKS: PRP=%06o, MPRP=%06o, PRP&MPRP=%06o, GRP_SLAVE=%s",
-                PRP, MPRP, PRP & MPRP, (GRP & GRP_SLAVE) ? "SET" : "clear");
+    besm6_debug(">>> DKS: PRP=%06o, MPRP=%06o, PRP&MPRP=%06o", PRP, MPRP, PRP & MPRP);
 }
 
 /*
@@ -436,6 +441,23 @@ t_stat tty_setmode (UNIT *u, int32 val, CONST char *cptr, void *desc)
     int num = u - tty_unit;
     TMLN *t = &tty_line [num];
     uint32 mask = 1 << (TTY_MAX - num);
+
+    /* Handle MUX/DKS mode flags - check by mask to avoid overflow issues */
+    if (val & (TTY_MUX_MODE | TTY_DKS_MODE)) {
+        if (val & TTY_MUX_MODE) {
+            u->flags |= TTY_MUX_MODE;
+            u->flags &= ~TTY_DKS_MODE;
+            vt_mask &= ~mask;
+            tt_mask &= ~mask;
+        }
+        if (val & TTY_DKS_MODE) {
+            u->flags |= TTY_DKS_MODE;
+            u->flags &= ~TTY_MUX_MODE;
+            vt_mask &= ~mask;
+            tt_mask &= ~mask;
+        }
+        return SCPE_OK;
+    }
 
     switch (val & TTY_STATE_MASK) {
     case TTY_OFFLINE_STATE:
@@ -627,10 +649,10 @@ MTAB tty_mod[] = {
       "INVREADY" },
     { TTY_INVERSE_READY, 0, "regular ready",
       "REGREADY" },
-    { TTY_MUX_MODE, TTY_MUX_MODE, "treat as connected via UART mux",
-      "MUX" },
-    { TTY_DKS_MODE, TTY_DKS_MODE, "treat as connected via DKS (КАДОПАМ)",
-      "DKS" },
+    { MTAB_XTD | MTAB_VUN, TTY_MUX_MODE, "treat as connected via UART mux",
+      "MUX", &tty_setmode, NULL, NULL, "treat as connected via UART mux" },
+    { MTAB_XTD | MTAB_VUN, TTY_DKS_MODE, "treat as connected via DKS (КАДОПАМ)",
+      "DKS", &tty_setmode, NULL, NULL, "treat as connected via DKS" },
     { MTAB_XTD | MTAB_VDV | MTAB_VALR, 1, NULL,
       "DISCONNECT", &tmxr_dscln, NULL, (void*) &tty_desc, "terminates telnet connection" },
     { MTAB_XTD | MTAB_VDV | MTAB_VALR, 1, "RATE",

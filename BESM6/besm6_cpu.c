@@ -963,54 +963,83 @@ t_stat cpu_show_autotime (FILE *st, UNIT *up, int32 v, CONST void *dp)
  */
 extern unsigned short kadopam_mem[65536];
 
-static unsigned short extmem[32768];
-static unsigned short last;
+/* Registers of КРК (Канал Регистров КАДОПАМ) */
+static unsigned short krk_counter = 0;      /* Счётчик прерываний источника (регистр 0) */
+static unsigned short krk_last_write = 0;   /* Последнее записанное значение */
+static unsigned short krk_status = 0400;    /* Статус КРК (регистр 0 при чтении) */
 
 void write_032(int addr, t_value val) {
-    int v = val & 077777777; 
-    // if (v || addr) besm6_debug("W32 %08o -> %05o", v, addr);
+    int v = val & 077777777;
+    
+    besm6_debug(">>> KDP write: addr=%05o, val=%06o", addr, v);
+    
     switch (addr) {
     case 0:
-	if (v & 2) {
-	    PRP &= ~040;
-	}
-	else if (v == 0) {
-		static int cnt;
-		if (++cnt % 10000 == 0) {
-			besm6_debug("10K writes of 0 to 0");
-		}
-	}
-	break;
-    case 077777:
-	if (v & 0400) {
-	    // interrupt - will result in setting E6 in PRP after some time
-	    PRP |= 040;
-	}
-	break;
+        /* Регистр 0 - счётчик прерываний источника */
+        krk_counter = v;
+        /* Бит 1 (значение 2) - сброс прерывания */
+        if (v & 2) {
+            PRP &= ~PRP_DKS_SREQ;
+            besm6_debug(">>> KDP: cleared PRP_DKS_SREQ");
+        }
+        krk_last_write = v;
+        break;
+        
+    case 1:
+        /* Регистр 1 - код команды / данные */
+        krk_last_write = v;
+        kadopam_mem[1] = v;
+        break;
+        
+    case 2:
+        /* Регистр 2 - адрес массива / длина */
+        krk_last_write = v;
+        kadopam_mem[2] = v;
+        break;
+        
+    case 077777:  /* = 32767 */
+        /* Управление прерываниями */
+        /* Бит 8 (0400) - запрос прерывания от КАДОПАМ */
+        if (v & 0400) {
+            PRP |= PRP_DKS_SREQ;
+            GRP |= GRP_SLAVE;
+            besm6_debug(">>> KDP: set PRP_DKS_SREQ interrupt");
+        }
+        break;
+        
     default:
-        /* Write to kadopam_mem for addresses < 65536 */
+        /* Запись в память КАДОПАМ */
         if (addr < 65536) {
             kadopam_mem[addr] = v;
-            besm6_debug(">>> KDP write: kadopam_mem[%05o] = %06o", addr, v);
+            besm6_debug(">>> KDP: kadopam_mem[%05o] = %06o", addr, v);
         }
-	last = extmem[addr] = v;
+        krk_last_write = v;
+        break;
     }
 }
 
 t_value read_032(int addr) {
-    // besm6_debug("R32 %05o", addr);
+    t_value result;
+    
     switch (addr) {
     case 0:
-	return 0400;		/* ready */
+        /* Регистр 0 - статус КРК (бит 8 = готовность) */
+        result = krk_status | (krk_counter & 0377);
+        besm6_debug(">>> KDP read status: %06o", result);
+        return result;
+        
     case 2:
-	return last;
-    default: 
-        /* Read from kadopam_mem for addresses < 65536 */
+        /* Регистр 2 - последнее записанное значение */
+        return krk_last_write;
+        
+    default:
+        /* Чтение из памяти КАДОПАМ */
         if (addr < 65536) {
-            besm6_debug(">>> KDP read: kadopam_mem[%05o] = %06o", addr, kadopam_mem[addr]);
-            return kadopam_mem[addr];
+            result = kadopam_mem[addr];
+            besm6_debug(">>> KDP read: kadopam_mem[%05o] = %06o", addr, result);
+            return result;
         }
-        return extmem[addr];
+        return 0;
     }
 }
 
@@ -1372,15 +1401,21 @@ void cpu_one_inst ()
         }
         delay = MEAN_TIME (3, 5);
         break;
-    case 032:                                       /* э32, ext */
-	if (RK & BBIT(19))
-	    write_032(ADDR(addr-070000+M[reg]), ACC);
-	else {
-	    t_value res;
-	    res = read_032(ADDR(addr+M[reg]));
-	    ACC = res << 24 | ACC & 077777777;
-	}
-	break;
+    case 032:                                       /* э32, ext - работа с КРК (КАДОПАМ) */
+        /* КК 26,'70000' транслируется как 132,00000 - адрес регистра КРК = 0 */
+        /* КК 26,'70001' транслируется как 132,00001 - адрес регистра КРК = 1 */
+        /* Бит 19 определяет запись (1) или чтение (0) */
+        Aex = ADDR (addr + M[reg]);
+        if (RK & BBIT(19)) {
+            /* Запись в регистр КРК */
+            write_032(Aex, ACC);
+        } else {
+            /* Чтение из регистра КРК */
+            t_value res;
+            res = read_032(Aex);
+            ACC = res << 24 | ACC & 077777777;
+        }
+        break;
     case 033:                                       /* увв, ext */
         Aex = ADDR (addr + M[reg]);
         if (! IS_SUPERVISOR (RUU))
