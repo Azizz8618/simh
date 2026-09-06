@@ -1,0 +1,46 @@
+=== besm6_mg.c — 660 строк ===
+Источник: besm6_mg.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_mg.c -nt .cline/maps/besm6_mg.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| KMT | 55-65 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MG_BLOCK | 0740000000   /* RAM block number... | 36 |
+| MG_READ_SYSDATA | 004000000   /* control words onl... | 37 |
+| MG_READ | 000400000   /* reading to RAM fl... | 38 |
+| MG_PAGE | 000370000   /* номер страницы па... | 39 |
+| MG_UNIT | 000001600   /* номер устройства */ | 40 |
+| MG_CLEARINTR | 040000000 | 44 |
+| MG_BACK | 000000002   /* 0 - forward, 1 - ... | 45 |
+| MG_MOVE | 000000001   /* start moving the ... | 46 |
+| MG_OFFLINE | (1<<8)      /* 0 - online, 1 - o... | 48 |
+| MG_READONLY | (1<<16)     /* 0 - r/w, 1 - r/o */ | 49 |
+| MG_MOVING | 1           /* 0 - stopped, 1 - ... | 50 |
+| MG_SIZE | 0 | 72 |
+| MG_TOTBLK | 02010 | 73 |
+| MG_IO_DELAY | (200*MSEC) | 75 |
+| MG_MOVE_DELAY | (100*MSEC) | 76 |
+| MG_GAP_DELAY | (10*MSEC) | 77 |
+| FMT_CTLR | 3 | 80 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| unit_to_ctlr | 189-196 | Определение контроллера по устройству. |
+| mg_reset | 197-244 | Reset routine |
+| mg_attach | 245-328 |  |
+| mg_detach | 329-343 |  |
+| log_data | 344-365 | Отладочная печать массива данных обмена. |
+| mg_write | 366-386 | Writing to a tape. |
+| mg_format | 387-440 | 0 - disable, 2 - create gap, 3 - create synchrotrack |
+| mg_read | 441-476 | Reading from a tape. |
+| mg_io | 477-506 | Given 3 affects 2 and 3. |
+| mg_ctl | 507-596 | Moving the tape. |
+| mg_state | 597-621 | Запрос состояния контроллера. |
+| mg_event | 622-652 | End of I/O, sending an interrupt. |
+| mg_errors | 653-660 | Опрос ошибок обмена командой 033 4035. |

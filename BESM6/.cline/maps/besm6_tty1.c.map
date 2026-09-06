@@ -1,0 +1,88 @@
+=== besm6_tty1.c — 1395 строк ===
+Источник: besm6_tty1.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_tty1.c -nt .cline/maps/besm6_tty1.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| reg | 49 | |
+| tty_active | 72 | |
+| tty_typed | 73 | |
+| tty_last_time | 76 | |
+| tty_idle_count | 77 | |
+| tty_lnorder | 78 | |
+| tty_rate | 81 | |
+| tty_turbo | 84 | |
+| vt_sending | 86 | |
+| tt_sending | 87 | |
+| tt_mask | 90 | |
+| TTY_OUT | 92 | |
+| CONSUL_IN | 93 | |
+| CONS_CAN_PRINT | 95 | |
+| CONS_HAS_INPUT | 96 | |
+| CONS_READY | 98 | |
+| vt_cbuf | 100 | |
+| vt_cptr | 101 | |
+| attached_console | 108 | |
+| tty_line | 155 | |
+| cons_is_printing | 1325 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TTY_MAX | 24              /* Serial TTY li... | 34 |
+| LINES_MAX | TTY_MAX + 2     /* Including par... | 35 |
+| TTY_UNICODE_CHARSET | 0 | 158 |
+| TTY_KOI7_JCUKEN_CHARSET | (1<<UNIT_V_UF) | 159 |
+| TTY_KOI7_QWERTY_CHARSET | (2<<UNIT_V_UF) | 160 |
+| TTY_RAW_CHARSET | (3<<UNIT_V_UF) | 161 |
+| TTY_CHARSET_MASK | (3<<UNIT_V_UF) | 162 |
+| TTY_OFFLINE_STATE | 0 | 163 |
+| TTY_TELETYPE_STATE | (1<<(UNIT_V_UF+2)) | 164 |
+| TTY_VT340_STATE | (2<<(UNIT_V_UF+2)) | 165 |
+| TTY_CONSUL_STATE | (3<<(UNIT_V_UF+2)) | 166 |
+| TTY_STATE_MASK | (3<<(UNIT_V_UF+2)) | 167 |
+| TTY_DESTRUCTIVE_BSPACE | 0 | 168 |
+| TTY_AUTHENTIC_BSPACE | (1<<(UNIT_V_UF+4)) | 169 |
+| TTY_BSPACE_MASK | (1<<(UNIT_V_UF+4)) | 170 |
+| TTY_CMDLINE_MASK | (1<<(UNIT_V_UF+5)) | 171 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| process | 51-172 |  |
+| reset_line | 173-180 |  |
+| tty_reset | 181-200 |  |
+| vt_clk | 201-298 | Bit 19 of GRP, should be <tty_rate> Hz |
+| tty_setmode | 299-353 |  |
+| tty_attach | 354-402 | Where <port> is the port number for telnet, e.g. 4199. |
+| tty_detach | 403-407 |  |
+| tty_showrate | 408-412 |  |
+| tty_showturbo | 413-417 |  |
+| tty_setrate | 418-432 |  |
+| tty_setturbo | 433-513 |  |
+| tty_send | 514-523 |  |
+| vt_putc | 524-541 | Sending a character to a terminal with the given number. |
+| vt_puts | 542-564 | Sending a string to a terminal with the given number. |
+| vt_send | 565-638 | Videoton-340 employed single byte control codes rather than ESC sequences. |
+| vt_print | 639-684 | Handling output to all connected terminals. |
+| tt_print | 685-730 |  |
+| unicode_to_koi7 | 731-774 | Returns -1 if unsuccessful. |
+| cmd_set | 775-825 | Set command |
+| cmd_show | 826-870 | Show command |
+| cmd_exit | 871-910 | Exit command |
+| lookup_cmd | 911-926 | Find command routine |
+| cmd_help | 927-957 | Help command |
+| vt_cmd_exec | 958-985 | Executing a command. |
+| vt_cmd_loop | 986-1057 | Command line interface mode. |
+| vt_getc | 1058-1124 | Returns -1 if there is no char to input. |
+| vt_kbd_input_unicode | 1125-1159 | If no input, returns -1. |
+| vt_kbd_input_koi7 | 1160-1211 | Semicolon is }, quote is \|. |
+| odd_parity | 1212-1223 |  |
+| vt_fix | 1224-1238 | unless the mode is RAW. |
+| vt_receive | 1239-1313 | Handling input from all connected terminals. |
+| vt_is_idle | 1314-1318 | SIMH should not enter idle mode until they are. |
+| tty_query | 1319-1326 |  |
+| consul_print | 1327-1352 |  |
+| consul_receive | 1353-1389 |  |
+| consul_read | 1390-1395 |  |

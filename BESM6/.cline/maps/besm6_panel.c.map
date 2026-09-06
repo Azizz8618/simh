@@ -1,0 +1,62 @@
+=== besm6_panel.c — 630 строк ===
+Источник: besm6_panel.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_panel.c -nt .cline/maps/besm6_panel.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| font_big | 55 | |
+| font_small | 56 | |
+| foreground | 57 | |
+| background | 58 | |
+| white | 59 | |
+| black | 60 | |
+| cyan | 61 | |
+| grey | 62 | |
+| old_BRZ | 63 | |
+| old_M | 64 | |
+| act | 80 | |
+| screen | 82 | |
+| sdlWindow | 444 | |
+| sdlRenderer | 445 | |
+| sdlTexture | 446 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| WIDTH | 800 | 39 |
+| HEIGHT | 450 | 40 |
+| DEPTH | 32 | 41 |
+| STEPX | 14 | 43 |
+| STEPY | 16 | 44 |
+| TEXTW | 76 | 45 |
+| HEADER | 28 | 46 |
+| _QUOTE(x) | #x | 51 |
+| QUOTE(x) | _QUOTE(x) | 52 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| render_utf8 | 89-141 | Foreground/background colors are taken from global variables. |
+| draw_lamp | 142-203 | Drawing a neon light. |
+| draw_a_modifier | 204-221 |  |
+| draw_modifiers_periodic | 222-251 | Drawing index (modifier) registers. They form two groups. |
+| draw_grp_periodic | 252-276 | Drawing the main interrupt register and its mask. |
+| draw_counters_periodic | 277-287 |  |
+| draw_prp_periodic | 288-296 | Drawing the peripheral interrupt register and its mask. |
+| draw_brz_periodic | 297-309 | Drawing the data cache registers. |
+| draw_separators | 310-327 | Visually separating groups of bits. |
+| draw_bit_numbers | 328-341 | Drawing weaving bit numbers. |
+| draw_modifiers_static | 342-361 | Drawing the static part of the modifier register area. |
+| draw_grp_static | 362-375 | Drawing the static part of the interrupt register area. |
+| draw_prp_static | 376-389 | Drawing the static part of the interrupt register area. |
+| draw_counters_static | 390-403 | Drawing the static part of PC and SP (M17) area. |
+| draw_brz_static | 404-422 | Drawing the static part of the cache register area |
+| besm6_close_panel | 423-434 | Closing the graphical window. |
+| besm6_show_panel | 435-450 |  |
+| besm6_init_panel | 451-573 | Initializing of the graphical window and the fonts. |
+| besm6_draw_panel | 574-611 | Refreshing the window. |
+| besm6_init_panel | 612-616 |  |
+| besm6_close_panel | 617-621 |  |
+| besm6_show_panel | 622-626 |  |
+| besm6_draw_panel | 627-630 |  |

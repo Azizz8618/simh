@@ -1,4 +1,4 @@
-=== besm6_tty.c — 1713 строк ===
+=== besm6_tty.c — 1716 строк ===
 Источник: besm6_tty.c | Автогенерация: scripts/gen_code_map.sh
 Регенерировать: test besm6_tty.c -nt .cline/maps/besm6_tty.c.map
 
@@ -33,7 +33,7 @@
 | tty_line | 172 | |
 | kadopam_mem | 197 | |
 | dks_terminals | 206 | |
-| cons_is_printing | 1575 | |
+| cons_is_printing | 1578 | |
 
 === КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
 | Имя | Значение | Стр |
@@ -57,11 +57,11 @@
 | TTY_INVERSE_READY | (1<<(UNIT_V_UF+6)) | 189 |
 | TTY_MUX_MODE | (1<<(UNIT_V_UF+7)) | 190 |
 | TTY_DKS_MODE | (1<<(UNIT_V_UF+8)) | 191 |
-| DIRECT |  | 1495 |
-| TT_CLEAR(x,y) | x &= ~(y) | 1497 |
-| TT_SET(x,y) | x \|= (y) | 1498 |
-| TT_SET(x,y) | x &= ~(y) | 1500 |
-| TT_CLEAR(x,y) | x \|= (y) | 1501 |
+| DIRECT |  | 1498 |
+| TT_CLEAR(x,y) | x &= ~(y) | 1500 |
+| TT_SET(x,y) | x \|= (y) | 1501 |
+| TT_SET(x,y) | x &= ~(y) | 1503 |
+| TT_CLEAR(x,y) | x \|= (y) | 1504 |
 
 === ФУНКЦИИ ===
 | Имя | Строки | Назначение |
@@ -73,42 +73,42 @@
 | reset_line | 301-308 |  |
 | tty_reset | 309-333 |  |
 | vt_clk | 334-442 | Bit 19 of GRP, should be <tty_rate> Hz |
-| tty_setmode | 443-516 |  |
-| tty_attach | 517-568 | Where <port> is the port number for telnet, e.g. 4199. |
-| tty_detach | 569-573 |  |
-| tty_showrate | 574-578 |  |
-| tty_showturbo | 579-583 |  |
-| tty_setrate | 584-598 |  |
-| tty_setturbo | 599-688 |  |
-| tty_send | 689-699 |  |
-| vt_putc | 700-717 | Sending a character to a terminal with the given number. |
-| vt_puts | 718-740 | Sending a string to a terminal with the given number. |
-| vt_send | 741-814 | Videoton-340 employed single byte control codes rather than ESC sequences. |
-| vt_print | 815-861 | Handling output to all connected terminals. |
-| tt_print | 862-909 |  |
-| unicode_to_koi7 | 910-953 | Returns -1 if unsuccessful. |
-| cmd_set | 954-1004 | Set command |
-| cmd_show | 1005-1049 | Show command |
-| cmd_exit | 1050-1089 | Exit command |
-| lookup_cmd | 1090-1105 | Find command routine |
-| cmd_help | 1106-1136 | Help command |
-| vt_cmd_exec | 1137-1164 | Executing a command. |
-| vt_cmd_loop | 1165-1236 | Command line interface mode. |
-| vt_getc | 1237-1304 | Returns -1 if there is no char to input. |
-| vt_kbd_input_unicode | 1305-1341 | If no input, returns -1. |
-| vt_kbd_input_koi7 | 1342-1393 | Semicolon is }, quote is \|. |
-| odd_parity | 1394-1405 |  |
-| vt_fix | 1406-1420 | unless the mode is RAW. |
-| getsym | 1421-1437 | Receive a character (in KOI-7) from a line. |
-| vt_receive | 1438-1506 | Handling input from all connected terminals. |
-| tt_receive | 1507-1563 | Input from Baudot teletypes. |
-| vt_is_idle | 1564-1568 | SIMH should not enter idle mode until they are. |
-| tty_query | 1569-1576 |  |
-| consul_print | 1577-1605 |  |
-| consul_receive | 1606-1631 |  |
-| consul_read | 1632-1638 |  |
-| mux_read | 1639-1645 |  |
-| mux_event | 1646-1650 |  |
-| mux_send | 1651-1679 |  |
-| mux_receive | 1680-1703 |  |
-| mux_clear | 1704-1713 |  |
+| tty_setmode | 443-519 |  |
+| tty_attach | 520-571 | Where <port> is the port number for telnet, e.g. 4199. |
+| tty_detach | 572-576 |  |
+| tty_showrate | 577-581 |  |
+| tty_showturbo | 582-586 |  |
+| tty_setrate | 587-601 |  |
+| tty_setturbo | 602-691 |  |
+| tty_send | 692-702 |  |
+| vt_putc | 703-720 | Sending a character to a terminal with the given number. |
+| vt_puts | 721-743 | Sending a string to a terminal with the given number. |
+| vt_send | 744-817 | Videoton-340 employed single byte control codes rather than ESC sequences. |
+| vt_print | 818-864 | Handling output to all connected terminals. |
+| tt_print | 865-912 |  |
+| unicode_to_koi7 | 913-956 | Returns -1 if unsuccessful. |
+| cmd_set | 957-1007 | Set command |
+| cmd_show | 1008-1052 | Show command |
+| cmd_exit | 1053-1092 | Exit command |
+| lookup_cmd | 1093-1108 | Find command routine |
+| cmd_help | 1109-1139 | Help command |
+| vt_cmd_exec | 1140-1167 | Executing a command. |
+| vt_cmd_loop | 1168-1239 | Command line interface mode. |
+| vt_getc | 1240-1307 | Returns -1 if there is no char to input. |
+| vt_kbd_input_unicode | 1308-1344 | If no input, returns -1. |
+| vt_kbd_input_koi7 | 1345-1396 | Semicolon is }, quote is \|. |
+| odd_parity | 1397-1408 |  |
+| vt_fix | 1409-1423 | unless the mode is RAW. |
+| getsym | 1424-1440 | Receive a character (in KOI-7) from a line. |
+| vt_receive | 1441-1509 | Handling input from all connected terminals. |
+| tt_receive | 1510-1566 | Input from Baudot teletypes. |
+| vt_is_idle | 1567-1571 | SIMH should not enter idle mode until they are. |
+| tty_query | 1572-1579 |  |
+| consul_print | 1580-1608 |  |
+| consul_receive | 1609-1634 |  |
+| consul_read | 1635-1641 |  |
+| mux_read | 1642-1648 |  |
+| mux_event | 1649-1653 |  |
+| mux_send | 1654-1682 |  |
+| mux_receive | 1683-1706 |  |
+| mux_clear | 1707-1716 |  |

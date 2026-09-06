@@ -1,0 +1,63 @@
+=== besm6_vu.c — 579 строк ===
+Источник: besm6_vu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_vu.c -nt .cline/maps/besm6_vu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| vu_col_dly | 64 | |
+| vu_card_dly | 66 | |
+| vu_updkstart | 67 | |
+| VU | 69 | |
+| vu_state | 196 | |
+| vu_isfifo | 198 | |
+| vu_gost | 203 | |
+| vu_image | 204 | |
+| vu_cardcnt | 205 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VU1_NOTREADY | (1<<23) | 37 |
+| VU1_FEED | (1<<22) | 38 |
+| VU1_MAYSTART | (1<<21) | 39 |
+| VU2_NOTREADY | (1<<19) | 40 |
+| VU2_FEED | (1<<18) | 41 |
+| VU2_MAYSTART | (1<<17) | 42 |
+| SET_RDY2(x) | do READY2 \|= x; while (0) | 44 |
+| CLR_RDY2(x) | do READY2 &= ~(x); while (0) | 45 |
+| ISSET_RDY2(x) | ((READY2 & (x)) != 0) | 46 |
+| ISCLR_RDY2(x) | ((READY2 & (x)) == 0) | 47 |
+| VU_RATE_CPM | 600 | 49 |
+| CARD_LEN | (80/2) | 52 |
+| DFLT_DELAY | (60*1000*MSEC/VU_RATE_CPM/CARD_LEN) | 53 |
+| GOST_DOT | 016            /* unpunched posi... | 58 |
+| GOST_O | 056            /* punched positi... | 59 |
+| DISP_END | "\032\032\032\032\032\032\377" | 62 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| vu_set_coldly | 78-87 |  |
+| vu_set_enddly | 88-97 |  |
+| vu_set_carddly | 98-107 |  |
+| vu_show_coldly | 108-113 |  |
+| vu_show_enddly | 114-119 |  |
+| vu_show_carddly | 120-125 |  |
+| vu_set_updk | 126-145 |  |
+| vu_show_updk | 146-209 |  |
+| vu_reset | 210-229 | Reset routine |
+| vu_attach | 230-243 | is not supported yet. |
+| vu_detach | 244-253 |  |
+| vu_control | 254-303 | Controlling the card reader. |
+| uni2utf8 | 304-321 |  |
+| punch | 322-336 | Converts a string consisting of 0-9+- digits, plus, or minus to a 12-bit map of punches. |
+| gost_to_updk | 337-359 | The UPDK codes are taken from Maznyj, "Programming in the Dubna system". |
+| gost_to_upp | 360-367 | UPP stood for "unit for preparation of punchards". |
+| display_card | 368-380 |  |
+| reverse_card | 381-405 |  |
+| is_prettycard | 406-419 |  |
+| chad | 420-437 |  |
+| prettycard | 438-469 |  |
+| vu_event | 470-573 | Event: reading two characters (two columns) into the register, sending an interrupt. |
+| vu_read | 574-579 |  |

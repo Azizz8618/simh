@@ -1,0 +1,27 @@
+=== besm6_sys.c — 733 строк ===
+Источник: besm6_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_sys.c -nt .cline/maps/besm6_sys.c.map
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| besm6_opname | 77-92 | Код должен быть в диапазоне 000..077 или 0200..0370. |
+| besm6_opcode | 93-112 | Выдача кода инструкции по мнемонике (UTF-8). |
+| besm6_log | 113-138 | Добавляет перевод строки. |
+| besm6_log_cont | 139-161 | Не добавляет перевод строки. |
+| besm6_debug | 162-190 | Добавляет перевод строки. |
+| ieee_to_besm6 | 191-218 | порядок знак мантисса в доп. коде |
+| besm6_to_ieee | 219-240 |  |
+| skip_spaces | 241-260 | Пропуск пробелов. |
+| utf8_to_unicode | 261-274 | Advance string pointer. |
+| besm6_parse_octal | 275-284 |  |
+| get_alnum | 285-299 |  |
+| parse_instruction | 300-392 | Allow mnemonics or octal code. |
+| parse_instruction_word | 393-419 | Instruction parse: two commands per word. |
+| besm6_fprint_cmd | 420-451 | Печать машинной инструкции с мнемоникой. |
+| besm6_fprint_insn | 452-532 | Печать машинной инструкции в восьмеричном виде. |
+| parse_sym | 533-564 | status  = error status |
+| besm6_read_line | 565-638 | к 00 22 00000 00 010 0000   - команды |
+| besm6_load | 639-683 | Load memory from file. |
+| besm6_dump | 684-726 | Dump memory to file. |
+| sim_load | 727-733 | Loader/dumper |

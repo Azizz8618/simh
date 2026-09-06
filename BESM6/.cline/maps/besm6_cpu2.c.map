@@ -1,6 +1,6 @@
-=== besm6_cpu.c — 2165 строк ===
-Источник: besm6_cpu.c | Автогенерация: scripts/gen_code_map.sh
-Регенерировать: test besm6_cpu.c -nt .cline/maps/besm6_cpu.c.map
+=== besm6_cpu2.c — 2057 строк ===
+Источник: besm6_cpu2.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test besm6_cpu2.c -nt .cline/maps/besm6_cpu2.c.map
 
 === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
 | Имя | Стр | Назначение |
@@ -19,7 +19,8 @@
 | tableau | 599 | |
 | totreads | 600 | |
 | readmap | 601 | |
-| kadopam_mem | 964 | |
+| extmem | 960 | |
+| last | 961 | |
 
 === КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
 | Имя | Значение | Стр |
@@ -45,13 +46,12 @@
 | cmd_033 | 597-871 | Команда "увв" |
 | check_initial_setup | 872-940 |  |
 | cpu_set_autotime | 941-953 | Automatic time setup.  |
-| cpu_show_autotime | 954-986 |  |
-| rks_count_interrupt | 987-1011 | (dks_register - ПРП12, dks_poll - ПРП7). |
-| write_032 | 1012-1068 |  |
-| read_032 | 1069-1110 |  |
-| cpu_one_inst | 1111-1843 | sending a stop code. |
-| op_int_1 | 1844-1865 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
-| op_int_2 | 1866-1884 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
-| sim_instr | 1885-2101 | Main instruction fetch/decode loop |
-| fast_clk | 2102-2144 | for a better user time/system time ratio. |
-| clk_reset | 2145-2165 |  |
+| cpu_show_autotime | 954-962 |  |
+| write_032 | 963-988 |  |
+| read_032 | 989-1008 |  |
+| cpu_one_inst | 1009-1735 | sending a stop code. |
+| op_int_1 | 1736-1757 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
+| op_int_2 | 1758-1776 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
+| sim_instr | 1777-1993 | Main instruction fetch/decode loop |
+| fast_clk | 1994-2036 | for a better user time/system time ratio. |
+| clk_reset | 2037-2057 |  |
