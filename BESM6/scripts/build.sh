@@ -17,8 +17,12 @@ cd "$PROJECT_ROOT"
 # make из папки BESM6 НЕ пересобирает эмулятор.
 cd /home/azizz/Yandex.Disk/simh
 
+# ОБЯЗАТЕЛЬНОЕ правило (2026-09-06): удалять старый бинарник перед сборкой.
+# Отсутствие файла после сборки = надёжный индикатор незавершённой сборки.
+rm -f /home/azizz/Yandex.Disk/simh/BIN/besm6
+
 # Сборка в фоне
-echo "Запуск сборки (make besm6 из simh)..."
+echo "Запуск сборки (make besm6 из simh, старый бинарник удалён)..."
 make besm6 > "$BUILD_LOG" 2>&1 &
 BUILD_PID=$!
 
