@@ -1,4 +1,4 @@
-=== besm6_cpu.c — 2165 строк ===
+=== besm6_cpu.c — 2174 строк ===
 Источник: besm6_cpu.c | Автогенерация: scripts/gen_code_map.sh
 Регенерировать: test besm6_cpu.c -nt .cline/maps/besm6_cpu.c.map
 
@@ -19,7 +19,7 @@
 | tableau | 599 | |
 | totreads | 600 | |
 | readmap | 601 | |
-| kadopam_mem | 964 | |
+| kadopam_mem | 963 | |
 
 === КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
 | Имя | Значение | Стр |
@@ -42,16 +42,16 @@
 | besm6_okno | 487-514 | системе "Дубна", которая печатала полное состояние всех регистров. |
 | cmd_002 | 515-584 | Команда "рег" |
 | dump | 585-596 |  |
-| cmd_033 | 597-871 | Команда "увв" |
-| check_initial_setup | 872-940 |  |
-| cpu_set_autotime | 941-953 | Automatic time setup.  |
-| cpu_show_autotime | 954-986 |  |
-| rks_count_interrupt | 987-1011 | (dks_register - ПРП12, dks_poll - ПРП7). |
-| write_032 | 1012-1068 |  |
-| read_032 | 1069-1110 |  |
-| cpu_one_inst | 1111-1843 | sending a stop code. |
-| op_int_1 | 1844-1865 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
-| op_int_2 | 1866-1884 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
-| sim_instr | 1885-2101 | Main instruction fetch/decode loop |
-| fast_clk | 2102-2144 | for a better user time/system time ratio. |
-| clk_reset | 2145-2165 |  |
+| cmd_033 | 597-870 | Команда "увв" |
+| check_initial_setup | 871-939 |  |
+| cpu_set_autotime | 940-952 | Automatic time setup.  |
+| cpu_show_autotime | 953-985 |  |
+| rks_count_interrupt | 986-1010 | (dks_register - ПРП12, dks_poll - ПРП7). |
+| write_032 | 1011-1067 |  |
+| read_032 | 1068-1117 |  |
+| cpu_one_inst | 1118-1850 | sending a stop code. |
+| op_int_1 | 1851-1872 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
+| op_int_2 | 1873-1893 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
+| sim_instr | 1894-2110 | Main instruction fetch/decode loop |
+| fast_clk | 2111-2153 | for a better user time/system time ratio. |
+| clk_reset | 2154-2174 |  |
