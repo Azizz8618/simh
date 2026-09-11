@@ -360,6 +360,31 @@ CONTEXT_MANIFEST:
 #   ./scripts/gen_code_map.sh --check
 # выполняется ДО ответа пользователю, без запроса разрешения; если карты
 # не устарели — одна строка вывода, ~100 токенов. Пропуск = ошибка M5.
+
+# === СЕКЦИЯ: PCRE/REGEX В ALTLINUX (сборка эмулятора) ===
+# Правило Р1 (2026-09-08): ALT Linux кладёт pcre.h в НЕстандартное место
+#   /usr/include/pcre/pcre.h  (каталог /usr/include/pcre/, НЕ корень include)
+# Стандартный find_include makefile ищет только $(dir)/pcre.h по корням gcc
+# (-I путям), поэтому при дефолтной сборке HAVE_PCRE_H НЕ определяется:
+# эмулятор собирается БЕЗ regex support → команды 'expect -r' в сценариях
+# (UVU/program.dubna.ini и др.) дают ошибку "...without regex support".
+# Решение ВНЕСЕНО в makefile simh (секция "Find PCRE RegEx library",
+# ~стр. 558): ветка else ищет pcre/pcre.h и добавляет
+#   OS_CCDEFS += -DHAVE_PCRE_H -I/usr/include/pcre/  OS_LDFLAGS += -lpcre
+# ВАЖНО: -I указывает на /usr/include/pcre/ (каталог с pcre.h), а НЕ на
+# /usr/include — иначе fatal error: pcre.h: Нет такого файла (ловилось
+# на первой правке). Проверка успеха сборки:
+#   grep -m1 'using libpcre' /tmp/besm6_build.log
+#   → "using libpcre: /lib64/libpcre.so /usr/include/pcre/pcre.h"
+#   и в строке gcc: -DHAVE_PCRE_H -I/usr/include/pcre/ ... -lpcre
+# Требуемый пакет: libpcre-devel (библиотека libpcre.so.3 была, заголовков
+# не было). Признак работы regex: 'expect -r "В0.*\n"' принимается без
+# ошибки, 'show expect' показывает правило EXPECT -r.
+# Синтаксис (scp.c): у EXPECT задержка задаётся HALTAFTER=n (НЕ after=,
+# after= — только у SEND). lit. expect без -r — fallback при отсутствии
+# PCRE, но литеральные шаблоны с "В0.*\n" НЕ матчатся как regex.
+
+# не устарели — одна строка вывода, ~100 токенов. Пропуск = ошибка M5.
 # === СЕКЦИЯ: МУЛЬТИ-МОДЕЛЬНЫЙ РОУТИНГ ===
 
 # Архитектура Cline (team_spawn_teammate) НЕ поддерживает назначение

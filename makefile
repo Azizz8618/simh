@@ -555,7 +555,7 @@ ifeq (${WIN32},)  #*nix Environments (&& cygwin)
       LIBEXT = $(LIBEXTSAVE)
     endif
   endif
-  # Find PCRE RegEx library.
+  # Find PCRE RegEx library. (ALT Linux puts pcre.h into /usr/include/pcre/)
   ifneq (,$(call find_include,pcre))
     ifneq (,$(call find_lib,pcre))
       OS_CCDEFS += -DHAVE_PCRE_H
@@ -563,6 +563,15 @@ ifeq (${WIN32},)  #*nix Environments (&& cygwin)
       $(info using libpcre: $(call find_lib,pcre) $(call find_include,pcre))
       ifeq ($(LD_SEARCH_NEEDED),$(call need_search,pcre))
         OS_LDFLAGS += -L$(dir $(call find_lib,pcre))
+      endif
+    endif
+  else
+    ifneq (,$(call find_include,pcre/pcre))
+      ifneq (,$(call find_lib,pcre))
+        PCRE_INC := $(dir $(call find_include,pcre/pcre))
+        OS_CCDEFS += -DHAVE_PCRE_H -I$(PCRE_INC)
+        OS_LDFLAGS += -lpcre
+        $(info using libpcre: $(call find_lib,pcre) $(call find_include,pcre/pcre))
       endif
     endif
   endif
