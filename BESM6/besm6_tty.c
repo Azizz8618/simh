@@ -236,7 +236,7 @@ void dks_register(int num, TMLN *line)
         base_addr = dks_next_base;
         dks_next_base += 0x100;  /* 64 words per terminal buffer */
         if (dks_next_base >= 65536) {
-            besm6_debug(">>> DKS: out of buffer space");
+            besm6_debug_sub(B6_LOG_DKS, ">>> DKS: out of buffer space");
             return;
         }
         term->unit = num;
@@ -249,7 +249,7 @@ void dks_register(int num, TMLN *line)
     kadopam_mem[109] = num;            /* Logical terminal number */
     kadopam_mem[110] = base_addr;      /* S-terminal buffer address */
     
-    besm6_debug(">>> DKS: terminal %d registered, base=0x%04x (%05o), SPREQ[108-110]=%06o,%06o,%06o", 
+    besm6_debug_sub(B6_LOG_DKS, ">>> DKS: terminal %d registered, base=0x%04x (%05o), SPREQ[108-110]=%06o,%06o,%06o", 
                 num, base_addr, base_addr, kadopam_mem[108], kadopam_mem[109], kadopam_mem[110]);
     
     /* Generate interrupt PRP12 (SREQ - S-terminal request) */
@@ -257,7 +257,7 @@ void dks_register(int num, TMLN *line)
     GRP |= GRP_SLAVE;
     rks_count_interrupt();   /*increment RKS interrupt counter (077775) */
     
-    besm6_debug(">>> DKS: PRP=%06o, MPRP=%06o, PRP&MPRP=%06o", PRP, MPRP, PRP & MPRP);
+    besm6_debug_sub(B6_LOG_DKS, ">>> DKS: PRP=%06o, MPRP=%06o, PRP&MPRP=%06o", PRP, MPRP, PRP & MPRP);
 }
 
 /*
@@ -287,7 +287,7 @@ void dks_poll(void)
             /* Store character in kadopam_mem */
             kadopam_mem[term->base_addr] = (unsigned short)c;
             
-            besm6_debug(">>> DKS: char '%c' (0%03o) from terminal %d at 0x%04x",
+            besm6_debug_sub(B6_LOG_DKS, ">>> DKS: char '%c' (0%03o) from terminal %d at 0x%04x",
                         c >= ' ' ? c : '?', c, num, term->base_addr);
             
             /* Generate interrupt PRP7 (TERMREQ - H-terminal request) */
@@ -356,7 +356,7 @@ t_stat vt_clk (UNIT * this)
     if (num > 0 && num <= LINES_MAX) {
         char buf [80];
         TMLN *t = &tty_line [num];
-        besm6_debug ("*** tty%d: a new connection from %s",
+        besm6_debug_sub(B6_LOG_TTY, "*** tty%d: a new connection from %s",
                      num, t->ipad);
         reset_line (num);
         t->rcve = 1;
@@ -539,7 +539,7 @@ t_stat tty_attach (UNIT *u, CONST char *cptr)
             vt_mask &= ~(1 << (TTY_MAX - num));
             tt_mask &= ~(1 << (TTY_MAX - num));
         }
-        besm6_debug ("*** turning off T%03o", num);
+        besm6_debug_sub(B6_LOG_TTY, "*** turning off T%03o", num);
         return SCPE_OK;
     }
     if (strcmp (gbuf, "CONSOLE")) {
@@ -562,7 +562,7 @@ t_stat tty_attach (UNIT *u, CONST char *cptr)
         tty_line[num].rcve = 0;
         if (num <= TTY_MAX)
             vt_mask |= 1 << (TTY_MAX - num);
-        besm6_debug ("*** console on T%03o", num);
+        besm6_debug_sub(B6_LOG_TTY, "*** console on T%03o", num);
         attached_console = 1;
         return SCPE_OK;
     }
@@ -692,7 +692,7 @@ DEVICE tty_dev = {
 void tty_send (uint32 mask)
 {
     if (mask && tty_dev.dctrl)
-        besm6_debug ("*** TTY: transmit %08o", mask);
+        besm6_debug_sub(B6_LOG_TTY, "*** TTY: transmit %08o", mask);
 
     TTY_OUT = mask;
 }
@@ -830,7 +830,7 @@ void vt_print()
         int c = (TTY_OUT & mask) != 0;
         switch (tty_active[num]*2+c) {
         case 0: /* idle */
-            besm6_debug ("Warning: inactive ttys should have been screened");
+            besm6_debug_sub(B6_LOG_TTY, "Warning: inactive ttys should have been screened");
             continue;
         case 1: /* start bit */
             vt_sending |= mask;
@@ -871,7 +871,7 @@ void tt_print()
         return;
     }
     if (tty_dev.dctrl)
-        besm6_debug("<<< TTY_OUT: %08o", TTY_OUT);
+        besm6_debug_sub(B6_LOG_TTY, "<<< TTY_OUT: %08o", TTY_OUT);
 
     for (num = besm6_highest_bit (workset) - TTY_MAX;
          workset; num = besm6_highest_bit (workset) - TTY_MAX) {
@@ -1247,7 +1247,7 @@ int vt_getc (int num)
     if (! t->conn) {
         /* Пользователь отключился. */
         if (t->ipad) {
-            besm6_debug ("*** tty%d: disconnecting %s",
+            besm6_debug_sub(B6_LOG_TTY, "*** tty%d: disconnecting %s",
                          num, 
                          t->ipad);
             t->ipad = NULL;
@@ -1585,7 +1585,7 @@ void consul_print (int dev_num, uint32 cmd)
     char buf[5];
     int line_num = dev_num + TTY_MAX + 1;
     if (tty_dev.dctrl)
-        besm6_debug(">>> CONSUL%o: %03o", line_num, cmd & 0377);
+        besm6_debug_sub(B6_LOG_TTY, ">>> CONSUL%o: %03o", line_num, cmd & 0377);
 
     if (tty_unit[line_num].flags & TTY_INVERSE_READY)
         READY2 |= CONS_READY[dev_num];
@@ -1635,14 +1635,14 @@ void consul_receive ()
 uint32 consul_read (int num)
 {
     if (tty_dev.dctrl)
-        besm6_debug("<<< CONSUL%o: %03o", num+TTY_MAX+1, CONSUL_IN[num]);
+        besm6_debug_sub(B6_LOG_TTY, "<<< CONSUL%o: %03o", num+TTY_MAX+1, CONSUL_IN[num]);
     return CONSUL_IN[num];
 }
 
 uint32 mux_read ()
 {
 //    if (tty_dev.dctrl)
-        besm6_debug("<<< MUX: %03o %03o", MUX_SYLLABLE >> 8, MUX_SYLLABLE & 0377);
+        besm6_debug_sub(B6_LOG_TTY, "<<< MUX: %03o %03o", MUX_SYLLABLE >> 8, MUX_SYLLABLE & 0377);
     return MUX_SYLLABLE;
 }
 
@@ -1655,7 +1655,7 @@ void mux_send(uint32 syl)
 {
     int line_num = (syl >> 8) & 0177;
 //    if (tty_dev.dctrl)
-        besm6_debug(">>> MUX: %03o %03o", syl >> 8, syl & 0377);
+        besm6_debug_sub(B6_LOG_TTY, ">>> MUX: %03o %03o", syl >> 8, syl & 0377);
     if (syl & 0x4000) {
         if (syl & 0x80) {
             // Line status request
@@ -1677,7 +1677,7 @@ void mux_send(uint32 syl)
         vt_idle = 0;
         sim_activate_after(tty_unit + line_num, 10);
     } else
-        besm6_debug(">>> MUX: bad line %03o", line_num);
+        besm6_debug_sub(B6_LOG_TTY, ">>> MUX: bad line %03o", line_num);
 }
 
 void mux_receive ()
@@ -1693,7 +1693,7 @@ void mux_receive ()
             continue;
         c = getsym(line_num);
         if (c >= 0 && c <= 0177) {
-            besm6_debug("Got %03o from line %02o", c, line_num);
+            besm6_debug_sub(B6_LOG_TTY, "Got %03o from line %02o", c, line_num);
             vt_send(line_num, c == '\177' ? '\b' : c);
             c = vt_fix(line_num, c);
             MUX_SYLLABLE = (line_num << 8) | (odd_parity(c) ? c | 0200 : c);
@@ -1707,7 +1707,7 @@ void mux_receive ()
 void mux_clear()
 {
 //    if (tty_dev.dctrl)
-    besm6_debug(">>> MUX: clear, PRP = %05o", PRP);
+    besm6_debug_sub(B6_LOG_TTY, ">>> MUX: clear, PRP = %05o", PRP);
     PRP &= ~PRP_MUX_INPUT;
     PRP |= PRP_MUX_DONE;
     MUX_SYLLABLE = 0;

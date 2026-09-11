@@ -70,7 +70,7 @@ t_stat pl_reset (DEVICE *dptr)
         SET_RDY2(PL2_READY);
     }
     if (pl_dev.dctrl)
-        besm6_debug("reset READY2 := %08o", READY2);
+        besm6_debug_sub(B6_LOG_PL, "reset READY2 := %08o", READY2);
     return SCPE_OK;
 }
 
@@ -83,7 +83,7 @@ t_stat pl_attach (UNIT *u, CONST char *cptr)
         return s;
     SET_RDY2(PL1_READY >> num);
     if (pl_dev.dctrl)
-        besm6_debug("attach READY2 := %08o", READY2);
+        besm6_debug_sub(B6_LOG_PL, "attach READY2 := %08o", READY2);
     return SCPE_OK;
 }
 
@@ -92,7 +92,7 @@ t_stat pl_detach (UNIT *u)
     int num = u - pl_unit;
     CLR_RDY2(PL1_READY >> num);
     if (pl_dev.dctrl)
-        besm6_debug("detach READY2 := %08o", READY2);
+        besm6_debug_sub(B6_LOG_PL, "detach READY2 := %08o", READY2);
     return detach_unit (u);
 }
 
@@ -103,7 +103,7 @@ void pl_control (int num, uint32 cmd)
 
     if (! ISSET_RDY2(PL1_READY >> num)) {
         if (pl_dev.dctrl)
-            besm6_debug("<<< PL80-%d not ready", num);
+            besm6_debug_sub(B6_LOG_PL, "<<< PL80-%d not ready", num);
         return;
     }
     putc(cmd & 0xff, f);
@@ -111,8 +111,8 @@ void pl_control (int num, uint32 cmd)
     CLR_RDY2(PL1_READY >> num);
     sim_activate_after(u, PL_RATE);
     if (pl_dev.dctrl) {
-        besm6_debug("PL%d: punching %03o", num, cmd & 0xff);
-        besm6_debug("punch READY2 := %08o", READY2);
+        besm6_debug_sub(B6_LOG_PL, "PL%d: punching %03o", num, cmd & 0xff);
+        besm6_debug_sub(B6_LOG_PL, "punch READY2 := %08o", READY2);
     }
 }
 
@@ -137,7 +137,7 @@ t_stat pl_event (UNIT *u)
     PRP |= PRP_PTAPE1_PUNCH >> num;
     SET_RDY2(PL1_READY >> num);
     if (pl_dev.dctrl) {
-        besm6_debug("PL%d event, READY2 := %08o", num, READY2);
+        besm6_debug_sub(B6_LOG_PL, "PL%d event, READY2 := %08o", num, READY2);
     }
     return SCPE_OK;
 }

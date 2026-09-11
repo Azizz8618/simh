@@ -263,6 +263,23 @@ DEBUG_CMD   = tail -f debug.txt | grep -iE "(DKS|KDP|PRP)"
 # Проверка остановки: ps aux | grep '[b]esm6' → 0 строк.
 # Обратное: этап НЕ завершён (идёт прогон/сбор данных) — эмулятор не трогать.
 
+# Правило Л3: ПЕР-SUBSYSTEM ЖУРНАЛИРОВАНИЕ (АВТОМАТИЧЕСКИ, 2026-09-11)
+# Эмулятор разделяет логи по подсистемам: logs/debug_*.log
+# Файлы: logs/debug_sys.log, logs/debug_cpu.log, logs/debug_dks.log,
+#   logs/debug_mmu.log, logs/debug_disk.log, logs/debug_vu.log,
+#   logs/debug_prn.log, logs/debug_punch.log, logs/debug_pl.log,
+#   logs/debug_tty.log, logs/errors.log
+# Инициализация: besm6_log_init() вызывается из cpu_reset(), создаст
+#   каталог logs/ и откроет файлы (по умолчанию: logs/, 10 МБ на файл).
+# Очистка: rm -rf logs/ (перед прогоном).
+# Конфигурация в dispak.ini:
+#   set cpu log=on          # включить (по умолчанию включено)
+#   set cpu log=off         # отключить (debug.txt продолжает работать)
+#   set cpu log-dir=logs    # каталог (по умолчанию: logs/)
+#   set cpu log-max=10      # максимальный размер файла (МБ, по умолчанию 10)
+# Проверка: show cpu log
+# Подробности: docs/LOGGING.md, AGENTS.md §14.
+
 # Правило С1: СПРАВОЧНИКИ ОС ДИСПАК (ОБЯЗАТЕЛЬНОЕ)
 # При любом анализе поведения ОС ДИСПАК, работе с модулями ОС,
 # разборе трасс, прерываний, экстракодов (ПРП, ДКС, СВЯЗЬ7, КАНАЛ,

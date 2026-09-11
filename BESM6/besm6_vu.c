@@ -255,16 +255,16 @@ void vu_control (int num, uint32 cmd)
 {
     UNIT *u = &vu_unit[num];
     if (vu_dev.dctrl)
-        besm6_debug("<<< VU-%d cmd %o", num, cmd);
+        besm6_debug_sub(B6_LOG_VU, "<<< VU-%d cmd %o", num, cmd);
     if (ISSET_RDY2(VU1_NOTREADY >> (num*4))) {
         if (vu_dev.dctrl)
-            besm6_debug("<<< VU-%d not ready", num);
+            besm6_debug_sub(B6_LOG_VU, "<<< VU-%d not ready", num);
         return;
     }
     if (cmd & 010) {
         // Resetting the column buffer.
         if (vu_dev.dctrl)
-            besm6_debug("<<< VU-%d buffer reset", num);
+            besm6_debug_sub(B6_LOG_VU, "<<< VU-%d buffer reset", num);
         VU[num] = 0;
         cmd &= ~010;
     }
@@ -274,7 +274,7 @@ void vu_control (int num, uint32 cmd)
         vu_state[num] = VU_IDLE;
         SET_RDY2(VU1_MAYSTART >> (num*4));
         if (vu_dev.dctrl)
-            besm6_debug("<<< VU-%d OFF", num);
+            besm6_debug_sub(B6_LOG_VU, "<<< VU-%d OFF", num);
         if (vu_state[num] == VU_TAIL) {
             if (! vu_isfifo[num]) {
                 vu_detach(u);
@@ -288,13 +288,13 @@ void vu_control (int num, uint32 cmd)
         CLR_RDY2(VU1_MAYSTART >> (num*4));
         vu_next[num] = cmd == 1 ? VU_STARTING : VU_IDLE;
         if (vu_dev.dctrl)
-            besm6_debug("<<< VU-%d %s read.", num, cmd == 1 ? "DECK" : "CARD");
+            besm6_debug_sub(B6_LOG_VU, "<<< VU-%d %s read.", num, cmd == 1 ? "DECK" : "CARD");
         sim_activate (u, vu_col_dly);
         break;
     case 0:
         break;
     default:
-        besm6_debug ("<<< VU-%d unknown cmd %o", num, cmd);
+        besm6_debug_sub(B6_LOG_VU, "<<< VU-%d unknown cmd %o", num, cmd);
     }
 }
 
@@ -372,9 +372,9 @@ static void display_card(int num) {
         for (i = 0; i < 12; ++i) {
             for (j = 0; j < 80; ++j)
                 buf[j] = (vu_image[num][j] >> i) & 1 ? 'O' : '.';
-            besm6_debug("<<< VU-%d: %.80s", num, buf);
+            besm6_debug_sub(B6_LOG_VU, "<<< VU-%d: %.80s", num, buf);
         }
-        besm6_debug("<<< VU-%d: ###", num);
+        besm6_debug_sub(B6_LOG_VU, "<<< VU-%d: ###", num);
     }
 }
 
@@ -478,7 +478,7 @@ t_stat vu_event (UNIT *u)
         while (ch == '\r');
         if (ch == EOF) {
             if (vu_dev.dctrl) {
-                besm6_debug("<<< VU-%d: EOF, detaching", num);
+                besm6_debug_sub(B6_LOG_VU, "<<< VU-%d: EOF, detaching", num);
             }
             vu_state[num] = VU_IDLE;
             vu_detach(u);
@@ -531,7 +531,7 @@ t_stat vu_event (UNIT *u)
 
             if (vu_dev.dctrl) {
                 display_card(num);
-                besm6_debug("<<< VU-%d: card start", num);
+                besm6_debug_sub(B6_LOG_VU, "<<< VU-%d: card start", num);
             }
 
             GRP |= GRP_VU1_SYNC >> num;
@@ -543,7 +543,7 @@ t_stat vu_event (UNIT *u)
         int pos = (vu_state[num]++ - VU_COL) * 2;
         VU[num] = (vu_image[num][pos] << 12) | vu_image[num][pos+1];
         if (vu_dev.dctrl) {
-            besm6_debug("<<< VU-%d: cols %d-%d: reg %06x", num, pos+1, pos+2, VU[num]);
+            besm6_debug_sub(B6_LOG_VU, "<<< VU-%d: cols %d-%d: reg %06x", num, pos+1, pos+2, VU[num]);
         }
         GRP |= GRP_VU1_SYNC >> num;
         sim_activate (u, vu_col_dly);
@@ -552,7 +552,7 @@ t_stat vu_event (UNIT *u)
         vu_state[num] = VU_TAIL2;
         sim_activate(u, vu_end_dly);
         if (vu_dev.dctrl) {
-            besm6_debug("<<< VU-%d: ------", num);
+            besm6_debug_sub(B6_LOG_VU, "<<< VU-%d: ------", num);
         }
     } else if (vu_state[num] == VU_TAIL2) {
         PRP &= ~(num == 0 ? PRP_VU1_END : PRP_VU2_END);
@@ -562,10 +562,10 @@ t_stat vu_event (UNIT *u)
         }
         vu_state[num] = vu_next[num];
         if (vu_dev.dctrl) {
-            besm6_debug("<<< VU-%d: ======", num);
+            besm6_debug_sub(B6_LOG_VU, "<<< VU-%d: ======", num);
         }
     } else {
-        besm6_debug("<<< VU-%d: spurious event", num);
+        besm6_debug_sub(B6_LOG_VU, "<<< VU-%d: spurious event", num);
     }
 
     return SCPE_OK;
@@ -573,7 +573,7 @@ t_stat vu_event (UNIT *u)
 
 int vu_read(int num) {
     if (vu_dev.dctrl)
-        besm6_debug("<<< VU-%d: reg %06x", num, VU[num]);
+        besm6_debug_sub(B6_LOG_VU, "<<< VU-%d: reg %06x", num, VU[num]);
 
     return VU[num];
 }

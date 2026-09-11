@@ -397,6 +397,14 @@ void besm6_fprint_cmd (FILE *of, uint32 cmd);
 void besm6_log (const char *fmt, ...);
 void besm6_log_cont (const char *fmt, ...);
 void besm6_debug (const char *fmt, ...);
+void besm6_debug_sub (int subsystem, const char *fmt, ...);
+void besm6_error (int subsystem, const char *fmt, ...);
+void besm6_log_init (void);
+void besm6_log_setup_dir (const char *dir);
+void besm6_log_setup_max (size_t max_bytes);
+const char *besm6_log_get_dir (void);
+void besm6_log_set_enabled (int enabled);
+#include "besm6_log.h"
 t_stat fprint_sym (FILE *of, t_addr addr, t_value *val,
                    UNIT *uptr, int32 sw);
 void besm6_draw_panel (int force);

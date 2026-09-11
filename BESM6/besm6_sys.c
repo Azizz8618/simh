@@ -39,6 +39,49 @@
 #include "besm6_defs.h"
 #include <math.h>
 
+/* Per-subsystem logging directory (set via command or default) */
+static char besm6_log_dir[256] = {0};
+static size_t besm6_log_max_bytes = 10*1024*1024; /* 10 MB default */
+
+/*
+ * Initialize the subsystem logging infrastructure.
+ * Called from cpu_reset() or the ini file.
+ */
+void besm6_log_init(void)
+{
+    /* Only initialize if not already initialized */
+    if (!b6_log_is_init()) {
+        b6_log_init(besm6_log_dir[0] ? besm6_log_dir : "logs",
+                     besm6_log_max_bytes);
+    }
+}
+
+void besm6_log_setup_dir(const char *dir)
+{
+    strncpy(besm6_log_dir, dir, sizeof(besm6_log_dir)-1);
+    besm6_log_dir[sizeof(besm6_log_dir)-1] = '\0';
+}
+
+void besm6_log_setup_max(size_t max_bytes)
+{
+    besm6_log_max_bytes = max_bytes;
+}
+
+/*
+ * Enable or disable subsystem logging.
+ * When disabled, only sim_deb (debug.txt) output works.
+ * Wrapper around b6_log_set_enabled().
+ */
+void besm6_log_set_enabled(int enabled)
+{
+    b6_log_set_enabled(enabled);
+}
+
+const char *besm6_log_get_dir(void)
+{
+    return besm6_log_dir;
+}
+
 const char *opname_short_bemsh [64] = {
     "зп",  "зпм", "рег", "счм", "сл",  "вч",  "вчоб","вчаб",
     "сч",  "и",   "нтж", "слц", "знак","или", "дел", "умн",
@@ -107,8 +150,8 @@ int besm6_opcode (char *instr)
 }
 
 /*
- * Выдача на консоль и в файл протокола.
- * Если первый символ формата - подчерк, на консоль не печатаем.
+ * Выдача в файл протокола (журнала). На консоль не печатаем.
+ * Если первый символ формата - подчерк, он пропускается (совместимость).
  * Добавляет перевод строки.
  */
 void besm6_log (const char *fmt, ...)
@@ -117,12 +160,6 @@ void besm6_log (const char *fmt, ...)
 
     if (*fmt == '_')
         ++fmt;
-    else {
-        va_start (args, fmt);
-        vprintf (fmt, args);
-        printf ("\r\n");
-        va_end (args);
-    }
     if (sim_log) {
         va_start (args, fmt);
         vfprintf (sim_log, fmt, args);
@@ -143,11 +180,6 @@ void besm6_log_cont (const char *fmt, ...)
 
     if (*fmt == '_')
         ++fmt;
-    else {
-        va_start (args, fmt);
-        vprintf (fmt, args);
-        va_end (args);
-    }
     if (sim_log) {
         va_start (args, fmt);
         vfprintf (sim_log, fmt, args);
@@ -157,22 +189,77 @@ void besm6_log_cont (const char *fmt, ...)
 }
 
 /*
- * Выдача на консоль и в файл отладки: если включён режим "cpu debug".
- * Добавляет перевод строки.
+ * Выдача в файл отладки: если включён режим "cpu debug".
+ * На консоль не печатаем. Добавляет перевод строки.
+ * (Обратная совместимость — пишет в sim_deb)
  */
 void besm6_debug (const char *fmt, ...)
 {
     va_list args;
 
-    va_start (args, fmt);
-    vprintf (fmt, args);
-    printf ("\r\n");
-    va_end (args);
-    if (sim_deb && sim_deb != stdout) {
+    if (sim_deb) {
         va_start (args, fmt);
         vfprintf (sim_deb, fmt, args);
+        if (sim_deb == stdout)
+            fprintf (sim_deb, "\r");
         fprintf (sim_deb, "\n");
         fflush (sim_deb);
+        va_end (args);
+    }
+}
+
+/*
+ * Subsystem-specific debug output.
+ * Writes to per-subsystem log file AND to sim_deb (backward compatible).
+ * subsystem: B6_LOG_SYS, B6_LOG_CPU, B6_LOG_DKS, etc.
+ */
+void besm6_debug_sub (int subsystem, const char *fmt, ...)
+{
+    va_list args;
+
+    /* Write to sim_deb (backward compatible) */
+    if (sim_deb) {
+        va_start (args, fmt);
+        vfprintf (sim_deb, fmt, args);
+        if (sim_deb == stdout)
+            fprintf (sim_deb, "\r");
+        fprintf (sim_deb, "\n");
+        fflush (sim_deb);
+        va_end (args);
+    }
+
+    /* Write to subsystem log file (if initialized) */
+    if (b6_log_is_init()) {
+        va_start (args, fmt);
+        b6_vlog (subsystem, B6_LOG_DEBUG, fmt, args);
+        va_end (args);
+    }
+}
+
+/*
+ * Subsystem-specific error output.
+ * Writes to subsystem error file AND to errors.log AND to sim_deb.
+ */
+void besm6_error (int subsystem, const char *fmt, ...)
+{
+    va_list args;
+
+    /* Write to sim_deb */
+    if (sim_deb) {
+        va_start (args, fmt);
+        fprintf (sim_deb, "[ERROR:%d] ", subsystem);
+        vfprintf (sim_deb, fmt, args);
+        if (sim_deb == stdout)
+            fprintf (sim_deb, "\r");
+        fprintf (sim_deb, "\n");
+        fflush (sim_deb);
+        va_end (args);
+    }
+
+    /* Write to subsystem log file */
+    if (b6_log_is_init()) {
+        va_start (args, fmt);
+        b6_log_error (subsystem, fmt, args);
         va_end (args);
     }
 }

@@ -302,7 +302,7 @@ void mmu_protection_check (int addr)
     if (! tmp_prot_disabled && (RZ & (1 << (addr >> 10)))) {
         iintr_data = addr >> 10;
         if (mmu_dev.dctrl)
-            besm6_debug ("--- (%05o) защита числа", addr);
+            besm6_debug_sub(B6_LOG_MMU, "--- (%05o) защита числа", addr);
         longjmp (cpu_halt, STOP_OPERAND_PROT);
     }
 }
@@ -487,7 +487,7 @@ t_value mmu_memaccess (int addr)
     /* На тумблерных регистрах контроля числа не бывает */
     if (addr >= 010 && ! IS_NUMBER (val) && (mmu_unit.flags & CHECK_ENB)) {
         iintr_data = addr & 7;
-        besm6_debug ("--- (%05o) контроль числа", addr);
+        besm6_debug_sub(B6_LOG_MMU, "--- (%05o) контроль числа", addr);
         longjmp (cpu_halt, STOP_RAM_CHECK);
     }
     return val;
@@ -541,7 +541,7 @@ t_value mmu_load (int addr)
         }
         if (! IS_NUMBER (val)) {
             iintr_data = matching;
-            besm6_debug ("--- (%05o) контроль числа БРЗ", addr);
+            besm6_debug_sub(B6_LOG_MMU, "--- (%05o) контроль числа БРЗ", addr);
             longjmp (cpu_halt, STOP_CACHE_CHECK);
         }
     }
@@ -589,7 +589,7 @@ void mmu_fetch_check (int addr)
         if (page == 0) {
             iintr_data = addr >> 10;
             if (mmu_dev.dctrl)
-                besm6_debug ("--- (%05o) защита команды", addr);
+                besm6_debug_sub(B6_LOG_MMU, "--- (%05o) защита команды", addr);
             longjmp (cpu_halt, STOP_INSN_PROT);
         }
     }
@@ -661,7 +661,7 @@ t_value mmu_fetch (int addr)
 
     if (addr == 0) {
         if (mmu_dev.dctrl)
-            besm6_debug ("--- передача управления на 0");
+            besm6_debug_sub(B6_LOG_MMU, "--- передача управления на 0");
         longjmp (cpu_halt, STOP_INSN_CHECK);
     }
 
@@ -685,7 +685,7 @@ t_value mmu_fetch (int addr)
 
     /* Тумблерные регистры пока только с командной сверткой */
     if (addr >= 010 && ! IS_INSN (val)) {
-        besm6_debug ("--- (%05o) контроль команды", addr);
+        besm6_debug_sub(B6_LOG_MMU, "--- (%05o) контроль команды", addr);
         longjmp (cpu_halt, STOP_INSN_CHECK);
     }
     return val & BITS48;
