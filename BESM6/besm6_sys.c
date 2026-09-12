@@ -65,6 +65,7 @@ void besm6_log_setup_dir(const char *dir)
 void besm6_log_setup_max(size_t max_bytes)
 {
     besm6_log_max_bytes = max_bytes;
+    b6_log_set_max(max_bytes);
 }
 
 /*

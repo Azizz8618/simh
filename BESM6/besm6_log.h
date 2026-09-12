@@ -96,6 +96,11 @@ void b6_log_error(b6_log_sub subsystem, const char *fmt, ...);
 void b6_log_rotate(void);
 
 /*
+ * Update max file size for rotation. Can be called after b6_log_init().
+ */
+void b6_log_set_max(size_t max_bytes);
+
+/*
  * Check if logging is initialized.
  */
 int b6_log_is_init(void);

@@ -166,6 +166,16 @@ b6_log_close(void)
 }
 
 /*
+ * Update max file size for log rotation.
+ * Can be called after b6_log_init() to change the limit.
+ */
+void
+b6_log_set_max(size_t max_bytes)
+{
+    max_file_size = max_bytes;
+}
+
+/*
  * Check if the file at the given handle exceeds max_file_size.
  * If so, truncate it (simple rotation strategy).
  */

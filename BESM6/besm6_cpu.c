@@ -753,7 +753,7 @@ static uint32 readmap[32768], writemap[32768];
         MPRP = ACC & 077777777;
         /* Бит 37 в MGRP разрешает прерывания от ПРП */
         MGRP |= GRP_SLAVE;
-        besm6_debug_sub(B6_LOG_DKS, ">>> MPRP=%06o", MPRP);
+        besm6_debug_sub(B6_LOG_CPU, ">>> MPRP=%06o", MPRP);
         break;
     case 035:
         /* TODO: управление режимом имитации обмена
@@ -1964,7 +1964,7 @@ void op_int_1 (const char *msg)
 void op_int_2 ()
 {
     /*besm6_okno ("Внешнее прерывание");*/
-    besm6_debug_sub(B6_LOG_DKS, ">>> INT2 enter: PC=%05o GRP=%012llo MGRP=%012llo "
+    besm6_debug_sub(B6_LOG_CPU, ">>> INT2 enter: PC=%05o GRP=%012llo MGRP=%012llo "
                  "PRP=%06o MPRP=%06o", PC, GRP, MGRP, PRP, MPRP);
     M[SPSW] = (M[PSW] & (PSW_INTR_DISABLE | PSW_MMAP_DISABLE |
                          PSW_PROT_DISABLE)) | IS_SUPERVISOR (RUU);
