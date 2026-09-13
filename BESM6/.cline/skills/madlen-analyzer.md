@@ -1,0 +1,1 @@
+/home/azizz/.cline/skills/madlen-analyzer/SKILL.md
