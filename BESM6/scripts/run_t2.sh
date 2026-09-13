@@ -47,21 +47,34 @@ fi
 log "Step 0: Останавливаю CPU (Ctrl+G)..."
 tmux send-keys -t "$SESSION" C-g
 sleep 2
+# --- Step 1: ТР1 — direction КРК=1 ---
+log "Step 1: ТР1 = $DIRECTION_TR1 (direction КРК=1)..."
+#tmux send-keys -t "$SESSION" C-g
+sleep 2
+tmux send-keys -t "$SESSION" "d 1 $DIRECTION_TR1" Enter
+sleep 1
 
 # --- Цикл ввода: повторяем до появления В0 ---
 MAX_RETRIES=3
 for attempt in $(seq 1 $MAX_RETRIES); do
     log "--- Попытка ввода #$attempt ---"
 
-    # Step 1: Подключение теста
-    log "Step 1: Подключаю тест..."
-    tmux send-keys -t "$SESSION" "do $UVU/test_kont_dks.ini" Enter
+    # Step 2: Подключение теста
+    log "Step 2: Подключаю тест..."
+    tmux send-keys -t "$SESSION" "do $UVU/test_kont_dks.ini" 
+	sleep 2
+	tmux send-keys -t "$SESSION" Enter
     sleep 15
 
     # Проверяем результат
     CAPTURE=$(tmux capture-pane -t "$SESSION" -p)
+    
+	if echo "$CAPTURE" | grep -q 'B07[0-9]-'; then
+        log "B0 — тест принят!"
+        break
+    fi
 
-    if echo "$CAPTURE" | grep -q 'CБB0'; then
+    if echo "$CAPTURE" | grep -q 'CБB'; then
         log "CБB0 — ошибка ввода, повторяю..."
         tmux send-keys -t "$SESSION" Enter
 		sleep 2
@@ -72,40 +85,34 @@ for attempt in $(seq 1 $MAX_RETRIES); do
         continue
     fi
 
-    if echo "$CAPTURE" | grep -q 'B07[0-9]-'; then
-        log "B0 — тест принят!"
-        break
-    fi
 
     log "Неожиданный вывод, повторяю..."
     tmux send-keys -t "$SESSION" C-g
     sleep 10
 done
 
-# --- Step 4: ТР1 — direction КРК=1 ---
-log "Step 4: ТР1 = $DIRECTION_TR1 (direction КРК=1)..."
-tmux send-keys -t "$SESSION" C-g
-sleep 2
-#tmux send-keys -t "$SESSION" "d 1 $DIRECTION_TR1" Enter
-sleep 1
 
-# --- Step 5: ТР4 — Е24Р=1 ---
-log "Step 5: ТР4 = $TR4_VALUE (Е24Р=1)..."
+# --- Step 3: ТР4 — Е24Р=1 ---
+log "Step 3: ТР4 = $TR4_VALUE (Е24Р=1)..."
+tmux send-keys -t "$SESSION" C-g
+sleep 1
 tmux send-keys -t "$SESSION" "d 4 $TR4_VALUE" Enter
 sleep 1
 
-# --- Step 6: go ---
-log "Step 6: go..."
+# --- Step 4: go ---
+log "Step 4: go..."
 tmux send-keys -t "$SESSION" "go" Enter
+sleep 2
 # --- Результат ---
 log "=== Состояние эмулятора ==="
 tmux capture-pane -t "$SESSION" -p | tail -15
 log "=== Лог ДКС (последние 10 строк) ==="
 tail -10 "$OSZAGR/logs/debug_dks.log" 2>/dev/null || echo "(нет лога)"
 log "=== Готово ==="
-# --- Step 7: Ожидание + выброс из решения ---
-log "Step 7: Жду 40 сек, затем ВЫБРОС..."
-sleep 40
+sleep 1
+# --- Step 5: Ожидание + выброс из решения ---
+log "Step 5: Жду 120 сек, затем ВЫБРОС..."
+sleep 120
 tmux send-keys -t "$SESSION" C-g
 sleep 2
 tmux send-keys -t "$SESSION" "d 1 140000000" Enter
