@@ -1,4 +1,4 @@
-=== besm6_cpu.c — 2265 строк ===
+=== besm6_cpu.c — 2260 строк ===
 Источник: besm6_cpu.c | Автогенерация: scripts/gen_code_map.sh
 Регенерировать: test besm6_cpu.c -nt .cline/maps/besm6_cpu.c.map
 
@@ -52,10 +52,10 @@
 | cpu_show_autotime | 1044-1076 |  |
 | rks_count_interrupt | 1077-1101 | (dks_register - ПРП12, dks_poll - ПРП7). |
 | write_032 | 1102-1158 |  |
-| read_032 | 1159-1208 |  |
-| cpu_one_inst | 1209-1941 | sending a stop code. |
-| op_int_1 | 1942-1963 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
-| op_int_2 | 1964-1984 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
-| sim_instr | 1985-2201 | Main instruction fetch/decode loop |
-| fast_clk | 2202-2244 | for a better user time/system time ratio. |
-| clk_reset | 2245-2265 |  |
+| read_032 | 1159-1199 |  |
+| cpu_one_inst | 1200-1936 | sending a stop code. |
+| op_int_1 | 1937-1958 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
+| op_int_2 | 1959-1979 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
+| sim_instr | 1980-2196 | Main instruction fetch/decode loop |
+| fast_clk | 2197-2239 | for a better user time/system time ratio. |
+| clk_reset | 2240-2260 |  |
