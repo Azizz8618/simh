@@ -601,6 +601,11 @@ void besm6_okno (const char *message)
 }
 
 /*
+ * Пересчёт слова РКС (слркс0) по текущему PRP.
+ */
+static void rks_update_slr(void);
+
+/*
  * Команда "рег"
  */
 static void cmd_002 ()
@@ -735,8 +740,8 @@ static uint32 readmap[32768], writemap[32768];
         break;
     case 030:
         /* Гашение ПРП */
-/*              besm6_debug(">>> гашение ПРП");*/
         PRP &= ACC | PRP_WIRED_BITS;
+        rks_update_slr();
         break;
     case 031:
         /* Имитация сигналов прерывания ГРП */
@@ -1074,27 +1079,37 @@ static unsigned short rks_slr = 0;          /* 077777 - последнее зн�
  * Вызывается из besm6_tty.c при каждой установке бита ПРП
  * (dks_register - ПРП12, dks_poll - ПРП7).
  */
+/*
+ * Пересчитать слово РКС (слркс0) по текущему состоянию PRP.
+ * Вызывается после ЛЮБОГО изменения PRP (установка или сброс битов).
+ * В реальной БЭСМ-6 микро-ЭВМ "Электроника-60" формирует слово РКС
+ * из текущего состояния аппаратуры ДКС. Если бит PRP сброшен
+ * (ОС обработала направление), соответствующий бит в РКС тоже
+ * исчезает — это совпадение между МПРП и РКС (uelles variables) в свдкс3.
+ */
+static void rks_update_slr(void)
+{
+    unsigned short new_slr = 0;
+    if (PRP & PRP_DKS_SREQ)    new_slr |= 04000;
+    if (PRP & PRP_DKS_RECV)    new_slr |= 00040;
+    if (PRP & PRP_DKS_TERMREQ) new_slr |= 00100;
+    if (PRP & PRP_DKS_XMIT)    new_slr |= 00200;
+    if (PRP & PRP_DKS_ATTN)    new_slr |= 00020;
+    rks_slr = new_slr;
+}
+
+/*
+ * Увеличить счётчик запросов РКС (077775) и пересчитать слова РКС.
+ * Вызывается из besm6_tty.c при каждой установке бита ПРП
+ * (dks_register - ПРП12, dks_poll - ПРП7).
+ * Ранее rks_slr накапливался через OR и никогда не очищался —
+ * из-за этого ОС не могла отличить "новый флаг" (УСТПРП) от
+ * "уже установленного" (свдкс3 не переходил к загруз).
+ */
 void rks_count_interrupt(void)
 {
     rks_adr = (rks_adr + 1) & 0xFFFF;
-    /*
-     * Слово РКС формируется извне ЭВМ микро-ЭВМ "Электроника-60"
-     * (сторона S-машины). Эмулятор должен имитировать эту работу:
-     * при каждом прерывании от ДКС ставятся биты готовности
-     * направлений в слове РКС (слркс0, читается по 032 из регистра
-     * 077777, а также по адресу 0). Свядкс (konfus.be) анализирует
-     * эти флаги и по активному биту 6 вызывает УСТПРП и пб загруз.
-     *   бит 12 (04000) - ПРП12: запрос S-терминала
-     *   бит  6 (00040) - ПРП6:  готовность приёма (медленный обмен)
-     *   бит  7 (00100) - ПРП7:  запрос ввода H-терминала
-     *   бит  8 (00200) - ПРП8:  готовность к передаче
-     *   бит  5 (00020) - ПРП5:  внимание (быстрый обмен)
-     */
-    if (PRP & PRP_DKS_SREQ)    rks_slr |= 04000;
-    if (PRP & PRP_DKS_RECV)    rks_slr |= 00040;
-    if (PRP & PRP_DKS_TERMREQ) rks_slr |= 00100;
-    if (PRP & PRP_DKS_XMIT)    rks_slr |= 00200;
-    if (PRP & PRP_DKS_ATTN)    rks_slr |= 00020;
+    rks_update_slr();
     besm6_debug_sub(B6_LOG_DKS, ">>> RKS: interrupt counter (077775) = %06o, слркс0=%06o",
                 rks_adr, rks_slr);
 }
@@ -1108,10 +1123,17 @@ void write_032(int addr, t_value val) {
     case 0:
         /* Регистр 0 - счётчик прерываний источника */
         krk_counter = v;
-        /* Бит 1 (значение 2) - сброс прерывания */
+        /* Бит 1 (значение 2) - сброс прерывания.
+         * Гасим все биты ДКС-направлений в ПРП, потому что
+         * свядкс (konfus.be) опрашивает РКС для определения
+         * активных направлений; при сбросе по адресу 0
+         * микро-ЭВМ гасит соответствующие биты. */
         if (v & 2) {
-            PRP &= ~PRP_DKS_SREQ;
-            besm6_debug_sub(B6_LOG_DKS, ">>> KDP: cleared PRP_DKS_SREQ");
+            PRP &= ~(PRP_DKS_SREQ | PRP_DKS_TERMREQ |
+                      PRP_DKS_XMIT | PRP_DKS_RECV | PRP_DKS_ATTN);
+            rks_update_slr();
+            besm6_debug_sub(B6_LOG_DKS, ">>> KDP: cleared all DKS PRP bits, PRP=%06o, слркс0=%06o",
+                        PRP, rks_slr);
         }
         krk_last_write = v;
         break;
@@ -1158,13 +1180,17 @@ void write_032(int addr, t_value val) {
 
 t_value read_032(int addr) {
     t_value result;
-    
+
+    besm6_debug_sub(B6_LOG_DKS, ">>> KDP read: addr=%05o", addr);
+
     switch (addr) {
     case 0:
         /* Регистр 0 - статус КРК (бит 8 = готовность).
          * Слово РКС формируется микро-ЭВМ: старшие разряды -
          * флаги готовности направлений (см. rks_count_interrupt). */
         result = krk_status | rks_slr | (krk_counter & 0377);
+        besm6_debug_sub(B6_LOG_DKS, ">>> RKS read reg0: krk_status=%06o, слркс0=%06o, counter=%03o => %06o",
+                    krk_status, rks_slr, krk_counter & 0377, result);
         return result;
         
     case 2:
@@ -2174,6 +2200,35 @@ t_stat sim_instr (void)
             /* There are interrupts pending in the peripheral
              * interrupt register */
             GRP |= GRP_SLAVE;
+        }
+
+        /* === Стратегия А: проталкивание первого ДКС-прерывания ===
+         * Если PRP содержит DKS-биты (ПРП5-8,12), а MPRP их не содержит,
+         * напрямую устанавливаем GRP_SLAVE. Это обходит проверку PRP & MPRP,
+         * которая блокирует прерывания ДКС до вызова УСТРП из СВЯЗЬ7.
+         *
+         * Одноразовый флаг: push выполняется 1 раз за сессию. После
+         * первого прерывания ОС сама вызывает УСТРП (УВВ '34) и настраивает
+         * MPRP. Без флага — interrupt storm (GRP_SLAVE ставится на каждой
+         * итерации, handler не чистит PRP DKS → бесконечный INT2).
+         *
+         * Сравнение с read_032: push в read_032 ineffective — вызов изнутри
+         * обработчика (PSW_INTR_DISABLE), op_int_2 не срабатывает. */
+        {
+            static int dks_push_done = 0;
+            if (!dks_push_done) {
+                t_value dks_undelivered = PRP & (PRP_DKS_SREQ | PRP_DKS_RECV |
+                                                 PRP_DKS_TERMREQ | PRP_DKS_XMIT |
+                                                 PRP_DKS_ATTN) & ~MPRP;
+                if (dks_undelivered) {
+                    GRP |= GRP_SLAVE;
+                    MGRP |= GRP_SLAVE;
+                    dks_push_done = 1;
+                    besm6_debug_sub(B6_LOG_DKS,
+                        ">>> DKS PUSH: MPRP=%06o, PRP=%06o, GRP_SLAVE set (one-shot)",
+                        MPRP, PRP);
+                }
+            }
         }
 
         if (! iintr && ! (RUU & RUU_RIGHT_INSTR) &&
