@@ -1,0 +1,108 @@
+=== sel32_ec.c — 1909 строк ===
+Источник: sel32_ec.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_ec.c -nt .cline/maps/sel32_ec.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| in_addr_T | 80 | |
+| tmxr_poll | 218 | |
+| broadcast_ethaddr | 222 | |
+| ec_chp | 225 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_MODE | (UNIT_V_UF + 1) | 30 |
+| UNIT_MODE | (0x3 << UNIT_V_MODE) | 31 |
+| GET_MODE(x) | ((UNIT_MODE & (x)) >> UNIT_V_MODE) | 33 |
+| SET_MODE(x) | (UNIT_MODE & ((x) << UNIT_V_MODE)) | 34 |
+| CMD | u3 | 37 |
+| EC_CMDMSK | 0x0ff        /* Command being ru... | 40 |
+| EC_INCH | 0x00         /* Initialize chann... | 42 |
+| EC_INCH2 | 0xF0         /* Initialize chann... | 43 |
+| EC_WRITE | 0x01         /* Write frame */ | 44 |
+| EC_READ | 0x02         /* Read frame*/ | 45 |
+| EC_NOP | 0x03         /* No operation */ | 46 |
+| EC_SNS | 0x04         /* Sense */ | 47 |
+| EC_LIA | 0x07         /* Load individual ... | 48 |
+| EC_TIC | 0x08         /* Transfer in chan... | 49 |
+| EC_CGA | 0x0B         /* Disable multicas... | 50 |
+| EC_LGA | 0x0F         /* Load Multicast a... | 51 |
+| EC_LCC | 0x10         /* Configure LCC */ | 52 |
+| EC_STATS | 0x14         /* Read Statistics */ | 53 |
+| EC_CSTATS | 0x15         /* Clear software c... | 54 |
+| EC_BUSY | 0x100        /* Mark Device as B... | 55 |
+| SNS | u5 | 57 |
+| SNS_CMDREJ | 0x80000000  /* Command reject */ | 60 |
+| SNS_SPARE0 | 0x40000000  /* Spare */ | 61 |
+| SNS_SPARE1 | 0x20000000  /* Spare */ | 62 |
+| SNS_EQUCHK | 0x10000000  /* Equipment check */ | 63 |
+| SNS_SPARE2 | 0x08000000  /* Spare */ | 64 |
+| SNS_SPARE3 | 0x04000000  /* Spare */ | 65 |
+| SNS_MODE_M | 0x03000000  /* Mode Mask */ | 66 |
+| SNS_RCV_RDY | 0x00800000  /* Receive unit read... | 69 |
+| SNS_TMT_DEF | 0x00400000  /* Transmission defe... | 70 |
+| SNS_COL_RTY | 0x00300000  /* Collision retry */ | 71 |
+| SNS_HRT_TST | 0x00080000  /* Heartbeat test fa... | 72 |
+| SNS_DMA_UND | 0x00040000  /* DMA under run */ | 73 |
+| SNS_LST_CTS | 0x00020000  /* Lost Clear to sen... | 74 |
+| SNS_NO_CAR | 0x00010000  /* No carrier. */ | 75 |
+| SNS_XFR_MASK | 0x0000FFFF  /* Previous frame co... | 78 |
+| ETHTYPE_ARP | 0x0806 | 82 |
+| ETHTYPE_IP | 0x0800 | 83 |
+| STAT_FR_ALIGN | 0        /* Frame alignment erro... | 85 |
+| STAT_FR_CRC | 1        /* Frame CRC errors */ | 86 |
+| STAT_LCL_AVAIL | 2        /* Local bus available ... | 87 |
+| STAT_LCL_OVER | 3        /* Local bus overflow */ | 88 |
+| STAT_TX_COLL | 4        /* Transmission collisi... | 89 |
+| STAT_RX_LEN | 5        /* Receive length error... | 90 |
+| STAT_TX_SUCC | 6        /* Transmitt success af... | 91 |
+| STAT_TX_DEF | 7        /* Transmitt deferred */ | 92 |
+| STAT_TX_UNSUCC | 8        /* Transmitt unsuccessf... | 93 |
+| STAT_TX_SUCC1 | 9        /* Transmitt success af... | 94 |
+| STAT_LEN | 10        /* Number of half word... | 95 |
+| IP_DF | 0x4000                /* don't f... | 114 |
+| IP_MF | 0x2000                /* more fr... | 115 |
+| IP_OFFMASK | 0x1fff           /* mask for fra... | 116 |
+| TCP_PROTO | 6 | 124 |
+| TCP_FL_FIN | 0x01 | 132 |
+| TCP_FL_SYN | 0x02 | 133 |
+| TCP_FL_RST | 0x04 | 134 |
+| TCP_FL_PSH | 0x08 | 135 |
+| TCP_FL_ACK | 0x10 | 136 |
+| TCP_FL_URG | 0x20 | 137 |
+| UDP_PROTO | 17 | 143 |
+| ICMP_PROTO | 1 | 161 |
+| ARP_REQUEST | 1 | 175 |
+| ARP_REPLY | 2 | 176 |
+| ARP_HWTYPE_ETH | 1 | 177 |
+| LOOP_MSK | 0x3ff | 216 |
+| DEBUG_ARP | (DEBUG_IRQ<<1) | 310 |
+| DEBUG_TCP | (DEBUG_ARP<<1) | 312 |
+| DEBUG_UDP | (DEBUG_TCP<<1) | 314 |
+| DEBUG_ICMP | (DEBUG_UDP<<1) | 316 |
+| DEBUG_ETHER | (DEBUG_ICMP<<1) | 318 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ec_iocl | 334-653 | return = 1 error, chan_status will have reason |
+| ec_preio | 654-672 | start an ethernet operation |
+| ec_startcmd | 673-723 | Start ethernet command |
+| ec_rec_srv | 724-758 | Handle processing of ethernet requests. |
+| ec_srv | 759-1469 | Handle processing of ethernet requests. |
+| ec_haltio | 1470-1505 | Handle haltio transfers for ethernet |
+| ec_ini | 1506-1535 | initialize the ethernet |
+| ec_rsctrl | 1536-1552 | handle reset controller cmds for Ethernet |
+| ec_rschnlio | 1553-1565 | handle reset channel cmds for Ethernet |
+| ipv4_inet_ntoa | 1566-1750 |  |
+| ec_show_mode | 1751-1756 |  |
+| ec_set_mode | 1757-1777 |  |
+| ec_show_mac | 1778-1785 |  |
+| ec_set_mac | 1786-1799 |  |
+| ec_reset | 1800-1830 |  |
+| ec_attach | 1831-1883 | attach device: |
+| ec_detach | 1884-1894 | detach device: |
+| ec_help | 1895-1904 |  |
+| ec_description | 1905-1909 |  |

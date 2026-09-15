@@ -1,0 +1,75 @@
+=== isbc202.c — 783 строк ===
+Источник: isbc202.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test isbc202.c -nt .cline/maps/isbc202.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| FDDDEF | 236-240 |
+| FDCDEF | 242-254 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 201 | |
+| isbc202_onetime | 231 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_WPMODE | (UNIT_V_UF)     /* Write protect */ | 148 |
+| UNIT_WPMODE | (1 << UNIT_V_WPMODE) | 149 |
+| FDD_NUM | 4 | 151 |
+| SECSIZ | 128 | 152 |
+| DNOP | 0x00            //disk no operation | 155 |
+| DSEEK | 0x01            //disk seek | 156 |
+| DFMT | 0x02            //disk format | 157 |
+| DHOME | 0x03            //disk home | 158 |
+| DREAD | 0x04            //disk read | 159 |
+| DVCRC | 0x05            //disk verify CRC | 160 |
+| DWRITE | 0x06            //disk write | 161 |
+| RDY0 | 0x01            //FDD 0 ready | 164 |
+| RDY1 | 0x02            //FDD 1 ready | 165 |
+| FDCINT | 0x04            //FDC interrupt ... | 166 |
+| FDCPRE | 0x08            //FDC board present | 167 |
+| FDCDD | 0x10            //FDC is DD | 168 |
+| RDY2 | 0x20            //FDD 2 ready | 169 |
+| RDY3 | 0x40            //FDD 3 ready | 170 |
+| ROK | 0x00            //FDC error | 173 |
+| RCHG | 0x02            //FDC OK OR disk... | 174 |
+| RB0DR | 0x01            //deleted record | 177 |
+| RB0CRC | 0x02            //CRC error | 178 |
+| RB0SEK | 0x04            //seek error | 179 |
+| RB0ADR | 0x08            //address error | 180 |
+| RB0OU | 0x10            //data overrun/u... | 181 |
+| RB0WP | 0x20            //write protect | 182 |
+| RB0WE | 0x40            //write error | 183 |
+| RB0NR | 0x80            //not ready | 184 |
+| RB1RD2 | 0x10            //drive 2 ready | 187 |
+| RB1RD3 | 0x20            //drive 3 ready | 188 |
+| RB1RD0 | 0x40            //drive 0 ready | 189 |
+| RB1RD1 | 0x80            //drive 1 ready | 190 |
+| MDSDD | 512512          //double density... | 193 |
+| MAXSECDD | 52              //double density... | 194 |
+| MAXTRK | 76              //last track | 195 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| isbc202_desc | 232-332 |  |
+| isbc202_cfg | 333-358 |  |
+| isbc202_clr | 359-374 |  |
+| isbc202_set_mode | 375-395 |  |
+| isbc202_set_port | 396-415 |  |
+| isbc202_set_int | 416-429 |  |
+| isbc202_set_verb | 430-448 |  |
+| isbc202_show_param | 449-464 |  |
+| isbc202_reset | 465-474 |  |
+| isbc202_reset_dev | 475-511 |  |
+| isbc202_attach | 512-546 |  |
+| isbc202r0 | 547-554 |  |
+| isbc202r1 | 555-567 |  |
+| isbc202r2 | 568-580 |  |
+| isbc202r3 | 581-598 |  |
+| isbc202r7 | 599-610 |  |
+| isbc202_diskio | 611-783 |  |

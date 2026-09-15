@@ -1,0 +1,40 @@
+=== i7010_sys.c — 1250 строк ===
+Источник: i7010_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7010_sys.c -nt .cline/maps/i7010_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_name | 38 | |
+| sim_PC | 40 | |
+| sim_emax | 42 | |
+| cdp_dib | 92 | |
+| cdr_dib | 95 | |
+| lpr_dib | 98 | |
+| con_dib | 101 | |
+| mt_dib | 104 | |
+| chron_dib | 107 | |
+| dsk_dib | 110 | |
+| com_dib | 113 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TYPE_0 | 0               /* no operands, ... | 234 |
+| TYPE_1 | 1               /* One operand, ... | 235 |
+| TYPE_2 | 2               /* Two operands,... | 236 |
+| TYPE_T | 4               /* Tape opcode, ... | 237 |
+| TYPE_B | 5               /* Branch, one o... | 238 |
+| TYPE_BE | 6               /* Branch, three... | 239 |
+| TYPE_BZ | 7               /* Branch, three... | 240 |
+| TYPE_CC | 8               /* Carrage contr... | 241 |
+| TYPE_IO | 9               /* IO select, ad... | 242 |
+| TYPE_Y | 10              /* one operand, ... | 243 |
+| TYPE_M | 11              /* Move type, tw... | 244 |
+| TYPE_BS | 12              /* One operand, ... | 245 |
+| MOD(x) | (x<<6) | 247 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load | 220-1250 |  |

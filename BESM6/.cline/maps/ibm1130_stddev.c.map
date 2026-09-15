@@ -1,0 +1,75 @@
+=== ibm1130_stddev.c — 1325 строк ===
+Источник: ibm1130_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_stddev.c -nt .cline/maps/ibm1130_stddev.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| OS_MAP | 108-112 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tto_dsw | 115 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MAX_OUTPUT_COLUMNS | 100              /* width of 113... | 104 |
+| MAX_OS_CHARS | 4              /* maximum number... | 105 |
+| MAX_OS_MAPPINGS | 100              /* maximum numb... | 106 |
+| UNIT_V_CSET | (UNIT_V_UF + 0)     /* user flag... | 151 |
+| UNIT_V_LOCKED | (UNIT_V_UF + 2)     /* user flag... | 152 |
+| UNIT_V_ANSI | (UNIT_V_UF + 3) | 153 |
+| CSET_ASCII | (0u << UNIT_V_CSET) | 155 |
+| CSET_1130 | (1u << UNIT_V_CSET) | 156 |
+| CSET_APL | (2u << UNIT_V_CSET) | 157 |
+| CSET_MASK | (3u << UNIT_V_CSET) | 158 |
+| ENABLE_ANSI | (1u << UNIT_V_ANSI) | 159 |
+| KEYBOARD_LOCKED | (1u << UNIT_V_LOCKED) | 161 |
+| IRQ_KEY | 0x11            /* ctrl-Q */ | 163 |
+| PROGRAM_STOP_KEY | 0x10            /* ctrl-P */ | 164 |
+| TT_DSW_PRINTER_RESPONSE | 0x8000 | 239 |
+| TT_DSW_KEYBOARD_RESPONSE | 0x4000 | 240 |
+| TT_DSW_INTERRUPT_REQUEST | 0x2000 | 241 |
+| TT_DSW_KEYBOARD_CONSOLE | 0x1000 | 242 |
+| TT_DSW_PRINTER_BUSY | 0x0800 | 243 |
+| TT_DSW_PRINTER_NOT_READY | 0x0400 | 244 |
+| TT_DSW_KEYBOARD_BUSY | 0x0200 | 245 |
+| NCONIN_TO_APL | (sizeof(conin_to_APL)/sizeof(con... | 532 |
+| NCONOUT_TO_APL | (sizeof(conout_to_APL)/sizeof(co... | 641 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| badio | 91-98 |  |
+| xio_1231_optical | 99-99 |  |
+| xio_system7 | 100-246 |  |
+| xio_1131_console | 247-297 |  |
+| emit_conout_character | 298-334 |  |
+| SendBeep | 335-341 |  |
+| tti_svc | 342-419 |  |
+| tti_reset | 420-440 |  |
+| basic_attach | 441-449 |  |
+| quotefix | 450-469 |  |
+| keyboard_is_busy | 470-474 |  |
+| tto_svc | 475-487 |  |
+| tto_reset | 488-680 |  |
+| os_map_comp | 681-710 |  |
+| strsort | 711-735 |  |
+| set_conout_mapping | 736-747 |  |
+| finish_conout_mapping | 748-770 |  |
+| validate_conout_mapping | 771-776 |  |
+| reset_mapping | 777-793 |  |
+| set_default_mapping | 794-827 |  |
+| sim_putstr | 828-843 |  |
+| map_conout_character | 844-937 |  |
+| font_cmd | 938-976 |  |
+| str_match | 977-996 |  |
+| read_map_file | 997-1089 |  |
+| get_num_char | 1090-1122 |  |
+| get_characters | 1123-1222 |  |
+| handle_map_ansi_definition | 1223-1249 |  |
+| handle_map_input_definition | 1250-1273 |  |
+| handle_map_output_definition | 1274-1297 |  |
+| handle_map_overstrike_definition | 1298-1325 |  |

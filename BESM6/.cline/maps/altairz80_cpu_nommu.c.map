@@ -1,0 +1,53 @@
+=== altairz80_cpu_nommu.c — 4348 строк ===
+Источник: altairz80_cpu_nommu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test altairz80_cpu_nommu.c -nt .cline/maps/altairz80_cpu_nommu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 115 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FLAG_C | 1 | 37 |
+| FLAG_N | 2 | 38 |
+| FLAG_P | 4 | 39 |
+| FLAG_H | 16 | 40 |
+| FLAG_Z | 64 | 41 |
+| FLAG_S | 128 | 42 |
+| SETFLAG(f,c) | AF = (c) ? AF \| FLAG_ ## f : AF ... | 44 |
+| TSTFLAG(f) | ((AF & FLAG_ ## f) != 0) | 45 |
+| LOW_DIGIT(x) | ((x) & 0xf) | 47 |
+| HIGH_DIGIT(x) | (((x) >> 4) & 0xf) | 48 |
+| LOW_REGISTER(x) | ((x) & 0xff) | 49 |
+| HIGH_REGISTER(x) | (((x) >> 8) & 0xff) | 50 |
+| SET_LOW_REGISTER(x, | v)  x = (((x) & 0xff00) \| ((v) &... | 52 |
+| SET_HIGH_REGISTER(x, | v) x = (((x) & 0xff) \| (((v) & 0... | 53 |
+| PARITY(x) | parityTable[(x) & 0xff] | 55 |
+| SET_PVS(s) | ((chiptype == CHIP_TYPE_Z80) ? (... | 59 |
+| SET_PV | (SET_PVS(sum)) | 60 |
+| SET_PV2(x) | ((chiptype == CHIP_TYPE_Z80) ? (... | 61 |
+| CHECK_CPU_8080 |  | 68 |
+| CHECK_CPU_Z80 |  | 78 |
+| POP(x) | {                                | 84 |
+| JPC(cond) | {                              | 89 |
+| CALLC(cond) | {                            | 97 |
+| INCR(val) | IR_S = (IR_S & ~0x7f) \| ((IR_S +... | 108 |
+| RAM_MM(a) | GET_BYTE(a--) | 953 |
+| RAM_PP(a) | GET_BYTE(a++) | 954 |
+| PUT_BYTE_PP(a,v) | PUT_BYTE(a++, v) | 956 |
+| PUT_BYTE_MM(a,v) | PUT_BYTE(a--, v) | 957 |
+| MM_PUT_BYTE(a,v) | PUT_BYTE(--a, v) | 958 |
+| PUSH(x) | do {             | 960 |
+| INOUTFLAGS_ZERO(x) |  | 981 |
+| INOUTFLAGS_NONZERO(x) |  | 987 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| GET_BYTE | 936-939 |  |
+| PUT_BYTE | 940-943 |  |
+| PUT_WORD | 944-948 |  |
+| GET_WORD | 949-993 |  |
+| sim_instr_nommu | 994-4348 |  |

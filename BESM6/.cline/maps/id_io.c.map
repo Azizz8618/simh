@@ -1,0 +1,106 @@
+=== id_io.c — 660 строк ===
+Источник: id_io.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test id_io.c -nt .cline/maps/id_io.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 65 | |
+| pawidth | 67 | |
+| cpu_unit | 68 | |
+| sch_dib | 96 | |
+| ch | 237 | |
+| FALSE | 241 | |
+| return | 250 | |
+| addr | 268 | |
+| inc | 282 | |
+| addr | 289 | |
+| inc | 303 | |
+| return | 314 | |
+| ch | 321 | |
+| return | 333 | |
+| SCPE_OK | 339 | |
+| dptr | 346 | |
+| dibp | 347 | |
+| SCPE_OK | 370 | |
+| SCPE_OK | 378 | |
+| SCPE_OK | 397 | |
+| sch_tplte | 408 | |
+| return | 409 | |
+| qevent | 417 | |
+| qevent | 425 | |
+| return | 426 | |
+| armdis | 469 | |
+| ^1 | 483 | |
+| cnt | 498 | |
+| cnt | 511 | |
+| dptr | 518 | |
+| dibp | 519 | |
+| newch | 520 | |
+| SCPE_OK | 537 | |
+| dptr | 544 | |
+| dibp | 545 | |
+| SCPE_OK | 556 | |
+| dptr | 563 | |
+| dibp | 564 | |
+| newdev | 565 | |
+| SCPE_OK | 584 | |
+| dptr | 591 | |
+| dibp | 592 | |
+| SCPE_OK | 603 | |
+| dptr | 610 | |
+| dibp | 611 | |
+| tplte | 613 | |
+| FALSE | 659 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SCHC_EXA | 0x40                            ... | 58 |
+| SCHC_RD | 0x20                            ... | 59 |
+| SCHC_GO | 0x10                            ... | 60 |
+| SCHC_STOP | 0x08                            ... | 61 |
+| SCHC_SSTA | 0x04                            ... | 62 |
+| SCHC_EXM | 0x03                            ... | 63 |
+| SCH_EXR(ch) | ((sch_cmd[ch] & SCHC_EXA) && (pa... | 148 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sch | 150-153 |  |
+| switch | 154-234 |  |
+| sch_blk | 235-245 |  |
+| sch_adr | 246-254 |  |
+| sch_actv | 255-265 |  |
+| sch_rdmem | 266-275 |  |
+| if | 276-286 |  |
+| sch_wrmem | 287-296 |  |
+| if | 297-307 |  |
+| sch_stop | 308-309 |  |
+| if | 310-318 |  |
+| sch_reset_ch | 319-322 |  |
+| for | 323-335 |  |
+| sch_reset | 336-343 |  |
+| sch_set_nchan | 344-357 |  |
+| if | 358-374 |  |
+| sch_show_nchan | 375-382 |  |
+| sch_show_reg | 383-401 |  |
+| sch_ini | 402-413 |  |
+| int_eval | 414-418 |  |
+| for | 419-430 |  |
+| int_getdev | 431-435 |  |
+| for | 436-451 |  |
+| int_chg | 452-455 |  |
+| if | 456-459 |  |
+| if | 460-463 |  |
+| if | 464-473 |  |
+| io_2b | 474-487 |  |
+| IOReadBlk | 488-500 |  |
+| IOWriteBlk | 501-515 |  |
+| set_sch | 516-541 |  |
+| show_sch | 542-560 |  |
+| set_dev | 561-588 |  |
+| show_dev | 589-607 |  |
+| devtab_init | 608-616 |  |
+| for | 617-627 |  |
+| for | 628-660 |  |

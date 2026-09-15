@@ -1,0 +1,62 @@
+=== s3_sys.c — 951 строк ===
+Источник: s3_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s3_sys.c -nt .cline/maps/s3_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dev | 32 | |
+| pkb_dev | 33 | |
+| cdr_dev | 34 | |
+| cdp_dev | 35 | |
+| stack_dev | 36 | |
+| lpt_dev | 37 | |
+| r1_dev | 38 | |
+| f1_dev | 39 | |
+| r2_dev | 40 | |
+| f2_dev | 41 | |
+| cpu_unit | 42 | |
+| cpu_reg | 43 | |
+| saved_PC | 45 | |
+| ebcdic_to_ascii | 46 | |
+| sim_name | 62 | |
+| sim_PC | 64 | |
+| sim_emax | 66 | |
+| nopcode | 123 | |
+| addr | 233 | |
+| c1 | 273 | |
+| oplen | 274 | |
+| bld | 275 | |
+| blk | 276 | |
+| blkadd | 277 | |
+| c1 | 281 | |
+| inst | 319 | |
+| qbyte | 323 | |
+| cflag | 508 | |
+| gbuf | 509 | |
+| gbuf | 538 | |
+| nybble | 930 | |
+| temp | 931 | |
+| cptr | 949 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| " | 206-227 |  |
+| sim_load | 228-233 |  |
+| while | 234-281 |  |
+| if | 282-308 |  |
+| if | 309-326 |  |
+| if | 327-338 |  |
+| switch | 339-359 |  |
+| for | 360-372 |  |
+| if | 373-505 |  |
+| parse_sym | 506-512 |  |
+| if | 513-517 |  |
+| if | 518-527 |  |
+| while | 528-538 |  |
+| for | 539-543 |  |
+| for | 544-554 | find opcode in table |
+| switch | 555-927 |  |
+| parse_addr | 928-933 |  |
+| if | 934-951 |  |

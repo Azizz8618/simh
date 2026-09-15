@@ -1,0 +1,65 @@
+=== sds_sbc200.c — 1295 строк ===
+Источник: sds_sbc200.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sds_sbc200.c -nt .cline/maps/sds_sbc200.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sbc200_iores | 52 | |
+| sbc200_monres | 53 | |
+| sbc200_ddbres | 54 | |
+| sbc200_mon_ram | 607 | |
+| sbc200_ddb_ram | 608 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SBC200_NAME | "SD SYSTEMS SBC-200" | 36 |
+| SBC200_SNAME | "SBC200" | 37 |
+| SBC200_WAIT | 250            /* Service Wait I... | 39 |
+| SBC200_IOBASE | 0x78 | 41 |
+| SBC200_IOSIZE | 8 | 42 |
+| SBC200_MON_BASE | 0xe000 | 44 |
+| SBC200_MON_SIZE | 2048 | 45 |
+| SBC200_MON_MASK | (SBC200_MON_SIZE-1) | 46 |
+| SBC200_DDB_BASE | 0xf000 | 48 |
+| SBC200_DDB_SIZE | 2048 | 49 |
+| SBC200_DDB_MASK | (SBC200_DDB_SIZE-1) | 50 |
+| SBC200_TRDY | 0x01           /* Transmit Data ... | 56 |
+| SBC200_RDRF | 0x02           /* Receive Data R... | 57 |
+| SBC200_TDRE | 0x04           /* Transmit Data ... | 58 |
+| SBC200_PE | 0x08           /* Parity Error  ... | 59 |
+| SBC200_OVRN | 0x10           /* Overrun       ... | 60 |
+| SBC200_FE | 0x20           /* Framing Error ... | 61 |
+| SBC200_DSR | 0x80           /* Data Set Ready... | 62 |
+| SBC200_IR | 0x40           /* Internal Reset... | 63 |
+| SBC200_CLK1 | 0x01           /* Divide Clock b... | 64 |
+| SBC200_CLK16 | 0x02           /* Divide Clock b... | 65 |
+| SBC200_CLK64 | 0x03           /* Divide Clock b... | 66 |
+| SBC200_72E | 0xf8           /* 7-2-E         ... | 67 |
+| SBC200_72O | 0xd8           /* 7-2-O         ... | 68 |
+| SBC200_72N | 0xc8           /* 7-2-O         ... | 69 |
+| SBC200_71E | 0x78           /* 7-1-E         ... | 70 |
+| SBC200_71O | 0x58           /* 7-1-O         ... | 71 |
+| SBC200_71N | 0x48           /* 7-1-O         ... | 72 |
+| SBC200_82E | 0xfc           /* 8-2-E         ... | 73 |
+| SBC200_82O | 0xdc           /* 8-2-O         ... | 74 |
+| SBC200_82N | 0xcc           /* 8-2-O         ... | 75 |
+| SBC200_81E | 0x7c           /* 8-1-E         ... | 76 |
+| SBC200_81O | 0xbc           /* 8-1-O         ... | 77 |
+| SBC200_81N | 0x4c           /* 8-1-N         ... | 78 |
+| SBC200_FMTMSK | 0xfc           /* Length, Parity... | 79 |
+| SBC200_DTR | 0x02           /* RTS Bit Mask  ... | 80 |
+| SBC200_RTS | 0x20           /* RTS Bit Mask  ... | 81 |
+| SBC200_RIE | 0x80           /* Receive Int En... | 82 |
+| SBC200_BAUD | 9600           /* Default baud r... | 84 |
+| STATUS_MSG | (1 << 0) | 613 |
+| IRQ_MSG | (1 << 1) | 614 |
+| VERBOSE_MSG | (1 << 3) | 615 |
+| UNIT_V_SBC200_CONSOLE | (UNIT_V_UF + 0)     /* Port chec... | 686 |
+| UNIT_SBC200_CONSOLE | (1 << UNIT_V_SBC200_CONSOLE) | 687 |
+| UNIT_V_SBC200_MONITOR | (UNIT_V_UF + 1)     /* Monitor R... | 688 |
+| UNIT_SBC200_MONITOR | (1 << UNIT_V_SBC200_MONITOR) | 689 |
+| UNIT_V_SBC200_DDBIOS | (UNIT_V_UF + 2)     /* DDBIOS RO... | 690 |
+| UNIT_SBC200_DDBIOS | (1 << UNIT_V_SBC200_DDBIOS) | 691 |
+

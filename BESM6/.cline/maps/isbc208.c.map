@@ -1,0 +1,104 @@
+=== isbc208.c — 1518 строк ===
+Источник: isbc208.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test isbc208.c -nt .cline/maps/isbc208.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 519 | |
+| isbc208_onetime | 523 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_WPMODE | (UNIT_V_UF)     /* Write protect */ | 400 |
+| UNIT_WPMODE | (1 << UNIT_V_WPMODE) | 401 |
+| RQM | 0x80            /* Request for m... | 404 |
+| DIO | 0x40            /* Data I/O Dire... | 405 |
+| NDM | 0x20            /* Non-DMA mode */ | 406 |
+| CB | 0x10            /* FDC busy */ | 407 |
+| D3B | 0x08            /* FDD 3 busy */` | 408 |
+| D2B | 0x04            /* FDD 2 busy */` | 409 |
+| D1B | 0x02            /* FDD 1 busy */` | 410 |
+| D0B | 0x01            /* FDD 0 busy */` | 411 |
+| IC | 0xC0            /* Interrupt cod... | 414 |
+| IC_NORM | 0x00            /* normal comple... | 415 |
+| IC_ABNORM | 0x40            /* abnormal comp... | 416 |
+| IC_INVC | 0x80            /* invalid comma... | 417 |
+| IC_RC | 0xC0            /* drive not rea... | 418 |
+| SE | 0x20            /* Seek end */ | 419 |
+| EC | 0x10            /* Equipment che... | 420 |
+| NR | 0x08            /* Not ready */ | 421 |
+| HD | 0x04            /* Head selected */ | 422 |
+| US | 0x03            /* Unit selected */ | 423 |
+| US_0 | 0x00            /* Unit 0 */ | 424 |
+| US_1 | 0x01            /* Unit 1 */ | 425 |
+| US_2 | 0x02            /* Unit 2 */ | 426 |
+| US_3 | 0x03            /* Unit 3 */ | 427 |
+| EN | 0x80            /* End of cylind... | 430 |
+| DE | 0x20            /* Data error */ | 431 |
+| OR | 0x10            /* Overrun */ | 432 |
+| ND | 0x04            /* No data */ | 433 |
+| NW | 0x02            /* Not writable */ | 434 |
+| MA | 0x01            /* Missing addre... | 435 |
+| CM | 0x40            /* Control mark */ | 438 |
+| DD | 0x20            /* Data error in... | 439 |
+| WC | 0x10            /* Wrong cylinde... | 440 |
+| BC | 0x02            /* Bad cylinder */ | 441 |
+| MD | 0x01            /* Missing addre... | 442 |
+| FT | 0x80            /* Fault */ | 445 |
+| WP | 0x40            /* Write protect */ | 446 |
+| RDY | 0x20            /* Ready */ | 447 |
+| T0 | 0x10            /* Track 0 */ | 448 |
+| TS | 0x08            /* Two sided */ | 449 |
+| READTRK | 0x02 | 454 |
+| SPEC | 0x03 | 455 |
+| SENDRV | 0x04 | 456 |
+| WRITE | 0x05 | 457 |
+| READ | 0x06 | 458 |
+| HOME | 0x07 | 459 |
+| SENINT | 0x08 | 460 |
+| WRITEDEL | 0x09 | 461 |
+| READID | 0x0A | 462 |
+| READDEL | 0x0C | 463 |
+| FMTTRK | 0x0D | 464 |
+| SEEK | 0x0F | 465 |
+| SCANEQ | 0x11 | 466 |
+| SCANLOEQ | 0x19 | 467 |
+| SCANHIEQ | 0x1D | 468 |
+| FDD_NUM | 4 | 470 |
+| SBC208_INT | INT_1 | 474 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| isbc208_desc | 524-688 |  |
+| isbc208_cfg | 689-730 |  |
+| isbc208_clr | 731-746 |  |
+| isbc208_reset | 747-752 |  |
+| isbc208_reset1 | 753-783 |  |
+| isbc208_attach | 784-828 |  |
+| isbc208_set_mode | 829-844 |  |
+| isbc208_svc | 845-1072 |  |
+| isbc208_r11 | 1073-1186 | read/write FDC data register stack |
+| isbc208_r0 | 1187-1208 |  |
+| isbc208_r1 | 1209-1230 |  |
+| isbc208_r2 | 1231-1252 |  |
+| isbc208_r3 | 1253-1274 |  |
+| isbc208_r4 | 1275-1296 |  |
+| isbc208_r5 | 1297-1318 |  |
+| isbc208_r6 | 1319-1340 |  |
+| isbc208_r7 | 1341-1362 |  |
+| isbc208_r8 | 1363-1372 |  |
+| isbc208_r9 | 1373-1382 |  |
+| isbc208_rA | 1383-1417 |  |
+| isbc208_rB | 1418-1427 |  |
+| isbc208_rC | 1428-1437 |  |
+| isbc208_rD | 1438-1447 |  |
+| isbc208_rE | 1448-1457 |  |
+| isbc208_rF | 1458-1467 |  |
+| isbc208_r10 | 1468-1477 |  |
+| isbc208_r12 | 1478-1487 |  |
+| isbc208_r13 | 1488-1497 |  |
+| isbc208_r14 | 1498-1507 |  |
+| isbc208_r15 | 1508-1518 |  |

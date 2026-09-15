@@ -1,0 +1,213 @@
+=== asm1130.c — 4701 строк ===
+Источник: asm1130.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test asm1130.c -nt .cline/maps/asm1130.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| EXPR | 221-224 |
+| CPCODE | 4528-4531 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| {ABSOLUTE | 198 | |
+| {INTMODE_UNSPECIFIED | 232 | |
+| {REALMODE_UNSPECIFIED | 233 | |
+| {OUTMODE_LOAD | 239 | |
+| maxiplcols | 289 | |
+| nentries | 319 | |
+| ndefined_files | 320 | |
+| n_literals | 328 | |
+| dmes_savew | 331 | |
+| bincard_maxaddr | 1548 | |
+| dmes_wd | 3093 | |
+| dmes_nc | 3094 | |
+| {CODESET_CONSOLE | 3095 | |
+| exprptr | 3922 | |
+| symbest | 3998 | |
+| exprjmp | 3999 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VERSION | "ASM1130 CROSS ASSEMBLER V1.22" | 12 |
+| BETWEEN(v,a,b) | (((v) >= (a)) && ((v) <= (b))) | 164 |
+| MIN(a,b) | (((a) <= (b)) ? (a) : (b)) | 165 |
+| MAX(a,b) | (((a) >= (b)) ? (a) : (b)) | 166 |
+| FIX_ATS |  | 173 |
+| DMSVERSION | "V2M12"                  /* requ... | 175 |
+| DOLLAREXIT | "/38"               /* hmmm, are... | 177 |
+| DOLLARDUMP | "/3F" | 178 |
+| SYSTEM_TABLE | "SYMBOLS.SYS" | 180 |
+| BOOL | int | 182 |
+| TRUE | 1 | 183 |
+| FALSE | 0 | 184 |
+| ISTV | 0x33                        /* m... | 186 |
+| MAXLITERALS | 300 | 188 |
+| MAXENTRIES | 14 | 189 |
+| LINEFORMAT | "                          %4ld ... | 191 |
+| LEFT_MARGIN | "                                \|" | 192 |
+| S_UNDEFINED | 0           /* values of 'define... | 210 |
+| S_PROVISIONAL | 1           /* usually an expres... | 211 |
+| S_DEFINED | 2           /* ordering must be ... | 212 |
+| OP_INDEXED | 0x0300          /* 1130 opcode m... | 235 |
+| OP_LONG | 0x0400 | 236 |
+| OP_INDIRECT | 0x0080 | 237 |
+| OUTWRITEMODE | "wb"         /* write outfile in... | 242 |
+| ENDLINE | "\r\n"       /* explictly write ... | 243 |
+| OUTWRITEMODE | "w"          /* use native mode */ | 245 |
+| ENDLINE | "\n" | 246 |
+| L | "L"         /* long */ | 1251 |
+| X | "X"         /* absolute displace... | 1252 |
+| I | "I"         /* indirect */ | 1253 |
+| IDX | "0123"      /* indexed (some LDX... | 1254 |
+| E | "E"         /* even address */ | 1255 |
+| NONE | "" | 1256 |
+| ALL | L X I IDX       /* hope non-Micr... | 1257 |
+| ANY | "\xFF" | 1258 |
+| NUMS | "0123456789" | 1259 |
+| IS_DBL | 0x0001          /* double word o... | 1261 |
+| IS_ABS | 0x0002          /* always uses a... | 1262 |
+| NO_IDX | 0x0004          /* even with 1 o... | 1263 |
+| NO_ARGS | 0x0008          /* statement tak... | 1264 |
+| IS_1800 | 0x0010          /* 1800-only dir... | 1265 |
+| TRAP | 0x1000          /* debug this in... | 1266 |
+| GETNEXT | (*exprptr++) | 3924 |
+| UNGET | --exprptr | 3925 |
+| LETTER | 0           /* character types */ | 3927 |
+| DIGIT | 1 | 3928 |
+| ETC | 2 | 3929 |
+| ILL | 3 | 3930 |
+| SPACE | 4 | 3931 |
+| MULOP | 5 | 3932 |
+| ADDOP | 6 | 3933 |
+| EXPOP | 7 | 3934 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| main | 426-495 |  |
+| init | 496-510 |  |
+| flag | 511-593 |  |
+| bail | 594-603 |  |
+| errprintf | 604-618 |  |
+| asm_error | 619-648 |  |
+| asm_warning | 649-677 |  |
+| sym_list | 678-710 |  |
+| passreport | 711-731 |  |
+| xref_list | 732-779 |  |
+| listhdr | 780-796 |  |
+| astring | 797-816 |  |
+| lookup_symbol | 817-866 |  |
+| add_xref | 867-896 |  |
+| get_symbol | 897-917 |  |
+| set_symbol | 918-953 |  |
+| skipbl | 954-970 |  |
+| gtok | 971-1002 |  |
+| trim | 1003-1020 |  |
+| listout | 1021-1036 |  |
+| storew | 1037-1065 |  |
+| setw | 1066-1109 |  |
+| setorg | 1110-1129 |  |
+| org_even | 1130-1142 |  |
+| tabtok | 1143-1191 |  |
+| coltok | 1192-1426 |  |
+| addextn | 1427-1450 |  |
+| controlcard | 1451-1485 |  |
+| stuff | 1486-1500 |  |
+| format_line | 1501-1523 |  |
+| lookup_op | 1524-1554 |  |
+| bincard_init | 1555-1568 |  |
+| bincard_writecard | 1569-1617 |  |
+| bincard_writedata | 1618-1645 |  |
+| bincard_flush | 1646-1657 |  |
+| bincard_sbrk | 1658-1671 |  |
+| bincard_setorg | 1672-1681 |  |
+| bincard_endcard | 1682-1697 |  |
+| bincard_typecard | 1698-1766 |  |
+| bincard_writew | 1767-1789 |  |
+| writetwo | 1790-1800 |  |
+| handle_sbrk | 1801-1829 |  |
+| namecode | 1830-1851 |  |
+| parse_line | 1852-1952 |  |
+| get_line | 1953-1973 |  |
+| proc | 1974-2042 |  |
+| prep_line | 2043-2076 |  |
+| opcmp | 2077-2085 |  |
+| preload_symbols | 2086-2112 |  |
+| save_symbols | 2113-2149 |  |
+| startpass | 2150-2198 |  |
+| x_dc | 2199-2227 |  |
+| convert_double_to_extended | 2228-2270 |  |
+| convert_double_to_standard | 2271-2318 |  |
+| convert_double_to_fixed | 2319-2372 |  |
+| getDconstant | 2373-2424 |  |
+| x_dec | 2425-2445 |  |
+| x_decs | 2446-2464 |  |
+| x_xflc | 2465-2507 |  |
+| x_equ | 2508-2527 |  |
+| x_lorg | 2528-2537 |  |
+| x_abs | 2538-2567 |  |
+| x_call | 2568-2612 |  |
+| x_org | 2613-2631 |  |
+| x_end | 2632-2654 |  |
+| x_ent | 2655-2704 |  |
+| x_libr | 2705-2731 |  |
+| x_ils | 2732-2759 |  |
+| x_iss | 2760-2810 |  |
+| x_spr | 2811-2819 |  |
+| x_epr | 2820-2828 |  |
+| x_dsa | 2829-2857 |  |
+| x_link | 2858-2891 |  |
+| x_libf | 2892-2927 |  |
+| x_file | 2928-2971 |  |
+| x_trap | 2972-2983 |  |
+| x_ces | 2984-3001 |  |
+| x_bss | 3002-3048 |  |
+| x_bes | 3049-3097 |  |
+| x_dmes | 3098-3224 |  |
+| stuff_dmes | 3225-3289 |  |
+| x_ebc | 3290-3323 |  |
+| x_dn | 3324-3342 |  |
+| x_dump | 3343-3352 |  |
+| x_pdmp | 3353-3379 |  |
+| x_hdng | 3380-3401 |  |
+| x_list | 3402-3427 |  |
+| x_spac | 3428-3451 |  |
+| x_ejct | 3452-3469 |  |
+| basic_opcode | 3470-3493 |  |
+| std_op | 3494-3535 |  |
+| mdx_op | 3536-3598 |  |
+| bsi_op | 3599-3610 |  |
+| b_op | 3611-3630 |  |
+| bsc_op | 3631-3679 |  |
+| shf_op | 3680-3711 |  |
+| x_mdm | 3712-3726 |  |
+| x_exit | 3727-3742 |  |
+| x_opt | 3743-3766 |  |
+| askip | 3767-3796 |  |
+| x_aif | 3797-3875 |  |
+| x_aifb | 3876-3884 |  |
+| x_ago | 3885-3902 |  |
+| x_agob | 3903-3911 |  |
+| x_anop | 3912-3982 |  |
+| getnb | 3983-4004 |  |
+| getexpr | 4005-4043 |  |
+| output_literals | 4044-4083 |  |
+| a1130_term | 4084-4151 |  |
+| signextend | 4152-4165 |  |
+| c_expr | 4166-4204 |  |
+| c_expr_m | 4205-4279 |  |
+| c_expr_e | 4280-4314 |  |
+| c_expr_u | 4315-4340 |  |
+| c_term | 4341-4400 |  |
+| c_number | 4401-4445 |  |
+| digit | 4446-4462 |  |
+| c_esc | 4463-4491 |  |
+| exprerr | 4492-4511 |  |
+| upcase | 4512-4604 |  |
+| ascii_to_hollerith | 4605-4619 |  |
+| detab | 4620-4652 |  |
+| strnicmp | 4653-4677 |  |
+| strcmpi | 4678-4701 |  |

@@ -1,0 +1,42 @@
+=== vax750_stddev.c — 1059 строк ===
+Источник: vax750_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax750_stddev.c -nt .cline/maps/vax750_stddev.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RXCS_RD | (CSR_DONE + CSR_IE)             ... | 68 |
+| RXCS_WR | (CSR_IE) | 69 |
+| RXDB_ERR | 0x8000                          ... | 70 |
+| RXDB_OVR | 0x4000                          ... | 71 |
+| RXDB_FRM | 0x2000                          ... | 72 |
+| TXCS_RD | (CSR_DONE + CSR_IE)             ... | 73 |
+| TXCS_WR | (CSR_IE) | 74 |
+| TXDB_V_SEL | 8                               ... | 75 |
+| TXDB_M_SEL | 0xF | 76 |
+| TXDB_MISC | 0xF                             ... | 77 |
+| MISC_MASK | 0xFF                           /... | 78 |
+| MISC_SWDN | 0x1                            /... | 79 |
+| MISC_BOOT | 0x2                            /... | 80 |
+| MISC_CLWS | 0x3                            /... | 81 |
+| MISC_CLCS | 0x4                            /... | 82 |
+| TXDB_SEL | (TXDB_M_SEL << TXDB_V_SEL)      ... | 83 |
+| TXDB_GETSEL(x) | (((x) >> TXDB_V_SEL) & TXDB_M_SEL) | 84 |
+| TMR_CSR_ERR | 0x80000000                      ... | 123 |
+| TMR_CSR_DON | 0x00000080                      ... | 124 |
+| TMR_CSR_IE | 0x00000040                      ... | 125 |
+| TMR_CSR_SGL | 0x00000020                      ... | 126 |
+| TMR_CSR_XFR | 0x00000010                      ... | 127 |
+| TMR_CSR_RUN | 0x00000001                      ... | 128 |
+| TMR_CSR_RD | (TMR_CSR_W1C \| TMR_CSR_WR) | 129 |
+| TMR_CSR_W1C | (TMR_CSR_ERR \| TMR_CSR_DON) | 130 |
+| TMR_CSR_WR | (TMR_CSR_IE \| TMR_CSR_RUN) | 131 |
+| TMR_INC | 10000                           ... | 132 |
+| CLK_DELAY | 5000                            ... | 133 |
+| TMXR_MULT | 1                               ... | 134 |
+| TMR_DB_TODR | 0x10    /* TODR */ | 298 |
+| TMR_DB_REG | 0x01    /* Register Access */ | 326 |
+| TMR_DB_TICK | 0x02    /* Ticks */ | 327 |
+| TMR_DB_SCHED | 0x04    /* Scheduling */ | 328 |
+| TMR_DB_INT | 0x08    /* Interrupts */ | 329 |
+

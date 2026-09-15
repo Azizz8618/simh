@@ -1,0 +1,92 @@
+=== alpha_ev5_pal.c — 962 строк ===
+Источник: alpha_ev5_pal.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test alpha_ev5_pal.c -nt .cline/maps/alpha_ev5_pal.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ast_map | 90 | |
+| PC | 99 | |
+| trap_mask | 100 | |
+| p1 | 101 | |
+| ir | 102 | |
+| vax_flag | 103 | |
+| fpen | 104 | |
+| pcc_h | 105 | |
+| trap_summ | 106 | |
+| arch_mask | 107 | |
+| pal_mode | 108 | |
+| int_req | 109 | |
+| itlb_cm | 110 | |
+| itlb_asn | 111 | |
+| itlb_spage | 112 | |
+| save_env | 113 | |
+| pal_type | 114 | |
+| SCPE_OK | 263 | |
+| lvl | 287 | |
+| req | 310 | |
+| SCPE_OK | 341 | |
+| dsp | 350 | |
+| ra | 351 | |
+| SCPE_OK | 375 | |
+| dsp | 382 | |
+| ra | 383 | |
+| SCPE_OK | 403 | |
+| PCQ_ENTRY | 414 | |
+| PC | 415 | |
+| pal_mode | 419 | |
+| SCPE_OK | 420 | |
+| res | 427 | |
+| fnc | 428 | |
+| SCPE_OK | 591 | |
+| val | 600 | |
+| SCPE_OK | 774 | |
+| ev5_palbase | 781 | |
+| ev5_mchk | 782 | |
+| ev5_pwrfl | 783 | |
+| ev5_crd | 784 | |
+| ev5_sli | 785 | |
+| SCPE_OK | 792 | |
+| return | 837 | |
+| tptr | 845 | |
+| cptr | 861 | |
+| op | 868 | |
+| -3 | 898 | |
+| reg | 906 | |
+| tptr | 907 | |
+| gbuf | 908 | |
+| -3 | 960 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pal_proc_intr | 180-187 |  |
+| pal_proc_trap | 188-195 |  |
+| pal_proc_excp | 196-197 |  |
+| switch | 198-268 |  |
+| pal_proc_inst | 269-283 |  |
+| pal_eval_intr | 284-296 |  |
+| if | 297-315 |  |
+| ev5_palent_d | 316-317 |  |
+| if | 318-331 |  |
+| ev5_palent | 332-336 |  |
+| if | 337-347 |  |
+| pal_1b | 348-358 |  |
+| if | 359-379 |  |
+| pal_1f | 380-407 |  |
+| pal_1e | 408-415 |  |
+| if | 416-424 |  |
+| pal_19 | 425-435 |  |
+| switch | 436-595 |  |
+| pal_1d | 596-603 |  |
+| switch | 604-778 |  |
+| pal_proc_reset_hwre | 779-826 |  |
+| fprint_opt_ev5 | 827-830 |  |
+| for | 831-841 |  |
+| parse_opt_ev5 | 842-848 |  |
+| while | 849-865 |  |
+| fprint_pal_hwre | 866-872 |  |
+| switch | 873-902 |  |
+| parse_pal_hwre | 903-911 |  |
+| for | 912-915 |  |
+| switch | 916-962 |  |

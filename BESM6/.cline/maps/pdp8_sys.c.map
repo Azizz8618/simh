@@ -1,0 +1,145 @@
+=== pdp8_sys.c — 1071 строк ===
+Источник: pdp8_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp8_sys.c -nt .cline/maps/pdp8_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dev | 57 | |
+| cpu_unit | 58 | |
+| tsc_dev | 59 | |
+| fpp_dev | 60 | |
+| ptr_dev | 61 | |
+| tti_dev | 62 | |
+| clk_dev | 63 | |
+| rk_dev | 64 | |
+| rx_dev | 65 | |
+| df_dev | 66 | |
+| dt_dev | 67 | |
+| mt_dev | 68 | |
+| ttix_dev | 69 | |
+| dpy_dev | 71 | |
+| cpu_reg | 73 | |
+| sim_name | 93 | |
+| sim_PC | 95 | |
+| sim_emax | 97 | |
+| origin | 157 | |
+| origin | 159 | |
+| SCPE_OK | 174 | |
+| EOF | 203 | |
+| hi | 208 | |
+| field | 209 | |
+| sections_read | 210 | |
+| SCPE_IERR | 287 | |
+| sp | 596 | |
+| cflag | 618 | |
+| emode | 619 | |
+| inst | 623 | |
+| SCPE_ARG | 718 | |
+| cflag | 735 | |
+| gbuf | 737 | |
+| SCPE_OK | 840 | |
+| wd1 | 847 | |
+| fpp_bra | 849 | |
+| xr3b | 854 | |
+| SCPE_ARG | 918 | |
+| broff | 926 | |
+| gbuf | 927 | |
+| xr | 934 | |
+| nwd | 935 | |
+| -nwd | 1019 | |
+| gbuf | 1026 | |
+| cptr | 1033 | |
+| gbuf | 1040 | |
+| len | 1041 | |
+| xr | 1052 | |
+| cptr | 1056 | |
+| off | 1063 | |
+| fpp_bra | 1064 | |
+| off | 1066 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| AMB_RL | (1 << 12) | 147 |
+| AMB_CT | (2 << 12) | 148 |
+| AMB_TD | (3 << 12) | 149 |
+| I_V_FL | 18                              ... | 309 |
+| I_M_FL | 07                              ... | 310 |
+| I_V_NPN | 0                               ... | 311 |
+| I_V_FLD | 1                               ... | 312 |
+| I_V_MRF | 2                               ... | 313 |
+| I_V_IOT | 3                               ... | 314 |
+| I_V_OP1 | 4                               ... | 315 |
+| I_V_OP2 | 5                               ... | 316 |
+| I_V_OP3 | 6                               ... | 317 |
+| I_V_IOA | 7                               ... | 318 |
+| I_NPN | (I_V_NPN << I_V_FL) | 319 |
+| I_FLD | (I_V_FLD << I_V_FL) | 320 |
+| I_MRF | (I_V_MRF << I_V_FL) | 321 |
+| I_IOT | (I_V_IOT << I_V_FL) | 322 |
+| I_OP1 | (I_V_OP1 << I_V_FL) | 323 |
+| I_OP2 | (I_V_OP2 << I_V_FL) | 324 |
+| I_OP3 | (I_V_OP3 << I_V_FL) | 325 |
+| I_IOA | (I_V_IOA << I_V_FL) | 326 |
+| F_V_FL | 18                              ... | 481 |
+| F_M_FL | 017                             ... | 482 |
+| F_V_NOP12 | 0                               ... | 483 |
+| F_V_NOP9 | 1                               ... | 484 |
+| F_V_AD15 | 2                               ... | 485 |
+| F_V_AD15X | 3                               ... | 486 |
+| F_V_IMMX | 4                               ... | 487 |
+| F_V_X | 5                               ... | 488 |
+| F_V_MRI | 6                               ... | 489 |
+| F_V_MR1D | 7                               ... | 490 |
+| F_V_MR2D | 8                               ... | 491 |
+| F_V_LEMU | 9                               ... | 492 |
+| F_V_LEMUI | 10                              ... | 493 |
+| F_V_LTR | 11                              ... | 494 |
+| F_V_MRD | 12                              ... | 495 |
+| F_NOP12 | (F_V_NOP12 << F_V_FL) | 496 |
+| F_NOP9 | (F_V_NOP9 << F_V_FL) | 497 |
+| F_AD15 | (F_V_AD15 << F_V_FL) | 498 |
+| F_AD15X | (F_V_AD15X << F_V_FL) | 499 |
+| F_IMMX | (F_V_IMMX << F_V_FL) | 500 |
+| F_X | (F_V_X << F_V_FL) | 501 |
+| F_MRI | (F_V_MRI << F_V_FL) | 502 |
+| F_MR1D | (F_V_MR1D << F_V_FL) | 503 |
+| F_MR2D | (F_V_MR2D << F_V_FL) | 504 |
+| F_LEMU | (F_V_LEMU << F_V_FL) | 505 |
+| F_LEMUI | (F_V_LEMUI << F_V_FL) | 506 |
+| F_LTR | (F_V_LTR << F_V_FL) | 507 |
+| F_MRD | (F_V_MRD << F_V_FL) | 508 |
+| FMTASC(x) | ((x) < 040)? "<%03o>": "%c", (x) | 611 |
+| SIXTOASC(x) | (((x) >= 040)? (x): (x) + 0100) | 612 |
+| TSSTOASC(x) | ((x) + 040) | 613 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load_rim | 155-182 |  |
+| sim_bin_getc | 183-187 |  |
+| while | 188-205 |  |
+| sim_load_bin | 206-211 |  |
+| for | 212-292 |  |
+| sim_load | 293-583 |  |
+| fprint_opr | 584-587 |  |
+| for | 588-623 |  |
+| if | 624-629 |  |
+| if | 630-634 |  |
+| if | 635-650 |  |
+| if | 651-666 |  |
+| for | 667-732 |  |
+| parse_sym | 733-740 |  |
+| if | 741-746 |  |
+| if | 747-753 |  |
+| if | 754-772 |  |
+| switch | 773-844 |  |
+| fprint_sym_fpp | 845-856 |  |
+| for | 857-922 |  |
+| parse_sym_fpp | 923-936 |  |
+| switch | 937-1023 |  |
+| parse_field | 1024-1037 |  |
+| parse_fpp_xr | 1038-1045 |  |
+| if | 1046-1060 |  |
+| test_fpp_addr | 1061-1071 |  |

@@ -1,0 +1,157 @@
+=== hp2100_disclib.c — 2412 строк ===
+Источник: hp2100_disclib.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_disclib.c -nt .cline/maps/hp2100_disclib.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DRIVE_PROPERTIES | 382-390 |
+| DS_PROPS | 458-468 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PRPTR | 470 | |
+| invalid_name | 514 | |
+| unit | 601 | |
+| props | 602 | |
+| opcode | 603 | |
+| uptr | 751 | |
+| unit | 752 | |
+| props | 753 | |
+| is_seeking | 754 | |
+| return | 961 | |
+| unit | 985 | |
+| result | 1085 | |
+| result | 1285 | |
+| SCPE_OK | 1399 | |
+| unit | 1493 | |
+| dptr | 1494 | |
+| SCPE_OK | 1528 | |
+| return | 1544 | |
+| SCPE_OK | 1593 | |
+| id | 1670 | |
+| result | 1671 | |
+| SCPE_OK | 1726 | |
+| count | 1782 | |
+| verify | 1783 | |
+| limit | 1868 | |
+| return | 1890 | |
+| return | 1937 | |
+| count | 1971 | |
+| pad | 1972 | |
+| SCPE_OK | 2007 | |
+| block | 2064 | |
+| delta | 2217 | |
+| block | 2218 | |
+| return | 2320 | |
+| return | 2348 | |
+| status | 2384 | |
+| model | 2385 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DL_V_OPCODE | 8                              /... | 271 |
+| DL_V_HOLD | 7                              /... | 272 |
+| DL_V_UNIT | 0                              /... | 273 |
+| DL_V_SPD | 13                              ... | 275 |
+| DL_V_CHEAD | 6                              /... | 276 |
+| DL_V_CSECT | 0                              /... | 277 |
+| DL_V_FRETRY | 4                              /... | 278 |
+| DL_V_FDECR | 3                              /... | 279 |
+| DL_V_FSPEN | 2                              /... | 280 |
+| DL_V_FCYLM | 1                              /... | 281 |
+| DL_V_FAUTSK | 0                              /... | 282 |
+| DL_V_FMASK | 0                              /... | 284 |
+| DL_M_OPCODE | 037                             ... | 287 |
+| DL_M_UNIT | 017                             ... | 288 |
+| DL_M_SPD | 007                             ... | 290 |
+| DL_M_CHEAD | 003                             ... | 291 |
+| DL_M_CSECT | 077                             ... | 292 |
+| DL_M_FRETRY | 017                             ... | 293 |
+| DL_M_FMASK | 017                             ... | 294 |
+| GET_OPCODE(c) | (CNTLR_OPCODE) (((c) >> DL_V_OPC... | 297 |
+| GET_UNIT(c) | (((c) >> DL_V_UNIT)   & DL_M_UNIT) | 298 |
+| GET_SPD(c) | (((c) >> DL_V_SPD)    & DL_M_SPD) | 300 |
+| GET_CHEAD(c) | (((c) >> DL_V_CHEAD)  & DL_M_CHEAD) | 301 |
+| GET_CSECT(c) | (((c) >> DL_V_CSECT)  & DL_M_CSECT) | 302 |
+| GET_FRETRY(c) | (((c) >> DL_V_FRETRY) & DL_M_FRE... | 303 |
+| GET_FMASK(c) | (((c) >> DL_V_FMASK)  & DL_M_FMASK) | 304 |
+| DL_FDECR | (1 << DL_V_FDECR) | 306 |
+| DL_FSPEN | (1 << DL_V_FSPEN) | 307 |
+| DL_FCYLM | (1 << DL_V_FCYLM) | 308 |
+| DL_FAUTSK | (1 << DL_V_FAUTSK) | 309 |
+| DL_V_HEAD | 8                               ... | 314 |
+| DL_V_SECTOR | 0                               ... | 315 |
+| DL_M_HEAD | 0017                            ... | 317 |
+| DL_M_SECTOR | 0377                            ... | 318 |
+| GET_HEAD(p) | (((p) >> DL_V_HEAD) & DL_M_HEAD) | 320 |
+| GET_SECTOR(p) | (((p) >> DL_V_SECTOR) & DL_M_SEC... | 321 |
+| SET_HEAD(c) | (uint16) (((c)->head & DL_M_HEAD... | 323 |
+| SET_SECTOR(c) | (uint16) (((c)->sector & DL_M_SE... | 324 |
+| D7905_RH | 2 | 370 |
+| D7905_FH | (D7905_HEADS - D7905_RH) | 371 |
+| D7906_RH | 2 | 373 |
+| D7906_FH | (D7906_HEADS - D7906_RH) | 374 |
+| D7920_RH | D7920_HEADS | 376 |
+| D7920_FH | (D7920_HEADS - D7920_RH) | 377 |
+| D7925_RH | D7925_HEADS | 379 |
+| D7925_FH | (D7925_HEADS - D7925_RH) | 380 |
+| PROPS_COUNT | (sizeof (drive_props) / sizeof (... | 400 |
+| TO_BLOCK(cylinder,head,sector,model) |  | 424 |
+| TO_OFFSET(block) | ((block) * DL_WPSEC * sizeof (ui... | 431 |
+| GET_CURSEC(cvptr,uptr) |  | 445 |
+| T | TRUE | 472 |
+| F | FALSE | 473 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dl_prepare_command | 599-622 |  |
+| if | 623-748 |  |
+| dl_start_command | 749-757 |  |
+| if | 758-782 |  |
+| if | 783-806 |  |
+| switch | 807-932 |  |
+| if | 933-955 |  |
+| dl_end_command | 956-982 |  |
+| dl_poll_drives | 983-986 |  |
+| for | 987-1082 |  |
+| dl_service_drive | 1083-1087 |  |
+| switch | 1088-1282 |  |
+| dl_service_controller | 1283-1287 |  |
+| switch | 1288-1391 |  |
+| dl_service_timer | 1392-1490 |  |
+| dl_clear_controller | 1491-1495 |  |
+| if | 1496-1513 |  |
+| for | 1514-1537 |  |
+| dl_idle_controller | 1538-1573 |  |
+| dl_load_unload | 1574-1608 |  |
+| dl_classify | 1609-1626 |  |
+| dl_opcode_name | 1627-1643 |  |
+| dl_phase_name | 1644-1667 |  |
+| dl_attach | 1668-1679 |  |
+| if | 1680-1703 |  |
+| dl_detach | 1704-1717 |  |
+| dl_set_model | 1718-1779 |  |
+| start_read | 1780-1785 |  |
+| if | 1786-1790 |  |
+| if | 1791-1865 |  |
+| end_read | 1866-1923 |  |
+| start_write | 1924-1931 |  |
+| if | 1932-1968 |  |
+| end_write | 1969-1975 |  |
+| if | 1976-1980 |  |
+| if | 1981-2061 |  |
+| position_sector | 2062-2087 |  |
+| if | 2088-2149 |  |
+| next_sector | 2150-2160 |  |
+| if | 2161-2214 |  |
+| start_seek | 2215-2220 |  |
+| if | 2221-2233 |  |
+| if | 2234-2279 |  |
+| io_error | 2280-2311 |  |
+| set_address | 2312-2339 |  |
+| set_timer | 2340-2381 |  |
+| drive_status | 2382-2412 |  |

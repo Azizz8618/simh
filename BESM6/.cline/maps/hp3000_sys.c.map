@@ -1,0 +1,143 @@
+=== hp3000_sys.c — 3764 строк ===
+Источник: hp3000_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_sys.c -nt .cline/maps/hp3000_sys.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| INST_CLASS | 339-344 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| formats | 1333 | |
+| radix | 1334 | |
+| status | 1545 | |
+| value | 1546 | |
+| mask | 1636 | |
+| dashes | 1724 | |
+| status | 1725 | |
+| byte | 1878 | |
+| word_address | 1879 | |
+| eval_array | 1880 | |
+| conditions | 2103 | |
+| flags | 2104 | |
+| formatted | 2105 | |
+| index | 2106 | |
+| fmtptr | 2168 | |
+| bnptr | 2318 | |
+| test_bit | 2319 | |
+| name_length | 2320 | |
+| argptr | 2444 | |
+| debptr | 2445 | |
+| format | 2446 | |
+| nptr | 2447 | |
+| return | 2483 | |
+| dibptr | 2572 | |
+| tptr | 2573 | |
+| dptr | 2574 | |
+| name_length | 2575 | |
+| dev | 2576 | |
+| conf | 2577 | |
+| count | 2578 | |
+| dib_val | 2579 | |
+| conflicts | 2580 | |
+| contab | 2676 | |
+| inited | 2677 | |
+| inited | 2681 | |
+| sim_vm_release | 2683 | |
+| sim_vm_release_message | 2684 | |
+| return | 2720 | |
+| bank | 2805 | |
+| return | 2819 | |
+| sptr | 2863 | |
+| overrides | 2864 | |
+| bank | 2865 | |
+| address | 2866 | |
+| PC | 2999 | |
+| save_PC | 3001 | |
+| status | 3002 | |
+| iocw | 3140 | |
+| order | 3141 | |
+| odd_byte | 3258 | |
+| byte_addr | 3259 | |
+| op_index | 3410 | |
+| reg_index | 3411 | |
+| reg_first | 3412 | |
+| instruction | 3413 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SCPE_OK_2_WORDS | ((t_stat) -1)       /* two words... | 112 |
+| SCPE_OK_3_WORDS | ((t_stat) -2)       /* three wor... | 113 |
+| A_SWITCH | SWMASK ('A') | 118 |
+| B_SWITCH | SWMASK ('B') | 119 |
+| C_SWITCH | SWMASK ('C') | 120 |
+| D_SWITCH | SWMASK ('D') | 121 |
+| E_SWITCH | SWMASK ('E') | 122 |
+| H_SWITCH | SWMASK ('H') | 123 |
+| I_SWITCH | SWMASK ('I') | 124 |
+| M_SWITCH | SWMASK ('M') | 125 |
+| O_SWITCH | SWMASK ('O') | 126 |
+| T_SWITCH | SWMASK ('T') | 127 |
+| MODE_SWITCHES | (C_SWITCH \| E_SWITCH \| I_SWITCH ... | 129 |
+| FORMAT_SWITCHES | (A_SWITCH \| B_SWITCH \| D_SWITCH ... | 130 |
+| SYMBOLIC_SWITCHES | (MODE_SWITCHES \| A_SWITCH)      ... | 132 |
+| ALL_SWITCHES | (MODE_SWITCHES \| FORMAT_SWITCHES) | 133 |
+| E | 0400u               /* parity bi... | 1007 |
+| O | 0000u               /* parity bi... | 1008 |
+| DEVICE_COUNT | (sizeof sim_devices / sizeof sim... | 1099 |
+| GET_BYTE(b) |  | 1870 |
+| FLAG_SIZE | 32                          /* s... | 2439 |
+| FORMAT_SIZE | 1024                        /* s... | 2440 |
+| CONFLICT_COUNT | 3                           /* t... | 2551 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load | 1203-1330 |  |
+| fprint_sym | 1331-1385 |  |
+| if | 1386-1399 |  |
+| if | 1400-1481 |  |
+| parse_sym | 1482-1541 |  |
+| hp_set_dib | 1542-1632 |  |
+| hp_show_dib | 1633-1637 |  |
+| switch | 1638-1721 |  |
+| fprint_cpu | 1722-1726 |  |
+| switch | 1727-1875 |  |
+| fprint_edit | 1876-1886 |  |
+| if | 1887-1901 |  |
+| if | 1902-1909 |  |
+| if | 1910-1916 |  |
+| switch | 1917-2100 |  |
+| fmt_status | 2101-2111 |  |
+| for | 2112-2156 |  |
+| fmt_char | 2157-2310 |  |
+| fmt_bitset | 2311-2392 |  |
+| if | 2393-2441 |  |
+| hp_debug | 2442-2450 |  |
+| if | 2451-2548 |  |
+| hp_device_conflict | 2549-2584 |  |
+| for | 2585-2621 |  |
+| for | 2622-2673 |  |
+| hp_one_time_init | 2674-2687 |  |
+| while | 2688-2756 |  |
+| fprint_stopped | 2757-2758 |  |
+| if | 2759-2772 |  |
+| if | 2773-2781 |  |
+| if | 2782-2802 |  |
+| fprint_addr | 2803-2806 |  |
+| if | 2807-2860 |  |
+| parse_addr | 2861-2932 |  |
+| hp_exdep_cmd | 2933-2965 |  |
+| hp_run_cmd | 2966-2996 |  |
+| hp_brk_cmd | 2997-3039 |  |
+| fprint_value | 3040-3137 |  |
+| fprint_order | 3138-3149 |  |
+| switch | 3150-3255 |  |
+| fprint_subop | 3256-3456 |  |
+| if | 3457-3463 |  |
+| switch | 3464-3742 |  |
+| if | 3743-3760 |  |
+| parse_cpu | 3761-3764 |  |

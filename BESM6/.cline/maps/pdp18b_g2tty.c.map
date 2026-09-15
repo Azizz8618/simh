@@ -1,0 +1,75 @@
+=== pdp18b_g2tty.c — 603 строк ===
+Источник: pdp18b_g2tty.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp18b_g2tty.c -nt .cline/maps/pdp18b_g2tty.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| debug | 118 | |
+| g2out_count | 130 | |
+| g2out_which | 138 | |
+| int_hwre | 160 | |
+| api_vec | 161 | |
+| tmxr_poll | 162 | |
+| stop_inst | 163 | |
+| g2in_dib | 198 | |
+| g2out_dib | 257 | |
+| dat | 306 | |
+| dat | 326 | |
+| ln | 332 | |
+| SCPE_OK | 370 | |
+| g2kb_done | 382 | |
+| return | 384 | |
+| g2kb_done | 389 | |
+| return | 391 | |
+| g2bb_flag | 401 | |
+| return | 403 | |
+| g2bb_flag | 408 | |
+| return | 410 | |
+| dat | 461 | |
+| g2out_addr | 576 | |
+| SCPE_OK | 579 | |
+| SCPE_OK | 591 | |
+| g2_ldsc.rcve | 600 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PB7 | 02000 | 127 |
+| OLD | g2out_which | 139 |
+| NEW | (g2out_which ^ 1) | 140 |
+| MAXBUFCHARS | 700                 /* larger th... | 142 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| g2kb_iot | 293-294 | real device could have done bitwise decode?! |
+| if | 295-299 |  |
+| if | 300-302 |  |
+| if | 303-309 |  |
+| g2bb_iot | 310-311 | Button Box IOT routine |
+| if | 312-317 |  |
+| if | 318-320 |  |
+| if | 321-329 |  |
+| g2in_svc | 330-336 | Input side Unit service |
+| if | 337-349 |  |
+| if | 350-374 |  |
+| g2kb_test_done | 375-379 |  |
+| g2kb_set_done | 380-386 |  |
+| g2kb_clr_done | 387-393 |  |
+| g2bb_test_flag | 394-398 |  |
+| g2bb_set_flag | 399-405 |  |
+| g2bb_clr_flag | 406-417 |  |
+| g2pc | 418-424 | helper to put 7-bit display character |
+| g2out_putchar | 425-429 | returns 1 if "c" was sent; 0 means try again later |
+| if | 430-438 |  |
+| if | 439-448 |  |
+| g2d1_iot | 449-454 | Device 05 IOT routine |
+| if | 455-473 | and display output is restarted periodicly in timer PI service code |
+| g2out_clear | 474-483 |  |
+| g2out_process_display_list | 484-518 | quits early if display list doesn't conform to what's expected |
+| g2out_send_new | 519-554 | returns number of new characters sent |
+| g2_reset | 555-556 | Reset routine |
+| if | 557-582 |  |
+| g2_attach | 583-595 | Attach master unit |
+| g2_detach | 596-603 |  |

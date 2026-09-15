@@ -1,0 +1,33 @@
+=== i650_mt.c — 666 строк ===
+Источник: i650_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i650_mt.c -nt .cline/maps/i650_mt.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_MT | UNIT_ATTABLE \| UNIT_ROABLE \| UNI... | 40 |
+| MT_CMDMSK | 0x00FF      /* Command being run */ | 45 |
+| MT_RDY | 0x0100      /* Unit is ready for... | 46 |
+| MT_IND | 0x0200      /* Unit has Indicato... | 47 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt_ready | 111-118 | return 1 if tape unit n (0..5) is ready to receive a command |
+| mt_rew | 119-128 | Rewind tape drive |
+| mt_read_numeric_word | 129-153 |  |
+| mt_read_alpha_word | 154-168 |  |
+| mt_transfer_tape_rec_to_IAS | 169-252 |  |
+| mt_write_numeric_word | 253-275 |  |
+| mt_write_alpha_word | 276-287 |  |
+| mt_transfer_IAS_to_tape_rec | 288-349 |  |
+| mt_cmd | 350-518 | Start off a mag tape command |
+| mt_srv | 519-583 | Handle processing of tape requests. |
+| mt_ini | 584-594 |  |
+| mt_reset | 595-603 |  |
+| mt_attach | 604-614 |  |
+| mt_detach | 615-624 |  |
+| mt_set_len | 625-639 |  |
+| mt_show_len | 640-647 |  |
+| mt_help | 648-660 |  |
+| mt_description | 661-666 |  |

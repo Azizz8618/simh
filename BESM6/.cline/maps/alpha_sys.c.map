@@ -1,0 +1,106 @@
+=== alpha_sys.c — 816 строк ===
+Источник: alpha_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test alpha_sys.c -nt .cline/maps/alpha_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 32 | |
+| cpu_reg | 33 | |
+| pal_type | 34 | |
+| sim_PC | 52 | |
+| sim_emax | 54 | |
+| origin | 80 | |
+| SCPE_OK | 99 | |
+| dptr | 504 | |
+| rdx | 513 | |
+| -7 | 554 | |
+| SCPE_ARG | 615 | |
+| num | 633 | |
+| dptr | 636 | |
+| rdx | 645 | |
+| -7 | 701 | |
+| bra | 717 | |
+| reg | 719 | |
+| tptr | 721 | |
+| gbuf | 722 | |
+| -3 | 800 | |
+| reg | 808 | |
+| reg | 814 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CL_NO | 0                               ... | 104 |
+| CL_BR | 1                               ... | 105 |
+| CL_MR | 2                               ... | 106 |
+| CL_IO | 3                               ... | 107 |
+| CL_FO | 4                               ... | 108 |
+| CL_MO | 5                               ... | 109 |
+| CL_JP | 6                               ... | 110 |
+| CL_HW | 7                               ... | 111 |
+| CL_M_PAL | 0x00F0 | 112 |
+| CL_V_PAL | 4 | 113 |
+| CL_VMS | (1u << (PAL_VMS + CL_V_PAL)) | 114 |
+| CL_UNIX | (1u << (PAL_UNIX + CL_V_PAL)) | 115 |
+| CL_NT | (1u << (PAL_NT + CL_V_PAL)) | 116 |
+| FL_RA | 0x0100 | 117 |
+| FL_RB | 0x0200 | 118 |
+| FL_RC | 0x0400 | 119 |
+| FL_RBI | 0x0800 | 120 |
+| FL_MDP | 0x1000 | 121 |
+| FL_BDP | 0x2000 | 122 |
+| FL_JDP | 0x4000 | 123 |
+| FL_LIT | 0x8000 | 124 |
+| CL_CLASS | 0x000F | 125 |
+| PAL_MASK(x) | (1u << (pal_type + CL_V_PAL)) | 126 |
+| C_NO | CL_NO | 128 |
+| C_PCM | CL_NO \| CL_VMS \| CL_UNIX \| CL_NT | 129 |
+| C_PVM | CL_NO \| CL_VMS | 130 |
+| C_PUN | CL_NO \| CL_UNIX | 131 |
+| C_PNT | CL_NO \| CL_NT | 132 |
+| C_BR | CL_BR \| FL_RA \| FL_BDP | 133 |
+| C_MR | CL_MR \| FL_RA \| FL_RB \| FL_RBI \|... | 134 |
+| C_FE | CL_MO \| FL_RB \| FL_RBI | 135 |
+| C_RV | CL_MO \| FL_RA | 136 |
+| C_MO | CL_MO \| FL_RA \| FL_RB | 137 |
+| C_IO | CL_IO \| FL_RA \| FL_RB \| FL_RC \| ... | 138 |
+| C_IAC | CL_IO \| FL_RA \| FL_RC | 139 |
+| C_IBC | CL_IO \| FL_RB \| FL_RC \| FL_LIT | 140 |
+| C_FO | CL_FO \| FL_RA \| FL_RB \| FL_RC | 141 |
+| C_FAC | CL_FO \| FL_RA \| FL_RC | 142 |
+| C_FBC | CL_FO \| FL_RB \| FL_RC | 143 |
+| C_JP | CL_JP \| FL_RA \| FL_RB \| FL_RBI \|... | 144 |
+| C_HW | CL_HW | 145 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load | 76-83 |  |
+| if | 84-88 |  |
+| while | 89-514 |  |
+| if | 515-520 |  |
+| if | 521-526 |  |
+| if | 527-532 |  |
+| if | 533-538 |  |
+| if | 539-545 |  |
+| if | 546-567 |  |
+| fprint_sym_m | 568-573 |  |
+| for | 574-630 |  |
+| parse_sym | 631-646 |  |
+| if | 647-653 |  |
+| if | 654-661 |  |
+| if | 662-669 |  |
+| if | 670-677 |  |
+| if | 678-688 |  |
+| if | 689-714 |  |
+| parse_sym_m | 715-725 |  |
+| for | 726-736 |  |
+| if | 737-741 |  |
+| if | 742-753 |  |
+| if | 754-766 |  |
+| if | 767-774 |  |
+| if | 775-786 |  |
+| if | 787-792 |  |
+| if | 793-804 |  |
+| parse_reg | 805-816 |  |

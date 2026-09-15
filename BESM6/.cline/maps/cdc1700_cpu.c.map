@@ -1,0 +1,64 @@
+=== cdc1700_cpu.c — 1889 строк ===
+Источник: cdc1700_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_cpu.c -nt .cline/maps/cdc1700_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| Instructions | 146 | |
+| Preg | 147 | |
+| R1reg | 148 | |
+| Pfault | 149 | |
+| ExecutionStarted | 151 | |
+| CharAddrMode | 152 | |
+| INTlevel | 154 | |
+| INTprefix | 156 | |
+| FirstRejSeen | 158 | |
+| CountRejects | 159 | |
+| FirstAddr | 161 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NMON | 0x00F4 | 166 |
+| UNIT_V_STOPSW | (UNIT_V_UF + 1)         /* Selec... | 189 |
+| UNIT_STOPSW | (1 << UNIT_V_STOPSW) | 190 |
+| UNIT_V_SKIPSW | (UNIT_V_UF + 2)         /* Selec... | 191 |
+| UNIT_SKIPSW | (1 << UNIT_V_SKIPSW) | 192 |
+| UNIT_V_MODE65K | (UNIT_V_UF + 3)         /* 32K/6... | 193 |
+| UNIT_MODE65K | (1 << UNIT_V_MODE65K) | 194 |
+| UNIT_V_CHAR | (UNIT_V_UF + 4)         /* Chara... | 195 |
+| UNIT_CHAR | (1 << UNIT_V_CHAR) | 196 |
+| UNIT_V_PROT | (UNIT_V_UF + 5)         /* Prote... | 197 |
+| UNIT_PROT | (1 << UNIT_V_PROT) | 198 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 6)         /* Memor... | 199 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 200 |
+| DBG_ALL |  | 268 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_set_instr | 340-355 |  |
+| cpu_show_instr | 356-381 |  |
+| cpu_reset | 382-412 | Reset routine |
+| cpu_set_size | 413-435 | Memory size change |
+| cpu_ex | 436-447 | Memory examine |
+| cpu_dep | 448-458 | Memory deposit |
+| dumpRegisters | 459-468 | Dump the current register contents on debugging output. |
+| inProtectedMode | 469-477 | Indicate processor is running in protected mode. |
+| cpuINTR | 478-486 | has already been set in the Pending register. |
+| RaiseInternalInterrupt | 487-499 | Program Protect Fault. Only Program Protect Fault can occur in emulation. |
+| RaiseExternalInterrupt | 500-530 | Raise an external interrupt associated with a peripheral device. |
+| LoadFromMem | 531-540 | Reads are always allowed |
+| StoreToMem | 541-567 | has been scheduled. |
+| IOStoreToMem | 568-585 | write failed due to a protect failure. |
+| doSUB | 586-600 | is added to minus zero). |
+| doADD | 601-609 |  |
+| doADDinternal | 610-623 | overflow flag. |
+| doMUL | 624-653 | the resulting sign based on the input values. |
+| doDIV | 654-728 | and adjust the resulting signs based on the input values. |
+| getEffectiveAddr | 729-816 | Compute the effective address of an instruction |
+| disEffectiveAddr | 817-896 | Compute the effective address of an instruction |
+| executeAnInstruction | 897-1764 | pointing at the instruction to execute. |
+| sim_instr | 1765-1789 |  |
+| cpu_help | 1790-1889 |  |

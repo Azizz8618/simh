@@ -1,0 +1,142 @@
+=== kx10_tym.c — 685 строк ===
+Источник: kx10_tym.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_tym.c -nt .cline/maps/kx10_tym.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tym_ldsc | 97 | |
+| tym_desc | 98 | |
+| tym_host | 129 | |
+| tym_base | 130 | |
+| tym_size | 131 | |
+| tym_key | 132 | |
+| output_port | 133 | |
+| output_count | 134 | |
+| lock | 564 | |
+| dump | 565 | |
+| irng | 566 | |
+| isiz | 567 | |
+| ihp | 568 | |
+| ibp | 570 | |
+| orng | 571 | |
+| osiz | 572 | |
+| ohp | 573 | |
+| obp | 574 | |
+| bcrsh | 575 | |
+| hcrsh | 576 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_TYM | 0 | 28 |
+| TYM_NAME | "TYM" | 33 |
+| MAX_LINES | 32      /* Maximum found in the ... | 34 |
+| KEY | 0633751506262LL  /* Base key. */ | 36 |
+| BASE | 02000            /* Default base... | 37 |
+| SIZE | 01000            /* Default size... | 38 |
+| LOCK | 000              /* Key. */ | 40 |
+| DUMP | 002              /* Base dump lo... | 41 |
+| IRNG | 003              /* Input ring l... | 42 |
+| ISIZ | 004              /* Input ring s... | 43 |
+| IHP | 005              /* Host set inp... | 44 |
+| IBP | 006              /* Base set inp... | 45 |
+| ORNG | 007              /* Output ring ... | 46 |
+| OSIZ | 010              /* Output ring ... | 47 |
+| OHP | 011              /* Host set out... | 48 |
+| OBP | 012              /* Base set out... | 49 |
+| BCRSH | 013              /* Base set cra... | 50 |
+| HCRSH | 014              /* Host set cra... | 51 |
+| TYMBAS_ANS | 001 | 53 |
+| TYMBAS_SHT | 002 | 54 |
+| TYMBAS_CRS | 003 | 55 |
+| TYMBAS_DIE | 004 | 56 |
+| TYMBAS_NSP | 005 | 57 |
+| TYMBAS_LOG | 006 | 58 |
+| TYMBAS_AUX | 007 | 59 |
+| TYMBAS_NOP | 010 | 60 |
+| TYMBAS_OUP | 011 | 61 |
+| TYMBAS_GOB | 012 | 62 |
+| TYMBAS_ZAP | 013 | 63 |
+| TYMBAS_EDC | 014 | 64 |
+| TYMBAS_LDC | 015 | 65 |
+| TYMBAS_GRN | 016 | 66 |
+| TYMBAS_RED | 017 | 67 |
+| TYMBAS_YEL | 020 | 68 |
+| TYMBAS_ORG | 021 | 69 |
+| TYMBAS_HNG | 022 | 70 |
+| TYMBAS_ETM | 023 | 71 |
+| TYMBAS_LTM | 024 | 72 |
+| TYMBAS_LOS | 025 | 73 |
+| TYMBAS_SUP | 026 | 74 |
+| TYMBAS_SUR | 027 | 75 |
+| TYMBAS_AXC | 030 | 76 |
+| TYMBAS_TSP | 031 | 77 |
+| TYMBAS_TSR | 032 | 78 |
+| TYMBAS_SAD | 033 | 79 |
+| TYMBAS_ECN | 034 | 80 |
+| TYMBAS_ECF | 035 | 81 |
+| TYMBAS_TCS | 036 | 82 |
+| TYMBAS_TCP | 037 | 83 |
+| TYMBAS_TCR | 040 | 84 |
+| TYMBAS_HSI | 041 | 85 |
+| TYMBAS_DATA | 0200 | 86 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tym_reset | 153-166 |  |
+| block | 167-175 |  |
+| tym_attach | 176-183 |  |
+| tym_detach | 184-191 |  |
+| word | 192-198 |  |
+| next | 199-204 |  |
+| tym_input | 205-211 |  |
+| room | 212-219 |  |
+| send_word | 220-236 |  |
+| send_character | 237-243 |  |
+| send_string | 244-269 |  |
+| send_login | 270-277 |  |
+| send_zap | 278-283 |  |
+| send_orange | 284-289 |  |
+| recv_ans | 290-295 |  |
+| recv_sht | 296-300 |  |
+| recv_crs | 301-305 |  |
+| recv_die | 306-310 |  |
+| recv_nsp | 311-315 |  |
+| recv_log | 316-322 |  |
+| recv_aux | 323-327 |  |
+| recv_nop | 328-332 |  |
+| recv_oup | 333-337 |  |
+| recv_gob | 338-342 |  |
+| recv_zap | 343-350 |  |
+| recv_edc | 351-355 |  |
+| recv_ldc | 356-360 |  |
+| recv_grn | 361-365 |  |
+| recv_red | 366-370 |  |
+| recv_yel | 371-376 |  |
+| recv_org | 377-381 |  |
+| recv_hng | 382-386 |  |
+| recv_etm | 387-391 |  |
+| recv_ltm | 392-396 |  |
+| recv_los | 397-403 |  |
+| recv_sup | 404-408 |  |
+| recv_sur | 409-413 |  |
+| recv_axc | 414-418 |  |
+| recv_tsp | 419-423 |  |
+| recv_tsr | 424-428 |  |
+| recv_sad | 429-433 |  |
+| recv_ecn | 434-438 |  |
+| recv_ecf | 439-443 |  |
+| recv_tcs | 444-450 |  |
+| recv_tcp | 451-456 |  |
+| recv_tcr | 457-463 |  |
+| recv_hsi | 464-515 |  |
+| output_data | 516-542 |  |
+| tym_output | 543-577 |  |
+| check | 578-586 |  |
+| tym_interface_srv | 587-607 |  |
+| tym_alive_srv | 608-617 |  |
+| tym_input_srv | 618-655 |  |
+| tym_output_srv | 656-680 |  |
+| tym_description | 681-685 |  |

@@ -1,0 +1,51 @@
+=== vax_cmode.c — 1315 строк ===
+Источник: vax_cmode.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_cmode.c -nt .cline/maps/vax_cmode.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| FALSE | 70 | |
+| IR | 77 | |
+| dstspec | 90 | |
+| cc | 1083 | |
+| adr | 1096 | |
+| adr | 1162 | |
+| return | 1261 | |
+| return | 1284 | |
+| return | 1293 | |
+| cc | 1312 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RdMemB(a) | Read (a, L_BYTE, RA) | 45 |
+| RdMemMB(a) | Read (a, L_BYTE, WA) | 46 |
+| WrMemB(d,a) | Write (a, d, L_BYTE, WA) | 47 |
+| BRANCH_F(x) | CMODE_JUMP ((PC + (((x) + (x)) &... | 48 |
+| BRANCH_B(x) | CMODE_JUMP ((PC + (((x) + (x)) \|... | 49 |
+| CC_XOR_NV(x) | ((((x) & CC_N) != 0) ^ (((x) & C... | 50 |
+| CC_XOR_NC(x) | ((((x) & CC_N) != 0) ^ (((x) & C... | 51 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| BadCmPSL | 65-74 |  |
+| op_cmode | 75-81 |  |
+| if | 82-92 |  |
+| switch | 93-1093 |  |
+| GeteaW | 1094-1098 |  |
+| switch | 1099-1159 |  |
+| GeteaB | 1160-1164 |  |
+| switch | 1165-1235 |  |
+| RdMemW | 1236-1244 |  |
+| RdMemMW | 1245-1253 |  |
+| WrMemW | 1254-1263 |  |
+| RdRegB | 1264-1270 |  |
+| RdRegW | 1271-1277 |  |
+| WrRegB | 1278-1279 |  |
+| if | 1280-1286 |  |
+| WrRegW | 1287-1288 |  |
+| if | 1289-1303 |  |
+| BadCmPSL | 1304-1308 |  |
+| op_cmode | 1309-1315 |  |

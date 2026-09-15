@@ -1,0 +1,89 @@
+=== cdc1700_mt.c — 2107 строк ===
+Источник: cdc1700_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_mt.c -nt .cline/maps/cdc1700_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 93 | |
+| Instructions | 123 | |
+| IOFWinitialized | 125 | |
+| cpu_unit | 127 | |
+| MTbuf | 285 | |
+| MToffset | 286 | |
+| MT_IDLE | 287 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| LOOSETIMING(t) | (((t) * 3)/ 2) | 84 |
+| DEVTYPE_1732_A | IOtype_dev1             /* Contr... | 86 |
+| DEVTYPE_1732_3 | IOtype_dev2             /* Contr... | 87 |
+| STATUS2 | iod_readR[2] | 89 |
+| BUFFEREDIO | iod_writeR[3] | 90 |
+| CURADDRESS | iod_readR[3] | 91 |
+| DENS | u3 | 135 |
+| MTBOOTLEN9 | (sizeof(mtbootstrap9) / sizeof(u... | 169 |
+| MTBOOTLEN7 | (sizeof(mtbootstrap7) / sizeof(u... | 216 |
+| SMM17BOOTLEN9 | (sizeof(smm17boot9) / sizeof(uin... | 242 |
+| SMM17BOOTLEN7 | (sizeof(smm17boot7) / sizeof(uin... | 276 |
+| MTSIZ | 131072 | 284 |
+| IO_DELAY_RDATA | 0x01                    /* Delay... | 433 |
+| IO_DELAY_WDATA | 0x02                    /*    an... | 434 |
+| IO_DELAY_RTMO | 0x03                    /* Read ... | 435 |
+| IO_DELAY_WTMO | 0x04                    /* Write... | 436 |
+| IO_DELAY_EOP | 0x05                    /* EOP d... | 437 |
+| IO_DSA_READ | 0x06                    /* DSA R... | 438 |
+| IO_DSA_WRITE | 0x07                    /* DSA W... | 439 |
+| IO_LOCAL_MASK | 0x7F | 440 |
+| MT_NUMDR | 4                       /* # dri... | 450 |
+| DBG_V_OPS | (DBG_SPECIFIC+0)/* Trace operati... | 513 |
+| DBG_V_READ | (DBG_SPECIFIC+1)/* Dump read rec... | 514 |
+| DBG_V_RDATA | (DBG_SPECIFIC+2)/* Read through ... | 515 |
+| DBG_V_WDATA | (DBG_SPECIFIC+3)/* Write through... | 516 |
+| DBG_V_MTIO | (DBG_SPECIFIC+4)/* Trace library... | 517 |
+| DBG_V_DENS | (DBG_SPECIFIC+5)/* Trace density... | 518 |
+| DBG_V_SELECT | (DBG_SPECIFIC+6)/* Trace drive s... | 519 |
+| DBG_V_RDSA | (DBG_SPECIFIC+7)/* Read data aft... | 520 |
+| DBG_V_WDSA | (DBG_SPECIFIC+8)/* Write data be... | 521 |
+| DBG_OPS | (1 << DBG_V_OPS) | 523 |
+| DBG_READ | (1 << DBG_V_READ) | 524 |
+| DBG_RDATA | (1 << DBG_V_RDATA) | 525 |
+| DBG_WDATA | (1 << DBG_V_WDATA) | 526 |
+| DBG_MTIO | (1 << DBG_V_MTIO) | 527 |
+| DBG_DENS | (1 << DBG_V_DENS) | 528 |
+| DBG_SELECT | (1 << DBG_V_SELECT) | 529 |
+| DBG_RDSA | (1 << DBG_V_RDSA) | 530 |
+| DBG_WDSA | (1 << DBG_V_WDSA) | 531 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt_trace | 564-630 |  |
+| mt_DSAtrace | 631-640 |  |
+| mtio_trace | 641-730 |  |
+| mt_dump | 731-763 |  |
+| mt_DSAdump | 764-806 |  |
+| MTstate | 807-827 |  |
+| mt_data | 828-834 |  |
+| mt_show_type | 835-851 |  |
+| mt_set_type | 852-879 |  |
+| mt_show_transport | 880-899 | Display magtape transport |
+| mt_set_9track | 900-914 | Set drive to 9-track transport. |
+| mt_set_7track | 915-931 | Set drive to 7-track transport. |
+| mt_densityTimeout | 932-961 | (in this case we assume 37.5 inches per sec). |
+| mt_svc | 962-1401 |  |
+| mt_reset | 1402-1439 |  |
+| mt_boot | 1440-1483 |  |
+| mt_attach | 1484-1515 |  |
+| mt_detach | 1516-1536 |  |
+| MTclear | 1537-1579 | device reset except it does not forget the currently selected transport. |
+| MTreject | 1580-1616 | out, we need to generate an ALARM + LOST data status. |
+| doMTIn | 1617-1670 |  |
+| doMTOut | 1671-1712 |  |
+| doMTFunction | 1713-1845 |  |
+| MTin | 1846-1860 |  |
+| MTout | 1861-2014 |  |
+| MTBDCin | 2015-2037 |  |
+| MTBDCout | 2038-2066 |  |
+| mt_help | 2067-2107 |  |

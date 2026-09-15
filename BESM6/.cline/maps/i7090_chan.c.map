@@ -1,0 +1,85 @@
+=== i7090_chan.c — 1710 строк ===
+Источник: i7090_chan.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7090_chan.c -nt .cline/maps/i7090_chan.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| iotraps | 51 | |
+| iocheck | 52 | |
+| dualcore | 53 | |
+| cpu_unit | 54 | |
+| IC | 55 | |
+| MQ | 56 | |
+| drum_addr | 57 | |
+| hsdrm_addr | 58 | |
+| SCPE_OK | 1703 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IOCD | 000 | 89 |
+| TCH | 010 | 90 |
+| IORP | 020 | 91 |
+| IORT | 030 | 92 |
+| IOCP | 040 | 93 |
+| IOCT | 050 | 94 |
+| IOSP | 060 | 95 |
+| IOST | 070 | 96 |
+| WTR | 000 | 99 |
+| WTRX | 004 | 100 |
+| XMT | 001 | 101 |
+| XMTX | 005 | 102 |
+| TCH9 | 010 | 103 |
+| TCHX | 014 | 104 |
+| LIPT | 011 | 105 |
+| LIPTX | 015 | 106 |
+| CTL | 020 | 107 |
+| CTLR | 021 | 108 |
+| CTLW | 024 | 109 |
+| SNS | 025 | 110 |
+| LAR | 030 | 111 |
+| SAR | 031 | 112 |
+| TWT | 034 | 113 |
+| XXXX | 035 | 114 |
+| CPYP | 040 | 115 |
+| CPYP2 | 041 | 116 |
+| CPYP3 | 044 | 117 |
+| CPYP4 | 045 | 118 |
+| CPYD | 050 | 119 |
+| TCM | 051 | 120 |
+| CPYDX | 054 | 121 |
+| TCMX | 055 | 122 |
+| XXXZ | 060 | 123 |
+| LIP | 061 | 124 |
+| TDC | 064 | 125 |
+| LCC | 065 | 126 |
+| SMS | 070 | 127 |
+| ICC | 071 | 128 |
+| ICCX | 075 | 129 |
+| CHAINF_START | 1       /* Channel started */ | 132 |
+| CHAINF_RUN | 2       /* Transfer in progress */ | 133 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dly_cmd | 224-233 | Nothing special to do, just return true if cmd is write and we got here |
+| chan_reset | 234-259 |  |
+| chan_boot | 260-282 |  |
+| bcd_xlat | 283-328 |  |
+| chan_proc | 329-1185 |  |
+| chan_fetch | 1186-1220 |  |
+| chan_rst | 1221-1245 |  |
+| chan_cmd | 1246-1320 |  |
+| chan_start | 1321-1357 |  |
+| chan_load | 1358-1393 |  |
+| chan_store | 1394-1422 |  |
+| chan_store_diag | 1423-1447 |  |
+| chan_write | 1448-1490 |  |
+| chan_read | 1491-1539 |  |
+| chan_write_char | 1540-1602 |  |
+| chan_read_char | 1603-1657 |  |
+| chan9_seqcheck | 1658-1669 |  |
+| chan9_set_error | 1670-1680 |  |
+| chan_help | 1681-1706 |  |
+| chan_description | 1707-1710 |  |

@@ -1,0 +1,118 @@
+=== hp3000_mpx.c — 1973 строк ===
+Источник: hp3000_mpx.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_mpx.c -nt .cline/maps/hp3000_mpx.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mpx_interface | 679 | |
+| idx | 823 | |
+| dibptr | 824 | |
+| dptr | 825 | |
+| return | 846 | |
+| return | 895 | |
+| return | 924 | |
+| dibptr | 1198 | |
+| cycles | 1199 | |
+| srn | 1200 | |
+| inbound_data | 1201 | |
+| store_ioaw | 1202 | |
+| sio_order | 1203 | |
+| inbound_signals | 1204 | |
+| return | 1578 | |
+| address | 1640 | |
+| sio_order | 1641 | |
+| signal | 1642 | |
+| working_set | 1643 | |
+| outbound_value | 1644 | |
+| outbound_signals | 1645 | |
+| mpx_is_idle | 1869 | |
+| SCPE_OK | 1871 | |
+| return | 1949 | |
+| outbound | 1963 | |
+| outbound | 1972 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| INTRF_COUNT | (SRNO_MAX + 1)      /* count of ... | 368 |
+| NS_PER_CYCLE | 175                 /* each cloc... | 370 |
+| CYCLES_PER_STATE | 2 | 372 |
+| CYCLES_PER_READ | 9 | 373 |
+| CYCLES_PER_WRITE | 9 | 374 |
+| CYCLES_PER_EVENT | (int32) (USEC_PER_EVENT * 1000 /... | 376 |
+| DEB_CSRW | (1u << 0)               /* trace... | 416 |
+| DEB_PIO | (1u << 1)               /* trace... | 417 |
+| DEB_IOB | (1u << 2)               /* trace... | 418 |
+| DEB_STATE | (1u << 3)               /* trace... | 419 |
+| DEB_SR | (1u << 4)               /* trace... | 420 |
+| CN_MR | 0100000u            /* (M) maste... | 431 |
+| CN_RAM_ADDR_MASK | 0036000u            /* RAM addre... | 432 |
+| CN_ADDR_RAM | 0001000u            /* (A) selec... | 433 |
+| CN_ORDER_RAM | 0000400u            /* (O) selec... | 434 |
+| CN_STATE_RAM | 0000200u            /* (S) selec... | 435 |
+| CN_LOAD_REGS | 0000100u            /* (L) load ... | 436 |
+| CN_INCR_REGS | 0000040u            /* (I) incre... | 437 |
+| CN_RAM_ADDR_SHIFT | 10                  /* RAM addre... | 439 |
+| CN_RAM_ADDR(c) | (((c) & CN_RAM_ADDR_MASK) >> CN_... | 441 |
+| ST_DIO_OK | 0040000u            /* (D) direc... | 469 |
+| ST_STATE_PARITY | 0010000u            /* (E) a sta... | 470 |
+| ST_RAM_ADDR_MASK | 0007400u            /* RAM addre... | 471 |
+| ST_RAM_ADDR_SHIFT | 8                   /* RAM addre... | 473 |
+| ST_RAM_ADDR(c) | ((c) << ST_RAM_ADDR_SHIFT & ST_R... | 475 |
+| ST_TO_RAM_ADDR(s) | (((s) & ST_RAM_ADDR_MASK) >> ST_... | 477 |
+| WR_ORDER_MASK | 0170000u            /* order mas... | 501 |
+| WR_COUNT_MASK | 0007777u            /* word coun... | 502 |
+| WR_STATE_MASK | 0036000u            /* state mas... | 503 |
+| WR_BANK_MASK | 0000017u            /* bank numb... | 504 |
+| WR_ORDER_SHIFT | 12                  /* order ali... | 506 |
+| WR_COUNT_SHIFT | 0                   /* word coun... | 507 |
+| WR_STATE_SHIFT | 10                  /* state ali... | 508 |
+| WR_BANK_SHIFT | 0                   /* bank numb... | 509 |
+| WR_ORDER(c) | (((c) & WR_ORDER_MASK) >> WR_ORD... | 511 |
+| WR_COUNT(c) | (((c) & WR_COUNT_MASK) >> WR_COU... | 512 |
+| WR_STATE(c) | (((c) & WR_STATE_MASK) >> WR_STA... | 513 |
+| WR_BANK(c) | (((c) & WR_BANK_MASK)  >> WR_BAN... | 514 |
+| RD_ADDR_MASK | 0177777u            /* address m... | 529 |
+| RD_ORDER_MASK | 0170000u            /* order mas... | 530 |
+| RD_COUNT_MASK | 0007777u            /* word coun... | 531 |
+| RD_BANK_MASK | 0007400u            /* bank numb... | 532 |
+| RD_XFER_COMPLETE | 0000200u            /* (T) trans... | 533 |
+| RD_STATE_MASK | 0000170u            /* (A/B/C/D)... | 534 |
+| RD_XFER_END | 0000004u            /* (E) end o... | 535 |
+| RD_ADDR_PARITY | 0000002u            /* (P) addre... | 536 |
+| RD_STATE_PARITY | 0000001u            /* (S) state... | 537 |
+| RD_ORDER_SHIFT | 12                  /* order ali... | 539 |
+| RD_COUNT_SHIFT | 0                   /* word coun... | 540 |
+| RD_BANK_SHIFT | 8                   /* bank numb... | 541 |
+| RD_STATE_SHIFT | 3                   /* state ali... | 542 |
+| RD_ORDER(c) | ((c) << RD_ORDER_SHIFT & RD_ORDE... | 544 |
+| RD_COUNT(c) | ((c) << RD_COUNT_SHIFT & RD_COUN... | 545 |
+| RD_BANK(c) | ((c) << RD_BANK_SHIFT  & RD_BANK... | 546 |
+| RD_STATE(c) | ((c) << RD_STATE_SHIFT & RD_STAT... | 547 |
+| RD_SIO_ORDER(o,c) | IOCW_ORDER ((o) << RD_ORDER_SHIF... | 549 |
+| AUX_IB | 040u                /* auxiliary... | 608 |
+| AUX_TC | 020u                /* auxiliary... | 609 |
+| AUX_BANK_MASK | 017u                /* auxiliary... | 610 |
+| AUX_BANK(r) | ((r) & AUX_BANK_MASK) | 612 |
+| ORDER_DC | 020u                /* order RAM... | 614 |
+| ORDER_MASK | 017u                /* order RAM... | 615 |
+| CNTR_MASK | 0007777u            /* counter R... | 617 |
+| CNTR_MAX | 0007777u            /* counter R... | 618 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mpx_initialize | 821-830 |  |
+| for | 831-876 |  |
+| mpx_assert_REQ | 877-914 |  |
+| mpx_assert_SRn | 915-1195 |  |
+| mpx_service | 1196-1210 |  |
+| while | 1211-1637 |  |
+| mpx_interface | 1638-1649 |  |
+| while | 1650-1856 |  |
+| mpx_reset | 1857-1890 |  |
+| next_state | 1891-1892 |  |
+| switch | 1893-1940 |  |
+| end_channel | 1941-1960 |  |
+| abort_channel | 1961-1973 |  |

@@ -1,0 +1,44 @@
+=== vax_ka620_bin.h — 4165 строк ===
+Источник: vax_ka620_bin.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_ka620_bin.h -nt .cline/maps/vax_ka620_bin.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ROM_vax_ka620_bin_H | 0 | 2 |
+| BOOT_CODE_SIZE | 0x10000 | 10 |
+| BOOT_CODE_CHECKSUM | 0xFF7F930F | 11 |
+| BOOT_CODE_FILENAME | "ka620.bin" | 12 |
+| BOOT_CODE_FILEPATH | "VAX/ka620.bin" | 13 |
+| BOOT_CODE_ARRAY | NULL | 15 |
+| BOOT_CODE_ARRAY | vax_ka620_bin | 17 |
+| BOOT_CODE_URL | NULL | 19 |
+| BOOT_CODE_SIZE_1 | 0x10000 | 22 |
+| BOOT_CODE_CHECKSUM_1 | 0xFF7F930F | 23 |
+| BOOT_CODE_FILENAME_1 | "ka620.bin" | 24 |
+| BOOT_CODE_FILEPATH_1 | "VAX/ka620.bin" | 25 |
+| BOOT_CODE_ARRAY_1 | NULL | 27 |
+| BOOT_CODE_ARRAY_1 | vax_ka620_bin | 29 |
+| BOOT_CODE_URL_1 | NULL | 31 |
+| BOOT_CODE_SIZE_2 | 0x10000 | 33 |
+| BOOT_CODE_CHECKSUM_2 | 0xFF7F930F | 34 |
+| BOOT_CODE_FILENAME_2 | "ka620.bin" | 35 |
+| BOOT_CODE_FILEPATH_2 | "VAX/ka620.bin" | 36 |
+| BOOT_CODE_ARRAY_2 | NULL | 38 |
+| BOOT_CODE_ARRAY_2 | vax_ka620_bin | 40 |
+| BOOT_CODE_URL_2 | NULL | 42 |
+| BOOT_CODE_SIZE_3 | 0x10000 | 44 |
+| BOOT_CODE_CHECKSUM_3 | 0xFF7F930F | 45 |
+| BOOT_CODE_FILENAME_3 | "ka620.bin" | 46 |
+| BOOT_CODE_FILEPATH_3 | "VAX/ka620.bin" | 47 |
+| BOOT_CODE_ARRAY_3 | NULL | 49 |
+| BOOT_CODE_ARRAY_3 | vax_ka620_bin | 51 |
+| BOOT_CODE_URL_3 | NULL | 53 |
+| BOOT_CODE_SIZE_4 | 0x10000 | 55 |
+| BOOT_CODE_CHECKSUM_4 | 0xFF7F930F | 56 |
+| BOOT_CODE_FILENAME_4 | "ka620.bin" | 57 |
+| BOOT_CODE_FILEPATH_4 | "VAX/ka620.bin" | 58 |
+| BOOT_CODE_ARRAY_4 | NULL | 60 |
+| BOOT_CODE_ARRAY_4 | vax_ka620_bin | 62 |
+| BOOT_CODE_URL_4 | NULL | 64 |
+

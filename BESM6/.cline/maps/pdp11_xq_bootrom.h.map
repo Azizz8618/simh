@@ -1,0 +1,12 @@
+=== pdp11_xq_bootrom.h — 1299 строк ===
+Источник: pdp11_xq_bootrom.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_xq_bootrom.h -nt .cline/maps/pdp11_xq_bootrom.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PDP11_XQ_BOOTROM_H |  | 38 |
+| BOOT_LEN | (sizeof(boot_rom)/sizeof(uint16)... | 1239 |
+| BOOT_START | 020000               /* Initial ... | 1240 |
+| BOOT_ENTRY | (BOOT_START+0)       /* Start ad... | 1241 |
+

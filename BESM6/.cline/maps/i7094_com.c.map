@@ -1,0 +1,213 @@
+=== i7094_com.c — 1213 строк ===
+Источник: i7094_com.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7094_com.c -nt .cline/maps/i7094_com.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| LISTHD | 152-155 |
+| LISTENT | 157-160 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ch_req | 214 | |
+| com_dib | 258 | |
+| SCPE_OK | 424 | |
+| SCPE_OK | 437 | |
+| dat | 444 | |
+| SCPE_OK | 482 | |
+| chr | 490 | |
+| dat | 491 | |
+| SCPE_OK | 629 | |
+| ent | 637 | |
+| ent | 674 | |
+| SCPE_OK | 725 | |
+| ln | 732 | |
+| SCPE_OK | 743 | |
+| SCPE_OK | 766 | |
+| coml_unit | 784 | |
+| SCPE_OK | 786 | |
+| out | 793 | |
+| com_not_ret | 826 | |
+| com_chob | 888 | |
+| FALSE | 901 | |
+| coml_unit | 908 | |
+| return | 910 | |
+| FALSE | 921 | |
+| return | 931 | |
+| ent | 938 | |
+| ent | 942 | |
+| ent | 949 | |
+| ent | 953 | |
+| ent | 960 | |
+| FALSE | 967 | |
+| ent | 974 | |
+| lh->tail | 981 | |
+| ent | 982 | |
+| ent | 989 | |
+| ent | 992 | |
+| next | 997 | |
+| com_pkt | 1014 | |
+| com_pkt | 1015 | |
+| lh->tail | 1016 | |
+| return | 1017 | |
+| return | 1032 | |
+| com_enab | 1056 | |
+| com_sns | 1057 | |
+| com_msgn | 1058 | |
+| com_sta | 1059 | |
+| com_chob | 1060 | |
+| com_chob_v | 1061 | |
+| com_stop | 1062 | |
+| com_bptr | 1063 | |
+| com_blim | 1064 | |
+| com_free.head | 1080 | |
+| com_free.tail | 1081 | |
+| coml_unit | 1083 | |
+| SCPE_OK | 1084 | |
+| SCPE_OK | 1098 | |
+| com_not_ret | 1121 | |
+| coml_unit | 1122 | |
+| coml_unit | 1123 | |
+| coml_unit | 1124 | |
+| return | 1128 | |
+| next | 1137 | |
+| return | 1161 | |
+| SCPE_OK | 1167 | |
+| entc | 1172 | |
+| lh | 1173 | |
+| name | 1174 | |
+| ln | 1176 | |
+| lh | 1178 | |
+| SCPE_OK | 1190 | |
+| SCPE_OK | 1199 | |
+| SCPE_OK | 1212 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| COM_MLINES | 31                              ... | 71 |
+| COM_TLINES | (COM_MLINES + 1)                ... | 72 |
+| COM_BUFSIZ | 120                             ... | 73 |
+| COM_PKTSIZ | 16384                           ... | 74 |
+| UNIT_V_2741 | (TTUF_V_UF + 0)                 ... | 76 |
+| UNIT_V_K35 | (TTUF_V_UF + 1)                 ... | 77 |
+| UNIT_2741 | (1 << UNIT_V_2741) | 78 |
+| UNIT_K35 | (1 << UNIT_V_K35) | 79 |
+| CONN | u3                              ... | 81 |
+| NEEDID | u4                              ... | 82 |
+| NOECHO | u5                              ... | 83 |
+| INPP | u6                              ... | 84 |
+| COM_INIT_POLL | 8000                            ... | 86 |
+| COMC_WAIT | 2                               ... | 87 |
+| COML_WAIT | 1000                            ... | 88 |
+| COM_LBASE | 4                               ... | 89 |
+| COM_PLU | 0                               ... | 93 |
+| COM_CIU | 1                               ... | 94 |
+| COM_CHU | 2                               ... | 95 |
+| COM_SNS | 3                               ... | 96 |
+| COMI_VALIDL | 02000                           ... | 100 |
+| COMI_PARITY | 00200                           ... | 101 |
+| COMI_DIALUP | 02001                           ... | 102 |
+| COMI_ENDID | 02002                           ... | 103 |
+| COMI_INTR | 02003                           ... | 104 |
+| COMI_QUIT | 02004                           ... | 105 |
+| COMI_HANGUP | 02005                           ... | 106 |
+| COMI_EOM | 03777                           ... | 107 |
+| COMI_COMP(x) | ((uint16) (03000 + ((x) & COMI_C... | 108 |
+| COMI_K35 | 1                               ... | 109 |
+| COMI_K37 | 7                               ... | 110 |
+| COMI_2741 | 8                               ... | 111 |
+| COMI_CMAX | 31                              ... | 112 |
+| COMI_BMAX | 50                              ... | 113 |
+| COMI_12BMAX | ((3 * COMI_BMAX) - 1)           ... | 114 |
+| COMO_LIN12B | INT64_C(0200000000000)          ... | 118 |
+| COMO_LINCTL | INT64_C(0100000000000)          ... | 119 |
+| COMO_GETLN(x) | (((uint32) ((x) >> 24)) & 0777) | 120 |
+| COMO_CTLRST | 00000                           ... | 121 |
+| COMO_BITRPT | 03777                           ... | 122 |
+| COMO_EOM12B | 07777                           ... | 123 |
+| COMO_BMAX | 94                              ... | 124 |
+| COMO_12BMAX | ((3 * COMO_BMAX) - 1) | 125 |
+| COMS_PCHK | INT64_C(004000000000000000000)  ... | 129 |
+| COMS_DCHK | INT64_C(002000000000000000000)  ... | 130 |
+| COMS_EXCC | INT64_C(001000000000000000000)  ... | 131 |
+| COMS_MLNT | INT64_C(000040000000000000000)  ... | 132 |
+| COMS_CHNH | INT64_C(000020000000000000000)  ... | 133 |
+| COMS_CHNQ | INT64_C(000010000000000000000)  ... | 134 |
+| COMS_ITMO | INT64_C(000000100000000000000)  ... | 135 |
+| COMS_DATR | INT64_C(000000004000000000000)  ... | 136 |
+| COMS_INBF | INT64_C(000000002000000000000)  ... | 137 |
+| COMS_SVCR | INT64_C(000000001000000000000)  ... | 138 |
+| COMS_PALL | INT64_C(000000000000000000000) | 139 |
+| COMS_DALL | INT64_C(000000000000000000000) | 140 |
+| COMS_EALL | INT64_C(000000000000000000000) | 141 |
+| COMS_DYN | INT64_C(000000007000000000000) | 142 |
+| COMR_FQ | 1                               ... | 146 |
+| COMR_IQ | 2                               ... | 147 |
+| COMR_OQ | 4                               ... | 148 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| com_chsel | 396-404 |  |
+| switch | 405-428 |  |
+| com_chwr | 429-441 |  |
+| coms_svc | 442-445 |  |
+| switch | 446-486 |  |
+| comc_svc | 487-492 |  |
+| switch | 493-633 |  |
+| comti_svc | 634-646 |  |
+| if | 647-670 |  |
+| comi_svc | 671-682 |  |
+| if | 683-690 |  |
+| for | 691-729 |  |
+| comto_svc | 730-747 |  |
+| como_svc | 748-752 |  |
+| if | 753-770 |  |
+| com_send_id | 771-790 |  |
+| com_queue_in | 791-794 |  |
+| if | 795-798 |  |
+| if | 799-817 |  |
+| com_queue_out | 818-826 |  |
+| if | 827-832 |  |
+| if | 833-837 |  |
+| switch | 838-864 |  |
+| com_gen_ccmp | 865-868 |  |
+| if | 869-879 |  |
+| com_getob | 880-883 |  |
+| if | 884-892 |  |
+| com_test_inp | 893-896 |  |
+| for | 897-905 |  |
+| com_set_inpp | 906-914 |  |
+| com_qdone | 915-916 |  |
+| if | 917-925 |  |
+| com_end | 926-935 |  |
+| com_gethd_free | 936-946 |  |
+| com_gettl_free | 947-957 |  |
+| com_new_puttl | 958-961 |  |
+| if | 962-971 |  |
+| com_gethd | 972-975 |  |
+| if | 976-986 |  |
+| com_gettl | 987-992 |  |
+| if | 993-997 |  |
+| for | 998-1009 |  |
+| com_puttl | 1010-1021 |  |
+| com_set_sns | 1022-1036 |  |
+| com_reset | 1037-1040 |  |
+| if | 1041-1051 |  |
+| if | 1052-1066 |  |
+| for | 1067-1074 |  |
+| for | 1075-1088 |  |
+| com_attach | 1089-1102 |  |
+| com_detach | 1103-1116 |  |
+| com_reset_ln | 1117-1132 |  |
+| com_show_qsumm | 1133-1137 |  |
+| for | 1138-1152 |  |
+| com_show_char | 1153-1163 |  |
+| com_show_freeq | 1164-1169 |  |
+| com_show_oneq | 1170-1178 |  |
+| if | 1179-1192 |  |
+| com_show_allq | 1193-1201 |  |
+| com_show_ctrl | 1202-1213 |  |

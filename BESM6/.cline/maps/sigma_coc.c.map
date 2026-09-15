@@ -1,0 +1,91 @@
+=== sigma_coc.c — 670 строк ===
+Источник: sigma_coc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sigma_coc.c -nt .cline/maps/sigma_coc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| chan_ctl_time | 95 | |
+| CC | 96 | |
+| mux_dib | 122 | |
+| ln | 344 | |
+| st | 421 | |
+| cmd | 422 | |
+| SCPE_OK | 444 | |
+| newln | 456 | |
+| SCPE_OK | 486 | |
+| st | 493 | |
+| SCPE_OK | 506 | |
+| SCPE_OK | 544 | |
+| return | 576 | |
+| muxl_dev.flags | 587 | |
+| SCPE_OK | 593 | |
+| SCPE_OK | 606 | |
+| newln | 628 | |
+| MUX_NUMLIN | 656 | |
+| SCPE_OK | 657 | |
+| mux_sta | 665 | |
+| mux_rbuf | 666 | |
+| mux_xbuf | 667 | |
+| mux_ldsc | 668 | |
+| return | 669 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MUX_LINES | 64                              ... | 42 |
+| MUX_LINES_DFLT | 8                               ... | 43 |
+| MUX_INIT_POLL | 8000 | 44 |
+| MUXL_WAIT | 500 | 45 |
+| MUX_NUMLIN | mux_desc.lines                  ... | 46 |
+| MUXC | 0                               ... | 48 |
+| MUXI | 1                               ... | 49 |
+| MUXL_XIA | 0x01                            ... | 53 |
+| MUXL_XIR | 0x02                            ... | 54 |
+| MUXL_REP | 0x04                            ... | 55 |
+| MUXL_RBP | 0x10                            ... | 56 |
+| MUXC_IDLE | 0                               ... | 60 |
+| MUXC_INIT | 1                               ... | 61 |
+| MUXC_RCV | 2                               ... | 62 |
+| MUXC_END | 3                               ... | 63 |
+| MUXDIO_V_FNC | 0                               ... | 67 |
+| MUXDIO_M_FNC | 0xF | 68 |
+| MUXDIO_V_COC | 4                               ... | 69 |
+| MUXDIO_M_COC | 0xF | 70 |
+| MUXDIO_GETFNC(x) | (((x) >> MUXDIO_V_FNC) & MUXDIO_... | 71 |
+| MUXDIO_GETCOC(x) | (((x) >> MUXDIO_V_COC) & MUXDIO_... | 72 |
+| MUXDAT_V_LIN | 0                               ... | 74 |
+| MUXDAT_M_LIN | (MUX_LINES - 1) | 75 |
+| MUXDAT_V_CHR | 8                               ... | 76 |
+| MUXDAT_M_CHR | 0xFF | 77 |
+| MUXDAT_GETLIN(x) | (((x) >> MUXDAT_V_LIN) & MUXDAT_... | 78 |
+| MUXDAT_GETCHR(x) | (((x) >> MUXDAT_V_CHR) & MUXDAT_... | 79 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mux_disp | 277-278 |  |
+| switch | 279-341 |  |
+| mux_dio | 342-347 |  |
+| if | 348-355 |  |
+| if | 356-418 |  |
+| muxc_svc | 419-423 |  |
+| if | 424-433 |  |
+| if | 434-452 |  |
+| muxi_rtc_svc | 453-460 |  |
+| if | 461-465 |  |
+| for | 466-490 |  |
+| muxi_put_char | 491-500 |  |
+| if | 501-510 |  |
+| mux_chan_err | 511-521 |  |
+| muxo_svc | 522-526 |  |
+| if | 527-548 |  |
+| mux_tio_status | 549-557 |  |
+| mux_scan_next | 558-565 |  |
+| for | 566-580 |  |
+| mux_reset | 581-597 |  |
+| mux_attach | 598-610 |  |
+| mux_detach | 611-625 |  |
+| mux_vlines | 626-636 |  |
+| if | 637-661 |  |
+| mux_reset_ln | 662-670 |  |

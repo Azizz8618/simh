@@ -1,0 +1,155 @@
+=== vax410_sysdev.c — 988 строк ===
+Источник: vax410_sysdev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax410_sysdev.c -nt .cline/maps/vax410_sysdev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| boot_code_filename | 36 | |
+| tmr_int | 76 | |
+| clk_unit | 77 | |
+| tmr_poll | 78 | |
+| vc_sel | 79 | |
+| va_dev | 80 | |
+| xs_dev | 81 | |
+| rom | 82 | |
+| int_unmask | 196 | |
+| ma | 225 | |
+| dat | 226 | |
+| ma | 250 | |
+| dat | 251 | |
+| ba | 253 | |
+| bc | 254 | |
+| ma | 275 | |
+| dat | 276 | |
+| ma | 300 | |
+| dat | 301 | |
+| ba | 303 | |
+| bc | 304 | |
+| ba | 352 | |
+| bc | 353 | |
+| ba | 402 | |
+| bc | 403 | |
+| ddb | 426 | |
+| ddb | 437 | |
+| ka_cfgtst | 442 | |
+| val | 454 | |
+| val | 494 | |
+| return | 529 | |
+| val | 577 | |
+| val | 605 | |
+| return | 650 | |
+| return | 705 | |
+| return | 775 | |
+| st | 782 | |
+| st | 791 | |
+| in_ie | 796 | |
+| in_ie | 802 | |
+| cc | 803 | |
+| temp | 810 | |
+| gbuf | 837 | |
+| cdptr | 851 | |
+| PC | 854 | |
+| PSL | 855 | |
+| conisp | 856 | |
+| conpc | 857 | |
+| conpsl | 858 | |
+| SCPE_OK | 879 | |
+| ka_mser | 886 | |
+| ka_mear | 887 | |
+| sim_vm_cmd | 907 | |
+| SCPE_OK | 909 | |
+| devices" | 914 | |
+| SCPE_OK | 919 | |
+| SCPE_OK | 924 | |
+| gbuf | 929 | |
+| SCPE_OK | 973 | |
+| SCPE_OK | 979 | |
+| SCPE_OK | 987 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CFGT_MEM | 0x07                            ... | 50 |
+| CFGT_VID | 0x08                            ... | 51 |
+| CFGT_CUR | 0x10                            ... | 52 |
+| CFGT_L3C | 0x20                            ... | 53 |
+| CFGT_NET | 0x40                            ... | 54 |
+| CFGT_TYP | 0x80                            ... | 55 |
+| MSER_PE | 0x00000001                      ... | 59 |
+| MSER_WWP | 0x00000002                      ... | 60 |
+| MSER_PER | 0x00000040                      ... | 61 |
+| MSER_MCD0 | 0x00000100                      ... | 62 |
+| MSER_MBZ | 0xFFFFFEBC | 63 |
+| MSER_RD | (MSER_PE \| MSER_WWP \| MSER_PER \|  | 64 |
+| MSER_WR | (MSER_PE \| MSER_WWP) | 66 |
+| MSER_RS | (MSER_PER) | 67 |
+| MEAR_FAD | 0x00007FFF                      ... | 71 |
+| MEAR_RD | (MEAR_FAD) | 72 |
+| ROM_VEC | 0x8                             ... | 74 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eval_int | 160-175 |  |
+| if | 176-183 |  |
+| for | 184-192 |  |
+| get_vector | 193-197 |  |
+| if | 198-201 |  |
+| if | 202-204 |  |
+| for | 205-221 |  |
+| Map_ReadB | 222-227 |  |
+| if | 228-246 |  |
+| Map_ReadW | 247-254 |  |
+| if | 255-271 |  |
+| Map_WriteB | 272-277 |  |
+| if | 278-296 |  |
+| Map_WriteW | 297-304 |  |
+| if | 305-321 |  |
+| ddb_WriteB | 322-325 |  |
+| if | 326-347 |  |
+| ddb_WriteW | 348-353 |  |
+| if | 354-372 |  |
+| ddb_ReadB | 373-376 |  |
+| if | 377-397 |  |
+| ddb_ReadW | 398-403 |  |
+| if | 404-422 |  |
+| ddb_rd | 423-428 |  |
+| ddb_wr | 429-431 |  |
+| if | 432-439 |  |
+| cfg_rd | 440-444 |  |
+| ioreset_wr | 445-451 |  |
+| ReadIPR | 452-455 |  |
+| switch | 456-498 |  |
+| WriteIPR | 499-500 |  |
+| switch | 501-573 |  |
+| ReadReg | 574-578 |  |
+| for | 579-601 |  |
+| ReadRegU | 602-606 |  |
+| for | 607-635 |  |
+| WriteReg | 636-639 |  |
+| for | 640-662 |  |
+| WriteRegU | 663-666 |  |
+| for | 667-709 |  |
+| ka_rd | 710-713 |  |
+| switch | 714-734 |  |
+| ka_wr | 735-738 |  |
+| switch | 739-779 |  |
+| machine_check | 780-783 |  |
+| if | 784-807 |  |
+| con_halt | 808-834 |  |
+| vax410_boot | 835-847 |  |
+| cpu_boot | 848-860 |  |
+| if | 861-869 |  |
+| for | 870-883 |  |
+| sysd_reset | 884-892 |  |
+| if | 893-911 |  |
+| sysd_description | 912-916 |  |
+| auto_config | 917-921 |  |
+| build_dib_tab | 922-926 |  |
+| cpu_set_model | 927-933 |  |
+| if | 934-944 |  |
+| if | 945-957 |  |
+| if | 958-975 |  |
+| cpu_print_model | 976-981 |  |
+| cpu_model_help | 982-988 |  |

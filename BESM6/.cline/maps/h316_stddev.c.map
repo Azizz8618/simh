@@ -1,0 +1,132 @@
+=== h316_stddev.c — 972 строк ===
+Источник: h316_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test h316_stddev.c -nt .cline/maps/h316_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PC | 109 | |
+| stop_inst | 110 | |
+| dev_int | 112 | |
+| cpu_unit | 113 | |
+| ptp_stopioe | 117 | |
+| ptp_ptime | 119 | |
+| ttr_stopioe | 120 | |
+| ttr_xoff_read | 126 | |
+| ttp_tape_rcvd | 127 | |
+| ttp_xoff_rcvd | 128 | |
+| ptr_dib | 164 | |
+| ptp_dib | 209 | |
+| tty_dib | 249 | |
+| clk_dib | 314 | |
+| dat | 379 | |
+| SCPE_OK | 415 | |
+| saved_switches | 424 | |
+| sim_switches | 433 | |
+| uptr->STA | 440 | |
+| uptr->STA | 452 | |
+| ptr_unit.STA | 463 | |
+| SCPE_OK | 466 | |
+| PC | 498 | |
+| SCPE_OK | 499 | |
+| dat | 542 | |
+| SCPE_OK | 572 | |
+| ptp_unit.STA | 584 | |
+| SCPE_OK | 586 | |
+| dat | 655 | |
+| out | 662 | |
+| ruptr | 663 | |
+| SCPE_OK | 729 | |
+| c7b | 736 | |
+| ruptr | 737 | |
+| puptr | 738 | |
+| c7b | 746 | |
+| tty_ready | 772 | |
+| SCPE_OK | 774 | |
+| tuptr | 781 | |
+| tuptr->pos | 784 | |
+| SCPE_OK | 787 | |
+| puptr | 795 | |
+| SCPE_OK | 814 | |
+| tty_buf | 824 | |
+| tty_2nd | 825 | |
+| tty_ready | 826 | |
+| tty_busy | 827 | |
+| ttp_tape_rcvd | 829 | |
+| ttp_xoff_rcvd | 830 | |
+| tty_unit | 831 | |
+| tty_unit | 832 | |
+| SCPE_OK | 835 | |
+| SCPE_OK | 848 | |
+| SCPE_OK | 859 | |
+| SCPE_OK | 876 | |
+| dat | 927 | |
+| SCPE_OK | 940 | |
+| SCPE_OK | 951 | |
+| clk_tps | 962 | |
+| SCPE_OK | 963 | |
+| SCPE_OK | 971 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_ASC | (TTUF_V_UF + 0)                 ... | 95 |
+| UNIT_V_UASC | (TTUF_V_UF + 1)                 ... | 96 |
+| UNIT_ASC | (1 << UNIT_V_ASC) | 97 |
+| UNIT_UASC | (1 << UNIT_V_UASC) | 98 |
+| STA | u3                              ... | 99 |
+| LF_PEND | 01                              ... | 100 |
+| RUNNING | 02                              ... | 101 |
+| XON | 0021 | 103 |
+| TAPE | 0022 | 104 |
+| XOFF | 0023 | 105 |
+| RUBOUT | 0377 | 106 |
+| TTI | 0 | 244 |
+| TTO | 1 | 245 |
+| TTR | 2 | 246 |
+| TTP | 3 | 247 |
+| PBOOT_START | 1 | 471 |
+| PBOOT_SIZE | (sizeof (pboot) / sizeof (int32)) | 472 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ptrio | 346-347 |  |
+| switch | 348-383 |  |
+| ptr_svc | 384-389 |  |
+| if | 390-420 |  |
+| pt_attach | 421-445 |  |
+| pt_detach | 446-457 |  |
+| ptr_reset | 458-491 |  |
+| ptr_boot | 492-503 |  |
+| ptpio | 504-505 |  |
+| switch | 506-546 |  |
+| ptp_svc | 547-551 |  |
+| if | 552-557 |  |
+| if | 558-565 |  |
+| if | 566-576 |  |
+| ptp_reset | 577-590 |  |
+| ttyio | 591-592 |  |
+| switch | 593-659 |  |
+| tti_svc | 660-665 |  |
+| if | 666-673 |  |
+| if | 674-722 |  |
+| if | 723-733 |  |
+| tto_svc | 734-740 |  |
+| if | 741-746 |  |
+| if | 747-753 |  |
+| if | 754-760 |  |
+| if | 761-764 |  |
+| if | 765-778 |  |
+| tto_write | 779-791 |  |
+| ttp_write | 792-818 |  |
+| tty_reset | 819-839 |  |
+| ttio_set_mode | 840-852 |  |
+| ttrp_set_mode | 853-863 |  |
+| ttrp_set_start_stop | 864-880 |  |
+| clkio | 881-882 |  |
+| switch | 883-931 |  |
+| clk_svc | 932-944 |  |
+| clk_reset | 945-955 |  |
+| clk_set_freq | 956-967 |  |
+| clk_show_freq | 968-972 |  |

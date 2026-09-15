@@ -1,0 +1,86 @@
+=== hp2100_ds.c — 1684 строк ===
+Источник: hp2100_ds.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_ds.c -nt .cline/maps/hp2100_ds.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 161-172 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ds_interface | 190 | |
+| output_state | 461 | |
+| signal | 463 | |
+| working_set | 464 | |
+| outbound | 465 | |
+| irq_enabled | 466 | |
+| command_issued | 467 | |
+| interrupt_enabled | 468 | |
+| result | 743 | |
+| seek_completion | 744 | |
+| result | 885 | |
+| result | 1005 | |
+| unit | 1038 | |
+| SCPE_OK | 1061 | |
+| result | 1088 | |
+| offset | 1089 | |
+| zero | 1090 | |
+| result | 1122 | |
+| result | 1129 | |
+| start | 1375 | |
+| unit | 1468 | |
+| uptr | 1469 | |
+| drive_command | 1470 | |
+| return | 1504 | |
+| return | 1542 | |
+| return | 1562 | |
+| index | 1593 | |
+| return | 1609 | |
+| data | 1629 | |
+| data | 1644 | |
+| return | 1659 | |
+| result | 1671 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DS_DRIVES | (DL_MAXDRIVE + 1)               ... | 145 |
+| DS_UNITS | (DS_DRIVES + DL_AUXUNITS)       ... | 146 |
+| FIFO_SIZE | 16                              ... | 150 |
+| FIFO_EMPTY | (ds.fifo_count == 0)            ... | 152 |
+| FIFO_STOP | (ds.fifo_count >= 5)            ... | 153 |
+| FIFO_FULL | (ds.fifo_count == FIFO_SIZE)    ... | 154 |
+| PRESET_ENABLE | TRUE                            ... | 156 |
+| UNIT_FLAGS | (UNIT_FIX \| UNIT_ATTABLE \| UNIT_... | 232 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ds_interface | 459-469 |  |
+| while | 470-740 |  |
+| ds_service_drive | 741-827 |  |
+| if | 828-882 |  |
+| ds_service_controller | 883-889 |  |
+| switch | 890-982 |  |
+| if | 983-1002 |  |
+| ds_service_timer | 1003-1035 |  |
+| ds_reset | 1036-1039 |  |
+| if | 1040-1085 |  |
+| ds_attach | 1086-1093 |  |
+| if | 1094-1119 |  |
+| ds_detach | 1120-1370 |  |
+| ds_boot | 1371-1410 |  |
+| ds_load_unload | 1411-1465 |  |
+| start_command | 1466-1480 |  |
+| if | 1481-1518 |  |
+| poll_interface | 1519-1520 |  |
+| if | 1521-1554 |  |
+| poll_drives | 1555-1590 |  |
+| fifo_load | 1591-1594 |  |
+| if | 1595-1626 |  |
+| fifo_unload | 1627-1630 |  |
+| if | 1631-1652 |  |
+| fifo_clear | 1653-1668 |  |
+| activate_unit | 1669-1684 |  |

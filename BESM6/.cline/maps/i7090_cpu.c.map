@@ -1,0 +1,79 @@
+=== i7090_cpu.c — 4460 строк ===
+Источник: i7090_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7090_cpu.c -nt .cline/maps/i7090_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rtc_tps | 225 | |
+| iocheck | 253 | |
+| drum_addr | 282 | |
+| SCPE_OK | 4458 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_MSIZE | (UNIT_V_UF + 0) | 165 |
+| UNIT_MSIZE | (7 << UNIT_V_MSIZE) | 166 |
+| UNIT_V_CPUMODEL | (UNIT_V_UF + 4) | 167 |
+| UNIT_MODEL | (0x3 << UNIT_V_CPUMODEL) | 168 |
+| CPU_MODEL | ((cpu_unit.flags >> UNIT_V_CPUMO... | 169 |
+| MODEL(x) | (x << UNIT_V_CPUMODEL) | 170 |
+| MEMAMOUNT(x) | (x << UNIT_V_MSIZE) | 171 |
+| UNIT_DUALCORE | (1 << (UNIT_V_CPUMODEL + 2)) | 172 |
+| UNIT_FASTIO | (1 << (UNIT_V_CPUMODEL + 3)) | 173 |
+| OPTION_EFP | (1 << (UNIT_V_CPUMODEL + 4)) | 174 |
+| OPTION_TIMER | (1 << (UNIT_V_CPUMODEL + 5)) | 175 |
+| OPTION_FPSM | (1 << (UNIT_V_UF_31)) | 176 |
+| CPU_704 | 0 | 178 |
+| CPU_709 | 1 | 179 |
+| CPU_7090 | 2 | 180 |
+| CPU_7094 | 3 | 181 |
+| TMR_RTC | 0 | 183 |
+| HIST_XCT | 1       /* instruction */ | 185 |
+| HIST_INT | 2       /* interrupt cycle */ | 186 |
+| HIST_TRP | 3       /* trap cycle */ | 187 |
+| HIST_MIN | 64 | 188 |
+| HIST_MAX | 1000000 | 189 |
+| HIST_NOEA | 0x40000000 | 190 |
+| HIST_PC | 0x10000 | 191 |
+| DP_FLOAT | 1 | 284 |
+| CHANNEL | 2 | 285 |
+| MULTIIX | 4 | 286 |
+| TIMER | 7 | 287 |
+| INDICATORS | 16 | 288 |
+| PROTECT | 32 | 289 |
+| DUALCORE | 64 | 290 |
+| T_B | 0x0001          /* Do load with ... | 400 |
+| T_D | 0x0002          /* Do ea, but no... | 401 |
+| T_F | 0x0004          /* Ea = Y, no in... | 402 |
+| T_T | 0x0008          /* Do ea with in... | 403 |
+| S_B | 0x0010          /* Do ea, but st... | 404 |
+| S_F | 0x0020          /* Ea = Y, no in... | 405 |
+| S_X | 0x0040          /* Store index r... | 406 |
+| T_N | 0x0100          /* Nop op addres... | 407 |
+| I_9 | 0x0200          /* 709 and up */ | 408 |
+| I_94 | 0x0400          /* 7094 only */ | 409 |
+| I_D | 0x0800          /* Need dual cor... | 410 |
+| X_T | 0x1000          /* Trap if in io... | 411 |
+| X_P | 0x2000          /* Trap if in pr... | 412 |
+| X_C | 0x4000          /* Trap if in co... | 413 |
+| N | 0x0000          /* No instructio... | 414 |
+| CORE_B | 0100000        /* Core B base ad... | 637 |
+| ReadMem(ind, | reg)  | 663 |
+| WriteMem() |  | 689 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 713-4168 |  |
+| cpu_cmd | 4169-4179 | Nothing special to do, just return true if cmd is write and we got here |
+| cpu_reset | 4180-4211 |  |
+| rtc_srv | 4212-4226 |  |
+| cpu_ex | 4227-4239 |  |
+| cpu_dep | 4240-4248 |  |
+| cpu_set_size | 4249-4277 |  |
+| cpu_set_hist | 4278-4312 |  |
+| cpu_show_hist | 4313-4401 |  |
+| cpu_description | 4402-4411 |  |
+| cpu_help | 4412-4460 |  |

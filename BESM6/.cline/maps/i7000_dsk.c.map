@@ -1,0 +1,103 @@
+=== i7000_dsk.c — 1885 строк ===
+Источник: i7000_dsk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7000_dsk.c -nt .cline/maps/i7000_dsk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dbuffer | 135 | |
+| fbuffer | 138 | |
+| fmt_cyl | 141 | |
+| dtrack | 144 | |
+| arm_cyl | 147 | |
+| sense | 148 | |
+| sense_unit | 149 | |
+| SCPE_OK | 1877 | |
+| controller" | 1882 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_DSK | UNIT_ATTABLE \| UNIT_DISABLE \| UN... | 50 |
+| FORMAT_OK | (1 << (UNIT_V_LOCAL+0)) | 51 |
+| HA2_OK | (1 << (UNIT_V_LOCAL+1)) | 52 |
+| CTSS_BOOT | (1 << (UNIT_V_MODE)) | 53 |
+| DSKSTA_CMD | 0x0000100       /* Unit has reci... | 56 |
+| DSKSTA_DATA | 0x0000200       /* Unit has fini... | 57 |
+| DSKSTA_WRITE | 0x0000400       /* Last command ... | 58 |
+| DSKSTA_CHECK | 0x0000800       /* Doing a write... | 59 |
+| DSKSTA_CMSK | 0x00000ff       /* Command mask */ | 60 |
+| DSKSTA_ARGMSK | 0x0fff000       /* Command argum... | 61 |
+| DSKSTA_ARGSHFT | 12 | 62 |
+| DSKSTA_SCAN | 0x1000000       /* Scanning for ... | 63 |
+| DSKSTA_SKIP | 0x2000000       /* Skiping recor... | 64 |
+| DSKSTA_XFER | 0x4000000       /* Tranfser curr... | 65 |
+| DSKSTA_DIRTY | 0x8000000       /* Buffer needs ... | 66 |
+| FMT_DATA | 0               /* Data */ | 68 |
+| FMT_HDR | 1               /* Header */ | 69 |
+| FMT_HA2 | 2               /* Home address ... | 70 |
+| FMT_END | 3               /* End of track */ | 71 |
+| DNOP | 0x00            /* Nop */ | 74 |
+| DREL | 0x04            /* Release */ | 75 |
+| DEBM | 0x08            /* Eight Bit mod... | 76 |
+| DSBM | 0x09            /* Six bit mode */ | 77 |
+| DSEK | 0x80            /* Seek */ | 78 |
+| DVSR | 0x82            /* Prepare to Ve... | 79 |
+| DWRF | 0x83            /* Prepare to Fo... | 80 |
+| DVTN | 0x84            /* Prepare to Ve... | 81 |
+| DVCY | 0x85            /* Prepare to Ve... | 82 |
+| DWRC | 0x86            /* Prepare to Wr... | 83 |
+| DSAI | 0x87            /* Set Access In... | 84 |
+| DVTA | 0x88            /* Prepare to Ve... | 85 |
+| DVHA | 0x89            /* Prepare to Ve... | 86 |
+| STAT_SIXBIT | 0x00004         /* Disk in 6bit ... | 89 |
+| EXPT_FILECHK | 0x10010         /* File control ... | 90 |
+| EXPT_DSKCHK | 0x10020         /* Disk storage ... | 91 |
+| STAT_NOTRDY | 0x10040         /* Disk no ready */ | 92 |
+| STAT_OFFLINE | 0x10080         /* Disk offline */ | 93 |
+| DATA_PARITY | 0x20100         /* Data parity e... | 94 |
+| DATA_CHECK | 0x20200         /* Compare error */ | 95 |
+| DATA_RESPONSE | 0x20400         /* Response chec... | 96 |
+| PROG_INVADDR | 0x40800         /* Invalid seek ... | 97 |
+| PROG_NOREC | 0x41000         /* No record fou... | 98 |
+| PROG_FMTCHK | 0x42000         /* Format check */ | 99 |
+| PROG_INVCODE | 0x44000         /* Invalid code */ | 100 |
+| PROG_INVSEQ | 0x48000         /* Invalid seque... | 101 |
+| MAXTRACK | 6020    /* Max size per track */ | 103 |
+| DISK_DEF(name, | cyl, cylpertrk, acc, charpertrk,... | 161 |
+| DSKSTA_BSY | 0x02    /* Controller busy. */ | 198 |
+| DSKSTA_EIGHT | 0x04    /* Controller in 8 bit m... | 199 |
+| CH1 | 4 | 202 |
+| CH2 | 6 | 203 |
+| CH1 | 5 | 206 |
+| CH2 | 6 | 207 |
+| CH1 | 5 | 210 |
+| CH2 | 6 | 211 |
+| CH1 | 1 | 214 |
+| CH2 | 2 | 217 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dsk_cmd | 298-328 |  |
+| dsk_srv | 329-537 |  |
+| disk_posterr | 538-572 |  |
+| disk_cmderr | 573-607 |  |
+| disk_cmd | 608-954 |  |
+| print_format | 955-997 |  |
+| disk_rblock | 998-1035 |  |
+| disk_wblock | 1036-1085 |  |
+| disk_format | 1086-1224 |  |
+| disk_write | 1225-1404 |  |
+| disk_read | 1405-1594 |  |
+| bcd_to_track | 1595-1607 |  |
+| dsk_boot | 1608-1700 |  |
+| dsk_ini | 1701-1706 |  |
+| dsk_reset | 1707-1751 |  |
+| dsk_set_type | 1752-1788 |  |
+| dsk_get_type | 1789-1797 |  |
+| dsk_set_module | 1798-1829 |  |
+| dsk_get_module | 1830-1849 |  |
+| for | 1850-1855 |  |
+| for | 1856-1879 |  |
+| dsk_description | 1880-1885 |  |

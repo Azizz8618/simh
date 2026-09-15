@@ -1,0 +1,67 @@
+=== ibm1130_disk.c — 891 строк ===
+Источник: ibm1130_disk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_disk.c -nt .cline/maps/ibm1130_disk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| trace_dms | 41 | |
+| dsk_dsw | 80 | |
+| raw_disk_debug | 85 | |
+| {DSK_FUNC_IDLE | 152 | |
+| boot_drive | 184 | |
+| nseg | 614 | |
+| phdebug_lo | 647 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TRACE_DMS_IO | /* define to enable debug of DMS... | 38 |
+| DSK_NUMWD | 321             /* words/sector */ | 51 |
+| DSK_NUMSC | 4               /* sectors/surfa... | 52 |
+| DSK_NUMSF | 2               /* surfaces/cyli... | 53 |
+| DSK_NUMCY | 203             /* cylinders/dri... | 54 |
+| DSK_NUMTR | (DSK_NUMCY * DSK_NUMSF)     /* t... | 55 |
+| DSK_NUMDR | 5               /* drives/contro... | 56 |
+| DSK_SIZE | (DSK_NUMCY * DSK_NUMSF * DSK_NUM... | 57 |
+| UNIT_V_RONLY | (UNIT_V_UF + 0) /* hwre write lo... | 59 |
+| UNIT_V_OPERR | (UNIT_V_UF + 1) /* operation err... | 60 |
+| UNIT_V_HARDERR | (UNIT_V_UF + 2) /* hard error fl... | 61 |
+| UNIT_RONLY | (1u << UNIT_V_RONLY) | 62 |
+| UNIT_OPERR | (1u << UNIT_V_OPERR) | 63 |
+| UNIT_HARDERR | (1u << UNIT_V_HARDERR) | 64 |
+| MEM_MAPPED(uptr) | (uptr->flags & UNIT_BUF)       /... | 66 |
+| IO_NONE | 0                   /* last oper... | 68 |
+| IO_READ | 1 | 69 |
+| IO_WRITE | 2 | 70 |
+| DSK_DSW_DATA_ERROR | 0x8000      /* device status wor... | 72 |
+| DSK_DSW_OP_COMPLETE | 0x4000 | 73 |
+| DSK_DSW_NOT_READY | 0x2000 | 74 |
+| DSK_DSW_DISK_BUSY | 0x1000 | 75 |
+| DSK_DSW_CARRIAGE_HOME | 0x0800 | 76 |
+| DSK_DSW_SECTOR_MASK | 0x0003 | 77 |
+| IS_ONLINE(u) | (((u)->flags & (UNIT_ATT\|UNIT_DI... | 110 |
+| CYL | u3              /* current cylin... | 114 |
+| FUNC | u4              /* current funct... | 115 |
+| MAXSLET | ((3*320)/4) | 597 |
+| MAXMSEG | 100 | 609 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| xio_disk | 186-374 |  |
+| diskfail | 375-387 |  |
+| dsk_svc | 388-468 |  |
+| dsk_reset | 469-497 |  |
+| dsk_attach | 498-546 |  |
+| dsk_detach | 547-575 |  |
+| dsk_boot | 576-615 |  |
+| enable_dms_tracing | 616-627 |  |
+| saywhere | 628-648 |  |
+| phdebug_cmd | 649-675 |  |
+| where_cmd | 676-698 |  |
+| addseg | 699-713 |  |
+| delseg | 714-724 |  |
+| savesector | 725-771 |  |
+| tracesector | 772-840 |  |
+| fdump_cmd | 841-891 |  |

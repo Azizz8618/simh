@@ -1,0 +1,66 @@
+=== hp_tapelib.h — 558 строк ===
+Источник: hp_tapelib.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp_tapelib.h -nt .cline/maps/hp_tapelib.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DELAY_PROPS | 353-361 |
+| CNTLR_VARS | 369-384 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TL_MAXDRIVE | 3                   /* last vali... | 67 |
+| TL_AUXUNITS | 1                   /* number of... | 68 |
+| TL_CNTLR_UNIT | (TL_MAXDRIVE + 1)   /* controlle... | 69 |
+| TL_MAXREC | (DV_UMAX + 1)       /* maximum s... | 71 |
+| TL_BUFSIZE | (TL_MAXREC + 2)     /* buffer si... | 72 |
+| TL_DEB_CMD | (1u << 0)           /* trace con... | 77 |
+| TL_DEB_INCO | (1u << 1)           /* trace com... | 78 |
+| TL_DEB_STATE | (1u << 2)           /* trace com... | 79 |
+| TL_DEB_SERV | (1u << 3)           /* trace uni... | 80 |
+| TL_DEB_XFER | (1u << 4)           /* trace dat... | 81 |
+| TL_DEB_IOB | (1u << 5)           /* trace I/O... | 82 |
+| TL_DEB_V_UF | 6                   /* first fre... | 83 |
+| PROP | u3                  /* drive pro... | 88 |
+| STATUS | u4                  /* drive sta... | 89 |
+| OPCODE | u5                  /* drive cur... | 90 |
+| PHASE | u6                  /* drive cur... | 91 |
+| DEV_REALTIME_SHIFT | (DEV_V_UF + 0)              /* b... | 96 |
+| DEV_REALTIME | (1 << DEV_REALTIME_SHIFT)   /* r... | 98 |
+| UNIT_MODEL_SHIFT | (MTUF_V_UF + 0)             /* b... | 126 |
+| UNIT_OFFLINE_SHIFT | (MTUF_V_UF + 3)             /* b... | 127 |
+| UNIT_REW_SHIFT | (MTUF_V_UF + 4)             /* b... | 128 |
+| TL_UNIT_V_UF | (MTUF_V_UF + 5)             /* f... | 130 |
+| UNIT_MODEL_MASK | 0000007u                    /* m... | 132 |
+| UNIT_MODEL | (UNIT_MODEL_MASK << UNIT_MODEL_S... | 134 |
+| UNIT_OFFLINE | (1u << UNIT_OFFLINE_SHIFT) | 135 |
+| UNIT_REWINDING | (1u << UNIT_REW_SHIFT) | 136 |
+| UNIT_7970B | (HP_7970B << UNIT_MODEL_SHIFT) | 138 |
+| UNIT_7970E | (HP_7970E << UNIT_MODEL_SHIFT) | 139 |
+| UNIT_7974 | (HP_7974  << UNIT_MODEL_SHIFT) | 140 |
+| UNIT_7978 | (HP_7978  << UNIT_MODEL_SHIFT) | 141 |
+| TLIFN(C) | ((CNTLR_IFN_SET) ((C) & ~D16_MASK)) | 146 |
+| TLIBUS(C) | ((CNTLR_IBUS)    ((C) &  D16_MASK)) | 147 |
+| TLNEXTIFN(S) | ((CNTLR_IFN) IOPRIORITY (S)) | 149 |
+| LAST_CNTLR | HP_IB | 171 |
+| CNTLR_COUNT | (LAST_CNTLR + 1) | 172 |
+| NO_FLAGS | (CNTLR_FLAG) 0          /* no fl... | 216 |
+| NO_FUNCTIONS | (CNTLR_IFN) 0           /* no fu... | 234 |
+| NO_DATA | (CNTLR_IBUS) 0          /* no da... | 242 |
+| DELAY_INIT(rstart,rrate,rstop,bot,ir,dxfr,ovhd) |  | 363 |
+| CNTLR_INIT(ctype,dev,bufptr,fast) |  | 399 |
+| TL_REGS(cntlr,units,numunits,buffer,times) |  | 425 |
+| TL_7970B | (1u << HP_7970B) | 485 |
+| TL_7970E | (1u << HP_7970E) | 486 |
+| TL_7974 | (1u << HP_7974) | 487 |
+| TL_7978 | (1u << HP_7978) | 488 |
+| TL_FIXED | 0 | 492 |
+| TL_800 | (1u << MT_DENS_800) | 493 |
+| TL_1600 | (1u << MT_DENS_1600) | 494 |
+| TL_6250 | (1u << MT_DENS_6250) | 495 |
+| IFTYPE(t,s) | (TL_##t & (s) ? #t : NULL),  | 497 |
+| IFDENSITY(s) | ((s) ? "DENSITY" : NULL),  | 500 |
+| TL_MODS(cntlr,typeset,densset,offvalid) |  | 503 |
+

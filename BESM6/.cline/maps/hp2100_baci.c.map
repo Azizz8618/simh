@@ -1,0 +1,163 @@
+=== hp2100_baci.c — 1696 строк ===
+Источник: hp2100_baci.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_baci.c -nt .cline/maps/hp2100_baci.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 331-337 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| baci_interface | 374 | |
+| ch | 597 | |
+| mask | 598 | |
+| signal | 599 | |
+| working_set | 600 | |
+| outbound | 601 | |
+| irq_enabled | 602 | |
+| data_bits | 954 | |
+| status | 957 | |
+| recv_loop | 958 | |
+| status | 1104 | |
+| SCPE_OK | 1140 | |
+| SCPE_OK | 1166 | |
+| status | 1174 | |
+| status | 1182 | |
+| status | 1190 | |
+| status | 1195 | |
+| return | 1246 | |
+| return | 1332 | |
+| data | 1443 | |
+| index | 1490 | |
+| pass_thru | 1491 | |
+| return | 1528 | |
+| uart_bits | 1567 | |
+| return | 1695 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FIFO_SIZE | 128                             ... | 176 |
+| ENQ | '\005' | 181 |
+| ACK | '\006' | 182 |
+| UNIT_V_DIAG | (UNIT_V_UF + 0)                 ... | 187 |
+| UNIT_V_FASTTIME | (UNIT_V_UF + 1)                 ... | 188 |
+| UNIT_V_CAPSLOCK | (UNIT_V_UF + 2)                 ... | 189 |
+| UNIT_DIAG | (1 << UNIT_V_DIAG) | 191 |
+| UNIT_FASTTIME | (1 << UNIT_V_FASTTIME) | 192 |
+| UNIT_CAPSLOCK | (1 << UNIT_V_CAPSLOCK) | 193 |
+| OUT_MR | 0100000                         ... | 198 |
+| OUT_ENCM | 0000040                         ... | 200 |
+| OUT_ENCB | 0000020                         ... | 201 |
+| OUT_ENCC | 0000010                         ... | 202 |
+| OUT_ENCE | 0000004                         ... | 203 |
+| OUT_ENCF | 0000002                         ... | 204 |
+| OUT_ENSXX | 0000001                         ... | 205 |
+| OUT_DIAG | 0000040                         ... | 207 |
+| OUT_REFCB | 0000020                         ... | 208 |
+| OUT_REFCC | 0000010                         ... | 209 |
+| OUT_REFCE | 0000004                         ... | 210 |
+| OUT_REFCF | 0000002                         ... | 211 |
+| OUT_REFSXX | 0000001                         ... | 212 |
+| OUT_STBITS | 0000040                         ... | 214 |
+| OUT_ECHO | 0000020                         ... | 215 |
+| OUT_PARITY | 0000010                         ... | 216 |
+| OUT_PAREVEN | 0000004                         ... | 217 |
+| OUT_XMIT | 0000400                         ... | 219 |
+| OUT_CA | 0000200                         ... | 220 |
+| OUT_CD | 0000100                         ... | 221 |
+| OUT_SXX | 0000040                         ... | 222 |
+| OUT_DCPC | 0000020                         ... | 223 |
+| OUT_CSC | 0000040                         ... | 225 |
+| OUT_CBH | 0000020                         ... | 226 |
+| OUT_CBF | 0000010                         ... | 227 |
+| OUT_CBE | 0000004                         ... | 228 |
+| OUT_CBRK | 0000002                         ... | 229 |
+| OUT_COVR | 0000001                         ... | 230 |
+| OUT_SPFLAG | 0000400                         ... | 232 |
+| OUT_IRQCLR | (OUT_CBH \| OUT_CBF \| OUT_CBE \| O... | 234 |
+| IN_VALID | 0100000                         ... | 237 |
+| IN_SPFLAG | 0040000                         ... | 238 |
+| IN_DEVINT | 0100000                         ... | 240 |
+| IN_SPCHAR | 0040000                         ... | 241 |
+| IN_SPARE | 0010000                         ... | 242 |
+| IN_TEST | 0004000                         ... | 243 |
+| IN_BUFHALF | 0001000                         ... | 244 |
+| IN_BUFFULL | 0000400                         ... | 245 |
+| IN_BUFEMPTY | 0000200                         ... | 246 |
+| IN_BREAK | 0000100                         ... | 247 |
+| IN_OVRUNPE | 0000040                         ... | 248 |
+| IN_CB | 0000020                         ... | 249 |
+| IN_CC | 0000010                         ... | 250 |
+| IN_CE | 0000004                         ... | 251 |
+| IN_CF | 0000002                         ... | 252 |
+| IN_SXX | 0000001                         ... | 253 |
+| IN_MODEM | (IN_CB \| IN_CC \| IN_CE \| IN_CF \|... | 255 |
+| IN_DIAG | (IN_DEVINT \| IN_SPARE \| IN_TEST ... | 256 |
+| IN_STDIRQ | (IN_DEVINT \| IN_SPCHAR \| IN_BREA... | 257 |
+| IN_FIFOIRQ | (IN_BUFEMPTY \| IN_BUFHALF \| IN_B... | 258 |
+| OUT_V_ID | 12                              ... | 263 |
+| OUT_V_DATA | 0                              /... | 264 |
+| OUT_V_CHARSIZE | 0                              /... | 265 |
+| OUT_V_BAUDRATE | 0                              /... | 266 |
+| OUT_V_SPCHAR | 0                              /... | 267 |
+| IN_V_CHARCNT | 8                              /... | 269 |
+| IN_V_DATA | 0                              /... | 270 |
+| IN_V_IRQCLR | 5                              /... | 271 |
+| OUT_W_ID | 3 | 276 |
+| OUT_W_DATA | 8 | 277 |
+| OUT_W_CHARSIZE | 2 | 278 |
+| OUT_W_BAUDRATE | 4 | 279 |
+| OUT_W_SPCHAR | 8 | 280 |
+| IN_W_CHARCNT | 6 | 282 |
+| IN_W_DATA | 8 | 283 |
+| OUT_M_ID | ((1 << OUT_W_ID)       - 1) | 287 |
+| OUT_M_DATA | ((1 << OUT_W_DATA)     - 1) | 288 |
+| OUT_M_CHARSIZE | ((1 << OUT_W_CHARSIZE) - 1) | 289 |
+| OUT_M_BAUDRATE | ((1 << OUT_W_BAUDRATE) - 1) | 290 |
+| OUT_M_SPCHAR | ((1 << OUT_W_SPCHAR)   - 1) | 291 |
+| IN_M_CHARCNT | ((1 << IN_W_CHARCNT) - 1) | 293 |
+| IN_M_DATA | ((1 << IN_W_DATA)    - 1) | 294 |
+| OUT_ID | (OUT_M_ID       << OUT_V_ID) | 298 |
+| OUT_DATA | (OUT_M_DATA     << OUT_V_DATA) | 299 |
+| OUT_CHARSIZE | (OUT_M_CHARSIZE << OUT_V_CHARSIZE) | 300 |
+| OUT_BAUDRATE | (OUT_M_BAUDRATE << OUT_V_BAUDRATE) | 301 |
+| OUT_SPCHAR | (OUT_M_SPCHAR   << OUT_V_SPCHAR) | 302 |
+| IN_CHARCNT | (IN_M_CHARCNT << IN_V_CHARCNT) | 304 |
+| IN_DATA | (IN_M_DATA    << IN_V_DATA) | 305 |
+| TO_CHARCNT(c) | (((c) << IN_V_CHARCNT) & IN_CHAR... | 310 |
+| GET_ID(i) | (((i) & OUT_ID) >> OUT_V_ID) | 312 |
+| GET_BAUDRATE(b) | (((b) & OUT_BAUDRATE) >> OUT_V_B... | 313 |
+| IO_MODE | (baci_icw & OUT_XMIT) | 315 |
+| XMIT | OUT_XMIT | 316 |
+| RECV | 0 | 317 |
+| CLEAR_HR | 0                              /... | 319 |
+| CLEAR_R | -1                              ... | 320 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| baci_interface | 594-603 |  |
+| while | 604-951 |  |
+| baci_term_svc | 952-967 |  |
+| while | 968-1042 |  |
+| while | 1043-1085 |  |
+| if | 1086-1122 |  |
+| baci_poll_svc | 1123-1145 |  |
+| baci_reset | 1146-1158 |  |
+| if | 1159-1171 |  |
+| baci_attach | 1172-1177 |  |
+| if | 1178-1187 |  |
+| baci_detach | 1188-1213 |  |
+| master_reset | 1214-1240 |  |
+| if | 1241-1268 |  |
+| update_status | 1269-1270 |  |
+| if | 1271-1346 |  |
+| service_time | 1347-1440 |  |
+| fifo_get | 1441-1446 |  |
+| if | 1447-1487 |  |
+| fifo_put | 1488-1564 |  |
+| clock_uart | 1565-1568 |  |
+| if | 1569-1696 |  |

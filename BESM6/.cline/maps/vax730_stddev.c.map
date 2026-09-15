@@ -1,0 +1,86 @@
+=== vax730_stddev.c — 1068 строк ===
+Источник: vax730_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax730_stddev.c -nt .cline/maps/vax730_stddev.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RXCS_RD | (CSR_DONE + CSR_IE)             ... | 67 |
+| RXCS_WR | (CSR_IE) | 68 |
+| RXDB_V_SEL | 8                               ... | 69 |
+| RXDB_M_SEL | 0xF | 70 |
+| RXDB_TERM | 0x0                             ... | 71 |
+| RXDB_MISC | 0xF                             ... | 72 |
+| RXDB_ERR | 0x8000                          ... | 73 |
+| TXCS_RD | (CSR_DONE + CSR_IE)             ... | 74 |
+| TXCS_WR | (CSR_IE) | 75 |
+| TXDB_V_SEL | 8                               ... | 76 |
+| TXDB_M_SEL | 0xF | 77 |
+| TXDB_TERM | 0x0                             ... | 78 |
+| TXDB_MISC | 0xF                             ... | 79 |
+| MISC_MASK | 0xFF                           /... | 80 |
+| MISC_SWDN | 0x1                            /... | 81 |
+| MISC_BOOT | 0x2                            /... | 82 |
+| MISC_CLWS | 0x3                            /... | 83 |
+| MISC_CLCS | 0x4                            /... | 84 |
+| TXDB_SEL | (TXDB_M_SEL << TXDB_V_SEL)      ... | 85 |
+| TXDB_GETSEL(x) | (((x) >> TXDB_V_SEL) & TXDB_M_SEL) | 86 |
+| TMR_CSR_ERR | 0x80000000                      ... | 90 |
+| TMR_CSR_DON | 0x00000080                      ... | 91 |
+| TMR_CSR_IE | 0x00000040                      ... | 92 |
+| TMR_CSR_SGL | 0x00000020                      ... | 93 |
+| TMR_CSR_XFR | 0x00000010                      ... | 94 |
+| TMR_CSR_RUN | 0x00000001                      ... | 95 |
+| TMR_CSR_RD | (TMR_CSR_W1C \| TMR_CSR_WR) | 96 |
+| TMR_CSR_W1C | (TMR_CSR_ERR \| TMR_CSR_DON) | 97 |
+| TMR_CSR_WR | (TMR_CSR_IE \| TMR_CSR_RUN) | 98 |
+| TMR_INC | 10000                           ... | 99 |
+| CLK_DELAY | 5000                            ... | 100 |
+| TMXR_MULT | 1                               ... | 101 |
+| TD_OPDAT | 001                             ... | 117 |
+| TD_OPCMD | 002                             ... | 118 |
+| TD_OPINI | 004                             ... | 119 |
+| TD_OPBOO | 010                             ... | 120 |
+| TD_OPCNT | 020                             ... | 121 |
+| TD_OPXOF | 023                             ... | 122 |
+| TD_CMDNOP | 0000                            ... | 124 |
+| TD_CMDINI | 0001                            ... | 125 |
+| TD_CMDRD | 0002                            ... | 126 |
+| TD_CMDWR | 0003                            ... | 127 |
+| TD_CMDPOS | 0005                            ... | 128 |
+| TD_CMDDIA | 0007                            ... | 129 |
+| TD_CMDGST | 0010                            ... | 130 |
+| TD_CMDSST | 0011                            ... | 131 |
+| TD_CMDMRSP | 0012                            ... | 132 |
+| TD_CMDEND | 0100                            ... | 133 |
+| TD_STSOK | 0000                            ... | 135 |
+| TD_STSRTY | 0001                            ... | 136 |
+| TD_STSFAIL | 0377                            ... | 137 |
+| TD_STSPO | 0376                            ... | 138 |
+| TD_STSBUN | 0370                            ... | 139 |
+| TD_STSNC | 0367                            ... | 140 |
+| TD_STSWP | 0365                            ... | 141 |
+| TD_STSDCE | 0357                            ... | 142 |
+| TD_STSSE | 0340                            ... | 143 |
+| TD_STSMS | 0337                            ... | 144 |
+| TD_STSBOP | 0320                            ... | 145 |
+| TD_STSBBN | 0311                            ... | 146 |
+| TD_GETOPC | 0                               ... | 148 |
+| TD_GETLEN | 1                               ... | 149 |
+| TD_GETDATA | 2                               ... | 150 |
+| TD_IDLE | 0                               ... | 152 |
+| TD_READ | 1                               ... | 153 |
+| TD_READ1 | 2                               ... | 154 |
+| TD_READ2 | 3                               ... | 155 |
+| TD_WRITE | 4                               ... | 156 |
+| TD_WRITE1 | 5                               ... | 157 |
+| TD_WRITE2 | 6                               ... | 158 |
+| TD_END | 7                               ... | 159 |
+| TD_END1 | 8                               ... | 160 |
+| TD_INIT | 9                               ... | 161 |
+| TMR_DB_TODR | 0x10    /* TODR */ | 309 |
+| TMR_DB_REG | 0x01    /* Register Access */ | 337 |
+| TMR_DB_TICK | 0x02    /* Ticks */ | 338 |
+| TMR_DB_SCHED | 0x04    /* Scheduling */ | 339 |
+| TMR_DB_INT | 0x08    /* Interrupts */ | 340 |
+

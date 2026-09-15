@@ -1,0 +1,92 @@
+=== pdp8_cpu.c — 1641 строк ===
+Источник: pdp8_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp8_cpu.c -nt .cline/maps/pdp8_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 212-219 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| IR | 327 | |
+| PC | 328 | |
+| device | 329 | |
+| reason | 330 | |
+| IF | 337 | |
+| DF | 338 | |
+| LAC | 339 | |
+| MQ | 340 | |
+| int_req | 341 | |
+| reason | 342 | |
+| saved_DF | 1368 | |
+| saved_LAC | 1369 | |
+| saved_MQ | 1370 | |
+| reason | 1372 | |
+| saved_LAC | 1398 | |
+| saved_DF | 1400 | |
+| UF | 1401 | |
+| sim_clock_precalibrate_commands | 1407 | |
+| sim_clock_precalibrate_cleanup_commands | 1408 | |
+| sim_vm_initial_ips | 1409 | |
+| SCPE_OK | 1412 | |
+| return | 1421 | |
+| SCPE_OK | 1432 | |
+| SCPE_OK | 1442 | |
+| mc | 1449 | |
+| MEMSIZE | 1458 | |
+| SCPE_OK | 1461 | |
+| dptr | 1468 | |
+| dibp | 1469 | |
+| newdev | 1470 | |
+| SCPE_OK | 1487 | |
+| dptr | 1494 | |
+| dibp | 1495 | |
+| SCPE_OK | 1508 | |
+| dptr | 1522 | |
+| dibp | 1523 | |
+| FALSE | 1563 | |
+| hst_p | 1584 | |
+| SCPE_OK | 1596 | |
+| lnt | 1615 | |
+| SCPE_OK | 1640 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 199 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 200 |
+| PCQ_ENTRY(x) | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 201 |
+| UNIT_V_NOEAE | (UNIT_V_UF)                     ... | 202 |
+| UNIT_NOEAE | (1 << UNIT_V_NOEAE) | 203 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 1)                 ... | 204 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 205 |
+| OP_KSF | 06031                           ... | 206 |
+| HIST_PC | 0x40000000 | 208 |
+| HIST_MIN | 64 | 209 |
+| HIST_MAX | 65536 | 210 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 325-345 |  |
+| while | 346-432 |  |
+| switch | 433-1395 |  |
+| cpu_reset | 1396-1416 |  |
+| cpu_set_bootpc | 1417-1425 |  |
+| cpu_ex | 1426-1436 |  |
+| cpu_dep | 1437-1446 |  |
+| cpu_set_size | 1447-1465 |  |
+| set_dev | 1466-1491 |  |
+| show_dev | 1492-1512 |  |
+| bad_dev | 1513-1519 |  |
+| build_dev_tab | 1520-1532 |  |
+| for | 1533-1567 |  |
+| cpu_set_hist | 1568-1572 |  |
+| if | 1573-1584 |  |
+| if | 1585-1589 |  |
+| if | 1590-1600 |  |
+| cpu_show_hist | 1601-1609 |  |
+| if | 1610-1619 |  |
+| for | 1620-1641 |  |

@@ -1,0 +1,33 @@
+=== cdc1700_io.c — 542 строк ===
+Источник: cdc1700_io.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_io.c -nt .cline/maps/cdc1700_io.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 33 | |
+| Areg | 44 | |
+| Protected | 45 | |
+| Instructions | 46 | |
+| FirstRejSeen | 48 | |
+| CountRejects | 49 | |
+| IOcall | 78 | |
+| IOdev | 79 | |
+| IOintr | 80 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| show_addr | 89-120 | Protected status |
+| set_stoponrej | 121-135 | Device stop on reject handling. |
+| clr_stoponrej | 136-153 |  |
+| set_protected | 154-168 | Protected device. |
+| clear_protected | 169-190 |  |
+| noneINTR | 191-198 | Interrupt status for a non-existent device |
+| deviceINTR | 199-212 | Generic device interrupt status |
+| rebuildPending | 213-235 | each device. |
+| doDirectorFunc | 236-299 | Return TRUE if an explicit change was made to the device interrupt mask. |
+| doIO | 300-481 | emulation environment. |
+| notPresent | 482-494 | Default I/O routine for devices which are not present |
+| buildIOtable | 495-535 | Build the I/O call table according to the enabled devices |
+| loadBootstrap | 536-542 | Load bootstrap code into memory |

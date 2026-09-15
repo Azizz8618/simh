@@ -1,0 +1,118 @@
+=== alpha_ev5_tlb.c — 566 строк ===
+Источник: alpha_ev5_tlb.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test alpha_ev5_tlb.c -nt .cline/maps/alpha_ev5_tlb.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| itlb_asn | 61 | |
+| itlb_nlu | 62 | |
+| i_mini_tlb | 63 | |
+| itlb | 64 | |
+| dtlb_cm | 65 | |
+| dtlb_spage | 66 | |
+| dtlb_asn | 67 | |
+| dtlb_nlu | 68 | |
+| d_mini_tlb | 69 | |
+| dtlb | 70 | |
+| p1 | 77 | |
+| save_env | 78 | |
+| tlbp | 132 | |
+| tlbp | 155 | |
+| tacc | 183 | |
+| EXC_TNV | 189 | |
+| itlbp | 198 | |
+| return | 211 | |
+| return | 239 | |
+| hi | 250 | |
+| NULL | 269 | |
+| hi | 278 | |
+| NULL | 297 | |
+| NULL | 324 | |
+| NULL | 349 | |
+| itlb_asn | 396 | |
+| ITLB_SORT | 401 | |
+| return | 402 | |
+| dtlb_asn | 409 | |
+| DTLB_SORT | 414 | |
+| return | 415 | |
+| itlb_spage | 422 | |
+| return | 423 | |
+| dtlb_spage | 428 | |
+| return | 429 | |
+| itlb_cm | 436 | |
+| return | 438 | |
+| dtlb_cm | 443 | |
+| return | 446 | |
+| dtlb_cm | 458 | |
+| tlbp->tag | 465 | |
+| tlbp->pte | 466 | |
+| tlbp->pfn | 467 | |
+| tlbp->asn | 468 | |
+| tlbp->gh_mask | 469 | |
+| return | 470 | |
+| itlb_nlu | 493 | |
+| SCPE_OK | 503 | |
+| dtlb_nlu | 511 | |
+| SCPE_OK | 521 | |
+| SCPE_OK | 530 | |
+| lo | 537 | |
+| lnt | 538 | |
+| tlbp | 539 | |
+| dptr | 540 | |
+| SCPE_OK | 564 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ITLB_SORT | qsort (itlb, ITLB_SIZE, sizeof (... | 54 |
+| DTLB_SORT | qsort (dtlb, DTLB_SIZE, sizeof (... | 55 |
+| TLB_ESIZE | (sizeof (TLBENT)/sizeof (uint32)) | 56 |
+| MM_RW(x) | (((x) & PTE_FOW)? EXC_W: EXC_R) | 57 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| trans_i | 128-135 |  |
+| if | 136-139 |  |
+| if | 140-150 |  |
+| trans_d | 151-158 |  |
+| if | 159-162 |  |
+| if | 163-180 |  |
+| mm_exc | 181-193 |  |
+| tlb_is | 194-200 |  |
+| if | 201-205 |  |
+| if | 206-215 |  |
+| tlb_ia | 216-219 |  |
+| if | 220-224 |  |
+| if | 225-231 |  |
+| if | 232-243 |  |
+| itlb_lookup | 244-271 |  |
+| dtlb_lookup | 272-301 |  |
+| itlb_load | 302-305 |  |
+| for | 306-326 |  |
+| dtlb_load | 327-330 |  |
+| for | 331-353 |  |
+| itlb_read | 354-357 |  |
+| for | 358-371 |  |
+| dtlb_read | 372-375 |  |
+| for | 376-391 |  |
+| itlb_set_asn | 392-396 |  |
+| for | 397-404 |  |
+| dtlb_set_asn | 405-409 |  |
+| for | 410-419 |  |
+| itlb_set_spage | 420-425 |  |
+| dtlb_set_spage | 426-433 |  |
+| itlb_set_cm | 434-440 |  |
+| dtlb_set_cm | 441-448 |  |
+| tlb_set_cm | 449-450 |  |
+| if | 451-462 |  |
+| tlb_inval | 463-474 |  |
+| tlb_comp | 475-488 |  |
+| itlb_reset | 489-493 |  |
+| for | 494-506 |  |
+| dtlb_reset | 507-511 |  |
+| for | 512-525 |  |
+| tlb_reset | 526-534 |  |
+| cpu_show_tlb | 535-545 |  |
+| if | 546-566 |  |

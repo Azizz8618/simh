@@ -1,0 +1,61 @@
+=== sim_tape.c — 5173 строк ===
+Источник: sim_tape.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_tape.c -nt .cline/maps/sim_tape.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| TAPE_RECORD | 452-455 |
+| MEMORY_TAPE | 457-465 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| callback | 334 | |
+| FALSE | 364 | |
+| FALSE | 380 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MAX(a,b) | (((a) >= (b)) ? (a) : (b)) | 102 |
+| MIN(a,b) | (((a) <= (b)) ? (a) : (b)) | 105 |
+| BPI_COUNT | (sizeof (bpi) / sizeof (bpi [0])... | 139 |
+| AIO_CALLSETUP |  | 183 |
+| AIO_CALL(op, | _buf, _bc, _fc, _max, _vbc, _gap... | 190 |
+| TOP_DONE | 0             /* close */ | 218 |
+| TOP_RDRF | 1             /* sim_tape_rdrecf... | 219 |
+| TOP_RDRR | 2             /* sim_tape_rdrecr... | 220 |
+| TOP_WREC | 3             /* sim_tape_wrrecf... | 221 |
+| TOP_WTMK | 4             /* sim_tape_wrtmk_... | 222 |
+| TOP_WEOM | 5             /* sim_tape_wreom_... | 223 |
+| TOP_WEMR | 6             /* sim_tape_wreomr... | 224 |
+| TOP_WGAP | 7             /* sim_tape_wrgap_... | 225 |
+| TOP_SPRF | 8             /* sim_tape_sprecf... | 226 |
+| TOP_SRSF | 9             /* sim_tape_sprecs... | 227 |
+| TOP_SPRR | 10             /* sim_tape_sprec... | 228 |
+| TOP_SRSR | 11             /* sim_tape_sprec... | 229 |
+| TOP_SPFF | 12             /* sim_tape_spfil... | 230 |
+| TOP_SFRF | 13             /* sim_tape_spfil... | 231 |
+| TOP_SPFR | 14             /* sim_tape_spfil... | 232 |
+| TOP_SFRR | 15             /* sim_tape_spfil... | 233 |
+| TOP_RWND | 16             /* sim_tape_rewin... | 234 |
+| TOP_POSN | 17             /* sim_tape_posit... | 235 |
+| AIO_CALLSETUP |  | 383 |
+| AIO_CALL(op, | _buf, _fc, _bc, _max, _vbc, _gap... | 386 |
+| MIN_RECORD_SIZE | 14   /* Mag tape records <14 byt... | 391 |
+| MAX_RECORD_SIZE | 65535   /* DEC tape controllers ... | 392 |
+| DOS11_PROT | 0233 | 538 |
+| BUF_SZ | 512 | 1753 |
+| MAX(a,b) | (((a) > (b)) ? (a) : (b)) | 3527 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| _tape_io | 238-330 |  |
+| _tape_completion_dispatch | 331-343 |  |
+| if | 344-355 |  |
+| _tape_is_active | 356-359 |  |
+| if | 360-366 |  |
+| _tape_cancel | 367-370 |  |
+| if | 371-5173 |  |

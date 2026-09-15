@@ -1,0 +1,94 @@
+=== vax4xx_stddev.c — 581 строк ===
+Источник: vax4xx_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax4xx_stddev.c -nt .cline/maps/vax4xx_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| val | 213 | |
+| return | 227 | |
+| SCPE_OK | 241 | |
+| SCPE_OK | 255 | |
+| SCPE_OK | 266 | |
+| SCPE_OK | 291 | |
+| memory" | 296 | |
+| val | 304 | |
+| val | 316 | |
+| SCPE_OK | 337 | |
+| SCPE_OK | 351 | |
+| SCPE_OK | 364 | |
+| SCPE_OK | 375 | |
+| memory" | 411 | |
+| data | 426 | |
+| rg | 427 | |
+| SCPE_OK | 457 | |
+| SCPE_OK | 466 | |
+| SCPE_OK | 476 | |
+| uptr | 481 | |
+| uptr->capac | 488 | |
+| SCPE_OK | 489 | |
+| uptr | 494 | |
+| uptr->OR_ROM | 495 | |
+| uptr->OR_DEVICE | 496 | |
+| uptr->capac | 497 | |
+| SCPE_OK | 498 | |
+| ROMs" | 503 | |
+| return | 523 | |
+| SCPE_OK | 541 | |
+| clk_csr | 548 | |
+| tmr_int | 549 | |
+| SCPE_OK | 553 | |
+| tick" | 558 | |
+| return | 570 | |
+| return | 580 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_NODELAY | (UNIT_V_UF + 0)                 ... | 35 |
+| UNIT_NODELAY | (1u << UNIT_V_NODELAY) | 36 |
+| CLKCSR_IMP | (CSR_IE)                        ... | 38 |
+| CLKCSR_RW | (CSR_IE) | 39 |
+| CLK_DELAY | 5000                            ... | 40 |
+| TMXR_MULT | 1                               ... | 41 |
+| OR_ROM | up7         /* UNIT member holdi... | 131 |
+| OR_DEVICE | up8         /* UNIT member holdi... | 132 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rom_rd | 210-220 |  |
+| rom_wr_B | 221-231 |  |
+| rom_ex | 232-245 |  |
+| rom_dep | 246-259 |  |
+| rom_reset | 260-268 |  |
+| rom_help | 269-293 |  |
+| rom_description | 294-300 |  |
+| nvr_rd | 301-312 |  |
+| nvr_wr | 313-327 |  |
+| nvr_ex | 328-341 |  |
+| nvr_dep | 342-355 |  |
+| nvr_reset | 356-357 |  |
+| if | 358-366 |  |
+| nvr_help | 367-379 |  |
+| nvr_attach | 380-396 |  |
+| nvr_detach | 397-401 |  |
+| if | 402-408 |  |
+| nvr_description | 409-419 |  |
+| or_rd | 420-428 |  |
+| if | 429-454 |  |
+| or_reset | 455-459 |  |
+| or_show | 460-468 |  |
+| or_help | 469-478 |  |
+| or_map | 479-491 |  |
+| or_unmap | 492-500 |  |
+| or_description | 501-510 |  |
+| iccs_rd | 511-515 |  |
+| iccs_wr | 516-532 |  |
+| clk_svc | 533-545 |  |
+| clk_reset | 546-555 |  |
+| clk_description | 556-562 |  |
+| ReadIO | 563-567 |  |
+| WriteIO | 568-572 |  |
+| ReadIOU | 573-577 |  |
+| WriteIOU | 578-581 |  |

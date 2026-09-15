@@ -1,0 +1,125 @@
+=== vax750_cmi.c — 928 строк ===
+Источник: vax750_cmi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax750_cmi.c -nt .cline/maps/vax750_cmi.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cmi_err | 70 | |
+| cmi_cadr | 71 | |
+| sys_model | 73 | |
+| pcspatchbit | 76 | |
+| vax750_wcsmem | 77 | |
+| tmr_int | 83 | |
+| val | 273 | |
+| val | 349 | |
+| return | 418 | |
+| nexus | 432 | |
+| nexus | 466 | |
+| SET_IRQL | 492 | |
+| return | 493 | |
+| return | 506 | |
+| acc | 520 | |
+| in_ie | 529 | |
+| in_ie | 542 | |
+| cc | 544 | |
+| cc | 557 | |
+| gbuf | 623 | |
+| slptr | 624 | |
+| regptr | 625 | |
+| dptr | 627 | |
+| uptr | 628 | |
+| r5v | 646 | |
+| SCPE_OK | 762 | |
+| vax750_bootdev | 769 | |
+| SCPE_OK | 770 | |
+| SCPE_OK | 785 | |
+| sim_vm_cmd | 793 | |
+| cmi_err | 794 | |
+| cmi_cadr | 795 | |
+| SCPE_OK | 796 | |
+| interconnect" | 801 | |
+| SCPE_OK | 809 | |
+| return | 822 | |
+| idx | 837 | |
+| idx | 841 | |
+| SCPE_OK | 855 | |
+| dptr | 863 | |
+| dibp | 864 | |
+| SCPE_OK | 887 | |
+| SCPE_OK | 893 | |
+| SCPE_OK | 927 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CMIERR_CRD | 0x00000001 | 40 |
+| CMIERR_LEB | 0x00000002 | 41 |
+| CMIERR_RDS | 0x00000004 | 42 |
+| CMIERR_ME | 0x00000008 | 43 |
+| CMIERR_TBH | 0x00000010 | 44 |
+| CMIERR_TBG0DE | 0x00000100 | 45 |
+| CMIERR_TBG1DE | 0x00000200 | 46 |
+| CMIERR_TBG0TE | 0x00000400 | 47 |
+| CMIERR_TBG1TE | 0x00000800 | 48 |
+| CMIERR_V_MODE | 16 | 49 |
+| CMIERR_M_MODE | 0x3 | 50 |
+| CMIERR_MODE | (CMIERR_M_MODE << CMIERR_V_MODE) | 51 |
+| CMIERR_REF | 0x00040000 | 52 |
+| CMIERR_RM | 0x00080000 | 53 |
+| CMIERR_EN | 0x00100000 | 54 |
+| PCS_BITCNT | 0x2000          /* Number of pat... | 58 |
+| PCS_MICRONUM | 0x400           /* Number of Mic... | 59 |
+| PCS_PATCHADDR | 0xf00000        /* Beginning add... | 60 |
+| PCS_PCSADDR | 0x8000          /* offset to pcs */ | 61 |
+| PCS_PATCHENBIT | 0xF0C000        /* Patch Enable ... | 62 |
+| PCS_ENABLE | 0xfff00000      /* enable pcs */ | 63 |
+| BOOT_A | 0 | 560 |
+| BOOT_B | 1 | 561 |
+| BOOT_C | 2 | 562 |
+| BOOT_D | 3 | 563 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eval_int | 174-194 |  |
+| for | 195-206 |  |
+| for | 207-215 |  |
+| get_vector | 216-219 |  |
+| if | 220-223 |  |
+| if | 224-227 |  |
+| if | 228-231 |  |
+| if | 232-234 |  |
+| if | 235-247 |  |
+| if | 248-270 |  |
+| ReadIPR | 271-274 |  |
+| switch | 275-353 |  |
+| WriteIPR | 354-355 |  |
+| switch | 356-429 |  |
+| ReadReg | 430-433 |  |
+| if | 434-463 |  |
+| WriteReg | 464-467 |  |
+| if | 468-497 |  |
+| cmi_set_tmo | 498-499 |  |
+| if | 500-517 |  |
+| machine_check | 518-548 |  |
+| con_halt | 549-605 |  |
+| vax750_boot | 606-620 |  |
+| vax750_boot_parse | 621-632 |  |
+| if | 633-665 |  |
+| if | 666-750 |  |
+| cpu_boot | 751-754 |  |
+| if | 755-764 |  |
+| vax750_set_bootdev | 765-772 |  |
+| vax750_show_bootdev | 773-777 |  |
+| if | 778-790 |  |
+| cmi_reset | 791-798 |  |
+| cmi_description | 799-805 |  |
+| show_nexus | 806-813 |  |
+| init_nexus_tab | 814-817 |  |
+| for | 818-834 |  |
+| build_nexus_tab | 835-859 |  |
+| build_dib_tab | 860-869 |  |
+| for | 870-889 |  |
+| cpu_print_model | 890-895 |  |
+| cpu_model_help | 896-928 |  |

@@ -1,0 +1,296 @@
+=== sigma_dp.c — 1394 строк ===
+Источник: sigma_dp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sigma_dp.c -nt .cline/maps/sigma_dp.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DP_CTX | 258-266 |
+| DP_TYPE | 268-276 |
+| DP_SNSTAB | 278-283 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dp_buf | 289 | |
+| chan_ctl_time | 291 | |
+| dp_unit | 590 | |
+| uptr | 591 | |
+| iu | 592 | |
+| ctx | 594 | |
+| ctx | 600 | |
+| cidx | 684 | |
+| dp_unit | 685 | |
+| un | 686 | |
+| dva | 687 | |
+| ctx | 689 | |
+| st | 691 | |
+| da | 734 | |
+| dc | 735 | |
+| SCPE_OK | 949 | |
+| cidx | 956 | |
+| ctx | 957 | |
+| dp_unit | 958 | |
+| un | 959 | |
+| SCPE_OK | 969 | |
+| cidx | 982 | |
+| un | 983 | |
+| dva | 984 | |
+| ctx | 985 | |
+| ctx | 1013 | |
+| dp_unit | 1014 | |
+| st | 1016 | |
+| st | 1028 | |
+| st | 1033 | |
+| dp_unit | 1034 | |
+| on_cyl | 1035 | |
+| st | 1037 | |
+| st | 1045 | |
+| st | 1050 | |
+| dp_unit | 1051 | |
+| on_cyl | 1052 | |
+| st | 1054 | |
+| st | 1061 | |
+| cidx | 1068 | |
+| sptr | 1069 | |
+| ctx | 1070 | |
+| data | 1071 | |
+| tptr | 1072 | |
+| tptr | 1080 | |
+| return | 1088 | |
+| FALSE | 1106 | |
+| FALSE | 1128 | |
+| err | 1135 | |
+| SCPE_OK | 1146 | |
+| err | 1151 | |
+| SCPE_OK | 1160 | |
+| cidx | 1165 | |
+| un | 1166 | |
+| dva | 1167 | |
+| SCPE_IOERR | 1174 | |
+| ctx | 1181 | |
+| dva | 1182 | |
+| ctx->dp_test | 1185 | |
+| TRUE | 1197 | |
+| SCPE_OK | 1207 | |
+| iu | 1214 | |
+| ctx | 1215 | |
+| return | 1237 | |
+| return | 1249 | |
+| uptr->UDA | 1257 | |
+| uptr->UCMD | 1258 | |
+| uptr->UCTX | 1259 | |
+| return | 1260 | |
+| cidx | 1266 | |
+| dp_unit | 1267 | |
+| ctx | 1268 | |
+| dp_unit | 1272 | |
+| ctx | 1273 | |
+| ctx->dp_flags | 1279 | |
+| ctx->dp_ski | 1280 | |
+| ctx->dp_test | 1281 | |
+| SCPE_OK | 1283 | |
+| SCPE_OK | 1310 | |
+| cidx | 1318 | |
+| uptr->capac | 1326 | |
+| SCPE_OK | 1327 | |
+| cidx | 1334 | |
+| SCPE_OK | 1342 | |
+| ctx | 1350 | |
+| dp_unit | 1351 | |
+| SCPE_OK | 1380 | |
+| cidx | 1385 | |
+| SCPE_OK | 1392 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_AUTO | (UNIT_V_UF + 1)                 ... | 72 |
+| UNIT_AUTO | (1u << UNIT_V_AUTO) | 73 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 2)                 ... | 74 |
+| UNIT_M_DTYPE | 0xF | 75 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 76 |
+| UDA | u3                              ... | 77 |
+| UCMD | u4                              ... | 78 |
+| UCTX | u5                              ... | 79 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 80 |
+| DP_NUMCTL | 2                               ... | 84 |
+| DP_CTYPE | 6                               ... | 85 |
+| DP_C7240 | 0                               ... | 86 |
+| DP_C7270 | 1                               ... | 87 |
+| DP_C7260 | 2                               ... | 88 |
+| DP_C7265 | 3                               ... | 89 |
+| DP_C7275 | 4                               ... | 90 |
+| DP_C3281 | 5                               ... | 91 |
+| DP_Q10B(x) | ((x) <= DP_C7270)               ... | 92 |
+| DP_NUMDR_10B | 8                               ... | 93 |
+| DP_NUMDR_16B | 15 | 94 |
+| DP_CONT | 0xF                             ... | 95 |
+| DP_WDSC | 256                             ... | 96 |
+| DP_BYHD | 8                               ... | 97 |
+| DP_NUMDR | ((uint32) ((DP_Q10B (ctx->dp_cty... | 98 |
+| DP_SEEK | (DP_CONT + 1)                   ... | 99 |
+| DPA_V_CY | 16                              ... | 103 |
+| DPA_M_CY | 0x3FF | 104 |
+| DPA_V_HD | 8                               ... | 105 |
+| DPA_M_HD | 0x1F | 106 |
+| DPA_V_SC | 0                               ... | 107 |
+| DPA_M_SC | 0x1F | 108 |
+| DPA_GETCY(x) | (((x) >> DPA_V_CY) & DPA_M_CY) | 109 |
+| DPA_GETHD(x) | (((x) >> DPA_V_HD) & DPA_M_HD) | 110 |
+| DPA_GETSC(x) | (((x) >> DPA_V_SC) & DPA_M_SC) | 111 |
+| DPS_NBY_10B | 10 | 115 |
+| DPS_NBY_16B | 16 | 116 |
+| DPS_NBY | ((uint32) (DP_Q10B (ctx->dp_ctyp... | 117 |
+| DPT_NBY_10B | 1                               ... | 121 |
+| DPT_NBY_16B | 2 | 122 |
+| DPT_NBY | ((uint32) (DP_Q10B (ctx->dp_ctyp... | 123 |
+| DPS_INIT | 0x100 | 127 |
+| DPS_END | 0x101 | 128 |
+| DPS_WRITE | 0x01 | 129 |
+| DPS_READ | 0x02 | 130 |
+| DPS_SEEK | 0x03 | 131 |
+| DPS_SEEKI | 0x83 | 132 |
+| DPS_SENSE | 0x04 | 133 |
+| DPS_CHECK | 0x05 | 134 |
+| DPS_RSRV | 0x07 | 135 |
+| DPS_WHDR | 0x09 | 136 |
+| DPS_RHDR | 0x0A | 137 |
+| DPS_CRIOF | 0x0F | 138 |
+| DPS_RDEES | 0x12 | 139 |
+| DPS_TEST | 0x13 | 140 |
+| DPS_RLS | 0x17 | 141 |
+| DPS_CRION | 0x1F | 142 |
+| DPS_RLSA | 0x23 | 143 |
+| DPS_RECAL | 0x33 | 144 |
+| DPS_RECALI | 0xB3 | 145 |
+| DSC_SEEK | 0x00                            ... | 149 |
+| DSC_SEEKI | 0x80                            ... | 150 |
+| DSC_SEEKW | 0x01                            ... | 151 |
+| DPF_V_WCHK | 0 | 155 |
+| DPF_V_DPE | 1 | 156 |
+| DPF_V_SNZ | 2 | 157 |
+| DPF_V_EOC | 3 | 158 |
+| DPF_V_IVA | 4 | 159 |
+| DPF_V_PGE | 5 | 160 |
+| DPF_V_WPE | 6 | 161 |
+| DPF_V_AIM | 7 | 162 |
+| DPF_WCHK | (1u << DPF_V_WCHK)              ... | 163 |
+| DPF_DPE | (1u << DPF_V_DPE)               ... | 164 |
+| DPF_SNZ | (1u << DPF_V_SNZ)               ... | 165 |
+| DPF_EOC | (1u << DPF_V_EOC)               ... | 166 |
+| DPF_IVA | (1u << DPF_V_IVA)               ... | 167 |
+| DPF_PGE | (1u << DPF_V_PGE)               ... | 168 |
+| DPF_WPE | (1u << DPF_V_WPE)               ... | 169 |
+| DPF_AIM | (1u << DPF_V_AIM)               ... | 170 |
+| DPF_V_DIFF | 16 | 171 |
+| DPF_M_DIFF | 0xFFFFu | 172 |
+| DPF_DIFF | (DPF_M_DIFF << DPF_V_DIFF) | 173 |
+| DP_SZ(x) | ((DPCY_##x) * (DPHD_##x) * (DPSC... | 196 |
+| DP_ENT(x,y) | (DP_##x), (DPCY_##x), (DPHD_##x)... | 197 |
+| DP_7242 | 0 | 199 |
+| DPCY_7242 | 203 | 200 |
+| DPHD_7242 | 20 | 201 |
+| DPSC_7242 | 6 | 202 |
+| DPID_7242 | 0 | 203 |
+| DPSZ_7242 | DP_SZ(7242) | 204 |
+| DP_7261 | 1 | 206 |
+| DPCY_7261 | 203 | 207 |
+| DPHD_7261 | 20 | 208 |
+| DPSC_7261 | 11 | 209 |
+| DPID_7261 | (5u << 5) | 210 |
+| DPSZ_7261 | DP_SZ(7261) | 211 |
+| DP_7271 | 2 | 213 |
+| DPCY_7271 | 406 | 214 |
+| DPHD_7271 | 20 | 215 |
+| DPSC_7271 | 6 | 216 |
+| DPID_7271 | 0 | 217 |
+| DPSZ_7271 | DP_SZ(7271) | 218 |
+| DP_3288 | 3 | 220 |
+| DPCY_3288 | 822 | 221 |
+| DPHD_3288 | 5 | 222 |
+| DPSC_3288 | 17 | 223 |
+| DPID_3288 | 0 | 224 |
+| DPSZ_3288 | DP_SZ(3288) | 225 |
+| DP_7276 | 4 | 227 |
+| DPCY_7276 | 411 | 228 |
+| DPHD_7276 | 19 | 229 |
+| DPSC_7276 | 11 | 230 |
+| DPID_7276 | (7 << 5) | 231 |
+| DPSZ_7276 | DP_SZ(7276) | 232 |
+| DP_7266 | 5 | 234 |
+| DPCY_7266 | 411 | 235 |
+| DPHD_7266 | 20 | 236 |
+| DPSC_7266 | 11 | 237 |
+| DPID_7266 | (6 << 5) | 238 |
+| DPSZ_7266 | DP_SZ(7276) | 239 |
+| DP_3282 | 6 | 241 |
+| DPCY_3282 | 815 | 242 |
+| DPHD_3282 | 19 | 243 |
+| DPSC_3282 | 11 | 244 |
+| DPID_3282 | 0 | 245 |
+| DPSZ_3282 | DP_SZ(3282) | 246 |
+| DP_3283 | 7 | 248 |
+| DPCY_3283 | 815 | 249 |
+| DPHD_3283 | 19 | 250 |
+| DPSC_3283 | 17 | 251 |
+| DPID_3283 | 0 | 252 |
+| DPSZ_3283 | DP_SZ(3283) | 253 |
+| GET_PSC(x,s) | ((int32) fmod (sim_gtime() / ((d... | 255 |
+| C_10B | (1u << DP_C7240) \| (1u << DP_C7270) | 351 |
+| C_16B | (1u << DP_C7260) \| (1u << DP_C72... | 352 |
+| C_A | (C_10B\|C_16B)                   ... | 354 |
+| C_F | (1u << (DP_CTYPE))              ... | 355 |
+| C_C | (1u << (DP_CTYPE + 1))          ... | 356 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dpa_disp | 577-581 |  |
+| dpb_disp | 582-586 |  |
+| dp_disp | 587-595 |  |
+| if | 596-609 |  |
+| switch | 610-680 |  |
+| dp_svc | 681-693 |  |
+| if | 694-722 |  |
+| if | 723-735 |  |
+| switch | 736-953 |  |
+| dps_svc | 954-961 |  |
+| if | 962-979 |  |
+| dp_end_sec | 980-986 |  |
+| if | 987-995 |  |
+| if | 996-1009 |  |
+| dp_tio_status | 1010-1021 |  |
+| for | 1022-1030 |  |
+| dp_tdv_status | 1031-1047 |  |
+| dp_aio_status | 1048-1065 |  |
+| dp_set_sense | 1066-1080 |  |
+| while | 1081-1092 |  |
+| dp_inv_ad | 1093-1110 |  |
+| dp_inc_ad | 1111-1118 |  |
+| if | 1119-1132 |  |
+| dp_read | 1133-1137 |  |
+| if | 1138-1148 |  |
+| dp_write | 1149-1153 |  |
+| if | 1154-1162 |  |
+| dp_ioerr | 1163-1178 |  |
+| dp_test_mode | 1179-1185 |  |
+| for | 1186-1201 |  |
+| dp_chan_err | 1202-1211 |  |
+| dp_clr_int | 1212-1216 |  |
+| if | 1217-1221 |  |
+| for | 1222-1232 |  |
+| dp_set_ski | 1233-1241 |  |
+| dp_clr_ski | 1242-1253 |  |
+| dp_reset_unit | 1254-1262 |  |
+| dp_reset | 1263-1274 |  |
+| for | 1275-1287 |  |
+| dp_attach | 1288-1301 |  |
+| for | 1302-1314 |  |
+| dp_set_size | 1315-1331 |  |
+| dp_set_auto | 1332-1346 |  |
+| dp_set_ctl | 1347-1356 |  |
+| for | 1357-1360 |  |
+| for | 1361-1369 |  |
+| for | 1370-1382 |  |
+| dp_show_ctl | 1383-1394 |  |

@@ -1,0 +1,267 @@
+=== pdp18b_defs.h — 575 строк ===
+Источник: pdp18b_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp18b_defs.h -nt .cline/maps/pdp18b_defs.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DIB | 279-284 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| asc_to_baud | 571 | |
+| baud_to_asc | 572 | |
+| fio_to_asc | 573 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PDP18B_DEFS_H_ | 0 | 58 |
+| PC | PC_Global | 64 |
+| PDP15 | 0                               ... | 121 |
+| STOP_RSRV | 1                               ... | 126 |
+| STOP_HALT | 2                               ... | 127 |
+| STOP_IBKPT | 3                               ... | 128 |
+| STOP_XCT | 4                               ... | 129 |
+| STOP_API | 5                               ... | 130 |
+| STOP_NONSTD | 6                               ... | 131 |
+| STOP_MME | 7                               ... | 132 |
+| STOP_FPDIS | 8                               ... | 133 |
+| STOP_DTOFF | 9                               ... | 134 |
+| STOP_LOOP | 10                              ... | 135 |
+| ADDRSIZE | 13 | 140 |
+| KSR28 | 0                               ... | 141 |
+| TYPE62 | 0                               ... | 142 |
+| TYPE550 | 0                               ... | 143 |
+| DRM | 0                               ... | 144 |
+| ADDRSIZE | 15 | 146 |
+| TYPE647 | 0                               ... | 147 |
+| TYPE550 | 0                               ... | 148 |
+| DRM | 0                               ... | 149 |
+| RB | 0                               ... | 150 |
+| GRAPHICS2 | 0                               ... | 151 |
+| TYPE340 | 0                               ... | 153 |
+| ADDRSIZE | 15 | 156 |
+| TYPE647 | 0                               ... | 157 |
+| LP09 | 0                               ... | 158 |
+| RB | 0                               ... | 159 |
+| RF | 0                               ... | 160 |
+| DRM | 0                               ... | 161 |
+| MTA | 0                               ... | 162 |
+| TC02 | 0                               ... | 163 |
+| TTY1 | 4                               ... | 164 |
+| BRMASK | 0076000                         ... | 165 |
+| ADDRSIZE | 17 | 167 |
+| LP09 | 0                               ... | 168 |
+| LP15 | 0                               ... | 169 |
+| RF | 0                               ... | 170 |
+| RP | 0                               ... | 171 |
+| MTA | 0                               ... | 172 |
+| TC02 | 0                               ... | 173 |
+| TTY1 | 16                              ... | 174 |
+| UC15 | 0                               ... | 175 |
+| BRMASK | 0377400                         ... | 176 |
+| BRMASK_XVM | 0777400                         ... | 177 |
+| AMASK | ((1 << ADDRSIZE) - 1)           ... | 182 |
+| IAMASK | 077777                          ... | 183 |
+| BLKMASK | (AMASK & (~IAMASK))             ... | 184 |
+| MAXMEMSIZE | (1 << ADDRSIZE)                 ... | 185 |
+| MEMSIZE | (cpu_unit.capac)                ... | 186 |
+| MEM_ADDR_OK(x) | (((uint32) (x)) < MEMSIZE) | 187 |
+| I_V_OP | 14                              ... | 191 |
+| I_M_OP | 017 | 192 |
+| I_V_IND | 13                              ... | 193 |
+| I_V_IDX | 12                              ... | 194 |
+| I_IND | (1 << I_V_IND) | 195 |
+| I_IDX | (1 << I_V_IDX) | 196 |
+| B_DAMASK | 017777                          ... | 197 |
+| B_EPCMASK | (AMASK & ~B_DAMASK) | 198 |
+| P_DAMASK | 007777                          ... | 199 |
+| P_EPCMASK | (AMASK & ~P_DAMASK) | 200 |
+| FE | 0 | 204 |
+| DF | 1 | 205 |
+| RD | 2 | 206 |
+| WR | 3 | 207 |
+| MM_OK | 0 | 211 |
+| MM_ERR | 1 | 212 |
+| REL_C | -1                              ... | 216 |
+| REL_R | 0                               ... | 217 |
+| REL_W | 1                               ... | 218 |
+| DMASK | 0777777                         ... | 222 |
+| LINK | (DMASK + 1)                     ... | 223 |
+| LACMASK | (LINK \| DMASK)                  ... | 224 |
+| SIGN | 0400000                         ... | 225 |
+| OP_JMS | 0100000                         ... | 226 |
+| OP_JMP | 0600000                         ... | 227 |
+| OP_HLT | 0740040                         ... | 228 |
+| IOT_V_SKP | 18                              ... | 232 |
+| IOT_V_REASON | 19                              ... | 233 |
+| IOT_SKP | (1 << IOT_V_SKP) | 234 |
+| IOT_REASON | (1 << IOT_V_REASON) | 235 |
+| IORETURN(f,v) | ((f)? (v):                      ... | 237 |
+| PCQ_SIZE | 64                              ... | 243 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 244 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 245 |
+| MM_RDIS | 0400000                         ... | 249 |
+| MM_V_GM | 15                              ... | 250 |
+| MM_M_GM | 03 | 251 |
+| MM_GM | (MM_M_GM << MM_V_GM) | 252 |
+| MM_G_W0 | 0077777                         ... | 253 |
+| MM_G_W1 | 0177777 | 254 |
+| MM_G_W2 | 0777777 | 255 |
+| MM_G_W3 | 0377777 | 256 |
+| MM_G_B0 | 0060000                         ... | 257 |
+| MM_G_B1 | 0160000 | 258 |
+| MM_G_B2 | 0760000 | 259 |
+| MM_G_B3 | 0360000 | 260 |
+| MM_UIOT | 0040000                         ... | 261 |
+| MM_WP | 0020000                         ... | 262 |
+| MM_SH | 0010000                         ... | 263 |
+| MM_V_SLR | 10                              ... | 264 |
+| MM_M_SLR | 03 | 265 |
+| MM_SLR_L0 | 001000                          ... | 266 |
+| MM_SLR_L1 | 002000 | 267 |
+| MM_SLR_L2 | 010000 | 268 |
+| MM_SLR_L3 | 020000 | 269 |
+| MM_SBR_MASK | 01777                           ... | 270 |
+| MM_GETGM(x) | (((x) >> MM_V_GM) & MM_M_GM) | 271 |
+| MM_GETSLR(x) | (((x) >> MM_V_SLR) & MM_M_SLR) | 272 |
+| DEV_MAXBLK | 8                               ... | 276 |
+| DEV_MAX | 64                              ... | 277 |
+| DEV_PTR | 001                             ... | 288 |
+| DEV_PTP | 002                             ... | 289 |
+| DEV_TTI | 003                             ... | 290 |
+| DEV_TTO | 004                             ... | 291 |
+| DEV_DPY | 005                             ... | 292 |
+| DEV_TTI1 | 041                             ... | 293 |
+| DEV_TTO1 | 040 | 294 |
+| DEV_DRM | 060                             ... | 295 |
+| DEV_DR | 060                             ... | 296 |
+| DEV_RP | 063                             ... | 297 |
+| DEV_LPT | 065                             ... | 298 |
+| DEV_RF | 070                             ... | 299 |
+| DEV_RB | 071                             ... | 300 |
+| DEV_MT | 073                             ... | 301 |
+| DEV_DTA | 075                             ... | 302 |
+| DEV_G2D1 | 005                             ... | 308 |
+| DEV_G2D | 006                             ... | 309 |
+| DEV_G2LP | 007                             ... | 310 |
+| DEV_G2DS | 010                             ... | 311 |
+| DEV_G2D3 | 014                             ... | 312 |
+| DEV_G2D4 | 034                             ... | 313 |
+| DEV_G2UNK | 042                             ... | 315 |
+| DEV_G2KB | 043                             ... | 316 |
+| DEV_G2BB | 044                             ... | 317 |
+| DEV_G2IM | 045                             ... | 318 |
+| DEV_DP | 047                             ... | 324 |
+| API_ML0 | 0200                            ... | 375 |
+| API_ML1 | 0100 | 376 |
+| API_ML2 | 0040 | 377 |
+| API_ML3 | 0020 | 378 |
+| API_ML4 | 0010 | 379 |
+| API_ML5 | 0004 | 380 |
+| API_ML6 | 0002 | 381 |
+| API_ML7 | 0001                            ... | 382 |
+| API_MASKPI | (API_ML0\|API_ML1\|API_ML2\|API_ML3... | 385 |
+| API_MASKPI | (API_ML0\|API_ML1\|API_ML2\|API_ML3) | 387 |
+| API_HLVL | 4                               ... | 390 |
+| ACH_SWRE | 040                             ... | 391 |
+| INT_V_PWRFL | 0                               ... | 395 |
+| INT_PWRFL | (1 << INT_V_PWRFL) | 397 |
+| API_PWRFL | 0 | 399 |
+| ACH_PWRFL | 052 | 401 |
+| INT_V_DTA | 0                               ... | 405 |
+| INT_V_MTA | 1                               ... | 406 |
+| INT_V_DRM | 2                               ... | 407 |
+| INT_V_RF | 3                               ... | 408 |
+| INT_V_RP | 4                               ... | 409 |
+| INT_V_RB | 5                               ... | 410 |
+| INT_DTA | (1 << INT_V_DTA) | 412 |
+| INT_MTA | (1 << INT_V_MTA) | 413 |
+| INT_DRM | (1 << INT_V_DRM) | 414 |
+| INT_RF | (1 << INT_V_RF) | 415 |
+| INT_RP | (1 << INT_V_RP) | 416 |
+| INT_RB | (1 << INT_V_RB) | 417 |
+| API_DTA | 1 | 419 |
+| API_MTA | 1 | 420 |
+| API_DRM | 1 | 421 |
+| API_RF | 1 | 422 |
+| API_RP | 1 | 423 |
+| API_RB | 1 | 424 |
+| ACH_DTA | 044 | 426 |
+| ACH_MTA | 045 | 427 |
+| ACH_DRM | 046 | 428 |
+| ACH_RB | 047 | 429 |
+| ACH_RF | 063 | 430 |
+| ACH_RP | 064 | 431 |
+| INT_V_PTR | 0                               ... | 435 |
+| INT_V_LPT | 1                               ... | 436 |
+| INT_V_LPTSPC | 2                               ... | 437 |
+| INT_PTR | (1 << INT_V_PTR) | 439 |
+| INT_LPT | (1 << INT_V_LPT) | 440 |
+| INT_LPTSPC | (1 << INT_V_LPTSPC) | 441 |
+| API_PTR | 2 | 443 |
+| API_LPT | 2 | 444 |
+| API_LPTSPC | 2 | 445 |
+| ACH_PTR | 050 | 447 |
+| ACH_LPT | 056 | 448 |
+| INT_V_CLK | 0                               ... | 452 |
+| INT_V_TTI1 | 1                               ... | 453 |
+| INT_V_TTO1 | 2                               ... | 454 |
+| INT_CLK | (1 << INT_V_CLK) | 456 |
+| INT_TTI1 | (1 << INT_V_TTI1) | 457 |
+| INT_TTO1 | (1 << INT_V_TTO1) | 458 |
+| API_CLK | 3 | 460 |
+| API_TTI1 | 3 | 461 |
+| API_TTO1 | 3 | 462 |
+| ACH_CLK | 051 | 464 |
+| ACH_TTI1 | 075 | 465 |
+| ACH_TTO1 | 074 | 466 |
+| INT_V_TTI | 0                               ... | 470 |
+| INT_V_TTO | 1                               ... | 471 |
+| INT_V_PTP | 2                               ... | 472 |
+| INT_V_G2 | 3                               ... | 473 |
+| INT_TTI | (1 << INT_V_TTI) | 475 |
+| INT_TTO | (1 << INT_V_TTO) | 476 |
+| INT_PTP | (1 << INT_V_PTP) | 477 |
+| API_TTI | 4                               ... | 479 |
+| API_TTO | 4 | 480 |
+| API_PTP | 4 | 481 |
+| INT_G2 | (1 << INT_V_G2) | 488 |
+| API_G2 | 4 | 489 |
+| SET_INT(dv) | int_hwre[API_##dv] = int_hwre[AP... | 494 |
+| CLR_INT(dv) | int_hwre[API_##dv] = int_hwre[AP... | 495 |
+| TST_INT(dv) | (int_hwre[API_##dv] & INT_##dv) | 496 |
+| INT_V_DR | 7                               ... | 502 |
+| INT_DR | (1 << INT_V_DR) | 503 |
+| API_DR0 | 0 | 504 |
+| API_DR1 | 1 | 505 |
+| API_DR2 | 2 | 506 |
+| API_DR3 | 3 | 507 |
+| IOS_ION | 0400000                         ... | 533 |
+| IOS_PTR | 0200000                         ... | 534 |
+| IOS_PTP | 0100000                         ... | 535 |
+| IOS_TTI | 0040000                         ... | 536 |
+| IOS_TTO | 0020000                         ... | 537 |
+| IOS_LPEN | 0010000                         ... | 538 |
+| IOS_CLK | 0004000                         ... | 539 |
+| IOS_CLKON | 0002000                         ... | 540 |
+| IOS_DTA | 0000200                         ... | 541 |
+| IOS_RP | 0000040                         ... | 542 |
+| IOS_RF | 0000020                         ... | 543 |
+| IOS_DRM | 0000001                         ... | 544 |
+| IOS_MTA | 0001000                         ... | 546 |
+| IOS_LPT | 0000004                         ... | 547 |
+| IOS_LPT1 | 0000002                         ... | 548 |
+| IOS_PTRERR | 0001000                         ... | 550 |
+| IOS_PTPERR | 0000400                         ... | 551 |
+| IOS_MTA | 0000100                         ... | 552 |
+| IOS_LPT | 0000004                         ... | 553 |
+| IOS_LPT1 | 0000002                         ... | 554 |
+| IOS_PTRERR | 0001000                         ... | 556 |
+| IOS_PTPERR | 0000400                         ... | 557 |
+| IOS_MTA | 0000100                         ... | 558 |
+| IOS_LPT | 0000010                         ... | 559 |
+| IOS_LPT1 | 0000000                         ... | 560 |
+

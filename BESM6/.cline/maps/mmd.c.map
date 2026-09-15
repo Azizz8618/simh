@@ -1,0 +1,175 @@
+=== mmd.c — 4016 строк ===
+Источник: mmd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test mmd.c -nt .cline/maps/mmd.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| MMD_REG | 2656-2692 |
+| MMD_CTX | 2696-2708 |
+| MMD_UART_CTX | 2798-2809 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 139 | |
+| MMD_PHASE_CMDNEW | 2694 | |
+| mmd_ctx | 2715 | |
+| mmdm_ctx | 2850 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 132 |
+| DBG_PRINT(args) |  | 134 |
+| VERBOSE_MSG | (1 << 0) | 145 |
+| ERROR_MSG | (1 << 1) | 146 |
+| RBUF_MSG | (1 << 2) | 147 |
+| WBUF_MSG | (1 << 3) | 148 |
+| FDC_MSG | (1 << 4) | 149 |
+| STATUS_MSG | (1 << 5) | 150 |
+| MMD_ROM_BASE | 0x0000 | 209 |
+| MMD_ROM_SIZE | 4096 | 210 |
+| MMD_ROM_MASK | (MMD_ROM_SIZE-1) | 211 |
+| MMD_MAX_DRIVES | 4 | 2545 |
+| MMD_UNITS | MMD_MAX_DRIVES + 1 | 2546 |
+| MMD_SIO1_UNIT | MMD_UNITS - 1 | 2547 |
+| MMD_SECTOR_LEN | 1024 | 2548 |
+| MMD_SPT | 5           /* Sectors per Track */ | 2549 |
+| MMD_BPT | (MMD_SPT * MMD_SECTOR_LEN) | 2550 |
+| MMD_TRACKS | 40 | 2551 |
+| MMD_SIDES | 2 | 2552 |
+| MMD_CAPACITY | (MMD_BPT * MMD_TRACKS * MMD_SIDE... | 2553 |
+| MMD_IO_BASE | 0xf0 | 2555 |
+| MMD_IO_SIZE | 14        /* FE is used by SIMH */ | 2556 |
+| MMD_REG_CH0DIV | 0xf0 | 2558 |
+| MMD_REG_CH1DIV | 0xf1 | 2559 |
+| MMD_REG_CH2DIV | 0xf2 | 2560 |
+| MMD_REG_CTCSEL | 0xf3 | 2561 |
+| MMD_REG_CENDATA | 0xf4 | 2562 |
+| MMD_REG_MTRCHK | 0xf5 | 2563 |
+| MMD_REG_ROMCTL | 0xf6 | 2564 |
+| MMD_REG_VFO | 0xf7 | 2565 |
+| MMD_REG_TC | 0xf7 | 2566 |
+| MMD_REG_MOTOR | 0xf8 | 2567 |
+| MMD_REG_FDCSTAT | 0xfa | 2568 |
+| MMD_REG_FDCDATA | 0xfb | 2569 |
+| MMD_REG_CDATA | 0xfc | 2570 |
+| MMD_REG_CSTAT | 0xfd | 2571 |
+| MMD_CH_1 | 0x7e    /* Select CTC Channel 1 */ | 2574 |
+| MMD_CH_2 | 0xbe    /* Select CTC Channel 2 */ | 2575 |
+| MMD_STAT_MTR | 0x03 | 2577 |
+| MMD_STAT_MTRON | 0x01 | 2578 |
+| MMD_STAT_IDX | 0x04 | 2579 |
+| MMD_STAT_ACK | 0x08 | 2580 |
+| MMD_STAT_BUSY | 0x10 | 2581 |
+| MMD_STAT_DIAG | 0x20 | 2582 |
+| MMD_STAT_STROBE | 0x80 | 2583 |
+| MMD_STAT_D0B | 0x01 | 2585 |
+| MMD_STAT_D1B | 0x02 | 2586 |
+| MMD_STAT_D2B | 0x04 | 2587 |
+| MMD_STAT_D3B | 0x08 | 2588 |
+| MMD_STAT_BUSY | 0x10 | 2589 |
+| MMD_STAT_EXM | 0x20 | 2590 |
+| MMD_STAT_DIO | 0x40 | 2591 |
+| MMD_STAT_RQM | 0x80 | 2592 |
+| MMD_STAT0_US0 | 0x01    /* Unit Select 0 */ | 2594 |
+| MMD_STAT0_US1 | 0x02    /* Unit Select 1 */ | 2595 |
+| MMD_STAT0_HD | 0x04    /* Head Address */ | 2596 |
+| MMD_STAT0_NR | 0x08    /* Not Ready */ | 2597 |
+| MMD_STAT0_EC | 0x10    /* Equipment Check */ | 2598 |
+| MMD_STAT0_SE | 0x20    /* Seek End */ | 2599 |
+| MMD_STAT0_ICMASK | 0xc0    /* Interrupt Code Mask */ | 2600 |
+| MMD_STAT0_NT | 0x00    /* Normal Termination */ | 2601 |
+| MMD_STAT0_AT1 | 0x40    /* Abnormal Termination */ | 2602 |
+| MMD_STAT0_IC | 0x80    /* Invalid Command Issue */ | 2603 |
+| MMD_STAT0_AT2 | 0xc0    /* Abnormal Termination */ | 2604 |
+| MMD_STAT1_MA | 0x10    /* Missing Address Mark */ | 2606 |
+| MMD_STAT1_NW | 0x20    /* Not Writable */ | 2607 |
+| MMD_STAT1_ND | 0x40    /* No Data */ | 2608 |
+| MMD_STAT1_OR | 0x10    /* Overrun Error */ | 2609 |
+| MMD_STAT1_CRC | 0x20    /* CRC Error */ | 2610 |
+| MMD_STAT1_EN | 0x80    /* End of Cylinder */ | 2611 |
+| MMD_STAT2_MD | 0x01    /* Missing Address Mark */ | 2613 |
+| MMD_STAT2_BC | 0x02    /* Bad Cylinder */ | 2614 |
+| MMD_STAT2_SN | 0x04    /* Scan Not Satisfied */ | 2615 |
+| MMD_STAT2_SH | 0x08    /* Scan Equal Hit */ | 2616 |
+| MMD_STAT2_WC | 0x10    /* Wrong Cylinder */ | 2617 |
+| MMD_STAT2_DD | 0x20    /* Data Error in Data Fi... | 2618 |
+| MMD_STAT2_CM | 0x40    /* Control Mark */ | 2619 |
+| MMD_STAT3_US0 | 0x01    /* Unit Select 0 */ | 2621 |
+| MMD_STAT3_US1 | 0x02    /* Unit Select 1 */ | 2622 |
+| MMD_STAT3_HD | 0x04    /* Head Address */ | 2623 |
+| MMD_STAT3_TS | 0x08    /* Two Side */ | 2624 |
+| MMD_STAT3_TO | 0x10    /* Track 0 */ | 2625 |
+| MMD_STAT3_RY | 0x20    /* Ready */ | 2626 |
+| MMD_STAT3_WP | 0x40    /* Write Protected */ | 2627 |
+| MMD_STAT3_FT | 0x80    /* Fault */ | 2628 |
+| MMD_CMD_MASK | 0x1f | 2630 |
+| MMD_CMD_SPECIFY | 0x03 | 2631 |
+| MMD_CMD_SDS | 0x04 | 2632 |
+| MMD_CMD_WRITE | 0x05 | 2633 |
+| MMD_CMD_READ | 0x06 | 2634 |
+| MMD_CMD_RECALIB | 0x07 | 2635 |
+| MMD_CMD_SIS | 0x08 | 2636 |
+| MMD_CMD_FORMAT | 0x0d | 2637 |
+| MMD_CMD_SEEK | 0x0f | 2638 |
+| MMD_FLAG_SK | 0x20 | 2640 |
+| MMD_FLAG_MF | 0x40 | 2641 |
+| MMD_FLAG_MT | 0x80 | 2642 |
+| MMD_NAME | "Morrow Micro-Decision" | 2650 |
+| MMD_SNAME | "MMD" | 2651 |
+| MMD_STAT_TXRDY | 0x01 | 2811 |
+| MMD_STAT_RXRDY | 0x02 | 2812 |
+| MMDM_NAME | "Morrow Micro Decision Modem Port" | 2818 |
+| MMDM_SNAME | "MMDM" | 2819 |
+| MMD_REG_MDATA | 0xfe | 2821 |
+| MMD_REG_MSTAT | 0xff | 2822 |
+| MMD_BAUD_110 | 1136 | 2824 |
+| MMD_BAUD_300 | 417 | 2825 |
+| MMD_BAUD_600 | 208 | 2826 |
+| MMD_BAUD_1200 | 104 | 2827 |
+| MMD_BAUD_2400 | 52 | 2828 |
+| MMD_BAUD_4800 | 26 | 2829 |
+| MMD_BAUD_9600 | 13 | 2830 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mmd_description | 2904-2908 |  |
+| mmd_reset | 2909-2979 | Reset routines |
+| mmdm_reset | 2980-3007 |  |
+| mmd_svc | 3008-3016 | Service routines |
+| mmdm_svc | 3017-3069 |  |
+| mmd_sio1_svc | 3070-3135 |  |
+| mmd_attach | 3136-3195 | Attach routines |
+| mmdm_attach | 3196-3209 |  |
+| mmd_detach | 3210-3250 | Detach routines |
+| mmdm_detach | 3251-3261 |  |
+| mmd_config_line | 3262-3314 |  |
+| mmd_boot | 3315-3326 |  |
+| mmd_set_diag | 3327-3352 |  |
+| mmd_show_diag | 3353-3363 |  |
+| mmd_set_rom | 3364-3386 |  |
+| mmd_show_rom | 3387-3405 |  |
+| mmdrom | 3406-3420 |  |
+| mmdmem | 3421-3429 |  |
+| mmddev | 3430-3438 |  |
+| intZ80 | 3439-3446 |  |
+| MMD_Dev_Read | 3447-3504 |  |
+| MMD_FDC_Read_Data | 3505-3525 |  |
+| MMD_Dev_Write | 3526-3589 |  |
+| MMD_FDC_Write_Data | 3590-3610 |  |
+| MMD_Command_New | 3611-3652 |  |
+| MMD_Command_Stack | 3653-3661 |  |
+| MMD_Command_Proc | 3662-3768 |  |
+| MMD_Command_String | 3769-3813 |  |
+| MMD_Result_Stack | 3814-3827 |  |
+| MMD_Exec_Format | 3828-3855 |  |
+| MMD_Exec_Read | 3856-3888 |  |
+| MMD_Exec_Write | 3889-3922 |  |
+| MMD_Term_Count | 3923-3932 |  |
+| MMD_Seek_Sector | 3933-3960 | Seek to sector on disk |
+| MMD_Read_Sector | 3961-3984 | Read sector from disk |
+| MMD_Write_Sector | 3985-4004 | Write sector to disk |
+| MMD_Dump_Sector | 4005-4016 |  |

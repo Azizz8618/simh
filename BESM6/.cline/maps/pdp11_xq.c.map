@@ -1,0 +1,93 @@
+=== pdp11_xq.c — 3369 строк ===
+Источник: pdp11_xq.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_xq.c -nt .cline/maps/pdp11_xq.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 253 | |
+| tmr_poll | 254 | |
+| SCPE_OK | 3162 | |
+| SCPE_NOFNC | 3164 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IOLN_XQ | 020 | 343 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| xq_unit2ctlr | 589-599 |  |
+| xq_dev2ctlr | 600-609 |  |
+| xq_pa2ctlr | 610-622 |  |
+| xq_ex | 623-644 | stop simh from reading non-existant unit data stream |
+| xq_dep | 645-649 | stop simh from writing non-existant unit data stream |
+| xq_showmac | 650-659 |  |
+| xq_make_checksum | 660-682 |  |
+| xq_setmac | 683-698 |  |
+| xq_set_stats | 699-718 |  |
+| xq_show_stats | 719-740 |  |
+| xq_show_filters | 741-775 |  |
+| xq_show_type | 776-795 |  |
+| xq_set_type | 796-813 |  |
+| xq_show_poll | 814-826 |  |
+| xq_set_poll | 827-859 |  |
+| xq_show_sanity | 860-867 |  |
+| xq_set_sanity | 868-881 |  |
+| xq_show_throttle | 882-892 |  |
+| xq_set_throttle | 893-953 |  |
+| xq_show_lockmode | 954-962 |  |
+| xq_set_lockmode | 963-978 |  |
+| xq_show_leds | 979-990 |  |
+| xq_nxm_error | 991-1008 |  |
+| xq_write_callback | 1009-1044 |  |
+| xqa_write_callback | 1045-1049 |  |
+| xqb_write_callback | 1050-1055 |  |
+| xq_rd | 1056-1100 | read registers: |
+| xq_process_rbdl | 1101-1306 |  |
+| xq_process_mop | 1307-1362 |  |
+| xq_process_setup | 1363-1488 |  |
+| xq_process_xbdl | 1489-1618 |  |
+| xq_show_debug_bdl | 1619-1674 |  |
+| xq_dispatch_rbdl | 1675-1698 |  |
+| xq_dispatch_xbdl | 1699-1729 |  |
+| xq_process_turbo_rbdl | 1730-1859 |  |
+| xq_process_turbo_xbdl | 1860-1981 |  |
+| xq_process_loopback | 1982-2033 |  |
+| xq_process_remote_console | 2034-2074 |  |
+| xq_process_local | 2075-2097 |  |
+| xq_read_callback | 2098-2119 |  |
+| xqa_read_callback | 2120-2124 |  |
+| xqb_read_callback | 2125-2129 |  |
+| xq_sw_reset | 2130-2184 |  |
+| xq_wr_var | 2185-2232 |  |
+| xq_process_bootrom | 2233-2291 |  |
+| xq_wr_csr | 2292-2337 |  |
+| xq_start_receiver | 2338-2359 |  |
+| xq_stop_receiver | 2360-2367 |  |
+| xq_wr_srqr_set | 2368-2378 |  |
+| xq_wr_srqr_action | 2379-2434 |  |
+| xq_wr_arqr | 2435-2458 |  |
+| xq_wr_icr | 2459-2472 |  |
+| xq_wr | 2473-2552 |  |
+| xq_reset | 2553-2641 | reset device |
+| xq_reset_santmr | 2642-2652 |  |
+| xq_boot_host | 2653-2666 |  |
+| xq_system_id | 2667-2745 |  |
+| xq_svc | 2746-2783 |  |
+| xq_tmrsvc | 2784-2819 |  |
+| xq_startsvc | 2820-2835 |  |
+| xq_receivesvc | 2836-2847 |  |
+| xq_srqrsvc | 2848-2859 |  |
+| xq_attach | 2860-2955 | attach device: |
+| xq_detach | 2956-2978 |  |
+| xq_setint | 2979-2995 |  |
+| xq_clrint | 2996-3009 |  |
+| xq_int | 3010-3022 |  |
+| xq_csr_set_clr | 3023-3074 |  |
+| xq_debug_setup | 3075-3103 |  |
+| xq_debug_turbo_setup | 3104-3151 |  |
+| xq_boot | 3152-3167 |  |
+| xq_help | 3168-3364 |  |
+| xq_description | 3365-3369 |  |

@@ -1,0 +1,261 @@
+=== sim_scsi.c — 1784 строк ===
+Источник: sim_scsi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_scsi.c -nt .cline/maps/sim_scsi.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| uptr | 97 | |
+| arglist | 108 | |
+| bus->initiator | 150 | |
+| bus->target | 151 | |
+| bus->buf_t | 152 | |
+| uptr | 210 | |
+| FALSE | 236 | |
+| used | 243 | |
+| used | 279 | |
+| bus->sense_key | 286 | |
+| bus->sense_code | 287 | |
+| bus->buf_b | 289 | |
+| bus->status | 298 | |
+| bus->sense_key | 299 | |
+| bus->sense_code | 300 | |
+| return | 361 | |
+| uptr | 377 | |
+| uptr | 391 | |
+| bus->buf | 465 | |
+| bus->buf | 468 | |
+| bus->buf | 469 | |
+| bus->buf | 470 | |
+| bus->buf | 475 | |
+| bus->buf | 476 | |
+| bus->sense_qual | 480 | |
+| bus->sense_info | 481 | |
+| uptr | 492 | |
+| blk_size | 493 | |
+| uptr | 549 | |
+| pc | 550 | |
+| uptr | 664 | |
+| pc | 665 | |
+| pc | 699 | |
+| uptr | 750 | |
+| bus->buf_b | 762 | |
+| uptr | 771 | |
+| lba | 772 | |
+| sects | 773 | |
+| sects | 777 | |
+| uptr | 799 | |
+| sects | 800 | |
+| new_buf_b | 810 | |
+| sectsread | 811 | |
+| uptr | 906 | |
+| lba | 907 | |
+| sects | 908 | |
+| uptr | 939 | |
+| lba | 940 | |
+| sects | 941 | |
+| bus->buf_b | 955 | |
+| uptr | 964 | |
+| lba | 965 | |
+| sects | 966 | |
+| uptr | 996 | |
+| sects | 997 | |
+| uptr | 1033 | |
+| lba | 1034 | |
+| sects | 1035 | |
+| uptr | 1067 | |
+| uptr | 1101 | |
+| uptr | 1128 | |
+| code | 1129 | |
+| sects | 1130 | |
+| code | 1133 | |
+| uptr | 1169 | |
+| sects | 1171 | |
+| uptr | 1209 | |
+| uptr | 1479 | |
+| cmd_len | 1480 | |
+| bus->status | 1486 | |
+| cmd_len | 1508 | |
+| left | 1532 | |
+| bc | 1533 | |
+| buf | 1534 | |
+| bus->dev | 1622 | |
+| bus->phase | 1649 | |
+| bus->buf_t | 1650 | |
+| bus->atn | 1651 | |
+| bus->initiator | 1652 | |
+| bus->target | 1653 | |
+| bus->lun | 1654 | |
+| bus->sense_key | 1657 | |
+| bus->sense_code | 1658 | |
+| bus->sense_qual | 1659 | |
+| bus->sense_info | 1660 | |
+| SCPE_OK | 1671 | |
+| SCPE_OK | 1783 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CMD_TESTRDY | 0x00                            ... | 33 |
+| CMD_INQUIRY | 0x12                            ... | 34 |
+| CMD_REQSENSE | 0x03                            ... | 35 |
+| CMD_RDBLKLIM | 0x05                            ... | 36 |
+| CMD_MODESEL6 | 0x15                            ... | 37 |
+| CMD_MODESEL10 | 0x55                            ... | 38 |
+| CMD_MODESENSE6 | 0x1A                            ... | 39 |
+| CMD_MODESENSE10 | 0x5A                            ... | 40 |
+| CMD_STARTSTOP | 0x1B                            ... | 41 |
+| CMD_LOADUNLOAD | 0x1B                            ... | 42 |
+| CMD_PREVALLOW | 0x1E                            ... | 43 |
+| CMD_RDCAP | 0x25                            ... | 44 |
+| CMD_READ6 | 0x08                            ... | 45 |
+| CMD_READ10 | 0x28                            ... | 46 |
+| CMD_RDLONG | 0x3E                            ... | 47 |
+| CMD_WRITE6 | 0x0A                            ... | 48 |
+| CMD_WRITE10 | 0x2A                            ... | 49 |
+| CMD_ERASE | 0x19                            ... | 50 |
+| CMD_RESERVE | 0x16                            ... | 51 |
+| CMD_RELEASE | 0x17                            ... | 52 |
+| CMD_REWIND | 0x01                            ... | 53 |
+| CMD_SNDDIAG | 0x1D                            ... | 54 |
+| CMD_SPACE | 0x11                            ... | 55 |
+| CMD_WRFMARK | 0x10                            ... | 56 |
+| CMD_READ6_TAPE_FIXED | 0x01                    /* Fixed... | 58 |
+| CMD_READ6_TAPE_SILI | 0x02                    /* Suppr... | 59 |
+| STS_OK | 0                               ... | 64 |
+| STS_CHK | 2                               ... | 65 |
+| KEY_OK | 0                               ... | 69 |
+| KEY_NOTRDY | 2                               ... | 70 |
+| KEY_ILLREQ | 5                               ... | 71 |
+| KEY_PROT | 7                               ... | 72 |
+| KEY_BLANK | 8                               ... | 73 |
+| KEY_M_ILI | 0x20                            ... | 74 |
+| ASC_OK | 0                               ... | 78 |
+| ASC_INVCOM | 0x20                            ... | 79 |
+| ASC_INVCDB | 0x24                            ... | 80 |
+| ASC_NOMEDIA | 0x3A                            ... | 81 |
+| PUTL(b,x,v) | b[x] = (v >> 24) & 0xFF;  | 83 |
+| PUTW(b,x,v) | b[x] = (v >> 8) & 0xFF;  | 87 |
+| GETL(b,x) | ((b[x] << 24) \|  | 89 |
+| GETW(b,x) | ((b[x] << 8)\|b[x+1]) | 93 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| _scsi_vdebug | 95-105 |  |
+| scsi_debug_cmd | 106-127 |  |
+| scsi_arbitrate | 128-129 |  |
+| if | 130-142 |  |
+| scsi_release | 143-156 |  |
+| scsi_set_atn | 157-167 |  |
+| scsi_release_atn | 168-176 |  |
+| scsi_set_req | 177-178 |  |
+| if | 179-187 |  |
+| scsi_release_req | 188-189 |  |
+| if | 190-196 |  |
+| scsi_set_phase | 197-198 |  |
+| if | 199-207 |  |
+| scsi_select | 208-211 |  |
+| if | 212-216 |  |
+| if | 217-221 |  |
+| if | 222-240 |  |
+| scsi_message | 241-244 |  |
+| if | 245-251 |  |
+| if | 252-261 |  |
+| if | 262-267 |  |
+| if | 268-283 |  |
+| scsi_status | 284-295 |  |
+| scsi_status_deferred | 296-304 |  |
+| scsi_decode_group | 305-308 |  |
+| switch | 309-326 |  |
+| scsi_tape_status | 327-328 |  |
+| switch | 329-366 |  |
+| scsi_check_alloc | 367-374 |  |
+| scsi_test_ready | 375-388 |  |
+| scsi_inquiry | 389-394 |  |
+| if | 395-454 |  |
+| scsi_req_sense | 455-489 |  |
+| scsi_mode_sel6 | 490-494 |  |
+| if | 495-501 |  |
+| if | 502-527 |  |
+| scsi_mode_sel10 | 528-529 |  |
+| if | 530-536 |  |
+| if | 537-546 |  |
+| scsi_mode_sense | 547-563 |  |
+| if | 564-577 |  |
+| if | 578-595 |  |
+| if | 596-621 |  |
+| if | 622-647 |  |
+| if | 648-661 |  |
+| scsi_mode_sense6 | 662-671 |  |
+| if | 672-696 |  |
+| scsi_mode_sense10 | 697-705 |  |
+| if | 706-731 |  |
+| scsi_start_stop | 732-739 |  |
+| scsi_prev_allow | 740-747 |  |
+| scsi_read_capacity | 748-753 |  |
+| if | 754-768 |  |
+| scsi_read6_disk | 769-796 |  |
+| scsi_read6_tape | 797-803 |  |
+| if | 804-812 |  |
+| if | 813-819 |  |
+| if | 820-890 |  |
+| if | 891-903 |  |
+| scsi_read10_disk | 904-915 |  |
+| if | 916-936 |  |
+| scsi_read_long | 937-961 |  |
+| scsi_write6_disk | 962-968 |  |
+| if | 969-977 |  |
+| if | 978-993 |  |
+| scsi_write6_tape | 994-999 |  |
+| if | 1000-1009 |  |
+| if | 1010-1030 |  |
+| scsi_write10_disk | 1031-1037 |  |
+| if | 1038-1049 |  |
+| if | 1050-1064 |  |
+| scsi_erase | 1065-1082 |  |
+| scsi_reserve_unit | 1083-1090 |  |
+| scsi_release_unit | 1091-1098 |  |
+| scsi_rewind | 1099-1113 |  |
+| scsi_send_diag | 1114-1125 |  |
+| scsi_space | 1126-1137 |  |
+| switch | 1138-1166 |  |
+| scsi_wrfmark | 1167-1177 |  |
+| for | 1178-1190 |  |
+| scsi_read_blklim | 1191-1206 |  |
+| scsi_load_unload | 1207-1212 |  |
+| if | 1213-1223 |  |
+| scsi_disk_command | 1224-1225 |  |
+| switch | 1226-1310 |  |
+| scsi_tape_command | 1311-1312 |  |
+| switch | 1313-1399 |  |
+| scsi_cdrom_command | 1400-1401 |  |
+| switch | 1402-1476 |  |
+| scsi_command | 1477-1487 |  |
+| switch | 1488-1512 |  |
+| scsi_data | 1513-1518 |  |
+| if | 1519-1529 |  |
+| scsi_write | 1530-1536 |  |
+| for | 1537-1555 |  |
+| switch | 1556-1570 |  |
+| scsi_read | 1571-1574 |  |
+| if | 1575-1581 |  |
+| if | 1582-1608 |  |
+| scsi_state | 1609-1619 |  |
+| scsi_add_unit | 1620-1626 |  |
+| scsi_reset_unit | 1627-1631 |  |
+| switch | 1632-1645 |  |
+| scsi_reset | 1646-1664 |  |
+| scsi_init | 1665-1675 |  |
+| scsi_set_fmt | 1676-1680 |  |
+| switch | 1681-1694 |  |
+| scsi_show_fmt | 1695-1699 |  |
+| switch | 1700-1713 |  |
+| scsi_set_wlk | 1714-1722 |  |
+| scsi_show_wlk | 1723-1729 |  |
+| scsi_attach_ex | 1730-1734 |  |
+| switch | 1735-1748 |  |
+| scsi_attach | 1749-1755 |  |
+| scsi_detach | 1756-1760 |  |
+| switch | 1761-1774 |  |
+| scsi_help | 1775-1784 |  |

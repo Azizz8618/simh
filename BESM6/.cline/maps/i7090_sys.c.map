@@ -1,0 +1,39 @@
+=== i7090_sys.c — 1056 строк ===
+Источник: i7090_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7090_sys.c -nt .cline/maps/i7090_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_name | 41 | |
+| sim_name | 43 | |
+| sim_PC | 46 | |
+| sim_emax | 48 | |
+| drm_dib | 113 | |
+| cdp_dib | 116 | |
+| cdr_dib | 119 | |
+| lpr_dib | 122 | |
+| chron_dib | 129 | |
+| dsk_dib | 132 | |
+| ht_dib | 135 | |
+| com_dib | 138 | |
+| hsdrm_dib | 141 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TYPE_A | 0               /* Basic opcode ... | 365 |
+| TYPE_B | 1               /* OpcodeF Y[,T] */ | 366 |
+| TYPE_C | 2               /* Opcode  Y,C */ | 367 |
+| TYPE_D | 3               /* Opcode Y[,T] */ | 368 |
+| TYPE_E | 4               /* Opcode */ | 369 |
+| TYPE_F | 5               /* Opcode T */ | 370 |
+| TYPE_G | 6               /* Opcode K */ | 371 |
+| TYPE_P | 8               /* Positive 0760... | 372 |
+| TYPE_N | 9               /* Negitive 0760... | 373 |
+| TYPE_X | 10 | 374 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load | 223-1056 |  |

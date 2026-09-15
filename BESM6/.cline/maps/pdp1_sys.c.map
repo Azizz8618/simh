@@ -1,0 +1,96 @@
+=== pdp1_sys.c — 667 строк ===
+Источник: pdp1_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp1_sys.c -nt .cline/maps/pdp1_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dev | 51 | |
+| clk_dev | 52 | |
+| ptr_dev | 53 | |
+| ptp_dev | 54 | |
+| tti_dev | 55 | |
+| tto_dev | 56 | |
+| lpt_dev | 57 | |
+| dt_dev | 58 | |
+| drm_dev | 59 | |
+| drp_dev | 60 | |
+| dcs_dev | 61 | |
+| dpy_dev | 63 | |
+| cpu_unit | 65 | |
+| cpu_reg | 66 | |
+| PC | 68 | |
+| ascii_to_fiodec | 69 | |
+| sim_name | 81 | |
+| sim_PC | 83 | |
+| sim_emax | 85 | |
+| word | 123 | |
+| word | 132 | |
+| origin | 137 | |
+| val | 160 | |
+| sta | 203 | |
+| fld | 204 | |
+| fld | 214 | |
+| SCPE_OK | 220 | |
+| sp | 429 | |
+| cflag | 451 | |
+| inst | 453 | |
+| disp | 476 | |
+| SCPE_ARG | 538 | |
+| cflag | 579 | |
+| sc_enc | 581 | |
+| gbuf | 582 | |
+| cptr | 588 | |
+| SCPE_OK | 666 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| I_V_FL | 18                              ... | 225 |
+| I_M_FL | 017                             ... | 226 |
+| I_V_NPN | 0                               ... | 227 |
+| I_V_IOT | 1                               ... | 228 |
+| I_V_LAW | 2                               ... | 229 |
+| I_V_MRF | 3                               ... | 230 |
+| I_V_MRI | 4                               ... | 231 |
+| I_V_OPR | 5                               ... | 232 |
+| I_V_SKP | 6                               ... | 233 |
+| I_V_SHF | 7                               ... | 234 |
+| I_V_SPC | 8                               ... | 235 |
+| I_NPN | (I_V_NPN << I_V_FL)             ... | 236 |
+| I_IOT | (I_V_IOT << I_V_FL)             ... | 237 |
+| I_LAW | (I_V_LAW << I_V_FL)             ... | 238 |
+| I_MRF | (I_V_MRF << I_V_FL)             ... | 239 |
+| I_MRI | (I_V_MRI << I_V_FL)             ... | 240 |
+| I_OPR | (I_V_OPR << I_V_FL)             ... | 241 |
+| I_SKP | (I_V_SKP << I_V_FL)             ... | 242 |
+| I_SHF | (I_V_SHF << I_V_FL)             ... | 243 |
+| I_SPC | (I_V_SPC << I_V_FL) | 244 |
+| FMTASC(x) | ((x) < 040)? "<%03o>": "%c", (x) | 444 |
+| SIXTOASC(x) | fiodec_to_ascii[x] | 445 |
+| ASCTOSIX(x) | (ascii_to_fiodec[(x) & 0177] & 077) | 446 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pdp1_getw | 119-123 |  |
+| for | 124-134 |  |
+| rim_load | 135-138 |  |
+| for | 139-157 |  |
+| blk_load | 158-161 |  |
+| for | 162-200 |  |
+| sim_load | 201-207 |  |
+| if | 208-416 |  |
+| fprint_opr | 417-420 |  |
+| for | 421-454 |  |
+| if | 455-460 |  |
+| if | 461-464 |  |
+| if | 465-477 |  |
+| for | 478-550 |  |
+| get_sint | 551-553 |  |
+| if | 554-557 |  |
+| if | 558-576 |  |
+| parse_sym | 577-588 |  |
+| if | 589-594 |  |
+| if | 595-610 |  |
+| switch | 611-667 |  |

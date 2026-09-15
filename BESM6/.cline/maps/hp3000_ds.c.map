@@ -1,0 +1,83 @@
+=== hp3000_ds.c — 1356 строк ===
+Источник: hp3000_ds.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_ds.c -nt .cline/maps/hp3000_ds.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ds_interface | 368 | |
+| signal | 595 | |
+| working_set | 596 | |
+| outbound_value | 597 | |
+| outbound_signals | 598 | |
+| SCPE_OK | 873 | |
+| SCPE_OK | 901 | |
+| result | 959 | |
+| result | 991 | |
+| result | 1026 | |
+| return | 1079 | |
+| return | 1101 | |
+| return | 1130 | |
+| result | 1221 | |
+| command_set | 1222 | |
+| command | 1223 | |
+| flag_set | 1224 | |
+| return | 1355 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DRIVE_COUNT | (DL_MAXDRIVE + 1)           /* n... | 233 |
+| UNIT_COUNT | (DRIVE_COUNT + DL_AUXUNITS) /* t... | 234 |
+| OVERRIDE_COUNT | 50                          /* c... | 238 |
+| PRESET_ENABLE | TRUE                        /* P... | 240 |
+| UNUSED_COMMANDS | (BUSY \| DSCIF \| SELIF \| IFPRF \| ... | 242 |
+| DEB_IOB | DL_DEB_IOB                  /* t... | 247 |
+| DEB_CSRW | (1u << DL_DEB_V_UF + 0)     /* t... | 248 |
+| CN_MR | 0100000u            /* (M) maste... | 263 |
+| CN_RIN | 0040000u            /* (R) reset... | 264 |
+| CN_TEST | 0020000u            /* (T) test ... | 265 |
+| CN_WAIT | 0000001u            /* (W) wait ... | 267 |
+| CN_OPCODE_MASK | 0017400u            /* command w... | 269 |
+| CN_OPCODE_SHIFT | 8                   /* controlle... | 271 |
+| CN_OPCODE(c) | ((CNTLR_OPCODE) (((c) & CN_OPCOD... | 273 |
+| ST_SIO_OK | 0100000u            /* (S) SIO O... | 293 |
+| ST_TEST | 0040000u            /* (T) test ... | 294 |
+| ST_INTREQ | 0020000u            /* (I) inter... | 295 |
+| ST_STATUS_MASK | 0017400u            /* encoded t... | 296 |
+| ST_UNIT_MASK | 0000017u            /* unit numb... | 297 |
+| ST_MASK | ~(ST_SIO_OK \| ST_TEST \| ST_INTREQ) | 299 |
+| ST_STATUS_SHIFT | 8                   /* terminati... | 301 |
+| ST_UNIT_SHIFT | 0                   /* unit numb... | 302 |
+| ST_STATUS(n) | ((n) << ST_STATUS_SHIFT & ST_STA... | 304 |
+| ST_TO_UNIT(s) | (((s) & ST_UNIT_MASK) >> ST_UNIT... | 306 |
+| ST_TO_STATUS(s) | (CNTLR_STATUS) (((s) & ST_STATUS... | 307 |
+| DS_SEEK_ONE | uS (25)             /* track-to-... | 322 |
+| DS_SEEK_FULL | uS (250)            /* full-stro... | 323 |
+| DS_SECTOR_FULL | uS (50)             /* full sect... | 324 |
+| DS_DATA_XFER | uS (1)              /* data tran... | 325 |
+| DS_ISG | uS (25)             /* intersect... | 326 |
+| DS_OVERHEAD | uS (25)             /* controlle... | 327 |
+| UNIT_FLAGS | (UNIT_FIX \| UNIT_ATTABLE \| UNIT_... | 400 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ds_interface | 593-605 |  |
+| while | 606-860 |  |
+| ds_service | 861-887 |  |
+| ds_reset | 888-891 |  |
+| if | 892-918 |  |
+| ds_boot | 919-956 |  |
+| ds_attach | 957-962 |  |
+| if | 963-988 |  |
+| ds_detach | 989-994 |  |
+| if | 995-1022 |  |
+| ds_load_unload | 1023-1029 |  |
+| if | 1030-1052 |  |
+| master_reset | 1053-1072 |  |
+| if | 1073-1090 |  |
+| deny_sio_busy | 1091-1115 |  |
+| clear_interface_logic | 1116-1117 |  |
+| if | 1118-1218 |  |
+| call_controller | 1219-1356 |  |

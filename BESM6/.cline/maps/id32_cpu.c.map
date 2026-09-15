@@ -1,0 +1,159 @@
+=== id32_cpu.c — 2431 строк ===
+Источник: id32_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test id32_cpu.c -nt .cline/maps/id32_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 184-192 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dib | 498 | |
+| abortval | 612 | |
+| reason | 631 | |
+| PC | 1715 | |
+| reason | 1718 | |
+| qevent | 1732 | |
+| CC_MASK | 1736 | |
+| cc | 1775 | |
+| slt | 1782 | |
+| slt | 1813 | |
+| addr | 1846 | |
+| bufc | 1848 | |
+| seg | 2026 | |
+| seg | 2059 | |
+| val | 2093 | |
+| val | 2114 | |
+| val | 2134 | |
+| val | 2149 | |
+| pa | 2154 | |
+| val | 2157 | |
+| return | 2173 | |
+| pa | 2178 | |
+| val | 2180 | |
+| return | 2198 | |
+| pa | 2203 | |
+| val | 2205 | |
+| return | 2225 | |
+| val | 2244 | |
+| return | 2246 | |
+| val | 2253 | |
+| return | 2255 | |
+| drmod | 2267 | |
+| SCPE_IERR | 2277 | |
+| SCPE_OK | 2278 | |
+| SCPE_OK | 2294 | |
+| SCPE_OK | 2309 | |
+| mc | 2316 | |
+| MEMSIZE | 2325 | |
+| SCPE_OK | 2328 | |
+| rptr | 2335 | |
+| return | 2343 | |
+| SCPE_OK | 2352 | |
+| hst_p | 2373 | |
+| SCPE_OK | 2385 | |
+| op | 2392 | |
+| sim_eval | 2394 | |
+| lnt | 2405 | |
+| SCPE_OK | 2430 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 161 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 162 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 163 |
+| VAMASK | VAMASK32 | 164 |
+| NRSETS | 8                               ... | 165 |
+| PSW_MASK | PSW_x32 | 166 |
+| ABORT(val) | longjmp (save_env, (val)) | 167 |
+| MPRO | (-1) | 168 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 0)                 ... | 170 |
+| UNIT_V_DPFP | (UNIT_V_UF + 1) | 171 |
+| UNIT_V_832 | (UNIT_V_UF + 2) | 172 |
+| UNIT_V_8RS | (UNIT_V_UF + 3) | 173 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 174 |
+| UNIT_DPFP | (1 << UNIT_V_DPFP) | 175 |
+| UNIT_832 | (1 << UNIT_V_832) | 176 |
+| UNIT_8RS | (1 << UNIT_V_8RS) | 177 |
+| UNIT_TYPE | (UNIT_DPFP \| UNIT_832) | 178 |
+| HIST_PC | 0x40000000 | 180 |
+| HIST_MIN | 64 | 181 |
+| HIST_MAX | 65536 | 182 |
+| PSW_GETREG(x) | (((x) >> PSW_V_REG) & psw_reg_mask) | 194 |
+| SEXT32(x) | (((x) & SIGN32)? ((int32) ((x) \|... | 195 |
+| SEXT16(x) | (((x) & SIGN16)? ((int32) ((x) \|... | 197 |
+| SEXT15(x) | (((x) & 0x4000)? ((int32) ((x) \|... | 199 |
+| CC_GL_16(x) | if ((x) & SIGN16)  | 201 |
+| CC_GL_32(x) | if ((x) & SIGN32)  | 206 |
+| BUILD_PSW(x) | (((PSW & ~CC_MASK) \| (x)) & PSW_... | 211 |
+| NEG(x) | ((~(x) + 1) & DMASK32) | 212 |
+| ABS(x) | (((x) & SIGN32)? NEG (x): (x)) | 213 |
+| DNEG(x,y) | y = NEG (y);  | 214 |
+| LOG_CPU_I | 0x0001                          ... | 219 |
+| LOG_CPU_C | 0x0002                          ... | 220 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 608-617 |  |
+| if | 618-643 |  |
+| if | 644-651 |  |
+| while | 652-1722 |  |
+| newPSW | 1723-1740 |  |
+| exception | 1741-1747 |  |
+| if | 1748-1763 |  |
+| testsysq | 1764-1768 |  |
+| if | 1769-1779 |  |
+| addtoq | 1780-1790 |  |
+| if | 1791-1810 |  |
+| remfmq | 1811-1821 |  |
+| if | 1822-1843 |  |
+| int_auto | 1844-1858 |  |
+| if | 1859-1866 |  |
+| if | 1867-1872 |  |
+| if | 1873-1876 |  |
+| if | 1877-1880 |  |
+| if | 1881-1980 |  |
+| display | 1981-1984 |  |
+| switch | 1985-2023 |  |
+| Reloc | 2024-2031 |  |
+| if | 2032-2035 |  |
+| if | 2036-2039 |  |
+| if | 2040-2043 |  |
+| if | 2044-2056 |  |
+| RelocT | 2057-2090 |  |
+| ReadB | 2091-2095 |  |
+| if | 2096-2111 |  |
+| ReadH | 2112-2115 |  |
+| if | 2116-2131 |  |
+| ReadF | 2132-2135 |  |
+| if | 2136-2151 |  |
+| WriteB | 2152-2157 |  |
+| if | 2158-2175 |  |
+| WriteH | 2176-2180 |  |
+| if | 2181-2200 |  |
+| WriteF | 2201-2205 |  |
+| if | 2206-2210 |  |
+| if | 2211-2227 |  |
+| IOReadB | 2228-2234 |  |
+| IOReadH | 2235-2239 |  |
+| IOWriteB | 2240-2248 |  |
+| IOWriteH | 2249-2259 |  |
+| cpu_reset | 2260-2282 |  |
+| cpu_ex | 2283-2284 |  |
+| if | 2285-2298 |  |
+| cpu_dep | 2299-2300 |  |
+| if | 2301-2313 |  |
+| cpu_set_size | 2314-2332 |  |
+| set_r_display | 2333-2347 |  |
+| cpu_set_consint | 2348-2356 |  |
+| cpu_set_hist | 2357-2361 |  |
+| if | 2362-2373 |  |
+| if | 2374-2378 |  |
+| if | 2379-2389 |  |
+| cpu_show_hist | 2390-2399 |  |
+| if | 2400-2409 |  |
+| for | 2410-2431 |  |

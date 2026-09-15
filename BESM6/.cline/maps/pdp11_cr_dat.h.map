@@ -1,0 +1,4 @@
+=== pdp11_cr_dat.h — 682 строк ===
+Источник: pdp11_cr_dat.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_cr_dat.h -nt .cline/maps/pdp11_cr_dat.h.map
+

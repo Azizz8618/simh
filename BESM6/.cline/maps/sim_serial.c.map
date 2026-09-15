@@ -1,0 +1,246 @@
+=== sim_serial.c — 1885 строк ===
+Источник: sim_serial.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_serial.c -nt .cline/maps/sim_serial.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| SERIAL_LIST | 137-140 |
+| SERCONFIG | 142-147 |
+|     unsigned int stat2 | 1414-1419 |
+|     unsigned int dev_status | 1421-1424 |
+| ITEM | 1426-1431 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| serial_open_device_count | 161 | |
+| NULL | 170 | |
+| NULL | 180 | |
+| serial_open_devices | 187 | |
+| serial_open_devices | 188 | |
+| &serial_open_devices | 192 | |
+| return | 219 | |
+| ports | 253 | |
+| list | 258 | |
+| name | 264 | |
+| list | 269 | |
+| NULL | 291 | |
+| list | 296 | |
+| found | 301 | |
+| list | 315 | |
+| found | 320 | |
+| list | 334 | |
+| SCPE_OK | 367 | |
+| temp1 | 372 | |
+| savname | 373 | |
+| port | 374 | |
+| config | 375 | |
+| status | 376 | |
+| port | 445 | |
+| pptr | 456 | |
+| sptr | 457 | |
+| config | 458 | |
+| arg_error | 459 | |
+| dev | 461 | |
+| pptr | 465 | |
+| ports | 519 | |
+| hSERIALCOMM | 520 | |
+| ports | 547 | |
+| hPort | 577 | |
+| port | 578 | |
+| dcb | 579 | |
+| commdefault | 580 | |
+| error | 581 | |
+| cto | 583 | |
+| win32name | 584 | |
+| port->hPort | 610 | |
+| dcb.Parity | 623 | |
+| dcb.ByteSize | 624 | |
+| dcb.StopBits | 625 | |
+| dcb.fOutX | 626 | |
+| dcb.fInX | 627 | |
+| cto.ReadTotalTimeoutConstant | 640 | |
+| cto.WriteTotalTimeoutMultiplier | 641 | |
+| cto.WriteTotalTimeoutConstant | 642 | |
+| dcb | 726 | |
+| error | 727 | |
+| SCPE_OK | 824 | |
+| read | 850 | |
+| commerrors | 851 | |
+| cs | 852 | |
+| bptr | 853 | |
+| port | 950 | |
+| ports | 951 | |
+| serial_unix_serial_names | 1001 | |
+| sp | 1002 | |
+| ports | 1030 | |
+| o_set | 1070 | |
+| l_set | 1087 | |
+| port | 1088 | |
+| serport | 1089 | |
+| tio | 1090 | |
+| tio.c_cc | 1117 | |
+| tio.c_cc | 1120 | |
+| serport->port | 1130 | |
+| tio | 1152 | |
+| charsize_map | 1175 | |
+| bits | 1246 | |
+| SCPE_OK | 1279 | |
+| read_count | 1307 | |
+| bptr | 1308 | |
+| remaining | 1309 | |
+| written | 1359 | |
+| ports | 1452 | |
+| iosb | 1453 | |
+| status | 1454 | |
+| devsts | 1455 | |
+| devtype | 1458 | |
+| devdepend | 1459 | |
+| devnamlen | 1461 | |
+| done | 1462 | |
+| context | 1463 | |
+| ports | 1516 | |
+| status | 1536 | |
+| chan | 1537 | |
+| iosb | 1538 | |
+| devclass | 1540 | |
+| start_mode | 1543 | |
+| run_mode | 1544 | |
+| port | 1545 | |
+| run_mode | 1564 | |
+| run_mode.stat2 | 1566 | |
+| port->port | 1574 | |
+| port->write_iosb.status | 1575 | |
+| sense | 1598 | |
+| status | 1599 | |
+| iosb | 1600 | |
+| status | 1693 | |
+| iosb | 1694 | |
+| bits | 1695 | |
+| SCPE_OK | 1735 | |
+| read_count | 1763 | |
+| status | 1764 | |
+| term | 1765 | |
+| buf | 1766 | |
+| iosb | 1767 | |
+| sense | 1768 | |
+| status | 1801 | |
+| INVALID_HANDLE | 1841 | |
+| SCPE_IERR | 1849 | |
+| SCPE_NOFNC | 1857 | |
+| -1 | 1865 | |
+| -1 | 1873 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SER_DEV_NAME_MAX | 256                        /* ma... | 132 |
+| SER_DEV_DESC_MAX | 256                        /* ma... | 133 |
+| SER_DEV_CONFIG_MAX | 64                        /* max... | 134 |
+| SER_MAX_DEVICE | 64                        /* max... | 135 |
+| UCB$M_TEMPLATE | 0x2000       /* Device is a temp... | 1456 |
+| UCB$M_ONLINE | 0x0010       /* Device is online */ | 1457 |
+| DEV$M_RTM | 0x20000000 | 1460 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| _get_open_device | 163-172 |  |
+| _get_open_device_byname | 173-182 |  |
+| _serial_add_to_open_list | 183-194 |  |
+| _serial_remove_from_open_list | 195-215 |  |
+| sim_error_serial | 216-222 |  |
+| _serial_name_compare | 223-230 | Used when sorting a list of serial port names |
+| sim_serial_devices | 231-238 |  |
+| for | 239-255 |  |
+| sim_serial_getname | 256-266 |  |
+| sim_serial_getname_bydesc | 267-273 |  |
+| for | 274-293 |  |
+| sim_serial_getname_byname | 294-302 |  |
+| for | 303-312 |  |
+| sim_serial_getdesc_byname | 313-321 |  |
+| for | 322-331 |  |
+| sim_show_serial | 332-355 |  |
+| if | 356-369 |  |
+| sim_open_serial | 370-412 |  |
+| if | 413-420 |  |
+| if | 421-430 |  |
+| if | 431-437 |  |
+| if | 438-447 |  |
+| sim_close_serial | 448-453 |  |
+| sim_config_serial | 454-488 |  |
+| if | 489-516 |  |
+| sim_serial_os_devices | 517-522 |  |
+| if | 523-574 |  |
+| sim_open_os_serial | 575-585 |  |
+| if | 586-598 |  |
+| if | 599-611 |  |
+| if | 612-630 |  |
+| if | 631-643 |  |
+| if | 644-656 |  |
+| if | 657-667 |  |
+| if | 668-678 |  |
+| if | 679-685 |  |
+| if | 686-714 |  |
+| sim_config_os_serial | 715-729 |  |
+| if | 730-760 |  |
+| if | 761-786 |  |
+| sim_control_serial | 787-812 |  |
+| if | 813-847 |  |
+| sim_read_serial | 848-855 |  |
+| if | 856-868 |  |
+| if | 869-888 |  |
+| sim_write_serial | 889-906 |  |
+| sim_close_os_serial | 907-946 |  |
+| sim_serial_os_devices | 947-954 |  |
+| if | 955-989 |  |
+| for | 990-1003 |  |
+| for | 1004-1018 |  |
+| for | 1019-1052 | now the traditional UNIX serial port names |
+| sim_open_os_serial | 1053-1093 |  |
+| if | 1094-1100 |  |
+| if | 1101-1105 |  |
+| if | 1106-1122 |  |
+| if | 1123-1149 |  |
+| sim_config_os_serial | 1150-1177 |  |
+| if | 1178-1198 |  |
+| switch | 1199-1222 |  |
+| if | 1223-1243 |  |
+| sim_control_serial | 1244-1251 |  |
+| if | 1252-1259 |  |
+| if | 1260-1267 |  |
+| if | 1268-1304 |  |
+| sim_read_serial | 1305-1356 |  |
+| sim_write_serial | 1357-1362 |  |
+| if | 1363-1382 |  |
+| sim_close_os_serial | 1383-1446 |  |
+| sim_serial_os_devices | 1447-1464 |  |
+| {sizeof | 1465-1466 |  |
+| sizeof | 1467-1475 |  |
+| for | 1476-1533 |  |
+| sim_open_os_serial | 1534-1540 |  |
+| {sizeof | 1541-1559 |  |
+| if | 1560-1568 |  |
+| if | 1569-1594 |  |
+| sim_config_os_serial | 1595-1615 |  |
+| if | 1616-1635 |  |
+| switch | 1636-1653 |  |
+| switch | 1654-1670 |  |
+| if | 1671-1690 |  |
+| sim_control_serial | 1691-1706 |  |
+| if | 1707-1716 |  |
+| if | 1717-1760 |  |
+| sim_read_serial | 1761-1773 |  |
+| if | 1774-1783 |  |
+| if | 1784-1798 |  |
+| sim_write_serial | 1799-1806 |  |
+| if | 1807-1819 |  |
+| sim_close_os_serial | 1820-1831 |  |
+| sim_serial_os_devices | 1832-1838 |  |
+| sim_open_os_serial | 1839-1846 |  |
+| sim_config_os_serial | 1847-1854 |  |
+| sim_control_serial | 1855-1862 |  |
+| sim_read_serial | 1863-1870 |  |
+| sim_write_serial | 1871-1878 |  |
+| sim_close_os_serial | 1879-1885 |  |

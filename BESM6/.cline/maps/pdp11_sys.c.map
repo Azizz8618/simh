@@ -1,0 +1,179 @@
+=== pdp11_sys.c — 1190 строк ===
+Источник: pdp11_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_sys.c -nt .cline/maps/pdp11_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dev | 75 | |
+| sys_dev | 76 | |
+| ptr_dev | 77 | |
+| ptp_dev | 78 | |
+| tti_dev | 79 | |
+| tto_dev | 80 | |
+| lpt_dev | 81 | |
+| cr_dev | 82 | |
+| clk_dev | 83 | |
+| kwv11_dev | 84 | |
+| pclk_dev | 85 | |
+| dli_dev | 86 | |
+| dlo_dev | 87 | |
+| dlcji_dev | 88 | |
+| dlcjo_dev | 89 | |
+| dci_dev | 90 | |
+| dco_dev | 91 | |
+| tdc_dev | 92 | |
+| dz_dev | 93 | |
+| vh_dev | 94 | |
+| dh_dev | 95 | |
+| dt_dev | 96 | |
+| rc_dev | 97 | |
+| rf_dev | 98 | |
+| rk_dev | 99 | |
+| rl_dev | 100 | |
+| hk_dev | 101 | |
+| rx_dev | 102 | |
+| ry_dev | 103 | |
+| mba_dev | 104 | |
+| rp_dev | 105 | |
+| rpb_dev | 106 | |
+| rr_dev | 107 | |
+| rs_dev | 108 | |
+| rq_dev | 109 | |
+| tm_dev | 110 | |
+| tq_dev | 111 | |
+| ts_dev | 112 | |
+| tu_dev | 113 | |
+| ta_dev | 114 | |
+| vt_dev | 116 | |
+| xq_dev | 118 | |
+| xu_dev | 119 | |
+| ke_dev | 120 | |
+| kg_dev | 121 | |
+| dmc_dev | 122 | |
+| dup_dev | 123 | |
+| dpv_dev | 124 | |
+| kmc_dev | 125 | |
+| uca_dev | 126 | |
+| rom_dev | 127 | |
+| ch_dev | 128 | |
+| ng_dev | 130 | |
+| daz_dev | 131 | |
+| tv_dev | 132 | |
+| mb_dev | 134 | |
+| cpu_reg | 135 | |
+| saved_PC | 136 | |
+| sim_name | 149 | |
+| sim_name | 151 | |
+| sim_PC | 154 | |
+| sim_emax | 156 | |
+| org | 291 | |
+| SCPE_CSUM | 327 | |
+| r50_to_asc | 536 | |
+| reg | 554 | |
+| rgwd | 555 | |
+| pcwd | 556 | |
+| reg | 558 | |
+| cflag | 624 | |
+| bflag | 625 | |
+| FPS | 626 | |
+| -1 | 815 | |
+| val | 833 | |
+| tptr | 834 | |
+| minus | 836 | |
+| errno | 851 | |
+| tptr | 863 | |
+| reg | 886 | |
+| pflag | 889 | |
+| bflag | 995 | |
+| by | 996 | |
+| tptr | 998 | |
+| n1 | 1045 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| I_V_L | 16                              ... | 332 |
+| I_V_D | 17                              ... | 333 |
+| I_L | (1 << I_V_L) | 334 |
+| I_D | (1 << I_V_D) | 335 |
+| I_V_CL | 18                              ... | 339 |
+| I_M_CL | 037                             ... | 340 |
+| I_V_NPN | 0                               ... | 341 |
+| I_V_REG | 1                               ... | 342 |
+| I_V_SOP | 2                               ... | 343 |
+| I_V_3B | 3                               ... | 344 |
+| I_V_FOP | 4                               ... | 345 |
+| I_V_AFOP | 5                               ... | 346 |
+| I_V_6B | 6                               ... | 347 |
+| I_V_BR | 7                               ... | 348 |
+| I_V_8B | 8                               ... | 349 |
+| I_V_SOB | 9                               ... | 350 |
+| I_V_RSOP | 10                              ... | 351 |
+| I_V_ASOP | 11                              ... | 352 |
+| I_V_ASMD | 12                              ... | 353 |
+| I_V_DOP | 13                              ... | 354 |
+| I_V_CCC | 14                              ... | 355 |
+| I_V_CCS | 15                              ... | 356 |
+| I_V_SOPR | 16                              ... | 357 |
+| I_V_FOPA | 17                              ... | 358 |
+| I_V_SOPA | 18                              ... | 359 |
+| I_V_SMDA | 19                              ... | 360 |
+| I_NPN | (I_V_NPN << I_V_CL) | 361 |
+| I_REG | (I_V_REG << I_V_CL) | 362 |
+| I_3B | (I_V_3B << I_V_CL) | 363 |
+| I_SOP | (I_V_SOP << I_V_CL) | 364 |
+| I_FOP | (I_V_FOP << I_V_CL) | 365 |
+| I_6B | (I_V_6B << I_V_CL) | 366 |
+| I_BR | (I_V_BR << I_V_CL) | 367 |
+| I_8B | (I_V_8B << I_V_CL) | 368 |
+| I_AFOP | (I_V_AFOP << I_V_CL) | 369 |
+| I_ASOP | (I_V_ASOP << I_V_CL) | 370 |
+| I_RSOP | (I_V_RSOP << I_V_CL) | 371 |
+| I_SOB | (I_V_SOB << I_V_CL) | 372 |
+| I_ASMD | (I_V_ASMD << I_V_CL) | 373 |
+| I_DOP | (I_V_DOP << I_V_CL) | 374 |
+| I_CCC | (I_V_CCC << I_V_CL) | 375 |
+| I_CCS | (I_V_CCS << I_V_CL) | 376 |
+| I_SOPR | (I_V_SOPR << I_V_CL) | 377 |
+| I_FOPA | (I_V_FOPA << I_V_CL) | 378 |
+| I_SOPA | (I_V_SOPA << I_V_CL) | 379 |
+| I_SMDA | (I_V_SMDA << I_V_CL) | 380 |
+| A_PND | 100                             ... | 786 |
+| A_MIN | 040                             ... | 787 |
+| A_PAR | 020                             ... | 788 |
+| A_REG | 010                             ... | 789 |
+| A_PLS | 004                             ... | 790 |
+| A_NUM | 002                             ... | 791 |
+| A_REL | 001                             ... | 792 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load | 288-559 |  |
+| switch | 560-629 |  |
+| if | 630-637 |  |
+| if | 638-644 |  |
+| if | 645-654 |  |
+| if | 655-661 |  |
+| if | 662-676 |  |
+| for | 677-804 |  |
+| get_reg | 805-810 |  |
+| for | 811-830 |  |
+| get_addr | 831-837 |  |
+| if | 838-841 |  |
+| if | 842-845 |  |
+| if | 846-852 |  |
+| if | 853-890 |  |
+| if | 891-894 |  |
+| if | 895-898 |  |
+| if | 899-904 |  |
+| if | 905-914 |  |
+| if | 915-920 |  |
+| switch | 921-992 |  |
+| parse_sym | 993-1001 |  |
+| if | 1002-1010 |  |
+| if | 1011-1020 |  |
+| if | 1021-1034 |  |
+| if | 1035-1051 |  |
+| switch | 1052-1190 |  |

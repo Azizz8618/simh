@@ -1,0 +1,23 @@
+=== sim_imd.c — 820 строк ===
+Источник: sim_imd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_imd.c -nt .cline/maps/sim_imd.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MAX_COMMENT_LEN | 256 | 348 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| diskOpenEx | 54-76 | DISK_INFO or NULL if an error occurred. |
+| diskOpen | 77-89 |  |
+| commentParse | 90-111 | to the end of the comment. |
+| headerOk | 112-118 |  |
+| diskParse | 119-338 | track write. |
+| diskClose | 339-356 | The IMD file is not actually closed, we leave that to SIMH. |
+| diskCreate | 357-434 | If the IMD file already exists, the user will be given the option of overwriting it. |
+| diskFormat | 435-456 |  |
+| imdGetSides | 457-465 |  |
+| imdIsWriteLocked | 466-800 |  |
+| assignDiskType | 801-820 | SCPE_OPENERR in this case. Otherwise the return value is SCPE_OK |

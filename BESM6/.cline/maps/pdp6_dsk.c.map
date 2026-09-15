@@ -1,0 +1,82 @@
+=== pdp6_dsk.c — 509 строк ===
+Источник: pdp6_dsk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp6_dsk.c -nt .cline/maps/pdp6_dsk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dsk_buf | 125 | |
+| dsk_octflp | 126 | |
+| dsk_status | 127 | |
+| dsk_cmd | 128 | |
+| dsk_addr | 129 | |
+| dsk_dct | 130 | |
+| SCPE_OK | 501 | |
+| controller" | 506 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_DSK | 0 | 27 |
+| DSK_DEVNUM | 0270                    /* 0174 */ | 32 |
+| NUM_UNITS_DSK | 4 | 33 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 0)                 ... | 37 |
+| UNIT_M_DTYPE | 1 | 38 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 39 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 40 |
+| CUR_CYL | u3              /* current cylin... | 44 |
+| DATAPTR | u4              /* data pointer */ | 45 |
+| UFLAGS | u5              /* Function */ | 46 |
+| PIA | 0000007 | 49 |
+| EIS | 0000010    /* Enable Idle State */ | 50 |
+| EFR | 0000020    /* Enable file ready */ | 51 |
+| EES | 0000040    /* Enable end of sect... | 52 |
+| EFE | 0000100    /* Enable file error */ | 53 |
+| SCL | 0000200    /* Clear error flags ... | 54 |
+| MRB | 0000200    /* Meter read bad RO */ | 55 |
+| MRG | 0000400    /* Meter read good RO */ | 56 |
+| CMD | 0003000    /* Command */ | 57 |
+| WR_CMD | 0002000    /* Command is write */ | 58 |
+| RD_CMD | 0001000    /* Command is read */ | 59 |
+| END | 0010000    /* End */ | 60 |
+| CLR | 0020000    /* Clear */ | 61 |
+| MCL | 0040000    /* Master clear RO */ | 62 |
+| SECT_END | (1 << 18)  /* End of sector flag... | 66 |
+| DCE | 0001000    /* Data clock error */ | 67 |
+| CME | 0000400    /* Command error */ | 68 |
+| WLE | 0000200    /* Write lock error */ | 69 |
+| ADE | 0000100    /* Not operational */ | 70 |
+| ALM | 0000040    /* ALARM */ | 71 |
+| DRL | 0000020    /* Data request late */ | 72 |
+| RCE | 0000010    /* Read Compare error */ | 73 |
+| PER | 0000004    /* Parity error */ | 74 |
+| FER | 0000002    /* File error */ | 75 |
+| OPR | 0000001    /* Not operational */ | 76 |
+| IDS | 0200    /* Selcted idle state */ | 79 |
+| SNA | 0100    /* Selected new address */ | 80 |
+| ADT | 0040    /* Address terminated */ | 81 |
+| DFR | 0020    /* Disc file ready */ | 82 |
+| ALS | 0010    /* Alert state */ | 83 |
+| CMS | 0004    /* Command selected */ | 84 |
+| SCS | 0002    /* Sector started */ | 85 |
+| SCE | 0001    /* Sector end */ | 86 |
+| DSK_WDS | 128 | 120 |
+| DSK_SECS | 44 | 121 |
+| DSK_CYL | 64 * 16 | 122 |
+| DSK_SIZE | (DSK_SECS * DSK_CYL * DSK_WDS) | 123 |
+| D | DEV_DIS | 146 |
+| D | 0 | 148 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dsk_devio | 188-257 |  |
+| dsk_svc | 258-419 |  |
+| dsk_set_dct | 420-434 |  |
+| dsk_show_dct | 435-446 |  |
+| dsk_reset | 447-461 |  |
+| dsk_boot | 462-468 |  |
+| dsk_attach | 469-482 |  |
+| dsk_detach | 483-492 |  |
+| dsk_help | 493-503 |  |
+| dsk_description | 504-509 |  |

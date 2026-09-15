@@ -1,0 +1,126 @@
+=== vax860_abus.c — 860 строк ===
+Источник: vax860_abus.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax860_abus.c -nt .cline/maps/vax860_abus.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| pamloc | 86 | |
+| cswp | 88 | |
+| ehsr | 89 | |
+| mdctl | 90 | |
+| sys_model | 91 | |
+| tmr_int | 107 | |
+| sbi_er | 108 | |
+| addr | 200 | |
+| slot | 202 | |
+| slots_remaining | 203 | |
+| size | 204 | |
+| slot | 233 | |
+| base | 234 | |
+| SCPE_OK | 279 | |
+| return | 400 | |
+| val | 407 | |
+| val | 487 | |
+| return | 560 | |
+| val | 574 | |
+| return | 608 | |
+| acc | 615 | |
+| mstat1 | 616 | |
+| in_ie | 629 | |
+| in_ie | 654 | |
+| cc | 657 | |
+| cc | 670 | |
+| gbuf | 697 | |
+| slptr | 698 | |
+| regptr | 699 | |
+| dptr | 701 | |
+| uptr | 702 | |
+| dibp | 703 | |
+| ba | 704 | |
+| r5v | 723 | |
+| SP | 772 | |
+| SCPE_OK | 773 | |
+| sim_vm_cmd | 780 | |
+| SCPE_OK | 782 | |
+| controller" | 787 | |
+| dptr | 796 | |
+| dibp | 797 | |
+| SCPE_OK | 820 | |
+| SCPE_OK | 836 | |
+| SCPE_OK | 842 | |
+| SCPE_OK | 859 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SBIER_TMO | 0x00001000                      ... | 38 |
+| SBIER_STA | 0x00000C00                      ... | 39 |
+| SBIER_CNF | 0x00000100                      ... | 40 |
+| SBIER_MULT | 0x00000004                      ... | 41 |
+| SBIER_TMOW1C | (SBIER_TMO\|SBIER_STA\|SBIER_CNF\|S... | 42 |
+| PAMM_IOA0 | 0x18                            ... | 46 |
+| PAMM_IOA1 | 0x19                            ... | 47 |
+| PAMM_IOA2 | 0x1A                            ... | 48 |
+| PAMM_IOA3 | 0x1B                            ... | 49 |
+| PAMM_NXM | 0x1F                            ... | 50 |
+| PAMACC_ADDR | 0x3FF00000                      ... | 52 |
+| PAMACC_CODE | 0x0000001F                      ... | 53 |
+| PAMLOC_ADDR | 0x3FF00000                      ... | 55 |
+| MSTAT1_V_CYC | 26                              ... | 59 |
+| MSTAT1_M_CYC | 0xF | 60 |
+| MSTAT1_CPRD | 0xE                             ... | 61 |
+| MSTAT2_NXM | 0x00000008                      ... | 63 |
+| MERG_V_MME | 8                               ... | 65 |
+| MDCTL_RW | 0x00006F0F                      ... | 67 |
+| EBCS_MFTL | 0x00008000                      ... | 71 |
+| EHMSTS_PROCA | 0x00020000                      ... | 73 |
+| EHSR_VMSE | 0x00000020                      ... | 75 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| init_pamm | 198-209 |  |
+| for | 210-230 |  |
+| cpu_show_memory | 231-248 |  |
+| for | 249-253 |  |
+| for | 254-261 |  |
+| for | 262-266 |  |
+| for | 267-271 |  |
+| for | 272-308 |  |
+| eval_int | 309-329 |  |
+| for | 330-341 |  |
+| for | 342-350 |  |
+| get_vector | 351-354 |  |
+| if | 355-358 |  |
+| if | 359-362 |  |
+| if | 363-366 |  |
+| if | 367-369 |  |
+| if | 370-378 |  |
+| if | 379-397 |  |
+| rom_wr_B | 398-404 |  |
+| ReadIPR | 405-408 |  |
+| switch | 409-491 |  |
+| WriteIPR | 492-493 |  |
+| switch | 494-571 |  |
+| ReadReg | 572-576 |  |
+| if | 577-594 |  |
+| WriteReg | 595-596 |  |
+| if | 597-601 |  |
+| if | 602-612 |  |
+| machine_check | 613-661 |  |
+| con_halt | 662-679 |  |
+| vax860_boot | 680-694 |  |
+| vax860_boot_parse | 695-709 |  |
+| if | 710-742 |  |
+| for | 743-764 |  |
+| cpu_boot | 765-777 |  |
+| abus_reset | 778-784 |  |
+| abus_description | 785-792 |  |
+| build_dib_tab | 793-802 |  |
+| for | 803-822 |  |
+| cpu_set_model | 823-825 |  |
+| if | 826-829 |  |
+| if | 830-838 |  |
+| cpu_print_model | 839-844 |  |
+| cpu_model_help | 845-860 |  |

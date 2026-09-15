@@ -1,0 +1,122 @@
+=== vax730_uba.c — 680 строк ===
+Источник: vax730_uba.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax730_uba.c -nt .cline/maps/vax730_uba.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| iodibp | 118 | |
+| uba_dib | 135 | |
+| idx | 190 | |
+| SCPE_OK | 234 | |
+| idx | 241 | |
+| SCPE_OK | 281 | |
+| idx | 288 | |
+| idx | 303 | |
+| return | 313 | |
+| iod | 327 | |
+| SET_IRQL | 340 | |
+| iod | 341 | |
+| return | 365 | |
+| vec | 381 | |
+| vec | 394 | |
+| ma | 408 | |
+| ma | 440 | |
+| bc | 443 | |
+| ma | 480 | |
+| ma | 513 | |
+| bc | 516 | |
+| ublk | 555 | |
+| FALSE | 567 | |
+| ublk | 574 | |
+| FALSE | 586 | |
+| dptr | 594 | |
+| return | 601 | |
+| uba_csr | 615 | |
+| SCPE_OK | 616 | |
+| SCPE_NXM | 631 | |
+| SCPE_NXM | 646 | |
+| ua | 655 | |
+| SCPE_OK | 667 | |
+| adapter" | 672 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UBA_NMAPR | 496                             ... | 36 |
+| UBACNF_OF | 0x00 | 40 |
+| UBACNF_CODE | 0x00000028                      ... | 41 |
+| UBADPR_OF | 0x01 | 45 |
+| UBACSR_OF | 0x04 | 49 |
+| UBACSR_WNV | 0x00004000                      ... | 50 |
+| UBACSR_TBPAR | 0x00008000                      ... | 51 |
+| UBACSR_NXM | 0x00010000                      ... | 52 |
+| UBACSR_RDS | 0x80000000                      ... | 53 |
+| UBA_UVEC | 0x80000000 | 57 |
+| UBA_VEC_MASK | 0x1FC                           ... | 58 |
+| RB730_OF | 0x80 | 63 |
+| RB730_LN | 8 | 64 |
+| UBAMAP_OF | 0x200 | 68 |
+| UBAMAP_VLD | 0x80000000                      ... | 69 |
+| UBAMAP_LWAE | 0x04000000                      ... | 70 |
+| UBAMAP_ODD | 0x02000000                      ... | 71 |
+| UBAMAP_V_DP | 21                              ... | 72 |
+| UBAMAP_M_DP | 0xF | 73 |
+| UBAMAP_DP | (UBAMAP_M_DP << UBAMAP_V_DP) | 74 |
+| UBAMAP_GETDP(x) | (((x) >> UBAMAP_V_DP) & UBAMAP_M... | 75 |
+| UBAMAP_PAG | 0x001FFFFF | 76 |
+| UBAMAP_RD | (0x86000000 \| UBAMAP_DP \| UBAMAP... | 77 |
+| UBAMAP_WR | (UBAMAP_RD) | 78 |
+| UBA_DEB_RRD | 0x01                            ... | 82 |
+| UBA_DEB_RWR | 0x02                            ... | 83 |
+| UBA_DEB_MRD | 0x04                            ... | 84 |
+| UBA_DEB_MWR | 0x08                            ... | 85 |
+| UBA_DEB_XFR | 0x10                            ... | 86 |
+| UBA_DEB_ERR | 0x20                            ... | 87 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| uba_rdreg | 188-191 |  |
+| if | 192-197 |  |
+| if | 198-205 |  |
+| if | 206-211 |  |
+| switch | 212-238 |  |
+| uba_wrreg | 239-242 |  |
+| if | 243-248 |  |
+| if | 249-256 |  |
+| if | 257-262 |  |
+| switch | 263-285 |  |
+| ReadUb | 286-289 |  |
+| if | 290-300 |  |
+| WriteUb | 301-304 |  |
+| if | 305-324 |  |
+| ReadIO | 325-353 |  |
+| WriteIO | 354-369 |  |
+| uba_eval_int | 370-376 |  |
+| uba_get_ubvector | 377-381 |  |
+| for | 382-404 |  |
+| Map_ReadB | 405-410 |  |
+| for | 411-436 |  |
+| Map_ReadW | 437-443 |  |
+| for | 444-476 |  |
+| Map_WriteB | 477-482 |  |
+| for | 483-509 |  |
+| Map_WriteW | 510-516 |  |
+| for | 517-552 |  |
+| uba_map_addr | 553-560 |  |
+| if | 561-571 |  |
+| uba_map_addr_c | 572-579 |  |
+| if | 580-590 |  |
+| uba_ubpdn | 591-595 |  |
+| for | 596-605 |  |
+| uba_reset | 606-609 |  |
+| for | 610-620 |  |
+| uba_ex | 621-626 |  |
+| if | 627-635 |  |
+| uba_dep | 636-641 |  |
+| if | 642-650 |  |
+| uba_show_virt | 651-656 |  |
+| if | 657-669 |  |
+| uba_description | 670-676 |  |
+| uba_show_map | 677-680 |  |

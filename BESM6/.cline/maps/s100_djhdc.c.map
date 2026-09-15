@@ -1,0 +1,103 @@
+=== s100_djhdc.c — 864 строк ===
+Источник: s100_djhdc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_djhdc.c -nt .cline/maps/s100_djhdc.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DJHDC_DRIVE_INFO | 117-132 |
+| DJHDC_INFO | 134-152 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| djhdc_info_data | 154 | |
+| djhdc_info | 155 | |
+| ntracks | 182 | |
+| nheads | 183 | |
+| nsectors | 184 | |
+| sectsize | 185 | |
+| PCX | 187 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEV_NAME | "DJHDC" | 43 |
+| DJHDC_MAX_CYLS | 1024 | 45 |
+| DJHDC_MAX_HEADS | 8 | 46 |
+| DJHDC_MAX_SPT | 256 | 47 |
+| ERROR_MSG | (1 << 0) | 50 |
+| SEEK_MSG | (1 << 1) | 51 |
+| OPCODE_MSG | (1 << 2) | 52 |
+| RD_DATA_MSG | (1 << 3) | 53 |
+| WR_DATA_MSG | (1 << 4) | 54 |
+| IRQ_MSG | (1 << 5) | 55 |
+| VERBOSE_MSG | (1 << 6) | 56 |
+| FORMAT_MSG | (1 << 7) | 57 |
+| DJHDC_MAX_DRIVES | 4 | 59 |
+| DJHDC_RESET | 0   /* Reset */ | 62 |
+| DJHDC_START | 1   /* Start */ | 63 |
+| DJHDC_LINK_ADDR | 0x000050    /* Default link addr... | 65 |
+| DJHDC_STEP_DIR | 0x10        /* Bit 4, Step OUT */ | 67 |
+| DJHDC_IRQ_EN_MASK | 0x80    /* Interrupt enable mask */ | 69 |
+| DJHDC_OPCODE_READ_DATA | 0x00 | 71 |
+| DJHDC_OPCODE_WRITE_DATA | 0x01 | 72 |
+| DJHDC_OPCODE_READ_HEADER | 0x02 | 73 |
+| DJHDC_OPCODE_FORMAT_TRACK | 0x03 | 74 |
+| DJHDC_OPCODE_LOAD_CONSTANTS | 0x04 | 75 |
+| DJHDC_OPCODE_SENSE_STATUS | 0x05 | 76 |
+| DJHDC_OPCODE_NOOP | 0x06 | 77 |
+| DJHDC_STATUS_BUSY | 0x00    /* Busy */ | 79 |
+| DJHDC_STATUS_NOT_READY | 0x01    /* Drive not ready */ | 80 |
+| DJHDC_STATUS_HEADER_NOT_FOUND | 0x04    /* Sector header not fou... | 81 |
+| DJHDC_STATUS_DATA_NOT_FOUND | 0x05    /* Sector data not found */ | 82 |
+| DJHDC_STATUS_DATA_OVERRUN | 0x06    /* Data overrun(channel ... | 83 |
+| DJHDC_STATUS_DATA_CRC_ERROR | 0x07    /* Data CRC error */ | 84 |
+| DJHDC_STATUS_WRITE_FAULT | 0x08    /* Write fault */ | 85 |
+| DJHDC_STATUS_HEADER_CRC_ERROR | 0x09    /* Sector header CRC err... | 86 |
+| DJHDC_STATUS_ILLEGAL_COMMAND | 0xA0    /* Illegal command */ | 87 |
+| DJHDC_STATUS_COMPLETE | 0xFF    /* Successful completion */ | 88 |
+| DJHDC_TRACK_0_DETECT | (1 << 0)    /* 0 = track 0. */ | 90 |
+| DJHDC_WRITE_FAULT_SIGNAL | (1 << 1)    /* Drive Write fault... | 91 |
+| DJHDC_DRIVE_READY_SIGNAL | (1 << 2)    /* Drive is up to sp... | 92 |
+| DJHDC_OPCODE_MASK | 0x07 | 94 |
+| DJHDC_IOPB_LEN | 16 | 96 |
+| DJHDC_IOPB_SELDRV | 0 | 98 |
+| DJHDC_IOPB_STEP_L | 1 | 99 |
+| DJHDC_IOPB_STEP_H | 2 | 100 |
+| DJHDC_IOPB_SEL_HD | 3 | 101 |
+| DJHDC_IOPB_DMA_L | 4 | 102 |
+| DJHDC_IOPB_DMA_H | 5 | 103 |
+| DJHDC_IOPB_DMA_E | 6 | 104 |
+| DJHDC_IOPB_ARG0 | 7 | 105 |
+| DJHDC_IOPB_ARG1 | 8 | 106 |
+| DJHDC_IOPB_ARG2 | 9 | 107 |
+| DJHDC_IOPB_ARG3 | 10 | 108 |
+| DJHDC_IOPB_OPCODE | 11 | 109 |
+| DJHDC_IOPB_STATUS | 12 | 110 |
+| DJHDC_IOPB_LINK | 13 | 111 |
+| DJHDC_IOPB_LINK_H | 14 | 112 |
+| DJHDC_IOPB_LINK_E | 15 | 113 |
+| DJHDC_INT | 1   /* DJHDC interrupts tied to ... | 115 |
+| SCRIBE_SECTSIZE | 1024 | 166 |
+| SCRIBE_NSECTORS | 8 | 167 |
+| SCRIBE_NHEADS | 4 | 168 |
+| SCRIBE_NTRACKS | 480 | 169 |
+| UNIT_V_DJHDC_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 199 |
+| UNIT_DJHDC_VERBOSE | (1 << UNIT_V_DJHDC_VERBOSE) | 200 |
+| DJHDC_CAPACITY | (SCRIBE_NTRACKS * SCRIBE_NHEADS *  | 201 |
+| DJHDC_NAME | "Morrow HDC/DMA Hard Disk Contro... | 252 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| djhdc_description | 254-292 |  |
+| djhdc_reset | 293-313 | Reset routine |
+| djhdc_attach | 314-387 | Attach routine |
+| djhdc_detach | 388-414 | Detach routine |
+| djhdc_unit_set_geometry | 415-467 | Set geometry of the disk drive |
+| djhdc_unit_show_geometry | 468-486 | Show geometry of the disk drive |
+| djhdcdev | 487-498 |  |
+| DJHDC_Write | 499-836 |  |
+| DJHDC_Validate_CHSN | 837-857 | disk drive geometry. |
+| raise_djhdc_interrupt | 858-864 |  |

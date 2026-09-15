@@ -1,0 +1,176 @@
+=== pdp11_rl.c — 1241 строк ===
+Источник: pdp11_rl.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_rl.c -nt .cline/maps/pdp11_rl.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rl_unit | 305 | |
+| uptr | 407 | |
+| SCPE_OK | 468 | |
+| curr | 473 | |
+| uptr | 474 | |
+| SCPE_OK | 633 | |
+| wc | 732 | |
+| err | 733 | |
+| sectsread | 734 | |
+| ma | 736 | |
+| comp | 737 | |
+| SCPE_OK | 957 | |
+| uptr | 978 | |
+| inited | 979 | |
+| rlcs | 993 | |
+| rlda | 994 | |
+| SCPE_OK | 1025 | |
+| uptr->STAT | 1030 | |
+| SCPE_OK | 1202 | |
+| SCPE_NOFNC | 1209 | |
+| SCPE_OK | 1234 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RL_NUMWD | (128)                           ... | 104 |
+| RL_NUMSC | (40)                            ... | 105 |
+| RL_NUMSF | (2)                             ... | 106 |
+| RL01_NUMCYL | (256)                           ... | 107 |
+| RL02_NUMCYL | (512)                           ... | 108 |
+| RL_NUMDR | (4)                             ... | 109 |
+| RL_MAXFR | (RL_NUMSC * RL_NUMWD)           ... | 110 |
+| RL_DRV(d) |  | 112 |
+| DEV_V_RLV11 | (DEV_V_UF + 7)                  ... | 127 |
+| DEV_RLV11 | (1u << DEV_V_RLV11) | 128 |
+| UNIT_V_DUMMY | (DKUF_V_UF  + 0)                ... | 132 |
+| UNIT_V_OFFL | (UNIT_V_DUMMY + 1)              ... | 133 |
+| UNIT_V_BRUSH | (UNIT_V_OFFL + 1)               ... | 134 |
+| UNIT_BRUSH | (1u << UNIT_V_BRUSH) | 135 |
+| UNIT_OFFL | (1u << UNIT_V_OFFL) | 136 |
+| UNIT_DUMMY | (1u << UNIT_V_DUMMY) | 137 |
+| TRK | u3                              ... | 141 |
+| STAT | u4                              ... | 142 |
+| FNC | u5                              ... | 143 |
+| RLDS_M_STATE | (07) | 147 |
+| RLDS_LOAD | (0)                             ... | 148 |
+| RLDS_SPIN | (1)                             ... | 149 |
+| RLDS_BRUSH | (2)                             ... | 150 |
+| RLDS_HLOAD | (3)                             ... | 151 |
+| RLDS_SEEK | (4)                             ... | 152 |
+| RLDS_LOCK | (5)                             ... | 153 |
+| RLDS_UNL | (6)                             ... | 154 |
+| RLDS_DOWN | (7)                             ... | 155 |
+| RLDS_BHO | (0000010)                       ... | 156 |
+| RLDS_HDO | (0000020)                       ... | 157 |
+| RLDS_CVO | (0000040)                       ... | 158 |
+| RLDS_HD | (0000100)                       ... | 159 |
+| RLDS_RL02 | (0000200)                       ... | 160 |
+| RLDS_DSE | (0000400)                       ... | 161 |
+| RLDS_VCK | (0001000)                       ... | 162 |
+| RLDS_WGE | (0002000)                       ... | 163 |
+| RLDS_SPE | (0004000)                       ... | 164 |
+| RLDS_STO | (0010000)                       ... | 165 |
+| RLDS_WLK | (0020000)                       ... | 166 |
+| RLDS_HCE | (0040000)                       ... | 167 |
+| RLDS_WDE | (0100000)                       ... | 168 |
+| RLDS_ERR | (RLDS_WDE\|RLDS_HCE\|RLDS_STO\|RLDS... | 169 |
+| RLCS_DRDY | (0000001)                       ... | 174 |
+| RLCS_M_FUNC | (0000007)                       ... | 175 |
+| RLCS_NOP | (0) | 176 |
+| RLCS_WCHK | (1) | 177 |
+| RLCS_GSTA | (2) | 178 |
+| RLCS_SEEK | (3) | 179 |
+| RLCS_RHDR | (4) | 180 |
+| RLCS_WRITE | (5) | 181 |
+| RLCS_READ | (6) | 182 |
+| RLCS_RNOHDR | (7) | 183 |
+| RLCS_SPECIAL | (8)                             ... | 184 |
+| RLCS_V_FUNC | (1) | 185 |
+| RLCS_M_MEX | (03)                            ... | 186 |
+| RLCS_V_MEX | (4) | 187 |
+| RLCS_MEX | (RLCS_M_MEX << RLCS_V_MEX) | 188 |
+| RLCS_M_DRIVE | (03) | 189 |
+| RLCS_V_DRIVE | (8) | 190 |
+| RLCS_INCMP | (0002000)                       ... | 191 |
+| RLCS_CRC | (0004000)                       ... | 192 |
+| RLCS_HCRC | (RLCS_CRC\|RLCS_INCMP)           ... | 193 |
+| RLCS_DLT | (0010000)                       ... | 194 |
+| RLCS_HDE | (RLCS_DLT\|RLCS_INCMP)           ... | 195 |
+| RLCS_NXM | (0020000)                       ... | 196 |
+| RLCS_PAR | (RLCS_NXM\|RLCS_INCMP)           ... | 197 |
+| RLCS_DRE | (0040000)                       ... | 198 |
+| RLCS_ERR | (0100000)                       ... | 199 |
+| RLCS_ALLERR | (RLCS_ERR\|RLCS_DRE\|RLCS_NXM\|RLCS... | 200 |
+| RLCS_RW | (0001776)                       ... | 201 |
+| GET_FUNC(x) | (((x) >> RLCS_V_FUNC) & RLCS_M_F... | 202 |
+| GET_DRIVE(x) | (((x) >> RLCS_V_DRIVE) & RLCS_M_... | 203 |
+| RLDA_GS | (0000002)                       ... | 207 |
+| RLDA_SK_DIR | (0000004)                       ... | 208 |
+| RLDA_GS_CLR | (0000010)                       ... | 209 |
+| RLDA_SK_HD | (0000020)                       ... | 210 |
+| RLDA_V_SECT | (0)                             ... | 212 |
+| RLDA_M_SECT | (077) | 213 |
+| RLDA_V_TRACK | (6)                             ... | 214 |
+| RLDA_M_TRACK | (01777) | 215 |
+| RLDA_HD0 | (0 << RLDA_V_TRACK) | 216 |
+| RLDA_HD1 | (1u << RLDA_V_TRACK) | 217 |
+| RLDA_V_CYL | (7)                             ... | 218 |
+| RLDA_M_CYL | (0777) | 219 |
+| RLDA_TRACK | (RLDA_M_TRACK << RLDA_V_TRACK) | 220 |
+| RLDA_CYL | (RLDA_M_CYL << RLDA_V_CYL) | 221 |
+| GET_SECT(x) | (((x) >> RLDA_V_SECT) & RLDA_M_S... | 222 |
+| GET_CYL(x) | (((x) >> RLDA_V_CYL) & RLDA_M_CYL) | 223 |
+| GET_TRACK(x) | (((x) >> RLDA_V_TRACK) & RLDA_M_... | 224 |
+| GET_DA(x) | ((GET_TRACK (x) * RL_NUMSC) + GE... | 225 |
+| RLBA_IMP | (0177777)                       ... | 229 |
+| RLBAE_IMP | (0000077)                       ... | 233 |
+| RLDEB_OPS | 0001                            ... | 250 |
+| RLDEB_RRD | 0002                            ... | 251 |
+| RLDEB_RWR | 0004                            ... | 252 |
+| RLDEB_TRC | 0010                            ... | 253 |
+| RLDEB_INT | 0020                            ... | 254 |
+| RLDEB_DAT | 0100                            ... | 255 |
+| IOLN_RL | 012 | 299 |
+| BOOT_START | 02000                           ... | 1145 |
+| BOOT_ENTRY | (BOOT_START + 002)              ... | 1146 |
+| BOOT_UNIT | (BOOT_START + 010)              ... | 1147 |
+| BOOT_CSR | (BOOT_START + 020)              ... | 1148 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 1149 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rl_rd | 405-408 |  |
+| switch | 409-470 |  |
+| rl_wr | 471-475 |  |
+| switch | 476-636 |  |
+| calcCRC | 637-660 | CRC16 as implemented by the DEC 9401 chip |
+| rlv_maint | 661-729 |  |
+| rl_svc | 730-749 |  |
+| if | 750-760 | really shouldn't happen... |
+| if | 761-829 |  |
+| if | 830-835 |  |
+| if | 836-841 |  |
+| if | 842-847 |  |
+| if | 848-861 |  |
+| if | 862-886 |  |
+| if | 887-896 |  |
+| if | 897-911 |  |
+| if | 912-951 |  |
+| if | 952-961 |  |
+| rl_set_done | 962-974 |  |
+| rl_reset | 975-980 |  |
+| if | 981-995 |  |
+| for | 996-1009 |  |
+| rl_attach | 1010-1027 |  |
+| rl_detach | 1028-1036 |  |
+| rl_set_bad | 1037-1041 |  |
+| rl_set_cover | 1042-1050 |  |
+| rl_show_cover | 1051-1057 |  |
+| rl_set_load | 1058-1079 | simulate the LOAD button on the drive |
+| rl_show_load | 1080-1086 |  |
+| rl_show_dstate | 1087-1115 |  |
+| rl_set_ctrl | 1116-1128 | Handle SET RL RLV12\|RLV11 |
+| rl_show_ctrl | 1129-1192 | SHOW RL will display the controller type |
+| rl_boot | 1193-1206 |  |
+| rl_boot | 1207-1213 |  |
+| rl_help | 1214-1236 |  |
+| rl_description | 1237-1241 |  |

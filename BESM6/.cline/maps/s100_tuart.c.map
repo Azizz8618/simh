@@ -1,0 +1,85 @@
+=== s100_tuart.c — 737 строк ===
+Источник: s100_tuart.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_tuart.c -nt .cline/maps/s100_tuart.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| TUART_CTX | 84-100 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tuart0_ctx | 203 | |
+| tuart1_ctx | 204 | |
+| tuart2_ctx | 205 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TUART_NAME | "CROMEMCO TU-ART" | 31 |
+| TUART0_SNAME | "TUART0" | 32 |
+| TUART1_SNAME | "TUART1" | 33 |
+| TUART2_SNAME | "TUART2" | 34 |
+| TUART_WAIT | 1000           /* Service Wait I... | 36 |
+| TUART0_IOBASE | 0x00 | 38 |
+| TUART0_IOSIZE | 4 | 39 |
+| TUART1_IOBASE | 0x20 | 40 |
+| TUART1_IOSIZE | 4 | 41 |
+| TUART2_IOBASE | 0x50 | 42 |
+| TUART2_IOSIZE | 4 | 43 |
+| TUART_FME | 0x01           /* Framing Error ... | 46 |
+| TUART_ORE | 0x02           /* Overrun       ... | 47 |
+| TUART_IPG | 0x20           /* Interrupt Pend... | 48 |
+| TUART_RDA | 0x40           /* Receive Data A... | 49 |
+| TUART_TBE | 0x80           /* Transmit Buffe... | 50 |
+| TUART_RESET | 0x01           /* Reset         ... | 53 |
+| TUART_INTA | 0x08           /* Interrupt Enab... | 54 |
+| TUART_HBD | 0x10           /* High baud rate... | 55 |
+| TUART_110 | 0x01 | 57 |
+| TUART_150 | 0x02 | 58 |
+| TUART_300 | 0x04 | 59 |
+| TUART_1200 | 0x08 | 60 |
+| TUART_2400 | 0x10 | 61 |
+| TUART_4800 | 0x20 | 62 |
+| TUART_9600 | 0x40 | 63 |
+| TUART_1STOP | 0x80 | 64 |
+| TUART_BAUD(xptr) | ((xptr->baud * xptr->hbd > 76800... | 66 |
+| TUART_RDAIE | 0x10 | 68 |
+| TUART_TBEIE | 0x20 | 69 |
+| TUART_RDAIA | 0xe7 | 71 |
+| TUART_TBSIA | 0xef | 72 |
+| STATUS_MSG | (1 << 0) | 75 |
+| IRQ_MSG | (1 << 1) | 76 |
+| ERROR_MSG | (1 << 2) | 77 |
+| VERBOSE_MSG | (1 << 3) | 78 |
+| IO_RD | 0x00     /* IO Read  */ | 81 |
+| IO_WR | 0x01     /* IO Write */ | 82 |
+| UNIT_V_TUART_CONSOLE | (UNIT_V_UF + 0)     /* Port chec... | 182 |
+| UNIT_TUART_CONSOLE | (1 << UNIT_V_TUART_CONSOLE) | 183 |
+| UNIT_V_TUART_EVEN | (UNIT_V_UF + 1)     /* Mode 2 in... | 184 |
+| UNIT_TUART_EVEN | (1 << UNIT_V_TUART_EVEN) | 185 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tuart_description | 329-333 |  |
+| tuart0_reset | 334-338 |  |
+| tuart1_reset | 339-343 |  |
+| tuart2_reset | 344-348 |  |
+| tuart_reset | 349-384 |  |
+| tuart_svc | 385-464 |  |
+| tuart_attach | 465-484 | Attach routine |
+| tuart_detach | 485-505 | Detach routine |
+| tuart_set_baud | 506-546 |  |
+| tuart_show_baud | 547-557 |  |
+| tuart_config_line | 558-578 |  |
+| tuart0_io | 579-583 |  |
+| tuart1_io | 584-588 |  |
+| tuart2_io | 589-593 |  |
+| tuart_io | 594-612 |  |
+| tuart_stat | 613-661 |  |
+| tuart_data | 662-680 |  |
+| tuart_command | 681-702 |  |
+| tuart_intadrmsk | 703-717 |  |
+| tuart_int | 718-737 |  |

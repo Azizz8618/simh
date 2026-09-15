@@ -1,0 +1,74 @@
+=== sel32_lpr.c — 677 строк ===
+Источник: sel32_lpr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_lpr.c -nt .cline/maps/sel32_lpr.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lpr_data | 160 | |
+| lpr_chp | 178 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_LPR | UNIT_ATTABLE \| UNIT_IDLE \| UNIT_... | 78 |
+| CMD | u3 | 80 |
+| LPR_INCH | 0x00        /* INCH command */ | 83 |
+| LPR_PBNCC | 0x01        /* print only, no fo... | 85 |
+| LPR_PBC | 0x05        /* print buffer, the... | 86 |
+| LPR_PBL | 0x15        /* print buffer, the... | 87 |
+| LPR_PBLL | 0x25        /* print buffer, the... | 88 |
+| LPR_PBLLL | 0x35        /* print buffer, the... | 89 |
+| LPR_PBF | 0x45        /* print buffer, the... | 90 |
+| LPR_PBCCB | 0x85        /* print buffer, the... | 91 |
+| LPR_CPBC | 0x0d        /* <CR> print buffer... | 93 |
+| LPR_LPBC | 0x1d        /* <LF> print buffer... | 94 |
+| LPR_LLPBC | 0x2d        /* <LF> <LF> print b... | 95 |
+| LPR_LLLPBC | 0x3d        /* <LF> <LF> <LF> pr... | 96 |
+| LPR_FPBC | 0x4d        /* <FF> print buffer... | 97 |
+| LPR_NPC | 0x03        /* <CR> */ | 99 |
+| LPR_NPL | 0x17        /* <LF> */ | 100 |
+| LPR_NPLL | 0x27        /* <LF> <LF> */ | 101 |
+| LPR_NPLLL | 0x37        /* <LF> <LF> <LF> */ | 102 |
+| LPR_NPF | 0x47        /* <FF> */ | 103 |
+| LPR_SNS | 0x04        /* Sense command */ | 105 |
+| LPR_CMDMSK | 0xff        /* Mask command part... | 106 |
+| LPR_FULL | 0x100       /* Buffer full (BOF) */ | 107 |
+| LPR_PRE | 0x200       /* Apply pre CC */ | 108 |
+| LPR_POST | 0x400       /* Apply post CC */ | 109 |
+| CNT | u4 | 111 |
+| SNS | u5 | 119 |
+| SNS_CMDREJ | 0x80000000  /* Command reject + ... | 122 |
+| SNS_OPRINTR | 0x40000000  /* Operator interven... | 123 |
+| SNS_BUSCHK | 0x20000000  /* Parity error on b... | 125 |
+| SNS_NU3 | 0x10000000  /* Not used */ | 127 |
+| SNS_NU4 | 0x08000000  /* Not used */ | 128 |
+| SNS_NU5 | 0x04000000  /* Not used */ | 129 |
+| SNS_NU6 | 0x02000000  /* Not used */ | 130 |
+| SNS_NU7 | 0x01000000  /* Not used */ | 131 |
+| SNS_BOF | 0x01000000  /* Not used, temp se... | 132 |
+| SNS_DEVVFY | 0x00800000  /* Device Verify Int... | 134 |
+| SNS_DEVPWR | 0x00400000  /* Device Powered Of... | 136 |
+| SNS_DEVCHK | 0x00200000  /* Device Check - No... | 137 |
+| SNS_OFFLINE | 0x00100000  /* Off Line + SNS_OP... | 138 |
+| SNS_NU2 | 0x00080000  /* Not used */ | 139 |
+| SNS_NU1 | 0x00040000  /* Not used */ | 140 |
+| SNS_BEGOF | 0x00020000  /* Beginning of form */ | 141 |
+| SNS_TOF | 0x00010000  /* Top of form on pr... | 142 |
+| CBP | u6 | 145 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lpr_ini | 228-236 | initialize the line printer |
+| lpr_rschnlio | 237-248 | handle rschnlio cmds for lpr |
+| lpr_preio | 249-267 | start a line printer operation |
+| lpr_startcmd | 268-342 | start an I/O operation |
+| lpr_srv | 343-552 | Handle transfer of data for printer |
+| lpr_haltio | 553-587 | Handle haltio transfers for printer |
+| lpr_setlpp | 588-610 | Set the number of lines per page on printer |
+| lpr_getlpp | 611-619 | display the number of lines per page |
+| lpr_attach | 620-653 | attach a file to the line printer device |
+| lpr_help | 654-666 | help information for lpr |
+| lpr_detach | 667-671 | detach a file from the line printer |
+| lpr_description | 672-677 |  |

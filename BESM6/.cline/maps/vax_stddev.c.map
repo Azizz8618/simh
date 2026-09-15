@@ -1,0 +1,23 @@
+=== vax_stddev.c — 719 строк ===
+Источник: vax_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_stddev.c -nt .cline/maps/vax_stddev.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TTICSR_IMP | (CSR_DONE + CSR_IE)             ... | 82 |
+| TTICSR_RW | (CSR_IE) | 83 |
+| TTIBUF_ERR | 0x8000                          ... | 84 |
+| TTIBUF_OVR | 0x4000                          ... | 85 |
+| TTIBUF_FRM | 0x2000                          ... | 86 |
+| TTIBUF_RBR | 0x0400                          ... | 87 |
+| TTOCSR_IMP | (CSR_DONE + CSR_IE)             ... | 88 |
+| TTOCSR_RW | (CSR_IE) | 89 |
+| CLKCSR_IMP | (CSR_IE)                        ... | 90 |
+| CLKCSR_RW | (CSR_IE) | 91 |
+| CLK_DELAY | 5000                            ... | 92 |
+| TMXR_MULT | 1                               ... | 93 |
+| DBG_REG | 1   /* TODR register access */ | 246 |
+| DBG_TIC | 2   /* clock ticks */ | 247 |
+| TOY_MAX_SECS | (0x40000000/25) | 494 |
+

@@ -1,0 +1,76 @@
+=== h316_hi.c — 845 строк ===
+Источник: h316_hi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test h316_hi.c -nt .cline/maps/h316_hi.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| hi_devices | 197 | |
+| hi_units | 198 | |
+| hi_dibs | 199 | |
+| hi_hidbs | 200 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PFLG_FINAL | 00001 | 82 |
+| PFLG_READY | 00002 | 84 |
+| HI_HIDB(N) | {FALSE, FALSE, 0, {0}, 0, 0, 0, ... | 120 |
+| HI_DIB(N) | {HI##N, 1, HI##N##_RX_DMC, HI##N... | 128 |
+| HI_UNIT(N) | {UDATA (&hi_rx_service, UNIT_ATT... | 138 |
+| HI_REG(N) | {                               ... | 145 |
+| HI_MOD(N) | {                               ... | 166 |
+| HI_DEV(HI,N,F) | {                               ... | 186 |
+| NEW_FORMAT_FLAG | (15 << 8) | 203 |
+| LEADER_REGULAR | 000 | 206 |
+| LEADER_UNCONTROLLED | 003 | 207 |
+| LEADER_NOP | 004 | 208 |
+| NLEADER_TRACE | 010 | 211 |
+| NLEADER_OCTAL | 004 | 212 |
+| NLEADER_FOR_IMP | 252 | 213 |
+| NLEADER_PRIORITY | 0200 | 214 |
+| OLEADER_PRIORITY | 010 | 217 |
+| OLEADER_FOR_IMP | 004 | 218 |
+| OLEADER_TRACE | 002 | 219 |
+| OLEADER_OCTAL | 001 | 220 |
+| PDEVICE(h) | hi_devices[(h)-1] | 228 |
+| PUNIT(h) | hi_units[(h)-1] | 229 |
+| PDIB(h) | hi_dibs[(h)-1] | 230 |
+| PHIDB(h) | hi_hidbs[(h)-1] | 231 |
+| SET_RX_IRQ(h) | SET_EXT_INT((1u << (PDIB(h)->rxi... | 234 |
+| SET_TX_IRQ(h) | SET_EXT_INT((1u << (PDIB(h)->txi... | 235 |
+| CLR_RX_IRQ(h) | CLR_EXT_INT((1u << (PDIB(h)->rxi... | 236 |
+| CLR_TX_IRQ(h) | CLR_EXT_INT((1u << (PDIB(h)->txi... | 237 |
+| CLR_RX_IEN(h) | CLR_EXT_ENB((1u << (PDIB(h)->rxi... | 238 |
+| CLR_TX_IEN(h) | CLR_EXT_ENB((1u << (PDIB(h)->txi... | 239 |
+| ISHDBG(l,f) | ((PDEVICE(l)->dctrl & (f)) != 0) | 242 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| hi_reset_rx | 245-255 | Reset receiver (clear flags AND initialize all data) ... |
+| hi_reset_tx | 256-264 | Reset transmitter (clear flags AND initialize all data) ... |
+| hi_get_dmc | 265-277 | Get the DMC control words (starting address, end and length) for the channel. |
+| hi_update_dmc | 278-287 | Update the DMC words to show "count" words transferred. |
+| hi_link_error | 288-305 | Link error recovery ... |
+| hi_debug_hio | 306-316 | Log a modem input or output including DMC words ... |
+| hi_debug_msg | 317-335 | Log the contents of a message sent or received ... |
+| hi_convert_long_to_short | 336-401 | Convert 1822 long header from host, to short leader for IMP. |
+| hi_convert_short_to_long | 402-452 | Convert 1822 short header from IMP, to long leader for host. |
+| hi_start_tx | 453-506 | Start the transmitter ... |
+| hi_poll_tx | 507-519 | Poll for transmitter done interrupts ... |
+| hi_start_rx | 520-535 | Start the receiver ... |
+| hi_poll_rx | 536-610 | Poll for receiver data ... |
+| hi_rx_local | 611-643 | Receive cross patched data ... |
+| hi1_io | 644-644 | Host specific I/O routines ... |
+| hi2_io | 645-645 |  |
+| hi3_io | 646-646 |  |
+| hi4_io | 647-649 |  |
+| hi_io | 650-736 | Common I/O simulation routine ... |
+| hi_rx_service | 737-748 | Receiver service ... |
+| hi_tx_service | 749-766 | Transmitter service ... |
+| hi_reset | 767-778 | Reset routine ... |
+| hi_attach | 779-813 | Attach (connect) ... |
+| hi_detach | 814-829 | Detach (connect) ... |
+| hi_set_convert | 830-835 |  |
+| hi_show_convert | 836-845 |  |

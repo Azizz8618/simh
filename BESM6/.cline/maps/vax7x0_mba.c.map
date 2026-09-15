@@ -1,0 +1,177 @@
+=== vax7x0_mba.c — 1032 строк ===
+Источник: vax7x0_mba.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax7x0_mba.c -nt .cline/maps/vax7x0_mba.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mba_regnames | 52 | |
+| nexus_req | 254 | |
+| ofs | 399 | |
+| mb | 400 | |
+| SCPE_OK | 491 | |
+| ofs | 498 | |
+| mb | 499 | |
+| cs1dt | 501 | |
+| old_sr | 515 | |
+| SCPE_OK | 620 | |
+| pa | 635 | |
+| pa | 684 | |
+| pa | 734 | |
+| old_sr | 789 | |
+| return | 794 | |
+| old_sr | 799 | |
+| return | 806 | |
+| return | 813 | |
+| dibp | 825 | |
+| return | 834 | |
+| dibp | 839 | |
+| return | 848 | |
+| o_sr | 853 | |
+| o_sr | 857 | |
+| return | 870 | |
+| mb | 882 | |
+| mba_cnf | 883 | |
+| mba_cr | 884 | |
+| mba_sr | 885 | |
+| mba_bc | 886 | |
+| mba_va | 887 | |
+| mba_dr | 888 | |
+| mba_smr | 889 | |
+| buf | 922 | |
+| mb | 923 | |
+| buf | 939 | |
+| dibp | 947 | |
+| SCPE_OK | 955 | |
+| mba_devs | 985 | |
+| mba_active | 1000 | |
+| idx | 1007 | |
+| idx | 1011 | |
+| SCPE_OK | 1030 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MBA_NMAPR | 256                             ... | 35 |
+| MBA_V_RTYPE | 10                              ... | 36 |
+| MBA_M_RTYPE | 0x3 | 37 |
+| MBART_INT | 0x0                             ... | 38 |
+| MBART_EXT | 0x1                             ... | 39 |
+| MBART_MAP | 0x2                             ... | 40 |
+| MBA_V_INTOFS | 2                               ... | 41 |
+| MBA_M_INTOFS | 0xFF | 42 |
+| MBA_V_DRV | 7                               ... | 43 |
+| MBA_M_DRV | 0x7 | 44 |
+| MBA_V_DEVOFS | 2                               ... | 45 |
+| MBA_M_DEVOFS | 0x1F | 46 |
+| MBA_RTYPE(x) | (((x) >> MBA_V_RTYPE) & MBA_M_RT... | 47 |
+| MBA_INTOFS(x) | (((x) >> MBA_V_INTOFS) & MBA_M_I... | 48 |
+| MBA_EXTDRV(x) | (((x) >> MBA_V_DRV) & MBA_M_DRV) | 49 |
+| MBA_EXTOFS(x) | (((x) >> MBA_V_DEVOFS) & MBA_M_D... | 50 |
+| MBACNF_OF | 0x0 | 56 |
+| MBACNF_ADPDN | 0x00800000                      ... | 57 |
+| MBACNF_ADPUP | 0x00400000                      ... | 58 |
+| MBACNF_CODE | 0x00000020 | 59 |
+| MBACNF_RD | (SBI_FAULTS\|MBACNF_W1C) | 60 |
+| MBACNF_W1C | 0x00C00000 | 61 |
+| MBACR_OF | 0x1 | 81 |
+| MBACR_MNT | 0x00000008                      ... | 82 |
+| MBACR_IE | 0x00000004                      ... | 83 |
+| MBACR_ABORT | 0x00000002                      ... | 84 |
+| MBACR_INIT | 0x00000001 | 85 |
+| MBACR_RD | 0x0000000E | 86 |
+| MBACR_WR | 0x0000000E | 87 |
+| MBASR_OF | 0x2 | 100 |
+| MBASR_DTBUSY | 0x80000000                      ... | 101 |
+| MBASR_NRCONF | 0x40000000                      ... | 102 |
+| MBASR_CRD | 0x20000000                      ... | 103 |
+| MBASR_CBH | 0x00800000                      ... | 104 |
+| MBASR_PGE | 0x00080000                      ... | 105 |
+| MBASR_NFD | 0x00040000                      ... | 106 |
+| MBASR_MCPE | 0x00020000                      ... | 107 |
+| MBASR_ATA | 0x00010000                      ... | 108 |
+| MBASR_SPE | 0x00004000                      ... | 109 |
+| MBASR_DTCMP | 0x00002000                      ... | 110 |
+| MBASR_DTABT | 0x00001000                      ... | 111 |
+| MBASR_DLT | 0x00000800                      ... | 112 |
+| MBASR_WCEU | 0x00000400                      ... | 113 |
+| MBASR_WCEL | 0x00000200                      ... | 114 |
+| MBASR_MXF | 0x00000100                      ... | 115 |
+| MBASR_MBEXC | 0x00000080                      ... | 116 |
+| MBASR_MBDPE | 0x00000040                      ... | 117 |
+| MBASR_MAPPE | 0x00000020                      ... | 118 |
+| MBASR_INVM | 0x00000010                      ... | 119 |
+| MBASR_ERCONF | 0x00000008                      ... | 120 |
+| MBASR_RDS | 0x00000004                      ... | 121 |
+| MBASR_ITMO | 0x00000002                      ... | 122 |
+| MBASR_RTMO | 0x00000001                      ... | 123 |
+| MBASR_RD | 0xE08F7FFF | 124 |
+| MBASR_W1C | 0x608F7FFF | 125 |
+| MBASR_ABORTS | 0x00000FFF | 126 |
+| MBASR_ERRORS | 0x608E49FF | 127 |
+| MBASR_INTR | 0x000F7000 | 128 |
+| MBAVA_OF | 0x3 | 159 |
+| MBAVA_RD | 0x0001FFFF | 160 |
+| MBAVA_WR | (MBAVA_RD) | 161 |
+| MBABC_OF | 0x4 | 171 |
+| MBABC_WR | 0x0000FFFF | 172 |
+| MBABC_V_MBC | 16                              ... | 173 |
+| MBADR_OF | 0x5 | 183 |
+| MBADR_RD | 0xFFFFFFFF | 184 |
+| MBADR_WR | 0xFFC00000 | 185 |
+| MBASMR_OF | 0x6 | 194 |
+| MBASMR_RD | (MBAMAP_RD) | 195 |
+| MBACMD_OF | 0x7 | 204 |
+| MBA_CS1 | 0x00                            ... | 224 |
+| MBA_CS1_WR | 0x3F                            ... | 225 |
+| MBA_CS1_DT | 0x28                            ... | 226 |
+| MBAMAP_VLD | 0x80000000                      ... | 230 |
+| MBAMAP_PAG | 0x001FFFFF | 231 |
+| MBAMAP_RD | (MBAMAP_VLD \| MBAMAP_PAG) | 232 |
+| MBAMAP_WR | (MBAMAP_RD) | 233 |
+| MBA_DEB_RRD | 0x01                            ... | 237 |
+| MBA_DEB_RWR | 0x02                            ... | 238 |
+| MBA_DEB_MRD | 0x04                            ... | 239 |
+| MBA_DEB_MWR | 0x08                            ... | 240 |
+| MBA_DEB_XFR | 0x10                            ... | 241 |
+| MBA_DEB_ERR | 0x20                            ... | 242 |
+| MBA_DEB_INT | 0x40                            ... | 243 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mba_rdreg | 397-410 |  |
+| if | 411-420 |  |
+| switch | 421-495 |  |
+| mba_wrreg | 496-503 |  |
+| if | 504-516 |  |
+| switch | 517-631 |  |
+| mba_rdbufW | 632-642 |  |
+| for | 643-680 |  |
+| mba_wrbufW | 681-691 |  |
+| for | 692-730 |  |
+| mba_chbufW | 731-741 |  |
+| for | 742-770 |  |
+| mba_map_addr | 771-776 |  |
+| if | 777-786 |  |
+| mba_set_don | 787-796 |  |
+| mba_upd_ata | 797-808 |  |
+| mba_set_exc | 809-815 |  |
+| mba_get_bc | 816-822 |  |
+| mba_set_int | 823-829 |  |
+| if | 830-836 |  |
+| mba_clr_int | 837-843 |  |
+| if | 844-850 |  |
+| mba_upd_sr | 851-866 |  |
+| if | 867-874 |  |
+| mba_reset | 875-889 |  |
+| if | 890-898 |  |
+| mba_help | 899-919 |  |
+| mba_description | 920-943 |  |
+| mba_show_num | 944-959 |  |
+| mba_set_enbdis | 960-968 |  |
+| if | 969-981 |  |
+| init_mbus_tab | 982-986 |  |
+| for | 987-992 |  |
+| for | 993-1004 |  |
+| build_mbus_tab | 1005-1032 |  |

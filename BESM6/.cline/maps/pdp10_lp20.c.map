@@ -1,0 +1,193 @@
+=== pdp10_lp20.c — 1319 строк ===
+Источник: pdp10_lp20.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp10_lp20.c -nt .cline/maps/pdp10_lp20.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dvld | 188 | |
+| dvld_hold | 189 | |
+| SCPE_OK | 460 | |
+| SCPE_OK | 544 | |
+| fnc | 577 | |
+| wd10 | 578 | |
+| cont | 579 | |
+| ba | 580 | |
+| lpcsa | 589 | |
+| tbc | 592 | |
+| lpba | 722 | |
+| SCPE_OK | 733 | |
+| lpcolc | 776 | |
+| stoppc | 783 | |
+| TRUE | 814 | |
+| FALSE | 846 | |
+| lpcsa | 861 | |
+| return | 867 | |
+| lpcsa | 894 | |
+| lp20_dib.vec | 902 | |
+| lprdat | 937 | |
+| SCPE_OK | 945 | |
+| reason | 950 | |
+| reason | 969 | |
+| reason | 974 | |
+| lpcsa | 984 | |
+| reason | 986 | |
+| uptr | 995 | |
+| uptr->u4 | 996 | |
+| uptr | 1008 | |
+| SCPE_OK | 1010 | |
+| gbuf | 1015 | |
+| fname | 1016 | |
+| vfile | 1017 | |
+| sum | 1018 | |
+| cptr | 1025 | |
+| dvptr | 1085 | |
+| SCPE_OK | 1135 | |
+| dvlnt | 1138 | |
+| SCPE_FMT | 1141 | |
+| SCPE_OK | 1156 | |
+| newlpi | 1161 | |
+| lpi | 1178 | |
+| SCPE_OK | 1179 | |
+| SCPE_OK | 1186 | |
+| sum | 1207 | |
+| SCPE_OK | 1225 | |
+| s_lpcsa | 1229 | |
+| s_lppagc | 1230 | |
+| lppagc | 1242 | |
+| lpcsa | 1243 | |
+| SCPE_OK | 1245 | |
+| even | 1250 | |
+| even | 1255 | |
+| dvlnt | 1268 | |
+| SCPE_OK | 1271 | |
+| SCPE_OK | 1314 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| LP20_IDLE_TIME | (10) | 61 |
+| UNIT_DUMMY | (1 << UNIT_V_UF) | 72 |
+| LP_WIDTH | 132                             ... | 73 |
+| DEFAULT_LPI | 6                             /*... | 74 |
+| DV_SIZE | 143                             ... | 77 |
+| DV_DMASK | 077                             ... | 78 |
+| DV_TOF | 0                               ... | 79 |
+| DV_BOF | 11                              ... | 80 |
+| DV_MAX | 11                              ... | 81 |
+| MIN_VFU_LEN | 2                               ... | 82 |
+| VFU_LEN_VALID(lines, | lpi) ((lines) >= (lpi * MIN_VFU_... | 83 |
+| TX_SIZE | 256                             ... | 87 |
+| TX_AMASK | (TX_SIZE - 1) | 88 |
+| TX_DMASK | 007777 | 89 |
+| TX_PARITY | 010000                          ... | 90 |
+| TX_V_FL | 8                               ... | 91 |
+| TX_M_FL | 017 | 92 |
+| TX_DELH | 02000                           ... | 94 |
+| TX_SLEW | 00020                           ... | 97 |
+| TX_VMASK | 00017                           ... | 98 |
+| TX_CHR | 0                               ... | 99 |
+| TX_RAM | 1                               ... | 100 |
+| TX_DVU | 2                               ... | 101 |
+| TX_INT | 3                               ... | 102 |
+| TX_GETFL(x) | (((x) >> TX_V_FL) & TX_M_FL) | 103 |
+| CSA_GO | 0000001                         ... | 107 |
+| CSA_PAR | 0000002                         ... | 108 |
+| CSA_V_FNC | 2                               ... | 109 |
+| CSA_M_FNC | 03 | 110 |
+| FNC_PR | 0                              /... | 111 |
+| FNC_TST | 1                              /... | 112 |
+| FNC_DVU | 2                              /... | 113 |
+| FNC_RAM | 3                              /... | 114 |
+| FNC_INTERNAL | 1                               ... | 115 |
+| CSA_FNC | (CSA_M_FNC << CSA_V_FNC) | 116 |
+| CSA_V_UAE | 4                               ... | 117 |
+| CSA_UAE | (03 << CSA_V_UAE) | 118 |
+| CSA_IE | 0000100                         ... | 119 |
+| CSA_DONE | 0000200                         ... | 120 |
+| CSA_INIT | 0000400                         ... | 121 |
+| CSA_ECLR | 0001000                         ... | 122 |
+| CSA_DELH | 0002000                         ... | 123 |
+| CSA_ONL | 0004000                         ... | 124 |
+| CSA_DVON | 0010000                         ... | 125 |
+| CSA_UNDF | 0020000                         ... | 126 |
+| CSA_PZRO | 0040000                         ... | 127 |
+| CSA_ERR | 0100000                         ... | 128 |
+| CSA_RW | (CSA_DELH \| CSA_IE \| CSA_UAE \| C... | 129 |
+| CSA_MBZ | (CSA_ECLR \| CSA_INIT) | 130 |
+| CSA_GETUAE(x) | (((x) & CSA_UAE) << (16 - CSA_V_... | 131 |
+| CSA_GETFNC(x) | (((x) >> CSA_V_FNC) & CSA_M_FNC) | 132 |
+| CSB_GOE | 0000001                         ... | 136 |
+| CSB_DTE | 0000002                         ... | 137 |
+| CSB_MTE | 0000004                         ... | 138 |
+| CSB_RPE | 0000010                         ... | 139 |
+| CSB_MPE | 0000020                         ... | 140 |
+| CSB_LPE | 0000040                         ... | 141 |
+| CSB_DVOF | 0000100                         ... | 142 |
+| CSB_OFFL | 0000200                         ... | 143 |
+| CSB_TEST | 0003400                         ... | 144 |
+| CSB_OVFU | 0004000                         ... | 145 |
+| CSB_PBIT | 0010000                         ... | 146 |
+| CSB_NRDY | 0020000                         ... | 147 |
+| CSB_LA180 | 0040000                         ... | 148 |
+| CSB_VLD | 0100000                         ... | 149 |
+| CSB_ECLR | (CSB_GOE \| CSB_DTE \| CSB_MTE \| C... | 150 |
+| CSB_ERR | (CSB_ECLR \| CSB_DVOF \| CSB_OFFL) | 151 |
+| CSB_RW | CSB_TEST | 152 |
+| CSB_MBZ | (CSB_DTE \| CSB_RPE \| CSB_MPE \| C... | 153 |
+| BC_MASK | 0007777                         ... | 160 |
+| PAGC_MASK | 0007777                         ... | 164 |
+| RDAT_MASK | 0007777                         ... | 168 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lp20_rd | 414-416 |  |
+| switch | 417-462 |  |
+| lp20_wr | 463-465 |  |
+| switch | 466-574 |  |
+| lp20_svc | 575-592 |  |
+| if | 593-596 |  |
+| if | 597-601 |  |
+| for | 602-727 |  |
+| if | 728-744 |  |
+| lp20_print | 745-758 |  |
+| if | 759-779 |  |
+| lp20_adv | 780-797 |  |
+| for | 798-816 |  |
+| lp20_davfu | 817-824 |  |
+| for | 825-850 |  |
+| update_lpcs | 851-856 |  |
+| if | 857-873 |  |
+| change_rdy | 874-877 | also updates corresponding bits in csb. |
+| if | 878-898 |  |
+| lp20_inta | 899-912 |  |
+| lp20_reset | 913-915 |  |
+| if | 916-931 | On power-up reset, clear DAVFU & RAM.  Set DAVFU off-line. |
+| lp20_init | 932-939 |  |
+| if | 940-947 |  |
+| lp20_attach | 948-953 |  |
+| if | 954-971 |  |
+| lp20_detach | 972-977 |  |
+| if | 978-993 |  |
+| set_flush_timer | 994-1001 | So u3 contains the number of seconds desired, and u4 the number to go. |
+| idle_svc | 1002-1003 |  |
+| if | 1004-1012 |  |
+| lp20_set_vfu_type | 1013-1033 |  |
+| if | 1034-1051 |  |
+| if | 1052-1080 |  |
+| if | 1081-1086 |  |
+| while | 1087-1143 |  |
+| lp20_show_vfu_type | 1144-1158 |  |
+| lp20_set_lpi | 1159-1181 |  |
+| lp20_show_lpi | 1182-1188 |  |
+| lp20_show_vfu | 1189-1197 |  |
+| if | 1198-1207 |  |
+| for | 1208-1217 |  |
+| if | 1218-1220 |  |
+| if | 1221-1226 |  |
+| lp20_set_tof | 1227-1247 |  |
+| evenbits | 1248-1250 |  |
+| while | 1251-1257 |  |
+| lp20_clear_vfu | 1258-1315 |  |
+| lp20_description | 1316-1319 |  |

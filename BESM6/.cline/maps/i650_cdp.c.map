@@ -1,0 +1,44 @@
+=== i650_cdp.c — 1555 строк ===
+Источник: i650_cdp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i650_cdp.c -nt .cline/maps/i650_cdp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| card_buf | 81 | |
+| card_nbuf | 82 | |
+| card_lpt | 85 | |
+| card_nlpt | 86 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_CDP | UNIT_ATTABLE \| MODE_026 \| MODE_L... | 35 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| encode_char | 88-97 |  |
+| encode_lpt_spc | 98-102 |  |
+| encode_lpt_str | 103-107 |  |
+| encode_lpt_num | 108-143 |  |
+| encode_lpt_word | 144-193 |  |
+| sprintf_word | 194-219 | if last digit is negative, never set HiPunch even if asked for (a card column cannot have both X(11) and Y(12) punched) |
+| encode_pch_str | 220-227 |  |
+| encode_8word_wiring | 228-253 |  |
+| encode_soap_wiring | 254-487 |  |
+| encode_supersoap_wiring | 488-746 |  |
+| encode_is_wiring | 747-866 |  |
+| encode_it_wiring | 867-1022 |  |
+| encode_ra_wiring | 1023-1129 |  |
+| encode_fortransit_wiring | 1130-1321 |  |
+| cdp_cmd | 1322-1422 | Card punch routine |
+| cdp_srv | 1423-1430 |  |
+| cdp_set_wiring | 1431-1446 | Set card read/punch control panel wiring |
+| cdp_show_wiring | 1447-1461 | Show card read/punch control panel wiring |
+| cdp_set_echo | 1462-1498 | Set card read/punch echo to console |
+| cdp_show_echo | 1499-1512 | Show card read/punch control panel wiring |
+| cdp_attach | 1513-1526 |  |
+| cdp_detach | 1527-1532 |  |
+| cdp_help | 1533-1549 |  |
+| cdp_description | 1550-1555 |  |

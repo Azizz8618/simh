@@ -1,0 +1,42 @@
+=== pmmi_mm103.c — 705 строк ===
+Источник: pmmi_mm103.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pmmi_mm103.c -nt .cline/maps/pmmi_mm103.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| PMMI_CTX | 65-83 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| pmmi_res | 131 | |
+| pmmi_ctx | 149 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEVICE_DESC | "PMMI MM-103 MODEM" | 55 |
+| DEVICE_NAME | "PMMI" | 56 |
+| STATUS_MSG | (1 << 0) | 61 |
+| ERROR_MSG | (1 << 1) | 62 |
+| VERBOSE_MSG | (1 << 2) | 63 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pmmi_description | 210-214 |  |
+| pmmi_reset | 215-260 |  |
+| pmmi_svc | 261-403 |  |
+| pmmi_attach | 404-428 | Attach routine |
+| pmmi_detach | 429-443 | Detach routine |
+| pmmi_set_baud | 444-464 |  |
+| pmmi_show_baud | 465-473 |  |
+| pmmi_config_line | 474-533 |  |
+| pmmi_io | 534-567 |  |
+| pmmi_reg0 | 568-597 |  |
+| pmmi_reg1 | 598-615 |  |
+| pmmi_reg2 | 616-641 |  |
+| pmmi_reg3 | 642-666 |  |
+| pmmi_set_console | 667-678 |  |
+| pmmi_show_help | 679-705 |  |

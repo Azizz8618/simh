@@ -1,0 +1,126 @@
+=== s100_jair.c — 1925 строк ===
+Источник: s100_jair.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_jair.c -nt .cline/maps/s100_jair.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| JAIR_CTX | 669-685 |
+| JAIR_PORT_CTX | 751-774 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| nmiInterrupt | 53 | |
+| jair_ram | 582 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VERBOSE_MSG | (1 << 0) | 56 |
+| ERROR_MSG | (1 << 1) | 57 |
+| STATUS_MSG | (1 << 2) | 58 |
+| JAIR_ROM_BASE | 0x0000 | 106 |
+| JAIR_ROM_SIZE | 8192 | 107 |
+| JAIR_ROM_MASK | (JAIR_ROM_SIZE-1) | 108 |
+| JAIR_ROM_READ | FALSE | 110 |
+| JAIR_ROM_WRITE | TRUE | 111 |
+| JAIR_CPU_IO | 0x20                 /* BASE ADD... | 591 |
+| JAIR_UART0 | JAIR_CPU_IO          /* UART0 OF... | 592 |
+| JAIR_UART1 | JAIR_CPU_IO + 0x08   /* UART1 OF... | 593 |
+| JAIR_SPI | JAIR_CPU_IO + 0x10   /* SPI OFFS... | 594 |
+| JAIR_SPI_SS | JAIR_CPU_IO + 0x11   /* SPI_SS O... | 595 |
+| JAIR_PPORT | JAIR_CPU_IO + 0x18   /* PPORT OF... | 596 |
+| JAIR_SDATA | 0x00    /* 8250 SERIAL DATA     ... | 598 |
+| JAIR_IER | 0x01    /* 8250 INTERRUPT ENABLE... | 599 |
+| JAIR_IIR | 0x02    /* 8250 INTERRUPT IDENT ... | 600 |
+| JAIR_LCR | 0x03    /* 8250 LINE CONTROL REG... | 601 |
+| JAIR_MCR | 0x04    /* 8250 MODEM CONTROL RE... | 602 |
+| JAIR_LSR | 0x05    /* 8250 LINE STATUS REGI... | 603 |
+| JAIR_MSR | 0x06    /* 8250 MODEM STATUS REG... | 604 |
+| JAIR_SR | 0x07    /* 8250 SCRATCH REGISTER... | 605 |
+| JAIR_DR | 0x01    /* SERIAL DATA READY    ... | 610 |
+| JAIR_OE | 0x02    /* SERIAL OVERRUN ERROR ... | 611 |
+| JAIR_THRE | 0x20    /* SERIAL TRANSMITTER BU... | 612 |
+| JAIR_TEMT | 0x40    /* SERIAL TRANSMITTER BU... | 613 |
+| JAIR_DLAB | 0x80    /* DIVISOR LATCH ACCESS ... | 614 |
+| JAIR_DCTS | 0x01    /* Clear to Send (Delta)... | 616 |
+| JAIR_DDSR | 0x02    /* Data Set Ready (Delta... | 617 |
+| JAIR_DRNG | 0x04    /* Ring Indicate (Delta)... | 618 |
+| JAIR_DDCD | 0x08    /* Data Carrier Detect (... | 619 |
+| JAIR_CTS | 0x10    /* Clear to Send        ... | 620 |
+| JAIR_DSR | 0x20    /* Data Set Ready       ... | 621 |
+| JAIR_RNG | 0x40    /* Ring Indicate        ... | 622 |
+| JAIR_DCD | 0x80    /* Data Carrier Detect  ... | 623 |
+| JAIR_DTR | 0x01    /* Data Terminal Ready  ... | 624 |
+| JAIR_RTS | 0x02    /* Request to Send      ... | 625 |
+| JAIR_STATE_IDLE | 0    /* idle */ | 627 |
+| JAIR_STATE_CMD | 1    /* receiving command */ | 628 |
+| JAIR_STATE_RESP | 2    /* sending response */ | 629 |
+| JAIR_STATE_SBLK | 3    /* start block */ | 630 |
+| JAIR_STATE_WBLK | 4    /* write block */ | 631 |
+| JAIR_STAT_WAIT | 10000 /* Status wait interval */ | 633 |
+| JAIR_IO_WAIT | 250   /* IO wait interval */ | 634 |
+| JAIR_CMD0 | 0 | 639 |
+| JAIR_CMD8 | 8          /* send if condition */ | 640 |
+| JAIR_CMD13 | 13         /* send status */ | 641 |
+| JAIR_CMD17 | 17         /* read single block */ | 642 |
+| JAIR_CMD24 | 24         /* write single block */ | 643 |
+| JAIR_CMD55 | 55         /* application comman... | 644 |
+| JAIR_ACMD41 | 41 + 0x80  /* send op condition */ | 645 |
+| JAIR_NAME | "Josh's Altair / IMASI Replaceme... | 651 |
+| JAIR_SNAME | "JAIR" | 652 |
+| JAIR_UNITS | 1 | 654 |
+| UNIT_V_JAIR_VERBOSE | (UNIT_V_UF + 0)                 ... | 656 |
+| UNIT_JAIR_VERBOSE | (1 << UNIT_V_JAIR_VERBOSE) | 657 |
+| UNIT_V_JAIR_WPROTECT | (UNIT_V_UF + 1)                 ... | 658 |
+| UNIT_JAIR_WPROTECT | (1 << UNIT_V_JAIR_WPROTECT) | 659 |
+| UNIT_V_JAIR_ROM | (UNIT_V_UF + 2)                 ... | 660 |
+| UNIT_JAIR_ROM | (1 << UNIT_V_JAIR_ROM) | 661 |
+| UNIT_V_JAIR_CONSOLE | (UNIT_V_UF + 3)                 ... | 662 |
+| UNIT_JAIR_CONSOLE | (1 << UNIT_V_JAIR_CONSOLE) | 663 |
+| JAIR_IOBUF_SIZE | (128) | 742 |
+| JAIR_IOBUF_MASK | (JAIR_IOBUF_SIZE-1) | 743 |
+| JAIR_PORT_UNITS | 3 | 745 |
+| JAIR_UNIT_STAT | 0 | 747 |
+| JAIR_UNIT_RX | 1 | 748 |
+| JAIR_UNIT_TX | 2 | 749 |
+| JAIRS0_NAME | "JAIR Serial Port 0" | 780 |
+| JAIRS0_SNAME | "JAIRS0" | 781 |
+| JAIRS1_NAME | "JAIR Serial Port 1" | 862 |
+| JAIRS1_SNAME | "JAIRS1" | 863 |
+| JAIRP_NAME | "JAIR Parallel Port" | 944 |
+| JAIRP_SNAME | "JAIRP" | 945 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| jair_description | 1016-1019 |  |
+| jairs0_description | 1020-1023 |  |
+| jairs1_description | 1024-1027 |  |
+| jairp_description | 1028-1036 |  |
+| jair_reset | 1037-1075 | Enables all other Sol-20 devices |
+| jair_port_reset | 1076-1129 |  |
+| jair_boot | 1130-1147 | The BOOT command will enter the ROM at 0x0000 |
+| jair_svc | 1148-1174 | JAIRP - Parallel device that supports TMXR |
+| jair_rx_svc | 1175-1206 |  |
+| jair_tx_svc | 1207-1254 |  |
+| jair_attach | 1255-1290 | Attach routines |
+| jair_detach | 1291-1322 | Detach routines |
+| jair_attach_mux | 1323-1342 | JAIRS0, JAIRS1, and JAIRP devices |
+| jair_detach_mux | 1343-1354 | JAIRS0, JAIRS1, and JAIRP devices |
+| jair_show_ports | 1355-1364 |  |
+| jair_config_line | 1365-1380 |  |
+| jair_get_rxdata | 1381-1411 |  |
+| jair_get_modem_status | 1412-1463 |  |
+| jair_set_mc | 1464-1473 |  |
+| jair_new_baud | 1474-1490 |  |
+| jair_set_baud | 1491-1512 |  |
+| jair_show_baud | 1513-1528 |  |
+| jairio | 1529-1538 | Handles I/O input and output |
+| jair_io_in | 1539-1628 |  |
+| jair_io_out | 1629-1884 |  |
+| jair_set_rom | 1885-1889 |  |
+| jair_set_norom | 1890-1902 |  |
+| jair_shadow_rom | 1903-1920 |  |
+| jair_help | 1921-1925 | Display help |

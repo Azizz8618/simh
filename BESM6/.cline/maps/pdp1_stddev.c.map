@@ -1,0 +1,119 @@
+=== pdp1_stddev.c — 785 строк ===
+Источник: pdp1_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp1_stddev.c -nt .cline/maps/pdp1_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ptr_state | 79 | |
+| ptr_wait | 80 | |
+| ptr_stopioe | 81 | |
+| ptp_uc | 83 | |
+| ptp_stopioe | 88 | |
+| tto_sbs | 95 | |
+| ios | 97 | |
+| PF | 98 | |
+| cpls | 346 | |
+| dat | 348 | |
+| temp | 355 | |
+| SCPE_OK | 399 | |
+| in | 417 | |
+| ptr_wait | 472 | |
+| ptr_hold | 473 | |
+| ptr_last | 474 | |
+| ptr_uc | 475 | |
+| ptr_unit.buf | 476 | |
+| cpls | 477 | |
+| SCPE_OK | 480 | |
+| uptr->flags | 490 | |
+| word | 510 | |
+| origin | 515 | |
+| fld | 516 | |
+| SCPE_OK | 551 | |
+| Reader" | 556 | |
+| cpls | 570 | |
+| dat | 572 | |
+| uptr->pos | 615 | |
+| SCPE_OK | 616 | |
+| ptp_uc | 624 | |
+| cpls | 625 | |
+| SCPE_OK | 628 | |
+| uptr->flags | 637 | |
+| SCPE_OK | 655 | |
+| Punch" | 660 | |
+| cpls | 681 | |
+| dat | 683 | |
+| in | 690 | |
+| uptr->pos | 722 | |
+| SCPE_OK | 723 | |
+| return | 732 | |
+| red_str | 739 | |
+| black_str | 740 | |
+| uptr->pos | 767 | |
+| SCPE_OK | 768 | |
+| cpls | 780 | |
+| SCPE_OK | 784 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FIODEC_SPACE | 000                             ... | 60 |
+| FIODEC_STOP | 013                             ... | 61 |
+| FIODEC_BLACK | 034                             ... | 62 |
+| FIODEC_RED | 035                             ... | 63 |
+| FIODEC_UC | 074                             ... | 64 |
+| FIODEC_LC | 072                             ... | 65 |
+| FIODEC_CR | 077                             ... | 66 |
+| UC_V | 6                               ... | 68 |
+| UC | (1 << UC_V) | 69 |
+| BOTH | (1 << (UC_V + 1))               ... | 70 |
+| CW | (1 << (UC_V + 2))               ... | 71 |
+| TT_WIDTH | 077 | 72 |
+| UNIT_V_ASCII | (UNIT_V_UF + 0)                 ... | 73 |
+| UNIT_ASCII | (1 << UNIT_V_ASCII) | 74 |
+| UNIT_V_ET | (UNIT_V_UF + 1)                 ... | 75 |
+| UNIT_ET | (1 << UNIT_V_ET) | 76 |
+| PTR_LEADER | 20                              ... | 77 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ptr | 325-326 |  |
+| if | 327-332 |  |
+| if | 333-341 |  |
+| if | 342-352 |  |
+| ptr_svc | 353-356 |  |
+| if | 357-367 |  |
+| if | 368-381 |  |
+| if | 382-385 |  |
+| if | 386-413 |  |
+| ptr_get_ascii | 414-418 |  |
+| if | 419-422 |  |
+| if | 423-468 |  |
+| ptr_reset | 469-484 |  |
+| ptr_attach | 485-496 |  |
+| ptr_getw | 497-500 |  |
+| for | 501-512 |  |
+| ptr_boot | 513-517 |  |
+| for | 518-536 |  |
+| ptr_help | 537-553 |  |
+| ptr_description | 554-561 |  |
+| ptp | 562-565 |  |
+| if | 566-576 |  |
+| ptp_svc | 577-580 |  |
+| if | 581-588 |  |
+| if | 589-609 |  |
+| if | 610-620 |  |
+| ptp_reset | 621-632 |  |
+| ptp_attach | 633-641 |  |
+| ptp_help | 642-657 |  |
+| ptp_description | 658-664 |  |
+| tti | 665-672 |  |
+| tto | 673-676 |  |
+| if | 677-687 |  |
+| tti_svc | 688-692 |  |
+| if | 693-725 |  |
+| tto_puts | 726-734 |  |
+| tto_svc | 735-760 |  |
+| if | 761-772 |  |
+| tty_reset | 773-785 |  |

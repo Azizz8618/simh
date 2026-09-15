@@ -1,0 +1,122 @@
+=== hp2100_dq.c — 1358 строк ===
+Источник: hp2100_dq.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_dq.c -nt .cline/maps/hp2100_dq.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 166-173 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dqd_interface | 201 | |
+| dqc_interface | 202 | |
+| signal | 419 | |
+| working_set | 420 | |
+| outbound | 421 | |
+| irq_enabled | 422 | |
+| fnc | 557 | |
+| signal | 558 | |
+| working_set | 559 | |
+| outbound | 560 | |
+| irq_enabled | 561 | |
+| return | 703 | |
+| return | 724 | |
+| drv | 750 | |
+| SCPE_OK | 846 | |
+| da | 871 | |
+| dqd_xfer | 1025 | |
+| SCPE_OK | 1033 | |
+| drv | 1040 | |
+| dqd_xfer | 1055 | |
+| dqd_wval | 1056 | |
+| dq_ptr | 1057 | |
+| SCPE_OK | 1068 | |
+| result | 1087 | |
+| offset | 1088 | |
+| zero | 1089 | |
+| SCPE_OK | 1126 | |
+| start | 1341 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_UNLOAD | (UNIT_V_UF + 1)                 ... | 101 |
+| UNIT_UNLOAD | (1 << UNIT_V_UNLOAD) | 102 |
+| FNC | u3                              ... | 103 |
+| DRV | u4                              ... | 104 |
+| DQ_N_NUMWD | 7 | 106 |
+| DQ_NUMWD | (1 << DQ_N_NUMWD)               ... | 107 |
+| DQ_NUMSC | 23                              ... | 108 |
+| DQ_NUMSF | 20                              ... | 109 |
+| DQ_NUMCY | 203                             ... | 110 |
+| DQ_SIZE | (DQ_NUMSF * DQ_NUMCY * DQ_NUMSC ... | 111 |
+| DQ_NUMDRV | 2                               ... | 112 |
+| CW_V_FNC | 12                              ... | 116 |
+| CW_M_FNC | 017 | 117 |
+| CW_GETFNC(x) | (((x) >> CW_V_FNC) & CW_M_FNC) | 118 |
+| FNC_STA | 001                             ... | 120 |
+| FNC_RCL | 002                             ... | 121 |
+| FNC_SEEK | 003                             ... | 122 |
+| FNC_RD | 004                             ... | 123 |
+| FNC_WD | 005                             ... | 124 |
+| FNC_RA | 006                             ... | 125 |
+| FNC_WA | 007                             ... | 126 |
+| FNC_CHK | 010                             ... | 127 |
+| FNC_LA | 013                             ... | 128 |
+| FNC_AS | 014                             ... | 129 |
+| FNC_SEEK1 | 020                             ... | 131 |
+| FNC_SEEK2 | 021                             ... | 132 |
+| FNC_SEEK3 | 022                             ... | 133 |
+| FNC_CHK1 | 023                             ... | 134 |
+| FNC_LA1 | 024                             ... | 135 |
+| CW_V_DRV | 0                               ... | 137 |
+| CW_M_DRV | 01 | 138 |
+| CW_GETDRV(x) | (((x) >> CW_V_DRV) & CW_M_DRV) | 139 |
+| DA_V_CYL | 0                               ... | 143 |
+| DA_M_CYL | 0377 | 144 |
+| DA_GETCYL(x) | (((x) >> DA_V_CYL) & DA_M_CYL) | 145 |
+| DA_V_HD | 8                               ... | 146 |
+| DA_M_HD | 037 | 147 |
+| DA_GETHD(x) | (((x) >> DA_V_HD) & DA_M_HD) | 148 |
+| DA_V_SC | 0                               ... | 149 |
+| DA_M_SC | 037 | 150 |
+| DA_GETSC(x) | (((x) >> DA_V_SC) & DA_M_SC) | 151 |
+| DA_CKMASK | 0777                            ... | 152 |
+| STA_DID | 0000200                         ... | 156 |
+| STA_NRDY | 0000100                         ... | 157 |
+| STA_EOC | 0000040                         ... | 158 |
+| STA_AER | 0000020                         ... | 159 |
+| STA_FLG | 0000010                         ... | 160 |
+| STA_BSY | 0000004                         ... | 161 |
+| STA_DTE | 0000002                         ... | 162 |
+| STA_ERR | 0000001                         ... | 163 |
+| STA_ANYERR | (STA_NRDY \| STA_EOC \| STA_AER \| ... | 164 |
+| UNIT_FLAGS | (UNIT_FIX \| UNIT_ATTABLE \| UNIT_... | 319 |
+| GETDA(x,y,z) |  | 866 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dqd_interface | 417-423 |  |
+| while | 424-554 |  |
+| dqc_interface | 555-562 |  |
+| while | 563-697 |  |
+| dq_god | 698-707 |  |
+| dq_goc | 708-713 |  |
+| if | 714-747 |  |
+| dqd_svc | 748-753 |  |
+| switch | 754-868 |  |
+| dqc_svc | 869-874 |  |
+| if | 875-886 |  |
+| switch | 887-1025 |  |
+| if | 1026-1037 |  |
+| dqc_reset | 1038-1044 |  |
+| if | 1045-1060 |  |
+| for | 1061-1084 |  |
+| dqc_attach | 1085-1092 |  |
+| if | 1093-1111 |  |
+| dqc_detach | 1112-1119 |  |
+| dqc_load_unload | 1120-1336 |  |
+| dqc_boot | 1337-1358 |  |

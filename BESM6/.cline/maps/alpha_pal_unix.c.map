@@ -1,0 +1,86 @@
+=== alpha_pal_unix.c — 702 строк ===
+Источник: alpha_pal_unix.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test alpha_pal_unix.c -nt .cline/maps/alpha_pal_unix.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| unix_stkp | 96 | |
+| unix_entVec | 97 | |
+| unix_kgp | 98 | |
+| unix_ipl | 99 | |
+| unix_cm | 100 | |
+| PC | 107 | |
+| p1 | 108 | |
+| vax_flag | 109 | |
+| fpen | 110 | |
+| ir | 111 | |
+| cm_racc | 112 | |
+| mmu_ispage | 113 | |
+| save_env | 114 | |
+| int_req | 115 | |
+| mipl | 180 | |
+| unix_ipl | 201 | |
+| SCPE_OK | 289 | |
+| SCPE_OK | 474 | |
+| val | 481 | |
+| tmp1 | 482 | |
+| unix_ptptr | 495 | |
+| return | 503 | |
+| SCPE_OK | 537 | |
+| a2 | 548 | |
+| unix_ipl | 562 | |
+| SCPE_OK | 571 | |
+| tpc | 578 | |
+| tps | 579 | |
+| lock_flag | 600 | |
+| SCPE_OK | 601 | |
+| tpc | 608 | |
+| unix_ipl | 617 | |
+| lock_flag | 620 | |
+| SCPE_OK | 621 | |
+| tsp | 628 | |
+| tps | 629 | |
+| lock_flag | 644 | |
+| return | 645 | |
+| vptea | 661 | |
+| vpte_vpn | 662 | |
+| vpte_p | 663 | |
+| mmu_ispage | 691 | |
+| unix_ipl | 692 | |
+| pcc_enb | 694 | |
+| pal_eval_intr | 695 | |
+| pal_proc_intr | 696 | |
+| pal_proc_trap | 697 | |
+| pal_proc_excp | 698 | |
+| pal_proc_inst | 699 | |
+| pal_find_pte | 700 | |
+| SCPE_OK | 701 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| GET_PSU | (((unix_cm & PSU_M_CM) << PSU_V_... | 66 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pal_eval_intr_unix | 177-181 |  |
+| for | 182-190 |  |
+| pal_proc_intr_unix | 191-206 |  |
+| pal_proc_trap_unix | 207-217 |  |
+| pal_proc_excp_unix | 218-221 |  |
+| switch | 222-293 |  |
+| pal_proc_inst_unix | 294-298 |  |
+| switch | 299-478 |  |
+| unix_swpctx | 479-514 |  |
+| unix_intexc | 515-518 |  |
+| if | 519-541 |  |
+| unix_mm_intexc | 542-554 |  |
+| unix_syscall | 555-575 |  |
+| unix_rti | 576-591 |  |
+| if | 592-605 |  |
+| unix_retsys | 606-625 |  |
+| unix_urti | 626-658 |  |
+| pal_find_pte_unix | 659-688 |  |
+| pal_proc_reset_unix | 689-702 |  |

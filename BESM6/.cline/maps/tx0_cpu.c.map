@@ -1,0 +1,141 @@
+=== tx0_cpu.c — 1485 строк ===
+Источник: tx0_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test tx0_cpu.c -nt .cline/maps/tx0_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 244-251 |
+| INST_CTRS | 410-419 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| addr_mask | 282 | |
+| petr_unit | 308 | |
+| inst_ctr | 421 | |
+| hst_p | 1147 | |
+| SCPE_OK | 1158 | |
+| ov | 1165 | |
+| lnt | 1176 | |
+| SCPE_OK | 1203 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| OPR_CLA | 0100000 /* 0.8 */ | 157 |
+| OPR_AMB | 0040000 /* 0.7 */ | 158 |
+| OPR_SHF_MASK | 0000700 /* 1.6 */ | 160 |
+| OPR_CYR | 0000600 | 161 |
+| OPR_SHR | 0000400 | 162 |
+| OPR_MBL_MASK | 0000600 /* 1.4 */ | 164 |
+| OPR_MBL | 0000200 | 165 |
+| OPR_XMB_MASK | 0000500 /* 1.2 */ | 166 |
+| OPR_XMB | 0000100 | 167 |
+| OPR_COM | 0000040 /* 1.2 */ | 169 |
+| OPR_PAD | 0000020 /* 1.5 */ | 170 |
+| OPR_CRY | 0000010 /* 1.7 */ | 171 |
+| OPR_LOG_MASK | 0000007 /* Logical operation mas... | 173 |
+| OPR_ANB | 0000007 /* 1.2-2 */ | 174 |
+| OPR_ORB | 0000005 /* 1.3 */ | 175 |
+| OPR_LMB_MASK | 0000006 /* 1.4 */ | 177 |
+| OPR_LMB | 0000002 | 178 |
+| OPR_MBX_MASK | 0000005 /* 1.8 */ | 179 |
+| OPR_MBX | 0000001 | 180 |
+| IOS_MASK | 0037000 | 206 |
+| IOS_EX_MASK | 0030000 | 207 |
+| IOS_NOP | 0000000 | 208 |
+| IOS_TAC | 0001000 | 209 |
+| IOS_TBR | 0002000 | 210 |
+| IOS_PEN | 0003000 | 211 |
+| IOS_SEL | 0004000 | 212 |
+| IOS_RPF | 0006000 | 213 |
+| IOS_SPF | 0007000 | 214 |
+| IOS_CPY | 0020000 | 215 |
+| IOS_R1L | 0021000 | 216 |
+| IOS_DIS | 0022000 | 217 |
+| IOS_R3L | 0023000 | 218 |
+| IOS_PRT | 0024000 | 219 |
+| IOS_P6H | 0026000 | 220 |
+| IOS_P7H | 0027000 | 221 |
+| IOS_HLT | 0030000 | 222 |
+| IOS_CLL | 0031000 | 223 |
+| IOS_CLR | 0032000 | 224 |
+| PCQ_SIZE | 64                              ... | 226 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 227 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 228 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 4)                 ... | 229 |
+| UNIT_V_EXT | (UNIT_V_UF + 2) | 230 |
+| UNIT_EXT_INST | (1 << UNIT_V_EXT) | 231 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 232 |
+| MIN(a,b) | (((a) < (b)) ? (a) : (b)) | 234 |
+| HIST_PC | 0x40000000 | 236 |
+| HIST_V_SHF | 18 | 237 |
+| HIST_MIN | 64 | 238 |
+| HIST_MAX | 65536 | 239 |
+| TRACE_PRINT(level, | args)    if(cpu_dev.dctrl & leve... | 241 |
+| ERROR_MSG | (1 << 0) | 356 |
+| TRACE_MSG | (1 << 1) | 357 |
+| STO_MSG | (1 << 2) | 358 |
+| ADD_MSG | (1 << 3) | 359 |
+| TRN_MSG | (1 << 4) | 360 |
+| ORD_MSG | (1 << 5) | 361 |
+| IOS_MSG | (1 << 6) | 362 |
+| READIN_MSG | (1 << 7) | 363 |
+| VERBOSE_MSG | (1 << 8) | 364 |
+| COUNTERS_MSG | (1 << 9) | 365 |
+| INCR_ADDR(x) | ((x+1) & (MEMSIZE-1)) | 458 |
+| OOPR_CLL | 0100000 | 1281 |
+| OOPR_CLR | 0040000 | 1282 |
+| OOPR_IOS | 0020000 | 1283 |
+| OOPR_HLT | 0030000 | 1284 |
+| OOPR_IOS_MASK | 0007000 | 1285 |
+| OOPR_P7H | 0007000 | 1286 |
+| OOPR_P6H | 0006000 | 1287 |
+| OOPR_PNT | 0004000 | 1288 |
+| OOPR_R3C | 0003000 | 1289 |
+| OOPR_DIS | 0002000 | 1290 |
+| OOPR_R1C | 0001000 | 1291 |
+| OOPR_SHF_MASK | 0000600 | 1293 |
+| OOPR_SHR | 0000400 | 1294 |
+| OOPR_CYR | 0000600 | 1295 |
+| OOPR_MLR | 0000200 | 1296 |
+| OOPR_PEN_MASK | 0000104 | 1298 |
+| OOPR_PEN | 0000100 | 1299 |
+| OOPR_TAC_MASK | 0000104 | 1301 |
+| OOPR_TAC | 0000004 | 1302 |
+| OOPR_COM | 0000040 | 1304 |
+| OOPR_PAD | 0000020 | 1305 |
+| OOPR_CRY | 0000010 | 1306 |
+| OOPR_AMB_MASK | 0000007 | 1308 |
+| OOPR_AMB | 0000001 | 1309 |
+| OOPR_TBR | 0000003 | 1310 |
+| OOPR_LMB | 0000002 | 1311 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| compute_index | 391-423 |  |
+| tx0_dump_regs | 424-445 |  |
+| sim_instr | 446-1014 |  |
+| Read | 1015-1022 | Read and write memory |
+| Write | 1023-1032 |  |
+| cpu_reset | 1033-1053 |  |
+| cpu_ex | 1054-1063 |  |
+| cpu_dep | 1064-1074 |  |
+| cpu_set_size | 1075-1091 |  |
+| cpu_set_mode | 1092-1110 |  |
+| cpu_set_ext | 1111-1116 |  |
+| cpu_set_noext | 1117-1122 |  |
+| cpu_get_mode | 1123-1131 |  |
+| cpu_set_hist | 1132-1136 |  |
+| if | 1137-1147 |  |
+| if | 1148-1152 |  |
+| if | 1153-1162 |  |
+| cpu_show_hist | 1163-1170 |  |
+| if | 1171-1179 |  |
+| for | 1180-1210 |  |
+| cpu_set_switches | 1211-1217 |  |
+| cpu_get_switches | 1218-1224 |  |
+| sim_load | 1225-1312 |  |
+| sim_opr_orig | 1313-1485 |  |

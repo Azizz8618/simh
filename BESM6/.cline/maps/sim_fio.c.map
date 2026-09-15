@@ -1,0 +1,391 @@
+=== sim_fio.c — 3232 строк ===
+Источник: sim_fio.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_fio.c -nt .cline/maps/sim_fio.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| FILELIST_DIRECTORY_CACHE | 929-933 |
+| FILE_STATS | 2600-2628 |
+| CHECK_STATS | 2918-2927 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| Testing" | 115 | |
+| sim_fio_unit | 118 | |
+| sim_end | 153 | |
+| by | 168 | |
+| base | 216 | |
+| FALSE | 265 | |
+| sptr | 272 | |
+| sim_flip | 273 | |
+| lcnt | 286 | |
+| total | 287 | |
+| total | 301 | |
+| pos | 314 | |
+| sz | 324 | |
+| fp | 329 | |
+| sz | 330 | |
+| sz | 336 | |
+| statb | 351 | |
+| TRUE | 356 | |
+| without_quotes | 371 | |
+| errno | 373 | |
+| dest | 409 | |
+| res_2bit | 488 | |
+| res_1bit | 489 | |
+| int64_data | 491 | |
+| int64_data_dbd9 | 496 | |
+| int64_data_dld9 | 497 | |
+| pt | 674 | |
+| rt | 675 | |
+| nt | 676 | |
+| gt | 677 | |
+| test_desc | 679 | |
+| result | 680 | |
+| tests | 681 | |
+| namebuf | 877 | |
+| pathbuf | 886 | |
+| pathbuf | 895 | |
+| pathbuf | 908 | |
+| statb | 909 | |
+| fullpath | 910 | |
+| FullPath | 911 | |
+| _filelist_directory_cache | 935 | |
+| entry | 939 | |
+| NULL | 949 | |
+| entry | 954 | |
+| entry->dirlist | 962 | |
+| entry->next | 963 | |
+| _filelist_directory_cache | 964 | |
+| entry | 970 | |
+| last | 971 | |
+| entry | 991 | |
+| filelist_skip_directories | 1002 | |
+| dircount | 1006 | |
+| dircount | 1016 | |
+| FullPath | 1033 | |
+| listcount | 1034 | |
+| listcount | 1060 | |
+| dirlist | 1072 | |
+| p1 | 1094 | |
+| p2 | 1095 | |
+| e1 | 1096 | |
+| e2 | 1097 | |
+| n1_sep | 1098 | |
+| n2_sep | 1099 | |
+| result | 1100 | |
+| result | 1163 | |
+| FullPath | 1173 | |
+| listcount | 1174 | |
+| filelist | 1194 | |
+| dirlist | 1204 | |
+| filelist | 1205 | |
+| NULL | 1247 | |
+| listp | 1252 | |
+| count | 1272 | |
+| count | 1278 | |
+| namebuf | 1289 | |
+| szMsgBuffer | 1411 | |
+| dwStatus | 1412 | |
+| szMsgBuffer | 1426 | |
+| sourcename | 1431 | |
+| time64 | 1444 | |
+| filename | 1458 | |
+| accesstime | 1459 | |
+| hFile | 1460 | |
+| bStat | 1461 | |
+| -1 | 1485 | |
+| SysInfo | 1497 | |
+| AlreadyExists | 1498 | |
+| SCPE_OK | 1545 | |
+| fIn | 1590 | |
+| st | 1591 | |
+| buf | 1592 | |
+| bytes | 1593 | |
+| statb | 1594 | |
+| st | 1636 | |
+| st | 1641 | |
+| utim | 1643 | |
+| utim.actime | 1645 | |
+| utim.modtime | 1646 | |
+| st | 1650 | |
+| st | 1652 | |
+| stbuf | 1657 | |
+| -1 | 1667 | |
+| orig_mask | 1687 | |
+| SCPE_OK | 1740 | |
+| SCPE_NOFNC | 1790 | |
+| -1 | 1799 | |
+| FALSE | 1804 | |
+| arglist | 1818 | |
+| result | 1838 | |
+| tot_len | 1866 | |
+| fullpath | 1867 | |
+| chr | 1869 | |
+| filesizebuf | 1871 | |
+| filedatetimebuf | 1872 | |
+| namebuf | 1873 | |
+| filepath | 1879 | |
+| tot_size | 1936 | |
+| result | 2009 | |
+| dir | 2022 | |
+| cp | 2025 | |
+| buf | 2026 | |
+| filepath | 2027 | |
+| updir | 2029 | |
+| offset | 2030 | |
+| cp | 2044 | |
+| buf | 2050 | |
+| buf | 2114 | |
+| hFind | 2121 | |
+| File | 2122 | |
+| filestat | 2123 | |
+| WildName | 2124 | |
+| cptr | 2128 | |
+| SCPE_OK | 2162 | |
+| paths | 2179 | |
+| dir | 2181 | |
+| found_count | 2183 | |
+| filestat | 2184 | |
+| DirName | 2186 | |
+| cptr | 2193 | |
+| cptr | 2208 | |
+| tptr | 2275 | |
+| cptr | 2280 | |
+| tptr | 2293 | |
+| tptr | 2295 | |
+| s1 | 2357 | |
+| s1 | 2378 | |
+| dlen | 2471 | |
+| dlen | 2476 | |
+| sim_check_scp_dir | 2630 | |
+| sim_problem_list | 2632 | |
+| sim_exceptions | 2634 | |
+| exception_count | 2635 | |
+| buf | 2640 | |
+| result | 2641 | |
+| result | 2654 | |
+| buf | 2660 | |
+| result | 2661 | |
+| result | 2673 | |
+| num | 2678 | |
+| list_size | 2679 | |
+| result | 2695 | |
+| result | 2709 | |
+| filepath | 2717 | |
+| data | 2719 | |
+| extension | 2720 | |
+| dir | 2721 | |
+| byte | 2722 | |
+| errmsg | 2728 | |
+| data | 2731 | |
+| Stats->FileSize | 2763 | |
+| Stats->LineEndingsCRLF | 2804 | |
+| Stats->LineEndingsLF | 2805 | |
+| filepath | 3054 | |
+| file | 3055 | |
+| files | 3056 | |
+| stat | 3127 | |
+| file | 3128 | |
+| stat | 3167 | |
+| source_skip_dirs | 3175 | |
+| sim_check_scp_dir | 3204 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IN_SIM_FIO_C | 1              /* Include from s... | 74 |
+| MAX(a,b) | (((a) >= (b)) ? (a) : (b)) | 98 |
+| MIN(a,b) | (((a) <= (b)) ? (a) : (b)) | 101 |
+| FIO_DBG_PACK | 1       /* Pack/Unpack Test Deta... | 104 |
+| FIO_DBG_SCAN | 2       /* File/Directory Scan D... | 105 |
+| S_SIM_IO_FSEEK_EXT_ | 1 | 1309 |
+| S_SIM_IO_FSEEK_EXT_ | 1 | 1325 |
+| S_SIM_IO_FSEEK_EXT_ | 1 | 1341 |
+| S_SIM_IO_FSEEK_EXT_ | 1 | 1358 |
+| S_SIM_IO_FSEEK_EXT_ | 1 | 1374 |
+| _CMP(x) | (sim_islower (x) ? sim_toupper (... | 2060 |
+| _CMP(x) | (x) | 2062 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_fio_test_description | 113-144 |  |
+| sim_finit | 145-156 |  |
+| sim_buf_swap_data | 157-163 | Copy little endian data to local buffer swapping if needed |
+| sim_byte_swap_data | 164-182 |  |
+| sim_fread | 183-195 |  |
+| sim_buf_copy_swapped | 196-202 |  |
+| if | 203-206 |  |
+| for | 207-213 |  |
+| _bit_index | 214-255 |  |
+| for | 256-267 |  |
+| sim_fwrite | 268-288 |  |
+| for | 289-311 |  |
+| sim_fsize_ex | 312-326 |  |
+| sim_fsize_name_ex | 327-338 |  |
+| sim_fsize_name | 339-343 |  |
+| sim_fsize | 344-348 |  |
+| sim_can_seek | 349-368 |  |
+| _sim_expand_homedir | 369-373 |  |
+| if | 374-671 |  |
+| sim_fio_test | 672-687 |  |
+| for | 688-715 |  |
+| for | 716-800 |  |
+| for | 801-816 |  |
+| for | 817-874 |  |
+| sim_stat | 875-883 |  |
+| sim_chdir | 884-892 |  |
+| sim_mkdir | 893-905 |  |
+| sim_rmdir | 906-936 |  |
+| _check_filelist_directory_cache | 937-940 |  |
+| while | 941-951 |  |
+| _save_filelist_directory_cache | 952-955 |  |
+| if | 956-967 |  |
+| _flush_filelist_directory_cache_entry | 968-972 |  |
+| while | 973-988 |  |
+| _flush_filelist_directory_cache | 989-992 |  |
+| while | 993-1003 |  |
+| sim_set_get_filelist_skip_directories | 1004-1007 |  |
+| if | 1008-1020 |  |
+| sim_clear_get_filelist_skip_directories | 1021-1040 |  |
+| if | 1041-1060 |  |
+| if | 1061-1073 |  |
+| if | 1074-1101 |  |
+| if | 1102-1108 |  |
+| if | 1109-1112 |  |
+| if | 1113-1116 |  |
+| if | 1117-1122 |  |
+| if | 1123-1130 |  |
+| while | 1131-1176 |  |
+| if | 1177-1197 |  |
+| sim_get_filelist | 1198-1214 |  |
+| if | 1215-1249 |  |
+| sim_free_filelist | 1250-1261 |  |
+| sim_print_filelist | 1262-1269 |  |
+| sim_count_filelist | 1270-1285 |  |
+| sim_fopen | 1286-1309 | Optimized file open |
+| sim_fseeko | 1310-1314 |  |
+| sim_ftell | 1315-1325 |  |
+| sim_fseeko | 1326-1330 |  |
+| sim_ftell | 1331-1342 |  |
+| sim_fseeko | 1343-1347 |  |
+| sim_ftell | 1348-1358 |  |
+| sim_fseeko | 1359-1363 |  |
+| sim_ftell | 1364-1374 |  |
+| sim_fseeko | 1375-1379 |  |
+| sim_ftell | 1380-1390 |  |
+| sim_fseeko | 1391-1395 |  |
+| sim_ftell | 1396-1401 |  |
+| sim_fseek | 1402-1408 |  |
+| sim_get_os_error_text | 1409-1428 |  |
+| sim_copyfile | 1429-1441 |  |
+| _time_t_to_filetime | 1442-1455 |  |
+| sim_set_file_times | 1456-1477 |  |
+| sim_set_fsize | 1478-1482 |  |
+| sim_set_fifo_nonblock | 1483-1494 |  |
+| sim_shmem_open | 1495-1504 |  |
+| if | 1505-1514 |  |
+| if | 1515-1523 |  |
+| if | 1524-1530 |  |
+| if | 1531-1547 |  |
+| sim_shmem_close | 1548-1559 |  |
+| sim_shmem_atomic_add | 1560-1564 |  |
+| sim_shmem_atomic_cas | 1565-1571 |  |
+| sim_set_fsize | 1572-1582 |  |
+| sim_get_os_error_text | 1583-1587 |  |
+| sim_copyfile | 1588-1596 |  |
+| if | 1597-1600 |  |
+| if | 1601-1606 |  |
+| if | 1607-1620 |  |
+| if | 1621-1638 |  |
+| sim_set_file_times | 1639-1654 |  |
+| sim_set_fifo_nonblock | 1655-1661 |  |
+| if | 1662-1682 |  |
+| sim_shmem_open | 1683-1692 |  |
+| if | 1693-1702 |  |
+| if | 1703-1731 |  |
+| if | 1732-1746 |  |
+| sim_shmem_close | 1747-1753 |  |
+| if | 1754-1762 |  |
+| sim_shmem_atomic_add | 1763-1771 |  |
+| sim_shmem_atomic_cas | 1772-1776 |  |
+| if | 1777-1787 |  |
+| sim_shmem_open | 1788-1792 |  |
+| sim_shmem_close | 1793-1796 |  |
+| sim_shmem_atomic_add | 1797-1801 |  |
+| sim_shmem_atomic_cas | 1802-1815 |  |
+| sim_vax_snprintf | 1816-1826 | care about the function return value. |
+| sim_getcwd | 1827-1863 |  |
+| sim_filepath_parts | 1864-1914 |  |
+| while | 1915-1953 |  |
+| for | 1954-1979 |  |
+| for | 1980-2019 |  |
+| sim_relative_path | 2020-2032 |  |
+| if | 2033-2038 |  |
+| if | 2039-2051 |  |
+| while | 2052-2067 | Skip over matching directory pieces |
+| if | 2068-2086 |  |
+| if | 2087-2108 |  |
+| if | 2109-2118 | Put quotes around paths containing space |
+| sim_dir_scan | 2119-2129 |  |
+| if | 2130-2175 |  |
+| sim_dir_scan | 2176-2201 |  |
+| if | 2202-2210 |  |
+| if | 2211-2213 |  |
+| if | 2214-2272 |  |
+| sim_trim_endspc | 2273-2290 |  |
+| sim_trim_spc | 2291-2302 |  |
+| sim_isspace | 2303-2307 |  |
+| sim_islower | 2308-2312 |  |
+| sim_isupper | 2313-2317 |  |
+| sim_toupper | 2318-2322 |  |
+| sim_tolower | 2323-2327 |  |
+| sim_isalpha | 2328-2332 |  |
+| sim_isprint | 2333-2337 |  |
+| sim_isdigit | 2338-2342 |  |
+| sim_isgraph | 2343-2347 |  |
+| sim_isalnum | 2348-2353 |  |
+| sim_strncasecmp | 2354-2358 | strncasecmp() is not available on all platforms |
+| for | 2359-2374 |  |
+| sim_strcasecmp | 2375-2379 | strcasecmp() is not available on all platforms |
+| while | 2380-2398 |  |
+| sim_strwhitecasecmp | 2399-2402 |  |
+| while | 2403-2465 |  |
+| sim_strlcat | 2466-2480 | If retval >= siz, truncation occurred. |
+| while | 2481-2497 |  |
+| sim_strlcpy | 2498-2504 | Returns strlen(src); if retval >= siz, truncation occurred. |
+| if | 2505-2636 | Copy as many bytes as will fit |
+| _source_problem_emit | 2637-2642 |  |
+| for | 2643-2656 |  |
+| _source_problem_bool_emit | 2657-2662 |  |
+| if | 2663-2675 |  |
+| _check_source_add_line_to_list | 2676-2681 |  |
+| if | 2682-2692 |  |
+| _source_problem_check | 2693-2737 |  |
+| if | 2738-2763 |  |
+| for | 2764-2793 |  |
+| if | 2794-2805 |  |
+| if | 2806-2936 |  |
+| if | 2937-2977 |  |
+| _check_source_print_string_list | 2978-2981 |  |
+| if | 2982-2988 |  |
+| _check_source_free_string_list | 2989-2997 |  |
+| _sim_check_source_file_report | 2998-3051 |  |
+| _check_source_add_needed_include | 3052-3060 |  |
+| for | 3061-3069 |  |
+| if | 3070-3115 |  |
+| _check_source_compare | 3116-3124 |  |
+| _sim_check_source_report | 3125-3130 |  |
+| for | 3131-3136 |  |
+| for | 3137-3155 | Populate Counts |
+| if | 3156-3170 |  |
+| sim_check_source | 3171-3176 |  |
+| if | 3177-3184 |  |
+| if | 3185-3206 |  |
+| for | 3207-3212 | Find the directory where scp.c is located |
+| while | 3213-3217 | Process the list of files |
+| for | 3218-3226 | Add includes to the file list if they're not there |
+| if | 3227-3232 |  |

@@ -1,0 +1,57 @@
+=== sim.c — 563 строк ===
+Источник: sim.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim.c -nt .cline/maps/sim.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| INPUT_ADDRESS | 0x800000 | 12 |
+| OUTPUT_ADDRESS | 0x400000 | 13 |
+| IRQ_NMI_DEVICE | 7 | 16 |
+| IRQ_INPUT_DEVICE | 2 | 17 |
+| IRQ_OUTPUT_DEVICE | 1 | 18 |
+| OUTPUT_DEVICE_PERIOD | 1 | 21 |
+| MAX_ROM | 0xfff | 24 |
+| MAX_RAM | 0xff | 25 |
+| READ_BYTE(BASE, | ADDR) (BASE)[ADDR] | 29 |
+| READ_WORD(BASE, | ADDR) (((BASE)[ADDR]<<8) \|			 | 30 |
+| READ_LONG(BASE, | ADDR) (((BASE)[ADDR]<<24) \|			 | 32 |
+| WRITE_BYTE(BASE, | ADDR, VAL) (BASE)[ADDR] = (VAL)&... | 37 |
+| WRITE_WORD(BASE, | ADDR, VAL) (BASE)[ADDR] = ((VAL)... | 38 |
+| WRITE_LONG(BASE, | ADDR, VAL) (BASE)[ADDR] = ((VAL)... | 40 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| exit_error | 99-123 | Exit with an error message.  Use printf syntax. |
+| cpu_read_byte | 124-147 | Read data from RAM, ROM, or a device |
+| cpu_read_word | 148-171 |  |
+| cpu_read_long | 172-196 |  |
+| cpu_read_word_dasm | 197-203 |  |
+| cpu_read_long_dasm | 204-212 |  |
+| cpu_write_byte | 213-234 | Write data to RAM or a device |
+| cpu_write_word | 235-256 |  |
+| cpu_write_long | 257-279 |  |
+| cpu_pulse_reset | 280-287 | Called when the CPU pulses the RESET line |
+| cpu_set_fc | 288-293 | Called when the CPU changes the function code pins |
+| cpu_irq_ack | 294-311 | Called when the CPU acknowledges an interrupt |
+| nmi_device_reset | 312-316 | Implementation for the NMI device |
+| nmi_device_update | 317-325 |  |
+| nmi_device_ack | 326-334 |  |
+| input_device_reset | 335-340 | Implementation for the input device |
+| input_device_update | 341-346 |  |
+| input_device_ack | 347-351 |  |
+| input_device_read | 352-359 |  |
+| input_device_write | 360-366 |  |
+| output_device_reset | 367-373 | Implementation for the output device |
+| output_device_update | 374-385 |  |
+| output_device_ack | 386-390 |  |
+| output_device_read | 391-396 |  |
+| output_device_write | 397-411 |  |
+| int_controller_set | 412-424 | Implementation for the interrupt controller |
+| int_controller_clear | 425-437 |  |
+| get_user_input | 438-461 | Parse user input and update any devices that need user input |
+| make_hex | 462-475 | Disassembler |
+| disassemble_program | 476-494 |  |
+| cpu_instr_callback | 495-515 |  |
+| main | 516-563 | The main loop |

@@ -1,0 +1,38 @@
+=== hp2100_mc.c — 620 строк ===
+Источник: hp2100_mc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_mc.c -nt .cline/maps/hp2100_mc.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 221-228 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mc_interface | 235 | |
+| signal | 455 | |
+| working_set | 456 | |
+| outbound | 457 | |
+| irq_enabled | 458 | |
+| SCPE_OK | 602 | |
+| SCPE_OK | 619 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CARD_COUNT | 2                   /* count of ... | 196 |
+| LOOPBACK_DELAY | (int32) uS (1)      /* diagnosti... | 201 |
+| UNIT_V_DIAG | (UNIT_V_UF + 0)     /* diagnosti... | 206 |
+| UNIT_DIAG | (1 << UNIT_V_DIAG) | 208 |
+| UNIT_FLAGS | (0) | 266 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mc_interface | 451-459 |  |
+| while | 460-591 |  |
+| mc_service | 592-595 |  |
+| if | 596-607 |  |
+| mc_reset | 608-611 |  |
+| if | 612-620 |  |

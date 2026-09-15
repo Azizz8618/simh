@@ -1,0 +1,41 @@
+=== s100_vdm1.c — 702 строк ===
+Источник: s100_vdm1.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_vdm1.c -nt .cline/maps/s100_vdm1.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| vdm1_vptr | 59 | |
+| vdm1_ram | 62 | |
+| vdm1_dstat | 63 | |
+| vdm1_dirty | 64 | |
+| vdm1_reverse | 65 | |
+| vdm1_blink | 66 | |
+| vdm1_counter | 67 | |
+| vdm1_active | 68 | |
+| vdm1_surface | 69 | |
+| vdm1_palette | 70 | |
+| vdm1_ctrl | 77 | |
+| vdm1_cursor | 78 | |
+| vdm1_display | 79 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VDM1_MARGIN | (5) | 32 |
+| VDM1_CHAR_XSIZE | (9)                        /* ch... | 33 |
+| VDM1_CHAR_YSIZE | (13)                       /* ch... | 34 |
+| VDM1_COLS | (64)                       /* nu... | 35 |
+| VDM1_LINES | (16)                       /* nu... | 36 |
+| VDM1_XSIZE | (VDM1_COLS * VDM1_CHAR_XSIZE + V... | 37 |
+| VDM1_YSIZE | (VDM1_LINES * VDM1_CHAR_YSIZE + ... | 38 |
+| VDM1_PIXELS | (VDM1_XSIZE * VDM1_YSIZE)  /* to... | 39 |
+| VDM1_MEM_BASE | 0xcc00 | 41 |
+| VDM1_MEM_SIZE | 1024 | 42 |
+| VDM1_MEM_MASK | (1024 - 1) | 43 |
+| VDM1_IO_BASE | 0xfe | 45 |
+| VDM1_IO_SIZE | 1 | 46 |
+| VDM1_DSTAT_RMSK | 0xf0    /* START ROW MASK */ | 51 |
+| VDM1_DSTAT_CMSK | 0x0f    /* START COL MASK */ | 52 |
+| DBG_REG | 0x0001                          ... | 213 |
+

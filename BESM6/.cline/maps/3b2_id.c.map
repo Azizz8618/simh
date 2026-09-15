@@ -1,0 +1,74 @@
+=== 3b2_id.c — 996 строк ===
+Источник: 3b2_id.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_id.c -nt .cline/maps/3b2_id.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| id_dpr | 64 | |
+| id_dpw | 66 | |
+| id_status | 68 | |
+| id_int_status | 70 | |
+| id_cmd | 72 | |
+| id_drq | 74 | |
+| id_data | 76 | |
+| id_srqm | 78 | |
+| id_unit_num | 80 | |
+| id_ua | 82 | |
+| id_cyl | 84 | |
+| id_etn | 86 | |
+| id_esn | 88 | |
+| id_dtlh | 90 | |
+| id_psn | 92 | |
+| id_phn | 94 | |
+| id_lcnh | 96 | |
+| id_lcnl | 98 | |
+| id_lhn | 100 | |
+| id_lsn | 102 | |
+| id_scnt | 104 | |
+| id_polling | 106 | |
+| id_buf | 108 | |
+| id_buf_ptr | 110 | |
+| id_idfield | 112 | |
+| id_idfield_ptr | 113 | |
+| id_seek_state | 115 | |
+| id_ctlr_unit | 141 | |
+| id_sel_unit | 144 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ID_SEEK_WAIT | 50 | 51 |
+| ID_SEEK_BASE | 700 | 52 |
+| ID_RECAL_WAIT | 6000 | 53 |
+| ID_RW_WAIT | 1000 | 54 |
+| ID_SUS_WAIT | 200 | 55 |
+| ID_SPEC_WAIT | 1250 | 56 |
+| ID_SIS_WAIT | 142 | 57 |
+| ID_CMD_WAIT | 140 | 58 |
+| UPDATE_INT | {                               ... | 189 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| id_set_status | 198-203 |  |
+| id_clr_status | 204-209 |  |
+| id_set_srqm | 210-215 |  |
+| id_clear_fifo | 216-221 |  |
+| id_activate | 222-233 |  |
+| id_ctlr_svc | 234-264 | unit, which may be in the middle of a seek or other operation. |
+| id_unit_svc | 265-368 | Service routine for ID0 and ID1 units. |
+| id_set_type | 369-384 |  |
+| id_show_type | 385-390 |  |
+| id_reset | 391-396 |  |
+| id_attach | 397-404 |  |
+| id_detach | 405-410 |  |
+| id_lba | 411-423 | Return the logical block address of the given sector |
+| id_end_rw | 424-437 | with the correct return parameters. */ |
+| id_update_chs | 438-453 | read, so that they point to the next C/H/S */ |
+| id_read | 454-584 |  |
+| id_write | 585-668 |  |
+| id_handle_command | 669-963 |  |
+| id_after_dma | 964-969 |  |
+| id_description | 970-974 |  |
+| id_help | 975-996 |  |

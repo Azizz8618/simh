@@ -1,0 +1,219 @@
+=== kl10_nia.c — 1677 строк ===
+Источник: kl10_nia.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kl10_nia.c -nt .cline/maps/kl10_nia.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| in_addr_T | 201 | |
+| tmxr_poll | 344 | |
+| broadcast_ethaddr | 346 | |
+| nia_rh | 367 | |
+| nia_dib | 385 | |
+| SCPE_OK | 1669 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NIA_DEVNUM | (0540 + (5 * 4)) | 30 |
+| NIA_PPT | 0400000000000LL            /* Po... | 35 |
+| NIA_DCC | 0100000000000LL            /* Di... | 36 |
+| NIA_CPE | 0004000000000LL            /* CR... | 37 |
+| NIA_MBE | 0002000000000LL            /* MB... | 38 |
+| NIA_ILD | 0000100000000LL            /* Id... | 39 |
+| NIA_DCP | 0000040000000LL            /* Di... | 40 |
+| NIA_ECP | 0000020000000LL            /* En... | 41 |
+| NIA_PID | 0000007000000LL            /* Po... | 42 |
+| NIA_CPT | 0000000400000LL            /* Cl... | 45 |
+| NIA_SEB | 0000000200000LL            /* Di... | 46 |
+| NIA_GEB | 0000000100000LL            /* Di... | 47 |
+| NIA_LAR | 0000000040000LL            /* Di... | 48 |
+| NIA_SSC | 0000000020000LL            /* Di... | 49 |
+| NIA_EPE | 0000000004000LL            /* Eb... | 50 |
+| NIA_FQE | 0000000002000LL            /* Fr... | 51 |
+| NIA_DME | 0000000001000LL            /* Da... | 52 |
+| NIA_CQA | 0000000000400LL            /* Co... | 53 |
+| NIA_RQA | 0000000000200LL            /* Re... | 54 |
+| NIA_DIS | 0000000000040LL            /* Di... | 55 |
+| NIA_ENB | 0000000000020LL            /* En... | 56 |
+| NIA_MRN | 0000000000010LL            /* RU... | 57 |
+| NIA_PIA | 0000000000007LL            /* PI... | 58 |
+| NIA_LRA | 0400000000000LL            /* Lo... | 60 |
+| NIA_RAR | 0377760000000LL            /* Mi... | 61 |
+| NIA_MSB | 0000020000000LL            /* Ha... | 62 |
+| PCB_CQI | 0                          /* Co... | 65 |
+| PCB_CQF | 1                          /* Co... | 66 |
+| PCB_CQB | 2                          /* Co... | 67 |
+| PCB_RS0 | 3                          /* Re... | 68 |
+| PCB_RSI | 4                          /* Re... | 69 |
+| PCB_RSF | 5                          /* Re... | 70 |
+| PCB_RSB | 6                          /* Re... | 71 |
+| PCB_RS1 | 7                          /* Re... | 72 |
+| PCB_UPI | 010                        /* Un... | 73 |
+| PCB_UPF | 011                        /* Un... | 74 |
+| PCB_UPB | 012                        /* Un... | 75 |
+| PCB_UPL | 013                        /* Un... | 76 |
+| PCB_RS2 | 014                        /* Re... | 77 |
+| PCB_PTT | 015                        /* Pr... | 78 |
+| PCB_MCT | 016                        /* Mu... | 79 |
+| PCB_RS3 | 017                        /* Re... | 80 |
+| PCB_ER0 | 020                        /* Er... | 81 |
+| PCB_ER1 | 021                        /* Er... | 82 |
+| PCB_EPA | 022                        /* EP... | 83 |
+| PCB_EPW | 023                        /* EP... | 84 |
+| PCB_PCB | 024                        /* PC... | 85 |
+| PCB_PIA | 025                        /* PI... | 86 |
+| PCB_RS4 | 026                        /* Re... | 87 |
+| PCB_CCW | 027                        /* Ch... | 88 |
+| PCB_RCB | 030                        /* Co... | 89 |
+| CHNERR | 07762 | 91 |
+| SLFTST | 07751 | 92 |
+| INTERR | 07750 | 93 |
+| EBSERR | 07752 | 94 |
+| NIA_CMD_SND | 0001                     /* Send... | 97 |
+| NIA_CMD_LMAC | 0002                     /* Load... | 98 |
+| NIA_CMD_LPTT | 0003                     /* Load... | 99 |
+| NIA_CMD_RCNT | 0004                     /* Read... | 100 |
+| NIA_CMD_RCV | 0005                     /* Rece... | 101 |
+| NIA_CMD_WPLI | 0006                     /* Writ... | 102 |
+| NIA_CMD_RPLI | 0007                     /* Read... | 103 |
+| NIA_CMD_RNSA | 0010                     /* Read... | 104 |
+| NIA_CMD_WNSA | 0011                     /* Writ... | 105 |
+| NIA_FLG_RESP | 0001                     /* Comm... | 108 |
+| NIA_FLG_CLRC | 0002                     /* Clea... | 109 |
+| NIA_FLG_BSD | 0010                     /* Send... | 110 |
+| NIA_FLG_PAD | 0040                     /* Send... | 111 |
+| NIA_FLG_ICRC | 0100                     /* Send... | 112 |
+| NIA_FLG_PACK | 0200                     /* Send... | 113 |
+| NIA_STS_CPE | 0200                     /* CRAM... | 114 |
+| NIA_STS_SR | 0100                     /* Send... | 115 |
+| NIA_STS_ERR | 0001                     /* Erro... | 116 |
+| NIA_ERR_ECL | 000                      /* Exce... | 119 |
+| NIA_ERR_CAR | 001                      /* Carr... | 120 |
+| NIA_ERR_COL | 002                      /* Coll... | 121 |
+| NIA_ERR_SHT | 003                      /* Shor... | 122 |
+| NIA_ERR_OPN | 004                      /* Open... | 123 |
+| NIA_ERR_LNG | 005                      /* Fram... | 124 |
+| NIA_ERR_RMT | 006                      /* Remo... | 125 |
+| NIA_ERR_BLK | 007                      /* Bloc... | 126 |
+| NIA_ERR_FRM | 010                      /* Fram... | 127 |
+| NIA_ERR_OVR | 011                      /* Data... | 128 |
+| NIA_ERR_PRO | 012                      /* Unre... | 129 |
+| NIA_ERR_RUN | 013                      /* Fram... | 130 |
+| NIA_ERR_WCZ | 030                      /* Word... | 131 |
+| NIA_ERR_QLV | 031                      /* Queu... | 132 |
+| NIA_ERR_PLI | 032                      /* Ille... | 133 |
+| NIA_ERR_UNK | 033                      /* Unkn... | 134 |
+| NIA_ERR_BLV | 034                      /* Buff... | 135 |
+| NIA_ERR_PAR | 036                      /* Pari... | 136 |
+| NIA_ERR_INT | 037                      /* Inte... | 137 |
+| NIA_CNT_BR | 000           /* Bytes received */ | 140 |
+| NIA_CNT_BX | 001           /* Bytes transmitt... | 141 |
+| NIA_CNT_FR | 002           /* Frames received */ | 142 |
+| NIA_CNT_FX | 003           /* Frames transmit... | 143 |
+| NIA_CNT_MCB | 004           /* Multicast bytes... | 144 |
+| NIA_CNT_MCF | 005           /* Multicast frame... | 145 |
+| NIA_CNT_FXD | 006           /* Frames xmitted,... | 146 |
+| NIA_CNT_FXS | 007           /* Frames xmitted,... | 147 |
+| NIA_CNT_FXM | 010           /* Frames xmitted,... | 148 |
+| NIA_CNT_XF | 011           /* Transmit failur... | 149 |
+| NIA_CNT_XFM | 012           /* Transmit failur... | 150 |
+| NIA_XFM_LOC | 04000         /* B24 - Loss of c... | 151 |
+| NIA_XFM_XBP | 02000         /* B25 - Xmit buff... | 152 |
+| NIA_XFM_RFD | 01000         /* B26 - Remote fa... | 153 |
+| NIA_XFM_XFL | 00400         /* B27 - Xmitted f... | 154 |
+| NIA_XFM_OC | 00200         /* B28 - Open circ... | 155 |
+| NIA_XFM_SC | 00100         /* B29 - Short cir... | 156 |
+| NIA_XFM_CCF | 00040         /* B30 - Collision... | 157 |
+| NIA_XFM_EXC | 00020         /* B31 - Excessive... | 158 |
+| NIA_CNT_CDF | 013           /* Carrier detect ... | 160 |
+| NIA_CNT_RF | 014           /* Receive failure... | 161 |
+| NIA_CNT_RFM | 015           /* Receive failure... | 162 |
+| NIA_RFM_FLE | 0400          /* B27 - free list... | 163 |
+| NIA_RFM_NFB | 0200          /* B28 - no free b... | 164 |
+| NIA_RFM_FTL | 0100          /* B29 - frame too... | 165 |
+| NIA_RFM_FER | 0040          /* B30 - framing e... | 166 |
+| NIA_RFM_BCE | 0020          /* B31 - block che... | 167 |
+| NIA_CNT_DUN | 016           /* Discarded unkno... | 169 |
+| NIA_CNT_D01 | 017           /* Discarded posit... | 170 |
+| NIA_CNT_D02 | 020           /* Discarded posit... | 171 |
+| NIA_CNT_D03 | 021           /* Discarded posit... | 172 |
+| NIA_CNT_D04 | 022           /* Discarded posit... | 173 |
+| NIA_CNT_D05 | 023           /* Discarded posit... | 174 |
+| NIA_CNT_D06 | 024           /* Discarded posit... | 175 |
+| NIA_CNT_D07 | 025           /* Discarded posit... | 176 |
+| NIA_CNT_D08 | 026           /* Discarded posit... | 177 |
+| NIA_CNT_D09 | 027           /* Discarded posit... | 178 |
+| NIA_CNT_D10 | 030           /* Discarded posit... | 179 |
+| NIA_CNT_D11 | 031           /* Discarded posit... | 180 |
+| NIA_CNT_D12 | 032           /* Discarded posit... | 181 |
+| NIA_CNT_D13 | 033           /* Discarded posit... | 182 |
+| NIA_CNT_D14 | 034           /* Discarded posit... | 183 |
+| NIA_CNT_D15 | 035           /* Discarded posit... | 184 |
+| NIA_CNT_D16 | 036           /* Discarded posit... | 185 |
+| NIA_CNT_UFD | 037           /* Unrecognized fr... | 186 |
+| NIA_CNT_DOV | 040           /* Data overrun */ | 187 |
+| NIA_CNT_SBU | 041           /* System buffer u... | 188 |
+| NIA_CNT_UBU | 042           /* User buffer una... | 189 |
+| NIA_CNT_RS0 | 043           /* Pli reg rd par ... | 190 |
+| NIA_CNT_RS1 | 044           /* Mover parity er... | 191 |
+| NIA_CNT_RS2 | 045           /* Ebus parity err... | 192 |
+| NIA_CNT_RS3 | 046           /* Channel error,,... | 193 |
+| NIA_CNT_RS4 | 047           /* Spur xmit attn ... | 194 |
+| NIA_CNT_RS5 | 050           /* Ebus req timeou... | 195 |
+| NIA_CNT_RS6 | 051           /* Used buff parit... | 196 |
+| NIA_CNT_RS7 | 052           /* Reserved for uc... | 197 |
+| NIA_CNT_RS8 | 053           /* Reserved for uc... | 198 |
+| NIA_CNT_LEN | 054           /* # of counters */ | 199 |
+| ETHTYPE_ARP | 0x0806 | 203 |
+| ETHTYPE_IP | 0x0800 | 204 |
+| IP_DF | 0x4000                    /* don... | 223 |
+| IP_MF | 0x2000                    /* mor... | 224 |
+| IP_OFFMASK | 0x1fff               /* mask for... | 225 |
+| TCP_PROTO | 6 | 233 |
+| TCP_FL_FIN | 0x01 | 241 |
+| TCP_FL_SYN | 0x02 | 242 |
+| TCP_FL_RST | 0x04 | 243 |
+| TCP_FL_PSH | 0x08 | 244 |
+| TCP_FL_ACK | 0x10 | 245 |
+| TCP_FL_URG | 0x20 | 246 |
+| UDP_PROTO | 17 | 252 |
+| ICMP_PROTO | 1 | 270 |
+| ARP_REQUEST | 1 | 284 |
+| ARP_REPLY | 2 | 285 |
+| ARP_HWTYPE_ETH | 1 | 286 |
+| DEBUG_ARP | (DEBUG_IRQ<<1) | 405 |
+| DEBUG_TCP | (DEBUG_ARP<<1) | 407 |
+| DEBUG_UDP | (DEBUG_TCP<<1) | 409 |
+| DEBUG_ICMP | (DEBUG_UDP<<1) | 411 |
+| DEBUG_ETHER | (DEBUG_ICMP<<1) | 413 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| nia_devio | 426-517 |  |
+| ipv4_inet_ntoa | 518-537 |  |
+| nia_error | 538-549 | Set error code and stop. |
+| nia_start | 550-579 | Start NIA device, load in 2 words using RH20 mode. |
+| nia_stop | 580-590 |  |
+| nia_enable | 591-627 | Read in PTT and MACS table. |
+| nia_disable | 628-636 | Disable NIA 20. |
+| nia_cpy_mac | 637-651 | Copy a MAC address from string to memory word. |
+| nia_cpy_to | 652-687 | Copy memory to a packet. |
+| nia_cpy_from | 688-729 | Copy a packet to memory. |
+| nia_getq | 730-792 | Returns 0 if fail, queue locked or memory out of bounds. |
+| nia_putq | 793-858 | Returns 0 if fail, queue locked or memory out of bounds. |
+| nia_load_ptt | 859-897 | Load in the protocol type table |
+| nia_load_mcast | 898-1096 | Load in the multi-cast table |
+| nia_send_pkt | 1097-1205 | Send out a packet. |
+| nia_cmd_srv | 1206-1370 | Process commands. |
+| nia_rec_pkt | 1371-1489 |  |
+| nia_eth_srv | 1490-1534 | Receive ether net packets. |
+| nia_rec_srv | 1535-1548 | Handle delayed packets. |
+| nia_show_mac | 1549-1556 |  |
+| nia_set_mac | 1557-1570 |  |
+| nia_reset | 1571-1586 |  |
+| nia_attach | 1587-1647 | attach device: |
+| nia_detach | 1648-1661 |  |
+| nia_help | 1662-1671 |  |
+| nia_description | 1672-1677 |  |

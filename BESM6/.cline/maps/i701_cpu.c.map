@@ -1,0 +1,36 @@
+=== i701_cpu.c — 971 строк ===
+Источник: i701_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i701_cpu.c -nt .cline/maps/i701_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| iocheck | 128 | |
+| drum_addr | 139 | |
+| hsdrm_addr | 140 | |
+| chan_unit | 141 | |
+| SCPE_OK | 969 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| HIST_XCT | 1       /* instruction */ | 84 |
+| HIST_INT | 2       /* interrupt cycle */ | 85 |
+| HIST_TRP | 3       /* trap cycle */ | 86 |
+| HIST_MIN | 64 | 87 |
+| HIST_MAX | 65536 | 88 |
+| HIST_NOEA | 0x40000000 | 89 |
+| HIST_PC | 0x10000 | 90 |
+| AMASK | 00000000007777L | 144 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 191-765 |  |
+| cpu_reset | 766-783 |  |
+| cpu_ex | 784-805 |  |
+| cpu_dep | 806-828 |  |
+| cpu_set_hist | 829-863 |  |
+| cpu_show_hist | 864-946 |  |
+| cpu_description | 947-952 |  |
+| cpu_help | 953-971 |  |

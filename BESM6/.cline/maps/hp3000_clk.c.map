@@ -1,0 +1,63 @@
+=== hp3000_clk.c — 942 строк ===
+Источник: hp3000_clk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_clk.c -nt .cline/maps/hp3000_clk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| clk_interface | 372 | |
+| elapsed | 500 | |
+| return | 513 | |
+| signal | 558 | |
+| working_set | 559 | |
+| outbound_value | 560 | |
+| outbound_signals | 561 | |
+| SCPE_OK | 893 | |
+| return | 941 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CLK_MULTIPLIER | 10                          /* n... | 188 |
+| CLK_RATE | (1000 / CLK_MULTIPLIER)     /* M... | 189 |
+| UNIT_CALTIME_SHIFT | (UNIT_V_UF + 0)     /* calibrate... | 228 |
+| UNIT_CALTIME | (1u << UNIT_CALTIME_SHIFT) | 230 |
+| DEB_CSRW | (1u << 0)           /* trace com... | 235 |
+| DEB_PSERV | (1u << 1)           /* trace uni... | 236 |
+| DEB_IOB | (1u << 2)           /* trace I/O... | 237 |
+| CN_MR | 0100000u            /* (M) maste... | 248 |
+| CN_RATE_MASK | 0160000u            /* clock rat... | 249 |
+| CN_RESET_LOAD_SEL | 0010000u            /* (E) selec... | 250 |
+| CN_IRQ_RESET_MASK | 0003400u            /* interrupt... | 251 |
+| CN_COUNT_RESET | 0000200u            /* (C) reset... | 252 |
+| CN_LIMIT_COUNT_SEL | 0000100u            /* (L) selec... | 253 |
+| CN_IRQ_RESET_ALL | 0000040u            /* (A) reset... | 254 |
+| CN_IRQ_ENABLE | 0000001u            /* (I) enabl... | 255 |
+| CN_RATE_SHIFT | 13                  /* clock rat... | 257 |
+| CN_IRQ_RESET_SHIFT | 8                   /* interrupt... | 258 |
+| CN_RATE(c) | (((c) & CN_RATE_MASK) >> CN_RATE... | 260 |
+| CN_RESET(c) | (((c) & CN_IRQ_RESET_MASK) >> CN... | 261 |
+| ST_DIO_OK | 0040000u            /* (D) direc... | 316 |
+| ST_RATE_MASK | 0034000u            /* clock rat... | 317 |
+| ST_LR_EQ_CR | 0000040u            /* (C) limit... | 318 |
+| ST_LR_EQ_CR_OVFL | 0000020u            /* (F) limit... | 319 |
+| ST_SYSTEM_IRQ | 0000004u            /* (I) I/O s... | 320 |
+| ST_LIMIT_COUNT_SEL | 0000002u            /* (L) limit... | 321 |
+| ST_COUNT_RESET | 0000001u            /* (R) count... | 322 |
+| ST_RATE_SHIFT | 11                  /* clock rat... | 324 |
+| ST_RATE(r) | ((r) << ST_RATE_SHIFT & ST_RATE_... | 326 |
+| ST_TO_RATE(s) | (((s) & ST_RATE_MASK) >> ST_RATE... | 328 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| clk_update_counter | 498-501 |  |
+| if | 502-555 |  |
+| clk_interface | 556-565 |  |
+| while | 566-780 |  |
+| clk_service | 781-787 |  |
+| if | 788-812 |  |
+| if | 813-818 |  |
+| if | 819-873 |  |
+| clk_reset | 874-918 |  |
+| resync_clock | 919-942 |  |

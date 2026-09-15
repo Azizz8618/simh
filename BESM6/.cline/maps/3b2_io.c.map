@@ -1,0 +1,26 @@
+=== 3b2_io.c — 772 строк ===
+Источник: 3b2_io.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_io.c -nt .cline/maps/3b2_io.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cio | 47 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cio_remove | 135-144 | Remove a CIO card from the specified backplane slot. |
+| cio_remove_all | 145-163 | Remove all CIO cards of the matching type. |
+| cio_crc32_shift | 164-180 | disassemble and understand 80186 code!) |
+| cio_sysgen | 181-228 |  |
+| cio_cexpress | 229-298 |  |
+| cio_rexpress | 299-372 | Retrieve the Express Entry from the Request Queue |
+| cio_r_lp | 373-386 | Return the Load Pointer for the given request queue |
+| cio_r_ulp | 387-397 | Return the Unload Pointer for the given request queue |
+| cio_c_lp | 398-404 |  |
+| cio_c_ulp | 405-415 |  |
+| cio_cqueue_avail | 416-425 | for a new entry. |
+| cio_rqueue_avail | 426-440 |  |
+| io_read | 441-621 |  |
+| io_write | 622-772 |  |

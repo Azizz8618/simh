@@ -1,0 +1,137 @@
+=== pdp11_io_lib.c — 1079 строк ===
+Источник: pdp11_io_lib.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_io_lib.c -nt .cline/maps/pdp11_io_lib.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| AUTO_CON | 676-684 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_vec | 44 | |
+| iodibp | 54 | |
+| autcon_enb | 77 | |
+| SCPE_OK | 99 | |
+| dptr | 106 | |
+| dibp | 107 | |
+| newba | 108 | |
+| SCPE_OK | 131 | |
+| dptr | 138 | |
+| dibp | 139 | |
+| radix | 140 | |
+| SCPE_OK | 172 | |
+| dptr | 179 | |
+| SCPE_OK | 196 | |
+| dptr | 203 | |
+| dibp | 204 | |
+| newvec | 205 | |
+| SCPE_OK | 227 | |
+| dptr | 234 | |
+| dibp | 235 | |
+| vec | 236 | |
+| vec | 250 | |
+| br_lvl | 281 | |
+| SCPE_OK | 285 | |
+| return | 317 | |
+| cdptr | 325 | |
+| cdname | 327 | |
+| vec | 335 | |
+| ilvl | 337 | |
+| ibit | 338 | |
+| dptr | 471 | |
+| dibp | 472 | |
+| maxaddr | 473 | |
+| maxvec | 474 | |
+| brbase | 475 | |
+| rdx | 476 | |
+| valbuf | 477 | |
+| vec_fmt | 478 | |
+| vec_fmt_buf | 479 | |
+| maxaddr | 489 | |
+| maxvec | 490 | |
+| maxname | 491 | |
+| maxdev | 492 | |
+| brbase | 494 | |
+| maxaddr | 530 | |
+| maxvec | 539 | |
+| SCPE_OK | 596 | |
+| desc | 602 | |
+| ind_eq | 608 | |
+| mr | 616 | |
+| mstart | 617 | |
+| mend | 618 | |
+| same_val | 619 | |
+| same_start | 620 | |
+| ind_eq | 621 | |
+| same_desc | 622 | |
+| desc | 623 | |
+| same_start | 632 | |
+| same_val | 633 | |
+| SCPE_OK | 657 | |
+| done | 922 | |
+| autp | 923 | |
+| dptr | 924 | |
+| done | 955 | |
+| csr | 960 | |
+| vec | 961 | |
+| numc | 962 | |
+| autp | 963 | |
+| dptr | 964 | |
+| dibp | 965 | |
+| SCPE_OK | 1050 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEV_MBUS | 0 | 41 |
+| VEC_SET | 0 | 46 |
+| UNIMEMSIZE | 001000000                       ... | 61 |
+| AUTO_MAXC | 32              /* Maximum numbe... | 64 |
+| AUTO_CSRBASE | 0010 | 65 |
+| AUTO_CSRMAX | 04000 | 66 |
+| AUTO_VECBASE | 0300 | 67 |
+| DEV_NEXUS | DEV_MBUS | 912 |
+| DEV_NEXUS | 0 | 914 |
+| MAX(a,b) | (((a)>(b))? (a) : (b)) | 918 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| set_autocon | 71-77 |  |
+| if | 78-94 |  |
+| show_autocon | 95-103 |  |
+| set_addr | 104-126 |  |
+| if | 127-135 |  |
+| show_addr | 136-155 |  |
+| if | 156-160 |  |
+| if | 161-176 |  |
+| set_addr_flt | 177-192 |  |
+| show_mapped_addr | 193-200 |  |
+| set_vec | 201-222 |  |
+| if | 223-231 |  |
+| show_vec | 232-289 |  |
+| show_vec_mux | 290-300 |  |
+| init_ubus_tab | 301-305 |  |
+| for | 306-311 |  |
+| for | 312-321 |  |
+| build_ubus_tab | 322-348 |  |
+| if | 349-383 | Also skip if power-up reset to allow for auto-configure. |
+| for | 384-407 | Interrupt slot assignment and conflict check. |
+| for | 408-449 | Register(Deregister) I/O space address and check for conflicts |
+| for | 450-467 |  |
+| show_iospace | 468-496 |  |
+| for | 497-549 |  |
+| for | 550-562 |  |
+| for | 563-598 |  |
+| _map_description | 599-612 |  |
+| show_bus_map | 613-624 |  |
+| if | 625-634 |  |
+| for | 635-919 |  |
+| build_vector_tab | 920-929 |  |
+| for | 930-957 | Locate all Unibus/Qbus devices and make sure vector masks are set |
+| auto_config | 958-969 |  |
+| if | 970-978 |  |
+| for | 979-1075 |  |
+| pdp11_bad_block | 1076-1079 |  |

@@ -1,0 +1,135 @@
+=== vax860_stddev.c — 1420 строк ===
+Источник: vax860_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax860_stddev.c -nt .cline/maps/vax860_stddev.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RXCS_V_DTR | 16                              ... | 42 |
+| RXCS_M_DTR | 0xF | 43 |
+| RXCS_DTR | (RXCS_M_DTR << RXCS_V_DTR) | 44 |
+| RXCS_RD | (CSR_DONE + CSR_IE + RXCS_DTR)  ... | 45 |
+| RXCS_WR | (CSR_IE) | 46 |
+| RXDB_V_LC | 16                              ... | 47 |
+| RXDB_V_IDC | 8                               ... | 48 |
+| RXDB_M_IDC | 0xF | 49 |
+| RXDB_IDC | (TXCS_M_IDC << TXCS_V_IDC) | 50 |
+| TXCS_V_IDC | 8                               ... | 51 |
+| TXCS_M_IDC | 0xF | 52 |
+| TXCS_IDC | (TXCS_M_IDC << TXCS_V_IDC) | 53 |
+| TXCS_WMN | 0x8000                          ... | 54 |
+| TXCS_V_TEN | 16                              ... | 55 |
+| TXCS_M_TEN | 0xF | 56 |
+| TXCS_TEN | (TXCS_M_TEN << TXCS_V_TEN) | 57 |
+| TXCS_RD | (CSR_DONE + CSR_IE + TXCS_TEN + ... | 58 |
+| TXCS_WR | (CSR_IE)                        ... | 59 |
+| ID_CT | 0                               ... | 60 |
+| ID_RS | 1                               ... | 61 |
+| ID_EMM | 2                               ... | 62 |
+| ID_LC | 3                               ... | 63 |
+| ID_M_CT | (1u << ID_CT) | 64 |
+| ID_M_RS | (1u << ID_RS) | 65 |
+| ID_M_EMM | (1u << ID_EMM) | 66 |
+| ID_M_LC | (1u << ID_LC) | 67 |
+| RDY | u3 | 68 |
+| TMR_CSR_ERR | 0x80000000                      ... | 72 |
+| TMR_CSR_DON | 0x00000080                      ... | 73 |
+| TMR_CSR_IE | 0x00000040                      ... | 74 |
+| TMR_CSR_SGL | 0x00000020                      ... | 75 |
+| TMR_CSR_XFR | 0x00000010                      ... | 76 |
+| TMR_CSR_RUN | 0x00000001                      ... | 77 |
+| TMR_CSR_RD | (TMR_CSR_W1C \| TMR_CSR_WR) | 78 |
+| TMR_CSR_W1C | (TMR_CSR_ERR \| TMR_CSR_DON) | 79 |
+| TMR_CSR_WR | (TMR_CSR_IE \| TMR_CSR_RUN) | 80 |
+| TMR_INC | 10000                           ... | 81 |
+| CLK_DELAY | 5000                            ... | 82 |
+| TMXR_MULT | 1                               ... | 83 |
+| LC_NUMBY | 128                             ... | 99 |
+| LC_IDLE | 0                               ... | 101 |
+| LC_READDAT | 1                               ... | 102 |
+| LC_V_FNC | 0                               ... | 104 |
+| LC_M_FNC | 0xFF | 105 |
+| LC_FNCBT | 0x2                             ... | 106 |
+| LC_FNCCW | 0x3                             ... | 107 |
+| LC_FNCCS | 0x4                             ... | 108 |
+| LC_FNCMV | 0x12                            ... | 109 |
+| LC_FNCAC | 0x13                            ... | 110 |
+| LC_FNCSS | 0x30                            ... | 111 |
+| LC_FNCCA | 0x70                            ... | 112 |
+| LC_GETFNC(x) | (((x) >> LC_V_FNC) & LC_M_FNC) | 113 |
+| STXCS_FNC | 0xF | 117 |
+| STXCS_V_DA | 8 | 118 |
+| STXCS_M_DA | 0xFFFF | 119 |
+| STXCS_DA | (STXCS_M_DA << STXCS_V_DA) | 120 |
+| STXCS_GETDA(x) | (((x) >> STXCS_V_DA) & STXCS_M_DA) | 121 |
+| STXCS_V_STS | 24 | 122 |
+| STXCS_M_STS | 0xFFu | 123 |
+| STXCS_STS | (STXCS_M_STS << STXCS_V_STS) | 124 |
+| STXCS_WR | (STXCS_FNC \| CSR_DONE \| CSR_IE \|... | 125 |
+| STXDB_DAT | 0xFFFF | 127 |
+| RL_NUMBY | 256                             ... | 129 |
+| RL_NUMWD | 128                             ... | 130 |
+| RL_NUMSC | 40                              ... | 131 |
+| RL_NUMSF | 2                               ... | 132 |
+| RL_NUMCY | 512                             ... | 133 |
+| RL02_SIZE | (RL_NUMCY * RL_NUMSF * RL_NUMSC ... | 134 |
+| RL_DRV(d) |  | 136 |
+| TRK | u3                              ... | 147 |
+| STAT | u4                              ... | 148 |
+| RLCS_DRDY | 0000001                         ... | 150 |
+| RLCS_M_DRIVE | 03 | 151 |
+| RLCS_V_DRIVE | 8 | 152 |
+| RLCS_INCMP | 0002000                         ... | 153 |
+| RLCS_CRC | 0004000                         ... | 154 |
+| RLCS_HDE | 0010000                         ... | 155 |
+| RLCS_NXM | 0020000                         ... | 156 |
+| RLCS_DRE | 0040000                         ... | 157 |
+| RLCS_ERR | 0100000                         ... | 158 |
+| RLCS_ALLERR | (RLCS_ERR+RLCS_DRE+RLCS_NXM+RLCS... | 159 |
+| RLCS_RW | 0001776                         ... | 160 |
+| RLFC_NOP | 0                               ... | 164 |
+| RLFC_CONT | 2                               ... | 165 |
+| RLFC_ABORT | 3                               ... | 166 |
+| RLFC_STS | 4                               ... | 167 |
+| RLFC_WRITE | 5                               ... | 168 |
+| RLFC_READ | 6                               ... | 169 |
+| RLST_COMP | 1                               ... | 173 |
+| RLST_CONT | 2                               ... | 174 |
+| RLST_ABORT | 3                               ... | 175 |
+| RLST_STS | 4                               ... | 176 |
+| RLST_HERR | 80                              ... | 177 |
+| RLST_HDERR | 81                              ... | 178 |
+| RL_IDLE | 0 | 182 |
+| RL_READ | 1 | 183 |
+| RL_WRITE | 2 | 184 |
+| RL_STATUS | 3 | 185 |
+| RL_ABORT | 4 | 186 |
+| RL_CSR | 0                               ... | 188 |
+| RL_MP | 1                               ... | 189 |
+| RLDS_LOAD | 0                               ... | 193 |
+| RLDS_LOCK | 5                               ... | 194 |
+| RLDS_BHO | 0000010                         ... | 195 |
+| RLDS_HDO | 0000020                         ... | 196 |
+| RLDS_CVO | 0000040                         ... | 197 |
+| RLDS_HD | 0000100                         ... | 198 |
+| RLDS_RL02 | 0000200                         ... | 199 |
+| RLDS_DSE | 0000400                         ... | 200 |
+| RLDS_VCK | 0001000                         ... | 201 |
+| RLDS_WGE | 0002000                         ... | 202 |
+| RLDS_SPE | 0004000                         ... | 203 |
+| RLDS_STO | 0010000                         ... | 204 |
+| RLDS_WLK | 0020000                         ... | 205 |
+| RLDS_HCE | 0040000                         ... | 206 |
+| RLDS_WDE | 0100000                         ... | 207 |
+| RLDS_ATT | (RLDS_HDO+RLDS_BHO+RLDS_LOCK)   ... | 208 |
+| RLDS_UNATT | (RLDS_CVO+RLDS_LOAD)            ... | 209 |
+| RLDS_ERR | (RLDS_WDE+RLDS_HCE+RLDS_STO+RLDS... | 210 |
+| TMR_DB_TODR | 0x10    /* TODR */ | 389 |
+| TMR_DB_REG | 0x01    /* Register Access */ | 417 |
+| TMR_DB_TICK | 0x02    /* Ticks */ | 418 |
+| TMR_DB_SCHED | 0x04    /* Scheduling */ | 419 |
+| TMR_DB_INT | 0x08    /* Interrupts */ | 420 |
+| RLDEB_OPS | 0001                            ... | 469 |
+| RLDEB_TRC | 0010                            ... | 470 |
+| RLDEB_DAT | 0100                            ... | 471 |
+

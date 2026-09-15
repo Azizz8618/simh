@@ -1,0 +1,98 @@
+=== vax780_stddev.c — 1335 строк ===
+Источник: vax780_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax780_stddev.c -nt .cline/maps/vax780_stddev.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RXCS_RD | (CSR_DONE + CSR_IE)             ... | 89 |
+| RXCS_WR | (CSR_IE) | 90 |
+| RXDB_ERR | 0x8000                          ... | 91 |
+| RXDB_OVR | 0x4000                          ... | 92 |
+| RXDB_FRM | 0x2000                          ... | 93 |
+| TXCS_RD | (CSR_DONE + CSR_IE)             ... | 94 |
+| TXCS_WR | (CSR_IE) | 95 |
+| TXDB_V_SEL | 8                               ... | 96 |
+| TXDB_M_SEL | 0xF | 97 |
+| TXDB_FDAT | 0x1                             ... | 98 |
+| TXDB_COMM | 0x3                             ... | 99 |
+| TXDB_FCMD | 0x9                             ... | 100 |
+| TXDB_MISC | 0xF                             ... | 101 |
+| COMM_LNT | 0200                            ... | 102 |
+| COMM_MASK | (COMM_LNT - 1)                  ... | 103 |
+| COMM_GH | 0144                            ... | 104 |
+| COMM_WRMS | 0145                            ... | 105 |
+| COMM_CLDS | 0146                            ... | 106 |
+| COMM_APTL | 0147                            ... | 107 |
+| COMM_LAST | 0150                            ... | 108 |
+| COMM_AUTO | 0151                            ... | 109 |
+| COMM_PCSV | 0152                            ... | 110 |
+| COMM_WCSV | 0153                            ... | 111 |
+| COMM_WCSS | 0154                            ... | 112 |
+| COMM_FPLV | 0155                            ... | 113 |
+| COMM_MTCH_785 | 0153                            ... | 114 |
+| COMM_WCSP_785 | 0154                            ... | 115 |
+| COMM_WCSS_785 | 0155                            ... | 116 |
+| COMM_DATA | 0x300                           ... | 117 |
+| MISC_MASK | 0xFF                           /... | 118 |
+| MISC_SWDN | 0x1                            /... | 119 |
+| MISC_BOOT | 0x2                            /... | 120 |
+| MISC_CLWS | 0x3                            /... | 121 |
+| MISC_CLCS | 0x4                            /... | 122 |
+| TXDB_SEL | (TXDB_M_SEL << TXDB_V_SEL)      ... | 123 |
+| TXDB_GETSEL(x) | (((x) >> TXDB_V_SEL) & TXDB_M_SEL) | 124 |
+| TMR_CSR_ERR | 0x80000000                      ... | 128 |
+| TMR_CSR_DON | 0x00000080                      ... | 129 |
+| TMR_CSR_IE | 0x00000040                      ... | 130 |
+| TMR_CSR_SGL | 0x00000020                      ... | 131 |
+| TMR_CSR_XFR | 0x00000010                      ... | 132 |
+| TMR_CSR_RUN | 0x00000001                      ... | 133 |
+| TMR_CSR_RD | (TMR_CSR_W1C \| TMR_CSR_WR) | 134 |
+| TMR_CSR_W1C | (TMR_CSR_ERR \| TMR_CSR_DON) | 135 |
+| TMR_CSR_WR | (TMR_CSR_IE \| TMR_CSR_RUN) | 136 |
+| TMR_INC | 10000                           ... | 137 |
+| CLK_DELAY | 5000                            ... | 138 |
+| TMXR_MULT | 1                               ... | 139 |
+| FL_NUMTR | 77                              ... | 155 |
+| FL_M_TRACK | 0377 | 156 |
+| FL_NUMSC | 26                              ... | 157 |
+| FL_M_SECTOR | 0177 | 158 |
+| FL_NUMSF | 1 | 159 |
+| FL_NUMBY | 128                             ... | 160 |
+| FL_SIZE | (FL_NUMTR * FL_NUMSC)           ... | 161 |
+| FL_IDLE | 0                               ... | 163 |
+| FL_RWDS | 1                               ... | 164 |
+| FL_RWDT | 2                               ... | 165 |
+| FL_READ | 3                               ... | 166 |
+| FL_READ1 | 4 | 167 |
+| FL_WRITE | 5                               ... | 168 |
+| FL_WRITE1 | 6 | 169 |
+| FL_FILL | 7                               ... | 170 |
+| FL_EMPTY | 8                               ... | 171 |
+| FL_READSTA | 9                               ... | 172 |
+| FL_DONE | 10                              ... | 173 |
+| FL_V_FNC | 0                               ... | 175 |
+| FL_M_FNC | 0xFF | 176 |
+| FL_FNCRD | 0x0                             ... | 177 |
+| FL_FNCWR | 0x1                             ... | 178 |
+| FL_FNCRS | 0x2                             ... | 179 |
+| FL_FNCWD | 0x3                             ... | 180 |
+| FL_FNCCA | 0x4                             ... | 181 |
+| FL_CDATA | 0x100                           ... | 182 |
+| FL_CDONE | 0x200                           ... | 183 |
+| FL_STACRC | 0x001                           ... | 184 |
+| FL_STAPAR | 0x002 | 185 |
+| FL_STAINC | 0x004 | 186 |
+| FL_STADDA | 0x040 | 187 |
+| FL_STAERR | 0x080 | 188 |
+| FL_CPROT | 0x905                           ... | 189 |
+| FL_GETFNC(x) | (((x) >> FL_V_FNC) & FL_M_FNC) | 190 |
+| TRACK | u3                              ... | 192 |
+| CALC_DA(t,s) | (((t) * FL_NUMSC) + ((s) - 1)) *... | 193 |
+| FL_DRV(d) |  | 195 |
+| TMR_DB_TODR | 0x10    /* TODR */ | 368 |
+| TMR_DB_REG | 0x01    /* Register Access */ | 396 |
+| TMR_DB_TICK | 0x02    /* Ticks */ | 397 |
+| TMR_DB_SCHED | 0x04    /* Scheduling */ | 398 |
+| TMR_DB_INT | 0x08    /* Interrupts */ | 399 |
+

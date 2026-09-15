@@ -1,0 +1,115 @@
+=== sel32_mt.c — 1645 строк ===
+Источник: sel32_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_mt.c -nt .cline/maps/sel32_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mt_buffer | 171 | |
+| mt_busy | 172 | |
+| valid_dens | 270 | |
+| mta_chp | 300 | |
+| mtb_chp | 335 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BUFFSIZE | (64 * 1024) | 44 |
+| UNIT_MT | UNIT_ATTABLE \| UNIT_DISABLE \| UN... | 45 |
+| CMD | u3 | 47 |
+| MT_INCH | 0x00        /* Initialize channe... | 49 |
+| MT_WRITE | 0x01        /* Write command */ | 50 |
+| MT_READ | 0x02        /* Read command */ | 51 |
+| MT_NOP | 0x03        /* Control command */ | 52 |
+| MT_SENSE | 0x04        /* Sense command */ | 53 |
+| MT_RDBK | 0x0c        /* Read Backward */ | 54 |
+| MT_RDCMP | 0x13        /* Read and compare ... | 55 |
+| MT_REW | 0x23        /* Rewind command */ | 56 |
+| MT_RUN | 0x33        /* Rewind and unload */ | 57 |
+| MT_FSR | 0x43        /* Advance record */ | 58 |
+| MT_BSR | 0x53        /* Backspace record */ | 59 |
+| MT_FSF | 0x63        /* Advance to filema... | 60 |
+| MT_BSF | 0x73        /* Backspace to file... | 61 |
+| MT_SETM | 0x83        /* Set Mode command */ | 62 |
+| MT_WTM | 0x93        /* Write Tape filema... | 63 |
+| MT_ERG | 0xA3        /* Erase 3.5 of tape */ | 64 |
+| MT_MODEMSK | 0xFF        /* Mode Mask */ | 65 |
+| MT_MODE_AUTO | 0x80        /* =0 Perform auto e... | 68 |
+| MT_MODE_FORCE | 0x80        /* =1 Read regardles... | 69 |
+| MT_MDEN_800 | 0x40        /* =0 select 800 BPI... | 70 |
+| MT_MDEN_1600 | 0x40        /* =1 select 1600 BP... | 71 |
+| MT_MDEN_6250 | 0x02        /* =0 Use mode from ... | 72 |
+| MT_MDEN_6250 | 0x02        /* =1 6250 BPI GCR m... | 73 |
+| MT_MDEN_SCATGR | 0x01        /* =1 HSTP scatter/g... | 74 |
+| MT_MDEN_MSK | 0x42        /* Density mask */ | 75 |
+| MT_CTL_MSK | 0x38        /* Mask for control ... | 77 |
+| MT_CTL_NOP | 0x00        /* Nop control mode */ | 78 |
+| MT_CTL_NRZI | 0x08        /* 9 track 800 bpi m... | 79 |
+| MT_CTL_RST | 0x10        /* Set density, odd,... | 80 |
+| MT_CTL_NOP2 | 0x18        /* 9 track 1600 NRZI... | 81 |
+| MT_CMDMSK | 0x00ff      /* Command being run */ | 84 |
+| MT_READDONE | 0x0400      /* Read finished, en... | 85 |
+| MT_MARK | 0x0800      /* Sensed tape mark ... | 86 |
+| MT_ODD | 0x1000      /* Odd parity */ | 87 |
+| MT_TRANS | 0x2000      /* Translation turne... | 88 |
+| MT_CONV | 0x4000      /* Data converter on... | 89 |
+| MT_BUSY | 0x8000      /* Flag to send a CU... | 90 |
+| POS | u4 | 92 |
+| SNS | u5 | 95 |
+| SNS_CMDREJ | 0x80000000     /* Command reject */ | 98 |
+| SNS_INTVENT | 0x40000000     /* Unit intervent... | 99 |
+| SNS_SPARE1 | 0x20000000     /* Spare */ | 100 |
+| SNS_EQUCHK | 0x10000000     /* Equipment chec... | 101 |
+| SNS_DATCHK | 0x08000000     /* Data Check */ | 102 |
+| SNS_OVRRUN | 0x04000000     /* Data overrun */ | 103 |
+| SNS_SPARE2 | 0x02000000     /* Spare */ | 104 |
+| SNS_LOOKER | 0x01000000     /* lookahead erro... | 105 |
+| SNS_PEMODER | 0x800000       /* PE tape mode e... | 108 |
+| SNS_TPECHK | 0x400000       /* Tape PE mode c... | 109 |
+| SNS_FMRKDT | 0x200000       /* File mark dete... | 110 |
+| SNS_CORERR | 0x100000       /* Corrected Erro... | 111 |
+| SNS_HARDER | 0x080000       /* Hard Error */ | 112 |
+| SNS_MRLDER | 0x040000       /* Mode register ... | 113 |
+| SNS_DATAWR | 0x020000       /* Data written */ | 114 |
+| SNS_SPARE3 | 0x010000       /* Spare */ | 115 |
+| SNS_MREG0 | 0x8000         /* 0 - Auto retry... | 118 |
+| SNS_MREG1 | 0x4000         /* 0 - NRZI */ | 120 |
+| SNS_MREG2 | 0x2000         /* Mode register ... | 122 |
+| SNS_MREG3 | 0x1000         /* Mode register ... | 123 |
+| SNS_MREG4 | 0x0800         /* Mode register ... | 124 |
+| SNS_MREG5 | 0x0400         /* Mode register ... | 125 |
+| SNS_MREG6 | 0x0200         /* Mode register ... | 126 |
+| SNS_MREG7 | 0x0100         /* 1 - HSDP scatt... | 127 |
+| SNS_RDY | 0x80           /* Drive Ready */ | 131 |
+| SNS_ONLN | 0x40           /* Drive Online */ | 132 |
+| SNS_WRP | 0x20           /* Drive is file ... | 133 |
+| SNS_NRZI | 0x10           /* Drive is NRZI */ | 134 |
+| SNS_SPARE4 | 0x08           /* Spare */ | 135 |
+| SNS_LOAD | 0x04           /* Drive is at lo... | 136 |
+| SNS_EOT | 0x02           /* Drive is at EO... | 137 |
+| SNS_SPARE5 | 0x01           /* Spare */ | 138 |
+| SNS_BYTE4 | 0x00           /* Hardware error... | 140 |
+| SNS_BYTE5 | 0x00           /* Hardware error... | 141 |
+| MT_CONV1 | 0x40 | 143 |
+| MT_CONV2 | 0x80 | 144 |
+| MT_CONV3 | 0xc0 | 145 |
+| BUF_EMPTY(u) | (u->hwmark == 0xFFFFFFFF) | 148 |
+| CLR_BUF(u) | u->hwmark =  0xFFFFFFFF | 149 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt_iocl | 382-626 | return = 1 error, chan_status will have reason |
+| mt_preio | 627-658 | start a tape operation |
+| mt_startcmd | 659-754 | start an I/O operation |
+| mt_error | 755-808 | Map simH errors into machine errors |
+| mt_srv | 809-1471 | Handle processing of tape requests. |
+| mt_ini | 1472-1487 | initialize the tape chan/unit |
+| mt_rschnlio | 1488-1498 | handle rschnlio cmds for tape |
+| mt_haltio | 1499-1533 | Handle haltio transfers for mag tape |
+| mt_reset | 1534-1541 | reset the mag tape |
+| mt_attach | 1542-1587 | attach the specified file to the tape device |
+| mt_detach | 1588-1600 | detach the MT device and unload any tape |
+| mt_boot | 1601-1625 | boot from the specified tape unit |
+| mt_help | 1626-1639 |  |
+| mt_description | 1640-1645 |  |

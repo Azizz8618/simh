@@ -1,0 +1,85 @@
+=== s100_adcs6.c — 1151 строк ===
+Источник: s100_adcs6.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_adcs6.c -nt .cline/maps/s100_adcs6.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEV_NAME | "ADCS6" | 45 |
+| ERROR_MSG | (1 << 0) | 48 |
+| DRIVE_MSG | (1 << 1) | 49 |
+| CTC_MSG | (1 << 2) | 50 |
+| DMA_MSG | (1 << 3) | 51 |
+| PIO_MSG | (1 << 4) | 52 |
+| BANK_MSG | (1 << 5) | 53 |
+| UART_MSG | (1 << 6) | 54 |
+| VERBOSE_MSG | (1 << 7) | 55 |
+| ADCS6_MAX_UNITS | 8 | 57 |
+| ADCS6_ROM_SIZE | (2 * 1024) | 58 |
+| ADCS6_ADDR_MASK | (ADCS6_ROM_SIZE - 1) | 59 |
+| ADCS6_S7_DEFAULT_VALUE | 0 | 61 |
+| ADCS6_CAPACITY | (77*1*26*128)   /* Default SSSD ... | 103 |
+| MOTOR_TO_LIMIT | 128 | 105 |
+| ADCS6_ROM_ADC | 0           /* ADC Monitor v3.6 */ | 124 |
+| ADCS6_ROM_DIGITEX | 1           /* Digitex Monitor v... | 125 |
+| ADCS6_FLAG_DRQ | (1 << 7)    /* DRQ (All controll... | 128 |
+| ADCS6_FLAG_BOOT | (1 << 6)    /* boot# jumper (act... | 129 |
+| ADCS6_FLAG_SEL_REQ | (1 << 5)    /* Head Load (4FDC, ... | 130 |
+| ADCS6_FLAG_INH_INIT | (1 << 4)    /* Unassigned (4FDC)... | 131 |
+| ADCS6_FLAG_MTRON | (1 << 3)    /* Unassigned (4FDC)... | 132 |
+| ADCS6_FLAG_MTO | (1 << 2)    /* Unassigned (4FDC)... | 133 |
+| ADCS6_FLAG_ATO | (1 << 1)    /* Unassigned (4FDC)... | 134 |
+| ADCS6_FLAG_EOJ | (1 << 0)    /* End of Job (INTRQ... | 135 |
+| ADCS6_CTRL_AUTOWAIT | (1 << 7)    /* Auto Wait Enable ... | 138 |
+| ADCS6_CTRL_DDENS | (1 << 3)    /* Unassigned (4FDC)... | 139 |
+| ADCS6_CTRL_HDS | (1 << 2)    /* Motor On (All con... | 140 |
+| ADCS6_CTRL_MINI | (1 << 4)    /* Mini (5.25") (All... | 141 |
+| ADCS6_AUX_RESERVED0 | (1 << 0)    /* Unused (All Contr... | 144 |
+| ADCS6_AUX_CMD_SIDE | (1 << 1)    /* 16FDC, 64FDC: Sid... | 145 |
+| ADCS6_AUX_CTRL_OUT | (1 << 2)    /* Control Out* (All... | 146 |
+| ADCS6_AUX_RESTORE | (1 << 3)    /* 4FDC, 16FDC Resto... | 147 |
+| ADCS6_AUX_FAST_SEEK | (1 << 4)    /* 4FDC, 16FDC Fast ... | 148 |
+| ADCS6_AUX_SEL_OVERRIDE | (1 << 5) /* 4FDC Eject Right* / ... | 149 |
+| ADCS6_AUX_EJECT | (1 << 6)    /* 4FDC Eject Left* ... | 150 |
+| ADCS6_AUX_RESERVED7 | (1 << 7)    /* Unused (All Contr... | 151 |
+| ADCS6_IRQ_TIMER1 | (1 << 0)    /* Timer1 Interrupt ... | 154 |
+| ADCS6_IRQ_TIMER2 | (1 << 1)    /* Timer2 Interrupt ... | 155 |
+| ADCS6_IRQ_EOJ | (1 << 2)    /* End of Job Interr... | 156 |
+| ADCS6_IRQ_TIMER3 | (1 << 3)    /* Timer3 Interrupt ... | 157 |
+| ADCS6_IRQ_RDA | (1 << 4)    /* Read Data Availab... | 158 |
+| ADCS6_IRQ_TBE | (1 << 5)    /* Transmit Buffer E... | 159 |
+| ADCS6_IRQ_TIMER4 | (1 << 6)    /* Timer4 Interrupt ... | 160 |
+| ADCS6_IRQ_TIMER5 | (1 << 7)    /* Timer5 Interrupt ... | 161 |
+| ADCS6_TIMER1_RST | 0xC7        /* RST0 - 0xC7 */ | 163 |
+| ADCS6_TIMER2_RST | 0xCF        /* RST8 - 0xCF */ | 164 |
+| ADCS6_EOJ_RST | 0xD7        /* RST10 - 0xD7 */ | 165 |
+| ADCS6_TIMER3_RST | 0xDF        /* RST18 - 0xDF */ | 166 |
+| ADCS6_RDA_RST | 0xE7        /* RST20 - 0xE7 */ | 167 |
+| ADCS6_TBE_RST | 0xEF        /* RST28 - 0xEF */ | 168 |
+| ADCS6_TIMER4_RST | 0xF7        /* RST30 - 0xF7 */ | 169 |
+| ADCS6_TIMER5_RST | 0xFF        /* RST38 - 0xFF */ | 170 |
+| ADCS6_PIO | 0x04 | 173 |
+| ADCS6_CTC0 | 0x08 | 174 |
+| ADCS6_CTC1 | (ADCS6_CTC0 + 1) | 175 |
+| ADCS6_CTC2 | (ADCS6_CTC0 + 2) | 176 |
+| ADCS6_CTC3 | (ADCS6_CTC0 + 3) | 177 |
+| ADCS6_DMA | 0x10 | 178 |
+| ADCS6_CTRL | 0x14 | 179 |
+| ADCS6_EXTADR | 0x15 | 180 |
+| ADCS6_MCTRL0 | 0x16 | 181 |
+| ADCS6_MCTRL1 | 0x17 | 182 |
+| ADCS6_SET_BAUD | 0x18 | 183 |
+| CCS2719 | 0x20 | 184 |
+| B810_RAM | 0x45 | 185 |
+| MCTRL_BANK_MASK | (0x0F) | 188 |
+| MCTRL_MAP_MASK | (0x70) | 189 |
+| MCTRL_ROM_DISABLE | (1 << 5)    /* Set = Disable ROM */ | 190 |
+| MCTRL_POJ_ENABLED | (1 << 6)    /* Power-on Jump Ena... | 191 |
+| MCTRL_PARITY_ENABLED | (1 << 7)    /* Parity Check Enab... | 192 |
+| RST_OPCODE_TO_VECTOR(x) | (x & 0x38) | 195 |
+| CTC_CCW_BIT | (1 << 0) | 198 |
+| CTC_TC_FOLLOWS | (1 << 2) | 199 |
+| ADCS6_WAIT | 16 | 210 |
+| ADCS6_NAME | "ADC Super-Six Single-Board Comp... | 256 |
+| ADCS6 |  | 679 |
+

@@ -1,0 +1,127 @@
+=== pdp1_cpu.c — 1725 строк ===
+Источник: pdp1_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp1_cpu.c -nt .cline/maps/pdp1_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 296-303 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| byt_shf | 425 | |
+| IR | 509 | |
+| sign | 510 | |
+| dev | 511 | |
+| reason | 512 | |
+| reason | 547 | |
+| reason | 1364 | |
+| SCPE_OK | 1395 | |
+| SCPE_OK | 1433 | |
+| bp | 1446 | |
+| MB | 1458 | |
+| SCPE_OK | 1461 | |
+| SCPE_OK | 1475 | |
+| ERR_RMV | 1483 | |
+| hi | 1490 | |
+| SCPE_OK | 1522 | |
+| newlvl | 1530 | |
+| SCPE_OK | 1539 | |
+| SCPE_OK | 1549 | |
+| sbs | 1558 | |
+| extm | 1559 | |
+| ioh | 1560 | |
+| ios | 1561 | |
+| cpls | 1562 | |
+| sbs_act | 1563 | |
+| sbs_req | 1564 | |
+| sbs_enb | 1565 | |
+| OV | 1566 | |
+| PF | 1567 | |
+| MA | 1568 | |
+| MB | 1569 | |
+| rm | 1570 | |
+| rtb | 1571 | |
+| rmask | 1572 | |
+| SCPE_IERR | 1578 | |
+| SCPE_OK | 1580 | |
+| SCPE_OK | 1591 | |
+| SCPE_OK | 1601 | |
+| mc | 1608 | |
+| MEMSIZE | 1617 | |
+| SCPE_OK | 1620 | |
+| SCPE_OK | 1628 | |
+| hst_p | 1649 | |
+| SCPE_OK | 1661 | |
+| ov | 1668 | |
+| lnt | 1680 | |
+| SCPE_OK | 1708 | |
+| TW | 1717 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 273 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 274 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 275 |
+| UNIT_V_MDV | (UNIT_V_UF + 0)                 ... | 276 |
+| UNIT_V_SBS | (UNIT_V_UF + 1) | 277 |
+| UNIT_V_1D | (UNIT_V_UF + 2) | 278 |
+| UNIT_V_1D45 | (UNIT_V_UF + 3) | 279 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 4)                 ... | 280 |
+| UNIT_MDV | (1 << UNIT_V_MDV) | 281 |
+| UNIT_SBS | (1 << UNIT_V_SBS) | 282 |
+| UNIT_1D | (1 << UNIT_V_1D) | 283 |
+| UNIT_1D45 | (1 << UNIT_V_1D45) | 284 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 285 |
+| HIST_PC | 0x40000000 | 287 |
+| HIST_V_SHF | 18 | 288 |
+| HIST_MIN | 64 | 289 |
+| HIST_MAX | 65536 | 290 |
+| MA_GETBNK(x) | ((cpu_unit.flags & UNIT_1D45)?  | 292 |
+| EPC_WORD | ((OV << 17) \| (extm << 16) \| PC) | 518 |
+| INCR_ADDR(x) | (((x) & EPCMASK) \| (((x) + 1) & ... | 519 |
+| DECR_ADDR(x) | (((x) & EPCMASK) \| (((x) - 1) & ... | 520 |
+| ABS(x) | ((x) ^ (((x) & SIGN)? DMASK: 0)) | 521 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 507-522 |  |
+| if | 523-538 |  |
+| if | 539-547 |  |
+| while | 548-1368 |  |
+| Ea | 1369-1374 |  |
+| if | 1375-1399 |  |
+| Ea_ch | 1400-1405 |  |
+| if | 1406-1420 |  |
+| if | 1421-1437 |  |
+| inc_bp | 1438-1440 |  |
+| if | 1441-1450 |  |
+| Read | 1451-1452 |  |
+| if | 1453-1463 |  |
+| Write | 1464-1467 |  |
+| if | 1468-1479 |  |
+| set_rmv | 1480-1487 |  |
+| sbs_eval | 1488-1491 |  |
+| if | 1492-1503 |  |
+| sbs_ffo | 1504-1512 |  |
+| dev_req_int | 1513-1514 |  |
+| if | 1515-1526 |  |
+| dev_set_sbs | 1527-1541 |  |
+| dev_show_sbs | 1542-1553 |  |
+| cpu_reset | 1554-1584 |  |
+| cpu_ex | 1585-1595 |  |
+| cpu_dep | 1596-1605 |  |
+| cpu_set_size | 1606-1624 |  |
+| cpu_set_1d | 1625-1632 |  |
+| cpu_set_hist | 1633-1637 |  |
+| if | 1638-1649 |  |
+| if | 1650-1654 |  |
+| if | 1655-1665 |  |
+| cpu_show_hist | 1666-1674 |  |
+| if | 1675-1684 |  |
+| for | 1685-1714 |  |
+| cpu_set_switches | 1715-1719 |  |
+| cpu_get_switches | 1720-1725 |  |

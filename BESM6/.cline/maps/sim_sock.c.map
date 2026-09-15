@@ -1,0 +1,172 @@
+=== sim_sock.c — 1384 строк ===
+Источник: sim_sock.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_sock.c -nt .cline/maps/sim_sock.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| err_buf | 115 | |
+| err_buf | 127 | |
+| INVALID_SOCKET | 138 | |
+| p_freeaddrinfo | 142 | |
+| p_getaddrinfo | 148 | |
+| socklen_t | 151 | |
+| p_getnameinfo | 164 | |
+| he | 185 | |
+| se | 186 | |
+| sin | 187 | |
+| result | 188 | |
+| ai | 189 | |
+| dhints | 190 | |
+| ipaddr | 191 | |
+| fixed | 192 | |
+| ips | 193 | |
+| ip | 194 | |
+| cname | 195 | |
+| port | 196 | |
+| he | 338 | |
+| se | 339 | |
+| lib_name | 407 | |
+| gbuf | 511 | |
+| hostp | 512 | |
+| portp | 513 | |
+| endc | 514 | |
+| portval | 515 | |
+| portp | 539 | |
+| status | 667 | |
+| done | 668 | |
+| ai_validate | 669 | |
+| bits | 670 | |
+| c1 | 672 | |
+| status | 697 | |
+| status | 779 | |
+| hostp | 818 | |
+| err | 839 | |
+| wVersionRequested | 840 | |
+| wsaData | 841 | |
+| non_block | 883 | |
+| non_block | 891 | |
+| fl | 899 | |
+| nodelay | 920 | |
+| sta | 921 | |
+| sta | 942 | |
+| newsock | 947 | |
+| err | 948 | |
+| newsock | 959 | |
+| newsock | 971 | |
+| sta | 972 | |
+| host | 973 | |
+| hints | 975 | |
+| result | 976 | |
+| hints.ai_flags | 985 | |
+| hints.ai_family | 986 | |
+| hints.ai_protocol | 987 | |
+| hints.ai_socktype | 988 | |
+| preferred | 994 | |
+| newsock | 1060 | |
+| sta | 1061 | |
+| host | 1062 | |
+| hints | 1063 | |
+| result | 1064 | |
+| hints.ai_family | 1070 | |
+| sta | 1165 | |
+| keepalive | 1166 | |
+| size | 1172 | |
+| size | 1176 | |
+| size | 1178 | |
+| newsock | 1180 | |
+| clientname | 1181 | |
+| newsock | 1219 | |
+| rw_set | 1224 | |
+| rw_p | 1225 | |
+| er_p | 1226 | |
+| zero | 1227 | |
+| peername | 1228 | |
+| size | 1276 | |
+| ret | 1278 | |
+| ret | 1288 | |
+| sockname | 1293 | |
+| hostbuf | 1310 | |
+| portbuf | 1311 | |
+| rbytes | 1333 | |
+| rbytes | 1357 | |
+| sbytes | 1373 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| WSAAPI |  | 63 |
+| SD_BOTH | SHUT_RDWR | 67 |
+| NI_MAXHOST | 1025 | 71 |
+| EAI_OVERFLOW | EAI_FAIL | 153 |
+| EAI_OVERFLOW | EAI_FAIL | 159 |
+| EAI_OVERFLOW | WSAENAMETOOLONG | 330 |
+| IPV6_V6ONLY | 27    /* Treat wildcard bind as ... | 394 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_get_err_sock | 111-129 |  |
+| sim_err_sock | 130-132 |  |
+| if | 133-167 |  |
+| s_freeaddrinfo | 168-171 |  |
+| for | 172-201 |  |
+| if | 202-219 |  |
+| if | 220-241 |  |
+| if | 242-287 |  |
+| for | 288-316 |  |
+| if | 317-345 |  |
+| if | 346-367 |  |
+| if | 368-411 |  |
+| load_function | 412-424 |  |
+| load_ws2 | 425-520 | load Ws2_32.dll as required |
+| if | 521-549 |  |
+| if | 550-567 |  |
+| if | 568-577 |  |
+| if | 578-599 |  |
+| if | 600-664 |  |
+| sim_addr_acl_check | 665-677 |  |
+| if | 678-689 |  |
+| if | 690-697 |  |
+| while | 698-815 |  |
+| sim_parse_addr_ex | 816-822 |  |
+| if | 823-835 |  |
+| sim_init_sock | 836-872 |  |
+| sim_cleanup_sock | 873-880 |  |
+| sim_setnonblock | 881-888 |  |
+| sim_setnonblock | 889-896 |  |
+| sim_setnonblock | 897-917 |  |
+| sim_setnodelay | 918-944 |  |
+| sim_create_sock | 945-950 |  |
+| if | 951-968 |  |
+| sim_master_sock_ex | 969-988 |  |
+| if | 989-999 |  |
+| for | 1000-1008 |  |
+| if | 1009-1025 |  |
+| if | 1026-1030 |  |
+| if | 1031-1046 |  |
+| if | 1047-1057 |  |
+| sim_connect_sock_ex | 1058-1075 |  |
+| if | 1076-1109 |  |
+| if | 1110-1117 |  |
+| if | 1118-1124 |  |
+| if | 1125-1131 |  |
+| if | 1132-1141 |  |
+| if | 1142-1162 |  |
+| sim_accept_conn_ex | 1163-1187 |  |
+| if | 1188-1193 |  |
+| if | 1194-1201 |  |
+| if | 1202-1207 |  |
+| if | 1208-1221 |  |
+| sim_check_conn | 1222-1253 |  |
+| if | 1254-1262 |  |
+| _sim_getaddrname | 1263-1290 |  |
+| sim_getnames_sock | 1291-1318 |  |
+| if | 1319-1322 |  |
+| if | 1323-1330 |  |
+| sim_read_sock | 1331-1335 |  |
+| if | 1336-1339 |  |
+| if | 1340-1359 |  |
+| sim_write_sock | 1360-1363 |  |
+| if | 1364-1375 |  |
+| sim_close_sock | 1376-1384 |  |

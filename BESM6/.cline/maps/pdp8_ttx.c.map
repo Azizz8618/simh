@@ -1,0 +1,80 @@
+=== pdp8_ttx.c — 559 строк ===
+Источник: pdp8_ttx.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp8_ttx.c -nt .cline/maps/pdp8_ttx.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 70 | |
+| tmxr_poll | 71 | |
+| ttx_dib | 134 | |
+| AC | 289 | |
+| ln | 296 | |
+| SCPE_OK | 318 | |
+| AC | 361 | |
+| SCPE_OK | 385 | |
+| ttix_done | 396 | |
+| ttox_done | 397 | |
+| ttx_enbl | 398 | |
+| int_req | 406 | |
+| return | 407 | |
+| -1 | 421 | |
+| ln | 428 | |
+| SCPE_OK | 444 | |
+| return | 457 | |
+| SCPE_OK | 470 | |
+| newln | 491 | |
+| ttx_lines | 521 | |
+| ttx_dib.num | 522 | |
+| SCPE_OK | 523 | |
+| dptr | 530 | |
+| SCPE_OK | 548 | |
+| input" | 553 | |
+| output" | 558 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TTX_MAXL | 16 | 65 |
+| TTX_INIL | 4 | 66 |
+| TTX_GETLN(x) | (((x) >> 4) & TTX_MASK) | 68 |
+| TTIX_SET_DONE(ln) | ttx_new_flags (ttix_done \| (1u <... | 97 |
+| TTIX_CLR_DONE(ln) | ttx_new_flags (ttix_done & ~(1u ... | 98 |
+| TTIX_TST_DONE(ln) | ((ttix_done & (1u << (ln))) != 0) | 99 |
+| TTOX_SET_DONE(ln) | ttx_new_flags (ttix_done, ttox_d... | 100 |
+| TTOX_CLR_DONE(ln) | ttx_new_flags (ttix_done, ttox_d... | 101 |
+| TTOX_TST_DONE(ln) | ((ttox_done & (1u << (ln))) != 0) | 102 |
+| TTX_SET_ENBL(ln) | ttx_new_flags (ttix_done, ttox_d... | 103 |
+| TTX_CLR_ENBL(ln) | ttx_new_flags (ttix_done, ttox_d... | 104 |
+| TTX_TST_ENBL(ln) | ((ttx_enbl & (1u << (ln))) != 0) | 105 |
+| DBG_XMT | TMXR_DBG_XMT                    ... | 160 |
+| DBG_RCV | TMXR_DBG_RCV                    ... | 161 |
+| DBG_RET | TMXR_DBG_RET                    ... | 162 |
+| DBG_CON | TMXR_DBG_CON                    ... | 163 |
+| DBG_TRC | TMXR_DBG_TRC                    ... | 164 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ttix | 249-256 |  |
+| switch | 257-293 |  |
+| ttix_svc | 294-304 |  |
+| for | 305-322 |  |
+| ttox | 323-330 |  |
+| switch | 331-365 |  |
+| ttox_svc | 366-369 |  |
+| if | 370-393 |  |
+| ttx_new_flags | 394-411 |  |
+| ttx_getln | 412-416 |  |
+| for | 417-425 |  |
+| ttx_reset | 426-429 |  |
+| if | 430-448 |  |
+| ttx_reset_ln | 449-461 |  |
+| ttx_attach | 462-474 |  |
+| ttx_detach | 475-488 |  |
+| ttx_vlines | 489-500 |  |
+| if | 501-526 |  |
+| ttx_show_devno | 527-543 | Show device numbers |
+| for | 544-550 |  |
+| ttix_description | 551-555 |  |
+| ttox_description | 556-559 |  |

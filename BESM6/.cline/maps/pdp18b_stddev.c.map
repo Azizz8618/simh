@@ -1,0 +1,166 @@
+=== pdp18b_stddev.c — 1186 строк ===
+Источник: pdp18b_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp18b_stddev.c -nt .cline/maps/pdp18b_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_hwre | 92 | |
+| api_vec | 93 | |
+| cpu_unit | 94 | |
+| clk_state | 96 | |
+| ptr_err | 97 | |
+| ptp_err | 98 | |
+| clk_task_last | 104 | |
+| clk_task_timer | 105 | |
+| clk_dib | 175 | |
+| ptr_dib | 219 | |
+| ptp_dib | 263 | |
+| tti_dib | 321 | |
+| tto_dib | 382 | |
+| dat | 434 | |
+| SCPE_OK | 454 | |
+| delta | 468 | |
+| usec10 | 470 | |
+| delta | 474 | |
+| clk_task_timer | 481 | |
+| clk_task_last | 482 | |
+| SCPE_OK | 511 | |
+| clk_tps | 522 | |
+| SCPE_OK | 523 | |
+| SCPE_OK | 531 | |
+| dat | 568 | |
+| temp | 575 | |
+| ptr_unit.pos | 616 | |
+| SCPE_OK | 617 | |
+| ptr_unit.buf | 625 | |
+| SCPE_OK | 634 | |
+| reason | 652 | |
+| saved_switches | 653 | |
+| sim_switches | 657 | |
+| SCPE_OK | 666 | |
+| ptr_err | 674 | |
+| ptr_unit.flags | 676 | |
+| word | 684 | |
+| word | 686 | |
+| word | 699 | |
+| bits | 704 | |
+| SCPE_FMT | 721 | |
+| mask | 872 | |
+| mask | 882 | |
+| SCPE_OK | 890 | |
+| dat | 920 | |
+| ptp_unit.pos | 943 | |
+| SCPE_OK | 944 | |
+| ptp_unit.buf | 962 | |
+| SCPE_OK | 966 | |
+| reason | 973 | |
+| saved_switches | 974 | |
+| sim_switches | 980 | |
+| ptp_err | 981 | |
+| ptp_unit.flags | 982 | |
+| reason | 985 | |
+| ptp_err | 992 | |
+| ptp_unit.flags | 993 | |
+| dat | 1017 | |
+| in | 1025 | |
+| uptr->pos | 1085 | |
+| SCPE_OK | 1087 | |
+| SCPE_OK | 1110 | |
+| dat | 1127 | |
+| uptr->pos | 1157 | |
+| SCPE_OK | 1158 | |
+| SCPE_OK | 1176 | |
+| SCPE_OK | 1185 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_RASCII | (UNIT_V_UF + 0)                 ... | 84 |
+| UNIT_RASCII | (1 << UNIT_V_RASCII) | 85 |
+| UNIT_V_KASCII | (UNIT_V_UF + 1)                 ... | 86 |
+| UNIT_KASCII | (1 << UNIT_V_KASCII) | 87 |
+| UNIT_V_PASCII | (UNIT_V_UF + 0)                 ... | 88 |
+| UNIT_PASCII | (1 << UNIT_V_PASCII) | 89 |
+| TTI_WIDTH | 5 | 304 |
+| TTI_FIGURES | (1 << TTI_WIDTH) | 305 |
+| TTI_BOTH | (1 << (TTI_WIDTH + 1)) | 306 |
+| BAUDOT_LETTERS | 037 | 307 |
+| BAUDOT_FIGURES | 033 | 308 |
+| TTI_WIDTH | 8 | 312 |
+| TTI_MASK | ((1 << TTI_WIDTH) - 1) | 315 |
+| TTUF_V_HDX | (TTUF_V_UF + 0)                 ... | 316 |
+| TTUF_V_UNIX | (TTUF_V_UF + 1) | 317 |
+| TTUF_HDX | (1 << TTUF_V_HDX) | 318 |
+| TTUF_UNIX | (1 << TTUF_V_UNIX) | 319 |
+| TTO_WIDTH | 5 | 372 |
+| TTO_FIGURES | (1 << TTO_WIDTH) | 373 |
+| TTO_WIDTH | 8 | 377 |
+| TTO_MASK | ((1 << TTO_WIDTH) - 1) | 380 |
+| BOOT_START | 017577 | 733 |
+| BOOT_FPC | 017577                          ... | 734 |
+| BOOT_RPC | 017770                          ... | 735 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int)) | 736 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| clk | 422-423 |  |
+| if | 424-427 |  |
+| if | 428-438 |  |
+| clk_svc | 439-448 |  |
+| if | 449-465 |  |
+| clk_task_upd | 466-489 |  |
+| clk_iors | 490-496 |  |
+| clk_reset | 497-502 |  |
+| if | 503-515 |  |
+| clk_set_freq | 516-527 |  |
+| clk_show_freq | 528-548 |  |
+| ptr | 549-550 |  |
+| if | 551-554 |  |
+| if | 555-558 |  |
+| if | 559-572 |  |
+| ptr_svc | 573-576 |  |
+| if | 577-583 |  |
+| if | 584-597 |  |
+| if | 598-608 |  |
+| if | 609-621 |  |
+| ptr_reset | 622-638 |  |
+| ptr_iors | 639-649 |  |
+| ptr_attach | 650-670 |  |
+| ptr_detach | 671-681 |  |
+| ptr_getw | 682-701 |  |
+| ptr_rim_load | 702-705 |  |
+| for | 706-868 |  |
+| ptr_boot | 869-882 |  |
+| for | 883-896 |  |
+| ptr_boot | 897-905 |  |
+| ptp | 906-907 |  |
+| if | 908-913 |  |
+| if | 914-924 |  |
+| ptp_svc | 925-927 |  |
+| if | 928-931 |  |
+| if | 932-936 |  |
+| if | 937-948 |  |
+| ptp_iors | 949-959 |  |
+| ptp_reset | 960-970 |  |
+| ptp_attach | 971-989 |  |
+| ptp_detach | 990-998 |  |
+| tti | 999-1000 |  |
+| if | 1001-1004 |  |
+| if | 1005-1013 |  |
+| if | 1014-1021 |  |
+| tti_svc | 1022-1027 |  |
+| if | 1028-1068 |  |
+| if | 1069-1091 |  |
+| tti_iors | 1092-1098 |  |
+| tti_reset | 1099-1102 |  |
+| if | 1103-1114 |  |
+| tto | 1115-1116 |  |
+| if | 1117-1122 |  |
+| if | 1123-1131 |  |
+| tto_svc | 1132-1146 |  |
+| if | 1147-1162 |  |
+| tto_iors | 1163-1169 |  |
+| tto_reset | 1170-1180 |  |
+| tty_set_mode | 1181-1186 |  |

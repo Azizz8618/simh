@@ -1,0 +1,69 @@
+=== bindump.c — 847 строк ===
+Источник: bindump.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test bindump.c -nt .cline/maps/bindump.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CPCODE | 676-679 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| {R_ABSOLUTE | 37 | |
+| {PACKED | 39 | |
+| verbose | 54 | |
+| phid | 55 | |
+| sort | 56 | |
+| card | 57 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BOOL | int | 32 |
+| TRUE | 1 | 33 |
+| FALSE | 0 | 34 |
+| CARDTYPE_COREIMAGE | 0x00 | 41 |
+| CARDTYPE_ABS | 0x01 | 42 |
+| CARDTYPE_REL | 0x02 | 43 |
+| CARDTYPE_LIB | 0x03 | 44 |
+| CARDTYPE_SUB | 0x04 | 45 |
+| CARDTYPE_ISSL | 0x05 | 46 |
+| CARDTYPE_ISSC | 0x06 | 47 |
+| CARDTYPE_ILS | 0x07 | 48 |
+| CARDTYPE_END | 0x0F | 49 |
+| CARDTYPE_ENDC | 0x80 | 50 |
+| CARDTYPE_81 | 0x81 | 51 |
+| CARDTYPE_DATA | 0x0A | 52 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| main | 87-123 |  |
+| process | 124-161 |  |
+| dump | 162-176 |  |
+| cardcomp | 177-185 |  |
+| sort_phases | 186-289 |  |
+| dump_phids | 290-349 |  |
+| dump_data | 350-443 |  |
+| show_data | 444-477 |  |
+| show_core | 478-502 |  |
+| info | 503-529 |  |
+| show_main | 530-541 |  |
+| show_sub | 542-557 |  |
+| show_iss | 558-564 |  |
+| show_ils | 565-577 |  |
+| show_end | 578-585 |  |
+| show_endc | 586-593 |  |
+| show_81 | 594-597 |  |
+| show_raw | 598-608 |  |
+| getseq | 609-621 |  |
+| bail | 622-629 |  |
+| unpack | 630-652 |  |
+| pack | 653-664 |  |
+| verify_checksum | 665-748 |  |
+| hollerith_to_ascii | 749-765 |  |
+| trim | 766-789 |  |
+| getname | 790-815 |  |
+| type_of_card | 816-829 |  |
+| card_type_name | 830-847 |  |

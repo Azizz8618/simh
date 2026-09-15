@@ -1,0 +1,364 @@
+=== kx10_defs.h — 867 строк ===
+Источник: kx10_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_defs.h -nt .cline/maps/kx10_defs.h.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| uint64 | 151 | |
+| dev_debug | 171 | |
+| crd_debug | 172 | |
+| cpu_unit | 477 | |
+| ten11_unit | 478 | |
+| lp20_dev | 480 | |
+| ch11_dev | 481 | |
+| dte_dev | 484 | |
+| lp20_dev | 485 | |
+| tty_dev | 486 | |
+| nia_dev | 487 | |
+| cty_dev | 489 | |
+| cpu_dev | 491 | |
+| mt_dev | 492 | |
+| dpa_dev | 493 | |
+| dpb_dev | 494 | |
+| dpc_dev | 495 | |
+| dpd_dev | 496 | |
+| imp_dev | 497 | |
+| rpa_dev | 498 | |
+| rpb_dev | 499 | |
+| rpc_dev | 500 | |
+| rpd_dev | 501 | |
+| rsa_dev | 502 | |
+| tua_dev | 503 | |
+| lpt_dev | 504 | |
+| ptp_dev | 505 | |
+| ptr_dev | 506 | |
+| cr_dev | 507 | |
+| cp_dev | 508 | |
+| rca_dev | 509 | |
+| rcb_dev | 510 | |
+| dc_dev | 511 | |
+| dt_dev | 512 | |
+| pmp_dev | 513 | |
+| dk_dev | 514 | |
+| pd_dev | 515 | |
+| pclk_dev | 516 | |
+| dpy_dev | 517 | |
+| iii_dev | 518 | |
+| dd_dev | 519 | |
+| vds_dev | 520 | |
+| imx_dev | 521 | |
+| imp_dev | 522 | |
+| ch10_dev | 523 | |
+| stk_dev | 524 | |
+| tk10_dev | 525 | |
+| mty_dev | 526 | |
+| ten11_dev | 527 | |
+| dkb_dev | 528 | |
+| auxcpu_dev | 529 | |
+| slave_dev | 530 | |
+| dpk_dev | 531 | |
+| tv_dev | 532 | |
+| ai_dev | 535 | |
+| dtc_dev | 537 | |
+| mtc_dev | 538 | |
+| dsk_dev | 539 | |
+| dcs_dev | 540 | |
+| dz_dev | 541 | |
+| kmc_dev | 542 | |
+| dup_dev | 543 | |
+| tcu_dev | 544 | |
+| ddc_dev | 545 | |
+| tym_dev | 546 | |
+| ge_dev | 547 | |
+| gtyo_dev | 548 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| _KA10_DEFS_H_ | 0 | 29 |
+| PC | PC_Global | 34 |
+| PDP6 | 0 | 41 |
+| KA | 0 | 45 |
+| KI | 0 | 49 |
+| KL | 0 | 53 |
+| KS | 0 | 57 |
+| EPT440 | 0              /* Force KL10 to ... | 61 |
+| KI_22BIT | KI\|KL | 69 |
+| ITS | KA | 74 |
+| BBN | KA | 79 |
+| WAITS | KA | 84 |
+| KL_ITS | KL | 89 |
+| KS_ITS | KS | 94 |
+| PDP6_DEV | PDP6\|WAITS | 98 |
+| MAGIC_SWITCH | 0 | 102 |
+| PIDP10 | 0 | 106 |
+| MPX_DEV | ITS | 111 |
+| STOP_HALT | 1                               ... | 153 |
+| STOP_IBKPT | 2                               ... | 154 |
+| STOP_ACCESS | 3                               ... | 155 |
+| STOP_MAGIC | 4                               ... | 157 |
+| DEBUG_CMD | 0x0000001       /* Show device c... | 161 |
+| DEBUG_DATA | 0x0000002       /* Show data tra... | 162 |
+| DEBUG_DETAIL | 0x0000004       /* Show details */ | 163 |
+| DEBUG_EXP | 0x0000008       /* Show error co... | 164 |
+| DEBUG_CONI | 0x0000020       /* Show CONI ins... | 165 |
+| DEBUG_CONO | 0x0000040       /* Show CONO ins... | 166 |
+| DEBUG_DATAIO | 0x0000100       /* Show DATAI/O ... | 167 |
+| DEBUG_IRQ | 0x0000200       /* Show IRQ requ... | 168 |
+| DEBUG_TRACE | 0x0000400       /* Trace cpu ins... | 169 |
+| Q_IDLE | (sim_idle_enab) | 176 |
+| LMASK | 00777777000000LL | 179 |
+| RMASK | 00000000777777LL | 180 |
+| FMASK | 00777777777777LL | 181 |
+| CMASK | 00377777777777LL | 182 |
+| SMASK | 00400000000000LL | 183 |
+| C1 | 01000000000000LL | 184 |
+| RSIGN | 00000000400000LL | 185 |
+| PMASK | 00007777777777LL | 186 |
+| XMASK | 03777777777777LL | 187 |
+| EMASK | 00777000000000LL | 188 |
+| MMASK | 00000777777777LL | 189 |
+| SECTM | 00007777000000LL | 190 |
+| BIT1 | 00200000000000LL | 191 |
+| BIT2 | 00100000000000LL | 192 |
+| BIT3 | 00040000000000LL | 193 |
+| BIT4 | 00020000000000LL | 194 |
+| BIT5 | 00010000000000LL | 195 |
+| BIT6 | 00004000000000LL | 196 |
+| BIT7 | 00002000000000LL | 197 |
+| BIT8 | 00001000000000LL | 198 |
+| BIT9 | 00000400000000LL | 199 |
+| BIT10 | 00000200000000LL | 200 |
+| BIT10_35 | 00000377777777LL | 201 |
+| BIT12 | 00000040000000LL | 202 |
+| BIT17 | 00000001000000LL | 203 |
+| MANT | 00000777777777LL | 204 |
+| EXPO | 00377000000000LL | 205 |
+| FPHBIT | 01000000000000000000000LL | 206 |
+| FPSBIT | 00400000000000000000000LL | 207 |
+| FPNBIT | 00200000000000000000000LL | 208 |
+| FP1BIT | 00100000000000000000000LL | 209 |
+| FPFMASK | 01777777777777777777777LL | 210 |
+| FPRMASK | 00000000000177777777777LL | 211 |
+| FPMMASK | 00000000000077777777777LL | 212 |
+| FPRBIT2 | 00000000000100000000000LL | 213 |
+| FPRBIT1 | 00000000000200000000000LL | 214 |
+| IOCTL | 00000017000000LL | 216 |
+| ADR_IFETCH | 020 | 219 |
+| ADR_DFETCH | 010 | 220 |
+| ADR_WRITE | 004 | 221 |
+| ADR_STOP | 002 | 222 |
+| ADR_BREAK | 001 | 223 |
+| SWP_DONE | 0000020         /* Cache sweep d... | 227 |
+| PFAIL | 0000040         /* Power failure */ | 228 |
+| ADDR_PAR | 0000100         /* Address Parit... | 229 |
+| CACHE_DIR | 0000200         /* Cache Parity ... | 230 |
+| MB_PAR | 0000400         /* Memory parity... | 231 |
+| INOUT_FAIL | 0001000         /* Fault during ... | 232 |
+| NXM_MEM | 0002000         /* Non-existent ... | 233 |
+| SBUS_ERR | 0004000         /* SBus Error */ | 234 |
+| CON_IRQ | 0000020         /* Interrupt fro... | 237 |
+| INT_DONE | 0000040         /* Interval time... | 238 |
+| COR_MEM | 0000100         /* Corrected mem... | 239 |
+| MB_ERR | 0000200         /* Uncorrectable... | 240 |
+| NXM_MEM | 0000400         /* No memory */ | 241 |
+| PFAIL | 0001000         /* Power Failure */ | 242 |
+| FLAG_24 | 0004000         /* Spare */ | 243 |
+| CM(x) | (FMASK ^ (x)) | 246 |
+| CCM(x) | ((CMASK ^ (x)) & CMASK) | 247 |
+| INST_V_OP | 27                              ... | 249 |
+| INST_M_OP | 0777 | 250 |
+| INST_V_DEV | 26 | 251 |
+| INST_M_DEV | 0177                            ... | 252 |
+| INST_V_AC | 23                              ... | 253 |
+| INST_M_AC | 017 | 254 |
+| INST_V_IND | 22                              ... | 255 |
+| INST_IND | (1 << INST_V_IND) | 256 |
+| INST_V_XR | 18                              ... | 257 |
+| INST_M_XR | 017 | 258 |
+| OP_JRST | 0254                            ... | 259 |
+| OP_JUMPA | 0324                            ... | 260 |
+| AC_XPCW | 07                              ... | 261 |
+| OP_JSR | 0264                            ... | 262 |
+| GET_OP(x) | ((int32) (((x) >> INST_V_OP) & I... | 263 |
+| GET_DEV(x) | ((int32) (((x) >> INST_V_DEV) & ... | 264 |
+| GET_AC(x) | ((int32) (((x) >> INST_V_AC) & I... | 265 |
+| TST_IND(x) | ((x) & INST_IND) | 266 |
+| GET_XR(x) | ((int32) (((x) >> INST_V_XR) & I... | 267 |
+| GET_ADDR(x) | ((uint32) ((x) & RMASK)) | 268 |
+| LRZ(x) | (((x) >> 18) & RMASK) | 269 |
+| JRST1 | (((uint64)OP_JRST << 27) + 1) | 270 |
+| OP_PORTAL(x) | (((x) & 00777740000000LL) == 025... | 272 |
+| NODIV | 000000 | 275 |
+| FLTUND | 000000 | 276 |
+| NODIV | 000001        /* 000040 */ | 278 |
+| FLTUND | 000002        /* 000100 */ | 279 |
+| TRP1 | 000004        /* 000200 */ | 282 |
+| TRP2 | 000010        /* 000400 */ | 283 |
+| ADRFLT | 000020        /* 001000 */ | 284 |
+| PUBLIC | 000040        /* 002000 */ | 286 |
+| PUBLIC | 000000        /* 000000 */ | 288 |
+| TRP1 | 000000 | 291 |
+| TRP2 | 000000 | 292 |
+| ADRFLT | 000000 | 293 |
+| PUBLIC | 000000 | 294 |
+| EXJSYS | 000040        /* 002000 */ | 297 |
+| USERIO | 000100        /* 004000 */ | 299 |
+| USER | 000200        /* 010000 */ | 300 |
+| BYTI | 000400        /* 020000 */ | 301 |
+| FLTOVR | 010000 | 303 |
+| PCHNG | 001000        /* 040000 */ | 304 |
+| FLTOVR | 001000        /* 040000 */ | 306 |
+| PCHNG | 000000 | 307 |
+| CRY1 | 002000        /* 100000 */ | 309 |
+| CRY0 | 004000        /* 200000 */ | 310 |
+| OVR | 010000        /* 400000 */ | 311 |
+| PRV_PUB | 020000        /* Overflow in exc... | 313 |
+| PRV_PUB | 000000        /* Not on KA, KS o... | 315 |
+| ONEP | 000010        /* 000400 */ | 321 |
+| PURE | 000040        /* 002000 */ | 322 |
+| DATAI | 00 | 325 |
+| DATAO | 01 | 326 |
+| CONI | 02 | 327 |
+| CONO | 03 | 328 |
+| CTY_SWITCH | 030 | 330 |
+| MAXMEMSIZE | 4096 * 1024 | 333 |
+| MAXMEMSIZE | 256 * 1024 | 335 |
+| MAXMEMSIZE | 1024 * 1024 | 337 |
+| MAXMEMSIZE | 1024 * 1024 | 339 |
+| MEMSIZE | (cpu_unit[0].capac) | 341 |
+| ICWA | 0000000000776 | 343 |
+| AMASK | 00000017777777LL | 345 |
+| WMASK | 0037777LL | 346 |
+| CSHIFT | 22 | 347 |
+| RH20_WMASK | 003777LL | 349 |
+| RH20_XFER | SMASK | 350 |
+| RH20_HALT | BIT1 | 351 |
+| RH20_REV | BIT2 | 352 |
+| AMASK | RMASK | 355 |
+| WMASK | RMASK | 356 |
+| CSHIFT | 18 | 357 |
+| API_MASK | 0000000007 | 360 |
+| PI_ENABLE | 0000000010      /* Clear DONE */ | 361 |
+| BUSY | 0000000020      /* STOP */ | 362 |
+| IADR_ATTN | 0000000000040LL   /* Interrupt o... | 364 |
+| IARD_RAE | 0000000000100LL   /* Interrupt o... | 365 |
+| DEF_SERIAL | 514             /* Default DEC t... | 368 |
+| DEF_SERIAL | 1025            /* Default DEC t... | 372 |
+| DEF_SERIAL | 4097            /* Default DEC t... | 376 |
+| BBN_PAGE | 0000017777777LL | 380 |
+| BBN_TRPPG | 0000017000000LL | 381 |
+| BBN_SPT | 0000017777000LL | 382 |
+| BBN_PN | 0000000000777LL | 383 |
+| BBN_ACC | 0000040000000LL | 384 |
+| BBN_TRP1 | 0000100000000LL | 385 |
+| BBN_TRP | 0000200000000LL | 386 |
+| BBN_TRPMOD | 0000400000000LL | 387 |
+| BBN_TRPUSR | 0001000000000LL | 388 |
+| BBN_EXEC | 0020000000000LL | 389 |
+| BBN_WRITE | 0040000000000LL | 390 |
+| BBN_READ | 0100000000000LL | 391 |
+| BBN_MERGE | 0161740000000LL | 392 |
+| KL_PAG_A | 0400000    /* Access */ | 397 |
+| KL_PAG_P | 0200000    /* Public */ | 398 |
+| KL_PAG_W | 0100000    /* Writable (M Tops 2... | 399 |
+| KL_PAG_S | 0040000    /* Software (W Writab... | 400 |
+| KL_PAG_C | 0020000    /* Cacheable */ | 401 |
+| KI_PAG_A | 0400000    /* Access */ | 406 |
+| KI_PAG_P | 0200000    /* Public */ | 407 |
+| KI_PAG_W | 0100000    /* Writable */ | 408 |
+| KI_PAG_S | 0040000    /* Software */ | 409 |
+| KI_PAG_X | 0020000    /* Reserved */ | 410 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 0) | 414 |
+| UNIT_MSIZE | (0177 << UNIT_V_MSIZE) | 415 |
+| UNIT_V_MAOFF | (UNIT_V_MSIZE + 8) | 416 |
+| UNIT_V_PAGE | (UNIT_V_MAOFF + 1) | 417 |
+| UNIT_MAOFF | (1 << UNIT_V_MAOFF) | 418 |
+| UNIT_KL10B | (1 << UNIT_V_PAGE) | 420 |
+| UNIT_TWOSEG | (0) | 421 |
+| UNIT_TWOSEG | (1 << UNIT_V_PAGE) | 424 |
+| UNIT_TWOSEG | (0) | 426 |
+| UNIT_ITSPAGE | (2 << UNIT_V_PAGE) | 429 |
+| UNIT_BBNPAGE | (4 << UNIT_V_PAGE) | 430 |
+| UNIT_M_PAGE | (007 << UNIT_V_PAGE) | 431 |
+| UNIT_V_WAITS | (UNIT_V_PAGE + 3) | 432 |
+| UNIT_M_WAITS | (1 << UNIT_V_WAITS) | 433 |
+| UNIT_WAITS | (UNIT_M_WAITS)        /* Support... | 434 |
+| UNIT_V_MPX | (UNIT_V_WAITS + 1) | 435 |
+| UNIT_M_MPX | (1 << UNIT_V_MPX) | 436 |
+| UNIT_MPX | (UNIT_M_MPX)          /* MPX Dev... | 437 |
+| UNIT_V_DF10 | (UNIT_V_MPX + 1)      /* DF10 18... | 438 |
+| UNIT_M_DF10 | (1 << UNIT_V_DF10) | 439 |
+| UNIT_DF10C | (UNIT_M_DF10) | 440 |
+| UNIT_DF10 | 0 | 441 |
+| CNTRL_V_RH | (UNIT_V_UF + 4) | 442 |
+| CNTRL_M_RH | 7 | 443 |
+| GET_CNTRL_RH(x) | (((x) >> CNTRL_V_RH) & CNTRL_M_RH) | 444 |
+| CNTRL_RH(x) | (((x) & CNTRL_M_RH) << CNTRL_V_RH) | 445 |
+| DEV_V_RH | (DEV_V_UF + 1)                 /... | 446 |
+| DEV_M_RH | (1 << DEV_V_RH) | 447 |
+| TYPE_RH10 | (0 << DEV_V_RH) | 448 |
+| TYPE_RH20 | (1 << DEV_V_RH) | 449 |
+| WORD | 0 | 594 |
+| BYTE | 1 | 595 |
+| VEC_DEVMAX | 8                               ... | 634 |
+| RH10_DEV | 01000 | 687 |
+| RH20_DEV | 02000 | 688 |
+| IBM_DEV | 04000 | 738 |
+| NUM_DEVS_LP | 1 | 742 |
+| NUM_DEVS_PT | 1 | 745 |
+| NUM_DEVS_CR | 1 | 746 |
+| NUM_DEVS_CP | 1 | 747 |
+| NUM_DEVS_DPY | USE_DISPLAY | 749 |
+| NUM_DEVS_WCNSLS | USE_DISPLAY | 750 |
+| NUM_DEVS_OCNSLS | USE_DISPLAY | 751 |
+| NUM_DEVS_DTC | 1 | 753 |
+| NUM_DEVS_DCT | 2 | 754 |
+| NUM_DEVS_MTC | 1 | 755 |
+| NUM_DEVS_DSK | 1 | 756 |
+| NUM_DEVS_DCS | 1 | 757 |
+| NUM_DEVS_SLAVE | PDP6 | 758 |
+| NUM_DEVS_GE | PDP6 | 759 |
+| NUM_DEVS_DC | 1 | 762 |
+| NUM_DEVS_MT | 1 | 763 |
+| NUM_DEVS_LP20 | 1 | 766 |
+| NUM_DEVS_TTY | 1 | 767 |
+| NUM_LINES_TTY | 64 | 768 |
+| NUM_DEVS_NIA | 1 | 769 |
+| NUM_DEVS_LP20 | 1 | 771 |
+| NUM_DEVS_DZ | 4 | 772 |
+| NUM_DEVS_TCU | 1 | 773 |
+| NUM_DEVS_DUP | 2 | 774 |
+| NUM_DEVS_KMC | 2 | 775 |
+| NUM_DEVS_CH11 | KS_ITS | 777 |
+| NUM_DEVS_RC | 1 | 781 |
+| NUM_DEVS_DK | 1 | 782 |
+| NUM_DEVS_DDC | 1 | 783 |
+| NUM_DEVS_RP | 1 | 786 |
+| NUM_DEVS_DT | 1 | 788 |
+| NUM_DEVS_DP | 2 | 789 |
+| NUM_DEVS_RP | 4 | 790 |
+| NUM_DEVS_RS | 1 | 791 |
+| NUM_DEVS_TU | 1 | 794 |
+| NUM_DEVS_IMP | 1 | 795 |
+| NUM_DEVS_PMP | WAITS | 798 |
+| NUM_DEVS_DKB | (WAITS * USE_DISPLAY) | 799 |
+| NUM_DEVS_III | (WAITS * USE_DISPLAY) | 800 |
+| NUM_DEVS_TV | (WAITS * USE_DISPLAY) | 801 |
+| NUM_DEVS_DD | (WAITS * USE_DISPLAY) | 802 |
+| NUM_DEVS_PD | ITS | 803 |
+| NUM_DEVS_PCLK | WAITS | 804 |
+| NUM_DEVS_IMX | ITS | 805 |
+| NUM_DEVS_STK | ITS | 806 |
+| NUM_DEVS_TK10 | ITS | 807 |
+| NUM_DEVS_MTY | ITS | 808 |
+| NUM_DEVS_TEN11 | ITS | 809 |
+| NUM_DEVS_AUXCPU | ITS | 810 |
+| NUM_DEVS_CH10 | ITS | 811 |
+| NUM_DEVS_DPK | ITS | 812 |
+| NUM_DEVS_AI | ITS | 813 |
+| NUM_DEVS_PD | KL_ITS | 816 |
+| NUM_DEVS_CH10 | KL_ITS | 817 |
+| NUM_DEVS_TYM | 1 | 823 |
+

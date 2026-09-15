@@ -1,0 +1,141 @@
+=== vax780_sbi.c — 855 строк ===
+Источник: vax780_sbi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax780_sbi.c -nt .cline/maps/vax780_sbi.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| wcs_addr | 100 | |
+| wcs_data | 101 | |
+| wcs_mbrk | 102 | |
+| tmr_int | 128 | |
+| val | 305 | |
+| val | 388 | |
+| return | 478 | |
+| nexus | 492 | |
+| nexus | 519 | |
+| return | 532 | |
+| return | 546 | |
+| return | 557 | |
+| acc | 571 | |
+| in_ie | 578 | |
+| in_ie | 591 | |
+| cc | 593 | |
+| cc | 606 | |
+| gbuf | 631 | |
+| slptr | 632 | |
+| regptr | 633 | |
+| ba | 635 | |
+| dptr | 636 | |
+| uptr | 637 | |
+| dibp | 638 | |
+| r5v | 659 | |
+| SP | 708 | |
+| SCPE_OK | 709 | |
+| wcs_addr | 716 | |
+| wcs_data | 717 | |
+| wcs_mbrk | 718 | |
+| sbi_fs | 719 | |
+| sbi_sc | 720 | |
+| sbi_mt | 721 | |
+| sbi_er | 722 | |
+| sbi_tmo | 723 | |
+| sim_vm_cmd | 724 | |
+| SCPE_OK | 725 | |
+| Interconnect" | 730 | |
+| SCPE_OK | 738 | |
+| return | 751 | |
+| idx | 766 | |
+| idx | 770 | |
+| SCPE_OK | 784 | |
+| dptr | 792 | |
+| dibp | 793 | |
+| SCPE_OK | 816 | |
+| SCPE_OK | 832 | |
+| SCPE_OK | 838 | |
+| SCPE_OK | 854 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| WCSA_RW | 0xFFFF                          ... | 47 |
+| WCSA_ADDR | 0x1FFF                          ... | 48 |
+| WCSA_CTR | 0x6000                          ... | 49 |
+| WCSA_CTR_INC | 0x2000                          ... | 50 |
+| WCSA_CTR_MAX | 0x6000                          ... | 51 |
+| WCSD_RD_VAL | 0xFF                            ... | 52 |
+| WCSD_WR | 0xFFFFFFFF                      ... | 53 |
+| MBRK_RW | 0x1FFF                          ... | 54 |
+| SBIFS_RD | (0x031F0000\|SBI_FAULTS)         ... | 58 |
+| SBIFS_WR | 0x03140000 | 59 |
+| SBIFS_W1C | 0x00080000 | 60 |
+| SBISC_RD | 0xFFFF0000                      ... | 62 |
+| SBISC_WR | 0x7FFF0000 | 63 |
+| SBISC_LOCK | 0x80000000                      ... | 64 |
+| SBIMT_RD | 0xFFFFFF00                      ... | 66 |
+| SBIMT_WR | 0xFFFFF900 | 67 |
+| SBIER_CRDIE | 0x00008000                      ... | 69 |
+| SBIER_CRD | 0x00004000                      ... | 70 |
+| SBIER_RDS | 0x00002000                      ... | 71 |
+| SBIER_TMO | 0x00001000                      ... | 72 |
+| SBIER_STA | 0x00000C00                      ... | 73 |
+| SBIER_CNF | 0x00000100                      ... | 74 |
+| SBIER_IBRDS | 0x00000080 | 75 |
+| SBIER_IBTMO | 0x00000040 | 76 |
+| SBIER_IBSTA | 0x00000030 | 77 |
+| SBIER_IBCNF | 0x00000008 | 78 |
+| SBIER_MULT | 0x00000004                      ... | 79 |
+| SBIER_FREE | 0x00000002                      ... | 80 |
+| SBIER_RD | 0x0000FDFE | 81 |
+| SBIER_WR | 0x00008000 | 82 |
+| SBIER_W1C | 0x000070C0 | 83 |
+| SBIER_TMOW1C | (SBIER_TMO\|SBIER_STA\|SBIER_CNF\|S... | 84 |
+| SBIER_IBTW1C | (SBIER_IBTMO\|SBIER_STA\|SBIER_IBCNF) | 85 |
+| SBITMO_V_MODE | 30                              ... | 87 |
+| SBITMO_VIRT | 0x20000000                      ... | 88 |
+| SBIQC_MBZ | 0xC0000007                      ... | 90 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eval_int | 218-238 |  |
+| for | 239-250 |  |
+| for | 251-259 |  |
+| get_vector | 260-263 |  |
+| if | 264-267 |  |
+| if | 268-271 |  |
+| if | 272-275 |  |
+| if | 276-278 |  |
+| if | 279-287 |  |
+| if | 288-302 |  |
+| ReadIPR | 303-306 |  |
+| switch | 307-392 |  |
+| WriteIPR | 393-394 |  |
+| switch | 395-489 |  |
+| ReadReg | 490-493 |  |
+| if | 494-516 |  |
+| WriteReg | 517-520 |  |
+| if | 521-536 |  |
+| sbi_set_tmo | 537-538 |  |
+| if | 539-550 |  |
+| sbi_set_errcnf | 551-568 |  |
+| machine_check | 569-597 |  |
+| con_halt | 598-615 |  |
+| vax780_boot | 616-628 |  |
+| vax780_boot_parse | 629-645 |  |
+| if | 646-678 |  |
+| for | 679-700 |  |
+| cpu_boot | 701-713 |  |
+| sbi_reset | 714-727 |  |
+| sbi_description | 728-734 |  |
+| show_nexus | 735-742 |  |
+| init_nexus_tab | 743-746 |  |
+| for | 747-763 |  |
+| build_nexus_tab | 764-788 |  |
+| build_dib_tab | 789-798 |  |
+| for | 799-818 |  |
+| cpu_set_model | 819-821 |  |
+| if | 822-825 |  |
+| if | 826-834 |  |
+| cpu_print_model | 835-840 |  |
+| cpu_model_help | 841-855 |  |

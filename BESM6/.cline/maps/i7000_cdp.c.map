@@ -1,0 +1,32 @@
+=== i7000_cdp.c — 548 строк ===
+Источник: i7000_cdp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7000_cdp.c -nt .cline/maps/i7000_cdp.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_CDP | UNIT_ATTABLE \| UNIT_DISABLE \| UN... | 37 |
+| ATTENA | (1 << (UNIT_V_UF+7)) | 41 |
+| ATTENB | (1 << (UNIT_V_UF+14)) | 42 |
+| INPUT_V | (UNIT_V_UF+7) | 43 |
+| INPUT_FULL | (1 << INPUT_V) | 44 |
+| INPUT_EMPTY | (2 << INPUT_V) | 45 |
+| INPUT_DECK | (3 << INPUT_V) | 46 |
+| INPUT_BLANK | (4 << INPUT_V) | 47 |
+| INPUT_MASK | (7 << INPUT_V) | 48 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cdp_cmd | 163-248 |  |
+| cdp_srv | 249-337 |  |
+| cdp_reset | 338-342 |  |
+| cdp_ini | 343-346 |  |
+| cdp_attach | 347-361 |  |
+| cdp_detach | 362-382 |  |
+| cdp_set_input | 383-459 |  |
+| cdp_get_input | 460-488 |  |
+| stk_help | 489-503 |  |
+| stk_description | 504-510 |  |
+| cdp_help | 511-533 |  |
+| cdp_description | 534-548 |  |

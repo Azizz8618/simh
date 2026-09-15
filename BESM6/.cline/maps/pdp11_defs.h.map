@@ -1,0 +1,612 @@
+=== pdp11_defs.h — 955 строк ===
+Источник: pdp11_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_defs.h -nt .cline/maps/pdp11_defs.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| fpac_t | 395-398 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PDP11_DEFS_H | 0 | 83 |
+| VM_PDP11 | 0 | 86 |
+| STKL_R | 0340                            ... | 98 |
+| STKL_Y | 0400 | 99 |
+| VASIZE | 0200000                         ... | 100 |
+| VAMASK | (VASIZE - 1)                    ... | 101 |
+| MEMSIZE64K | 0200000                         ... | 102 |
+| UNIMEMSIZE | 001000000                       ... | 103 |
+| UNIMASK | (UNIMEMSIZE - 1)                ... | 104 |
+| IOPAGEBASE | 017760000                       ... | 105 |
+| IOPAGESIZE | 000020000                       ... | 106 |
+| IOPAGEMASK | (IOPAGESIZE - 1)                ... | 107 |
+| MAXMEMSIZE | 020000000                       ... | 108 |
+| PAMASK | (MAXMEMSIZE - 1)                ... | 109 |
+| MEMSIZE | (cpu_unit.capac) | 110 |
+| DMASK | 0177777 | 111 |
+| BMASK | 0377 | 112 |
+| MOD_1103 | 0 | 116 |
+| MOD_1104 | 1 | 117 |
+| MOD_1105 | 2 | 118 |
+| MOD_1120 | 3 | 119 |
+| MOD_1123 | 4 | 120 |
+| MOD_1123P | 5 | 121 |
+| MOD_1124 | 6 | 122 |
+| MOD_1134 | 7 | 123 |
+| MOD_1140 | 8 | 124 |
+| MOD_1144 | 9 | 125 |
+| MOD_1145 | 10 | 126 |
+| MOD_1153 | 11 | 127 |
+| MOD_1160 | 12 | 128 |
+| MOD_1170 | 13 | 129 |
+| MOD_1173 | 14 | 130 |
+| MOD_1173B | 15 | 131 |
+| MOD_1183 | 16 | 132 |
+| MOD_1184 | 17 | 133 |
+| MOD_1193 | 18 | 134 |
+| MOD_1194 | 19 | 135 |
+| MOD_T | 20 | 136 |
+| CPUT_03 | (1u << MOD_1103)                ... | 138 |
+| CPUT_04 | (1u << MOD_1104)                ... | 139 |
+| CPUT_05 | (1u << MOD_1105)                ... | 140 |
+| CPUT_20 | (1u << MOD_1120)                ... | 141 |
+| CPUT_23 | (1u << MOD_1123)                ... | 142 |
+| CPUT_23P | (1u << MOD_1123P)               ... | 143 |
+| CPUT_24 | (1u << MOD_1124)                ... | 144 |
+| CPUT_34 | (1u << MOD_1134)                ... | 145 |
+| CPUT_40 | (1u << MOD_1140)                ... | 146 |
+| CPUT_44 | (1u << MOD_1144)                ... | 147 |
+| CPUT_45 | (1u << MOD_1145)                ... | 148 |
+| CPUT_60 | (1u << MOD_1160)                ... | 149 |
+| CPUT_70 | (1u << MOD_1170)                ... | 150 |
+| CPUT_73 | (1u << MOD_1173)                ... | 151 |
+| CPUT_53 | (1u << MOD_1153)                ... | 152 |
+| CPUT_73B | (1u << MOD_1173B)               ... | 153 |
+| CPUT_83 | (1u << MOD_1183)                ... | 154 |
+| CPUT_84 | (1u << MOD_1184)                ... | 155 |
+| CPUT_93 | (1u << MOD_1193)                ... | 156 |
+| CPUT_94 | (1u << MOD_1194)                ... | 157 |
+| CPUT_T | (1u << MOD_T)                   ... | 158 |
+| CPUT_F | (CPUT_23\|CPUT_23P\|CPUT_24)      ... | 160 |
+| CPUT_J | (CPUT_53\|CPUT_73\|CPUT_73B\|  | 161 |
+| CPUT_JB | (CPUT_73B\|CPUT_83\|CPUT_84)      ... | 163 |
+| CPUT_JE | (CPUT_93\|CPUT_94)               ... | 164 |
+| CPUT_JU | (CPUT_84\|CPUT_94)               ... | 165 |
+| CPUT_ALL | 0xFFFFFFFF | 166 |
+| BUS_U | (1u << 0)                       ... | 170 |
+| BUS_Q | (0)                             ... | 171 |
+| OPT_EIS | (1u << 1)                       ... | 172 |
+| OPT_FIS | (1u << 2)                       ... | 173 |
+| OPT_FPP | (1u << 3)                       ... | 174 |
+| OPT_CIS | (1u << 4)                       ... | 175 |
+| OPT_MMU | (1u << 5)                       ... | 176 |
+| OPT_RSRV | (1u << 6)                       ... | 177 |
+| OPT_PAR | (1u << 7)                       ... | 178 |
+| OPT_UBM | (1u << 8)                       ... | 179 |
+| OPT_BVT | (1u << 9)                       ... | 180 |
+| CPUT(x) | ((cpu_type & (x)) != 0) | 182 |
+| CPUO(x) | ((cpu_opt & (x)) != 0) | 183 |
+| UNIBUS | (cpu_opt & BUS_U) | 184 |
+| IS_SDSD | (CPUT_20\|CPUT_F\|CPUT_40\|CPUT_60\|... | 217 |
+| HAS_SR | (CPUT_04\|CPUT_05\|CPUT_20\|CPUT_34... | 218 |
+| HAS_DR | (CPUT_04\|CPUT_05\|CPUT_20\|CPUT_24... | 220 |
+| HAS_RTT | (CPUT_03\|CPUT_04\|CPUT_F\|CPUT_34\|... | 222 |
+| HAS_SXS | (CPUT_03\|CPUT_F\|CPUT_34\|CPUT_40\|... | 224 |
+| HAS_MARK | (CPUT_03\|CPUT_F\|CPUT_34\|CPUT_40\|... | 226 |
+| HAS_SPL | (CPUT_44\|CPUT_45\|CPUT_70\|CPUT_J) | 228 |
+| HAS_MXPY | (CPUT_F\|CPUT_34\|CPUT_40\|CPUT_44\|... | 229 |
+| HAS_MXPS | (CPUT_03\|CPUT_F\|CPUT_34\|CPUT_J\|C... | 231 |
+| HAS_MFPT | (CPUT_F\|CPUT_44\|CPUT_J\|CPUT_T) | 232 |
+| HAS_CSM | (CPUT_44\|CPUT_J) | 233 |
+| HAS_TSWLK | (CPUT_J) | 234 |
+| HAS_PSW | (CPUT_04\|CPUT_05\|CPUT_20\|CPUT_F\|... | 235 |
+| HAS_EXPT | (CPUT_04\|CPUT_05\|CPUT_20) | 237 |
+| HAS_IOSR | (CPUT_04\|CPUT_05) | 238 |
+| HAS_2REG | (CPUT_45\|CPUT_70\|CPUT_J) | 239 |
+| HAS_MMR3 | (CPUT_F\|CPUT_44\|CPUT_45\|CPUT_70\|... | 240 |
+| HAS_MMTR | (CPUT_45\|CPUT_70) | 241 |
+| HAS_STKLR | (CPUT_45\|CPUT_60\|CPUT_70) | 242 |
+| HAS_STKLF | (CPUT_04\|CPUT_05\|CPUT_20\|CPUT_F\|... | 243 |
+| HAS_SID | (CPUT_44\|CPUT_45\|CPUT_70\|CPUT_J) | 245 |
+| HAS_ODD | (CPUT_04\|CPUT_05\|CPUT_20\|CPUT_34... | 246 |
+| HAS_HALT4 | (CPUT_44\|CPUT_45\|CPUT_70\|CPUT_J) | 248 |
+| HAS_JREG4 | (CPUT_03\|CPUT_04\|CPUT_05\|CPUT_20... | 249 |
+| STOP_STKA | (CPUT_03\|CPUT_04\|CPUT_05\|CPUT_20... | 251 |
+| HAS_LTCR | (CPUT_04\|CPUT_05\|CPUT_20\|CPUT_23... | 252 |
+| HAS_LTCM | (CPUT_04\|CPUT_05\|CPUT_20\|CPUT_24... | 255 |
+| MD_KER | 0 | 260 |
+| MD_SUP | 1 | 261 |
+| MD_UND | 2 | 262 |
+| MD_USR | 3 | 263 |
+| READ | 0 | 267 |
+| READC | 1                               ... | 268 |
+| WRITE | 2 | 269 |
+| WRITEC | 3                               ... | 270 |
+| WRITEB | 4 | 271 |
+| PSW_V_C | 0                               ... | 275 |
+| PSW_V_V | 1 | 276 |
+| PSW_V_Z | 2 | 277 |
+| PSW_V_N | 3 | 278 |
+| PSW_V_TBIT | 4                               ... | 279 |
+| PSW_V_IPL | 5                               ... | 280 |
+| PSW_V_FPD | 8                               ... | 281 |
+| PSW_V_RS | 11                              ... | 282 |
+| PSW_V_PM | 12                              ... | 283 |
+| PSW_V_CM | 14                              ... | 284 |
+| PSW_CC | 017 | 285 |
+| PSW_TBIT | (1 << PSW_V_TBIT) | 286 |
+| PSW_PM | (3 << PSW_V_PM) | 287 |
+| FPS_V_C | 0                               ... | 291 |
+| FPS_V_V | 1 | 292 |
+| FPS_V_Z | 2 | 293 |
+| FPS_V_N | 3 | 294 |
+| FPS_V_T | 5                               ... | 295 |
+| FPS_V_L | 6                               ... | 296 |
+| FPS_V_D | 7                               ... | 297 |
+| FPS_V_IC | 8                               ... | 298 |
+| FPS_V_IV | 9                               ... | 299 |
+| FPS_V_IU | 10                              ... | 300 |
+| FPS_V_IUV | 11                              ... | 301 |
+| FPS_V_ID | 14                              ... | 302 |
+| FPS_V_ER | 15                              ... | 303 |
+| PIRQ_PIR1 | 0001000 | 307 |
+| PIRQ_PIR2 | 0002000 | 308 |
+| PIRQ_PIR3 | 0004000 | 309 |
+| PIRQ_PIR4 | 0010000 | 310 |
+| PIRQ_PIR5 | 0020000 | 311 |
+| PIRQ_PIR6 | 0040000 | 312 |
+| PIRQ_PIR7 | 0100000 | 313 |
+| PIRQ_IMP | 0177356                         ... | 314 |
+| PIRQ_RW | 0177000                         ... | 315 |
+| STKLIM_RW | 0177400 | 319 |
+| MMR0_MME | 0000001                         ... | 323 |
+| MMR0_V_PAGE | 1                               ... | 324 |
+| MMR0_M_PAGE | 077                             ... | 325 |
+| MMR0_PAGE | (MMR0_M_PAGE << MMR0_V_PAGE) | 326 |
+| MMR0_IC | 0000200                         ... | 327 |
+| MMR0_MAINT | 0000400                         ... | 328 |
+| MMR0_TENB | 0001000                         ... | 329 |
+| MMR0_TRAP | 0010000                         ... | 330 |
+| MMR0_RO | 0020000                         ... | 331 |
+| MMR0_PL | 0040000                         ... | 332 |
+| MMR0_NR | 0100000                         ... | 333 |
+| MMR0_FREEZE | 0160000                         ... | 334 |
+| MMR0_WR | 0171401                         ... | 335 |
+| MMR3_UDS | 001                             ... | 339 |
+| MMR3_SDS | 002                             ... | 340 |
+| MMR3_KDS | 004                             ... | 341 |
+| MMR3_CSM | 010                             ... | 342 |
+| MMR3_M22E | 020                             ... | 343 |
+| MMR3_BME | 040                             ... | 344 |
+| PAR_18B | 0007777                         ... | 348 |
+| PAR_22B | 0177777                         ... | 349 |
+| PDR_ACF | 0000007                         ... | 353 |
+| PDR_ACS | 0000006                         ... | 354 |
+| PDR_ED | 0000010                         ... | 355 |
+| PDR_W | 0000100                         ... | 356 |
+| PDR_A | 0000200                         ... | 357 |
+| PDR_PLF | 0077400                         ... | 358 |
+| PDR_NOC | 0100000                         ... | 359 |
+| PDR_PRD | 0000003                         ... | 361 |
+| VA_DF | 0017777                         ... | 365 |
+| VA_BN | 0017700                         ... | 366 |
+| VA_V_APF | 13                              ... | 367 |
+| VA_V_DS | 16                              ... | 368 |
+| VA_V_MODE | 17                              ... | 369 |
+| VA_DS | (1u << VA_V_DS)                 ... | 370 |
+| UBM_LNT_LW | 32                              ... | 374 |
+| UBM_V_PN | 13                              ... | 375 |
+| UBM_M_PN | 037 | 376 |
+| UBM_V_OFF | 0                               ... | 377 |
+| UBM_M_OFF | 017777 | 378 |
+| UBM_PAGSIZE | (UBM_M_OFF + 1)                 ... | 379 |
+| UBM_GETPN(x) | (((x) >> UBM_V_PN) & UBM_M_PN) | 380 |
+| UBM_GETOFF(x) | ((x) & UBM_M_OFF) | 381 |
+| CPUE_RED | 0004                            ... | 385 |
+| CPUE_YEL | 0010                            ... | 386 |
+| CPUE_TMO | 0020                            ... | 387 |
+| CPUE_NXM | 0040                            ... | 388 |
+| CPUE_ODD | 0100                            ... | 389 |
+| CPUE_HALT | 0200                            ... | 390 |
+| CPUE_IMP | 0374                            ... | 391 |
+| CSR_V_GO | 0                               ... | 402 |
+| CSR_V_IE | 6                               ... | 403 |
+| CSR_V_DONE | 7                               ... | 404 |
+| CSR_V_BUSY | 11                              ... | 405 |
+| CSR_V_ERR | 15                              ... | 406 |
+| CSR_GO | (1u << CSR_V_GO) | 407 |
+| CSR_IE | (1u << CSR_V_IE) | 408 |
+| CSR_DONE | (1u << CSR_V_DONE) | 409 |
+| CSR_BUSY | (1u << CSR_V_BUSY) | 410 |
+| CSR_ERR | (1u << CSR_V_ERR) | 411 |
+| TRAP_V_RED | 0                               ... | 420 |
+| TRAP_V_ODD | 1                               ... | 421 |
+| TRAP_V_NXM | 2                               ... | 422 |
+| TRAP_V_MME | 3                               ... | 423 |
+| TRAP_V_PAR | 4                               ... | 424 |
+| TRAP_V_PRV | 5                               ... | 425 |
+| TRAP_V_ILL | 6                               ... | 426 |
+| TRAP_V_BPT | 7                               ... | 427 |
+| TRAP_V_IOT | 8                               ... | 428 |
+| TRAP_V_EMT | 9                               ... | 429 |
+| TRAP_V_TRAP | 10                              ... | 430 |
+| TRAP_V_TRC | 11                              ... | 431 |
+| TRAP_V_YEL | 12                              ... | 432 |
+| TRAP_V_PWRFL | 13                              ... | 433 |
+| TRAP_V_FPE | 14                              ... | 434 |
+| TRAP_V_MAX | 15                              ... | 435 |
+| ABRT_V_BKPT | 16                              ... | 436 |
+| TRAP_RED | (1u << TRAP_V_RED) | 437 |
+| TRAP_ODD | (1u << TRAP_V_ODD) | 438 |
+| TRAP_MME | (1u << TRAP_V_MME) | 439 |
+| TRAP_NXM | (1u << TRAP_V_NXM) | 440 |
+| TRAP_PAR | (1u << TRAP_V_PAR) | 441 |
+| TRAP_PRV | (1u << TRAP_V_PRV) | 442 |
+| TRAP_ILL | (1u << TRAP_V_ILL) | 443 |
+| TRAP_BPT | (1u << TRAP_V_BPT) | 444 |
+| TRAP_IOT | (1u << TRAP_V_IOT) | 445 |
+| TRAP_EMT | (1u << TRAP_V_EMT) | 446 |
+| TRAP_TRAP | (1u << TRAP_V_TRAP) | 447 |
+| TRAP_TRC | (1u << TRAP_V_TRC) | 448 |
+| TRAP_YEL | (1u << TRAP_V_YEL) | 449 |
+| TRAP_PWRFL | (1u << TRAP_V_PWRFL) | 450 |
+| TRAP_FPE | (1u << TRAP_V_FPE) | 451 |
+| TRAP_INT | (1u << TRAP_V_MAX) | 452 |
+| TRAP_ALL | ((1u << TRAP_V_MAX) - 1)        ... | 453 |
+| ABRT_BKPT | (1u << ABRT_V_BKPT) | 454 |
+| VEC_RED | 0004                            ... | 456 |
+| VEC_ODD | 0004 | 457 |
+| VEC_MME | 0250 | 458 |
+| VEC_NXM | 0004 | 459 |
+| VEC_PAR | 0114 | 460 |
+| VEC_PRV | 0004 | 461 |
+| VEC_ILL | 0010 | 462 |
+| VEC_BPT | 0014 | 463 |
+| VEC_IOT | 0020 | 464 |
+| VEC_EMT | 0030 | 465 |
+| VEC_TRAP | 0034 | 466 |
+| VEC_TRC | 0014 | 467 |
+| VEC_YEL | 0004 | 468 |
+| VEC_PWRFL | 0024 | 469 |
+| VEC_FPE | 0244 | 470 |
+| STOP_HALT | (TRAP_V_MAX + 1)                ... | 474 |
+| STOP_IBKPT | (TRAP_V_MAX + 2)                ... | 475 |
+| STOP_WAIT | (TRAP_V_MAX + 3)                ... | 476 |
+| STOP_VECABORT | (TRAP_V_MAX + 4)                ... | 477 |
+| STOP_SPABORT | (TRAP_V_MAX + 5)                ... | 478 |
+| STOP_RQ | (TRAP_V_MAX + 6)                ... | 479 |
+| STOP_SANITY | (TRAP_V_MAX + 7)                ... | 480 |
+| STOP_DTOFF | (TRAP_V_MAX + 8)                ... | 481 |
+| IORETURN(f,v) | ((f)? (v):                      ... | 482 |
+| TMR_CLK | 0                               ... | 488 |
+| DZ_MUXES | 4                               ... | 492 |
+| VH_MUXES | 4                               ... | 493 |
+| DLX_LINES | 16                              ... | 494 |
+| DLCJ_LINES | 31                              ... | 495 |
+| DCX_LINES | 16                              ... | 496 |
+| DUP_LINES | 8                               ... | 497 |
+| KMC_UNITS | 2                               ... | 498 |
+| INITIAL_KMCS | 0                               ... | 499 |
+| MT_MAXFR | (1 << 16)                       ... | 500 |
+| DIB_MAX | 100                             ... | 501 |
+| DEV_V_UBUS | (DEV_V_UF + 0)                  ... | 503 |
+| DEV_V_QBUS | (DEV_V_UF + 1)                  ... | 504 |
+| DEV_V_Q18 | (DEV_V_UF + 2)                  ... | 505 |
+| DEV_V_MBUS | (DEV_V_UF + 3)                  ... | 506 |
+| DEV_V_NOAUTOCON | (DEV_V_UF + 4)                  ... | 507 |
+| DEV_V_FFUF | (DEV_V_UF + 5)                  ... | 508 |
+| DEV_UBUS | (1u << DEV_V_UBUS) | 509 |
+| DEV_QBUS | (1u << DEV_V_QBUS) | 510 |
+| DEV_Q18 | (1u << DEV_V_Q18) | 511 |
+| DEV_MBUS | (1u << DEV_V_MBUS) | 512 |
+| DEV_NOAUTOCON | (1u << DEV_V_NOAUTOCON) | 513 |
+| DEV_RDX | 8                               ... | 515 |
+| VEC_DEVMAX | 4                               ... | 519 |
+| IOBA_AUTO | (0)                             ... | 549 |
+| IOBA_CTL | (IOPAGEBASE + 017520)           ... | 554 |
+| IOLN_CTL | 010 | 555 |
+| IOBA_UCA | (IOPAGEBASE + 007770)           ... | 557 |
+| IOLN_UCA | 006 | 558 |
+| IOBA_UCB | (IOPAGEBASE + 007760)           ... | 559 |
+| IOLN_UCB | 006 | 560 |
+| IOBA_UBM | (IOPAGEBASE + 010200)           ... | 561 |
+| IOLN_UBM | (UBM_LNT_LW * sizeof (int32)) | 562 |
+| IOBA_MMR3 | (IOPAGEBASE + 012516)           ... | 563 |
+| IOLN_MMR3 | 002 | 564 |
+| IOBA_TTI | (IOPAGEBASE + 017560)           ... | 565 |
+| IOLN_TTI | 004 | 566 |
+| IOBA_TTO | (IOPAGEBASE + 017564)           ... | 567 |
+| IOLN_TTO | 004 | 568 |
+| IOBA_SR | (IOPAGEBASE + 017570)           ... | 569 |
+| IOLN_SR | 002 | 570 |
+| IOBA_MMR012 | (IOPAGEBASE + 017572)           ... | 571 |
+| IOLN_MMR012 | 006 | 572 |
+| IOBA_GPR | (IOPAGEBASE + 017700)           ... | 573 |
+| IOLN_GPR | 010 | 574 |
+| IOBA_UCTL | (IOPAGEBASE + 017730)           ... | 575 |
+| IOLN_UCTL | 010 | 576 |
+| IOBA_CPU | (IOPAGEBASE + 017740)           ... | 577 |
+| IOLN_CPU | 036 | 578 |
+| IOBA_PSW | (IOPAGEBASE + 017776)           ... | 579 |
+| IOLN_PSW | 002 | 580 |
+| IOBA_UIPDR | (IOPAGEBASE + 017600)           ... | 581 |
+| IOLN_UIPDR | 020 | 582 |
+| IOBA_UDPDR | (IOPAGEBASE + 017620) | 583 |
+| IOLN_UDPDR | 020 | 584 |
+| IOBA_UIPAR | (IOPAGEBASE + 017640) | 585 |
+| IOLN_UIPAR | 020 | 586 |
+| IOBA_UDPAR | (IOPAGEBASE + 017660) | 587 |
+| IOLN_UDPAR | 020 | 588 |
+| IOBA_SUP | (IOPAGEBASE + 012200)           ... | 589 |
+| IOLN_SUP | 0100 | 590 |
+| IOBA_KIPDR | (IOPAGEBASE + 012300)           ... | 591 |
+| IOLN_KIPDR | 020 | 592 |
+| IOBA_KDPDR | (IOPAGEBASE + 012320) | 593 |
+| IOLN_KDPDR | 020 | 594 |
+| IOBA_KIPAR | (IOPAGEBASE + 012340) | 595 |
+| IOLN_KIPAR | 020 | 596 |
+| IOBA_KDPAR | (IOPAGEBASE + 012360) | 597 |
+| IOLN_KDPAR | 020 | 598 |
+| IPL_HLVL | 8                               ... | 604 |
+| IPL_HMIN | 4                               ... | 605 |
+| INT_V_PIR7 | 0                               ... | 607 |
+| INT_V_UCA | 1 | 608 |
+| INT_V_PIR6 | 0                               ... | 610 |
+| INT_V_CLK | 1 | 611 |
+| INT_V_PCLK | 2 | 612 |
+| INT_V_DTA | 3 | 613 |
+| INT_V_TA | 4 | 614 |
+| INT_V_CR | 5                               ... | 615 |
+| INT_V_KWV11 | 6 | 616 |
+| INT_V_KWV11_ST2 | 7 | 617 |
+| INT_V_PIR5 | 0                               ... | 619 |
+| INT_V_RK | 1 | 620 |
+| INT_V_RL | 2 | 621 |
+| INT_V_RX | 3 | 622 |
+| INT_V_TM | 4 | 623 |
+| INT_V_RHA | 5 | 624 |
+| INT_V_TS | 6 | 625 |
+| INT_V_HK | 7 | 626 |
+| INT_V_RQ | 8 | 627 |
+| INT_V_DZRX | 9 | 628 |
+| INT_V_DZTX | 10 | 629 |
+| INT_V_TQ | 11 | 630 |
+| INT_V_RY | 12 | 631 |
+| INT_V_XQ | 13 | 632 |
+| INT_V_XU | 14 | 633 |
+| INT_V_RHB | 15 | 634 |
+| INT_V_RF | 16 | 635 |
+| INT_V_RC | 17 | 636 |
+| INT_V_RHC | 18 | 637 |
+| INT_V_DMCRX | 19 | 638 |
+| INT_V_DMCTX | 20 | 639 |
+| INT_V_DUPRX | 21 | 640 |
+| INT_V_DUPTX | 22 | 641 |
+| INT_V_KMCA | 23 | 642 |
+| INT_V_KMCB | 24 | 643 |
+| INT_V_UCB | 25 | 644 |
+| INT_V_CH | 26 | 645 |
+| INT_V_NG | 27 | 646 |
+| INT_V_DHRX | 28 | 647 |
+| INT_V_DHTX | 29 | 648 |
+| INT_V_RHD | 30 | 649 |
+| INT_V_RR | 31 | 650 |
+| INT_V_PIR4 | 0                               ... | 652 |
+| INT_V_TTI | 1 | 653 |
+| INT_V_TTO | 2 | 654 |
+| INT_V_PTR | 3 | 655 |
+| INT_V_PTP | 4 | 656 |
+| INT_V_LPT | 5 | 657 |
+| INT_V_VHRX | 6 | 658 |
+| INT_V_VHTX | 7 | 659 |
+| INT_V_CD | 8                               ... | 660 |
+| INT_V_DLI | 9 | 661 |
+| INT_V_DLO | 10 | 662 |
+| INT_V_DCI | 11 | 663 |
+| INT_V_DCO | 12 | 664 |
+| INT_V_VTST | 13 | 667 |
+| INT_V_VTLP | 14 | 668 |
+| INT_V_VTCH | 15 | 669 |
+| INT_V_VTNM | 16 | 670 |
+| INT_V_LK | 17 | 671 |
+| INT_V_TDRX | 18 | 672 |
+| INT_V_TDTX | 19 | 673 |
+| INT_V_DLCJI | 20 | 674 |
+| INT_V_DLCJO | 21 | 675 |
+| INT_V_PIR3 | 0                               ... | 677 |
+| INT_V_PIR2 | 0                               ... | 678 |
+| INT_V_PIR1 | 0                               ... | 679 |
+| INT_PIR7 | (1u << INT_V_PIR7) | 681 |
+| INT_UCB | (1u << INT_V_UCB) | 682 |
+| INT_PIR6 | (1u << INT_V_PIR6) | 683 |
+| INT_CLK | (1u << INT_V_CLK) | 684 |
+| INT_PCLK | (1u << INT_V_PCLK) | 685 |
+| INT_DTA | (1u << INT_V_DTA) | 686 |
+| INT_TA | (1u << INT_V_TA) | 687 |
+| INT_CR | (1u << INT_V_CR) | 688 |
+| INT_KWV11 | (1u << INT_V_KWV11) | 689 |
+| INT_KWV11_ST2 | (1u << INT_V_KWV11_ST2) | 690 |
+| INT_PIR5 | (1u << INT_V_PIR5) | 691 |
+| INT_RK | (1u << INT_V_RK) | 692 |
+| INT_RL | (1u << INT_V_RL) | 693 |
+| INT_RX | (1u << INT_V_RX) | 694 |
+| INT_TM | (1u << INT_V_TM) | 695 |
+| INT_RHA | (1u << INT_V_RHA) | 696 |
+| INT_RR | (1u << INT_V_RR) | 697 |
+| INT_TS | (1u << INT_V_TS) | 698 |
+| INT_HK | (1u << INT_V_HK) | 699 |
+| INT_RQ | (1u << INT_V_RQ) | 700 |
+| INT_DZRX | (1u << INT_V_DZRX) | 701 |
+| INT_DZTX | (1u << INT_V_DZTX) | 702 |
+| INT_TQ | (1u << INT_V_TQ) | 703 |
+| INT_RY | (1u << INT_V_RY) | 704 |
+| INT_XQ | (1u << INT_V_XQ) | 705 |
+| INT_XU | (1u << INT_V_XU) | 706 |
+| INT_RHB | (1u << INT_V_RHB) | 707 |
+| INT_RF | (1u << INT_V_RF) | 708 |
+| INT_RC | (1u << INT_V_RC) | 709 |
+| INT_RHC | (1u << INT_V_RHC) | 710 |
+| INT_DMCRX | (1u << INT_V_DMCRX) | 711 |
+| INT_DMCTX | (1u << INT_V_DMCTX) | 712 |
+| INT_KMCA | (1u << INT_V_KMCA) | 713 |
+| INT_KMCB | (1u << INT_V_KMCB) | 714 |
+| INT_DUPRX | (1u << INT_V_DUPRX) | 715 |
+| INT_DUPTX | (1u << INT_V_DUPTX) | 716 |
+| INT_UCA | (1u << INT_V_UCA) | 717 |
+| INT_PIR4 | (1u << INT_V_PIR4) | 718 |
+| INT_TTI | (1u << INT_V_TTI) | 719 |
+| INT_TTO | (1u << INT_V_TTO) | 720 |
+| INT_PTR | (1u << INT_V_PTR) | 721 |
+| INT_PTP | (1u << INT_V_PTP) | 722 |
+| INT_LPT | (1u << INT_V_LPT) | 723 |
+| INT_VHRX | (1u << INT_V_VHRX) | 724 |
+| INT_VHTX | (1u << INT_V_VHTX) | 725 |
+| INT_CD | (1u << INT_V_CD) | 726 |
+| INT_DLI | (1u << INT_V_DLI) | 727 |
+| INT_DLO | (1u << INT_V_DLO) | 728 |
+| INT_DCI | (1u << INT_V_DCI) | 729 |
+| INT_DCO | (1u << INT_V_DCO) | 730 |
+| INT_VTLP | (1u << INT_V_VTLP) | 731 |
+| INT_VTST | (1u << INT_V_VTST) | 732 |
+| INT_VTCH | (1u << INT_V_VTCH) | 733 |
+| INT_VTNM | (1u << INT_V_VTNM) | 734 |
+| INT_LK | (1u << INT_V_LK) | 735 |
+| INT_PIR3 | (1u << INT_V_PIR3) | 736 |
+| INT_PIR2 | (1u << INT_V_PIR2) | 737 |
+| INT_PIR1 | (1u << INT_V_PIR1) | 738 |
+| INT_TDRX | (1u << INT_V_TDRX) | 739 |
+| INT_TDTX | (1u << INT_V_TDTX) | 740 |
+| INT_CH | (1u << INT_V_CH) | 741 |
+| INT_NG | (1u << INT_V_NG) | 742 |
+| INT_DLCJI | (1u << INT_V_DLCJI) | 743 |
+| INT_DLCJO | (1u << INT_V_DLCJO) | 744 |
+| INT_DHRX | (1u << INT_V_DHRX) | 745 |
+| INT_DHTX | (1u << INT_V_DHTX) | 746 |
+| INT_RHD | (1u << INT_V_RHD) | 747 |
+| INT_INTERNAL7 | (INT_PIR7) | 749 |
+| INT_INTERNAL6 | (INT_PIR6 \| INT_CLK) | 750 |
+| INT_INTERNAL5 | (INT_PIR5) | 751 |
+| INT_INTERNAL4 | (INT_PIR4) | 752 |
+| INT_INTERNAL3 | (INT_PIR3) | 753 |
+| INT_INTERNAL2 | (INT_PIR2) | 754 |
+| INT_INTERNAL1 | (INT_PIR1) | 755 |
+| IPL_UCB | 7                               ... | 757 |
+| IPL_MB | 7 | 758 |
+| IPL_CLK | 6 | 759 |
+| IPL_PCLK | 6 | 760 |
+| IPL_DTA | 6 | 761 |
+| IPL_TA | 6 | 762 |
+| IPL_CR | 6 | 763 |
+| IPL_KWV11 | 6 | 764 |
+| IPL_KWV11_ST2 | 6 | 765 |
+| IPL_RK | 5 | 766 |
+| IPL_RL | 5 | 767 |
+| IPL_RX | 5 | 768 |
+| IPL_TM | 5 | 769 |
+| IPL_RHA | 5 | 770 |
+| IPL_RR | 5 | 771 |
+| IPL_TS | 5 | 772 |
+| IPL_HK | 5 | 773 |
+| IPL_RQ | 5 | 774 |
+| IPL_DZRX | 5 | 775 |
+| IPL_DZTX | 5 | 776 |
+| IPL_TQ | 5 | 777 |
+| IPL_RY | 5 | 778 |
+| IPL_XQ | 5 | 779 |
+| IPL_XU | 5 | 780 |
+| IPL_CH | 5 | 781 |
+| IPL_RHB | 5 | 782 |
+| IPL_RF | 5 | 783 |
+| IPL_RC | 5 | 784 |
+| IPL_RHC | 5 | 785 |
+| IPL_RHD | 5 | 786 |
+| IPL_DMCRX | 5 | 787 |
+| IPL_DMCTX | 5 | 788 |
+| IPL_KMCA | 5 | 789 |
+| IPL_KMCB | 5 | 790 |
+| IPL_DUPRX | 5 | 791 |
+| IPL_DUPTX | 5 | 792 |
+| IPL_UCA | 5 | 793 |
+| IPL_NG | 5 | 794 |
+| IPL_DHRX | 5 | 795 |
+| IPL_DHTX | 5 | 796 |
+| IPL_PTR | 4 | 797 |
+| IPL_PTP | 4 | 798 |
+| IPL_TTI | 4 | 799 |
+| IPL_TTO | 4 | 800 |
+| IPL_LPT | 4 | 801 |
+| IPL_VHRX | 4 | 802 |
+| IPL_VHTX | 4 | 803 |
+| IPL_CD | 4 | 804 |
+| IPL_DLI | 4 | 805 |
+| IPL_DLO | 4 | 806 |
+| IPL_DCI | 4 | 807 |
+| IPL_DCO | 4 | 808 |
+| IPL_VTLP | 4 | 809 |
+| IPL_VTST | 4 | 810 |
+| IPL_VTCH | 4 | 811 |
+| IPL_VTNM | 4 | 812 |
+| IPL_LK | 4           /* XXX just a guess */ | 813 |
+| IPL_TDRX | 4 | 814 |
+| IPL_TDTX | 4 | 815 |
+| IPL_DLCJI | 4 | 816 |
+| IPL_DLCJO | 4 | 817 |
+| IPL_PIR7 | 7 | 819 |
+| IPL_PIR6 | 6 | 820 |
+| IPL_PIR5 | 5 | 821 |
+| IPL_PIR4 | 4 | 822 |
+| IPL_PIR3 | 3 | 823 |
+| IPL_PIR2 | 2 | 824 |
+| IPL_PIR1 | 1 | 825 |
+| VEC_AUTO | (0)                             ... | 829 |
+| VEC_FLOAT | (0)                             ... | 830 |
+| VEC_PIRQ | 0240 | 833 |
+| VEC_TTI | 0060 | 834 |
+| VEC_TTO | 0064 | 835 |
+| VEC_UCA | 0300 | 836 |
+| VEC_UCB | 0310 | 837 |
+| IVCL(dv) | ((IPL_##dv * 32) + INT_V_##dv) | 841 |
+| IREQ(dv) | int_req[IPL_##dv] | 842 |
+| SET_INT(dv) | int_req[IPL_##dv] = int_req[IPL_... | 843 |
+| CLR_INT(dv) | int_req[IPL_##dv] = int_req[IPL_... | 844 |
+| INT_IS_SET(dv) | (int_req[IPL_##dv] & (INT_##dv)) | 845 |
+| MBA_NUM | 4                               ... | 849 |
+| MBA_AUTO | (uint32)0xFFFFFFFF              ... | 850 |
+| MBA_RMASK | 037                             ... | 851 |
+| MBE_NXD | 1                               ... | 852 |
+| MBE_NXR | 2                               ... | 853 |
+| MBE_GOE | 3                               ... | 854 |
+| ABORT(val) | longjmp (save_env, (val)) | 861 |
+| SP | R[6] | 862 |
+| PC | R[7] | 863 |
+| BPT_PCVIR | SWMASK('E') | 866 |
+| BPT_PCPHY | SWMASK('P') | 867 |
+| BPT_RDVIR | SWMASK('R') | 868 |
+| BPT_RDPHY | SWMASK('S') | 869 |
+| BPT_WRVIR | SWMASK('W') | 870 |
+| BPT_WRPHY | SWMASK('X') | 871 |
+| BPT_RWVIR | (BPT_RDVIR \| BPT_WRVIR) | 875 |
+| BPT_RWPHY | (BPT_RDPHY \| BPT_WRPHY) | 876 |
+| BPT_SUMM_PC | (sim_brk_summ & (BPT_PCVIR \| BPT... | 880 |
+| BPT_SUMM_RD | (sim_brk_summ & (BPT_RDVIR \| BPT... | 881 |
+| BPT_SUMM_WR | (sim_brk_summ & (BPT_WRVIR \| BPT... | 882 |
+| BPT_SUMM_RW | (sim_brk_summ & (BPT_RWVIR \| BPT... | 883 |
+| INIMODEL | MOD_1105 | 921 |
+| INIOPTNS | SOP_1105 | 922 |
+| INIMEMSIZE | 00040000                       /... | 923 |
+| ADDR_IS_MEM(x) | (((uint32) (x)) < uc15_memsize) | 924 |
+| RdMemW(pa) | uc15_RdMemW (pa) | 926 |
+| RdMemB(pa) | uc15_RdMemB (pa) | 927 |
+| WrMemW(pa,d) | uc15_WrMemW (pa, d) | 928 |
+| WrMemB(pa, | d)   uc15_WrMemB (pa, d) | 929 |
+| INIMODEL | MOD_1173 | 941 |
+| INIOPTNS | SOP_1173 | 942 |
+| INIMEMSIZE | 001000000                       ... | 943 |
+| ADDR_IS_MEM(x) | (((t_addr) (x)) < MEMSIZE) | 944 |
+| RdMemW(pa) | (M[(pa) >> 1]) | 946 |
+| RdMemB(pa) | ((((pa) & 1)? M[(pa) >> 1] >> 8:... | 947 |
+| WrMemW(pa,d) | M[(pa) >> 1] = (d) | 948 |
+| WrMemB(pa,d) | M[(pa) >> 1] = ((pa) & 1)?  | 949 |
+

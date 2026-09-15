@@ -1,0 +1,179 @@
+=== is1000_sysdev.c — 1060 строк ===
+Источник: is1000_sysdev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test is1000_sysdev.c -nt .cline/maps/is1000_sysdev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| boot_code_filename | 38 | |
+| tmr_int | 97 | |
+| clk_unit | 98 | |
+| tmr_poll | 99 | |
+| rom | 100 | |
+| vc_sel | 117 | |
+| dma_csr | 121 | |
+| dma_txc | 122 | |
+| dma_addr | 123 | |
+| int_unmask | 264 | |
+| TRUE | 311 | |
+| ma | 325 | |
+| ma | 359 | |
+| ba | 363 | |
+| bc | 364 | |
+| ma | 393 | |
+| ma | 427 | |
+| ba | 431 | |
+| bc | 432 | |
+| val | 461 | |
+| SET_IRQL | 492 | |
+| val | 493 | |
+| SET_IRQL | 524 | |
+| ka_cfgtst | 529 | |
+| val | 540 | |
+| val | 584 | |
+| return | 629 | |
+| return | 710 | |
+| return | 730 | |
+| val | 738 | |
+| val | 784 | |
+| return | 832 | |
+| p2 | 844 | |
+| in_ie | 855 | |
+| in_ie | 864 | |
+| cc | 865 | |
+| temp | 872 | |
+| gbuf | 899 | |
+| PC | 914 | |
+| PSL | 915 | |
+| conisp | 916 | |
+| conpc | 917 | |
+| conpsl | 918 | |
+| SCPE_OK | 926 | |
+| ka_hltcod | 933 | |
+| ka_cfgtst | 934 | |
+| ka_mapbase | 935 | |
+| ka_boff | 936 | |
+| ka_mser | 937 | |
+| ka_mear | 938 | |
+| ka_tmr | 939 | |
+| sim_vm_cmd | 940 | |
+| SCPE_OK | 941 | |
+| devices" | 946 | |
+| uptr->buf | 971 | |
+| uptr->pos | 973 | |
+| dz_csr | 974 | |
+| SCPE_OK | 976 | |
+| dz_csr | 996 | |
+| uptr->pos | 998 | |
+| SCPE_OK | 999 | |
+| dz_unit | 1005 | |
+| dz_unit | 1006 | |
+| dz_csr | 1007 | |
+| SCPE_OK | 1010 | |
+| SCPE_OK | 1025 | |
+| terminal" | 1030 | |
+| SCPE_OK | 1035 | |
+| SCPE_OK | 1040 | |
+| SCPE_ARG | 1045 | |
+| SCPE_OK | 1051 | |
+| SCPE_OK | 1059 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CFGT_MEM | 0x003F                          ... | 52 |
+| CFGT_V_VID | 6 | 53 |
+| CFGT_M_VID | 0x3 | 54 |
+| CFGT_VID | (CFGT_M_VID << CFGT_V_VID)      ... | 55 |
+| CFGT_L3C | 0x0100                          ... | 56 |
+| CFGT_V_SIM | 9 | 57 |
+| CFGT_M_SIM | 0x3F | 58 |
+| CFGT_SIM | (CFGT_M_SIM << CFGT_V_SIM)      ... | 59 |
+| PARCTL_CPEN | 0x00000001                      ... | 63 |
+| PARCTL_REV | 0x000000F0 | 64 |
+| PARCTL_NPEN | 0x00000100                      ... | 65 |
+| PARCTL_NPERR | 0x00000200                      ... | 66 |
+| PARCTL_NMAP | 0x00000400 | 67 |
+| PARCTL_SPEN | 0x00010000                      ... | 68 |
+| PARCTL_SPERR | 0x00020000                      ... | 69 |
+| PARCTL_SMAP | 0x00040000 | 70 |
+| PARCTL_INVEN | 0x01000000 | 71 |
+| PARCTL_AGS | 0x02000000                      ... | 72 |
+| PARCTL_ADP | 0x80000000 | 73 |
+| PARCTL_RD | 0x830707F1 | 74 |
+| PARCTL_WR | 0x01010101 | 75 |
+| MSER_WWP | 0x00000002                      ... | 79 |
+| ROM_VEC | 0x8                             ... | 81 |
+| DMANMAPR | 32768                           ... | 85 |
+| DMAMAP_VLD | 0x80000000                      ... | 86 |
+| DMAMAP_PAG | 0x0000FFFF                      ... | 87 |
+| CSR_XDONE | 0x01 | 89 |
+| CSR_RDONE | 0x02 | 90 |
+| TMXR_MULT | 1                               ... | 91 |
+| TTIBUF_VLD | 0x8000                          ... | 92 |
+| TTIBUF_OVR | 0x4000                          ... | 93 |
+| TTIBUF_FRM | 0x2000                          ... | 94 |
+| TTIBUF_RBR | 0x0400                          ... | 95 |
+| DBG_REG | 0x0001                          ... | 190 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eval_int | 226-241 |  |
+| if | 242-251 |  |
+| for | 252-260 |  |
+| get_vector | 261-265 |  |
+| if | 266-269 |  |
+| if | 270-272 |  |
+| for | 273-288 |  |
+| dma_map_addr | 289-290 |  |
+| if | 291-321 |  |
+| Map_ReadB | 322-328 |  |
+| if | 329-355 |  |
+| Map_ReadW | 356-364 |  |
+| if | 365-389 |  |
+| Map_WriteB | 390-396 |  |
+| if | 397-423 |  |
+| Map_WriteW | 424-432 |  |
+| if | 433-457 |  |
+| dz_rd | 458-462 |  |
+| switch | 463-495 |  |
+| dz_wr | 496-499 |  |
+| switch | 500-526 |  |
+| cfg_rd | 527-531 |  |
+| led_wr | 532-537 |  |
+| ReadIPR | 538-541 |  |
+| switch | 542-588 |  |
+| WriteIPR | 589-590 |  |
+| switch | 591-665 |  |
+| ReadReg | 666-668 |  |
+| for | 669-684 |  |
+| ReadRegU | 685-699 |  |
+| WriteReg | 700-703 |  |
+| for | 704-722 |  |
+| WriteRegU | 723-734 |  |
+| ka_rd | 735-739 |  |
+| switch | 740-786 |  |
+| ka_wr | 787-790 |  |
+| switch | 791-834 |  |
+| sysd_hlt_enb | 835-841 |  |
+| machine_check | 842-845 |  |
+| if | 846-869 |  |
+| con_halt | 870-896 |  |
+| is1000_boot | 897-909 |  |
+| cpu_boot | 910-920 |  |
+| if | 921-930 |  |
+| sysd_reset | 931-943 |  |
+| sysd_description | 944-953 |  |
+| tti_svc | 954-964 |  |
+| if | 965-983 |  |
+| tto_svc | 984-989 |  |
+| if | 990-1001 |  |
+| dz_reset | 1002-1012 |  |
+| dz_help | 1013-1027 |  |
+| dz_description | 1028-1032 |  |
+| auto_config | 1033-1037 |  |
+| build_dib_tab | 1038-1042 |  |
+| cpu_set_model | 1043-1047 |  |
+| cpu_print_model | 1048-1053 |  |
+| cpu_model_help | 1054-1060 |  |

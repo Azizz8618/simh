@@ -1,0 +1,159 @@
+=== pdp11_dz.c — 1036 строк ===
+Источник: pdp11_dz.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_dz.c -nt .cline/maps/pdp11_dz.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dz_charsizes | 151 | |
+| dz_parity | 154 | |
+| dz_stopbits | 155 | |
+| bitdefs | 379 | |
+| SCPE_OK | 437 | |
+| bitdefs | 443 | |
+| lineconfig | 445 | |
+| lp | 446 | |
+| SCPE_OK | 545 | |
+| dz | 561 | |
+| SCPE_OK | 588 | |
+| SCPE_OK | 596 | |
+| ret | 603 | |
+| ret | 613 | |
+| lp | 621 | |
+| return | 657 | |
+| dz | 664 | |
+| return | 686 | |
+| return | 699 | |
+| return | 707 | |
+| dz | 712 | |
+| return | 731 | |
+| return | 740 | |
+| dz | 745 | |
+| dz_scnt | 767 | |
+| dz_tdr | 772 | |
+| SCPE_OK | 782 | |
+| dz | 820 | |
+| SCPE_OK | 858 | |
+| dz | 865 | |
+| newln | 893 | |
+| dz_desc.lines | 922 | |
+| gbuf | 931 | |
+| ln | 932 | |
+| ln | 950 | |
+| SCPE_OK | 971 | |
+| SCPE_OK | 1012 | |
+| SCPE_OK | 1030 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RANK_DZ | 0                               ... | 64 |
+| DZ_8B_DFLT | 0 | 65 |
+| DZ_8B_DFLT | TT_MODE_8B | 69 |
+| DZ_8B_DFLT | TT_MODE_8B | 73 |
+| DZ_MUXES | 1 | 79 |
+| MAX_DZ_MUXES | 32 | 82 |
+| DZ_LINES | (UNIBUS ? 8 : 4)                ... | 84 |
+| DZ_MAXMUX | (dz_desc.lines/DZ_LINES - 1)    ... | 90 |
+| DZ_LNOMASK | (DZ_LINES - 1)                  ... | 91 |
+| DZ_LMASK | ((1 << DZ_LINES) - 1)           ... | 92 |
+| DZ_SILO_ALM | 16                              ... | 93 |
+| CSR_MAINT | 0000010                         ... | 97 |
+| CSR_CLR | 0000020                         ... | 98 |
+| CSR_MSE | 0000040                         ... | 99 |
+| CSR_RIE | 0000100                         ... | 100 |
+| CSR_RDONE | 0000200                         ... | 101 |
+| CSR_V_TLINE | 8                               ... | 102 |
+| CSR_TLINE | (DZ_LNOMASK << CSR_V_TLINE) | 103 |
+| CSR_SAE | 0010000                         ... | 104 |
+| CSR_SA | 0020000                         ... | 105 |
+| CSR_TIE | 0040000                         ... | 106 |
+| CSR_TRDY | 0100000                         ... | 107 |
+| CSR_RW | (CSR_MSE \| CSR_RIE \| CSR_SAE \| C... | 108 |
+| CSR_MBZ | (0004003 \| CSR_CLR \| CSR_MAINT) | 109 |
+| CSR_GETTL(x) | (((x) >> CSR_V_TLINE) & DZ_LNOMASK) | 111 |
+| CSR_PUTTL(x,y) | x = ((x) & ~CSR_TLINE) \| (((y) &... | 112 |
+| RBUF_CHAR | 0000377                         ... | 132 |
+| RBUF_V_RLINE | 8                               ... | 133 |
+| RBUF_PARE | 0010000                         ... | 134 |
+| RBUF_FRME | 0020000                         ... | 135 |
+| RBUF_OVRE | 0040000                         ... | 136 |
+| RBUF_VALID | 0100000                         ... | 137 |
+| RBUF_MBZ | 0004000 | 138 |
+| LPR_V_LINE | 0                               ... | 159 |
+| LPR_V_SPEED | 8                               ... | 160 |
+| LPR_M_SPEED | 0007400                         ... | 161 |
+| LPR_V_CHARSIZE | 3                               ... | 162 |
+| LPR_M_CHARSIZE | 0000030                         ... | 163 |
+| LPR_V_STOPBITS | 5                               ... | 164 |
+| LPR_V_PARENB | 6                               ... | 165 |
+| LPR_V_PARODD | 7                               ... | 166 |
+| LPR_GETSPD(x) | dz_baudrates[((x) & LPR_M_SPEED)... | 167 |
+| LPR_GETCHARSIZE(x) | dz_charsizes[((x) & LPR_M_CHARSI... | 168 |
+| LPR_GETPARITY(x) | dz_parity[(((x) >> LPR_V_PARENB)... | 169 |
+| LPR_GETSTOPBITS(x) | dz_stopbits[(((x) >> LPR_V_STOPB... | 170 |
+| LPR_LPAR | 0007770                         ... | 171 |
+| LPR_RCVE | 0010000                         ... | 172 |
+| LPR_GETLN(x) | (((x) >> LPR_V_LINE) & DZ_LNOMASK) | 173 |
+| TCR_V_XMTE | 0                               ... | 189 |
+| TCR_V_DTR | 8                               ... | 190 |
+| MSR_V_RI | 0                               ... | 200 |
+| MSR_V_CD | 8                               ... | 201 |
+| TDR_CHAR | 0000377                         ... | 211 |
+| TDR_V_TBR | 8                               ... | 212 |
+| DBG_REG | 0x0001                          ... | 240 |
+| DBG_INT | 0x0002                          ... | 241 |
+| DBG_XMT | TMXR_DBG_XMT                    ... | 242 |
+| DBG_RCV | TMXR_DBG_RCV                    ... | 243 |
+| DBG_RET | TMXR_DBG_RET                    ... | 244 |
+| DBG_MDM | TMXR_DBG_MDM                    ... | 245 |
+| DBG_CFG | TMXR_DBG_CFG                    ... | 246 |
+| DBG_CON | TMXR_DBG_CON                    ... | 247 |
+| DBG_TRC | TMXR_DBG_TRC                    ... | 248 |
+| DBG_ASY | TMXR_DBG_ASY                    ... | 249 |
+| IOLN_DZ | 010 | 298 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dz_rd | 376-383 |  |
+| switch | 384-439 |  |
+| dz_wr | 440-454 |  |
+| switch | 455-558 |  |
+| dz_svc | 559-565 |  |
+| if | 566-590 |  |
+| dz_xmt_svc | 591-600 |  |
+| dz_getc | 601-617 |  |
+| dz_update_rcvi | 618-622 |  |
+| for | 623-661 |  |
+| dz_update_xmti | 662-665 |  |
+| for | 666-690 |  |
+| dz_clr_rxint | 691-701 |  |
+| dz_set_rxint | 702-709 |  |
+| dz_rxinta | 710-713 |  |
+| for | 714-723 |  |
+| dz_clr_txint | 724-733 |  |
+| dz_set_txint | 734-742 |  |
+| dz_txinta | 743-746 |  |
+| for | 747-758 |  |
+| dz_clear | 759-775 |  |
+| for | 776-784 |  |
+| dz_reset | 785-790 |  |
+| if | 791-796 |  |
+| if | 797-817 |  |
+| dz_attach | 818-827 |  |
+| if | 828-831 |  |
+| if | 832-840 |  |
+| for | 841-862 |  |
+| dz_detach | 863-869 |  |
+| for | 870-880 |  |
+| dz_show_vec | 881-890 |  |
+| dz_setnl | 891-902 |  |
+| if | 903-927 |  |
+| dz_set_log | 928-946 |  |
+| dz_set_nolog | 947-961 |  |
+| dz_show_log | 962-965 |  |
+| for | 966-973 |  |
+| dz_help | 974-1014 |  |
+| dz_help_attach | 1015-1032 |  |
+| dz_description | 1033-1036 |  |

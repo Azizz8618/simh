@@ -1,0 +1,223 @@
+=== hp_disclib.c — 4345 строк ===
+Источник: hp_disclib.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp_disclib.c -nt .cline/maps/hp_disclib.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DRIVE_PROPS | 738-746 |
+| COMMAND_PROPERTIES | 817-831 |
+| PARSER_PROP | 3027-3030 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PRPTR | 833 | |
+| IFN_ARRAY | 889 | |
+| invalid_name | 1183 | |
+| outbound | 1397 | |
+| outbound | 1435 | |
+| cuptr | 1543 | |
+| unit | 1544 | |
+| seek_wait_time | 1545 | |
+| props | 1546 | |
+| outbound | 1547 | |
+| dop | 1548 | |
+| opcode | 2056 | |
+| phase | 2057 | |
+| outbound | 2058 | |
+| controller_service | 2059 | |
+| unit | 2060 | |
+| sector_count | 2061 | |
+| unit | 2474 | |
+| units | 2475 | |
+| unit_count | 2609 | |
+| uptr | 2610 | |
+| return | 2658 | |
+| result | 2719 | |
+| unload | 2742 | |
+| SCPE_OK | 2853 | |
+| model | 2885 | |
+| gbuf | 2886 | |
+| SCPE_OK | 2919 | |
+| model | 2938 | |
+| SCPE_OK | 2954 | |
+| entry | 3048 | |
+| pidx | 3049 | |
+| status | 3050 | |
+| gbuf | 3051 | |
+| SCPE_OK | 3165 | |
+| entry | 3206 | |
+| SCPE_OK | 3243 | |
+| dpptr | 3276 | |
+| model | 3277 | |
+| delay | 3278 | |
+| SCPE_OK | 3315 | |
+| SCPE_OK | 3342 | |
+| return | 3377 | |
+| return | 3393 | |
+| return | 3444 | |
+| count | 3500 | |
+| bound | 3603 | |
+| return | 3635 | |
+| count | 3745 | |
+| pad | 3746 | |
+| return | 3789 | |
+| delta | 4041 | |
+| target_cylinder | 4042 | |
+| return | 4118 | |
+| return | 4136 | |
+| return | 4167 | |
+| status | 4205 | |
+| result | 4246 | |
+| sectors_per_track | 4286 | |
+| distance | 4287 | |
+| track | 4329 | |
+| return | 4344 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CNTLR_UNIT | (DL_MAXDRIVE + 1)   /* controlle... | 385 |
+| MAX_UNIT | 10                  /* last lega... | 386 |
+| WORDS_PER_SECTOR | 128                 /* data word... | 388 |
+| UNTALK_DELAY | 160                 /* ICD untal... | 390 |
+| CNTLR_TIMEOUT | S (1.74)            /* command a... | 391 |
+| NO_EVENT | -1                  /* do not sc... | 393 |
+| NO_ACTION | (CNTLR_IFN_IBUS) (NO_FUNCTIONS \|... | 395 |
+| CNTLR_UPTR | (cvptr->device->units + cvptr->d... | 400 |
+| GET_MODEL(f) | (DRIVE_TYPE) ((f) >> UNIT_MODEL_... | 405 |
+| CM_OPCODE_MASK | 0017400u            /* operation... | 467 |
+| CM_UNIT_MASK | 0000017u            /* unit numb... | 468 |
+| CM_SPARE | 0100000u            /* spare tra... | 470 |
+| CM_PROTECTED | 0040000u            /* protected... | 471 |
+| CM_DEFECTIVE | 0020000u            /* defective... | 472 |
+| CM_SPD_MASK | (CM_SPARE \| CM_PROTECTED \| CM_DE... | 473 |
+| CM_RETRY_MASK | 0000360u            /* retry cou... | 475 |
+| CM_FILE_MASK_MASK | 0000017u            /* file mask... | 476 |
+| CM_DECR_SEEK | 0000010u            /* 0/1 = inc... | 478 |
+| CM_SPARE_EN | 0000004u            /* sparing e... | 479 |
+| CM_CYL_MODE | 0000002u            /* 0/1 = sur... | 480 |
+| CM_AUTO_SEEK_EN | 0000001u            /* auto-seek... | 481 |
+| CM_HEAD_MASK | 0000300u            /* cold load... | 483 |
+| CM_SECTOR_MASK | 0000077u            /* cold load... | 484 |
+| CM_OPCODE_SHIFT | 8 | 487 |
+| CM_UNIT_SHIFT | 0 | 488 |
+| CM_RETRY_SHIFT | 4 | 490 |
+| CM_FILE_MASK_SHIFT | 0 | 491 |
+| CM_HEAD_SHIFT | 6 | 493 |
+| CM_SECTOR_SHIFT | 0 | 494 |
+| CM_SPD(c) | ((c) & CM_SPD_MASK) | 497 |
+| CM_OPCODE(c) | (CNTLR_OPCODE) (((c) & CM_OPCODE... | 499 |
+| CM_UNIT(c) | (((c) & CM_UNIT_MASK)      >> CM... | 501 |
+| CM_RETRY(c) | (((c) & CM_RETRY_MASK)     >> CM... | 503 |
+| CM_FILE_MASK(c) | (((c) & CM_FILE_MASK_MASK) >> CM... | 504 |
+| CM_HEAD(c) | (((c) & CM_HEAD_MASK)      >> CM... | 506 |
+| CM_SECTOR(c) | (((c) & CM_SECTOR_MASK)    >> CM... | 507 |
+| S1_SPARE | 0100000u            /* spare tra... | 587 |
+| S1_PROTECTED | 0040000u            /* protected... | 588 |
+| S1_DEFECTIVE | 0020000u            /* defective... | 589 |
+| S1_STATUS_MASK | 0017400u            /* encoded t... | 590 |
+| S1_UNIT_MASK | 0000017u            /* unit numb... | 591 |
+| S1_STATUS_SHIFT | 8 | 593 |
+| S1_UNIT_SHIFT | 0 | 594 |
+| S1_STATUS(n) | ((n) << S1_STATUS_SHIFT & S1_STA... | 596 |
+| S1_UNIT(n) | ((n) << S1_UNIT_SHIFT   & S1_UNI... | 597 |
+| S2_ERROR | 0100000u            /* any error */ | 600 |
+| S2_DRIVE_TYPE_MASK | 0017000u            /* drive typ... | 601 |
+| S2_ATTENTION | 0000200u            /* attention */ | 602 |
+| S2_READ_ONLY | 0000100u            /* read-only */ | 603 |
+| S2_FORMAT_EN | 0000040u            /* format en... | 604 |
+| S2_FAULT | 0000020u            /* drive fau... | 605 |
+| S2_FIRST_STATUS | 0000010u            /* first sta... | 606 |
+| S2_SEEK_CHECK | 0000004u            /* seek chec... | 607 |
+| S2_NOT_READY | 0000002u            /* not ready */ | 608 |
+| S2_BUSY | 0000001u            /* drive bus... | 609 |
+| S2_STOPS | (S2_FAULT  | 611 |
+| S2_ERRORS | (S2_FAULT  | 615 |
+| S2_CPS | (S2_ATTENTION  | 620 |
+| S2_DRIVE_TYPE_SHIFT | 9 | 625 |
+| S2_DRIVE_TYPE(n) | ((n) << S2_DRIVE_TYPE_SHIFT & S2... | 627 |
+| S2_TO_DRIVE_TYPE(n) | (((n) & S2_DRIVE_TYPE_MASK) >> S... | 628 |
+| PIO_HEAD_MASK | 0017400u            /* head mask */ | 631 |
+| PIO_SECTOR_MASK | 0000377u            /* sector ma... | 632 |
+| PI_ADV_CLOCK | 0001000u            /* advance c... | 634 |
+| PI_DEL_CLOCK | 0000400u            /* delay clo... | 635 |
+| PI_NEG_OFFSET | 0000200u            /* 0/1 = pos... | 636 |
+| PI_OFFSET_MASK | 0000077u            /* cylinder ... | 637 |
+| PIO_HEAD_SHIFT | 8 | 640 |
+| PIO_SECTOR_SHIFT | 0 | 641 |
+| PI_OFFSET_SHIFT | 0 | 643 |
+| PI_HEAD(p) | (((p) & PIO_HEAD_MASK)   >> PIO_... | 646 |
+| PI_SECTOR(p) | (((p) & PIO_SECTOR_MASK) >> PIO_... | 647 |
+| PI_OFFSET(p) | (((p) & PI_OFFSET_MASK)  >> PI_O... | 648 |
+| PO_HEAD(n) | (((n) << PIO_HEAD_SHIFT   & PIO_... | 650 |
+| PO_SECTOR(n) | (((n) << PIO_SECTOR_SHIFT & PIO_... | 651 |
+| DELAY_COUNT | (sizeof real_times / sizeof real... | 783 |
+| CURRENT_SECTOR(cvptr,uptr) |  | 796 |
+| T | TRUE | 835 |
+| F | FALSE | 836 |
+| OPCODE_LENGTH | 22                  /* length of... | 1211 |
+| STATUS_LENGTH | 24                  /* length of... | 1249 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dl_controller | 1395-1401 |  |
+| if | 1402-1408 |  |
+| if | 1409-1540 |  |
+| start_command | 1541-1560 |  |
+| if | 1561-1602 |  |
+| if | 1603-1855 |  |
+| if | 1856-2052 |  |
+| continue_command | 2053-2062 |  |
+| if | 2063-2094 |  |
+| switch | 2095-2432 |  |
+| if | 2433-2471 |  |
+| poll_drives | 2472-2478 |  |
+| for | 2479-2606 |  |
+| clear_controller | 2607-2611 |  |
+| if | 2612-2672 |  |
+| dl_opcode_name | 2673-2690 |  |
+| dl_status_name | 2691-2716 |  |
+| dl_attach | 2717-2739 |  |
+| dl_detach | 2740-2745 |  |
+| if | 2746-2795 |  |
+| dl_load_unload | 2796-2800 |  |
+| if | 2801-2841 |  |
+| dl_set_model | 2842-2882 |  |
+| dl_set_protect | 2883-2935 |  |
+| dl_show_protect | 2936-3024 |  |
+| dl_set_diag | 3025-3202 |  |
+| dl_show_diag | 3203-3210 |  |
+| if | 3211-3272 |  |
+| dl_set_timing | 3273-3284 |  |
+| while | 3285-3332 |  |
+| dl_show_timing | 3333-3366 |  |
+| wait_timer | 3367-3386 |  |
+| idle_controller | 3387-3406 |  |
+| end_command | 3407-3497 |  |
+| start_read | 3498-3502 |  |
+| if | 3503-3507 |  |
+| if | 3508-3531 |  |
+| if | 3532-3600 |  |
+| end_read | 3601-3677 |  |
+| start_write | 3678-3690 |  |
+| if | 3691-3742 |  |
+| end_write | 3743-3749 |  |
+| if | 3750-3754 |  |
+| if | 3755-3848 |  |
+| position_sector | 3849-3956 |  |
+| next_sector | 3957-3968 |  |
+| if | 3969-4038 |  |
+| start_seek | 4039-4047 |  |
+| if | 4048-4060 |  |
+| if | 4061-4106 |  |
+| io_error | 4107-4130 |  |
+| set_completion | 4131-4158 |  |
+| set_address | 4159-4202 |  |
+| drive_status | 4203-4243 |  |
+| activate_unit | 4244-4283 |  |
+| set_rotation | 4284-4290 |  |
+| if | 4291-4326 |  |
+| set_file_pos | 4327-4345 |  |

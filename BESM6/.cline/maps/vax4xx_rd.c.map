@@ -1,0 +1,206 @@
+=== vax4xx_rd.c — 888 строк ===
+Источник: vax4xx_rd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax4xx_rd.c -nt .cline/maps/vax4xx_rd.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rd_data | 272 | |
+| rd_unit | 299 | |
+| data | 363 | |
+| uptr | 364 | |
+| data | 430 | |
+| SET_IRQL | 507 | |
+| max_cyl | 512 | |
+| uptr | 513 | |
+| CMD_UNKNOWN | 601 | |
+| SCPE_OK | 651 | |
+| sectsread | 656 | |
+| sectswritten | 666 | |
+| lba | 676 | |
+| SCPE_OK | 780 | |
+| inited | 817 | |
+| rd_rg_p | 833 | |
+| SCPE_OK | 843 | |
+| SCPE_OK | 882 | |
+| controller" | 887 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BOOT_CODE_ARRAY | NULL | 35 |
+| BOOT_CODE_SIZE | 0 | 36 |
+| RD_NUMDR | 3 | 39 |
+| RD_RMV(u) | ((u->drvtyp->flags & RDDF_RMV)? ... | 40 |
+| RDDF_RMV | DRVFL_RMV                       ... | 41 |
+| RD_NUMBY | 512                             ... | 42 |
+| RD_MAXFR | (1 << 14)                       ... | 44 |
+| CMD_RESET | 1 | 48 |
+| CMD_SETREG | 2 | 49 |
+| CMD_DESELECT | 3 | 50 |
+| CMD_DRVSEL | 4 | 51 |
+| CMD_RESTORE | 5 | 52 |
+| CMD_STEP | 6 | 53 |
+| CMD_POLL | 7 | 54 |
+| CMD_RDID | 8 | 55 |
+| CMD_FORMAT | 9 | 56 |
+| CMD_RDTRK | 10 | 57 |
+| CMD_RDPHY | 11 | 58 |
+| CMD_RDLOG | 12 | 59 |
+| CMD_WRPHY | 13 | 60 |
+| CMD_WRLOG | 14 | 61 |
+| CMD_UNKNOWN | 15 | 62 |
+| DST_WRF | 0x01                            ... | 66 |
+| DST_RDY | 0x02                            ... | 67 |
+| DST_WPT | 0x04                            ... | 68 |
+| DST_DS3 | 0x08                            ... | 69 |
+| DST_TRK0 | 0x10                            ... | 70 |
+| DST_SCOM | 0x20                            ... | 71 |
+| DST_IDX | 0x40                            ... | 72 |
+| DST_SELA | 0x80                            ... | 73 |
+| CST_SDRV | 0x03                            ... | 77 |
+| CST_CMPE | 0x04                            ... | 78 |
+| CST_SYNCE | 0x08                            ... | 79 |
+| CST_DELD | 0x10                            ... | 80 |
+| CST_ECCE | 0x20                            ... | 81 |
+| CST_ECCC | 0x40                            ... | 82 |
+| CST_RETR | 0x80                            ... | 83 |
+| STAT_V_BAD | 0                               ... | 87 |
+| STAT_V_OVR | 1                               ... | 88 |
+| STAT_V_RDYC | 2                               ... | 89 |
+| STAT_V_TRMC | 3                               ... | 90 |
+| STAT_M_TRMC | 0x3 | 91 |
+| STAT_V_DONE | 5                               ... | 92 |
+| STAT_V_DMARQ | 6                               ... | 93 |
+| STAT_V_INT | 7                               ... | 94 |
+| STAT_BAD | (1u << STAT_V_BAD) | 95 |
+| STAT_OVR | (1u << STAT_V_OVR) | 96 |
+| STAT_RDYC | (1u << STAT_V_RDYC) | 97 |
+| STAT_TRMC | (STAT_M_TRMC << STAT_V_TRMC) | 98 |
+| STAT_DONE | (1u << STAT_V_DONE) | 99 |
+| STAT_DMARQ | (1u << STAT_V_DMARQ) | 100 |
+| STAT_INT | (1u << STAT_V_INT) | 101 |
+| TRM_OK | 0                               ... | 105 |
+| TRM_ERR_RD | 1                               ... | 106 |
+| TRM_ERR_VER | 2                               ... | 107 |
+| TRM_ERR_TRAN | 3                               ... | 108 |
+| DBG_REG | 0x0001                          ... | 110 |
+| DBG_CMD | 0x0002                          ... | 111 |
+| DBG_RD | 0x0004                          ... | 112 |
+| DBG_WR | 0x0008                          ... | 113 |
+| DBG_REQ | 0x0010                          ... | 114 |
+| DBG_DSK | 0x0020                          ... | 115 |
+| DBG_DAT | 0x0040                          ... | 116 |
+| CYL | u3                              ... | 118 |
+| HEAD | u4                              ... | 119 |
+| STAT | u5                              ... | 120 |
+| CMD | u6                              ... | 121 |
+| CUR_DRV | (rd_cstat & CST_SDRV)           ... | 123 |
+| GET_SPT(u) | (u->drvtyp->sect) | 125 |
+| GET_SURF(u) | (u->drvtyp->surf) | 126 |
+| GET_DA(u,c,h,s) | ((c * (GET_SPT(u) * GET_SURF(u)))  | 127 |
+| RX33_SECT | 15 | 141 |
+| RX33_SURF | 2 | 142 |
+| RX33_CYL | 80 | 143 |
+| RX33_TPG | 2 | 144 |
+| RX33_XBN | 0 | 145 |
+| RX33_DBN | 0 | 146 |
+| RX33_LBN | 2400 | 147 |
+| RX33_RCTS | 0 | 148 |
+| RX33_RCTC | 0 | 149 |
+| RX33_RBN | 0 | 150 |
+| RX33_CYLP | 0 | 151 |
+| RX33_CYLR | 0 | 152 |
+| RX33_CCS | 0 | 153 |
+| RX33_MED | 0x25658021 | 154 |
+| RX33_FLGS | RDDF_RMV \| DRVFL_NOCHNG | 155 |
+| RD31_SECT | 17 | 157 |
+| RD31_SURF | 4 | 158 |
+| RD31_CYL | 616                             ... | 159 |
+| RD31_TPG | RD31_SURF | 160 |
+| RD31_XBN | 54 | 161 |
+| RD31_DBN | 14 | 162 |
+| RD31_LBN | 41584 | 163 |
+| RD31_RCTS | 3 | 164 |
+| RD31_RCTC | 8 | 165 |
+| RD31_RBN | 100 | 166 |
+| RD31_CYLP | 256 | 167 |
+| RD31_CYLR | 615 | 168 |
+| RD31_CCS | 9 | 169 |
+| RD31_MED | 0x2564401F | 170 |
+| RD31_FLGS | DRVFL_NORMV | 171 |
+| RD32_SECT | 17 | 173 |
+| RD32_SURF | 6 | 174 |
+| RD32_CYL | 821                             ... | 175 |
+| RD32_TPG | RD32_SURF | 176 |
+| RD32_XBN | 54 | 177 |
+| RD32_DBN | 48 | 178 |
+| RD32_LBN | 83236 | 179 |
+| RD32_RCTS | 4 | 180 |
+| RD32_RCTC | 8 | 181 |
+| RD32_RBN | 200 | 182 |
+| RD32_CYLP | 821 | 183 |
+| RD32_CYLR | 821 | 184 |
+| RD32_CCS | 14 | 185 |
+| RD32_MED | 0x25644020 | 186 |
+| RD32_FLGS | DRVFL_NORMV | 187 |
+| RD53_SECT | 17 | 189 |
+| RD53_SURF | 8 | 190 |
+| RD53_CYL | 1024                            ... | 191 |
+| RD53_TPG | RD53_SURF | 192 |
+| RD53_XBN | 54 | 193 |
+| RD53_DBN | 82 | 194 |
+| RD53_LBN | 138712 | 195 |
+| RD53_RCTS | 5 | 196 |
+| RD53_RCTC | 8 | 197 |
+| RD53_RBN | 280 | 198 |
+| RD53_CYLP | 1024 | 199 |
+| RD53_CYLR | 1024 | 200 |
+| RD53_CCS | 13 | 201 |
+| RD53_MED | 0x25644035 | 202 |
+| RD53_FLGS | DRVFL_NORMV | 203 |
+| RD54_SECT | 17 | 205 |
+| RD54_SURF | 15 | 206 |
+| RD54_CYL | 1225                            ... | 207 |
+| RD54_TPG | RD54_SURF | 208 |
+| RD54_XBN | 54 | 209 |
+| RD54_DBN | 201 | 210 |
+| RD54_LBN | 311256 | 211 |
+| RD54_RCTS | 7 | 212 |
+| RD54_RCTC | 8 | 213 |
+| RD54_RBN | 609 | 214 |
+| RD54_CYLP | 1225 | 215 |
+| RD54_CYLR | 1225 | 216 |
+| RD54_CCS | 14 | 217 |
+| RD54_MED | 0x25644036 | 218 |
+| RD54_FLGS | DRVFL_NORMV | 219 |
+| RD_DRV(d) |  | 240 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rd_rd | 360-368 |  |
+| switch | 369-438 |  |
+| rd_wr | 439-445 |  |
+| switch | 446-509 |  |
+| rd_cmd | 510-517 |  |
+| switch | 518-580 |  |
+| rd_decode_cmd | 581-583 |  |
+| if | 584-587 |  |
+| if | 588-605 |  |
+| rd_rdcyl0 | 606-610 |  |
+| if | 611-653 |  |
+| rd_rddata | 654-663 |  |
+| rd_wrdata | 664-673 |  |
+| rd_svc | 674-677 |  |
+| switch | 678-784 |  |
+| rd_set_dstat | 785-786 |  |
+| if | 787-803 |  |
+| rd_done | 804-806 |  |
+| if | 807-814 |  |
+| rd_reset | 815-818 |  |
+| if | 819-847 |  |
+| rd_attach | 848-856 |  |
+| rd_detach | 857-862 |  |
+| rd_help | 863-884 |  |
+| rd_description | 885-888 |  |

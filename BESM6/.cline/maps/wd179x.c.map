@@ -1,0 +1,68 @@
+=== wd179x.c — 1557 строк ===
+Источник: wd179x.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test wd179x.c -nt .cline/maps/wd179x.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CROMFDC_SIM_100US | 291     /* Number of "ticks" in ... | 42 |
+| CROMFDC_8IN_ROT | (167 * CROMFDC_SIM_100US) | 43 |
+| CROMFDC_5IN_ROT | (200 * CROMFDC_SIM_100US) | 44 |
+| ERROR_MSG | (1 << 0) | 47 |
+| SEEK_MSG | (1 << 1) | 48 |
+| CMD_MSG | (1 << 2) | 49 |
+| RD_DATA_MSG | (1 << 3) | 50 |
+| WR_DATA_MSG | (1 << 4) | 51 |
+| STATUS_MSG | (1 << 5) | 52 |
+| FMT_MSG | (1 << 6) | 53 |
+| VERBOSE_MSG | (1 << 7) | 54 |
+| IMD_MSG | (1 << 8) | 55 |
+| WD179X_MAX_DRIVES | 4 | 57 |
+| WD179X_SECTOR_LEN | 8192 | 58 |
+| WD179X_MAX_SEC_LEN | 6 | 60 |
+| WD179X_MAX_SECTOR | 26 | 61 |
+| CMD_PHASE | 0 | 63 |
+| EXEC_PHASE | 1 | 64 |
+| DATA_PHASE | 2 | 65 |
+| WD179X_STAT_NOT_READY | (1 << 7) | 68 |
+| WD179X_STAT_WPROT | (1 << 6) | 69 |
+| WD179X_STAT_HLD | (1 << 5) | 70 |
+| WD179X_STAT_SEEK_ERROR | (1 << 4) | 71 |
+| WD179X_STAT_CRC_ERROR | (1 << 3) | 72 |
+| WD179X_STAT_TRACK0 | (1 << 2) | 73 |
+| WD179X_STAT_INDEX | (1 << 1) | 74 |
+| WD179X_STAT_BUSY | (1 << 0) | 75 |
+| WD179X_STAT_REC_TYPE | (1 << 5)    /* Also Write Fault */ | 80 |
+| WD179X_STAT_NOT_FOUND | (1 << 4) | 81 |
+| WD179X_STAT_LOST_DATA | (1 << 2) | 83 |
+| WD179X_STAT_DRQ | (1 << 1) | 84 |
+| WD179X_SECTOR_LEN_BYTES | (unsigned)(128 << wd179x_info->f... | 87 |
+| UNIT_V_WD179X_WLK | (UNIT_V_UF + 0) /* write locked ... | 160 |
+| UNIT_WD179X_WLK | (1 << UNIT_V_WD179X_WLK) | 161 |
+| UNIT_V_WD179X_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 162 |
+| UNIT_WD179X_VERBOSE | (1 << UNIT_V_WD179X_VERBOSE) | 163 |
+| WD179X_CAPACITY_SSSD | (77*1*26*128)   /* Single-sided ... | 164 |
+| FMT_GAP1 | 1 | 167 |
+| FMT_GAP2 | 2 | 168 |
+| FMT_GAP3 | 3 | 169 |
+| FMT_GAP4 | 4 | 170 |
+| FMT_HEADER | 5 | 171 |
+| FMT_DATA | 6 | 172 |
+| WD179X_RESTORE | 0x00   /* Type I */ | 175 |
+| WD179X_SEEK | 0x10   /* Type I */ | 176 |
+| WD179X_STEP | 0x20   /* Type I */ | 177 |
+| WD179X_STEP_U | 0x30   /* Type I */ | 178 |
+| WD179X_STEP_IN | 0x40   /* Type I */ | 179 |
+| WD179X_STEP_IN_U | 0x50   /* Type I */ | 180 |
+| WD179X_STEP_OUT | 0x60   /* Type I */ | 181 |
+| WD179X_STEP_OUT_U | 0x70   /* Type I */ | 182 |
+| WD179X_READ_REC | 0x80   /* Type II */ | 183 |
+| WD179X_READ_RECS | 0x90   /* Type II */ | 184 |
+| WD179X_WRITE_REC | 0xA0   /* Type II */ | 185 |
+| WD179X_WRITE_RECS | 0xB0   /* Type II */ | 186 |
+| WD179X_READ_ADDR | 0xC0   /* Type III */ | 187 |
+| WD179X_FORCE_INTR | 0xD0   /* Type IV */ | 188 |
+| WD179X_READ_TRACK | 0xE0   /* Type III */ | 189 |
+| WD179X_WRITE_TRACK | 0xF0   /* Type III */ | 190 |
+| WD179X_NAME | "Western Digital FDC Core" | 251 |
+

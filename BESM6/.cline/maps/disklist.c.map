@@ -1,0 +1,67 @@
+=== disklist.c — 1547 строк ===
+Источник: disklist.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test disklist.c -nt .cline/maps/disklist.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| LETENTRY | 53-61 |
+| FILEARG | 63-66 |
+| iss | 95-117 |
+| DCI_PROGRAM_HEADER | 126-145 |
+| DSFSTREAM | 1115-1124 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| do_dump | 163 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TRUE | 1                               ... | 37 |
+| FALSE | 0 | 38 |
+| ALLOCATE(obj) | ((obj *) calloc(1, sizeof(obj)))... | 40 |
+| SEC_WORDS | 320                         // u... | 42 |
+| SEC_BYTES | 640                         // b... | 43 |
+| PHY_WORDS | 321                         // p... | 44 |
+| SLET_LENGTH | 160                         // s... | 45 |
+| SEC_BLOCKS | 16                         // di... | 46 |
+| BLK_WORDS | 20                         // si... | 47 |
+| BLK_BYTES | 40 | 48 |
+| THOUSANDS_SEP | ','                           //... | 50 |
+| N_SUBTYPE_NMS | (sizeof(subtype_nm) / sizeof(sub... | 91 |
+| FILETYPE_DSF | 0                       // DMS2 ... | 153 |
+| FILETYPE_1 | 1 | 154 |
+| FILETYPE_DCI | 2 | 155 |
+| FILETYPE_DDF | 3 | 156 |
+| N_SLET_PHASES | (sizeof(slet_phase)/sizeof(slet_... | 736 |
+| INDENT | "      "                    // i... | 1032 |
+| INDENT2 | "          "                // i... | 1033 |
+| NO_VECTOR | 0x0091            // appears to ... | 1357 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| main | 265-389 |  |
+| upcase | 390-405 |  |
+| commas | 406-440 |  |
+| bail | 441-450 |  |
+| getsec | 451-484 |  |
+| getdata | 485-737 |  |
+| print_slet | 738-764 |  |
+| ebcdic_to_ascii | 765-797 |  |
+| convert_namecode | 798-826 |  |
+| get_let | 827-894 |  |
+| print_let | 895-970 |  |
+| astring | 971-985 |  |
+| matchname | 986-1125 |  |
+| init_dsf_stream | 1126-1139 |  |
+| get_dsf_word | 1140-1196 |  |
+| print_dsf_info | 1197-1334 |  |
+| print_dci_info | 1335-1385 |  |
+| print_ddf_info | 1386-1394 |  |
+| dumpfile | 1395-1421 |  |
+| print_onefile | 1422-1459 |  |
+| list_named_files | 1460-1502 |  |
+| file_progtype | 1503-1547 |  |

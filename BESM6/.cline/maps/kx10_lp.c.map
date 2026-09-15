@@ -1,0 +1,54 @@
+=== kx10_lp.c — 556 строк ===
+Источник: kx10_lp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_lp.c -nt .cline/maps/kx10_lp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lpt_buffer | 84 | |
+| lpt_dib | 94 | |
+| SCPE_OK | 548 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_LP | 0 | 32 |
+| LP_DIS | DEV_DIS | 38 |
+| LP_DIS | 0 | 42 |
+| LP_DEVNUM | 0124 | 45 |
+| STATUS | u3 | 46 |
+| COL | u4 | 47 |
+| POS | u5 | 48 |
+| LINE | u6 | 49 |
+| MARGIN | 6 | 51 |
+| UNIT_V_CT | (UNIT_V_UF + 0) | 53 |
+| UNIT_CT | (3 << UNIT_V_CT) | 54 |
+| UNIT_UC | (1 << UNIT_V_CT) | 55 |
+| UNIT_UTF8 | (2 << UNIT_V_CT) | 56 |
+| UNIT_WA | (3 << UNIT_V_CT) | 57 |
+| PI_DONE | 000007 | 59 |
+| PI_ERROR | 000070 | 60 |
+| DONE_FLG | 000100 | 61 |
+| BUSY_FLG | 000200 | 62 |
+| ERR_FLG | 000400 | 63 |
+| CLR_LPT | 002000 | 64 |
+| C96 | 002000 | 65 |
+| C128 | 004000 | 66 |
+| DEL_FLG | 0100000 | 67 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lpt_devio | 131-183 |  |
+| lpt_printline | 184-293 |  |
+| lpt_output | 294-338 |  |
+| lpt_svc | 339-440 |  |
+| lpt_reset | 441-454 |  |
+| lpt_attach | 455-469 |  |
+| lpt_detach | 470-481 |  |
+| lpt_setlpp | 482-498 |  |
+| lpt_getlpp | 499-507 |  |
+| lpt_setdev | 508-525 |  |
+| lpt_getdev | 526-533 |  |
+| lpt_help | 534-550 |  |
+| lpt_description | 551-556 |  |

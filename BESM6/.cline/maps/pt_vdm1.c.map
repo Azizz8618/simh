@@ -1,0 +1,62 @@
+=== pt_vdm1.c — 702 строк ===
+Источник: pt_vdm1.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pt_vdm1.c -nt .cline/maps/pt_vdm1.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| vdm1_vptr | 65 | |
+| vdm1_ram | 68 | |
+| vdm1_dstat | 69 | |
+| vdm1_dirty | 70 | |
+| vdm1_reverse | 71 | |
+| vdm1_blink | 72 | |
+| vdm1_counter | 73 | |
+| vdm1_active | 74 | |
+| vdm1_surface | 75 | |
+| vdm1_palette | 76 | |
+| vdm1_ctrl | 83 | |
+| vdm1_cursor | 84 | |
+| vdm1_display | 85 | |
+| vdm1_res | 251 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEVICE_NAME | "VDM1" | 36 |
+| VDM1_MARGIN | (5) | 38 |
+| VDM1_CHAR_XSIZE | (9)                        /* ch... | 39 |
+| VDM1_CHAR_YSIZE | (13)                       /* ch... | 40 |
+| VDM1_COLS | (64)                       /* nu... | 41 |
+| VDM1_LINES | (16)                       /* nu... | 42 |
+| VDM1_XSIZE | (VDM1_COLS * VDM1_CHAR_XSIZE + V... | 43 |
+| VDM1_YSIZE | (VDM1_LINES * VDM1_CHAR_YSIZE + ... | 44 |
+| VDM1_PIXELS | (VDM1_XSIZE * VDM1_YSIZE)  /* to... | 45 |
+| VDM1_MEM_BASE | 0xcc00 | 47 |
+| VDM1_MEM_SIZE | 1024 | 48 |
+| VDM1_MEM_MASK | (1024 - 1) | 49 |
+| VDM1_IO_BASE | 0xfe | 51 |
+| VDM1_IO_SIZE | 1 | 52 |
+| VDM1_DSTAT_RMSK | 0xf0    /* START ROW MASK */ | 57 |
+| VDM1_DSTAT_CMSK | 0x0f    /* START COL MASK */ | 58 |
+| DBG_REG | 0x0001                          ... | 219 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| vdm1_svc | 300-327 |  |
+| vdm1_reset | 328-376 |  |
+| vdm1_boot | 377-402 |  |
+| vdm1_io | 403-412 |  |
+| vdm1_mem | 413-426 | VDM-1 1K Video Memory (16 x 64 characters) |
+| vdm1_help | 427-453 |  |
+| vdm1_description | 454-461 |  |
+| vdm1_refresh | 462-473 | Draw and refresh the screen in the video window |
+| vdm1_render | 474-522 | 1 byte in memory from CC00-CFFF. |
+| vdm1_render_char | 523-551 | video surface buffer. |
+| vdm1_set_ctrl | 552-574 |  |
+| vdm1_show_ctrl | 575-605 |  |
+| vdm1_set_cursor | 606-627 |  |
+| vdm1_show_cursor | 628-654 |  |
+| vdm1_set_display | 655-675 |  |
+| vdm1_show_display | 676-702 |  |

@@ -1,0 +1,60 @@
+=== sel32_cpu.c — 7642 строк ===
+Источник: sel32_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_cpu.c -nt .cline/maps/sel32_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dummy | 129 | |
+| dummy2 | 149 | |
+| dib_chan | 208 | |
+| TPSD | 2668 | |
+| TPSD | 2669 | |
+| TPSD | 2696 | |
+| TPSD | 2697 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PSD1 | PSD[0]                         /... | 103 |
+| PSD2 | PSD[1]                         /... | 104 |
+| INV | 0x0000      /* Instruction is in... | 381 |
+| HLF | 0x0001      /* Half word instruc... | 382 |
+| ADR | 0x0002      /* Normal addressing... | 383 |
+| IMM | 0x0004      /* Immediate mode */ | 384 |
+| WRD | 0x0008      /* Word addressing, ... | 385 |
+| SCC | 0x0010      /* Sets CC */ | 386 |
+| RR | 0x0020      /* Read source regis... | 387 |
+| R1 | 0x0040      /* Read destination ... | 388 |
+| RB | 0x0080      /* Read base registe... | 389 |
+| SD | 0x0100      /* Stores into desti... | 390 |
+| RNX | 0x0200      /* Reads memory with... | 391 |
+| RM | 0x0400      /* Reads memory */ | 392 |
+| SM | 0x0800      /* Stores memory */ | 393 |
+| DBL | 0x1000      /* Double word opera... | 394 |
+| SB | 0x2000      /* Store Base regist... | 395 |
+| BT | 0x4000      /* Branch taken, no ... | 396 |
+| SF | 0x8000      /* Special flag */ | 397 |
+| MAX32 | 32      /* 32/77 map limit */ | 619 |
+| MAX256 | 256     /* 32/27 and 32/87 map l... | 620 |
+| MAX2048 | 2048    /* 32/67, V6, and V9 map... | 621 |
+| LEAVE_ACTIVE |  | 2029 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| load_maps | 632-1159 | We will only get here if the retain maps bit is not set in PSD word 2 |
+| RealAddr | 1160-1567 | Addr is a byte address. |
+| read_instruction | 1568-1603 | fetch the current instruction from the PC address |
+| Mem_read | 1604-1689 | success.  Addr is logical byte address. |
+| Mem_write | 1690-1795 | success.  Addr is logical byte address, data is 32bit word |
+| set_CCs | 1796-1821 | ovr is setting for CC1 |
+| sim_instr | 1822-7361 | called from simulator |
+| cpu_reset | 7362-7448 | do any one time initialization here for cpu |
+| cpu_ex | 7449-7475 | examine a 32bit memory location and return a byte |
+| cpu_dep | 7476-7504 | address is byte address with bits 30,31 = 0 |
+| cpu_set_size | 7505-7537 |  |
+| cpu_set_hist | 7538-7570 |  |
+| cpu_show_hist | 7571-7627 | Show history |
+| cpu_description | 7628-7632 | return description for the specified device |
+| cpu_help | 7633-7642 |  |

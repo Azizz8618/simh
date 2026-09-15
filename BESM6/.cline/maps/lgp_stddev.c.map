@@ -1,0 +1,89 @@
+=== lgp_stddev.c — 686 строк ===
+Источник: lgp_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test lgp_stddev.c -nt .cline/maps/lgp_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tt_wait | 37 | |
+| tti_buf | 38 | |
+| tti_rdy | 39 | |
+| tto_uc | 40 | |
+| tto_buf | 41 | |
+| ttr_stopioe | 42 | |
+| ptr_rdy | 43 | |
+| ptr_stopioe | 44 | |
+| ptp_stopioe | 45 | |
+| inp_strt | 48 | |
+| out_strt | 49 | |
+| cpu_unit | 50 | |
+| return | 318 | |
+| SCPE_OK | 387 | |
+| SCPE_OK | 408 | |
+| SCPE_OK | 425 | |
+| out_strt | 474 | |
+| out_done | 475 | |
+| SCPE_OK | 478 | |
+| out_strt | 485 | |
+| out_done | 486 | |
+| ch | 496 | |
+| SCPE_OK | 533 | |
+| ch | 538 | |
+| SCPE_OK | 559 | |
+| SCPE_OK | 578 | |
+| tti_buf | 587 | |
+| tti_rdy | 588 | |
+| SCPE_OK | 589 | |
+| tto_buf | 595 | |
+| tto_uc | 596 | |
+| SCPE_OK | 597 | |
+| ptr_unit.buf | 603 | |
+| ptr_rdy | 604 | |
+| SCPE_OK | 605 | |
+| ptp_unit.buf | 611 | |
+| SCPE_OK | 612 | |
+| uptr->flags | 628 | |
+| SCPE_OK | 629 | |
+| SCPE_NOFNC | 638 | |
+| SCPE_OK | 651 | |
+| cnt | 658 | |
+| cnt | 668 | |
+| SCPE_OK | 674 | |
+| SCPE_OK | 685 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| op_i_strt | 304-305 |  |
+| switch | 306-320 |  |
+| op_i | 321-324 |  |
+| if | 325-332 |  |
+| switch | 333-356 |  |
+| if | 357-365 |  |
+| tti_svc | 366-373 |  |
+| if | 374-379 |  |
+| if | 380-391 |  |
+| ttr_svc | 392-412 |  |
+| ptr_svc | 413-429 |  |
+| op_p | 430-431 |  |
+| switch | 432-456 |  |
+| if | 457-465 |  |
+| tto_svc | 466-469 |  |
+| if | 470-482 |  |
+| ptp_svc | 483-493 |  |
+| read_reader | 494-535 |  |
+| write_tto | 536-561 |  |
+| write_punch | 562-571 |  |
+| if | 572-582 |  |
+| tti_reset | 583-591 |  |
+| tto_reset | 592-599 |  |
+| ptr_reset | 600-607 |  |
+| ptp_reset | 608-616 |  |
+| tap_attach | 617-633 |  |
+| tap_attable | 634-642 |  |
+| tti_rdrss | 643-644 |  |
+| if | 645-655 |  |
+| punch_feed | 656-662 |  |
+| if | 663-668 |  |
+| while | 669-678 |  |
+| send_start | 679-686 |  |

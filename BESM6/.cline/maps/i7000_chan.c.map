@@ -1,0 +1,34 @@
+=== i7000_chan.c — 513 строк ===
+Источник: i7000_chan.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7000_chan.c -nt .cline/maps/i7000_chan.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_devices | 30 | |
+| num_devs | 34 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| chan_set_devs | 38-129 |  |
+| help_set_chan_type | 130-166 | Print help for "SET dev CHAN" based on allowed types |
+| set_chan | 167-301 |  |
+| print_chan | 302-339 |  |
+| get_chan | 340-359 |  |
+| chan9_set_select | 360-405 |  |
+| chan9_get_select | 406-417 |  |
+| chan_error | 418-423 | Check channel for error |
+| chan_stat | 424-433 | Check channel for flag, clear it if it was set |
+| chan_test | 434-441 | Check channel for flag |
+| chan_select | 442-447 | Check channel is selected |
+| chan_active | 448-454 | Check channel is active |
+| chan_set_attn | 455-460 |  |
+| chan_set_eof | 461-466 |  |
+| chan_set_error | 467-472 |  |
+| chan_set_sel | 473-482 |  |
+| chan_clear_status | 483-489 |  |
+| chan_set | 490-495 |  |
+| chan_clear | 496-501 |  |
+| chan9_clear_error | 502-506 |  |
+| chan9_set_attn | 507-513 |  |

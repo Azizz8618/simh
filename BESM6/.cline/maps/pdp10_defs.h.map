@@ -1,0 +1,504 @@
+=== pdp10_defs.h — 809 строк ===
+Источник: pdp10_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp10_defs.h -nt .cline/maps/pdp10_defs.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PDP10_DEFS_H_ | 0 | 47 |
+| VM_PDP10 | 0 | 50 |
+| STOP_HALT | 1                               ... | 109 |
+| STOP_IBKPT | 2                               ... | 110 |
+| STOP_ILLEG | 3                               ... | 111 |
+| STOP_ILLINT | 4                               ... | 112 |
+| STOP_PAGINT | 5                               ... | 113 |
+| STOP_ZERINT | 6                               ... | 114 |
+| STOP_NXMPHY | 7                               ... | 115 |
+| STOP_IND | 8                               ... | 116 |
+| STOP_XCT | 9                               ... | 117 |
+| STOP_ILLIOC | 10                              ... | 118 |
+| STOP_ASTOP | 11                              ... | 119 |
+| STOP_CONSOLE | 12                              ... | 120 |
+| STOP_IOALIGN | 13                              ... | 121 |
+| STOP_UNKNOWN | 14                              ... | 122 |
+| PAGE_FAIL | -1                              ... | 123 |
+| INTERRUPT | -2                              ... | 124 |
+| ABORT(x) | longjmp (save_env, (x))         ... | 125 |
+| IORETURN(f,v) | ((f)? (v): SCPE_OK)             ... | 126 |
+| XT_MUUO | 0                               ... | 130 |
+| XT_SKIP | 1                               ... | 131 |
+| XT_NOSK | 2                               ... | 132 |
+| UNIT_V_ITS | (UNIT_V_UF)                     ... | 136 |
+| UNIT_V_T20 | (UNIT_V_UF + 1)                 ... | 137 |
+| UNIT_V_KLAD | (UNIT_V_UF + 2)                 ... | 138 |
+| UNIT_ITS | (1 << UNIT_V_ITS) | 139 |
+| UNIT_T20 | (1 << UNIT_V_T20) | 140 |
+| UNIT_KLAD | (1 << UNIT_V_KLAD) | 141 |
+| Q_T10 | ((cpu_unit.flags & (UNIT_ITS\|UNI... | 142 |
+| Q_ITS | (cpu_unit.flags & UNIT_ITS) | 143 |
+| Q_T20 | (cpu_unit.flags & UNIT_T20) | 144 |
+| Q_KLAD | (cpu_unit.flags & UNIT_KLAD) | 145 |
+| PASIZE | 20                              ... | 149 |
+| MAXMEMSIZE | (1 << PASIZE)                   ... | 150 |
+| PAMASK | ((1 << PASIZE) - 1) | 151 |
+| MEMSIZE | MAXMEMSIZE                      ... | 152 |
+| MEM_ADDR_NXM(x) | ((x) >= MEMSIZE) | 153 |
+| VASIZE | 18                              ... | 154 |
+| AMASK | ((1 << VASIZE) - 1)             ... | 155 |
+| LMASK | INT64_C(0777777000000)          ... | 156 |
+| LSIGN | INT64_C(0400000000000)          ... | 157 |
+| RMASK | INT64_C(0000000777777)          ... | 158 |
+| RSIGN | INT64_C(0000000400000)          ... | 159 |
+| DMASK | INT64_C(0777777777777)          ... | 160 |
+| SIGN | INT64_C(0400000000000)          ... | 161 |
+| MMASK | INT64_C(0377777777777)          ... | 162 |
+| ONES | INT64_C(0777777777777) | 163 |
+| MAXPOS | INT64_C(0377777777777) | 164 |
+| MAXNEG | INT64_C(0400000000000) | 165 |
+| INST_V_OP | 27                              ... | 169 |
+| INST_M_OP | 0777 | 170 |
+| INST_V_DEV | 26 | 171 |
+| INST_M_DEV | 0177                            ... | 172 |
+| INST_V_AC | 23                              ... | 173 |
+| INST_M_AC | 017 | 174 |
+| INST_V_IND | 22                              ... | 175 |
+| INST_IND | (1 << INST_V_IND) | 176 |
+| INST_V_XR | 18                              ... | 177 |
+| INST_M_XR | 017 | 178 |
+| OP_JRST | 0254                            ... | 179 |
+| AC_XPCW | 07                              ... | 180 |
+| OP_JSR | 0264                            ... | 181 |
+| GET_OP(x) | ((int32) (((x) >> INST_V_OP) & I... | 182 |
+| GET_DEV(x) | ((int32) (((x) >> INST_V_DEV) & ... | 183 |
+| GET_AC(x) | ((int32) (((x) >> INST_V_AC) & I... | 184 |
+| TST_IND(x) | ((x) & INST_IND) | 185 |
+| GET_XR(x) | ((int32) (((x) >> INST_V_XR) & I... | 186 |
+| GET_ADDR(x) | ((a10) ((x) & AMASK)) | 187 |
+| BP_V_P | 30                              ... | 191 |
+| BP_M_P | INT64_C(077) | 192 |
+| BP_P | INT64_C(0770000000000) | 193 |
+| BP_V_S | 24                              ... | 194 |
+| BP_M_S | INT64_C(077) | 195 |
+| BP_S | INT64_C(0007700000000) | 196 |
+| GET_P(x) | ((int32) (((x) >> BP_V_P) & BP_M... | 197 |
+| GET_S(x) | ((int32) (((x) >> BP_V_S) & BP_M... | 198 |
+| PUT_P(b,x) | (((b) & ~BP_P) \| ((((t_int64) (x... | 199 |
+| F_V_AOV | 17                              ... | 203 |
+| F_V_C0 | 16                              ... | 204 |
+| F_V_C1 | 15                              ... | 205 |
+| F_V_FOV | 14                              ... | 206 |
+| F_V_FPD | 13                              ... | 207 |
+| F_V_USR | 12                              ... | 208 |
+| F_V_UIO | 11                              ... | 209 |
+| F_V_PUB | 10                              ... | 210 |
+| F_V_AFI | 9                               ... | 211 |
+| F_V_T2 | 8                               ... | 212 |
+| F_V_T1 | 7                               ... | 213 |
+| F_V_FXU | 6                               ... | 214 |
+| F_V_DCK | 5                               ... | 215 |
+| F_AOV | (1 << F_V_AOV) | 216 |
+| F_C0 | (1 << F_V_C0) | 217 |
+| F_C1 | (1 << F_V_C1) | 218 |
+| F_FOV | (1 << F_V_FOV) | 219 |
+| F_FPD | (1 << F_V_FPD) | 220 |
+| F_USR | (1 << F_V_USR) | 221 |
+| F_UIO | (1 << F_V_UIO) | 222 |
+| F_PUB | (1 << F_V_PUB) | 223 |
+| F_AFI | (1 << F_V_AFI) | 224 |
+| F_T2 | (1 << F_V_T2) | 225 |
+| F_T1 | (1 << F_V_T1) | 226 |
+| F_TR | (F_T1 \| F_T2) | 227 |
+| F_FXU | (1 << F_V_FXU) | 228 |
+| F_DCK | (1 << F_V_DCK) | 229 |
+| F_1PR | (F_AFI)                         ... | 230 |
+| F_MASK | 0777740                         ... | 231 |
+| SETF(x) | flags = flags \| (x) | 232 |
+| CLRF(x) | flags = flags & ~(x) | 233 |
+| TSTF(x) | (flags & (x)) | 234 |
+| GET_TRAPS(x) | (((x) & (F_T2 \| F_T1)) >> F_V_T1) | 235 |
+| PI_CPRQ | 020000                          ... | 239 |
+| PI_INIT | 010000                          ... | 240 |
+| PI_SPRQ | 004000                          ... | 241 |
+| PI_SENB | 002000                          ... | 242 |
+| PI_CENB | 001000                          ... | 243 |
+| PI_CON | 000400                          ... | 244 |
+| PI_SON | 000200                          ... | 245 |
+| PI_M_LVL | 000177                          ... | 246 |
+| PI_V_PRQ | 18                              ... | 247 |
+| PI_V_ACT | 8 | 248 |
+| PI_V_ON | 7 | 249 |
+| PI_V_ENB | 0 | 250 |
+| APR_SENB | 0100000                         ... | 254 |
+| APR_CENB | 0040000                         ... | 255 |
+| APR_CFLG | 0020000                         ... | 256 |
+| APR_SFLG | 0010000                         ... | 257 |
+| APR_IRQ | 0000010                         ... | 258 |
+| APR_M_LVL | 0000007                         ... | 259 |
+| APR_V_FLG | 4                               ... | 260 |
+| APR_M_FLG | 0377 | 261 |
+| APRF_ITC | (002000 >> APR_V_FLG)           ... | 262 |
+| APRF_NXM | (000400 >> APR_V_FLG)           ... | 263 |
+| APRF_TIM | (000040 >> APR_V_FLG)           ... | 264 |
+| APRF_CON | (000020 >> APR_V_FLG)           ... | 265 |
+| APR_GETF(x) | (((x) >> APR_V_FLG) & APR_M_FLG) | 266 |
+| PAG_V_OFF | 0                               ... | 270 |
+| PAG_N_OFF | 9                               ... | 271 |
+| PAG_SIZE | 01000                           ... | 272 |
+| PAG_M_OFF | 0777                            ... | 273 |
+| PAG_V_PN | PAG_N_OFF                       ... | 274 |
+| PAG_N_PPN | (PASIZE - PAG_N_OFF)            ... | 275 |
+| PAG_M_PPN | 03777                           ... | 276 |
+| PAG_PPN | 03777000 | 277 |
+| PAG_N_VPN | (VASIZE - PAG_N_OFF)            ... | 278 |
+| PAG_M_VPN | 0777                            ... | 279 |
+| PAG_VPN | 0777000 | 280 |
+| PAG_GETOFF(x) | ((x) & PAG_M_OFF) | 281 |
+| PAG_GETVPN(x) | (((x) >> PAG_V_PN) & PAG_M_VPN) | 282 |
+| PAG_XPTEPA(p,x) | (((p) + PAG_GETOFF (x)) & PAMASK) | 283 |
+| PAG_PTEPA(p,x) | (((((int32) (p)) & PTE_PPMASK) <... | 284 |
+| PTE_T10_A | 0400000                         ... | 288 |
+| PTE_T10_P | 0200000                         ... | 289 |
+| PTE_T10_W | 0100000                         ... | 290 |
+| PTE_T10_S | 0040000                         ... | 291 |
+| PTE_T10_C | 0020000                         ... | 292 |
+| PTE_PPMASK | PAG_M_PPN | 293 |
+| PTE_T20_V_TYP | INT64_C(33)                     ... | 297 |
+| PTE_T20_M_TYP | INT64_C(07) | 298 |
+| T20_NOA | 0                              /... | 299 |
+| T20_IMM | 1                              /... | 300 |
+| T20_SHR | 2                              /... | 301 |
+| T20_IND | 3                              /... | 302 |
+| PTE_T20_W | INT64_C(0020000000000)          ... | 303 |
+| PTE_T20_C | INT64_C(0004000000000)          ... | 304 |
+| PTE_T20_STM | INT64_C(0000077000000)          ... | 305 |
+| PTE_T20_V_PMI | 18                              ... | 306 |
+| PTE_T20_M_PMI | 0777 | 307 |
+| T20_GETTYP(x) | ((int32) (((x) >> PTE_T20_V_TYP)... | 308 |
+| T20_GETPMI(x) | ((int32) (((x) >> PTE_T20_V_PMI)... | 309 |
+| CST_AGE | INT64_C(0770000000000)          ... | 313 |
+| CST_M | INT64_C(0000000000001)          ... | 314 |
+| PF_USER | INT64_C(0400000000000)          ... | 318 |
+| PF_HARD | INT64_C(0200000000000)          ... | 319 |
+| PF_NXM | INT64_C(0370000000000)          ... | 320 |
+| PF_T10_A | INT64_C(0100000000000)          ... | 321 |
+| PF_T10_W | INT64_C(0040000000000)          ... | 322 |
+| PF_T10_S | INT64_C(0020000000000)          ... | 323 |
+| PF_T20_DN | INT64_C(0100000000000)          ... | 324 |
+| PF_T20_M | INT64_C(0040000000000)          ... | 325 |
+| PF_T20_W | INT64_C(0020000000000)          ... | 326 |
+| PF_WRITE | INT64_C(0010000000000)          ... | 327 |
+| PF_PUB | INT64_C(0004000000000)          ... | 328 |
+| PF_C | INT64_C(0002000000000)          ... | 329 |
+| PF_VIRT | INT64_C(0001000000000)          ... | 330 |
+| PF_NXMP | INT64_C(0001000000000)          ... | 331 |
+| PF_IO | INT64_C(0000200000000)          ... | 332 |
+| PF_BYTE | INT64_C(0000020000000)          ... | 333 |
+| ITS_V_OFF | 0                               ... | 337 |
+| ITS_N_OFF | 10                              ... | 338 |
+| ITS_SIZE | 02000                           ... | 339 |
+| ITS_M_OFF | 01777                           ... | 340 |
+| ITS_V_PN | ITS_N_OFF                       ... | 341 |
+| ITS_N_PPN | (PASIZE- ITS_N_OFF)             ... | 342 |
+| ITS_M_PPN | 01777                           ... | 343 |
+| ITS_PPN | 03776000 | 344 |
+| ITS_N_VPN | (VASIZE - ITS_N_OFF)            ... | 345 |
+| ITS_M_VPN | 0377                            ... | 346 |
+| ITS_VPN | 0776000 | 347 |
+| ITS_GETVPN(x) | (((x) >> ITS_V_PN) & ITS_M_VPN) | 348 |
+| PTE_ITS_V_ACC | 16                              ... | 352 |
+| PTE_ITS_M_ACC | 03 | 353 |
+| ITS_ACC_NO | 0                              /... | 354 |
+| ITS_ACC_RO | 1                              /... | 355 |
+| ITS_ACC_RWF | 2                              /... | 356 |
+| ITS_ACC_RW | 3                              /... | 357 |
+| PTE_ITS_AGE | 0020000                         ... | 358 |
+| PTE_ITS_C | 0010000                         ... | 359 |
+| PTE_ITS_PPMASK | ITS_M_PPN | 360 |
+| ITS_GETACC(x) | (((x) >> PTE_ITS_V_ACC) & PTE_IT... | 361 |
+| PF_ITS_WRITE | INT64_C(0010000000000)          ... | 365 |
+| PF_ITS_V_ACC | 28                              ... | 366 |
+| PTF_RD | 0                               ... | 370 |
+| PTF_WR | 1                               ... | 371 |
+| PTF_MAP | 2                               ... | 372 |
+| PTF_CON | 4                               ... | 373 |
+| UBR_SETACB | INT64_C(0400000000000)          ... | 377 |
+| UBR_SETUBR | INT64_C(0100000000000)          ... | 378 |
+| UBR_V_CURAC | 27                              ... | 379 |
+| UBR_V_PRVAC | 24                              ... | 380 |
+| UBR_M_AC | 07 | 381 |
+| UBR_ACBMASK | INT64_C(0007700000000) | 382 |
+| UBR_V_UBR | 0                               ... | 383 |
+| UBR_N_UBR | 11 | 384 |
+| UBR_M_UBR | 03777 | 385 |
+| UBR_UBRMASK | INT64_C(0000000003777) | 386 |
+| UBR_GETCURAC(x) | ((int32) (((x) >> UBR_V_CURAC) &... | 387 |
+| UBR_GETPRVAC(x) | ((int32) (((x) >> UBR_V_PRVAC) &... | 388 |
+| UBR_GETUBR(x) | ((int32) (((x) >> UBR_V_UBR) & P... | 389 |
+| UBRWORD | (ubr \| UBR_SETACB \| UBR_SETUBR) | 390 |
+| EBR_V_T20P | 14                              ... | 394 |
+| EBR_T20P | (1u << EBR_V_T20P) | 395 |
+| EBR_V_PGON | 13                              ... | 396 |
+| EBR_PGON | (1u << EBR_V_PGON) | 397 |
+| EBR_V_EBR | 0                               ... | 398 |
+| EBR_N_EBR | 11 | 399 |
+| EBR_M_EBR | 03777 | 400 |
+| EBR_MASK | (EBR_T20P \| EBR_PGON \| (EBR_M_EB... | 401 |
+| EBR_GETEBR(x) | ((int32) (((x) >> EBR_V_EBR) & P... | 402 |
+| PAGING | (ebr & EBR_PGON) | 403 |
+| T20PAG | (ebr & EBR_T20P) | 404 |
+| EA_PXCT | 010                             ... | 415 |
+| OPND_PXCT | 004                             ... | 416 |
+| EABP_PXCT | 002                             ... | 417 |
+| BSTK_PXCT | 001                             ... | 418 |
+| XSRC_PXCT | 002                             ... | 419 |
+| XDST_PXCT | 001                             ... | 420 |
+| MM_CUR | 000                             ... | 421 |
+| MM_EA | (pflgs & EA_PXCT) | 422 |
+| MM_OPND | (pflgs & OPND_PXCT) | 423 |
+| MM_EABP | (pflgs & EABP_PXCT) | 424 |
+| MM_BSTK | (pflgs & BSTK_PXCT) | 425 |
+| AC_NUM | 16                              ... | 433 |
+| AC_NBLK | 8                               ... | 434 |
+| AC(r) | (ac_cur[r])                     ... | 435 |
+| XR(r,prv) | ((prv)? ac_prv[r]: ac_cur[r])   ... | 436 |
+| ADDAC(x,i) | (((x) + (i)) & INST_M_AC) | 437 |
+| P1 | ADDAC (ac, 1) | 438 |
+| UPT_T10_UMAP | 0000                            ... | 442 |
+| UPT_T10_X340 | 0400                            ... | 443 |
+| UPT_TRBASE | 0420                            ... | 444 |
+| UPT_MUUO | 0424                            ... | 445 |
+| UPT_MUPC | 0425                            ... | 446 |
+| UPT_T10_CTX | 0426                            ... | 447 |
+| UPT_T20_UEA | 0426                            ... | 448 |
+| UPT_T20_CTX | 0427                            ... | 449 |
+| UPT_ENPC | 0430                            ... | 450 |
+| UPT_1PO | 0432                            ... | 451 |
+| UPT_1PN | 0433                            ... | 452 |
+| UPT_UNPC | 0434                            ... | 453 |
+| UPT_NPCT | 1                               ... | 454 |
+| UPT_T10_PAG | 0500                            ... | 455 |
+| UPT_T20_PFL | 0500                            ... | 456 |
+| UPT_T20_OFL | 0501                            ... | 457 |
+| UPT_T20_OPC | 0502                            ... | 458 |
+| UPT_T20_NPC | 0503                            ... | 459 |
+| UPT_T20_SCTN | 0540                            ... | 460 |
+| EPT_PIIT | 0040                            ... | 464 |
+| EPT_UBIT | 0100                            ... | 465 |
+| EPT_T10_X400 | 0200                            ... | 466 |
+| EPT_TRBASE | 0420                            ... | 467 |
+| EPT_ITS_PAG | 0440                            ... | 468 |
+| EPT_T20_SCTN | 0540                            ... | 469 |
+| EPT_T10_X000 | 0600                            ... | 470 |
+| UC_INHCST | INT64_C(0400000000000)          ... | 474 |
+| UC_UBABLT | INT64_C(0040000000000)          ... | 475 |
+| UC_KIPAGE | INT64_C(0020000000000)          ... | 476 |
+| UC_KLPAGE | INT64_C(0010000000000)          ... | 477 |
+| UC_VERDEC | (0130 << 18)                    ... | 478 |
+| UC_VERITS | (262u << 18) | 479 |
+| UC_SERDEC | 4097                            ... | 480 |
+| UC_SERITS | 1729 | 481 |
+| UC_AIDDEC | (UC_INHCST \| UC_UBABLT \| UC_KIPA... | 482 |
+| UC_AIDITS | (UC_KIPAGE \| UC_VERITS) | 484 |
+| UC_HSBDEC | 0376000                         ... | 486 |
+| UC_HSBITS | 0000500                         ... | 487 |
+| FE_SWITCH | 030                             ... | 491 |
+| FE_KEEPA | 031                             ... | 492 |
+| FE_CTYIN | 032                             ... | 493 |
+| FE_CTYOUT | 033                             ... | 494 |
+| FE_KLININ | 034                             ... | 495 |
+| FE_KLINOUT | 035                             ... | 496 |
+| FE_RHBASE | 036                             ... | 497 |
+| FE_UNIT | 037                             ... | 498 |
+| FE_MTFMT | 040                             ... | 499 |
+| FE_CVALID | 0400                            ... | 500 |
+| ADDL(x,y) | (((x) + ((y) << 18)) & LMASK) | 504 |
+| ADDR(x,y) | (((x) + (y)) & RMASK) | 505 |
+| INCL(x) | ADDL (x, 1) | 506 |
+| INCR(x) | ADDR (x, 1) | 507 |
+| AOB(x) | (INCL (x) \| INCR(x)) | 508 |
+| SUBL(x,y) | (((x) - ((y) << 18)) & LMASK) | 509 |
+| SUBR(x,y) | (((x) - (y)) & RMASK) | 510 |
+| DECL(x) | SUBL (x, 1) | 511 |
+| DECR(x) | SUBR (x, 1) | 512 |
+| SOB(x) | (DECL (x) \| DECR(x)) | 513 |
+| LLZ(x) | ((x) & LMASK) | 514 |
+| RLZ(x) | (((x) << 18) & LMASK) | 515 |
+| RRZ(x) | ((x) & RMASK) | 516 |
+| LRZ(x) | (((x) >> 18) & RMASK) | 517 |
+| LIT8(x) | (((x) & RSIGN)?  | 518 |
+| INC(x) | (((x) + 1) & DMASK) | 523 |
+| DEC(x) | (((x) - 1) & DMASK) | 524 |
+| SWP(x) | ((((x) << 18) & LMASK) \| (((x) >... | 525 |
+| XWD(x,y) | (((((d10) (x)) << 18) & LMASK) \|... | 526 |
+| SETS(x) | ((x) \| SIGN) | 527 |
+| CLRS(x) | ((x) & ~SIGN) | 528 |
+| TSTS(x) | ((x) & SIGN) | 529 |
+| NEG(x) | (-(x) & DMASK) | 530 |
+| ABS(x) | (TSTS (x)? NEG(x): (x)) | 531 |
+| SXT(x) | (TSTS (x)? (x) \| ~DMASK: (x)) | 532 |
+| DMOVN(rs) | rs[1] = (-rs[1]) & MMASK;  | 536 |
+| MKDNEG(rs) | rs[1] = SETS (-rs[1]) & DMASK;  | 538 |
+| DCMPGE(a,b) | ((a[0] > b[0]) \|\| ((a[0] == b[0]... | 540 |
+| ADDA(x,i) | (((x) + (i)) & AMASK) | 544 |
+| INCA(x) | ADDA (x, 1) | 545 |
+| UBCS_TMO | 0400000                         ... | 549 |
+| UBCS_BMD | 0200000                         ... | 550 |
+| UBCS_PAR | 0100000                         ... | 551 |
+| UBCS_NXD | 0040000                         ... | 552 |
+| UBCS_HI | 0004000                         ... | 553 |
+| UBCS_LO | 0002000                         ... | 554 |
+| UBCS_PWR | 0001000                         ... | 555 |
+| UBCS_DXF | 0000200                         ... | 556 |
+| UBCS_INI | 0000100                         ... | 557 |
+| UBCS_RDZ | 0030500                         ... | 558 |
+| UBCS_RDW | 0000277                         ... | 559 |
+| UBCS_V_LHI | 3                               ... | 560 |
+| UBCS_V_LLO | 0                               ... | 561 |
+| UBCS_M_PRI | 07 | 562 |
+| UBCS_GET_HI(x) | (((x) >> UBCS_V_LHI) & UBCS_M_PRI) | 563 |
+| UBCS_GET_LO(x) | (((x) >> UBCS_V_LLO) & UBCS_M_PRI) | 564 |
+| UBANUM | 2                               ... | 568 |
+| UMAP_ASIZE | 6                               ... | 569 |
+| UMAP_MEMSIZE | (1 << UMAP_ASIZE)               ... | 570 |
+| UMAP_AMASK | (UMAP_MEMSIZE - 1) | 571 |
+| UMAP_V_RRV | 30                              ... | 572 |
+| UMAP_V_DSB | 29                              ... | 573 |
+| UMAP_V_FST | 28                              ... | 574 |
+| UMAP_V_VLD | 27                              ... | 575 |
+| UMAP_RRV | (1 << UMAP_V_RRV) | 576 |
+| UMAP_DSB | (1 << UMAP_V_DSB) | 577 |
+| UMAP_FST | (1 << UMAP_V_FST) | 578 |
+| UMAP_VLD | (1 << UMAP_V_VLD) | 579 |
+| UMAP_V_FLWR | 14                              ... | 580 |
+| UMAP_V_FLRD | 27                              ... | 581 |
+| UMAP_M_FL | 017 | 582 |
+| UMAP_V_PNWR | 0                               ... | 583 |
+| UMAP_V_PNRD | 9                               ... | 584 |
+| UMAP_M_PN | 03777 | 585 |
+| UMAP_MASK | ((UMAP_M_FL << UMAP_V_FLRD) \| (U... | 586 |
+| UMAP_POSFL(x) | (((x) & (UMAP_M_FL << UMAP_V_FLW... | 587 |
+| UMAP_POSPN(x) | (((x) & (UMAP_M_PN << UMAP_V_PNW... | 589 |
+| READ | 0                               ... | 594 |
+| WRITE | 2 | 596 |
+| WRITEB | 4 | 598 |
+| IO_V_UBA | 18                              ... | 599 |
+| IO_N_UBA | 16                              ... | 600 |
+| IO_M_UBA | (IO_N_UBA - 1) | 601 |
+| IO_UBA1 | (1 << IO_V_UBA) | 602 |
+| IO_UBA3 | (3 << IO_V_UBA) | 603 |
+| GET_IOUBA(x) | (((x) >> IO_V_UBA) & IO_M_UBA) | 604 |
+| VEC_DEVMAX | 8                               ... | 608 |
+| DIB_M_REGSIZE | 03                              ... | 621 |
+| DIB_REG16BIT | 00 | 622 |
+| DIB_REG18BIT | 01 | 623 |
+| DZ_MUXES | 4                               ... | 630 |
+| MAX_DZ_MUXES | 4                               ... | 631 |
+| KMC_UNITS | 1                               ... | 632 |
+| INITIAL_KMCS | 0                               ... | 633 |
+| DUP_LINES | 4                               ... | 634 |
+| DIB_MAX | 100                             ... | 635 |
+| DEV_V_UBUS | (DEV_V_UF + 0)                  ... | 637 |
+| DEV_V_QBUS | (DEV_V_UF + 1)                  ... | 638 |
+| DEV_V_Q18 | (DEV_V_UF + 2)                  ... | 639 |
+| DEV_UBUS | (1u << DEV_V_UBUS) | 640 |
+| DEV_QBUS | (1u << DEV_V_QBUS) | 641 |
+| DEV_Q18 | (1u << DEV_V_Q18) | 642 |
+| UNIBUS | TRUE                            ... | 644 |
+| DEV_RDX | 8                               ... | 646 |
+| IOPAGEBASE | (IO_UBA3 + 0760000)             ... | 650 |
+| IOBA_UBMAP | 0763000 | 651 |
+| IOBA_UBMAP1 | (IO_UBA1 + IOBA_UBMAP)          ... | 653 |
+| IOLN_UBMAP1 | 0100 | 654 |
+| IOBA_UBCS1 | (IO_UBA1 + 0763100)             ... | 655 |
+| IOLN_UBCS1 | 001 | 656 |
+| IOBA_UBMNT1 | (IO_UBA1 + 0763101)             ... | 657 |
+| IOLN_UBMNT1 | 001 | 658 |
+| IOBA_RP | (IO_UBA1 + 0776700)             ... | 659 |
+| IOLN_RP | 050 | 660 |
+| IOBA_TCU | (IO_UBA3 + 0760770)             ... | 662 |
+| IOLN_TCU | 006 | 663 |
+| IOBA_UBMAP3 | (IO_UBA3 + IOBA_UBMAP)          ... | 664 |
+| IOLN_UBMAP3 | 0100 | 665 |
+| IOBA_UBCS3 | (IO_UBA3 + 0763100)             ... | 666 |
+| IOLN_UBCS3 | 001 | 667 |
+| IOBA_UBMNT3 | (IO_UBA3 + 0763101)             ... | 668 |
+| IOLN_UBMNT3 | 001 | 669 |
+| IOBA_TU | (IO_UBA3 + 0772440)             ... | 670 |
+| IOLN_TU | 034 | 671 |
+| IOBA_LP20 | (IO_UBA3 + 0775400)             ... | 672 |
+| IOLN_LP20 | 020 | 673 |
+| IOBA_AUTO | 0                               ... | 674 |
+| CSR_V_GO | 0                               ... | 678 |
+| CSR_V_IE | 6                               ... | 679 |
+| CSR_V_DONE | 7                               ... | 680 |
+| CSR_V_BUSY | 11                              ... | 681 |
+| CSR_V_ERR | 15                              ... | 682 |
+| CSR_GO | (1u << CSR_V_GO) | 683 |
+| CSR_IE | (1u << CSR_V_IE) | 684 |
+| CSR_DONE | (1u << CSR_V_DONE) | 685 |
+| CSR_BUSY | (1u << CSR_V_BUSY) | 686 |
+| CSR_ERR | (1u << CSR_V_ERR) | 687 |
+| INT_V_RP | 6                               ... | 698 |
+| INT_V_TU | 7                               ... | 699 |
+| INT_V_KMCA | 8                               ... | 700 |
+| INT_V_KMCB | 9 | 701 |
+| INT_V_DMCRX | 10                              ... | 702 |
+| INT_V_DMCTX | 11 | 703 |
+| INT_V_XU | 15                              ... | 704 |
+| INT_V_DZRX | 16                              ... | 705 |
+| INT_V_DZTX | 17 | 706 |
+| INT_V_RY | 18                              ... | 707 |
+| INT_V_PTR | 24                              ... | 708 |
+| INT_V_PTP | 25 | 709 |
+| INT_V_LP20 | 26                              ... | 710 |
+| INT_V_CR | 27                              ... | 711 |
+| INT_V_DUPRX | 28                              ... | 712 |
+| INT_V_DUPTX | 29 | 713 |
+| INT_V_CH | 30                              ... | 714 |
+| INT_RP | (1u << INT_V_RP) | 716 |
+| INT_TU | (1u << INT_V_TU) | 717 |
+| INT_KMCA | (1u << INT_V_KMCA) | 718 |
+| INT_KMCB | (1u << INT_V_KMCB) | 719 |
+| INT_DMCRX | (1u << INT_V_DMCRX) | 720 |
+| INT_DMCTX | (1u << INT_V_DMCTX) | 721 |
+| INT_XU | (1u << INT_V_XU) | 722 |
+| INT_DZRX | (1u << INT_V_DZRX) | 723 |
+| INT_DZTX | (1u << INT_V_DZTX) | 724 |
+| INT_RY | (1u << INT_V_RY) | 725 |
+| INT_PTR | (1u << INT_V_PTR) | 726 |
+| INT_PTP | (1u << INT_V_PTP) | 727 |
+| INT_LP20 | (1u << INT_V_LP20) | 728 |
+| INT_CR | (1u << INT_V_CD) | 729 |
+| INT_DUPRX | (1u << INT_V_DUPRX) | 730 |
+| INT_DUPTX | (1u << INT_V_DUPTX) | 731 |
+| INT_CH | (1u << INT_V_CH) | 732 |
+| IPL_RP | 6                               ... | 734 |
+| IPL_TU | 6 | 735 |
+| IPL_KMCA | 5 | 736 |
+| IPL_KMCB | 5 | 737 |
+| IPL_DMCRX | 5 | 738 |
+| IPL_DMCTX | 5 | 739 |
+| IPL_DZRX | 5 | 740 |
+| IPL_DZTX | 5 | 741 |
+| IPL_RY | 5 | 742 |
+| IPL_DUPRX | 5 | 743 |
+| IPL_DUPTX | 5 | 744 |
+| IPL_PTR | 4 | 745 |
+| IPL_PTP | 4 | 746 |
+| IPL_LP20 | 4 | 747 |
+| IPL_CR | 4 | 748 |
+| INT_UB1 | INT_RP                          ... | 750 |
+| INT_UB3 | (0xFFFFFFFFu & ~INT_UB1)        ... | 751 |
+| INT_IPL7 | 0x0000000F                      ... | 753 |
+| INT_IPL6 | 0x000000F0 | 754 |
+| INT_IPL5 | 0x000FFF00 | 755 |
+| INT_IPL4 | 0x7FF00000 | 756 |
+| VEC_TU | 0224                            ... | 758 |
+| VEC_RP | 0254 | 759 |
+| VEC_LP20 | 0754 | 760 |
+| VEC_AUTO | 0                               ... | 761 |
+| IVCL(dv) | (INT_V_##dv) | 763 |
+| IREQ(dv) | int_req | 764 |
+| SET_INT(dv) | IREQ(dv) = IREQ(dv) \| (INT_##dv) | 765 |
+| CLR_INT(dv) | IREQ(dv) = IREQ(dv) & ~(INT_##dv) | 766 |
+

@@ -1,0 +1,121 @@
+=== kx10_tu.c — 1019 строк ===
+Источник: kx10_tu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_tu.c -nt .cline/maps/kx10_tu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tu_buf | 162 | |
+| tu_boot_buffer | 163 | |
+| rh_boot_dev | 178 | |
+| rh_boot_unit | 179 | |
+| SCPE_OK | 1010 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_TU | 0 | 28 |
+| NUM_UNITS_TU | 8 | 33 |
+| TU_NUMFR | (64*1024) | 34 |
+| BUF_EMPTY(u) | (u->hwmark == 0xFFFFFFFF) | 36 |
+| CLR_BUF(u) | u->hwmark = 0xFFFFFFFF | 37 |
+| TU_UNIT | UNIT_FIX+UNIT_ATTABLE+UNIT_DISAB... | 41 |
+| CMD | u3 | 43 |
+| CS1_GO | 1               /* go */ | 46 |
+| CS1_V_FNC | 1               /* function pos */ | 47 |
+| CS1_M_FNC | 037             /* function mask */ | 48 |
+| CS1_FNC | (CS1_M_FNC << CS1_V_FNC) | 49 |
+| FNC_NOP | 000             /* no operation */ | 50 |
+| FNC_UNLOAD | 001             /* unload */ | 51 |
+| FNC_REWIND | 003             /* rewind */ | 52 |
+| FNC_DCLR | 004             /* drive clear */ | 53 |
+| FNC_PRESET | 010             /* read-in prese... | 54 |
+| FNC_ERASE | 012             /* Erase */ | 55 |
+| FNC_WTM | 013             /* Write Tape Ma... | 56 |
+| FNC_SPACEF | 014             /* Space record ... | 57 |
+| FNC_SPACEB | 015             /* Space record ... | 58 |
+| FNC_XFER | 024             /* >=? data xfr */ | 59 |
+| FNC_WCHK | 024             /* write check */ | 60 |
+| FNC_WCHKREV | 027             /* write check r... | 61 |
+| FNC_WRITE | 030             /* write */ | 62 |
+| FNC_READ | 034             /* read */ | 63 |
+| FNC_READREV | 037             /* read reverse */ | 64 |
+| CS1_DVA | 0004000         /* drive avail N... | 65 |
+| CS1_TRE | 0040000         /* Set if errors */ | 66 |
+| CS1_SC | 0100000         /* Set if TRE or... | 67 |
+| GET_FNC(x) | (((x) >> CS1_V_FNC) & CS1_M_FNC) | 68 |
+| TUDS | 01 | 70 |
+| STATUS | u4              /* Attentions st... | 71 |
+| DS_SLA | 0000001         /* Drive has bec... | 74 |
+| DS_BOT | 0000002         /* Beginning of ... | 75 |
+| DS_TM | 0000004         /* Tape mark */ | 76 |
+| DS_IDB | 0000010         /* Identificatio... | 77 |
+| DS_SDWN | 0000020         /* Tape stoped */ | 78 |
+| DS_PES | 0000040         /* Phase Encodin... | 79 |
+| DS_SSC | 0000100         /* Status change */ | 80 |
+| DS_DRY | 0000200         /* drive ready */ | 81 |
+| DS_DPR | 0000400         /* drive present */ | 82 |
+| DS_PGM | 0001000         /* programable N... | 83 |
+| DS_EOT | 0002000         /* end of tape */ | 84 |
+| DS_WRL | 0004000         /* write locked */ | 85 |
+| DS_MOL | 0010000         /* medium online */ | 86 |
+| DS_PIP | 0020000         /* pos in progre... | 87 |
+| DS_ERR | 0040000         /* error */ | 88 |
+| DS_ATA | 0100000         /* attention act... | 89 |
+| TUER1 | 02 | 91 |
+| ER1_ILF | 0000001         /* illegal func */ | 94 |
+| ER1_ILR | 0000002         /* illegal regis... | 95 |
+| ER1_RMR | 0000004         /* reg mod refus... | 96 |
+| ER1_CPAR | 0000010         /* control parit... | 97 |
+| ER1_FMT | 0000020         /* format err */ | 98 |
+| ER1_DPAR | 0000040         /* data parity e... | 99 |
+| ER1_INC | 0000100         /* Incorrectable... | 100 |
+| ER1_PEF | 0000200         /* format error */ | 101 |
+| ER1_NSG | 0000400         /* Nonstandard g... | 102 |
+| ER1_FCE | 0001000         /* Frame count e... | 103 |
+| ER1_ITM | 0002000         /* Illegal tape ... | 104 |
+| ER1_NEF | 0004000         /* Non executabl... | 105 |
+| ER1_DTE | 0010000         /* drive time er... | 106 |
+| ER1_OPI | 0020000         /* op incomplete */ | 107 |
+| ER1_UNS | 0040000         /* drive unsafe */ | 108 |
+| ER1_DCK | 0100000         /* data check NI */ | 109 |
+| TUMR | 03 | 111 |
+| TUAS | 04 | 114 |
+| AS_U0 | 0000001         /* unit 0 flag */ | 117 |
+| TUDC | 05 | 119 |
+| TUDT | 06 | 122 |
+| TULA | 07 | 125 |
+| TUSN | 010 | 128 |
+| TUTC | 011 | 131 |
+| TC_SS | 0000007                    /* Sl... | 133 |
+| TC_EVPAR | 0000010                    /* Ev... | 134 |
+| TC_FMTSEL | 0000360                    /* Fo... | 135 |
+| TC_10CORE | 000                        /* PD... | 136 |
+| TC_15CORE | 001                        /* PD... | 138 |
+| TC_10NORM | 003                        /* PD... | 140 |
+| TC_11NORM | 014                        /* PD... | 142 |
+| TC_11CORE | 015                        /* PD... | 144 |
+| TC_15NORM | 016                        /* PD... | 146 |
+| TC_DENS | 0003400                    /* De... | 148 |
+| TC_800 | 0001400                    /* 80... | 149 |
+| TC_1600 | 0002000                    /* 16... | 150 |
+| TC_EAODTE | 0010000                    /* En... | 151 |
+| TC_SAC | 0020000                    /* Sl... | 152 |
+| TC_FCS | 0040000                    /* Fr... | 153 |
+| TC_ACCL | 0100000                    /* Ac... | 154 |
+| CPOS | u5 | 159 |
+| DATAPTR | u6 | 160 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tu_write | 278-417 |  |
+| tu_read | 418-495 |  |
+| tu_error | 496-547 | Map simH errors into machine errors |
+| tu_srv | 548-846 | Handle processing of tape requests. |
+| tu_reset | 847-857 |  |
+| tu_read_word | 858-874 |  |
+| tu_boot | 875-975 |  |
+| tu_detach | 976-987 |  |
+| tu_help | 988-1012 |  |
+| tu_description | 1013-1019 |  |

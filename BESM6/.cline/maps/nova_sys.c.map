@@ -1,0 +1,128 @@
+=== nova_sys.c — 1187 строк ===
+Источник: nova_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test nova_sys.c -nt .cline/maps/nova_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dev | 53 | |
+| cpu_unit | 54 | |
+| ptr_dev | 55 | |
+| ptp_dev | 56 | |
+| plt_dev | 57 | |
+| tti_dev | 58 | |
+| tto_dev | 59 | |
+| tti1_dev | 60 | |
+| tto1_dev | 61 | |
+| clk_dev | 62 | |
+| lpt_dev | 63 | |
+| dkp_dev | 64 | |
+| dsk_dev | 65 | |
+| mta_dev | 66 | |
+| qty_dev | 67 | |
+| alm_dev | 68 | |
+| cpu_reg | 69 | |
+| saved_PC | 71 | |
+| AMASK | 72 | |
+| map_dev | 76 | |
+| fpu_dev | 77 | |
+| pit_dev | 78 | |
+| Usermap | 79 | |
+| MapStat | 80 | |
+| sim_name | 95 | |
+| sim_name | 97 | |
+| sim_PC | 100 | |
+| sim_emax | 102 | |
+| data | 181 | |
+| origin | 182 | |
+| pos | 183 | |
+| block_start | 184 | |
+| done | 185 | |
+| state | 189 | |
+| block_start | 190 | |
+| done | 191 | |
+| dsign | 646 | |
+| dmax | 650 | |
+| SCPE_OK | 686 | |
+| cflag | 704 | |
+| ind | 705 | |
+| byac | 706 | |
+| SCPE_ARG | 839 | |
+| gbuf | 866 | |
+| dmax | 867 | |
+| dmax | 871 | |
+| cptr | 951 | |
+| gbuf | 967 | |
+| cptr | 978 | |
+| cflag | 995 | |
+| gbuf | 997 | |
+| rtn | 1186 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| I_V_FL | 18                              ... | 306 |
+| I_M_FL | 037                             ... | 307 |
+| I_V_NPN | 000                             ... | 308 |
+| I_V_R | 001                             ... | 309 |
+| I_V_D | 002                             ... | 310 |
+| I_V_RD | 003                             ... | 311 |
+| I_V_M | 004                             ... | 312 |
+| I_V_RM | 005                             ... | 313 |
+| I_V_RR | 006                             ... | 314 |
+| I_V_BY | 007                             ... | 315 |
+| I_V_2AC | 010                             ... | 316 |
+| I_V_RSI | 011                             ... | 317 |
+| I_V_LI | 012                             ... | 318 |
+| I_V_RLI | 013                             ... | 319 |
+| I_V_LM | 014                             ... | 320 |
+| I_V_RLM | 015                             ... | 321 |
+| I_V_FRM | 016                             ... | 322 |
+| I_V_FST | 017                             ... | 323 |
+| I_V_XP | 020                             ... | 324 |
+| I_NPN | (I_V_NPN << I_V_FL) | 325 |
+| I_R | (I_V_R << I_V_FL) | 326 |
+| I_D | (I_V_D << I_V_FL) | 327 |
+| I_RD | (I_V_RD << I_V_FL) | 328 |
+| I_M | (I_V_M << I_V_FL) | 329 |
+| I_RM | (I_V_RM << I_V_FL) | 330 |
+| I_RR | (I_V_RR << I_V_FL) | 331 |
+| I_BY | (I_V_BY << I_V_FL) | 332 |
+| I_2AC | (I_V_2AC << I_V_FL) | 333 |
+| I_RSI | (I_V_RSI << I_V_FL) | 334 |
+| I_LI | (I_V_LI << I_V_FL) | 335 |
+| I_RLI | (I_V_RLI << I_V_FL) | 336 |
+| I_LM | (I_V_LM << I_V_FL) | 337 |
+| I_RLM | (I_V_RLM << I_V_FL) | 338 |
+| I_FRM | (I_V_FRM << I_V_FL) | 339 |
+| I_FST | (I_V_FST << I_V_FL) | 340 |
+| I_XP | (I_V_XP << I_V_FL) | 341 |
+| A_FL | 001                             ... | 855 |
+| A_NX | 002                             ... | 856 |
+| A_PER | 004                             ... | 857 |
+| A_NUM | 010                             ... | 858 |
+| A_SI | 020                             ... | 859 |
+| A_MI | 040                             ... | 860 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load | 179-191 |  |
+| for | 192-653 |  |
+| switch | 654-710 |  |
+| if | 711-714 |  |
+| if | 715-726 |  |
+| for | 727-861 |  |
+| get_addr | 862-877 |  |
+| if | 878-881 |  |
+| if | 882-887 |  |
+| if | 888-891 |  |
+| if | 892-895 |  |
+| if | 896-902 |  |
+| if | 903-910 |  |
+| switch | 911-964 |  |
+| get_2reg | 965-992 |  |
+| parse_sym | 993-1000 |  |
+| if | 1001-1006 |  |
+| if | 1007-1023 |  |
+| switch | 1024-1187 |  |

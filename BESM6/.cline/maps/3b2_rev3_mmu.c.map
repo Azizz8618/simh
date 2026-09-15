@@ -1,0 +1,48 @@
+=== 3b2_rev3_mmu.c — 1178 строк ===
+Источник: 3b2_rev3_mmu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_rev3_mmu.c -nt .cline/maps/3b2_rev3_mmu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mmu_state | 39 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MMU_EXEC_DBG | 1 | 56 |
+| MMU_TRACE_DBG | 1 << 1 | 57 |
+| MMU_CACHE_DBG | 1 << 2 | 58 |
+| MMU_FAULT_DBG | 1 << 3 | 59 |
+| MMU_READ_DBG | 1 << 4 | 60 |
+| MMU_WRITE_DBG | 1 << 5 | 61 |
+| PDC_TAG_MASK | (pdc_tag_masks[MMU_CONF_MCE][MMU... | 137 |
+| VA_TO_TAG_MASK | 0xfffff800 | 141 |
+| PDC_MTAG(VA) | ((((VA) & VA_TO_TAG_MASK) >> 6) ... | 146 |
+| PDC_STAG(VA) | ((((VA) & VA_TO_TAG_MASK) >> 6) ... | 150 |
+| PDC_TAG(VA) | (MMU_CONF_MCE ? PDC_MTAG(VA) : P... | 153 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| get_sdce | 162-182 | If there is a cache miss, this function returns SCPE_NXM. |
+| put_sdce | 183-199 | Insert a Segment Descriptor into the SD cache. |
+| set_u_bit | 200-220 | entry. |
+| get_pdce | 221-256 | Cache. |
+| put_pdce_at | 257-271 | Cache a Page Descriptor in the specified slot. |
+| put_pdce | 272-320 | slot. |
+| flush_pdc | 321-368 | Flush the cache for an individual virtual address. |
+| flush_caches | 369-391 | Flush all entries in both SDC and PDC. |
+| mmu_check_perm | 392-419 | not allowed. |
+| mmu_init | 420-428 | Initialize the MMU device |
+| mmu_read | 429-540 | Memory-mapped (peripheral mode) read of the MMU device |
+| mmu_write | 541-689 |  |
+| mmu_update_history | 690-969 | Update history bits in cache and memory. |
+| mmu_decode_va | 970-1036 |  |
+| mmu_xlate_addr | 1037-1055 | without returning if translation failed. |
+| mmu_enable | 1056-1063 | Enable the MMU and allow virtual address translation. |
+| mmu_disable | 1064-1068 | Disable the MMU. All memory access will be through physical addresses only. |
+| mmu_description | 1069-1076 |  |
+| mmu_show_sdc | 1077-1105 | Display the segment descriptor cache |
+| mmu_show_pdc | 1106-1134 |  |
+| mmu_show_sdt | 1135-1178 | Display the segment table for a section. |

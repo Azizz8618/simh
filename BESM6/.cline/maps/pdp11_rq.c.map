@@ -1,0 +1,918 @@
+=== pdp11_rq.c — 3439 строк ===
+Источник: pdp11_rq.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_rq.c -nt .cline/maps/pdp11_rq.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| MSC | 994-1017 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| fault_PC | 109 | |
+| MMR2 | 116 | |
+| rq_ctx | 1139 | |
+| rq_unit | 1148 | |
+| rqb_ctx | 1268 | |
+| rqb_unit | 1275 | |
+| rqc_ctx | 1332 | |
+| rqc_unit | 1339 | |
+| rqd_ctx | 1396 | |
+| rqd_unit | 1403 | |
+| cp | 1469 | |
+| dptr | 1470 | |
+| cp | 1474 | |
+| dptr | 1475 | |
+| SCPE_OK | 1496 | |
+| cp | 1502 | |
+| dptr | 1503 | |
+| cp | 1507 | |
+| dptr | 1508 | |
+| SCPE_OK | 1528 | |
+| dptr | 1536 | |
+| dibp | 1537 | |
+| -1 | 1546 | |
+| base | 1554 | |
+| zero | 1555 | |
+| base | 1566 | |
+| OK | 1579 | |
+| pkt | 1596 | |
+| nuptr | 1597 | |
+| cp | 1598 | |
+| dptr | 1599 | |
+| nuptr | 1719 | |
+| cp | 1720 | |
+| dptr | 1721 | |
+| SCPE_OK | 1737 | |
+| tpkt | 1805 | |
+| uptr | 1806 | |
+| dptr | 1807 | |
+| sts | 1852 | |
+| uptr | 1853 | |
+| tpkt | 1880 | |
+| uptr | 1881 | |
+| sts | 1906 | |
+| uptr | 1907 | |
+| cp->pak | 1938 | |
+| sts | 1949 | |
+| uptr | 1950 | |
+| cp->pak | 1975 | |
+| sts | 1984 | |
+| sts | 2021 | |
+| uptr | 2022 | |
+| cp->pak | 2041 | |
+| sts | 2052 | |
+| uptr | 2053 | |
+| sts | 2088 | |
+| uptr | 2089 | |
+| cp | 2169 | |
+| uptr->io_status | 2173 | |
+| uptr->io_complete | 2174 | |
+| idx | 2184 | |
+| rg | 2185 | |
+| lbc | 2200 | |
+| pba | 2201 | |
+| lbc | 2226 | |
+| pba | 2227 | |
+| lbc | 2252 | |
+| pba | 2253 | |
+| cp | 2277 | |
+| err | 2279 | |
+| cmd | 2281 | |
+| SCPE_OK | 2406 | |
+| dptr | 2417 | |
+| cp->pak | 2424 | |
+| cp->pak | 2425 | |
+| cp->pak | 2426 | |
+| cp->pak | 2427 | |
+| cp->pak | 2428 | |
+| cp->pak | 2429 | |
+| cp->pak | 2430 | |
+| OK | 2436 | |
+| pkt | 2443 | |
+| lu | 2444 | |
+| lbn | 2446 | |
+| cp->pak | 2468 | |
+| cp->pak | 2472 | |
+| cp->pak | 2473 | |
+| cp->pak | 2480 | |
+| cp->pak | 2481 | |
+| cp->pak | 2487 | |
+| cp->pak | 2488 | |
+| pkt | 2500 | |
+| cp->pak | 2510 | |
+| cp->pak | 2514 | |
+| cp->pak | 2515 | |
+| cp->pak | 2520 | |
+| cp->pak | 2522 | |
+| pkt | 2531 | |
+| cp->pak | 2538 | |
+| cp->pak | 2542 | |
+| cp->pak | 2543 | |
+| cp->pak | 2548 | |
+| pkt | 2558 | |
+| cp->pak | 2567 | |
+| cp->pak | 2568 | |
+| cp->pak | 2569 | |
+| OK | 2591 | |
+| ptr | 2600 | |
+| return | 2609 | |
+| return | 2625 | |
+| addr | 2634 | |
+| addr | 2659 | |
+| dptr | 2660 | |
+| addr | 2697 | |
+| OK | 2704 | |
+| prva | 2716 | |
+| OK | 2736 | |
+| dptr | 2743 | |
+| NULL | 2750 | |
+| return | 2761 | |
+| cp->pak | 2775 | |
+| cp->pak | 2777 | |
+| cp->pak | 2778 | |
+| return | 2787 | |
+| cp->pak | 2797 | |
+| return | 2801 | |
+| return | 2811 | |
+| flag | 2819 | |
+| return | 2824 | |
+| return | 2835 | |
+| ncp | 2843 | |
+| return | 2856 | |
+| ncp | 2864 | |
+| dptr | 2865 | |
+| dibp | 2866 | |
+| dptr | 2884 | |
+| ERR | 2893 | |
+| SCPE_OK | 2913 | |
+| SCPE_OK | 2921 | |
+| plug | 2928 | |
+| uptr->unit_plug | 2943 | |
+| SCPE_OK | 2944 | |
+| new_drives | 2951 | |
+| old_drives | 2955 | |
+| SCPE_OK | 2981 | |
+| cp | 2988 | |
+| cp->ctype | 2994 | |
+| SCPE_OK | 2995 | |
+| cp | 3002 | |
+| SCPE_OK | 3004 | |
+| cp | 3011 | |
+| SCPE_OK | 3024 | |
+| SCPE_OK | 3038 | |
+| uptr | 3047 | |
+| cp | 3048 | |
+| plugs_inited | 3049 | |
+| uptr | 3242 | |
+| SCPE_OK | 3249 | |
+| SCPE_NOFNC | 3256 | |
+| return | 3286 | |
+| return | 3308 | |
+| cp | 3313 | |
+| dptr | 3314 | |
+| pkt | 3315 | |
+| SCPE_OK | 3339 | |
+| cp | 3344 | |
+| dptr | 3345 | |
+| pkt | 3347 | |
+| SCPE_OK | 3389 | |
+| cp | 3394 | |
+| SCPE_OK | 3430 | |
+| buf | 3435 | |
+| buf | 3438 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RQ_QTIME | 100 | 106 |
+| RQ_XTIME | 200 | 107 |
+| OLDPC | fault_PC | 108 |
+| RQ_QTIME | 200 | 113 |
+| RQ_XTIME | 500 | 114 |
+| OLDPC | MMR2 | 115 |
+| RQ_NUMCT | 4 | 120 |
+| UF_MSK | (UF_CMR\|UF_CMW)                 ... | 129 |
+| RQ_SH_MAX | 24                              ... | 131 |
+| RQ_SH_PPL | 8                               ... | 132 |
+| RQ_SH_DPL | 4                               ... | 133 |
+| RQ_SH_RI | 001                             ... | 134 |
+| RQ_SH_FR | 002                             ... | 135 |
+| RQ_SH_RS | 004                             ... | 136 |
+| RQ_SH_UN | 010                             ... | 137 |
+| RQ_SH_ALL | 017                             ... | 138 |
+| RQ_CLASS | 1                               ... | 140 |
+| RQU_UQPM | 6                               ... | 141 |
+| RQQ_UQPM | 19                              ... | 142 |
+| RQ_UQPM | (UNIBUS? RQU_UQPM: RQQ_UQPM) | 143 |
+| RQU_MODEL | 6                               ... | 144 |
+| RQQ_MODEL | 19                              ... | 145 |
+| RQ_MODEL | (UNIBUS? RQU_MODEL: RQQ_MODEL) | 146 |
+| RQ_HVER | 1                               ... | 147 |
+| RQ_SVER | 3                               ... | 148 |
+| RQ_DHTMO | 60                              ... | 149 |
+| RQ_DCTMO | 120                             ... | 150 |
+| RQ_NUMDR | 4                               ... | 151 |
+| RQ_MAXDR | 254                             ... | 152 |
+| RQ_NUMBY | 512                             ... | 153 |
+| RQ_MAXFR | (1 << 16)                       ... | 154 |
+| RQ_MAPXFER | (1u << 31)                      ... | 155 |
+| RQ_MAXQBADDR | 0x3FFFFF                        ... | 156 |
+| RQ_M_PFN | 0x1FFFFF                        ... | 157 |
+| UNIT_V_ONL | (DKUF_V_UF + 0)                 ... | 159 |
+| UNIT_V_ATP | (UNIT_V_ONL + 1)                ... | 160 |
+| UNIT_ONL | (1 << UNIT_V_ONL) | 161 |
+| UNIT_ATP | (1 << UNIT_V_ATP) | 162 |
+| RQ_RMV(u) | ((u->drvtyp->flags & RQDF_RMV)?  | 171 |
+| RQ_WPH(u) | (((u->drvtyp->flags & RQDF_RO) \|\|  | 173 |
+| CST_S1 | 0                               ... | 176 |
+| CST_S1_WR | 1                               ... | 177 |
+| CST_S2 | 2                               ... | 178 |
+| CST_S3 | 3                               ... | 179 |
+| CST_S3_PPA | 4                               ... | 180 |
+| CST_S3_PPB | 5                               ... | 181 |
+| CST_S4 | 6                               ... | 182 |
+| CST_UP | 7                               ... | 183 |
+| CST_DEAD | 8                               ... | 184 |
+| ERR | 0                               ... | 186 |
+| OK | 1 | 187 |
+| RQ_TIMER | (RQ_MAXDR) | 189 |
+| RQ_QUEUE | (RQ_MAXDR + 1) | 190 |
+| RQ_NPKTS | 32                              ... | 200 |
+| RQ_M_NPKTS | (RQ_NPKTS - 1)                  ... | 201 |
+| RQ_PKT_SIZE_W | 32                              ... | 202 |
+| RQ_PKT_SIZE | (RQ_PKT_SIZE_W * sizeof (int16)) | 203 |
+| GETP(p,w,f) | ((cp->pak[p].d[w] >> w##_V_##f) ... | 212 |
+| GETP32(p,w) | (((uint32) cp->pak[p].d[w]) \|  | 213 |
+| PUTP32(p,w,x) | cp->pak[p].d[w] = (x) & 0xFFFF;  | 215 |
+| RCT_OVHD | 2                               ... | 239 |
+| RCT_ENTB | 128                             ... | 240 |
+| RCT_END | 0x80000000                      ... | 241 |
+| RQDF_RMV | DRVFL_RMV                       ... | 304 |
+| RQDF_RO | DRVFL_RO                        ... | 305 |
+| RQDF_MFM | DRVFL_TYPE_MFM                  ... | 306 |
+| RQDF_SDI | DRVFL_TYPE_SDI                  ... | 307 |
+| RQDF_DSSI | DRVFL_TYPE_DSSI                 ... | 308 |
+| RQDF_RC | DRVFL_TYPE_RC                   ... | 309 |
+| RX18_DTYPE | 33 | 317 |
+| RX18_SECT | 9 | 318 |
+| RX18_SURF | 1 | 319 |
+| RX18_CYL | 40 | 320 |
+| RX18_TPG | RD33_SURF | 321 |
+| RX18_GPC | 1 | 322 |
+| RX18_XBN | 0 | 323 |
+| RX18_DBN | 0 | 324 |
+| RX18_LBN | 360 | 325 |
+| RX18_RCTS | 0 | 326 |
+| RX18_RCTC | 0 | 327 |
+| RX18_RBN | 0 | 328 |
+| RX18_MOD | 17 | 329 |
+| RX18_MED | 0x25658012 | 330 |
+| RX18_FLGS | RQDF_RMV | 331 |
+| RX50_SECT | 10 | 333 |
+| RX50_SURF | 1 | 334 |
+| RX50_CYL | 80 | 335 |
+| RX50_TPG | 5 | 336 |
+| RX50_GPC | 16 | 337 |
+| RX50_XBN | 0 | 338 |
+| RX50_DBN | 0 | 339 |
+| RX50_LBN | 800 | 340 |
+| RX50_RCTS | 0 | 341 |
+| RX50_RCTC | 0 | 342 |
+| RX50_RBN | 0 | 343 |
+| RX50_MOD | 7 | 344 |
+| RX50_MED | 0x25658032 | 345 |
+| RX50_FLGS | (RQDF_RMV \| RQDF_MFM) | 346 |
+| RX33_SECT | 15 | 348 |
+| RX33_SURF | 2 | 349 |
+| RX33_CYL | 80 | 350 |
+| RX33_TPG | 2 | 351 |
+| RX33_GPC | 1 | 352 |
+| RX33_XBN | 0 | 353 |
+| RX33_DBN | 0 | 354 |
+| RX33_LBN | 2400 | 355 |
+| RX33_RCTS | 0 | 356 |
+| RX33_RCTC | 0 | 357 |
+| RX33_RBN | 0 | 358 |
+| RX33_MOD | 10 | 359 |
+| RX33_MED | 0x25658021 | 360 |
+| RX33_FLGS | (RQDF_RMV \| RQDF_MFM) | 361 |
+| RD51_SECT | 18 | 363 |
+| RD51_SURF | 4 | 364 |
+| RD51_CYL | 306 | 365 |
+| RD51_TPG | 4 | 366 |
+| RD51_GPC | 1 | 367 |
+| RD51_XBN | 57 | 368 |
+| RD51_DBN | 87 | 369 |
+| RD51_LBN | 21600 | 370 |
+| RD51_RCTS | 36 | 371 |
+| RD51_RCTC | 4 | 372 |
+| RD51_RBN | 144 | 373 |
+| RD51_MOD | 6 | 374 |
+| RD51_MED | 0x25644033 | 375 |
+| RD51_FLGS | RQDF_MFM | 376 |
+| RD31_SECT | 17 | 378 |
+| RD31_SURF | 4 | 379 |
+| RD31_CYL | 615                             ... | 380 |
+| RD31_TPG | RD31_SURF | 381 |
+| RD31_GPC | 1 | 382 |
+| RD31_XBN | 54 | 383 |
+| RD31_DBN | 14 | 384 |
+| RD31_LBN | 41560 | 385 |
+| RD31_RCTS | 3 | 386 |
+| RD31_RCTC | 8 | 387 |
+| RD31_RBN | 100 | 388 |
+| RD31_MOD | 12 | 389 |
+| RD31_MED | 0x2564401F | 390 |
+| RD31_FLGS | RQDF_MFM | 391 |
+| RD52_SECT | 17 | 394 |
+| RD52_SURF | 8 | 395 |
+| RD52_CYL | 512 | 396 |
+| RD52_TPG | RD52_SURF | 397 |
+| RD52_GPC | 1 | 398 |
+| RD52_XBN | 54 | 399 |
+| RD52_DBN | 82 | 400 |
+| RD52_LBN | 60480 | 401 |
+| RD52_RCTS | 4 | 402 |
+| RD52_RCTC | 8 | 403 |
+| RD52_RBN | 168 | 404 |
+| RD52_MOD | 8 | 405 |
+| RD52_MED | 0x25644034 | 406 |
+| RD52_FLGS | RQDF_MFM | 407 |
+| RD53_SECT | 17 | 409 |
+| RD53_SURF | 8 | 410 |
+| RD53_CYL | 1024                            ... | 411 |
+| RD53_TPG | RD53_SURF | 412 |
+| RD53_GPC | 1 | 413 |
+| RD53_XBN | 54 | 414 |
+| RD53_DBN | 82 | 415 |
+| RD53_LBN | 138672 | 416 |
+| RD53_RCTS | 5 | 417 |
+| RD53_RCTC | 8 | 418 |
+| RD53_RBN | 280 | 419 |
+| RD53_MOD | 9 | 420 |
+| RD53_MED | 0x25644035 | 421 |
+| RD53_FLGS | RQDF_MFM | 422 |
+| RD54_SECT | 17 | 424 |
+| RD54_SURF | 15 | 425 |
+| RD54_CYL | 1225                            ... | 426 |
+| RD54_TPG | RD54_SURF | 427 |
+| RD54_GPC | 1 | 428 |
+| RD54_XBN | 54 | 429 |
+| RD54_DBN | 201 | 430 |
+| RD54_LBN | 311200 | 431 |
+| RD54_RCTS | 7 | 432 |
+| RD54_RCTC | 8 | 433 |
+| RD54_RBN | 609 | 434 |
+| RD54_MOD | 13 | 435 |
+| RD54_MED | 0x25644036 | 436 |
+| RD54_FLGS | RQDF_MFM | 437 |
+| RA82_SECT | 57                              ... | 439 |
+| RA82_SURF | 15 | 440 |
+| RA82_CYL | 1435                            ... | 441 |
+| RA82_TPG | RA82_SURF | 442 |
+| RA82_GPC | 1 | 443 |
+| RA82_XBN | 3480                            ... | 444 |
+| RA82_DBN | 3480                            ... | 445 |
+| RA82_LBN | 1216665                         ... | 446 |
+| RA82_RCTS | 3420                            ... | 447 |
+| RA82_RCTC | 1 | 448 |
+| RA82_RBN | 21345                           ... | 449 |
+| RA82_MOD | 11 | 450 |
+| RA82_MED | 0x25641052 | 451 |
+| RA82_FLGS | RQDF_SDI                        ... | 452 |
+| RRD40_SECT | 128 | 454 |
+| RRD40_SURF | 1 | 455 |
+| RRD40_CYL | 10400 | 456 |
+| RRD40_TPG | RRD40_SURF | 457 |
+| RRD40_GPC | 1 | 458 |
+| RRD40_XBN | 0 | 459 |
+| RRD40_DBN | 0 | 460 |
+| RRD40_LBN | 1331200 | 461 |
+| RRD40_RCTS | 0 | 462 |
+| RRD40_RCTC | 0 | 463 |
+| RRD40_RBN | 0 | 464 |
+| RRD40_MOD | 26 | 465 |
+| RRD40_MED | 0x25652228 | 466 |
+| RRD40_FLGS | (RQDF_RMV \| RQDF_RO \| RQDF_MFM) | 467 |
+| RA72_SECT | 51                              ... | 469 |
+| RA72_SURF | 20 | 470 |
+| RA72_CYL | 1921                            ... | 471 |
+| RA72_TPG | RA72_SURF | 472 |
+| RA72_GPC | 1 | 473 |
+| RA72_XBN | 2080                            ... | 474 |
+| RA72_DBN | 2080                            ... | 475 |
+| RA72_LBN | 1953300                         ... | 476 |
+| RA72_RCTS | 2040                            ... | 477 |
+| RA72_RCTC | 1 | 478 |
+| RA72_RBN | 38300                           ... | 479 |
+| RA72_MOD | 37 | 480 |
+| RA72_MED | 0x25641048 | 481 |
+| RA72_FLGS | RQDF_SDI                        ... | 482 |
+| RA90_SECT | 69                              ... | 484 |
+| RA90_SURF | 13 | 485 |
+| RA90_CYL | 2656                            ... | 486 |
+| RA90_TPG | RA90_SURF | 487 |
+| RA90_GPC | 1 | 488 |
+| RA90_XBN | 1820                            ... | 489 |
+| RA90_DBN | 1820                            ... | 490 |
+| RA90_LBN | 2376153                         ... | 491 |
+| RA90_RCTS | 1794                            ... | 492 |
+| RA90_RCTC | 1 | 493 |
+| RA90_RBN | 34437                           ... | 494 |
+| RA90_MOD | 19 | 495 |
+| RA90_MED | 0x2564105A | 496 |
+| RA90_FLGS | RQDF_SDI                        ... | 497 |
+| RA92_SECT | 73                              ... | 499 |
+| RA92_SURF | 13 | 500 |
+| RA92_CYL | 3101                            ... | 501 |
+| RA92_TPG | RA92_SURF | 502 |
+| RA92_GPC | 1 | 503 |
+| RA92_XBN | 174                             ... | 504 |
+| RA92_DBN | 788 | 505 |
+| RA92_LBN | 2940951                         ... | 506 |
+| RA92_RCTS | 949                             ... | 507 |
+| RA92_RCTC | 1 | 508 |
+| RA92_RBN | 40287                           ... | 509 |
+| RA92_MOD | 29 | 510 |
+| RA92_MED | 0x2564105C | 511 |
+| RA92_FLGS | RQDF_SDI                        ... | 512 |
+| RA8U_SECT | 57                              ... | 514 |
+| RA8U_SURF | 15 | 515 |
+| RA8U_CYL | 1435                            ... | 516 |
+| RA8U_TPG | RA8U_SURF | 517 |
+| RA8U_GPC | 1 | 518 |
+| RA8U_XBN | 0 | 519 |
+| RA8U_DBN | 0 | 520 |
+| RA8U_LBN | 4007911                         ... | 521 |
+| RA8U_RCTS | 400 | 522 |
+| RA8U_RCTC | 8 | 523 |
+| RA8U_RBN | 21345 | 524 |
+| RA8U_MOD | 11                              ... | 525 |
+| RA8U_MED | 0x25641052                      ... | 526 |
+| RA8U_FLGS | (RQDF_SDI \| DRVFL_SETSIZE)      ... | 527 |
+| RA60_SECT | 42                              ... | 529 |
+| RA60_SURF | 6 | 530 |
+| RA60_CYL | 1600                            ... | 531 |
+| RA60_TPG | RA60_SURF | 532 |
+| RA60_GPC | 1 | 533 |
+| RA60_XBN | 1032                            ... | 534 |
+| RA60_DBN | 1032                            ... | 535 |
+| RA60_LBN | 400176                          ... | 536 |
+| RA60_RCTS | 1008                            ... | 537 |
+| RA60_RCTC | 1 | 538 |
+| RA60_RBN | 9528                            ... | 539 |
+| RA60_MOD | 4 | 540 |
+| RA60_MED | 0x22A4103C | 541 |
+| RA60_FLGS | (RQDF_RMV \| RQDF_SDI)           ... | 542 |
+| RA81_SECT | 51                              ... | 544 |
+| RA81_SURF | 14 | 545 |
+| RA81_CYL | 1258                            ... | 546 |
+| RA81_TPG | RA81_SURF | 547 |
+| RA81_GPC | 1 | 548 |
+| RA81_XBN | 2436                            ... | 549 |
+| RA81_DBN | 2436                            ... | 550 |
+| RA81_LBN | 891072                          ... | 551 |
+| RA81_RCTS | 2856                            ... | 552 |
+| RA81_RCTC | 1 | 553 |
+| RA81_RBN | 17472                           ... | 554 |
+| RA81_MOD | 5 | 555 |
+| RA81_MED | 0x25641051 | 556 |
+| RA81_FLGS | RQDF_SDI                        ... | 557 |
+| RA71_SECT | 51                              ... | 559 |
+| RA71_SURF | 14 | 560 |
+| RA71_CYL | 1921                            ... | 561 |
+| RA71_TPG | RA71_SURF | 562 |
+| RA71_GPC | 1 | 563 |
+| RA71_XBN | 1456                            ... | 564 |
+| RA71_DBN | 1456                            ... | 565 |
+| RA71_LBN | 1367310                         ... | 566 |
+| RA71_RCTS | 1428                            ... | 567 |
+| RA71_RCTC | 1 | 568 |
+| RA71_RBN | 26810                           ... | 569 |
+| RA71_MOD | 40 | 570 |
+| RA71_MED | 0x25641047 | 571 |
+| RA71_FLGS | RQDF_SDI                        ... | 572 |
+| RD32_SECT | 17 | 574 |
+| RD32_SURF | 6 | 575 |
+| RD32_CYL | 820 | 576 |
+| RD32_TPG | RD32_SURF | 577 |
+| RD32_GPC | 1 | 578 |
+| RD32_XBN | 54 | 579 |
+| RD32_DBN | 48 | 580 |
+| RD32_LBN | 83236 | 581 |
+| RD32_RCTS | 4 | 582 |
+| RD32_RCTC | 8 | 583 |
+| RD32_RBN | 200 | 584 |
+| RD32_MOD | 15 | 585 |
+| RD32_MED | 0x25644020 | 586 |
+| RD32_FLGS | RQDF_MFM | 587 |
+| RD33_SECT | 17 | 592 |
+| RD33_SURF | 7 | 593 |
+| RD33_CYL | 1170 | 594 |
+| RD33_TPG | RD33_SURF | 595 |
+| RD33_GPC | 1 | 596 |
+| RD33_XBN | 54 | 597 |
+| RD33_DBN | 65 | 598 |
+| RD33_LBN | 138635 | 599 |
+| RD33_RCTS | 5 | 600 |
+| RD33_RCTC | 8 | 601 |
+| RD33_RBN | 317 | 602 |
+| RD33_MOD | 24 | 603 |
+| RD33_MED | 0x25644021 | 604 |
+| RD33_FLGS | 0 | 605 |
+| RC25_SECT | 50                              ... | 607 |
+| RC25_SURF | 8 | 608 |
+| RC25_CYL | 1260                            ... | 609 |
+| RC25_TPG | RC25_SURF | 610 |
+| RC25_GPC | 1 | 611 |
+| RC25_XBN | 0                               ... | 612 |
+| RC25_DBN | 0                               ... | 613 |
+| RC25_LBN | 50902                           ... | 614 |
+| RC25_RCTS | 0                               ... | 615 |
+| RC25_RCTC | 1 | 616 |
+| RC25_RBN | 0                               ... | 617 |
+| RC25_MOD | 2 | 618 |
+| RC25_MED | 0x20643019 | 619 |
+| RC25_FLGS | RQDF_RMV | 620 |
+| RCF25_SECT | 50                              ... | 622 |
+| RCF25_SURF | 8 | 623 |
+| RCF25_CYL | 1260                            ... | 624 |
+| RCF25_TPG | RCF25_SURF | 625 |
+| RCF25_GPC | 1 | 626 |
+| RCF25_XBN | 0                               ... | 627 |
+| RCF25_DBN | 0                               ... | 628 |
+| RCF25_LBN | 50902                           ... | 629 |
+| RCF25_RCTS | 0                               ... | 630 |
+| RCF25_RCTC | 1 | 631 |
+| RCF25_RBN | 0                               ... | 632 |
+| RCF25_MOD | 3 | 633 |
+| RCF25_MED | 0x20643319 | 634 |
+| RCF25_FLGS | RQDF_RC                         ... | 635 |
+| RA80_SECT | 31                              ... | 637 |
+| RA80_SURF | 14 | 638 |
+| RA80_CYL | 559                             ... | 639 |
+| RA80_TPG | RA80_SURF | 640 |
+| RA80_GPC | 1 | 641 |
+| RA80_XBN | 0                               ... | 642 |
+| RA80_DBN | 0                               ... | 643 |
+| RA80_LBN | 237212                          ... | 644 |
+| RA80_RCTS | 0                               ... | 645 |
+| RA80_RCTC | 1 | 646 |
+| RA80_RBN | 0                               ... | 647 |
+| RA80_MOD | 1 | 648 |
+| RA80_MED | 0x25641050 | 649 |
+| RA80_FLGS | RQDF_SDI                        ... | 650 |
+| RA70_SECT | 33              /* +1 spare/trac... | 654 |
+| RA70_SURF | 11              /* tracks/cylind... | 655 |
+| RA70_CYL | 1507            /* 0-1506 user */ | 656 |
+| RA70_TPG | RA70_SURF | 657 |
+| RA70_GPC | 1 | 658 |
+| RA70_XBN | 0               /* ??? */ | 659 |
+| RA70_DBN | 0               /* ??? */ | 660 |
+| RA70_LBN | 547041          /* 33*11*1507 */ | 661 |
+| RA70_RCTS | 198             /* Size of the R... | 662 |
+| RA70_RCTC | 7               /* Number of RCT... | 663 |
+| RA70_RBN | 16577           /* 1*11*1507 */ | 664 |
+| RA70_MOD | 18              /* ??? */ | 665 |
+| RA70_MED | 0x25641046      /* RA70 MEDIA ID */ | 666 |
+| RA70_FLGS | RQDF_SDI        /* SDI drive */ | 667 |
+| RA73_SECT | 70              /* +1 spare/trac... | 670 |
+| RA73_SURF | 21              /* tracks/cylind... | 671 |
+| RA73_CYL | 2667            /* 0-2666 user */ | 672 |
+| RA73_TPG | RA73_SURF | 673 |
+| RA73_GPC | 1 | 674 |
+| RA73_XBN | 0               /* ??? */ | 675 |
+| RA73_DBN | 0               /* ??? */ | 676 |
+| RA73_LBN | 3920490         /* 70*21*2667 */ | 677 |
+| RA73_RCTS | 198             /* Size of the R... | 678 |
+| RA73_RCTC | 7               /* Number of RCT... | 679 |
+| RA73_RBN | 56007           /* 1*21*2667 */ | 680 |
+| RA73_MOD | 47              /* ??? */ | 681 |
+| RA73_MED | 0x25641049      /* RA73 MEDIA ID */ | 682 |
+| RA73_FLGS | RQDF_SDI        /* SDI drive */ | 683 |
+| RF30_SECT | 37                              ... | 689 |
+| RF30_SURF | 6 | 690 |
+| RF30_CYL | 1320                            ... | 691 |
+| RF30_TPG | RF30_SURF | 692 |
+| RF30_GPC | 1 | 693 |
+| RF30_XBN | 1456                            ... | 694 |
+| RF30_DBN | 1456                            ... | 695 |
+| RF30_LBN | 293040                          ... | 696 |
+| RF30_RCTS | 1428                            ... | 697 |
+| RF30_RCTC | 1 | 698 |
+| RF30_RBN | 26810                           ... | 699 |
+| RF30_MOD | 21 | 700 |
+| RF30_MED | 0x2264601E | 701 |
+| RF30_FLGS | RQDF_DSSI                       ... | 702 |
+| RF31_SECT | 50                              ... | 704 |
+| RF31_SURF | 8 | 705 |
+| RF31_CYL | 1861                            ... | 706 |
+| RF31_TPG | RF31_SURF | 707 |
+| RF31_GPC | 1 | 708 |
+| RF31_XBN | 1456                            ... | 709 |
+| RF31_DBN | 1456                            ... | 710 |
+| RF31_LBN | 744400                          ... | 711 |
+| RF31_RCTS | 1428                            ... | 712 |
+| RF31_RCTC | 1 | 713 |
+| RF31_RBN | 26810                           ... | 714 |
+| RF31_MOD | 27 | 715 |
+| RF31_MED | 0x2264601F | 716 |
+| RF31_FLGS | RQDF_DSSI                       ... | 717 |
+| RF35_SECT | 57                              ... | 719 |
+| RF35_SURF | 14 | 720 |
+| RF35_CYL | 2086                            ... | 721 |
+| RF35_TPG | RF35_SURF | 722 |
+| RF35_GPC | 1 | 723 |
+| RF35_XBN | 1917                            ... | 724 |
+| RF35_DBN | 1919                            ... | 725 |
+| RF35_LBN | 1664628                         ... | 726 |
+| RF35_RCTS | 1915                            ... | 727 |
+| RF35_RCTC | 1 | 728 |
+| RF35_RBN | 26810                           ... | 729 |
+| RF35_MOD | 27 | 730 |
+| RF35_MED | 0x2264601F | 731 |
+| RF35_FLGS | RQDF_DSSI                       ... | 732 |
+| RF71_SECT | 37                              ... | 734 |
+| RF71_SURF | 16 | 735 |
+| RF71_CYL | 1320                            ... | 736 |
+| RF71_TPG | RF71_SURF | 737 |
+| RF71_GPC | 1 | 738 |
+| RF71_XBN | 1456                            ... | 739 |
+| RF71_DBN | 1456                            ... | 740 |
+| RF71_LBN | 781440                          ... | 741 |
+| RF71_RCTS | 1428                            ... | 742 |
+| RF71_RCTC | 1 | 743 |
+| RF71_RBN | 26810                           ... | 744 |
+| RF71_MOD | 40 | 745 |
+| RF71_MED | 0x22646047 | 746 |
+| RF71_FLGS | RQDF_DSSI                       ... | 747 |
+| RF72_SECT | 50                              ... | 749 |
+| RF72_SURF | 21 | 750 |
+| RF72_CYL | 1861                            ... | 751 |
+| RF72_TPG | RF72_SURF | 752 |
+| RF72_GPC | 1 | 753 |
+| RF72_XBN | 1456                            ... | 754 |
+| RF72_DBN | 1456                            ... | 755 |
+| RF72_LBN | 1954050                         ... | 756 |
+| RF72_RCTS | 1428                            ... | 757 |
+| RF72_RCTC | 1 | 758 |
+| RF72_RBN | 26810                           ... | 759 |
+| RF72_MOD | 28 | 760 |
+| RF72_MED | 0x22646048 | 761 |
+| RF72_FLGS | RQDF_DSSI                       ... | 762 |
+| RF73_SECT | 71                              ... | 764 |
+| RF73_SURF | 21 | 765 |
+| RF73_CYL | 2621                            ... | 766 |
+| RF73_TPG | RF73_SURF | 767 |
+| RF73_GPC | 1 | 768 |
+| RF73_XBN | 1456                            ... | 769 |
+| RF73_DBN | 1456                            ... | 770 |
+| RF73_LBN | 3907911                         ... | 771 |
+| RF73_RCTS | 1428                            ... | 772 |
+| RF73_RCTC | 1 | 773 |
+| RF73_RBN | 26810                           ... | 774 |
+| RF73_MOD | 35 | 775 |
+| RF73_MED | 0x22646049 | 776 |
+| RF73_FLGS | RQDF_DSSI                       ... | 777 |
+| ESE20_SECT | 4 | 787 |
+| ESE20_SURF | 128 | 788 |
+| ESE20_CYL | 480 | 789 |
+| ESE20_TPG | ESE20_SURF | 790 |
+| ESE20_GPC | 1 | 791 |
+| ESE20_XBN | 0 | 792 |
+| ESE20_DBN | 0 | 793 |
+| ESE20_LBN | 245760 | 794 |
+| ESE20_RCTS | 0 | 795 |
+| ESE20_RCTC | 1 | 796 |
+| ESE20_RBN | 0 | 797 |
+| ESE20_MOD | 25 | 798 |
+| ESE20_MED | 0x254B3294 | 799 |
+| ESE20_FLGS | RQDF_SDI | 800 |
+| ESE52_SECT | 4 | 802 |
+| ESE52_SURF | 128 | 803 |
+| ESE52_CYL | 465 | 804 |
+| ESE52_TPG | ESE52_SURF | 805 |
+| ESE52_GPC | 1 | 806 |
+| ESE52_XBN | 0 | 807 |
+| ESE52_DBN | 0 | 808 |
+| ESE52_LBN | 238080 | 809 |
+| ESE52_RCTS | 0 | 810 |
+| ESE52_RCTC | 1 | 811 |
+| ESE52_RBN | 0 | 812 |
+| ESE52_MOD | 31 | 813 |
+| ESE52_MED | 0x254B32B4 | 814 |
+| ESE52_FLGS | RQDF_SDI | 815 |
+| ESE56_SECT | 4 | 817 |
+| ESE56_SURF | 128 | 818 |
+| ESE56_CYL | 2337 | 819 |
+| ESE56_TPG | ESE56_SURF | 820 |
+| ESE56_GPC | 1 | 821 |
+| ESE56_XBN | 0 | 822 |
+| ESE56_DBN | 0 | 823 |
+| ESE56_LBN | 1196544 | 824 |
+| ESE56_RCTS | 0 | 825 |
+| ESE56_RCTC | 1 | 826 |
+| ESE56_RBN | 0 | 827 |
+| ESE56_MOD | 48 | 828 |
+| ESE56_MED | 0x254B32B8 | 829 |
+| ESE56_FLGS | RQDF_SDI | 830 |
+| ESE58_SECT | 4 | 832 |
+| ESE58_SURF | 128 | 833 |
+| ESE58_CYL | 3741 | 834 |
+| ESE58_TPG | ESE58_SURF | 835 |
+| ESE58_GPC | 1 | 836 |
+| ESE58_XBN | 0 | 837 |
+| ESE58_DBN | 0 | 838 |
+| ESE58_LBN | 1915392 | 839 |
+| ESE58_RCTS | 0 | 840 |
+| ESE58_RCTC | 1 | 841 |
+| ESE58_RBN | 0 | 842 |
+| ESE58_MOD | 49 | 843 |
+| ESE58_MED | 0x254B32BA | 844 |
+| ESE58_FLGS | RQDF_SDI | 845 |
+| CBUS_QBUS | 1 | 850 |
+| CBUS_UNIBUS | 2 | 851 |
+| DEFAULT_CTYPE | 0 | 853 |
+| KLESI_CTYPE | 1               // RC25 controll... | 856 |
+| KLESI_UQPM | 3 | 857 |
+| KLESI_MODEL | 3 | 858 |
+| KLESI_BUSES | CBUS_QBUS+CBUS_UNIBUS | 859 |
+| RUX50_CTYPE | 2               // UNIBUS RX50-o... | 861 |
+| RUX50_UQPM | 10 | 862 |
+| RUX50_MODEL | 10 | 863 |
+| RUX50_BUSES | CBUS_UNIBUS | 864 |
+| UDA50A_CTYPE | 3               // UNIBUS SDI (R... | 866 |
+| UDA50A_UQPM | 6 | 867 |
+| UDA50A_MODEL | 6 | 868 |
+| UDA50A_BUSES | CBUS_UNIBUS | 869 |
+| RQDX3_CTYPE | 4               // QBUS RX50/RDx... | 871 |
+| RQDX3_UQPM | 19 | 872 |
+| RQDX3_MODEL | 19 | 873 |
+| RQDX3_BUSES | CBUS_QBUS | 874 |
+| KDA50_CTYPE | 5               // QBUS SDI (RAx... | 876 |
+| KDA50_UQPM | 13 | 877 |
+| KDA50_MODEL | 13 | 878 |
+| KDA50_BUSES | CBUS_QBUS | 879 |
+| KRQ50_CTYPE | 6               // QBUS RRD40/50... | 881 |
+| KRQ50_UQPM | 16 | 882 |
+| KRQ50_MODEL | 16 | 883 |
+| KRQ50_BUSES | CBUS_QBUS | 884 |
+| KRU50_CTYPE | 7               // UNIBUS RRD40/... | 886 |
+| KRU50_UQPM | 26 | 887 |
+| KRU50_MODEL | 26 | 888 |
+| KRU50_BUSES | CBUS_UNIBUS | 889 |
+| RQDX1_CTYPE | 8               // QBUS RX50/RDx... | 891 |
+| RQDX1_UQPM | 7 | 892 |
+| RQDX1_MODEL | 7 | 893 |
+| RQDX1_BUSES | CBUS_QBUS | 894 |
+| KDB50_CTYPE | 9               // QBUS SDI (RAx... | 896 |
+| KDB50_UQPM | 18 | 897 |
+| KDB50_MODEL | 18 | 898 |
+| KDB50_BUSES | CBUS_QBUS | 899 |
+| RQDX4_CTYPE | 10              // QBUS RXxx/RDx... | 901 |
+| RQDX4_UQPM | 20              // CSS, Reading ... | 902 |
+| RQDX4_MODEL | 20 | 903 |
+| RQDX4_BUSES | CBUS_QBUS | 904 |
+| UDA50_CTYPE | 11              // Old UNIBUS SD... | 906 |
+| UDA50_UQPM | 2 | 907 |
+| UDA50_MODEL | 2 | 908 |
+| UDA50_BUSES | CBUS_UNIBUS | 909 |
+| RQ_DRV(d) |  | 912 |
+| RQ_DRV_A(d,a) |  | 918 |
+| RQ_SIZE(d) | d##_LBN | 924 |
+| RQ_CTLR(d) |  | 970 |
+| DBG_TRC | 0x0001                          ... | 1020 |
+| DBG_INI | 0x0002                          ... | 1021 |
+| DBG_REG | 0x0004                          ... | 1022 |
+| DBG_REQ | 0x0008                          ... | 1023 |
+| DBG_DSK | 0x0010                          ... | 1024 |
+| DBG_DAT | 0x0020                          ... | 1025 |
+| IOLN_RQ | 004 | 1141 |
+| BOOT_START | 016000                          ... | 3166 |
+| BOOT_ENTRY | (BOOT_START + 002)              ... | 3167 |
+| BOOT_UNIT | (BOOT_START + 010)              ... | 3168 |
+| BOOT_CSR | (BOOT_START + 014)              ... | 3169 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 3170 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rq_rd | 1466-1478 |  |
+| switch | 1479-1498 |  |
+| rq_wr | 1499-1511 |  |
+| switch | 1512-1532 |  |
+| rq_map_pa | 1533-1538 |  |
+| for | 1539-1550 |  |
+| rq_step4 | 1551-1592 |  |
+| rq_quesvc | 1593-1603 |  |
+| if | 1604-1668 |  |
+| for | 1669-1676 |  |
+| if | 1677-1702 |  |
+| if | 1703-1715 |  |
+| rq_tmrsvc | 1716-1724 |  |
+| for | 1725-1741 |  |
+| rq_mscp | 1742-1747 |  |
+| switch | 1748-1799 |  |
+| rq_abo | 1800-1811 |  |
+| if | 1812-1846 |  |
+| rq_avl | 1847-1856 |  |
+| if | 1857-1874 |  |
+| rq_gcs | 1875-1901 |  |
+| rq_gus | 1902-1910 |  |
+| if | 1911-1916 |  |
+| if | 1917-1944 |  |
+| rq_onl | 1945-1953 |  |
+| if | 1954-1981 |  |
+| rq_scc | 1982-1987 |  |
+| if | 1988-2016 |  |
+| rq_suc | 2017-2025 |  |
+| if | 2026-2047 |  |
+| rq_fmt | 2048-2056 |  |
+| if | 2057-2083 |  |
+| rq_rw | 2084-2092 |  |
+| if | 2093-2127 |  |
+| rq_rw_valid | 2128-2145 |  |
+| if | 2146-2153 | if (lbn & 0xF0000000) return (ST_CMD \| I_LBN);       /* 'reasonable' lbn? */ |
+| if | 2154-2166 |  |
+| rq_io_complete | 2167-2180 |  |
+| rq_map_ba | 2181-2196 |  |
+| rq_readb | 2197-2202 |  |
+| if | 2203-2222 |  |
+| rq_readw | 2223-2228 |  |
+| if | 2229-2248 |  |
+| rq_writew | 2249-2254 |  |
+| if | 2255-2274 |  |
+| rq_svc | 2275-2296 |  |
+| if | 2297-2300 |  |
+| if | 2301-2305 |  |
+| if | 2306-2316 |  |
+| if | 2317-2340 |  |
+| End | 2341-2389 |  |
+| if | 2390-2410 |  |
+| rq_rw_end | 2411-2440 |  |
+| rq_dte | 2441-2497 |  |
+| rq_hbe | 2498-2528 |  |
+| rq_plf | 2529-2555 |  |
+| rq_una | 2556-2582 |  |
+| rq_deqf | 2583-2593 |  |
+| rq_deqh | 2594-2602 |  |
+| rq_enqh | 2603-2611 |  |
+| rq_enqt | 2612-2631 |  |
+| rq_getpkt | 2632-2638 |  |
+| if | 2639-2656 |  |
+| rq_putpkt | 2657-2667 |  |
+| if | 2668-2694 |  |
+| rq_getdesc | 2695-2712 |  |
+| rq_putdesc | 2713-2722 |  |
+| if | 2723-2740 |  |
+| rq_getucb | 2741-2754 |  |
+| rq_setf_unit | 2755-2765 |  |
+| rq_putr_unit | 2766-2781 |  |
+| if | 2782-2805 |  |
+| rq_init_int | 2806-2815 |  |
+| rq_ring_int | 2816-2828 |  |
+| rq_setint | 2829-2839 |  |
+| rq_clrint | 2840-2847 |  |
+| for | 2848-2860 |  |
+| rq_inta | 2861-2867 |  |
+| for | 2868-2881 |  |
+| rq_fatal | 2882-2897 |  |
+| rq_set_wlk | 2898-2906 |  |
+| rq_show_wlk | 2907-2917 |  |
+| rq_show_plug | 2918-2925 |  |
+| rq_set_plug | 2926-2948 |  |
+| rq_set_drives | 2949-2958 |  |
+| for | 2959-2967 |  |
+| for | 2968-2972 |  |
+| for | 2973-2976 |  |
+| for | 2977-2985 |  |
+| rq_set_ctype | 2986-2999 |  |
+| rq_show_ctype | 3000-3008 |  |
+| rq_attach | 3009-3028 |  |
+| rq_detach | 3029-3042 |  |
+| rq_reset | 3043-3053 |  |
+| for | 3054-3069 |  |
+| if | 3070-3074 |  |
+| if | 3075-3132 |  |
+| for | 3133-3143 |  |
+| for | 3144-3237 |  |
+| rq_boot | 3238-3253 |  |
+| rq_boot | 3254-3261 |  |
+| rq_show_ring | 3262-3273 |  |
+| for | 3274-3288 |  |
+| rq_show_pkt | 3289-3297 |  |
+| for | 3298-3310 |  |
+| rq_show_unitq | 3311-3317 |  |
+| if | 3318-3321 |  |
+| if | 3322-3327 |  |
+| if | 3328-3341 |  |
+| rq_show_ctrl | 3342-3348 |  |
+| if | 3349-3352 |  |
+| if | 3353-3361 |  |
+| if | 3362-3374 |  |
+| if | 3375-3383 |  |
+| if | 3384-3391 |  |
+| rq_help | 3392-3432 |  |
+| rq_description | 3433-3439 |  |

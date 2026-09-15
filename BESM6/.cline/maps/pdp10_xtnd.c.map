@@ -1,0 +1,103 @@
+=== pdp10_xtnd.c — 754 строк ===
+Источник: pdp10_xtnd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp10_xtnd.c -nt .cline/maps/pdp10_xtnd.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rlog | 142 | |
+| b1 | 182 | |
+| xinst | 183 | |
+| xflgs | 184 | |
+| e1 | 185 | |
+| flg | 189 | |
+| XT_MUUO | 589 | |
+| bp | 608 | |
+| ba | 615 | |
+| bp | 616 | |
+| wd | 626 | |
+| ba | 633 | |
+| bp | 634 | |
+| val | 644 | |
+| return | 647 | |
+| ea | 664 | |
+| tcode | 665 | |
+| tblent | 666 | |
+| -1 | 704 | |
+| rlog | 728 | |
+| return | 729 | |
+| return | 753 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MM_XSRC | (pflgs & XSRC_PXCT) | 70 |
+| MM_XDST | (pflgs & XDST_PXCT) | 71 |
+| MM_EA_XSRC | ((pflgs & EA_PXCT) && MM_XSRC) | 72 |
+| MM_EA_XDST | ((pflgs & EA_PXCT) && MM_XDST) | 73 |
+| XT_CMPSL | 001                             ... | 75 |
+| XT_CMPSE | 002 | 76 |
+| XT_CMPSLE | 003 | 77 |
+| XT_EDIT | 004 | 78 |
+| XT_CMPSGE | 005 | 79 |
+| XT_CMPSN | 006 | 80 |
+| XT_CMPSG | 007 | 81 |
+| XT_CVTDBO | 010 | 82 |
+| XT_CVTDBT | 011 | 83 |
+| XT_CVTBDO | 012 | 84 |
+| XT_CVTBDT | 013 | 85 |
+| XT_MOVSO | 014 | 86 |
+| XT_MOVST | 015 | 87 |
+| XT_MOVSLJ | 016 | 88 |
+| XT_MOVSRJ | 017 | 89 |
+| XT_LFLG | INT64_C(0400000000000)          ... | 93 |
+| XT_SFLG | INT64_C(0400000000000)          ... | 94 |
+| XT_NFLG | INT64_C(0200000000000)          ... | 95 |
+| XT_MFLG | INT64_C(0100000000000)          ... | 96 |
+| XT_V_CODE | 15                              ... | 100 |
+| XT_M_CODE | 07 | 101 |
+| XT_BYMASK | 07777                           ... | 102 |
+| XT_DGMASK | 017                             ... | 103 |
+| XT_GETCODE(x) | ((int32) (((x) >> XT_V_CODE) & X... | 104 |
+| XLNTMASK | INT64_C(0000777777777)          ... | 108 |
+| XFLGMASK | INT64_C(0700000000000)          ... | 109 |
+| XT_MBZ | INT64_C(0777000000000)          ... | 110 |
+| XT_MBZE | INT64_C(0047777000000)          ... | 111 |
+| XT_N_RLOG | 5                               ... | 115 |
+| XT_M_RLOG | ((1 << XT_N_RLOG) - 1)          ... | 116 |
+| XT_O_RLOG | 1                               ... | 117 |
+| XT_INSRLOG(x,v) | v = ((v << XT_N_RLOG) \| (((x) + ... | 118 |
+| XT_REMRLOG(x,v) | x = (v & XT_M_RLOG) - XT_O_RLOG;  | 119 |
+| ED_V_PBYN | 30                              ... | 124 |
+| ED_M_PBYN | 03 | 125 |
+| ED_PBYNO | INT64_C(0040000000000)          ... | 126 |
+| ED_GETPBYN(x) | ((int32) (((x) >> ED_V_PBYN) & E... | 127 |
+| ED_V_POPC | 6                               ... | 128 |
+| ED_M_PAT | 0777                            ... | 129 |
+| ED_M_NUM | 0077                            ... | 130 |
+| ED_PBYTE(x,y) | ((int32) (((x) >> (27 - (ED_GETP... | 131 |
+| ED_STOP | 0000                            ... | 132 |
+| ED_SELECT | 0001                            ... | 133 |
+| ED_SIGST | 0002                            ... | 134 |
+| ED_FLDSEP | 0003                            ... | 135 |
+| ED_EXCHMD | 0004                            ... | 136 |
+| ED_MESSAG | 0100                            ... | 137 |
+| ED_SKPM | 0500                            ... | 138 |
+| ED_SKPN | 0600                            ... | 139 |
+| ED_SKPA | 0700                            ... | 140 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| xtend | 180-196 |  |
+| switch | 197-595 |  |
+| incbp | 596-602 |  |
+| if | 603-612 |  |
+| incloadbp | 613-630 |  |
+| incstorebp | 631-661 |  |
+| xlate | 662-670 |  |
+| switch | 671-715 |  |
+| filldst | 716-720 |  |
+| for | 721-741 |  |
+| xtcln | 742-745 |  |
+| while | 746-754 |  |

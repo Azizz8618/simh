@@ -1,0 +1,148 @@
+=== ka10_ai.c — 1035 строк ===
+Источник: ka10_ai.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ka10_ai.c -nt .cline/maps/ka10_ai.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| image_state | 186 | |
+| image_count | 187 | |
+| ai_dib | 234 | |
+| channel_unit | 252 | |
+| latency_unit | 253 | |
+| channel_pc | 254 | |
+| channel_status | 255 | |
+| channel_errors | 256 | |
+| channel_cc | 257 | |
+| channel_wc | 258 | |
+| channel_mode | 259 | |
+| channel_delay | 260 | |
+| channel_default_delay | 261 | |
+| channel_cylinder | 264 | |
+| SCPE_OK | 1026 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_AI | 0 | 30 |
+| SECTOR_SIZE | 1024 | 39 |
+| SECTORS | 2 | 40 |
+| SURFACES | 20 | 41 |
+| MEMOREX_CYLINDERS | 203 | 42 |
+| CALCOMP_CYLINDERS | (2 * MEMOREX_CYLINDERS) | 43 |
+| CYLINDER_SIZE | (SECTOR_SIZE * SECTORS * SURFACES) | 44 |
+| MEMOREX_SIZE | (CYLINDER_SIZE * MEMOREX_CYLINDERS) | 45 |
+| CALCOMP_SIZE | (CYLINDER_SIZE * CALCOMP_CYLINDERS) | 46 |
+| SECTOR_REAL_SIZE | (SECTOR_SIZE + 8) | 50 |
+| TRACK_REAL_SIZE | ((SECTORS + 1) * SECTOR_REAL_SIZE) | 53 |
+| CYLINDER_REAL_SIZE | (SURFACES * TRACK_REAL_SIZE) | 54 |
+| AI_DEVNUM | 0610    /* First device number; ... | 56 |
+| AI_NAME | "AI" | 57 |
+| NUM_UNITS | 16      /* Hardware units, but I... | 58 |
+| DASSGN | 0400000000000LL /* ASSIGNED TO P... | 63 |
+| DPIRQC | 0400000 /* PI REQ BEING GENERATE... | 64 |
+| DSSRQ | 0200000 /* SEEK REQUEST */ | 65 |
+| DSDEEB | 0010000 /* ENABLE INTERRUPT ON D... | 66 |
+| DSSERR | 0004000 /* ERROR FLAG */ | 67 |
+| DSSAEB | 0002000 /* ATTENTION ENABLE FLAG */ | 68 |
+| DSSATT | 0001000 /* ATTENTION FLAG */ | 69 |
+| DSIENB | 0000400 /* IDLE FLAG ENABLE */ | 70 |
+| DSSRUN | 0000200 /* RUN */ | 71 |
+| DSSACT | 0000100 /* ACTIVE */ | 72 |
+| DSSCEB | 0000040 /* CHANNEL ENABLE */ | 73 |
+| DSSCHF | 0000020 /* CHANNEL FLAG */ | 74 |
+| DSSCFL | 0000010 /* CPU FLAG */ | 75 |
+| DCSET | 0400000 /* SET SELECTED */ | 78 |
+| DCCLR | 0200000 /* CLEAR SELECTED */ | 79 |
+| DCCSET | 0600000 /* RESET CONTROLLER THEN... | 80 |
+| DCDENB | 0010000 /* DATA ERROR ENABLE */ | 81 |
+| DCERR | 0004000 /* SET ERROR FLAG OR CLE... | 82 |
+| DCATEB | 0002000 /* ATTENTION ENABLE */ | 83 |
+| DCCATT | 0001000 /* CLEAR ATTENTION */ | 84 |
+| DCSSRQ | 0001000 /* SET SEEK REQUEST */ | 85 |
+| DCIENB | 0000400 /* IDLE ENABLE */ | 86 |
+| DCSTAR | 0000200 /* START (SET) */ | 87 |
+| DCSSTP | 0000200 /* STOP (CLEAR) */ | 88 |
+| DCSGL | 0000100 /* DO SINGLE COMMAND */ | 89 |
+| DCCENB | 0000040 /* CHANNEL ENABLE */ | 90 |
+| DCCFLG | 0000020 /* CHANNEL FLAG */ | 91 |
+| DCCPUF | 0000010 /* CPU FLAG */ | 92 |
+| SET_MASK | (DCDENB\|DCERR\|DCATEB\|DCIENB\|DCSTAR) | 95 |
+| CLEAR_MASK | (DCDENB\|DCERR\|DCATEB\|DCCATT\|DCIE... | 96 |
+| DIPE | 04000   /* INTERNAL PARITY ERROR */ | 99 |
+| DRLNER | 02000   /* RECORD LENGTH */ | 100 |
+| DRCER | 01000   /* READ COMPARE ERROR */ | 101 |
+| DOVRRN | 00400   /* OVERRUN */ | 102 |
+| DCKSER | 00200   /* CKSUM OR DECODER ERR */ | 103 |
+| DWTHER | 00100   /* WATCHDOG TIMER */ | 104 |
+| DFUNSF | 00040   /* FILE UNSAFE, SEEK INC... | 105 |
+| DOFFL | 00020   /* OFF LINE OR MULT SEL */ | 106 |
+| DPROT | 00010   /* WRT KEY OR RD ONLY OR... | 107 |
+| DDOBSY | 00004   /* DATAO WHEN BSY */ | 108 |
+| DNXM | 00002   /* NON-EX MEM */ | 109 |
+| DCPERR | 00001   /* CORE PARITY ERR */ | 110 |
+| DUNENB | 0020000000000LL /* ENABLE LOAD U... | 113 |
+| DCMD | 0740000000000LL | 114 |
+| DCOPY | 0040000000000LL /* COPY */ | 115 |
+| DCCOMP | 0100000000000LL /* COMPARE */ | 116 |
+| DCSKIP | 0140000000000LL /* SKIP */ | 117 |
+| DOPR | 0200000000000LL /* BASIC OPR */ | 118 |
+| DSDRST | 0240000000000LL /* STORE DRIVE S... | 119 |
+| DALU | 0300000000000LL /* BASIC ALU OP ... | 120 |
+| DRC | 0400000000000LL /* READ COMPARE */ | 121 |
+| DWRITE | 0440000000000LL /* WRITE */ | 122 |
+| DREAD | 0500000000000LL /* READ */ | 123 |
+| DSEEK | 0540000000000LL /* SEEK */ | 124 |
+| DRCC | 0600000000000LL /* READ COMPARE ... | 125 |
+| DWRITC | 0640000000000LL /* WRITE CONTINU... | 126 |
+| DREADC | 0700000000000LL /* READ CONTINUO... | 127 |
+| DSPC | 0740000000000LL /* Special comma... | 128 |
+| DHLT | 0               /* 0 IN 4.9-4.5 ... | 130 |
+| DXCT | 0000020000000LL /* XCT */ | 131 |
+| DJMP | 0000040000000LL /* JUMP */ | 132 |
+| DJSR | 0000060000000LL /* JSR */ | 133 |
+| DJMASK | 0000060000000LL | 134 |
+| DOHXFR | 0400000000LL    /* HALT DURING X... | 137 |
+| DSWIDX | 0020000000LL    /* WAIT UNTIL IN... | 140 |
+| DSWSEC | 0040000000LL    /* WAIT UNTIL SE... | 141 |
+| DSWINF | 0060000000LL    /* NEVER (USE WI... | 142 |
+| DSWNUL | 0014000000LL    /* NO WAIT */ | 144 |
+| DSCRHD | 0200000000LL    /* READ HEADER W... | 146 |
+| DSRCAL | 0300000000LL     /* (RECALIBRATE... | 147 |
+| DSCWIM | 0500000000LL    /* WRITE IMAGE */ | 148 |
+| DLCC | 010000000LL     /* OP FROM CC, S... | 151 |
+| DLDBWC | 030000000LL     /* OP A FROM DB,... | 152 |
+| WC | 0037774000000LL /* Word count. */ | 154 |
+| ADDR | 0000003777777LL /* Address field... | 155 |
+| DDSWC | 040000000LL             /* WRITE... | 159 |
+| DDSUNS | 020000000LL             /* DRIVE... | 160 |
+| DDSRDO | 010000000LL             /* READ ... | 161 |
+| DDSSIC | 004000000LL             /* SEEK ... | 162 |
+| DDSRDY | 002000000LL             /* DRIVE... | 163 |
+| DDSONL | 001000000LL             /* DRIVE... | 164 |
+| DDSSEL | 000400000LL             /* DRIVE... | 165 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| clear_interrupt | 286-300 |  |
+| channel_error | 301-311 |  |
+| channel_seek | 312-350 |  |
+| channel_special | 351-391 |  |
+| channel_alu | 392-408 |  |
+| print_data | 409-416 |  |
+| sim_fcompare | 417-443 |  |
+| sim_freadh | 444-471 |  |
+| decode_fm | 472-521 |  |
+| decode_bit | 522-622 | Decode a bit stream from the WRITE IMAGE command. |
+| decode_image | 623-632 |  |
+| check_nxm | 633-656 |  |
+| channel_command | 657-875 |  |
+| channel_run | 876-888 | Process one channel instruction and update the channel state. |
+| ai_devio | 889-968 |  |
+| ai_svc | 969-980 |  |
+| ai_reset | 981-992 |  |
+| ai_attach | 993-1010 | Device attach |
+| ai_detach | 1011-1019 | Device detach |
+| ai_help | 1020-1028 |  |
+| ai_description | 1029-1035 |  |

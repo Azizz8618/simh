@@ -1,0 +1,60 @@
+=== b5500_dk.c — 593 строк ===
+Источник: b5500_dk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test b5500_dk.c -nt .cline/maps/b5500_dk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dsk_buffer | 77 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ESU | u3 | 32 |
+| ADDR | u4 | 33 |
+| CMD | u5 | 34 |
+| POS | u6 | 35 |
+| URCSTA_SKIP | 000017  /* Skip mask */ | 37 |
+| URCSTA_SINGLE | 000020  /* Single space skip. */ | 38 |
+| URCSTA_DOUBLE | 000040  /* Double space skip */ | 39 |
+| URCSTA_READ | 000400  /* Read flag */ | 40 |
+| URCSTA_WC | 001000  /* Use word count */ | 41 |
+| URCSTA_DIRECT | 002000  /* Direction, Long line */ | 42 |
+| URCSTA_BINARY | 004000  /* Binary transfer */ | 43 |
+| URCSTA_INHIBIT | 040000  /* Inhibit transfer to m... | 44 |
+| DK_CHAN | 0000003 /* Channel number */ | 46 |
+| DK_CTRL | 0000004 /* Disk controller unit ... | 47 |
+| DK_WC | 0000010 /* Use word count */ | 48 |
+| DK_BSY | 0000020 /* Drive is busy. */ | 49 |
+| DK_RD | 0000040 /* Executing a read comm... | 50 |
+| DK_WR | 0000100 /* Executing a write com... | 51 |
+| DK_RDCK | 0000200 /* Executing a read chec... | 52 |
+| DK_ADDR | 0000400 /* Drive has an address. */ | 53 |
+| DK_BIN | 0001000 /* Binary mode */ | 54 |
+| DK_WCZERO | 0002000 /* Word count Zero */ | 55 |
+| DK_SECMASK | 0770000 /* Number of segments to... | 56 |
+| DK_SECT | 0010000 /* One segment */ | 57 |
+| DK_SEC_SIZE | 240     /* Sector size  */ | 58 |
+| DK_MAXSEGS | 200000  /* Max segments for MOD ... | 59 |
+| DK_MAXSEGS2 | 400000  /* Max segments for MOD ... | 60 |
+| DFX_V | (UNIT_V_UF + 1) | 61 |
+| MODIB_V | (UNIT_V_UF + 2) | 62 |
+| DFX | (1 << DFX_V) | 63 |
+| MODIB | (1 << MODIB_V) | 64 |
+| ESU_TYPE | UDATA(&esu_srv, UNIT_ATTABLE+UNI... | 81 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dsk_cmd | 153-196 | Start off a disk command |
+| dsk_srv | 197-299 | Handle processing disk controller commands |
+| esu_set_end | 300-314 |  |
+| esu_srv | 315-448 | Handle processing esu controller commands |
+| set_mod | 449-461 |  |
+| dsk_boot | 462-482 |  |
+| esu_attach | 483-499 |  |
+| esu_detach | 500-536 |  |
+| dsk_help | 537-560 |  |
+| dsk_description | 561-566 |  |
+| esu_help | 567-586 |  |
+| esu_description | 587-593 |  |

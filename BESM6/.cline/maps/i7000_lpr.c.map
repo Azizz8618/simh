@@ -1,0 +1,32 @@
+=== i7000_lpr.c — 563 строк ===
+Источник: i7000_lpr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7000_lpr.c -nt .cline/maps/i7000_lpr.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lpr_data | 65 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_LPR | UNIT_ATTABLE \| UNIT_DISABLE \| UN... | 37 |
+| ECHO | (1 << (UNIT_V_UF+0)) | 41 |
+| ATTENA | (1 << (UNIT_V_UF+1)) | 43 |
+| ATTENB | (1 << (UNIT_V_UF+2)) | 44 |
+| DOUBLE | (1 << (UNIT_V_UF+1)) | 47 |
+| PROGRAM | (1 << (UNIT_V_UF+2)) | 48 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lpr_setlpp | 122-142 |  |
+| lpr_getlpp | 143-151 |  |
+| print_line | 152-283 |  |
+| lpr_cmd | 284-410 |  |
+| lpr_srv | 411-487 |  |
+| lpr_ini | 488-495 |  |
+| lpr_attach | 496-508 |  |
+| lpr_detach | 509-516 |  |
+| lpr_help | 517-547 |  |
+| lpr_description | 548-563 |  |

@@ -1,0 +1,65 @@
+=== pdp11_xu.c — 2051 строк ===
+Источник: pdp11_xu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_xu.c -nt .cline/maps/pdp11_xu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 103 | |
+| controller" | 2048 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IOLN_XU | 010 | 136 |
+| XU_MAX_CONTROLLERS | 2 | 301 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| xu_unit2ctlr | 311-322 |  |
+| xu_dev2ctlr | 323-332 |  |
+| xu_pa2ctlr | 333-345 |  |
+| xu_ex | 346-351 | stop simh from reading non-existant unit data stream |
+| xu_dep | 352-356 | stop simh from writing non-existant unit data stream |
+| xu_showmac | 357-366 |  |
+| xu_setmac | 367-377 |  |
+| xu_set_stats | 378-386 |  |
+| xu_show_stats | 387-406 |  |
+| xu_show_filters | 407-424 |  |
+| xu_show_type | 425-435 |  |
+| xu_set_type | 436-449 |  |
+| xu_show_throttle | 450-460 |  |
+| xu_set_throttle | 461-523 |  |
+| upd_stat16 | 524-531 |  |
+| upd_stat32 | 532-539 |  |
+| bit_stat16 | 540-544 |  |
+| xu_process_loopback | 545-591 |  |
+| xu_process_local | 592-611 |  |
+| xu_read_callback | 612-626 |  |
+| xua_read_callback | 627-631 |  |
+| xub_read_callback | 632-636 |  |
+| xu_system_id | 637-700 |  |
+| xu_svc | 701-733 |  |
+| xu_tmrsvc | 734-754 |  |
+| xu_write_callback | 755-759 |  |
+| xua_write_callback | 760-764 |  |
+| xub_write_callback | 765-769 |  |
+| xu_setclrint | 770-780 |  |
+| xu_sw_reset | 781-840 |  |
+| xu_reset | 841-871 | Reset device. |
+| xu_command | 872-1188 | Perform one of the defined ancillary functions. |
+| xu_process_receive | 1189-1378 | Transfer received packets into receive ring. |
+| xu_process_transmit | 1379-1518 |  |
+| xu_port_command | 1519-1634 |  |
+| xu_rd | 1635-1660 |  |
+| xu_wr | 1661-1743 |  |
+| xu_attach | 1744-1805 | attach device: |
+| xu_detach | 1806-1824 |  |
+| xu_setint | 1825-1833 |  |
+| xu_clrint | 1834-1847 |  |
+| xu_int | 1848-1864 |  |
+| xu_dump_rxring | 1865-1881 |  |
+| xu_dump_txring | 1882-1898 |  |
+| xu_help | 1899-2045 |  |
+| xu_description | 2046-2051 |  |

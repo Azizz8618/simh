@@ -1,0 +1,90 @@
+=== s100_z80.c — 6555 строк ===
+Источник: s100_z80.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_z80.c -nt .cline/maps/s100_z80.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| insthist_t | 180-195 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| z80_chiptype | 46 | |
+| z80_pc_reg | 228 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| INT_MSG | (1 << 2) | 44 |
+| INST_MAX_BYTES | 4                       /* instr... | 50 |
+| IFF1 | 1                               ... | 52 |
+| IFF2 | 2                               ... | 53 |
+| FLAG_C | 1 | 55 |
+| FLAG_N | 2 | 56 |
+| FLAG_P | 4 | 57 |
+| FLAG_H | 16 | 58 |
+| FLAG_Z | 64 | 59 |
+| FLAG_S | 128 | 60 |
+| SETFLAG(f,c) | AF = (c) ? AF \| FLAG_ ## f : AF ... | 62 |
+| TSTFLAG(f) | ((AF & FLAG_ ## f) != 0) | 63 |
+| TSTFLAG2(a, | f)          ((a & FLAG_ ## f) != 0) | 64 |
+| LOW_DIGIT(x) | ((x) & 0xf) | 66 |
+| HIGH_DIGIT(x) | (((x) >> 4) & 0xf) | 67 |
+| LOW_REGISTER(x) | ((x) & 0xff) | 68 |
+| HIGH_REGISTER(x) | (((x) >> 8) & 0xff) | 69 |
+| SET_LOW_REGISTER(x, | v)  x = (((x) & 0xff00) \| ((v) &... | 71 |
+| SET_HIGH_REGISTER(x, | v) x = (((x) & 0xff) \| (((v) & 0... | 72 |
+| PARITY(x) | parityTable[(x) & 0xff] | 74 |
+| SET_PVS(s) | ((z80_chiptype == CHIP_TYPE_Z80)... | 79 |
+| SET_PV | (SET_PVS(sum)) | 80 |
+| SET_PV2(x) | ((z80_chiptype == CHIP_TYPE_Z80)... | 81 |
+| CHECK_CPU_8080 |  | 90 |
+| CHECK_CPU_Z80 |  | 97 |
+| POP(x) | {                               ... | 103 |
+| JPC(cond) | {                               ... | 108 |
+| CALLC(cond) | {                               ... | 117 |
+| INCR(val) | IR_S = (IR_S & ~0x7f) \| ((IR_S +... | 131 |
+| HIST_MIN | 16 | 177 |
+| HIST_MAX | 8192 | 178 |
+| RAM_PP(Addr) | s100_bus_memr(Addr++) | 1342 |
+| RAM_MM(Addr) | s100_bus_memr(Addr--) | 1343 |
+| GET_WORD(Addr) | (s100_bus_memr(Addr) \| (s100_bus... | 1344 |
+| PUT_WORD(Addr, | v) { s100_bus_memw(Addr, v); s10... | 1345 |
+| PUT_BYTE_PP(a,v) | s100_bus_memw(a++, v) | 1346 |
+| PUT_BYTE_MM(a,v) | s100_bus_memw(a--, v) | 1347 |
+| MM_PUT_BYTE(a,v) | s100_bus_memw(--a, v) | 1348 |
+| PUSH(x) | {                               ... | 1350 |
+| CHECK_BREAK_BYTE(a) |  | 1355 |
+| CHECK_BREAK_TWO_BYTES_EXTENDED(a1, | a2, iCode)                | 1364 |
+| CHECK_BREAK_TWO_BYTES(a1, | a2) CHECK_BREAK_TWO_BYTES_EXTEND... | 1380 |
+| CHECK_BREAK_WORD(a) | CHECK_BREAK_TWO_BYTES(a, (a + 1)) | 1382 |
+| HALTINSTRUCTION | 0x76 | 1384 |
+| INOUTFLAGS_ZERO(x) |  | 1402 |
+| INOUTFLAGS_NONZERO(x) |  | 1408 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| z80_description | 230-1074 |  |
+| altairz80_print_tables | 1075-1414 |  |
+| z80_instr | 1415-5682 |  |
+| z80_reset | 5683-5707 |  |
+| z80_is_pc_a_subroutine_call | 5708-5740 |  |
+| chip_show | 5741-5750 |  |
+| z80_show | 5751-5759 |  |
+| z80_set_chiptype | 5760-5772 |  |
+| z80_set_hist | 5773-5836 |  |
+| z80_show_hist | 5837-5914 |  |
+| z80_pc_value | 5915-5918 |  |
+| z80_cmd_reg | 5919-6184 |  |
+| prepareMemoryAccessMessage | 6185-6188 |  |
+| prepareInstructionMessage | 6189-6194 |  |
+| printHex2 | 6195-6198 | Ensure that hex number starts with a digit when printed |
+| printHex4 | 6199-6217 |  |
+| z80_dasm | 6218-6306 |  |
+| checkbase | 6307-6431 |  |
+| checkXY | 6432-6436 |  |
+| parse_X80 | 6437-6539 |  |
+| z80_parse_sym | 6540-6544 |  |
+| z80_show_help | 6545-6555 |  |

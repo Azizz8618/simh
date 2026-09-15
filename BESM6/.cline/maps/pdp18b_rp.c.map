@@ -1,0 +1,138 @@
+=== pdp18b_rp.c — 558 строк ===
+Источник: pdp18b_rp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp18b_rp.c -nt .cline/maps/pdp18b_rp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_hwre | 150 | |
+| api_vec | 151 | |
+| cpu_unit | 152 | |
+| rp_dib | 182 | |
+| dat | 281 | |
+| uptr | 289 | |
+| sb | 291 | |
+| dat | 344 | |
+| fill | 360 | |
+| err | 364 | |
+| SCPE_OK | 470 | |
+| uptr | 478 | |
+| return | 500 | |
+| uptr | 508 | |
+| rp_sta | 510 | |
+| SCPE_OK | 517 | |
+| reason | 531 | |
+| reason | 536 | |
+| reason | 543 | |
+| reason | 547 | |
+| SCPE_OK | 557 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RP_NUMWD | 256                             ... | 49 |
+| RP_NUMSC | 10                              ... | 50 |
+| RP_NUMSF | 20                              ... | 51 |
+| RP02_NUMCY | 203                             ... | 52 |
+| RP03_NUMCY | 406 | 53 |
+| RP_NUMDR | 8                               ... | 54 |
+| RP02_SIZE | (RP02_NUMCY * RP_NUMSF * RP_NUMS... | 55 |
+| RP03_SIZE | (RP03_NUMCY * RP_NUMSF * RP_NUMS... | 56 |
+| RP_QCYL(f) | (((f) & UNIT_RP03)? RP03_NUMCY: ... | 57 |
+| RP_QSIZE(f) | (((f) & UNIT_RP03)? RP03_SIZE: R... | 58 |
+| UNIT_V_RP03 | (UNIT_V_UF + 0)                 ... | 62 |
+| UNIT_RP03 | (1u << UNIT_V_RP03) | 63 |
+| CYL | u3                              ... | 67 |
+| FUNC | u4                              ... | 68 |
+| STA_V_UNIT | 15                              ... | 72 |
+| STA_M_UNIT | 07 | 73 |
+| STA_V_FUNC | 12                              ... | 74 |
+| STA_M_FUNC | 07 | 75 |
+| FN_IDLE | 0 | 76 |
+| FN_READ | 1 | 77 |
+| FN_WRITE | 2 | 78 |
+| FN_RECAL | 3 | 79 |
+| FN_SEEK | 4 | 80 |
+| FN_RDALL | 5 | 81 |
+| FN_WRALL | 6 | 82 |
+| FN_WRCHK | 7 | 83 |
+| FN_2ND | 010                             ... | 84 |
+| STA_IED | 0004000                         ... | 85 |
+| STA_IEA | 0002000                         ... | 86 |
+| STA_GO | 0001000                         ... | 87 |
+| STA_WPE | 0000400                         ... | 88 |
+| STA_NXC | 0000200                         ... | 89 |
+| STA_NXF | 0000100                         ... | 90 |
+| STA_NXS | 0000040                         ... | 91 |
+| STA_HNF | 0000020                         ... | 92 |
+| STA_SUWP | 0000010                         ... | 93 |
+| STA_SUSI | 0000004                         ... | 94 |
+| STA_DON | 0000002                         ... | 95 |
+| STA_ERR | 0000001                         ... | 96 |
+| STA_RW | 0777000                         ... | 98 |
+| STA_EFLGS | (STA_WPE \| STA_NXC \| STA_NXF \| S... | 99 |
+| STA_DYN | (STA_SUWP \| STA_SUSI)           ... | 101 |
+| GET_UNIT(x) | (((x) >> STA_V_UNIT) & STA_M_UNIT) | 102 |
+| GET_FUNC(x) | (((x) >> STA_V_FUNC) & STA_M_FUNC) | 103 |
+| STB_V_ATT0 | 17                              ... | 107 |
+| STB_ATTN | 0776000                         ... | 108 |
+| STB_SUFU | 0001000                         ... | 109 |
+| STB_PGE | 0000400                         ... | 110 |
+| STB_EOP | 0000200                         ... | 111 |
+| STB_TME | 0000100                         ... | 112 |
+| STB_FME | 0000040                         ... | 113 |
+| STB_WCE | 0000020                         ... | 114 |
+| STB_WPE | 0000010                         ... | 115 |
+| STB_LON | 0000004                         ... | 116 |
+| STB_SUSU | 0000002                         ... | 117 |
+| STB_SUNR | 0000001                         ... | 118 |
+| STB_EFLGS | (STB_SUFU \| STB_PGE \| STB_EOP \| ... | 120 |
+| STB_DYN | (STB_SUFU \| STB_SUSU \| STB_SUNR)... | 122 |
+| DA_V_SECT | 0                               ... | 126 |
+| DA_M_SECT | 017 | 127 |
+| DA_V_C256 | 4 | 128 |
+| DA_C256 | (1 << DA_V_C256) | 129 |
+| DA_V_SURF | 5 | 130 |
+| DA_M_SURF | 037 | 131 |
+| DA_V_CYL | 10                              ... | 132 |
+| DA_M_CYL | 0377 | 133 |
+| GET_SECT(x) | (((x) >> DA_V_SECT) & DA_M_SECT) | 134 |
+| GET_SURF(x) | (((x) >> DA_V_SURF) & DA_M_SURF) | 135 |
+| GET_CYL(x,f) | ((((x) >> DA_V_CYL) & DA_M_CYL) +  | 136 |
+| GET_DA(x,f) | ((((GET_CYL (x,f) * RP_NUMSF) + ... | 139 |
+| CCYL_RP03 | 0400000                         ... | 144 |
+| RP_MIN | 2 | 146 |
+| MAX(x,y) | (((x) > (y))? (x): (y)) | 147 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rp63 | 232-236 |  |
+| if | 237-247 |  |
+| if | 248-253 |  |
+| if | 254-285 |  |
+| rp64 | 286-291 |  |
+| if | 292-295 |  |
+| if | 296-308 |  |
+| if | 309-360 |  |
+| rp_svc | 361-367 |  |
+| if | 368-372 |  |
+| if | 373-382 |  |
+| if | 383-387 |  |
+| if | 388-392 |  |
+| if | 393-403 |  |
+| if | 404-412 |  |
+| if | 413-416 |  |
+| if | 417-423 |  |
+| if | 424-430 |  |
+| if | 431-439 |  |
+| if | 440-464 |  |
+| if | 465-474 |  |
+| rp_updsta | 475-486 |  |
+| if | 487-504 |  |
+| rp_reset | 505-511 |  |
+| for | 512-521 |  |
+| rp_iors | 522-528 |  |
+| rp_attach | 529-540 |  |
+| rp_detach | 541-551 |  |
+| rp_set_size | 552-558 |  |

@@ -1,0 +1,40 @@
+=== cdc1700_dc.c — 807 строк ===
+Источник: cdc1700_dc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_dc.c -nt .cline/maps/cdc1700_dc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 34 | |
+| Areg | 36 | |
+| IOFWinitialized | 38 | |
+| IOdev | 40 | |
+| cpu_unit | 41 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IO_BDC_IDLE | 0x00 | 156 |
+| IO_BDC_STARTR | 0x01            /* Start read se... | 157 |
+| IO_BDC_STARTW | 0x02            /* Start write s... | 158 |
+| IO_BDC_READING | 0x03            /* Read sequence... | 159 |
+| IO_BDC_WRITING | 0x04            /* Write sequenc... | 160 |
+| IO_BDC_DONE | 0x05            /* Transfer has ... | 161 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| DCstate | 291-302 |  |
+| description | 303-310 | Display device description. |
+| dc_svc | 311-475 | Unit service |
+| dc_reset | 476-489 | Reset routine |
+| set_intr | 490-512 | Set the interrupt level for a buffered data channel. |
+| show_intr | 513-526 | Display the current interrupt level. |
+| show_target | 527-552 | Display buffered data channel target device and equipment address |
+| DCreject | 553-568 | 03          Not busy                        Always allowed |
+| DCxfer | 569-596 | The diagnostics check for this particular case. |
+| DCin | 597-658 | Perform a buffered data channel input operation |
+| DCout | 659-732 | Perform a buffered data channel output operation |
+| buildDCtables | 733-767 | Build the buffered data channel tables. |
+| dcINTR | 768-781 | Create bit map of interrupts asserted by the Buffered Data Channels. |
+| dc_help | 782-807 |  |

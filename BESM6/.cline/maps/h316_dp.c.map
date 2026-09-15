@@ -1,0 +1,182 @@
+=== h316_dp.c — 1093 строк ===
+Источник: h316_dp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test h316_dp.c -nt .cline/maps/h316_dp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dev_int | 218 | |
+| chan_req | 219 | |
+| stop_inst | 220 | |
+| dma_ad | 221 | |
+| dp_dib | 271 | |
+| uptr | 365 | |
+| dat | 489 | |
+| SCPE_OK | 510 | |
+| uptr | 519 | |
+| uptr->FNC | 523 | |
+| SCPE_OK | 553 | |
+| uptr | 561 | |
+| SCPE_OK | 567 | |
+| st | 577 | |
+| SCPE_OK | 782 | |
+| SCPE_OK | 802 | |
+| SCPE_OK | 819 | |
+| dp_rptr | 826 | |
+| FALSE | 837 | |
+| lnt | 844 | |
+| dp_csum | 847 | |
+| STOP_DPOVR | 861 | |
+| SCPE_OK | 881 | |
+| dp_fnc | 890 | |
+| dp_cw1 | 891 | |
+| dp_cw2 | 892 | |
+| dp_sta | 893 | |
+| dp_buf | 894 | |
+| dp_xip | 895 | |
+| dp_eor | 896 | |
+| dp_dma | 897 | |
+| dp_csum | 898 | |
+| dp_rptr | 899 | |
+| dp_wptr | 900 | |
+| dp_bctr | 901 | |
+| dp_gap | 902 | |
+| dp_defint | 903 | |
+| SCPE_OK | 911 | |
+| dp_ctype | 938 | |
+| SCPE_OK | 939 | |
+| SCPE_OK | 949 | |
+| tbuf | 978 | |
+| finp | 979 | |
+| SCPE_OK | 1026 | |
+| minrec | 1034 | |
+| maxrec | 1035 | |
+| minsec | 1036 | |
+| maxsec | 1037 | |
+| tbuf | 1038 | |
+| SCPE_OK | 1092 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FNC | u3                              ... | 76 |
+| CYL | u4                              ... | 77 |
+| DP_TRKLEN | 2048                            ... | 78 |
+| DP_NUMDRV | 8                               ... | 79 |
+| DP_NUMTYP | 3                               ... | 80 |
+| REC_LNT | 0                               ... | 84 |
+| REC_ADDR | 1                               ... | 85 |
+| REC_EXT | 2                               ... | 86 |
+| REC_DATA | 3                               ... | 87 |
+| REC_OVHD | 8                               ... | 88 |
+| REC_MAXEXT | 4                               ... | 89 |
+| REC_OVHD_WRDS | 16.5                            ... | 90 |
+| REC_OVHD_BITS | ((16 * 16) + 8) | 91 |
+| STA_BUSY | 0100000                         ... | 95 |
+| STA_RDY | 0040000                         ... | 96 |
+| STA_ADRER | 0020000                         ... | 97 |
+| STA_FMTER | 0010000                         ... | 98 |
+| STA_HNLER | 0004000                         ... | 99 |
+| STA_OFLER | 0002000                         ... | 100 |
+| STA_SEKER | 0001000                         ... | 101 |
+| STA_MBZ | 0000700 | 102 |
+| STA_WPRER | 0000040                         ... | 103 |
+| STA_UNSER | 0000020                         ... | 104 |
+| STA_CSMER | 0000010                         ... | 105 |
+| STA_DTRER | 0000004                         ... | 106 |
+| STA_ANYER | 0000002                         ... | 107 |
+| STA_EOR | 0000001                         ... | 108 |
+| STA_ALLERR | (STA_ADRER\|STA_FMTER\|STA_HNLER\|S... | 109 |
+| FNC_SK0 | 0000                            ... | 114 |
+| FNC_SEEK | 0001                            ... | 115 |
+| FNC_RCA | 0002                            ... | 116 |
+| FNC_UNL | 0004                            ... | 117 |
+| FNC_FMT | 0005                            ... | 118 |
+| FNC_RW | 0006                            ... | 119 |
+| FNC_STOP | 0010                            ... | 120 |
+| FNC_RDS | 0011                            ... | 121 |
+| FNC_DMA | 0013                            ... | 122 |
+| FNC_AKI | 0014                            ... | 123 |
+| FNC_IOBUS | 0017                            ... | 124 |
+| FNC_2ND | 0020                            ... | 125 |
+| FNC_3RD | 0040                            ... | 126 |
+| FNC_4TH | 0060                            ... | 127 |
+| FNC_5TH | 0100                            ... | 128 |
+| CW1_RW | 0100000                         ... | 132 |
+| CW1_DIR | 0000400                         ... | 133 |
+| CW1_V_UNIT | 11                              ... | 134 |
+| CW1_V_HEAD | 6                               ... | 135 |
+| CW1_V_OFFS | 0                               ... | 136 |
+| CW1_GETUNIT(x) | (((x) >> CW1_V_UNIT) & dp_tab[dp... | 137 |
+| CW1_GETHEAD(x) | (((x) >> CW1_V_HEAD) & dp_tab[dp... | 138 |
+| CW1_GETOFFS(x) | (((x) >> CW1_V_OFFS) & dp_tab[dp... | 139 |
+| OTA_NOP | 0                               ... | 143 |
+| OTA_CW1 | 1                               ... | 144 |
+| OTA_CW2 | 2                               ... | 145 |
+| XIP_UMSK | 007                             ... | 149 |
+| XIP_SCHED | 010                             ... | 150 |
+| XIP_WRT | 020                             ... | 151 |
+| XIP_FMT | 040                             ... | 152 |
+| TYPE_4651 | 0 | 165 |
+| UNIT_4651 | 4 | 166 |
+| CYL_4651 | 203 | 167 |
+| SURF_4651 | 2 | 168 |
+| WRDS_4651 | 1908.25 | 169 |
+| UMSK_4651 | 0003 | 170 |
+| HMSK_4651 | 0001 | 171 |
+| CMSK_4651 | 0377 | 172 |
+| CAP_4651 | (CYL_4651*SURF_4651*DP_TRKLEN) | 173 |
+| TYPE_4623 | 1 | 175 |
+| UNIT_4623 | 8 | 176 |
+| CYL_4623 | 203 | 177 |
+| SURF_4623 | 10 | 178 |
+| WRDS_4623 | 1816.5 | 179 |
+| UMSK_4623 | 0007 | 180 |
+| HMSK_4623 | 0017 | 181 |
+| CMSK_4623 | 0377 | 182 |
+| CAP_4623 | (CYL_4623*SURF_4623*DP_TRKLEN) | 183 |
+| TYPE_4720 | 2 | 185 |
+| UNIT_4720 | 8 | 186 |
+| CYL_4720 | 203 | 187 |
+| SURF_4720 | 20 | 188 |
+| WRDS_4720 | 1908.25 | 189 |
+| UMSK_4720 | 0007 | 190 |
+| HMSK_4720 | 0037 | 191 |
+| CMSK_4720 | 0377 | 192 |
+| CAP_4720 | (CYL_4720*SURF_4720*DP_TRKLEN) | 193 |
+| DP_DRV(d) |  | 207 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dpio | 361-366 |  |
+| switch | 367-493 |  |
+| dp_go | 494-505 |  |
+| if | 506-514 |  |
+| dp_go1 | 515-528 |  |
+| switch | 529-557 |  |
+| dp_go2 | 558-571 |  |
+| dp_svc | 572-580 |  |
+| if | 581-585 |  |
+| switch | 586-786 |  |
+| dp_rdtrk | 787-795 |  |
+| if | 796-806 |  |
+| dp_wrtrk | 807-812 |  |
+| if | 813-823 |  |
+| dp_findrec | 824-841 |  |
+| dp_wrwd | 842-847 |  |
+| if | 848-851 |  |
+| if | 852-865 |  |
+| dp_wrdone | 866-873 |  |
+| dp_done | 874-885 |  |
+| dp_reset | 886-903 |  |
+| for | 904-915 |  |
+| dp_attach | 916-926 |  |
+| dp_settype | 927-932 |  |
+| for | 933-943 |  |
+| dp_showtype | 944-973 |  |
+| dp_setformat | 974-993 |  |
+| if | 994-1008 |  |
+| for | 1009-1030 |  |
+| dp_showformat | 1031-1044 |  |
+| for | 1045-1093 |  |

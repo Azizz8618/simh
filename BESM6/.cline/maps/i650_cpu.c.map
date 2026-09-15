@@ -1,0 +1,65 @@
+=== i650_cpu.c — 2145 строк ===
+Источник: i650_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i650_cpu.c -nt .cline/maps/i650_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| DRUM | 130 | |
+| DRUM_NegativeZeroFlag | 131 | |
+| IOSync | 136 | |
+| IOSync_NegativeZeroFlag | 137 | |
+| IAS | 140 | |
+| IAS_NegativeZeroFlag | 141 | |
+| IAS_TimingRing | 142 | |
+| InterLockCount | 145 | |
+| DrumAddr | 148 | |
+| GlobalWordTimeCount | 151 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_MSIZE | (UNIT_V_UF + 0) | 107 |
+| UNIT_MSIZE | (7 << UNIT_V_MSIZE) | 108 |
+| UNIT_V_CPUMODEL | (UNIT_V_UF + 4) | 109 |
+| UNIT_MODEL | (0x01 << UNIT_V_CPUMODEL) | 110 |
+| CPU_MODEL | ((cpu_unit.flags >> UNIT_V_CPUMO... | 111 |
+| MODEL(x) | (x << UNIT_V_CPUMODEL) | 112 |
+| MEMAMOUNT(x) | (x << UNIT_V_MSIZE) | 113 |
+| OPTION_STOR | (1 << (UNIT_V_CPUMODEL + 1)) | 114 |
+| OPTION_CNTRL | (1 << (UNIT_V_CPUMODEL + 2)) | 115 |
+| OPTION_SOAPMNE | (1 << (UNIT_V_CPUMODEL + 3)) | 116 |
+| OPTION_FAST | (1 << (UNIT_V_CPUMODEL + 4)) | 117 |
+| OPTION_TLE | (1 << (UNIT_V_CPUMODEL + 5)) | 118 |
+| OPTION_1DSKARM | (1 << (UNIT_V_CPUMODEL + 6)) | 119 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_svc | 227-237 |  |
+| IsDrumAddrOk | 238-266 | set the ias TimingRing to AR is IAS is accessed |
+| WriteAddr | 267-285 | return 0 if write addr invalid |
+| ReadAddr | 286-326 | return 0 if read addr invalid |
+| ShiftAcc | 327-359 | Return digit going out of acc (with sign) |
+| GetExp | 360-365 | get modified characteristic of float d |
+| SetExp | 366-380 | set modified characteristic of float d |
+| MantissaRoundAndNormalizeToFloat | 381-429 | add sign, check for zero |
+| AddFloatToAcc | 430-514 | return number of steps used |
+| AddToAcc | 515-546 | add to accumulator, set Overflow |
+| SetDA | 547-568 |  |
+| SetIA | 569-581 | set last 4 digits in d with IA contents |
+| SetIA2 | 582-594 | set last 2 digits in d with IA contents |
+| NormalizeAddr | 595-607 | normalize to 4 digits, 10 complements |
+| ApplyIndexRegister | 608-629 | return 1 if address was tagged, and has been replaced by developed addr |
+| ApplyIndexRegisterModel4 | 630-672 | return 1 if address was tagged, and has been replaced by developed addr |
+| DecodeOpcode | 673-700 | returns opname: points to opcode name or NULL if undef opcode |
+| TransferIAS | 701-1616 | return number of words transfered |
+| WaitForStorage | 1617-1627 | return 2 if must wait for drum rotation, return 1 if must wait for IAS interlock release |
+| WaitForInterlock | 1628-1677 | return 1 if must wait for interlock release |
+| sim_instr | 1678-2030 |  |
+| cpu_reset | 2031-2052 |  |
+| cpu_ex | 2053-2076 |  |
+| cpu_dep | 2077-2096 |  |
+| cpu_set_size | 2097-2128 |  |
+| cpu_help | 2129-2141 |  |
+| cpu_description | 2142-2145 |  |

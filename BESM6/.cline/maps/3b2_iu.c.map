@@ -1,0 +1,55 @@
+=== 3b2_iu.c — 1149 строк ===
+Источник: 3b2_iu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_iu.c -nt .cline/maps/3b2_iu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| iu_state | 104 | |
+| iu_console | 107 | |
+| iu_contty | 108 | |
+| iu_timer_state | 111 | |
+| iu_increment_a | 114 | |
+| iu_increment_b | 115 | |
+| iu_timer_multiplier | 117 | |
+| contty_ldsc | 211 | |
+| parity | 251 | |
+| bits_per_char | 324 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DMA_INT | INT_UART_DMA | 64 |
+| DMA_INT | INT_DMA | 66 |
+| UPDATE_IRQ | do {                          | 69 |
+| SET_DMA_INT | do {                         | 79 |
+| CLR_DMA_INT | do {                         | 84 |
+| LOOPBACK(P) | (((P)->mode[1] & 0xc0) == 0x80) | 89 |
+| TX_ENABLED(P) | ((P).conf & TX_EN) | 90 |
+| PORTNO(P) | ((P) == &iu_console ? PORT_A : P... | 91 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| iu_timer_show_mult | 299-304 |  |
+| iu_timer_set_mult | 305-325 |  |
+| contty_attach | 326-362 |  |
+| contty_detach | 363-370 |  |
+| increment_modep_a | 371-380 |  |
+| increment_modep_b | 381-390 |  |
+| tti_reset | 391-407 |  |
+| contty_reset | 408-425 |  |
+| iu_rx | 426-458 |  |
+| iu_rx_getc | 459-495 |  |
+| iu_timer_reset | 496-504 |  |
+| iu_svc_tti | 505-520 |  |
+| iu_svc_tto | 521-588 |  |
+| iu_svc_contty | 589-632 |  |
+| iu_svc_contty_xmt | 633-705 |  |
+| iu_svc_timer | 706-739 |  |
+| iu_read | 740-811 |  |
+| iu_write | 812-927 |  |
+| iu_tx | 928-957 | Transmit a single character |
+| iu_w_cmd | 958-1068 |  |
+| iu_dma_console | 1069-1109 | Initiate DMA transfer or continue one already in progress. |
+| iu_dma_contty | 1110-1149 |  |

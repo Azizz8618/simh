@@ -1,0 +1,58 @@
+=== b5500_mt.c — 635 строк ===
+Источник: b5500_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test b5500_mt.c -nt .cline/maps/b5500_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mt_buffer | 93 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BUFFSIZE | 10240 | 42 |
+| UNIT_MT | UNIT_ATTABLE \| UNIT_DISABLE \| UN... | 43 |
+| HT | 500     /* Time per char high de... | 44 |
+| CMD | u5 | 49 |
+| POS | u6 | 50 |
+| URCSTA_SKIP | 000017  /* Skip mask */ | 52 |
+| URCSTA_SINGLE | 000020  /* Single space skip. */ | 53 |
+| URCSTA_DOUBLE | 000040  /* Double space skip */ | 54 |
+| URCSTA_READ | 000400  /* Read flag */ | 55 |
+| URCSTA_WC | 001000  /* Use word count */ | 56 |
+| URCSTA_DIRECT | 002000  /* Direction, Long line */ | 57 |
+| URCSTA_BINARY | 004000  /* Binary transfer */ | 58 |
+| URCSTA_INHIBIT | 040000  /* Inhibit transfer to m... | 59 |
+| MT_CHAN | 0000003     /* Channel active on */ | 61 |
+| MT_BIN | 0000004     /* Binary/BCD */ | 62 |
+| MT_BACK | 0000010     /* Backwards */ | 63 |
+| MT_CMD | 0000070     /* Command to tape d... | 64 |
+| MT_INT | 0000010     /* Interrogate */ | 65 |
+| MT_RD | 0000020     /* Reading */ | 66 |
+| MT_RDBK | 0000030     /* Reading Backwards */ | 67 |
+| MT_WR | 0000040     /* Writing */ | 68 |
+| MT_REW | 0000050     /* Rewind */ | 69 |
+| MT_FSR | 0000060     /* Space Forward */ | 70 |
+| MT_BSR | 0000070     /* Space Backward re... | 71 |
+| MT_RDY | 0000100     /* Device is ready f... | 72 |
+| MT_IDLE | 0000200     /* Tape still in mot... | 73 |
+| MT_MARK | 0001000     /* Hit tape mark */ | 74 |
+| MT_EOT | 0002000     /* At End Of Tape */ | 75 |
+| MT_BOT | 0004000     /* At Beginning Of T... | 76 |
+| MT_EOR | 0010000     /* Set EOR on next r... | 77 |
+| MT_BSY | 0020000     /* Tape busy after o... | 78 |
+| MT_LOADED | 0040000     /* Tape loaded, retu... | 79 |
+| BUF_EMPTY(u) | (u->hwmark == 0xFFFFFFFF) | 82 |
+| CLR_BUF(u) | u->hwmark = 0xFFFFFFFF | 83 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt_cmd | 159-219 |  |
+| mt_error | 220-272 | Map simH errors into machine errors |
+| mt_srv | 273-571 | Handle processing of tape requests. |
+| mt_attach | 572-584 |  |
+| mt_detach | 585-592 |  |
+| mt_reset | 593-614 |  |
+| mt_help | 615-628 |  |
+| mt_description | 629-635 |  |

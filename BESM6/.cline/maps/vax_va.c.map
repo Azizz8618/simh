@@ -1,0 +1,209 @@
+=== vax_va.c — 1253 строк ===
+Источник: vax_va.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_va.c -nt .cline/maps/vax_va.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 135 | |
+| fault_PC | 137 | |
+| trpirq | 138 | |
+| va_active | 163 | |
+| va_updated | 164 | |
+| va_rom_poll | 172 | |
+| data | 315 | |
+| SCPE_OK | 317 | |
+| SCPE_OK | 331 | |
+| va_dga_fifo_rp | 339 | |
+| va_dga_fifo_sz++ | 372 | |
+| val | 377 | |
+| va_dga_fifo_sz-- | 407 | |
+| val | 410 | |
+| data | 418 | |
+| data | 477 | |
+| return | 548 | |
+| data | 554 | |
+| data | 608 | |
+| va_rom | 617 | |
+| nval | 622 | |
+| sc | 624 | |
+| nodec | 698 | |
+| inst | 699 | |
+| val | 700 | |
+| vec | 835 | |
+| vec | 852 | |
+| SCPE_OK | 866 | |
+| ln | 871 | |
+| mev | 881 | |
+| kev | 882 | |
+| lines | 884 | |
+| col | 885 | |
+| plna | 886 | |
+| bita | 887 | |
+| poll_time | 888 | |
+| ln | 889 | |
+| va_cur_y | 908 | |
+| va_cur_v | 909 | |
+| va_rdbk | 916 | |
+| lines | 922 | |
+| SCPE_OK | 1002 | |
+| wc | 1009 | |
+| SCPE_OK | 1081 | |
+| va_mcsr | 1096 | |
+| va_rdbk | 1097 | |
+| va_dla | 1098 | |
+| va_rom_poll | 1099 | |
+| SCPE_OK | 1176 | |
+| SCPE_OK | 1199 | |
+| SCPE_OK | 1208 | |
+| va_input_captured | 1220 | |
+| SCPE_OK | 1221 | |
+| SCPE_OK | 1232 | |
+| SCPE_OK | 1243 | |
+| Adapter" | 1248 | |
+| dummy_declaration | 1252 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VA_RAM_OF | 0x4000                          ... | 46 |
+| VA_ADP_OF | 0x6000                          ... | 47 |
+| VA_DGA_OF | 0x6100                          ... | 48 |
+| VA_COM1_OF | 0x6200                          ... | 49 |
+| VA_COM2_OF | 0x6300                          ... | 50 |
+| VA_CSR_OF | 0x6400                          ... | 51 |
+| VA_RED_OF | 0x6500                          ... | 52 |
+| VA_BLU_OF | 0x6600                          ... | 53 |
+| VA_GRN_OF | 0x6700                          ... | 54 |
+| VA_RSV_OF | 0x6800 | 55 |
+| VA_ROMSIZE | (1u << 14) | 57 |
+| VA_FIFOSIZE | 64 | 59 |
+| VA_DGA_FIFOSIZE | 64 | 60 |
+| VA_FFO_OF | 0x000                           ... | 64 |
+| VA_TMP_OF | 0x040                           ... | 65 |
+| VA_CUR_OF | 0x7E0                           ... | 66 |
+| CSR_RAM | 0x80                            ... | 70 |
+| CSR_OPT2 | 0x40                            ... | 71 |
+| CSR_OPT1 | 0x20                            ... | 72 |
+| CSR_MBO | 0x10                            ... | 73 |
+| CSR_FPS | 0x04                            ... | 74 |
+| CSR_HPS | 0x02                            ... | 75 |
+| CSR_QPS | 0x01                            ... | 76 |
+| DGA_CSR | 0x0                             ... | 80 |
+| DGA_ADL | 0x1                             ... | 81 |
+| DGA_ADH | 0x2                             ... | 82 |
+| DGA_BCL | 0x3                             ... | 83 |
+| DGA_BCH | 0x4                             ... | 84 |
+| DGA_FFO | 0x5                             ... | 85 |
+| DGA_CX | 0x6                             ... | 86 |
+| DGA_CY | 0x7                             ... | 87 |
+| DGA_INT | 0x8                             ... | 88 |
+| DGA_MAXREG | 0x8 | 89 |
+| CUR_PLNA | VA_CUR_OF                       ... | 91 |
+| CUR_PLNB | (VA_CUR_OF + 16)                ... | 92 |
+| CUR_FG | 255                             ... | 93 |
+| CUR_BG | 254                             ... | 94 |
+| CUR_V | (va_dga_csr & 0x1)              ... | 95 |
+| CUR_X | (va_dga_curx)                   ... | 96 |
+| CUR_Y | (va_dga_cury)                   ... | 97 |
+| CUR_X_OF | 232                             ... | 98 |
+| CUR_Y_OF | 15                              ... | 99 |
+| RAM_SIZE | (1u << 11)                      ... | 101 |
+| RAM_MASK | (RAM_SIZE - 1) | 102 |
+| IOLN_QDSS | 002 | 104 |
+| DGACSR_PACK | 0x0100                          ... | 108 |
+| DGACSR_DE | 0x0080 | 109 |
+| DGACSR_WR | 0x471F                          ... | 110 |
+| DGACSR_V_MODE | 9 | 111 |
+| DGACSR_M_MODE | 0x3 | 112 |
+| GET_MODE(x) | ((x >> DGACSR_V_MODE) & DGACSR_M... | 113 |
+| DGAINT_WR | 0x01F0 | 115 |
+| MODE_HALT | 0                               ... | 119 |
+| MODE_DL | 1                               ... | 120 |
+| MODE_BTP | 2                               ... | 121 |
+| MODE_PTB | 3                               ... | 122 |
+| INT_DGA | 1                               ... | 126 |
+| INT_COM | 2                               ... | 127 |
+| DBG_DGA | 0x0001                          ... | 131 |
+| DBG_INT | 0x0002                          ... | 132 |
+| DBG_CURSOR | 0x0004                          ... | 133 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| va_rd | 305-307 |  |
+| if | 308-319 |  |
+| va_wr | 320-322 |  |
+| if | 323-333 |  |
+| va_dga_fifo_clr | 334-342 |  |
+| va_dga_fifo_wr | 343-346 |  |
+| if | 347-363 |  |
+| if | 364-374 |  |
+| va_dga_fifo_rd | 375-378 |  |
+| if | 379-398 |  |
+| if | 399-414 |  |
+| va_dga_rd | 415-419 |  |
+| switch | 420-481 |  |
+| va_dga_wr | 482-488 |  |
+| switch | 489-550 |  |
+| va_mem_rd | 551-556 |  |
+| if | 557-559 |  |
+| if | 560-565 |  |
+| if | 566-571 |  |
+| if | 572-577 |  |
+| if | 578-582 |  |
+| if | 583-589 |  |
+| if | 590-594 |  |
+| if | 595-600 |  |
+| if | 601-614 |  |
+| va_mem_wr_B | 615-619 | Loading ROM support |
+| va_mem_wr | 620-625 |  |
+| if | 626-629 |  |
+| if | 630-638 |  |
+| if | 639-647 |  |
+| if | 648-656 |  |
+| if | 657-661 |  |
+| if | 662-668 |  |
+| if | 669-673 |  |
+| if | 674-679 |  |
+| if | 680-695 |  |
+| va_dlist | 696-703 |  |
+| if | 704-715 |  |
+| for | 716-778 |  |
+| va_setint | 779-780 |  |
+| switch | 781-794 |  |
+| va_clrint | 795-796 |  |
+| switch | 797-810 |  |
+| va_checkint | 811-812 |  |
+| if | 813-824 |  |
+| if | 825-832 |  |
+| va_inta | 833-836 |  |
+| if | 837-840 |  |
+| if | 841-844 |  |
+| if | 845-854 |  |
+| va_uart_int | 855-862 |  |
+| va_intsvc | 863-868 |  |
+| va_invalidate | 869-878 |  |
+| va_svc | 879-892 |  |
+| if | 893-898 |  |
+| if | 899-902 |  |
+| if | 903-916 |  |
+| if | 917-922 |  |
+| for | 923-1006 |  |
+| va_dmasvc | 1007-1013 |  |
+| while | 1014-1083 |  |
+| va_reset | 1084-1103 |  |
+| if | 1104-1128 |  |
+| if | 1129-1159 |  |
+| va_set_yoff | 1160-1172 |  |
+| va_show_yoff | 1173-1178 |  |
+| va_set_dpln | 1179-1186 |  |
+| if | 1187-1195 |  |
+| va_show_dpln | 1196-1201 |  |
+| va_show_cmap | 1202-1210 |  |
+| va_set_enable | 1211-1215 |  |
+| va_set_capture | 1216-1223 |  |
+| va_show_capture | 1224-1225 |  |
+| if | 1226-1234 |  |
+| va_help | 1235-1245 |  |
+| va_description | 1246-1253 |  |

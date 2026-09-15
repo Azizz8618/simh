@@ -1,0 +1,102 @@
+=== kx10_rs.c — 726 строк ===
+Источник: kx10_rs.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_rs.c -nt .cline/maps/kx10_rs.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rs_buf | 172 | |
+| SCPE_OK | 717 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_RS | 0 | 27 |
+| BUF_EMPTY(u) | (u->hwmark == 0xFFFFFFFF) | 31 |
+| CLR_BUF(u) | u->hwmark = 0xFFFFFFFF | 32 |
+| RS_NUMWD | 128     /* 36bit words/sec */ | 34 |
+| NUM_UNITS_RS | 8 | 35 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 0)                 ... | 39 |
+| UNIT_M_DTYPE | 7 | 40 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 41 |
+| DTYPE(x) | (((x) & UNIT_M_DTYPE) << UNIT_V_... | 42 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 43 |
+| CMD | u3 | 47 |
+| CS1_GO | 1               /* go */ | 51 |
+| CS1_V_FNC | 1               /* function pos */ | 52 |
+| CS1_M_FNC | 037             /* function mask */ | 53 |
+| CS1_FNC | (CS1_M_FNC << CS1_V_FNC) | 54 |
+| FNC_NOP | 000             /* no operation */ | 55 |
+| FNC_DCLR | 004             /* drive clear */ | 56 |
+| FNC_PRESET | 010             /* read-in prese... | 57 |
+| FNC_SEARCH | 014             /* search */ | 58 |
+| FNC_XFER | 024             /* >=? data xfr */ | 59 |
+| FNC_WCHK | 024             /* write check */ | 60 |
+| FNC_WRITE | 030             /* write */ | 61 |
+| FNC_READ | 034             /* read */ | 62 |
+| CS1_DVA | 0004000         /* drive avail N... | 63 |
+| GET_FNC(x) | (((x) >> CS1_V_FNC) & CS1_M_FNC) | 64 |
+| DS_VV | 0000000         /* volume valid */ | 69 |
+| DS_DRY | 0000200         /* drive ready */ | 70 |
+| DS_DPR | 0000400         /* drive present */ | 71 |
+| DS_PGM | 0001000         /* programable N... | 72 |
+| DS_LST | 0002000         /* last sector */ | 73 |
+| DS_WRL | 0004000         /* write locked */ | 74 |
+| DS_MOL | 0010000         /* medium online */ | 75 |
+| DS_PIP | 0020000         /* pos in progre... | 76 |
+| DS_ERR | 0040000         /* error */ | 77 |
+| DS_ATA | 0100000         /* attention act... | 78 |
+| DS_MBZ | 0000076 | 79 |
+| ER1_ILF | 0000001         /* illegal func */ | 84 |
+| ER1_ILR | 0000002         /* illegal regis... | 85 |
+| ER1_RMR | 0000004         /* reg mod refus... | 86 |
+| ER1_PAR | 0000010         /* parity err */ | 87 |
+| ER1_FER | 0000020         /* format err NI */ | 88 |
+| ER1_WCF | 0000040         /* write clk fai... | 89 |
+| ER1_ECH | 0000100         /* ECC hard err ... | 90 |
+| ER1_HCE | 0000200         /* hdr comp err ... | 91 |
+| ER1_HCR | 0000400         /* hdr CRC err N... | 92 |
+| ER1_AOE | 0001000         /* addr ovflo er... | 93 |
+| ER1_IAE | 0002000         /* invalid addr ... | 94 |
+| ER1_WLE | 0004000         /* write lock er... | 95 |
+| ER1_DTE | 0010000         /* drive time er... | 96 |
+| ER1_OPI | 0020000         /* op incomplete */ | 97 |
+| ER1_UNS | 0040000         /* drive unsafe */ | 98 |
+| ER1_DCK | 0100000         /* data check NI */ | 99 |
+| AS_U0 | 0000001         /* unit 0 flag */ | 105 |
+| DA | u4 | 107 |
+| DA_V_SC | 0               /* sector pos */ | 111 |
+| DA_M_SC | 077             /* sector mask */ | 112 |
+| DA_V_SF | 6               /* track pos */ | 113 |
+| DA_M_SF | 077             /* track mask */ | 114 |
+| DA_MBZ | 0170000 | 115 |
+| GET_SC(x) | (((x) >> DA_V_SC) & DA_M_SC) | 116 |
+| GET_SF(x) | (((x) >> DA_V_SF) & DA_M_SF) | 117 |
+| LA_V_SC | 6                               ... | 123 |
+| GET_DA(c,d) | (((GET_SF (c)) * rs_drv_tab[d].s... | 125 |
+| DATAPTR | u6 | 127 |
+| RS03_DTYPE | 0 | 145 |
+| RS03_SECT | 64 | 146 |
+| RS03_SURF | 32 | 147 |
+| RS03_DEV | 020002 | 148 |
+| RS03_SIZE | (RS03_SECT * RS03_SURF * RS_NUMWD) | 149 |
+| RS04_DTYPE | 1 | 151 |
+| RS04_SECT | 64 | 152 |
+| RS04_SURF | 32 | 153 |
+| RS04_DEV | 020003 | 154 |
+| RS04_SIZE | (RS04_SECT * RS04_SURF * RS_NUMWD) | 155 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rs_rst | 265-275 |  |
+| rs_write | 276-380 |  |
+| rs_read | 381-432 |  |
+| rs_svc | 433-593 |  |
+| rs_set_type | 594-607 |  |
+| rs_reset | 608-620 |  |
+| rs_boot | 621-661 |  |
+| rs_attach | 662-694 |  |
+| rs_detach | 695-704 |  |
+| rs_help | 705-719 |  |
+| rs_description | 720-726 |  |

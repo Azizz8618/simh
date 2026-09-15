@@ -1,0 +1,104 @@
+=== vax_xs.c — 835 строк ===
+Источник: vax_xs.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_xs.c -nt .cline/maps/vax_xs.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 43 | |
+| xs | 150 | |
+| data | 152 | |
+| data | 186 | |
+| xs | 197 | |
+| return | 259 | |
+| queue_size | 266 | |
+| xs | 267 | |
+| SCPE_OK | 299 | |
+| b0 | 305 | |
+| segb | 306 | |
+| slen | 307 | |
+| rstatus | 308 | |
+| item | 309 | |
+| no_buffers | 310 | |
+| segb | 455 | |
+| slen | 456 | |
+| rstatus | 457 | |
+| off | 461 | |
+| w1 | 580 | |
+| inb | 581 | |
+| xs->var->relen | 621 | |
+| xs->var->rxnext | 622 | |
+| xs->var->telen | 633 | |
+| xs->var->txnext | 634 | |
+| xs->var->csr0 | 644 | |
+| xs->var->csr0 | 645 | |
+| xs->var->setup.mac_count | 649 | |
+| SCPE_OK | 657 | |
+| xs | 685 | |
+| xs | 696 | |
+| xs->var->write_buffer.status | 697 | |
+| status | 704 | |
+| xs | 705 | |
+| xs->var->csr0 | 707 | |
+| xs->var->csr1 | 708 | |
+| xs->var->csr2 | 709 | |
+| xs->var->csr3 | 710 | |
+| xs->var->rptr | 711 | |
+| xs->var->mode | 712 | |
+| xs->var->inbb | 713 | |
+| SCPE_OK | 721 | |
+| status | 728 | |
+| tptr | 729 | |
+| xs | 730 | |
+| uptr->filename | 750 | |
+| SCPE_OK | 757 | |
+| xs | 762 | |
+| SCPE_OK | 772 | |
+| rrlen | 778 | |
+| trlen | 797 | |
+| SCPE_OK | 829 | |
+| controller" | 834 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BOOT_CODE_ARRAY | NULL | 35 |
+| BOOT_CODE_SIZE | 0 | 36 |
+| GETB(p,x) | (p[x]) | 39 |
+| GETW(p,x) | ((p[(x + 1)] << 8) \| p[x]) | 40 |
+| GETL(p,x) | ((p[(x + 3)] << 24) \| (p[(x + 2)... | 41 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| xs_rd | 148-153 |  |
+| switch | 154-194 |  |
+| xs_wr | 195-199 |  |
+| switch | 200-263 |  |
+| xs_svc | 264-268 |  |
+| if | 269-276 |  |
+| if | 277-302 |  |
+| xs_process_receive | 303-320 | Transfer received packets into receive ring. |
+| if | 321-325 | check read queue for buffer loss |
+| while | 326-452 | while there are still packets left to process in the queue |
+| xs_process_transmit | 453-461 |  |
+| for | 462-577 |  |
+| xs_init | 578-596 |  |
+| if | 597-659 |  |
+| xs_updateint | 660-667 |  |
+| xs_setint | 668-676 |  |
+| xs_clrint | 677-682 |  |
+| xs_read_callback | 683-693 |  |
+| xs_write_callback | 694-701 |  |
+| xs_reset | 702-725 |  |
+| xs_attach | 726-737 |  |
+| if | 738-743 |  |
+| if | 744-759 |  |
+| xs_detach | 760-763 |  |
+| if | 764-774 |  |
+| xs_dump_rxring | 775-780 |  |
+| for | 781-793 |  |
+| xs_dump_txring | 794-799 |  |
+| for | 800-812 |  |
+| xs_help | 813-831 |  |
+| xs_description | 832-835 |  |

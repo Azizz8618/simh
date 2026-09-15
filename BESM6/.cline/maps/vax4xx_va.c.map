@@ -1,0 +1,223 @@
+=== vax4xx_va.c — 1416 строк ===
+Источник: vax4xx_va.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax4xx_va.c -nt .cline/maps/vax4xx_va.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 127 | |
+| fault_PC | 129 | |
+| trpirq | 130 | |
+| va_ram | 132 | |
+| va_fcc_csr | 134 | |
+| va_fcc_int | 135 | |
+| va_fcc_fcsr | 136 | |
+| va_fcc_data | 137 | |
+| va_fcc_sc | 138 | |
+| va_active | 163 | |
+| va_updated | 164 | |
+| va_yoff | 176 | |
+| va_dpln | 177 | |
+| va_white | 178 | |
+| va_black | 179 | |
+| va_bt458_addr | 181 | |
+| va_cmap_p | 182 | |
+| va_cmap | 183 | |
+| va_fcc_fifo_rp | 352 | |
+| va_fcc_fifo_sz++ | 366 | |
+| val | 371 | |
+| va_fcc_fifo_sz-- | 381 | |
+| val | 384 | |
+| data | 464 | |
+| data | 505 | |
+| data | 559 | |
+| data | 566 | |
+| red | 572 | |
+| data | 597 | |
+| data | 660 | |
+| data | 738 | |
+| nval | 778 | |
+| sc | 780 | |
+| nodec | 820 | |
+| inst | 821 | |
+| val | 822 | |
+| ln | 932 | |
+| mev | 940 | |
+| kev | 941 | |
+| lines | 943 | |
+| ln | 944 | |
+| plna | 945 | |
+| bita | 946 | |
+| va_cur_y | 966 | |
+| va_cur_v | 967 | |
+| va_cur_f | 968 | |
+| lines | 975 | |
+| SCPE_OK | 1031 | |
+| TRUE | 1044 | |
+| mask | 1050 | |
+| TRUE | 1060 | |
+| pix | 1065 | |
+| last_pix | 1067 | |
+| pix | 1100 | |
+| va_fcc_sc | 1102 | |
+| va_fcc_data | 1103 | |
+| debug_flag | 1149 | |
+| data | 1153 | |
+| SCPE_OK | 1252 | |
+| va_fcc_csr | 1266 | |
+| va_dla | 1267 | |
+| va_bt458_addr | 1269 | |
+| va_cmap_p | 1270 | |
+| SCPE_OK | 1324 | |
+| SCPE_OK | 1333 | |
+| SCPE_OK | 1352 | |
+| SCPE_OK | 1375 | |
+| va_input_captured | 1387 | |
+| SCPE_OK | 1388 | |
+| SCPE_OK | 1399 | |
+| SCPE_OK | 1410 | |
+| Adapter" | 1415 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BT458 | 1 | 39 |
+| VA_ADP_OF | 0x0000                          ... | 42 |
+| VA_FCC_OF | 0x0100                          ... | 43 |
+| VA_DAC_OF | 0x0180                          ... | 44 |
+| VA_CCR_OF | 0x0200                          ... | 45 |
+| VA_CBR_OF | 0x0280                          ... | 46 |
+| VA_FFW_OF | 0x4000                          ... | 47 |
+| VA_TMP_OF | 0x40 | 49 |
+| INT_FCC | 1 | 51 |
+| CUR_X_OF | 216 | 53 |
+| CUR_Y_OF | 33 | 54 |
+| CMD_TEST | 0x8000 | 56 |
+| CMD_HSHI | 0x4000 | 57 |
+| CMD_VBHI | 0x2000 | 58 |
+| CMD_LODSA | 0x1000 | 59 |
+| CMD_FORG2 | 0x0800 | 60 |
+| CMD_ENRG2 | 0x0400 | 61 |
+| CMD_FORG1 | 0x0200 | 62 |
+| CMD_ENRG1 | 0x0100 | 63 |
+| CMD_XHWID | 0x0080 | 64 |
+| CMD_XHCL1 | 0x0040 | 65 |
+| CMD_XHCLP | 0x0020 | 66 |
+| CMD_XHAIR | 0x0010 | 67 |
+| CMD_FOPB | 0x0008 | 68 |
+| CMD_ENPB | 0x0004 | 69 |
+| CMD_FOPA | 0x0002 | 70 |
+| CMD_ENPA | 0x0001 | 71 |
+| CUR_X | ((va_xpos < CUR_X_OF) ? 0 : (va_... | 73 |
+| CUR_Y | ((va_ypos < CUR_Y_OF) ? 0 : (va_... | 74 |
+| CUR_V | ((va_ccmd & CMD_LODSA) == 0) | 75 |
+| CUR_F | (0) | 76 |
+| CUR_PLNA | 0 | 78 |
+| CUR_PLNB | 16 | 79 |
+| CUR_COL | 4 | 82 |
+| CUR_HOT | (VA_BPP + 1) | 83 |
+| CUR_BG | (VA_BPP + 2) | 84 |
+| CUR_FG | (VA_BPP + 3) | 85 |
+| CUR_COL | 8 | 87 |
+| CUR_HOT | (VA_BPP + VA_BPP + 1) | 88 |
+| CUR_BG | (VA_BPP + VA_BPP + 2) | 89 |
+| CUR_FG | (VA_BPP + VA_BPP + 3) | 90 |
+| RAM_SIZE | (1u << 16)                      ... | 93 |
+| FCCCSR_PACK | 0x0100                          ... | 95 |
+| FCCCSR_WR | 0x5F83 | 96 |
+| FCCCSR_V_MODE | 9 | 97 |
+| FCCCSR_M_MODE | 0x3 | 98 |
+| GET_MODE(x) | ((x >> FCCCSR_V_MODE) & FCCCSR_M... | 99 |
+| MODE_HALT | 0 | 101 |
+| MODE_DL | 1 | 102 |
+| MODE_BTP | 2 | 103 |
+| MODE_PTB | 3 | 104 |
+| DBG_FCC | 0x0001                          ... | 108 |
+| DBG_CURSOR | 0x0002                          ... | 109 |
+| FCC_CCSR | 0x0                             ... | 113 |
+| FCC_ICSR | 0x1                             ... | 114 |
+| FCC_FCSR | 0x2                             ... | 115 |
+| FCC_FWU | 0x3                             ... | 116 |
+| FCC_FT | 0x4                             ... | 117 |
+| FCC_RSVD | 0x5                             ... | 118 |
+| FCC_PUT | 0x6                             ... | 119 |
+| FCC_GET | 0x7                             ... | 120 |
+| FCC_DIAG | 0x8                             ... | 121 |
+| FCC_CMPA | 0x9                             ... | 122 |
+| FCC_CMPB | 0xA                             ... | 123 |
+| FCC_CMPC | 0xB                             ... | 124 |
+| FCC_MAXREG | 0xB | 125 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| va_fcc_fifo_clr | 348-355 |  |
+| va_fcc_fifo_wr | 356-358 |  |
+| if | 359-368 |  |
+| va_fcc_fifo_rd | 369-372 |  |
+| if | 373-386 |  |
+| va_ccr_wr | 387-395 |  |
+| switch | 396-460 |  |
+| va_dac_rd | 461-465 |  |
+| switch | 466-507 |  |
+| va_dac_wr | 508-512 |  |
+| switch | 513-555 |  |
+| va_dac_rd | 556-568 |  |
+| va_dac_wr | 569-578 |  |
+| if | 579-593 |  |
+| va_fcc_rd | 594-598 |  |
+| switch | 599-662 |  |
+| va_fcc_wr | 663-671 |  |
+| switch | 672-734 |  |
+| va_rd | 735-739 |  |
+| if | 740-746 |  |
+| if | 747-754 |  |
+| if | 755-759 |  |
+| if | 760-763 |  |
+| if | 764-767 |  |
+| if | 768-775 |  |
+| va_wr | 776-781 |  |
+| if | 782-794 |  |
+| if | 795-798 |  |
+| if | 799-802 |  |
+| if | 803-806 |  |
+| if | 807-810 |  |
+| if | 811-817 |  |
+| va_dlist | 818-825 |  |
+| if | 826-837 |  |
+| for | 838-917 |  |
+| va_setint | 918-919 |  |
+| switch | 920-929 |  |
+| va_invalidate | 930-937 |  |
+| va_svc | 938-950 |  |
+| if | 951-956 |  |
+| if | 957-960 |  |
+| if | 961-975 |  |
+| for | 976-1033 |  |
+| va_fcc_rdn | 1034-1036 |  |
+| if | 1037-1046 |  |
+| va_fcc_wrn | 1047-1053 |  |
+| if | 1054-1062 |  |
+| va_fcc_decomp | 1063-1067 |  |
+| for | 1068-1097 |  |
+| va_fcc_comp | 1098-1103 |  |
+| if | 1104-1109 |  |
+| for | 1110-1150 |  |
+| va_dmasvc | 1151-1158 |  |
+| switch | 1159-1254 |  |
+| va_reset | 1255-1274 |  |
+| if | 1275-1287 |  |
+| if | 1288-1326 |  |
+| va_detach | 1327-1328 |  |
+| if | 1329-1335 |  |
+| va_set_yoff | 1336-1348 |  |
+| va_show_yoff | 1349-1354 |  |
+| va_set_dpln | 1355-1362 |  |
+| if | 1363-1371 |  |
+| va_show_dpln | 1372-1377 |  |
+| va_set_enable | 1378-1382 |  |
+| va_set_capture | 1383-1390 |  |
+| va_show_capture | 1391-1392 |  |
+| if | 1393-1401 |  |
+| va_help | 1402-1412 |  |
+| va_description | 1413-1416 |  |

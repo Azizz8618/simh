@@ -1,0 +1,294 @@
+=== hp2100_mpx.c — 3200 строк ===
+Источник: hp2100_mpx.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_mpx.c -nt .cline/maps/hp2100_mpx.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 833-837 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mpx_interface | 895 | |
+| output_state | 1189 | |
+| input_state | 1190 | |
+| delay | 1192 | |
+| signal | 1194 | |
+| working_set | 1195 | |
+| outbound | 1196 | |
+| irq_enabled | 1197 | |
+| ch | 1437 | |
+| add_crlf | 1439 | |
+| set_flag | 1440 | |
+| last_state | 1441 | |
+| cmd_state | 1443 | |
+| SCPE_OK | 1667 | |
+| ch | 1795 | |
+| chx | 1796 | |
+| buffer_count | 1797 | |
+| status | 1798 | |
+| status | 2101 | |
+| status | 2120 | |
+| SCPE_OK | 2151 | |
+| SCPE_OK | 2204 | |
+| status | 2242 | |
+| status | 2256 | |
+| status | 2281 | |
+| status | 2295 | |
+| SCPE_OK | 2333 | |
+| SCPE_OK | 2348 | |
+| port | 2440 | |
+| svc_time | 2441 | |
+| mpx_state | 2686 | |
+| set_flag | 2687 | |
+| new_line | 2695 | |
+| return | 2702 | |
+| return | 2749 | |
+| index | 2954 | |
+| mpx_sep | 2967 | |
+| mpx_put | 2968 | |
+| return | 2974 | |
+| ch | 2988 | |
+| ch | 3010 | |
+| index | 3024 | |
+| return | 3046 | |
+| index | 3058 | |
+| return | 3066 | |
+| return | 3094 | |
+| return | 3112 | |
+| return | 3146 | |
+| length | 3163 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CHAR_ECHO | 0100000u | 176 |
+| CHAR_SIZE | 0014000u | 177 |
+| SIZE_A | 0004000u | 178 |
+| SIZE_B | 0010000u | 179 |
+| CHAR_SHIFT | 11 | 181 |
+| GET_SIZE(v) | (((v) & CHAR_SIZE) >> CHAR_SHIFT) | 182 |
+| CHAR_ECHO | BIT (15) | 198 |
+| CHAR_SIZE | FIELD (12, 11) | 199 |
+| SIZE_A | TO_FIELD (12, 11, 1) | 200 |
+| SIZE_B | TO_FIELD (12, 11, 2) | 201 |
+| GET_SIZE(v) | FIELD_TO (12, 11, v) | 203 |
+| BIT(b) | (1u << (b)) | 215 |
+| FIELD(h,l) | (BIT ((h) - (l) + 1) - 1 << (l)) | 216 |
+| FIELD_TO(h,l,v) | (((unsigned) (v) & FIELD (h, l))... | 218 |
+| TO_FIELD(h,l,v) | ((unsigned) (v) << (l) & FIELD (... | 219 |
+| MPX_DATE_CODE | 2416                /* date code... | 224 |
+| RD_BUF_SIZE | 514                 /* read buff... | 226 |
+| WR_BUF_SIZE | 514                 /* write buf... | 227 |
+| RD_BUF_LIMIT | 254                 /* read buff... | 229 |
+| WR_BUF_LIMIT | 254                 /* write buf... | 230 |
+| KEY_DEFAULT | 255                 /* default p... | 232 |
+| DATA_DELAY | uS (1.25)           /* data tran... | 242 |
+| PARAM_DELAY | uS (25)             /* parameter... | 243 |
+| CMD_DELAY | uS (400)            /* command c... | 244 |
+| MPX_PORTS | 8                  /* number of ... | 249 |
+| MPX_CNTLS | 2                  /* number of ... | 250 |
+| EOT | '\004' | 258 |
+| ENQ | '\005' | 259 |
+| ACK | '\006' | 260 |
+| BS | '\010' | 261 |
+| LF | '\012' | 262 |
+| CR | '\015' | 263 |
+| DC1 | '\021' | 264 |
+| DC2 | '\022' | 265 |
+| DC3 | '\023' | 266 |
+| ESC | '\033' | 267 |
+| RS | '\036' | 268 |
+| DEL | '\177' | 269 |
+| XON | DC1 | 271 |
+| XOFF | DC3 | 272 |
+| DEV_REV_D | BIT (DEV_V_UF + 0)  /* firmware ... | 277 |
+| UNIT_FASTTIME | BIT (UNIT_V_UF + 0) /* fast timi... | 282 |
+| UNIT_CAPSLOCK | BIT (UNIT_V_UF + 1) /* caps lock... | 283 |
+| CN_OPCODE(w) | FIELD_TO (15, 8, w) | 367 |
+| CN_KEY(w) | FIELD_TO ( 7, 0, w) | 368 |
+| CMD_NOP | 0100u               /* No operat... | 373 |
+| CMD_RESET | 0101u               /* Reset fir... | 374 |
+| CMD_ENABLE_UI | 0102u               /* Enable un... | 375 |
+| CMD_DISABLE | 0103u               /* Disable i... | 376 |
+| CMD_ACK | 0104u               /* Acknowled... | 377 |
+| CMD_CANCEL | 0105u               /* Cancel fi... | 378 |
+| CMD_CANCEL_ALL | 0106u               /* Cancel al... | 379 |
+| CMD_BINARY_READ | 0107u               /* Fast bina... | 380 |
+| CMD_VCP_PUT | 0140u               /* VCP put b... | 382 |
+| CMD_VCP_PUT_BUF | 0141u               /* VCP put b... | 383 |
+| CMD_VCP_GET | 0142u               /* VCP get b... | 384 |
+| CMD_VCP_GET_BUF | 0143u               /* VCP get b... | 385 |
+| CMD_VCP_EXIT | 0144u               /* Exit VCP ... | 386 |
+| CMD_VCP_ENTER | 0157u               /* Enter VCP... | 387 |
+| CMD_REQ_WRITE | 0301u               /* Request w... | 391 |
+| CMD_WRITE | 0302u               /* Write dat... | 392 |
+| CMD_SET_KEY | 0303u               /* Set port ... | 393 |
+| CMD_SET_RCV | 0304u               /* Set recei... | 394 |
+| CMD_SET_COUNT | 0305u               /* Set chara... | 395 |
+| CMD_SET_FLOW | 0306u               /* Set flow ... | 396 |
+| CMD_READ | 0307u               /* Read data... | 397 |
+| CMD_DL_EXEC | 0310u               /* Download ... | 398 |
+| CMD_CN_LINE | 0311u               /* Connect l... | 400 |
+| CMD_DC_LINE | 0312u               /* Disconnec... | 401 |
+| CMD_GET_STATUS | 0315u               /* Get modem... | 402 |
+| CMD_LOOPBACK | 0316u               /* Enable/di... | 403 |
+| CMD_TERM_BUF | 0320u               /* Terminate... | 404 |
+| SUBCMD_UI | 1                   /* Disable u... | 408 |
+| SUBCMD_DMA | 2                   /* Abort DMA... | 409 |
+| CMD_TWO_WORDS | 0200u               /* two-word ... | 411 |
+| ST_OK | 0000000u            /* Command O... | 421 |
+| ST_DIAG_OK | 0000015u            /* Diagnosti... | 422 |
+| ST_VCP_SIZE | 0000120u            /* VCP buffe... | 423 |
+| ST_NO_SYSMDM | 0000200u            /* No system... | 424 |
+| ST_TEST_OK | 0100000u            /* Self test... | 425 |
+| ST_NO_MODEM | 0140000u            /* No modem ... | 426 |
+| ST_BAD_KEY | 0135320u            /* Bad port ... | 427 |
+| WR_NO_ENQACK | BIT (13)            /* Write: no... | 444 |
+| WR_ADD_CRLF | BIT (12)            /* Write: ad... | 445 |
+| WR_PARTIAL | BIT (11)            /* Write: wr... | 446 |
+| WR_LENGTH(w) | FIELD_TO (10, 0, w) /* Write: wr... | 448 |
+| SK_BPC_MASK | FIELD (15, 14)              /* S... | 505 |
+| SK_BPC_5 | TO_FIELD (15, 14, 0)        /*  ... | 506 |
+| SK_BPC_7 | TO_FIELD (15, 14, 1)        /*  ... | 507 |
+| SK_BPC_6 | TO_FIELD (15, 14, 2)        /*  ... | 508 |
+| SK_BPC_8 | TO_FIELD (15, 14, 3)        /*  ... | 509 |
+| SK_MODEM | BIT (13)                    /* S... | 510 |
+| SK_BRG | BIT (12)                    /* S... | 511 |
+| SK_STOPBITS_MASK | FIELD (11, 10)              /* S... | 512 |
+| SK_STOP_1 | TO_FIELD (11, 10, 1)        /*  ... | 513 |
+| SK_STOP_15 | TO_FIELD (11, 10, 2)        /*  ... | 514 |
+| SK_STOP_2 | TO_FIELD (11, 10, 3)        /*  ... | 515 |
+| SK_PARITY_MASK | FIELD (9, 8)                /* S... | 516 |
+| SK_PARITY_NONE | TO_FIELD (9, 8, 0)          /*  ... | 517 |
+| SK_PARITY_ODD | TO_FIELD (9, 8, 1)          /*  ... | 518 |
+| SK_PARITY_EVEN | TO_FIELD (9, 8, 3)          /*  ... | 519 |
+| SK_ENQACK | BIT (7)                     /* S... | 520 |
+| SK_BAUDRATE_MASK | FIELD (6, 3)                /* S... | 521 |
+| SK_BAUD_NOCHG | TO_FIELD (6, 3,  0)         /*  ... | 522 |
+| SK_BAUD_50 | TO_FIELD (6, 3,  1)         /*  ... | 523 |
+| SK_BAUD_75 | TO_FIELD (6, 3,  2)         /*  ... | 524 |
+| SK_BAUD_110 | TO_FIELD (6, 3,  3)         /*  ... | 525 |
+| SK_BAUD_1345 | TO_FIELD (6, 3,  4)         /*  ... | 526 |
+| SK_BAUD_150 | TO_FIELD (6, 3,  5)         /*  ... | 527 |
+| SK_BAUD_300 | TO_FIELD (6, 3,  6)         /*  ... | 528 |
+| SK_BAUD_1200 | TO_FIELD (6, 3,  7)         /*  ... | 529 |
+| SK_BAUD_1800 | TO_FIELD (6, 3,  8)         /*  ... | 530 |
+| SK_BAUD_2400 | TO_FIELD (6, 3,  9)         /*  ... | 531 |
+| SK_BAUD_4800 | TO_FIELD (6, 3, 10)         /*  ... | 532 |
+| SK_BAUD_9600 | TO_FIELD (6, 3, 11)         /*  ... | 533 |
+| SK_BAUD_19200 | TO_FIELD (6, 3, 12)         /*  ... | 534 |
+| SK_PORT_MASK | FIELD (2, 0)                /* S... | 535 |
+| GET_BPC(w) | FIELD_TO (15, 14, w) | 537 |
+| GET_BAUDRATE(w) | FIELD_TO ( 6,  3, w) | 538 |
+| GET_PORT(w) | FIELD_TO ( 2,  0, w) | 539 |
+| SK_BRG_1 | SK_BRG | 541 |
+| SK_BRG_0 | 0 | 542 |
+| SK_PWRUP_0 | (SK_BPC_8 \| SK_BRG_0 \| SK_STOP_1... | 544 |
+| SK_PWRUP_1 | (SK_BPC_8 \| SK_BRG_1 \| SK_STOP_1... | 545 |
+| RT_END_ON_CR | BIT (7)             /* Receive t... | 567 |
+| RT_END_ON_RS | BIT (6)             /* Receive t... | 568 |
+| RT_END_ON_EOT | BIT (5)             /* Receive t... | 569 |
+| RT_END_ON_DC2 | BIT (4)             /* Receive t... | 570 |
+| RT_END_ON_CNT | BIT (3)             /* Receive t... | 571 |
+| RT_END_ON_CHAR | BIT (2)             /* Receive t... | 572 |
+| RT_ENAB_EDIT | BIT (1)             /* Receive t... | 573 |
+| RT_ENAB_ECHO | BIT (0)             /* Receive t... | 574 |
+| RT_PWRUP | (RT_END_ON_CR \| RT_END_ON_CHAR \|... | 576 |
+| FC_FORCE_XON | BIT (1)             /* Flow cont... | 592 |
+| FC_XONXOFF | BIT (0)             /* Flow cont... | 593 |
+| CL_GUARD | BIT (5)             /* Connect l... | 613 |
+| CL_STANDARD | BIT (4)             /* Connect l... | 614 |
+| CL_BITS | BIT (3)             /* Connect l... | 615 |
+| CL_MODE | BIT (2)             /* Connect l... | 616 |
+| CL_DIAL | BIT (1)             /* Connect l... | 617 |
+| CL_SPEED | BIT (0)             /* Connect l... | 618 |
+| DL_AUTO_ANSWER | BIT (0)             /* Disconnec... | 633 |
+| LB_SPEED | BIT (2)             /* Loopback ... | 650 |
+| LB_MODE | BIT (1)             /* Loopback ... | 651 |
+| LB_TEST | BIT (0)             /* Loopback ... | 652 |
+| UI_REASON_MASK | FIELD (13, 8)       /* Unsolicit... | 686 |
+| UI_WRBUF_AVAIL | TO_FIELD (13, 8, 1) /*   Write b... | 687 |
+| UI_LINE_CONN | TO_FIELD (13, 8, 2) /*   Modem l... | 688 |
+| UI_LINE_DISC | TO_FIELD (13, 8, 3) /*   Modem l... | 689 |
+| UI_BRK_RECD | TO_FIELD (13, 8, 4) /*   Break r... | 690 |
+| UI_RDBUF_AVAIL | TO_FIELD (13, 8, 5) /*   Read bu... | 691 |
+| UI_PORT_KEY_MASK | FIELD (7, 0)        /* Unsolicit... | 692 |
+| UI_REASON_SHIFT | 8                   /* Unsolicit... | 694 |
+| GET_UIREASON(w) | FIELD_TO (13, 8, w) | 696 |
+| GET_UIPORT(w) | FIELD_TO ( 7, 0, w) | 697 |
+| RS_OVERFLOW | BIT (14)                    /* R... | 728 |
+| RS_PARTIAL | BIT (13)                    /* R... | 729 |
+| RS_ETC_RS | TO_FIELD (12, 11, 3)        /* R... | 730 |
+| RS_ETC_DC2 | TO_FIELD (12, 11, 2)        /* R... | 731 |
+| RS_ETC_CR | TO_FIELD (12, 11, 1)        /* R... | 732 |
+| RS_ETC_EOT | TO_FIELD (12, 11, 0)        /* R... | 733 |
+| RS_CHAR_COUNT_MASK | FIELD (10, 0)               /* R... | 734 |
+| GS_NO_SYSMDM | BIT (7)             /* Get statu... | 759 |
+| GS_SYSMDM_TO | BIT (6)             /* Get statu... | 760 |
+| GS_NO_MODEM | BIT (5)             /* Get statu... | 761 |
+| GS_SPEED | BIT (1)             /* Get statu... | 762 |
+| GS_LINE | BIT (0)             /* Get statu... | 763 |
+| FL_ALERT | BIT (11)            /* Port flag... | 789 |
+| FL_XOFF | BIT (10)            /* Port flag... | 790 |
+| FL_BREAK | BIT ( 9)            /* Port flag... | 791 |
+| FL_HAVEBUF | BIT ( 8)            /* Port flag... | 792 |
+| FL_WANTBUF | BIT ( 7)            /* Port flag... | 793 |
+| FL_RDOVFLOW | BIT ( 6)            /* Port flag... | 794 |
+| FL_RDFILL | BIT ( 5)            /* Port flag... | 795 |
+| FL_RDEMPT | BIT ( 4)            /* Port flag... | 796 |
+| FL_WRFILL | BIT ( 3)            /* Port flag... | 797 |
+| FL_WREMPT | BIT ( 2)            /* Port flag... | 798 |
+| FL_WAITACK | BIT ( 1)            /* Port flag... | 799 |
+| FL_DO_ENQACK | BIT ( 0)            /* Port flag... | 800 |
+| FL_RDFLAGS | (FL_RDEMPT \| FL_RDFILL \| FL_RDOV... | 802 |
+| FL_WRFLAGS | (FL_WREMPT \| FL_WRFILL) | 803 |
+| FL_UI_PENDING | (FL_WANTBUF \| FL_HAVEBUF \| FL_BR... | 804 |
+| ACK_LIMIT | 1000                /* poll time... | 806 |
+| ENQ_LIMIT | 80                /* output char... | 807 |
+| POLL_FLAGS | (UNIT_ATTABLE \| UNIT_DIS) | 988 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mpx_interface | 1187-1198 |  |
+| while | 1199-1434 |  |
+| cntl_service | 1435-1445 |  |
+| switch | 1446-1659 |  |
+| if | 1660-1786 |  |
+| line_service | 1787-1814 |  |
+| while | 1815-1889 |  |
+| while | 1890-2060 |  |
+| if | 2061-2116 |  |
+| poll_service | 2117-2125 |  |
+| for | 2126-2183 |  |
+| mpx_reset | 2184-2185 |  |
+| if | 2186-2196 |  |
+| if | 2197-2239 |  |
+| mpx_attach | 2240-2251 |  |
+| if | 2252-2278 |  |
+| mpx_detach | 2279-2283 |  |
+| if | 2284-2305 |  |
+| set_revision | 2306-2325 |  |
+| show_revision | 2326-2338 |  |
+| show_status | 2339-2437 |  |
+| exec_command | 2438-2446 |  |
+| switch | 2447-2692 |  |
+| poll_connection | 2693-2713 |  |
+| controller_reset | 2714-2723 |  |
+| for | 2724-2762 |  |
+| service_time | 2763-2784 |  |
+| key_to_port | 2785-2948 |  |
+| buf_incr | 2949-2963 |  |
+| buf_init | 2964-2985 |  |
+| buf_get | 2986-3021 |  |
+| buf_put | 3022-3025 |  |
+| if | 3026-3055 |  |
+| buf_remove | 3056-3077 |  |
+| buf_term | 3078-3103 |  |
+| buf_free | 3104-3121 |  |
+| buf_cancel | 3122-3123 |  |
+| if | 3124-3160 |  |
+| buf_len | 3161-3188 |  |
+| buf_avail | 3189-3200 |  |

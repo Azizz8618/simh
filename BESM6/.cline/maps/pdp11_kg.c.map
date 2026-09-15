@@ -1,0 +1,65 @@
+=== pdp11_kg.c — 562 строк ===
+Источник: pdp11_kg.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_kg.c -nt .cline/maps/pdp11_kg.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_reg | 98 | |
+| kg_bitdefs | 206 | |
+| kg_unit | 275 | |
+| SCPE_OK | 556 | |
+| Option" | 561 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| KG_UNITS | (8) | 102 |
+| KGSR_V_QUO | (8)                             ... | 107 |
+| KGSR_V_DONE | (7)                             ... | 108 |
+| KGSR_V_SEN | (6)                             ... | 109 |
+| KGSR_V_STEP | (5)                             ... | 110 |
+| KGSR_V_CLR | (4)                             ... | 111 |
+| KGSR_V_DDB | (3)                             ... | 112 |
+| KGSR_V_CRCIC | (2)                             ... | 113 |
+| KGSR_V_LRC | (1)                             ... | 114 |
+| KGSR_V_16 | (0)                             ... | 115 |
+| KGSR_M_QUO | (1u << KGSR_V_QUO) | 117 |
+| KGSR_M_DONE | (1u << KGSR_V_DONE) | 118 |
+| KGSR_M_SEN | (1u << KGSR_V_SEN) | 119 |
+| KGSR_M_STEP | (1u << KGSR_V_STEP) | 120 |
+| KGSR_M_CLR | (1u << KGSR_V_CLR) | 121 |
+| KGSR_M_DDB | (1u << KGSR_V_DDB) | 122 |
+| KGSR_M_CRCIC | (1u << KGSR_V_CRCIC) | 123 |
+| KGSR_M_LRC | (1u << KGSR_V_LRC) | 124 |
+| KGSR_M_16 | (1u << KGSR_V_16) | 125 |
+| KG_SR_RDMASK | (KGSR_M_QUO \| KGSR_M_DONE \| KGSR... | 127 |
+| KG_SR_WRMASK | (KGSR_M_SEN \| KGSR_M_DDB \| KGSR_... | 129 |
+| KG_SR_POLYMASK | (KGSR_M_CRCIC\|KGSR_M_LRC\|KGSR_M_16) | 132 |
+| POLY_LRC8 | (0x0008) | 134 |
+| POLY_LRC16 | (0x0080) | 135 |
+| POLY_CRC12 | (0x0f01) | 136 |
+| POLY_CRC16 | (0xa001) | 137 |
+| POLY_CCITT | (0x8408) | 138 |
+| ROR(n,v) | (((v >> n) & DMASK) \| ((v << (16... | 249 |
+| RORB(n,v) | (((v & 0377) >> n) \| ((v << (8 -... | 253 |
+| IOLN_KG | 006 | 265 |
+| SR | u3 | 278 |
+| BCC | u4 | 279 |
+| DR | u5 | 280 |
+| PULSCNT | u6 | 281 |
+| DBG_REG | (01) | 300 |
+| DBG_POLY | (02) | 301 |
+| DBG_CYCLE | (04) | 302 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| kg_rd | 333-360 |  |
+| kg_wr | 361-446 |  |
+| kg_reset | 447-460 |  |
+| cycleOneBit | 461-495 |  |
+| do_poly | 496-507 |  |
+| set_units | 508-533 |  |
+| kg_help | 534-558 |  |
+| kg_description | 559-562 |  |

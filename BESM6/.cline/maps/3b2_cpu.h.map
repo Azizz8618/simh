@@ -1,0 +1,162 @@
+=== 3b2_cpu.h — 684 строк ===
+Источник: 3b2_cpu.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_cpu.h -nt .cline/maps/3b2_cpu.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| mnemonic | 548-558 |
+| embedded | 563-575 |
+| instr | 586-593 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rom_loaded | 671 | |
+| stop_reason | 672 | |
+| sbd_int_req | 673 | |
+| cpu_instr | 674 | |
+| cpu_nmi | 675 | |
+| ROM | 676 | |
+| RAM | 677 | |
+| cpu_reg | 679 | |
+| cpu_unit | 680 | |
+| fault | 681 | |
+| cpu_km | 682 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| _3B2_CPU_H_ |  | 32 |
+| EX_LVL_KERN | 0 | 37 |
+| EX_LVL_EXEC | 1 | 38 |
+| EX_LVL_SUPR | 2 | 39 |
+| EX_LVL_USER | 3 | 40 |
+| MAX_HIST_SIZE | 10000000 | 42 |
+| MIN_HIST_SIZE | 64 | 43 |
+| MEM_SIZE | (cpu_unit.capac) | 44 |
+| UNIT_V_MSIZE | (UNIT_V_UF) | 46 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 47 |
+| WD_MSB | 0x80000000 | 49 |
+| HW_MSB | 0x8000 | 50 |
+| BT_MSB | 0x80 | 51 |
+| WORD_MASK | 0xffffffff | 52 |
+| HALF_MASK | 0xffffu | 53 |
+| BYTE_MASK | 0xff | 54 |
+| RESET_EXCEPTION | 0 | 57 |
+| PROCESS_EXCEPTION | 1 | 58 |
+| STACK_EXCEPTION | 2 | 59 |
+| NORMAL_EXCEPTION | 3 | 60 |
+| OLD_PCB_FAULT | 0 | 63 |
+| SYSTEM_DATA_FAULT | 1 | 64 |
+| INTERRUPT_STACK_FAULT | 2 | 65 |
+| EXTERNAL_RESET | 3 | 66 |
+| NEW_PCB_FAULT | 4 | 67 |
+| GATE_VECTOR_FAULT | 6 | 68 |
+| GATE_PCB_FAULT | 1 | 71 |
+| STACK_BOUND | 0 | 74 |
+| STACK_FAULT | 1 | 75 |
+| INTERRUPT_ID_FETCH | 3 | 76 |
+| INTEGER_ZERO_DIVIDE | 0 | 79 |
+| TRACE_TRAP | 1 | 80 |
+| ILLEGAL_OPCODE | 2 | 81 |
+| RESERVED_OPCODE | 3 | 82 |
+| INVALID_DESCRIPTOR | 4 | 83 |
+| EXTERNAL_MEMORY_FAULT | 5 | 84 |
+| N_GATE_VECTOR | 6 | 85 |
+| ILLEGAL_LEVEL_CHANGE | 7 | 86 |
+| RESERVED_DATATYPE | 8 | 87 |
+| INTEGER_OVERFLOW | 9 | 88 |
+| PRIVILEGED_OPCODE | 10 | 89 |
+| BREAKPOINT_TRAP | 14 | 90 |
+| PRIVILEGED_REGISTER | 15 | 91 |
+| PSW_ET | 0 | 93 |
+| PSW_TM | 2 | 94 |
+| PSW_ISC | 3 | 95 |
+| PSW_I | 7 | 96 |
+| PSW_R | 8 | 97 |
+| PSW_PM | 9 | 98 |
+| PSW_CM | 11 | 99 |
+| PSW_IPL | 13 | 100 |
+| PSW_TE | 17 | 101 |
+| PSW_C | 18 | 102 |
+| PSW_V | 19 | 103 |
+| PSW_Z | 20 | 104 |
+| PSW_N | 21 | 105 |
+| PSW_OE | 22 | 106 |
+| PSW_CD | 23 | 107 |
+| PSW_QIE | 24 | 108 |
+| PSW_CFD | 25 | 109 |
+| PSW_ET_MASK | 3u | 111 |
+| PSW_TM_MASK | (1u << PSW_TM) | 112 |
+| PSW_ISC_MASK | (15u << PSW_ISC) | 113 |
+| PSW_I_MASK | (1u << PSW_I) | 114 |
+| PSW_R_MASK | (1u << PSW_R) | 115 |
+| PSW_PM_MASK | (3u << PSW_PM) | 116 |
+| PSW_CM_MASK | (3u << PSW_CM) | 117 |
+| PSW_IPL_MASK | (15u << PSW_IPL) | 118 |
+| PSW_TE_MASK | (1u << PSW_TE) | 119 |
+| PSW_C_MASK | (1u << PSW_C) | 120 |
+| PSW_V_MASK | (1u << PSW_V) | 121 |
+| PSW_N_MASK | (1u << PSW_N) | 122 |
+| PSW_Z_MASK | (1u << PSW_Z) | 123 |
+| PSW_OE_MASK | (1u << PSW_OE) | 124 |
+| PSW_CD_MASK | (1u << PSW_CD) | 125 |
+| PSW_QIE_MASK | (1u << PSW_QIE) | 126 |
+| PSW_CFD_MASK | (1u << PSW_CFD) | 127 |
+| PSW_CUR_IPL | (((R[NUM_PSW] & PSW_IPL_MASK) >>... | 128 |
+| PSW_X | 26 | 131 |
+| PSW_AR | 27 | 132 |
+| PSW_EXUC | 28 | 133 |
+| PSW_EA | 29 | 134 |
+| PSW_X_MASK | (1u << PSW_X) | 136 |
+| PSW_AR_MASK | (1u << PSW_AR) | 137 |
+| PSW_EXUC_MASK | (1u << PSW_EXUC) | 138 |
+| PSW_EA_MASK | (1u << PSW_EA) | 139 |
+| QIE_PSW_MASK | (PSW_EA_MASK\|PSW_EXUC_MASK\|PSW_X... | 143 |
+| QIE_PSW_MASK | (PSW_CFD_MASK\|PSW_QIE_MASK\|PSW_C... | 148 |
+| PSW_RO_MASK | 0x17f   /* ET, TM, ISC, and R ar... | 154 |
+| WRITE_PSW(V) | (R[NUM_PSW] = ((R[NUM_PSW] & PSW... | 155 |
+| ABORT_EXC | 1 /* CPU exception  */ | 158 |
+| C_NONE | 0 /* No context. Normal handling... | 161 |
+| C_NORMAL_GATE_VECTOR | 1 | 162 |
+| C_PROCESS_GATE_PCB | 2 | 163 |
+| C_PROCESS_OLD_PCB | 3 | 164 |
+| C_PROCESS_NEW_PCB | 4 | 165 |
+| C_RESET_GATE_VECTOR | 5 | 166 |
+| C_RESET_INT_STACK | 6 | 167 |
+| C_RESET_NEW_PCB | 7 | 168 |
+| C_RESET_SYSTEM_DATA | 8 | 169 |
+| C_STACK_FAULT | 9 | 170 |
+| NUM_FP | 9 | 173 |
+| NUM_AP | 10 | 174 |
+| NUM_PSW | 11 | 175 |
+| NUM_SP | 12 | 176 |
+| NUM_PCBP | 13 | 177 |
+| NUM_ISP | 14 | 178 |
+| NUM_PC | 15 | 179 |
+| CPU_IPL_8 | 8 | 182 |
+| CPU_IPL_9 | 9 | 183 |
+| CPU_IPL_11 | 11 | 184 |
+| CPU_IPL_13 | 13 | 185 |
+| CPU_IPL_15 | 15 | 186 |
+| L_KERNEL | 0 | 189 |
+| L_EXEC | 1 | 190 |
+| L_SUPER | 2 | 191 |
+| L_USER | 3 | 192 |
+| CPU_CM | (cpu_km ? L_KERNEL : ((R[NUM_PSW... | 195 |
+| UW | 0 /* Unsigned Word */ | 200 |
+| UH | 2 /* Unsigned Halfword */ | 201 |
+| BT | 3 /* Unsigned Byte */ | 202 |
+| WD | 4 /* Signed Word */ | 203 |
+| HW | 6 /* Signed Halfword */ | 204 |
+| SB | 7 /* Signed Byte */ | 205 |
+| NA | -1 | 207 |
+| MOD(A,B,OP1,OP2,SZ) | {                               ... | 628 |
+| DIV(A,B,OP1,OP2,SZ) | {                               ... | 640 |
+| OP_R_W(d,a,p) | {                          | 652 |
+| OP_R_H(d,a,p) | {                          | 659 |
+| OP_R_B(d,a,p) | {                         | 664 |
+| CPU_SET_INT(flags) | (sbd_int_req \|= flags) | 668 |
+| CPU_CLR_INT(flags) | (sbd_int_req &= ~(flags)) | 669 |
+

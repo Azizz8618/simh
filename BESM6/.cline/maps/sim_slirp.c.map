@@ -1,0 +1,99 @@
+=== sim_slirp.c — 735 строк ===
+Источник: sim_slirp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_slirp.c -nt .cline/maps/sim_slirp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| gbuf | 69 | |
+| inaddr | 70 | |
+| port | 71 | |
+| lport | 72 | |
+| ipaddrstr | 73 | |
+| portstr | 74 | |
+| newp | 75 | |
+| host_addr | 118 | |
+| ret | 119 | |
+| ret | 130 | |
+| slirp_dptr | 157 | |
+| slirp_dbit | 158 | |
+| slirp_dptr | 173 | |
+| slirp_dbit | 174 | |
+| slirp->opaque | 175 | |
+| slirp->callback | 176 | |
+| slirp->db_chime | 177 | |
+| slirp | 220 | |
+| rtmp | 225 | |
+| request | 262 | |
+| wake_needed | 263 | |
+| request->len | 278 | |
+| request->next | 284 | |
+| len | 301 | |
+| nfds | 318 | |
+| nfds | 338 | |
+| select_ret | 366 | |
+| slirp_timeout | 367 | |
+| timeout | 368 | |
+| rfds | 369 | |
+| save_rfds | 370 | |
+| nfds | 371 | |
+| timeout.tv_sec | 378 | |
+| save_rfds | 386 | |
+| save_wfds | 387 | |
+| save_xfds | 388 | |
+| request | 414 | |
+| tptr | 447 | |
+| cptr | 448 | |
+| tbuf | 449 | |
+| err | 450 | |
+| nat->nat_type | 452 | |
+| nat->maskbits | 453 | |
+| nat->dhcpmgmt | 454 | |
+| err | 467 | |
+| nat->vnetwork.s_addr | 611 | |
+| err | 620 | |
+| rtmp | 631 | |
+| rtmp | 658 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEFAULT_IP_ADDR | "10.0.2.2" | 35 |
+| IS_TCP | 0 | 59 |
+| IS_UDP | 1 | 60 |
+| MAX(a,b) | (((a)>(b)) ? (a) : (b)) | 312 |
+| UNUSED_SETTING(arg) | if (nat_type == ETH_API_VMNET) s... | 438 |
+| UNUSED_SETTING(arg) |  | 440 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| _parse_redirect_port | 67-78 |  |
+| if | 79-96 |  |
+| if | 97-115 |  |
+| _do_redirects | 116-121 |  |
+| if | 122-163 |  |
+| sim_slirp_parse_args | 164-168 |  |
+| sim_slirp_open | 169-179 |  |
+| if | 180-189 |  |
+| if | 190-222 |  |
+| sim_slirp_close | 223-226 |  |
+| if | 227-259 |  |
+| sim_slirp_send | 260-264 |  |
+| if | 265-284 |  |
+| if | 285-303 |  |
+| slirp_output | 304-320 |  |
+| for | 321-345 |  |
+| for | 346-363 |  |
+| sim_slirp_select | 364-389 |  |
+| if | 390-411 |  |
+| sim_slirp_dispatch | 412-418 |  |
+| while | 419-443 |  |
+| sim_nat_parse_args | 444-456 |  |
+| if | 457-467 |  |
+| while | 468-622 |  |
+| sim_slirp_show | 623-628 |  |
+| sim_nat_show | 629-645 |  |
+| if | 646-658 |  |
+| while | 659-664 |  |
+| sim_nat_attach_scp_help | 665-735 |  |

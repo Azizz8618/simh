@@ -1,0 +1,287 @@
+=== sel32_defs.h — 535 строк ===
+Источник: sel32_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_defs.h -nt .cline/maps/sel32_defs.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CHANP | 206-228 |
+| IOCLQ | 238-242 |
+| DIB | 248-276 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| con_dev | 156 | |
+| mta_dev | 159 | |
+| mtb_dev | 162 | |
+| dda_dev | 165 | |
+| ddb_dev | 168 | |
+| dpa_dev | 171 | |
+| dpb_dev | 174 | |
+| sda_dev | 177 | |
+| sdb_dev | 180 | |
+| sba_dev | 183 | |
+| sbb_dev | 186 | |
+| coml_dev | 189 | |
+| com_dev | 190 | |
+| lpr_dev | 193 | |
+| ec_dev | 196 | |
+| dev_debug | 326 | |
+| attention_trap | 522 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| STOP_IONRDY | 1               /* I/O dev not r... | 28 |
+| STOP_HALT | 2               /* HALT */ | 29 |
+| STOP_IBKPT | 3               /* breakpoint */ | 30 |
+| STOP_UUO | 4               /* invalid opcod... | 31 |
+| STOP_INVINS | 5               /* invalid instr */ | 32 |
+| STOP_INVIOP | 6               /* invalid I/O o... | 33 |
+| STOP_INDLIM | 7               /* indirect limi... | 34 |
+| STOP_XECLIM | 8               /* XEC limit */ | 35 |
+| STOP_IOCHECK | 9               /* IOCHECK */ | 36 |
+| STOP_MMTRP | 10              /* mm in trap */ | 37 |
+| STOP_TRPINS | 11              /* trap inst not... | 38 |
+| STOP_RTCINS | 12              /* rtc inst not ... | 39 |
+| STOP_ILLVEC | 13              /* zero vector */ | 40 |
+| STOP_CCT | 14              /* runaway CCT */ | 41 |
+| SNS_BSY | 0x80          /* Unit Busy */ | 45 |
+| SNS_SMS | 0x40          /* Status modified */ | 46 |
+| SNS_CTLEND | 0x20          /* Control unit en... | 47 |
+| SNS_ATTN | 0x10          /* Unit attention */ | 48 |
+| SNS_CHNEND | 0x08          /* Channel end */ | 49 |
+| SNS_DEVEND | 0x04          /* Device end */ | 50 |
+| SNS_UNITCHK | 0x02          /* Unit check */ | 51 |
+| SNS_UNITEXP | 0x01          /* Unit exception */ | 52 |
+| CCMDMSK | 0xff000000     /* Mask for comma... | 55 |
+| CMD_CHAN | 0x00           /* Channel contro... | 56 |
+| CMD_SENSE | 0x04           /* Sense channel ... | 57 |
+| CMD_TIC | 0x08           /* Transfer in ch... | 58 |
+| CMD_RDBWD | 0x0c           /* Read backward */ | 59 |
+| CMD_TYPE | 0x03           /* Type mask */ | 61 |
+| CMD_WRITE | 0x01           /* Write command */ | 62 |
+| CMD_READ | 0x02           /* Read command */ | 63 |
+| CMD_CTL | 0x03           /* Control comman... | 64 |
+| STATUS_ECHO | 0x8000         /* Halt I/O and S... | 67 |
+| STATUS_PCI | 0x4000         /* Program contro... | 68 |
+| STATUS_LENGTH | 0x2000         /* Incorrect leng... | 69 |
+| STATUS_PCHK | 0x1000         /* Channel progra... | 70 |
+| STATUS_CDATA | 0x0800         /* Channel data c... | 71 |
+| STATUS_CCNTL | 0x0400         /* Channel contro... | 72 |
+| STATUS_INTER | 0x0200         /* Channel interf... | 73 |
+| STATUS_CHAIN | 0x0100         /* Channel chain ... | 74 |
+| STATUS_BUSY | 0x0080         /* Device busy */ | 75 |
+| STATUS_MOD | 0x0040         /* Status modifie... | 76 |
+| STATUS_CTLEND | 0x0020         /* Controller end */ | 77 |
+| STATUS_ATTN | 0x0010         /* Device raised ... | 78 |
+| STATUS_CEND | 0x0008         /* Channel end */ | 79 |
+| STATUS_DEND | 0x0004         /* Device end */ | 80 |
+| STATUS_CHECK | 0x0002         /* Unit check */ | 81 |
+| STATUS_EXPT | 0x0001         /* Unit exception */ | 82 |
+| STATUS_ERROR | 0x3f03         /* bad errors */ | 83 |
+| FLAG_DC | 0x8000         /* Data chain */ | 90 |
+| FLAG_CC | 0x4000         /* Chain command */ | 91 |
+| FLAG_SLI | 0x2000         /* Suppress lengt... | 92 |
+| FLAG_SKIP | 0x1000         /* Suppress memor... | 93 |
+| FLAG_PCI | 0x0800         /* Program contro... | 94 |
+| FLAG_RTO | 0x0400         /* Real-Time Opti... | 95 |
+| BUFF_EMPTY | 0x00           /* Buffer is empt... | 98 |
+| BUFF_BUSY | 0x04           /* Channel progra... | 99 |
+| BUFF_NEXT | 0x0C           /* 0x08\|0x04 Cont... | 100 |
+| BUFF_CHNEND | 0x14           /* 0x10\|0x04 Chan... | 101 |
+| BUFF_DONE | 0x20           /* 0x20 Channel r... | 102 |
+| BUFF_POST | 0x24           /* 0x20\|0x04 Wait... | 103 |
+| INFO_SIOCD | 0x01           /* Initial IOCD f... | 106 |
+| INFO_CEND | 0x02           /* Channel End (c... | 107 |
+| MAX_CHAN | 128         /* max channels that... | 110 |
+| SUB_CHANS | 256         /* max sub channels ... | 111 |
+| MAX_DEV | (MAX_CHAN * SUB_CHANS)  /* max p... | 112 |
+| NUM_DEVS_IOP | 1       /* 1 device IOP channel ... | 115 |
+| NUM_UNITS_IOP | 1       /* 1 master IOP channel ... | 116 |
+| NUM_DEVS_MFP | 1       /* 1 device MFP channel ... | 117 |
+| NUM_UNITS_MFP | 1       /* 1 master MFP channel ... | 118 |
+| NUM_DEVS_COM | 2       /* 8-Line async controll... | 119 |
+| NUM_UNITS_COM | 16      /* 8-Line async units */ | 120 |
+| NUM_DEVS_CON | 1       /* 1 I/O console control... | 121 |
+| NUM_UNITS_CON | 2       /* 2 console input & out... | 122 |
+| NUM_DEVS_MT | 1       /* 1 mag tape controller... | 123 |
+| NUM_UNITS_MT | 4       /* 4 of 8 devices */ | 124 |
+| NUM_DEVS_HSDP | 1       /* 1 hspd disk drive con... | 125 |
+| NUM_UNITS_HSDP | 4       /* 4 disk drive devices */ | 127 |
+| NUM_DEVS_DISK | 1       /* 1 dp02 disk drive con... | 128 |
+| NUM_UNITS_DISK | 4       /* 4 disk drive devices */ | 130 |
+| NUM_DEVS_SCFI | 1       /* 1 scfi (SCSI) disk dr... | 131 |
+| NUM_UNITS_SCFI | 4       /* 1 of 4 disk drive dev... | 133 |
+| NUM_DEVS_SCSI | 2       /* 2 scsi (MFP SCSI) scs... | 134 |
+| NUM_UNITS_SCSI | 2       /* 2 scsi disk drive dev... | 135 |
+| NUM_DEVS_RTOM | 1       /* 1 IOP RTOM channel */ | 136 |
+| NUM_UNITS_RTOM | 1       /* 1 IOP RTOM device (cl... | 137 |
+| NUM_DEVS_LPR | 1       /* 1 IOP Line printer */ | 138 |
+| NUM_UNITS_LPR | 1       /* 1 IOP Line printer de... | 139 |
+| NUM_DEVS_ETHER | 1       /* 1 Ethernet controller */ | 140 |
+| NUM_UNITS_ETHER | 16      /* 16 Ethernet devices */ | 141 |
+| MAXMEMSIZE | ((16*1024*1024)/4)  /* max memor... | 201 |
+| MEMSIZE | (cpu_unit.capac)    /* actual me... | 202 |
+| MEM_ADDR_OK(x) | (((x)) < MEMSIZE) | 203 |
+| FIFO_SIZE | 256                   /* fifo to... | 231 |
+| IOCLQ_SIZE | 32                   /* fifo to ... | 236 |
+| DEV_CHAN | (1 << DEV_V_UF) /* Device is cha... | 282 |
+| DEV_V_UF2 | (DEV_V_UF+1)    /* current usage */ | 283 |
+| DEV_BUF_NUM(x) | (((x) & 07) << DEV_V_UF2) | 284 |
+| GET_DEV_BUF(x) | (((x) >> DEV_V_UF2) & 07) | 285 |
+| UNIT_SUBCHAN | (1 << (UNIT_V_UF_31)) | 301 |
+| UNIT_V_TYPE | (UNIT_V_UF + 0) | 302 |
+| UNIT_TYPE | (0xff << UNIT_V_TYPE) | 303 |
+| GET_TYPE(x) | ((UNIT_TYPE & (x)) >> UNIT_V_TYPE) | 305 |
+| SET_TYPE(x) | (UNIT_TYPE & ((x) << UNIT_V_TYPE)) | 306 |
+| UNIT_V_ADDR | 16 | 310 |
+| UNIT_ADDR_MASK | (0x7fff << UNIT_V_ADDR) | 311 |
+| GET_UADDR(x) | ((UNIT_ADDR_MASK & x) >> UNIT_V_... | 312 |
+| UNIT_ADDR(x) | ((x) << UNIT_V_ADDR) | 313 |
+| DEBUG_CMD | 0x0000001       /* Show device c... | 316 |
+| DEBUG_DATA | 0x0000002       /* Show data tra... | 317 |
+| DEBUG_DETAIL | 0x0000004       /* Show details */ | 318 |
+| DEBUG_INFO | 0x0000004       /* Show details */ | 319 |
+| DEBUG_EXP | 0x0000008       /* Show error co... | 320 |
+| DEBUG_INST | 0x0000010       /* Show instruct... | 321 |
+| DEBUG_XIO | 0x0000020       /* Show XIO I/O ... | 322 |
+| DEBUG_IRQ | 0x0000040       /* Show IRQ requ... | 323 |
+| DEBUG_TRAP | 0x0000080       /* Show TRAP req... | 324 |
+| RMASK | 0x0000FFFF      /* right hw 16 b... | 329 |
+| LMASK | 0xFFFF0000      /* left hw 16 bi... | 330 |
+| FMASK | 0xFFFFFFFF      /* 32 bit mask */ | 331 |
+| DMASK | 0xFFFFFFFFFFFFFFFFLL    /* 64 bi... | 332 |
+| D48LMASK | 0xFFFFFFFFFFFF0000LL    /* 64 bi... | 333 |
+| D32LMASK | 0xFFFFFFFF00000000LL    /* 64 bi... | 334 |
+| D32RMASK | 0x00000000FFFFFFFFLL    /* 64 bi... | 335 |
+| MSIGN | 0x80000000      /* 32 bit minus ... | 336 |
+| DMSIGN | 0x8000000000000000LL    /* 64 bi... | 337 |
+| FSIGN | 0x80000000      /* 32 bit minus ... | 338 |
+| SEXT16(x) | (x&0x8000?(uint32)(((uint32)x&RM... | 340 |
+| DSEXT16(x) | (x&0x8000?(l_uint64)(((l_uint64)... | 342 |
+| DSEXT32(x) | (x&0x8000?(l_uint64)(((l_uint64)... | 344 |
+| NEGATE32(val) | ((~val) + 1)    /* negate a valu... | 345 |
+| UNIT_V_MODEL | (UNIT_V_UF + 0) | 348 |
+| UNIT_MODEL | (7 << UNIT_V_MODEL) | 349 |
+| MODEL(x) | (x << UNIT_V_MODEL) | 350 |
+| UNIT_V_MSIZE | (UNIT_V_MODEL + 3) | 351 |
+| UNIT_MSIZE | (0x1F << UNIT_V_MSIZE) | 352 |
+| MEMAMOUNT(x) | (x << UNIT_V_MSIZE) | 353 |
+| CPU_MODEL | ((cpu_unit.flags >> UNIT_V_MODEL... | 354 |
+| MODEL_55 | 0               /* 512K Mode Onl... | 356 |
+| MODEL_75 | 1               /* Extended */ | 357 |
+| MODEL_27 | 2               /* */ | 358 |
+| MODEL_67 | 3               /* */ | 359 |
+| MODEL_87 | 4               /* */ | 360 |
+| MODEL_97 | 5               /* */ | 361 |
+| MODEL_V6 | 6               /* V6 CPU */ | 362 |
+| MODEL_V9 | 7               /* V9 CPU */ | 363 |
+| TMR_RTC | 1               /* RTC will not ... | 365 |
+| HIST_MIN | 64 | 368 |
+| HIST_MAX | 10000 | 369 |
+| HIST_PC | 0x80000000 | 370 |
+| CC1BIT | 0x40000000             /* CC1 in... | 373 |
+| CC2BIT | 0x20000000             /* CC2 in... | 374 |
+| CC3BIT | 0x10000000             /* CC3 in... | 375 |
+| CC4BIT | 0x08000000             /* CC4 in... | 376 |
+| MAPMODE | 0x40                   /* Map mo... | 378 |
+| RETMODE | 0x20                   /* Retain... | 379 |
+| RETBLKM | 0x10                   /* Set re... | 380 |
+| BLKMODE | 0x08                   /* Set bl... | 381 |
+| PRIVBIT | 0x80000000             /* Privil... | 384 |
+| EXTDBIT | 0x04000000             /* Extend... | 385 |
+| BASEBIT | 0x02000000             /* Base M... | 386 |
+| AEXPBIT | 0x01000000             /* Arithm... | 387 |
+| MAPBIT | 0x80000000             /* Map mo... | 389 |
+| RETMBIT | 0x00010000             /* Retain... | 390 |
+| RETBBIT | 0x00008000             /* Retain... | 391 |
+| SETBBIT | 0x00004000             /* Set bl... | 392 |
+| POWERFAIL_TRAP | 0x80            /* Power fail tr... | 395 |
+| POWERON_TRAP | 0x84            /* Power-On trap */ | 396 |
+| MEMPARITY_TRAP | 0x88            /* Memory Parity... | 397 |
+| NONPRESMEM_TRAP | 0x8C            /* Non Present M... | 398 |
+| UNDEFINSTR_TRAP | 0x90            /* Undefined Ins... | 399 |
+| PRIVVIOL_TRAP | 0x94            /* Privlege Viol... | 400 |
+| SVCCALL_TRAP | 0x98            /* Supervisor Ca... | 401 |
+| MACHINECHK_TRAP | 0x9C            /* Machine Check... | 402 |
+| SYSTEMCHK_TRAP | 0xA0            /* System Check ... | 403 |
+| MAPFAULT_TRAP | 0xA4            /* Map Fault Tra... | 404 |
+| IPUUNDEFI_TRAP | 0xA8            /* IPU Undefined... | 405 |
+| SIGNALIPU_TRAP | 0xAC            /* Signal IPU/CP... | 406 |
+| ADDRSPEC_TRAP | 0xB0            /* Address Speci... | 407 |
+| CONSOLEATN_TRAP | 0xB4            /* Console Atten... | 408 |
+| PRIVHALT_TRAP | 0xB8            /* Privlege Mode... | 409 |
+| AEXPCEPT_TRAP | 0xBC            /* Arithmetic Ex... | 410 |
+| CACHEERR_TRAP | 0xC0            /* Cache Error T... | 411 |
+| DEMANDPG_TRAP | 0xC4            /* Demand Page F... | 412 |
+| ALLOK | 0x0000                  /* no er... | 415 |
+| MAPFLT | MAPFAULT_TRAP           /* map f... | 416 |
+| NPMEM | NONPRESMEM_TRAP         /* non p... | 417 |
+| MPVIOL | PRIVVIOL_TRAP           /* memor... | 418 |
+| DMDPG | DEMANDPG_TRAP           /* Deman... | 419 |
+| IND | 0x00100000              /* indir... | 422 |
+| F_BIT | 0x00080000              /* byte ... | 423 |
+| C_BITS | 0x00000003              /* byte ... | 424 |
+| BIT0 | 0x80000000              /* gener... | 425 |
+| BIT1 | 0x40000000              /* gener... | 426 |
+| BIT2 | 0x20000000              /* gener... | 427 |
+| BIT3 | 0x10000000              /* gener... | 428 |
+| BIT4 | 0x08000000              /* gener... | 429 |
+| BIT5 | 0x04000000              /* gener... | 430 |
+| BIT6 | 0x02000000              /* gener... | 431 |
+| BIT7 | 0x01000000              /* gener... | 432 |
+| BIT8 | 0x00800000              /* gener... | 433 |
+| BIT9 | 0x00400000              /* gener... | 434 |
+| BIT10 | 0x00200000              /* gener... | 435 |
+| BIT11 | 0x00100000              /* gener... | 436 |
+| BIT12 | 0x00080000              /* gener... | 437 |
+| BIT13 | 0x00040000              /* gener... | 438 |
+| BIT14 | 0x00020000              /* gener... | 439 |
+| BIT15 | 0x00010000              /* gener... | 440 |
+| BIT16 | 0x00008000              /* gener... | 441 |
+| BIT17 | 0x00004000              /* gener... | 442 |
+| BIT18 | 0x00002000              /* gener... | 443 |
+| BIT19 | 0x00001000              /* gener... | 444 |
+| BIT20 | 0x00000800              /* gener... | 445 |
+| BIT21 | 0x00000400              /* gener... | 446 |
+| BIT22 | 0x00000200              /* gener... | 447 |
+| BIT23 | 0x00000100              /* gener... | 448 |
+| BIT24 | 0x00000080              /* gener... | 449 |
+| BIT25 | 0x00000040              /* gener... | 450 |
+| BIT26 | 0x00000020              /* gener... | 451 |
+| BIT27 | 0x00000010              /* gener... | 452 |
+| BIT28 | 0x00000008              /* gener... | 453 |
+| BIT29 | 0x00000004              /* gener... | 454 |
+| BIT30 | 0x00000002              /* gener... | 455 |
+| BIT31 | 0x00000001              /* gener... | 456 |
+| MASK16 | 0x0000FFFF              /* 16 bi... | 457 |
+| MASK19 | 0x0007FFFF              /* 19 bi... | 458 |
+| MASK20 | 0x000FFFFF              /* 20 bi... | 459 |
+| MASK24 | 0x00FFFFFF              /* 24 bi... | 460 |
+| MASK32 | 0xFFFFFFFF              /* 32 bi... | 461 |
+| SINT_RAML | 0x80000000          /* ram loade... | 464 |
+| SINT_EWCS | 0x40000000          /* Enabled c... | 465 |
+| SINT_ACT | 0x20000000          /* Interrupt... | 466 |
+| SINT_ENAB | 0x10000000          /* Interrupt... | 467 |
+| SINT_EXTL | 0x00800000          /* IOP/RTOM ... | 468 |
+| INTS_NU1 | 0x80000000          /* Not used */ | 471 |
+| INTS_REQ | 0x40000000          /* Interrupt... | 472 |
+| INTS_ACT | 0x20000000          /* Interrupt... | 473 |
+| INTS_ENAB | 0x10000000          /* Interrupt... | 474 |
+| INTS_EXTL | 0x00800000          /* IOP/RTOM ... | 475 |
+| MEM_RD | 0x0                     /* read ... | 478 |
+| MEM_WR | 0x1                     /* write... | 479 |
+| MEM_EX | 0x2                     /* execu... | 480 |
+| PC | PC_Global | 483 |
+| RMB(a) | ((M[(a)>>2]>>(8*(3-(a&3))))&0xff... | 489 |
+| RMH(a) | ((a)&2?(M[(a)>>2]&RMASK):(M[(a)>... | 490 |
+| RMW(a) | (M[((a)&MASK24)>>2])     /* read... | 491 |
+| WMW(a,d) | (M[((a)&MASK24)>>2]=d) /* write ... | 492 |
+| WMH(a,d) | ((a)&2?(M[(a)>>2]=(M[(a)>>2]&LMA... | 494 |
+| WMB(a,d) | (M[(a)>>2]=(((M[(a)>>2])&(~(0xff... | 496 |
+| RMR(a) | ((a)&2?(MAPC[(a)>>2]&RMASK):(MAP... | 502 |
+| WMR(a,d) | ((a)&2?(MAPC[(a)>>2]=(MAPC[(a)>>... | 504 |
+| RDYQ_SIZE | 128 | 526 |
+

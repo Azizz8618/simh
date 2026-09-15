@@ -1,0 +1,101 @@
+=== altairz80_sys.c — 997 строк ===
+Источник: altairz80_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test altairz80_sys.c -nt .cline/maps/altairz80_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 36 | |
+| cpu_reg | 37 | |
+| cpu_dev | 38 | |
+| sio_dev | 39 | |
+| simh_device | 40 | |
+| ptr_dev | 41 | |
+| ptp_dev | 42 | |
+| dsk_dev | 43 | |
+| mhdsk_dev | 44 | |
+| hdsk_dev | 45 | |
+| net_dev | 46 | |
+| mfdc_dev | 48 | |
+| fw2_dev | 49 | |
+| fif_dev | 50 | |
+| vfdhd_dev | 51 | |
+| mdsa_dev | 52 | |
+| mdsad_dev | 53 | |
+| nsfpb_dev | 54 | |
+| disk1a_dev | 55 | |
+| disk2_dev | 56 | |
+| disk3_dev | 57 | |
+| selchan_dev | 58 | |
+| ss1_dev | 59 | |
+| if3_dev | 60 | |
+| i8272_dev | 61 | |
+| ibc_dev | 62 | |
+| ibc_hdc_dev | 63 | |
+| ibc_smd_dev | 64 | |
+| ibctimer_device | 65 | |
+| ibcrtctimer_device | 66 | |
+| mdriveh_dev | 67 | |
+| switchcpu_dev | 68 | |
+| adcs6_dev | 70 | |
+| hdc1001_dev | 71 | |
+| jade_dev | 73 | |
+| tarbell_dev | 74 | |
+| tdd_dev | 75 | |
+| icom_dev | 76 | |
+| dj2d_dev | 77 | |
+| m2sio0_dev | 78 | |
+| m2sio1_dev | 79 | |
+| pmmi_dev | 80 | |
+| hayes_dev | 81 | |
+| daz_dev | 82 | |
+| js1_dev | 83 | |
+| jair_dev | 84 | |
+| jairs0_dev | 85 | |
+| jairs1_dev | 86 | |
+| jairp_dev | 87 | |
+| mmd_dev | 88 | |
+| mmdm_dev | 89 | |
+| sol20_dev | 90 | |
+| sol20k_dev | 91 | |
+| sol20t_dev | 92 | |
+| sol20s_dev | 93 | |
+| sol20p_dev | 94 | |
+| vdm1_dev | 95 | |
+| tuart0_dev | 97 | |
+| tuart1_dev | 98 | |
+| tuart2_dev | 99 | |
+| cromfdc_dev | 100 | |
+| wd179x_dev | 101 | |
+| n8vem_dev | 102 | |
+| wdi2_dev | 103 | |
+| scp300f_dev | 105 | |
+| djhdc_dev | 106 | |
+| sim_PC | 130 | |
+| sim_emax | 131 | |
+| memoryAccessMessage | 200 | |
+| instructionMessage | 201 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SIM_EMAX | 6 | 34 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| prepareMemoryAccessMessage | 427-430 |  |
+| prepareInstructionMessage | 431-436 |  |
+| printHex2 | 437-440 | Ensure that hex number starts with a digit when printed |
+| printHex4 | 441-460 |  |
+| DAsm | 461-559 |  |
+| fprint_sym | 560-600 |  |
+| checkbase | 601-722 |  |
+| checkXY | 723-726 |  |
+| parse_X80 | 727-841 |  |
+| parse_sym | 842-863 |  |
+| set_membase | 864-903 | Set Memory Base Address routine |
+| show_membase | 904-922 | Show Base Address routine |
+| set_iobase | 923-963 | Set Memory Base Address routine |
+| show_iobase | 964-988 | Show I/O Base Address routine |
+| find_unit_index | 989-997 |  |

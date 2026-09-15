@@ -1,0 +1,93 @@
+=== ka10_dd.c — 751 строк ===
+Источник: ka10_dd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ka10_dd.c -nt .cline/maps/ka10_dd.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| vds_surface | 81 | |
+| vds_palette | 82 | |
+| vds_vptr | 83 | |
+| dd_channel | 86 | |
+| dd_changed | 87 | |
+| dd_windows | 88 | |
+| dd_function_code | 90 | |
+| dd_line_buffer | 91 | |
+| dd_line_buffer_address | 92 | |
+| dd_line_buffer_written | 93 | |
+| vds_changed | 97 | |
+| vds_sync_inhibit | 99 | |
+| dd_dib | 119 | |
+| vds_dib | 143 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_DD | 0 | 30 |
+| DD_DEVNUM | 0510 | 36 |
+| VDS_DEVNUM | 0340 | 37 |
+| DD_WIDTH | 512                    /* Displa... | 39 |
+| DD_HEIGHT | 480                    /* Displa... | 40 |
+| DD_PIXELS | (DD_WIDTH * DD_HEIGHT) /* Total ... | 41 |
+| DD_CHANNELS | 32                     /* Data D... | 42 |
+| DD_COLUMNS | 85 | 43 |
+| FONT_WIDTH | 6 | 44 |
+| FONT_HEIGHT | 12 | 45 |
+| MARGIN | 2 | 46 |
+| VDS_OUTPUTS | 64                     /* Video ... | 47 |
+| III_DISPLAYS | 6 | 48 |
+| STATUS | u3 | 50 |
+| MA | u4    /* Current memory address. */ | 51 |
+| PIA | u5 | 52 |
+| COLUMN | u6 | 53 |
+| LINE | us9 | 54 |
+| CHANNEL | us10 | 55 |
+| DD_HALT | 000000010    /* CONI: Halted. */ | 58 |
+| DD_RESET | 000000010    /* CONO: Reset. */ | 59 |
+| DD_INT | 000000020    /* CONI: Interrupti... | 60 |
+| DD_FORCE | 000000020    /* CONO: Force fiel... | 61 |
+| DD_FIELD | 000000040    /* CONI: Field. */ | 62 |
+| DD_HALT_ENA | 000000100    /* CONI: Halt inter... | 63 |
+| DD_DDGO | 000000100    /* CONO: Go. */ | 64 |
+| DD_LATE | 000000200    /* CONI: Late. */ | 65 |
+| DD_SPGO | 000000200    /* CONO */ | 66 |
+| DD_LATE_ENA | 000000400    /* Late interrupt e... | 67 |
+| DD_USER | 000001000    /* User mode. */ | 68 |
+| DD_NXM | 000002000    /* CONI: Accessed n... | 69 |
+| FC_GRAPHICS | 001  /* Graphics mode. */ | 72 |
+| FC_WRITE | 002  /* Write to disc. */ | 73 |
+| FC_DARK | 004  /* Dark background. */ | 74 |
+| FC_DOUBLE_W | 010  /* Double width. */ | 75 |
+| FC_ERASE | 010  /* Erase graphics. */ | 76 |
+| FC_ADDITIVE | 020  /* Additive graphics. */ | 77 |
+| FC_SINGLE_H | 040  /* Single height. */ | 78 |
+| WRITTEN | 0400 | 94 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dd_hang | 154-160 |  |
+| dd_halt | 161-167 |  |
+| dd_execute | 168-193 |  |
+| dd_devio | 194-251 |  |
+| dd_pixel | 252-268 |  |
+| dd_chargen | 269-291 |  |
+| dd_byte | 292-304 |  |
+| dd_text | 305-381 |  |
+| dd_graphics | 382-397 |  |
+| dd_function | 398-435 |  |
+| dd_command | 436-489 |  |
+| dd_decode | 490-536 |  |
+| dd_svc | 537-558 |  |
+| dd_display | 559-599 |  |
+| vds_svc | 600-613 |  |
+| dd_keyboard_line | 614-626 |  |
+| dd_reset | 627-642 |  |
+| dd_set_windows | 643-655 |  |
+| dd_show_windows | 656-664 |  |
+| dd_help | 665-670 |  |
+| dd_description | 671-676 |  |
+| vds_reset | 677-713 |  |
+| vds_devio | 714-740 |  |
+| vds_help | 741-746 |  |
+| vds_description | 747-751 |  |

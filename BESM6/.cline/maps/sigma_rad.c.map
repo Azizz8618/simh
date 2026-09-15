@@ -1,0 +1,99 @@
+=== sigma_rad.c — 569 строк ===
+Источник: sigma_rad.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sigma_rad.c -nt .cline/maps/sigma_rad.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| rad_t | 102-110 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| chan_ctl_time | 124 | |
+| rad_dib | 146 | |
+| iu | 208 | |
+| uptr | 209 | |
+| un | 274 | |
+| dva | 275 | |
+| st | 276 | |
+| SCPE_OK | 415 | |
+| un | 428 | |
+| dva | 429 | |
+| st | 461 | |
+| st | 466 | |
+| st | 468 | |
+| st | 471 | |
+| FALSE | 487 | |
+| FALSE | 506 | |
+| FALSE | 518 | |
+| SCPE_OK | 528 | |
+| rad_cmd | 539 | |
+| rad_flags | 540 | |
+| rad_ad | 541 | |
+| SCPE_OK | 543 | |
+| SCPE_OK | 560 | |
+| SCPE_OK | 568 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RAD_7212 | 0                               ... | 44 |
+| RAD_7232 | 1 | 45 |
+| RAD_NUMDR | 4                               ... | 46 |
+| RAD_WDSC | 256                             ... | 47 |
+| RAD_WDMASK | (RAD_WDSC - 1) | 48 |
+| RAD_SCTK1 | 82                              ... | 49 |
+| RAD_SCTK3 | 12 | 50 |
+| RAD_TKUN1 | 64                              ... | 51 |
+| RAD_TKUN3 | 512 | 52 |
+| RAD_WDUNDF | (RAD_WDSC*RAD_SCTK1*RAD_TKUN1)  ... | 53 |
+| RAD_WDUN | (RAD_WDSC*rad_tab[rad_model].sct... | 54 |
+| RAD_N_WLK | 16                              ... | 55 |
+| RADA_V_TK1 | 7                               ... | 59 |
+| RADA_M_TK1 | 0xFF | 60 |
+| RADA_V_SC1 | 0                               ... | 61 |
+| RADA_M_SC1 | 0x7F | 62 |
+| RADA_V_TK3 | 4 | 63 |
+| RADA_M_TK3 | 0x3FF | 64 |
+| RADA_V_SC3 | 0 | 65 |
+| RADA_M_SC3 | 0xF | 66 |
+| RADA_GETTK(x) | (((x) >> rad_tab[rad_model].tk_v... | 67 |
+| RADA_GETSC(x) | (((x) >> rad_tab[rad_model].sc_v... | 68 |
+| RADA_WP | 0x80 | 72 |
+| RADS_NBY1 | 4                               ... | 77 |
+| RADS_NBY3 | 3 | 78 |
+| RADS_INIT | 0x101 | 82 |
+| RADS_END | 0x102 | 83 |
+| RADS_WRITE | 0x01 | 84 |
+| RADS_READ | 0x02 | 85 |
+| RADS_SEEK | 0x03 | 86 |
+| RADS_SENSE | 0x04 | 87 |
+| RADS_CHECK | 0x05 | 88 |
+| RADS_RDEES | 0x12 | 89 |
+| RADV_OVR | 0x80                            ... | 93 |
+| RADV_BADS | 0x20                            ... | 94 |
+| RADV_WPE | 0x10 | 95 |
+| GET_PSC(x) | ((int32) fmod (sim_gtime() / ((d... | 97 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rad_disp | 204-215 |  |
+| switch | 216-269 |  |
+| rad_svc | 270-278 |  |
+| switch | 279-425 |  |
+| rad_end_sec | 426-430 |  |
+| if | 431-445 |  |
+| rad_tio_status | 446-454 |  |
+| for | 455-463 |  |
+| rad_tdv_status | 464-475 |  |
+| rad_inv_ad | 476-491 |  |
+| rad_inc_ad | 492-497 |  |
+| if | 498-510 |  |
+| rad_wp_trk | 511-522 |  |
+| rad_chan_err | 523-532 |  |
+| rad_reset | 533-547 |  |
+| rad_settype | 548-551 |  |
+| for | 552-564 |  |
+| rad_showtype | 565-569 |  |

@@ -1,0 +1,41 @@
+=== 3b2_ni.c — 1100 строк ===
+Источник: 3b2_ni.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_ni.c -nt .cline/maps/3b2_ni.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ni | 103 | |
+| ni_conf | 105 | |
+| rcv_unit | 158 | |
+| sanity_unit | 159 | |
+| rq_unit | 160 | |
+| cio_unit | 161 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dump_packet | 216-269 |  |
+| ni_enable | 270-293 |  |
+| ni_disable | 294-306 |  |
+| ni_cmd | 307-551 |  |
+| ni_setmac | 552-571 |  |
+| ni_showmac | 572-584 |  |
+| ni_show_filters | 585-607 |  |
+| ni_sysgen | 608-648 |  |
+| ni_express | 649-663 | Handler for CIO INT0 (express job) requests. |
+| ni_full | 664-680 | Handler for CIO INT1 (full job) requests. |
+| ni_cio_reset | 681-687 | Handler for CIO RESET requests. |
+| ni_reset | 688-738 |  |
+| ni_rcv_svc | 739-764 |  |
+| ni_rq_svc | 765-828 | entries. |
+| ni_sanity_svc | 829-848 | educated guess of 10 seconds. |
+| ni_cio_svc | 849-862 |  |
+| ni_process_packet | 863-922 | Do the work of trying to process the most recently received packet |
+| ni_attach | 923-980 |  |
+| ni_detach | 981-998 |  |
+| ni_set_stats | 999-1024 |  |
+| ni_show_stats | 1025-1044 |  |
+| ni_show_poll | 1045-1060 |  |
+| ni_help | 1061-1094 |  |
+| ni_description | 1095-1100 |  |

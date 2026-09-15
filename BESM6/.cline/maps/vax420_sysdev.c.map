@@ -1,0 +1,189 @@
+=== vax420_sysdev.c — 1203 строк ===
+Источник: vax420_sysdev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax420_sysdev.c -nt .cline/maps/vax420_sysdev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| boot_code_filename | 49 | |
+| tmr_int | 101 | |
+| clk_unit | 102 | |
+| tmr_poll | 103 | |
+| vc_sel | 104 | |
+| rd_dev | 105 | |
+| va_dev | 106 | |
+| rom | 107 | |
+| int_unmask | 236 | |
+| ma | 269 | |
+| dat | 270 | |
+| ma | 294 | |
+| dat | 295 | |
+| ba | 297 | |
+| bc | 298 | |
+| ma | 319 | |
+| dat | 320 | |
+| ma | 344 | |
+| dat | 345 | |
+| ba | 347 | |
+| bc | 348 | |
+| ba | 396 | |
+| bc | 397 | |
+| ba | 446 | |
+| bc | 447 | |
+| ddb | 471 | |
+| ddb | 483 | |
+| return | 484 | |
+| buf_sel | 489 | |
+| buf_sel | 494 | |
+| return | 495 | |
+| return | 505 | |
+| ka_cfgtst | 510 | |
+| val | 522 | |
+| val | 558 | |
+| return | 594 | |
+| val | 653 | |
+| val | 681 | |
+| return | 726 | |
+| return | 781 | |
+| return | 871 | |
+| usecs_remaining | 876 | |
+| cur_tir | 884 | |
+| SCPE_OK | 892 | |
+| tmr_tir | 900 | |
+| in_ie | 935 | |
+| in_ie | 942 | |
+| cc | 943 | |
+| temp | 950 | |
+| gbuf | 977 | |
+| cdptr | 991 | |
+| PC | 994 | |
+| PSL | 995 | |
+| conisp | 996 | |
+| conpc | 997 | |
+| conpsl | 998 | |
+| SCPE_OK | 1020 | |
+| unit | 1027 | |
+| ka_mser | 1030 | |
+| ka_mear | 1031 | |
+| ka_led | 1032 | |
+| ka_pctl | 1033 | |
+| tmr_tir | 1055 | |
+| tmr_inst | 1056 | |
+| sim_vm_cmd | 1065 | |
+| SCPE_OK | 1066 | |
+| devices" | 1071 | |
+| SCPE_OK | 1076 | |
+| SCPE_OK | 1081 | |
+| gbuf | 1086 | |
+| SCPE_OK | 1188 | |
+| SCPE_OK | 1194 | |
+| SCPE_OK | 1202 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CFGT_MEM | 0x0007                          ... | 63 |
+| CFGT_VID | 0x0008                          ... | 64 |
+| CFGT_CUR | 0x0010                          ... | 65 |
+| CFGT_L3C | 0x0020                          ... | 66 |
+| CFGT_CACHE | 0x0040                          ... | 67 |
+| CFGT_TYP | 0x0080                          ... | 68 |
+| CFGT_V_DSK | 8 | 69 |
+| CFGT_M_DSK | 0xF | 70 |
+| CFGT_DSK | (CFGT_M_DSK << CFGT_V_DSK)      ... | 71 |
+| CFGT_RX23 | 0x1000                          ... | 72 |
+| CFGT_V_STC | 14 | 73 |
+| CFGT_M_STC | 0x3 | 74 |
+| CFGT_STC | (CFGT_M_STC << CFGT_V_STC)      ... | 75 |
+| STC_SCSI | 0                               ... | 77 |
+| STC_ST506 | 1                               ... | 78 |
+| MSER_PE | 0x00000001                      ... | 82 |
+| MSER_WWP | 0x00000002                      ... | 83 |
+| MSER_PER | 0x00000040                      ... | 84 |
+| MSER_MCD0 | 0x00000100                      ... | 85 |
+| MSER_MBZ | 0xFFFFFEBC | 86 |
+| MSER_RD | (MSER_PE \| MSER_WWP \| MSER_PER \|  | 87 |
+| MSER_WR | (MSER_PE \| MSER_WWP) | 89 |
+| MSER_W1C | (MSER_PER) | 90 |
+| MEAR_FAD | 0x00007FFF                      ... | 94 |
+| MEAR_RD | (MEAR_FAD) | 95 |
+| ROM_VEC | 0x8                             ... | 97 |
+| TMR_INC | 10000                           ... | 99 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eval_int | 198-215 |  |
+| if | 216-223 |  |
+| for | 224-232 |  |
+| get_vector | 233-237 |  |
+| if | 238-241 |  |
+| if | 242-245 |  |
+| if | 246-248 |  |
+| for | 249-265 |  |
+| Map_ReadB | 266-271 |  |
+| if | 272-290 |  |
+| Map_ReadW | 291-298 |  |
+| if | 299-315 |  |
+| Map_WriteB | 316-321 |  |
+| if | 322-340 |  |
+| Map_WriteW | 341-348 |  |
+| if | 349-365 |  |
+| ddb_WriteB | 366-369 |  |
+| if | 370-391 |  |
+| ddb_WriteW | 392-397 |  |
+| if | 398-416 |  |
+| ddb_ReadB | 417-420 |  |
+| if | 421-441 |  |
+| ddb_ReadW | 442-447 |  |
+| if | 448-466 |  |
+| ddb_rd | 467-473 |  |
+| ddb_wr | 474-477 |  |
+| if | 478-486 |  |
+| buf_sel_rd | 487-491 |  |
+| buf_sel_wr | 492-497 |  |
+| null_rd | 498-502 |  |
+| null_wr | 503-507 |  |
+| cfg_rd | 508-512 |  |
+| ioreset_wr | 513-519 |  |
+| ReadIPR | 520-523 |  |
+| switch | 524-562 |  |
+| WriteIPR | 563-564 |  |
+| switch | 565-649 |  |
+| ReadReg | 650-654 |  |
+| for | 655-677 |  |
+| ReadRegU | 678-682 |  |
+| for | 683-711 |  |
+| WriteReg | 712-715 |  |
+| for | 716-738 |  |
+| WriteRegU | 739-742 |  |
+| for | 743-785 |  |
+| ka_rd | 786-789 |  |
+| switch | 790-819 |  |
+| ka_wr | 820-823 |  |
+| switch | 824-873 |  |
+| tmr_tir_rd | 874-888 |  |
+| tmr_svc | 889-896 |  |
+| tmr_sched | 897-914 |  |
+| machine_check | 915-923 |  |
+| for | 924-947 |  |
+| con_halt | 948-974 |  |
+| vax420_boot | 975-987 |  |
+| cpu_boot | 988-1000 |  |
+| if | 1001-1010 |  |
+| for | 1011-1024 |  |
+| sysd_reset | 1025-1037 |  |
+| if | 1038-1041 |  |
+| if | 1042-1049 |  |
+| for | 1050-1068 |  |
+| sysd_description | 1069-1073 |  |
+| auto_config | 1074-1078 |  |
+| build_dib_tab | 1079-1083 |  |
+| cpu_set_model | 1084-1091 |  |
+| if | 1092-1100 |  |
+| if | 1101-1130 |  |
+| if | 1131-1148 |  |
+| if | 1149-1166 |  |
+| if | 1167-1190 |  |
+| cpu_print_model | 1191-1196 |  |
+| cpu_model_help | 1197-1203 |  |

@@ -1,0 +1,121 @@
+=== alpha_fpi.c — 776 строк ===
+Источник: alpha_fpi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test alpha_fpi.c -nt .cline/maps/alpha_fpi.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| FR | 91 | |
+| fpcr | 92 | |
+| save_env | 93 | |
+| ftpa | 146 | |
+| res | 147 | |
+| return | 234 | |
+| ftpb | 242 | |
+| ftpb | 257 | |
+| ftpa | 275 | |
+| a.sign | 302 | |
+| sticky | 317 | |
+| rndm | 318 | |
+| ubexp | 319 | |
+| ftpa | 379 | |
+| sticky | 380 | |
+| ediff | 381 | |
+| ftpa | 453 | |
+| resl | 454 | |
+| ftpa | 491 | |
+| b.frac | 518 | |
+| op | 534 | |
+| ftpb | 535 | |
+| normtab | 589 | |
+| r->frac | 591 | |
+| return | 604 | |
+| stdrnd | 627 | |
+| infrnd | 628 | |
+| expmax | 629 | |
+| expmin | 630 | |
+| rndadd | 631 | |
+| rndm | 632 | |
+| rndadd | 643 | |
+| res | 669 | |
+| return | 680 | |
+| zsig | 687 | |
+| sticky | 688 | |
+| zsig | 713 | |
+| index | 728 | |
+| b0 | 757 | |
+| rem0 | 758 | |
+| b0 | 762 | |
+| rem1 | 766 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UFT_ZERO | 0                               ... | 62 |
+| UFT_FIN | 1                               ... | 63 |
+| UFT_DENORM | 2                               ... | 64 |
+| UFT_INF | 3                               ... | 65 |
+| UFT_NAN | 4                               ... | 66 |
+| Q_FINITE(x) | ((x) <= UFT_FIN)                ... | 68 |
+| Q_SUI(x) | (((x) & I_FTRP) == I_FTRP_SVI) | 69 |
+| QNAN | 0x0008000000000000              ... | 73 |
+| CQNAN | 0xFFF8000000000000              ... | 74 |
+| FPZERO | 0x0000000000000000              ... | 75 |
+| FMZERO | 0x8000000000000000              ... | 76 |
+| FPINF | 0x7FF0000000000000              ... | 77 |
+| FMINF | 0xFFF0000000000000              ... | 78 |
+| FPMAX | 0x7FEFFFFFFFFFFFFF              ... | 79 |
+| FMMAX | 0xFFEFFFFFFFFFFFFF              ... | 80 |
+| IPMAX | 0x7FFFFFFFFFFFFFFF              ... | 81 |
+| IMMAX | 0x8000000000000000              ... | 82 |
+| UF_SRND | 0x0000008000000000              ... | 86 |
+| UF_SINF | 0x000000FFFFFFFFFF              ... | 87 |
+| UF_TRND | 0x0000000000000400              ... | 88 |
+| UF_TINF | 0x00000000000007FF              ... | 89 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| op_lds | 116-128 |  |
+| op_sts | 129-142 |  |
+| ieee_fop | 143-152 |  |
+| switch | 153-238 |  |
+| ieee_cvtst | 239-244 |  |
+| if | 245-253 |  |
+| ieee_cvtts | 254-271 |  |
+| ieee_fcmp | 272-278 |  |
+| if | 279-292 |  |
+| ieee_cvtif | 293-297 |  |
+| if | 298-313 |  |
+| ieee_cvtfi | 314-321 |  |
+| if | 322-328 |  |
+| if | 329-333 |  |
+| if | 334-375 |  |
+| ieee_fadd | 376-387 |  |
+| if | 388-397 |  |
+| if | 398-402 |  |
+| if | 403-449 |  |
+| ieee_fmul | 450-460 |  |
+| if | 461-487 |  |
+| ieee_fdiv | 488-497 |  |
+| if | 498-506 |  |
+| if | 507-531 |  |
+| ieee_sqrt | 532-542 |  |
+| if | 543-553 |  |
+| ieee_unpack | 554-558 |  |
+| if | 559-569 |  |
+| if | 570-581 |  |
+| ieee_norm | 582-591 |  |
+| if | 592-596 |  |
+| while | 597-624 |  |
+| ieee_rpack | 625-644 |  |
+| if | 645-650 |  |
+| if | 651-657 |  |
+| if | 658-673 |  |
+| ieee_trap | 674-684 |  |
+| fsqrt64 | 685-700 |  |
+| if | 701-725 |  |
+| estimateSqrt32 | 726-738 |  |
+| if | 739-754 |  |
+| estimateDiv128 | 755-766 |  |
+| while | 767-776 |  |

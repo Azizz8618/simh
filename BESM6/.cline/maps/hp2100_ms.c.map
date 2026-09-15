@@ -1,0 +1,149 @@
+=== hp2100_ms.c — 1692 строк ===
+Источник: hp2100_ms.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_ms.c -nt .cline/maps/hp2100_ms.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 194-198 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| msd_interface | 253 | |
+| msc_interface | 254 | |
+| signal | 512 | |
+| working_set | 513 | |
+| outbound | 514 | |
+| irq_enabled | 515 | |
+| check | 516 | |
+| sched_time | 666 | |
+| uptr | 667 | |
+| signal | 668 | |
+| working_set | 669 | |
+| outbound | 670 | |
+| irq_enabled | 671 | |
+| unum | 897 | |
+| tbc | 898 | |
+| st | 899 | |
+| st | 1112 | |
+| SCPE_OK | 1171 | |
+| st | 1180 | |
+| uptr | 1181 | |
+| SCPE_OK | 1205 | |
+| uptr | 1214 | |
+| msc_buf | 1224 | |
+| msc_sta | 1225 | |
+| msc_1st | 1226 | |
+| SCPE_OK | 1240 | |
+| SCPE_UNATT | 1270 | |
+| ms_timing | 1289 | |
+| SCPE_OK | 1291 | |
+| SCPE_OK | 1300 | |
+| SCPE_OK | 1319 | |
+| SCPE_OK | 1330 | |
+| reel | 1340 | |
+| status | 1341 | |
+| SCPE_OK | 1382 | |
+| status | 1392 | |
+| status | 1402 | |
+| start | 1646 | |
+| byte | 1672 | |
+| lrc | 1674 | |
+| crc | 1688 | |
+| lrc | 1689 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_OFFLINE | (MTUF_V_UF + 0)         /* unit ... | 118 |
+| UNIT_OFFLINE | (1 << UNIT_V_OFFLINE) | 119 |
+| MS_NUMDR | 4                       /* numbe... | 121 |
+| DB_N_SIZE | 16                      /* max d... | 122 |
+| DBSIZE | (1 << DB_N_SIZE)        /* max d... | 123 |
+| FNC | u3                      /* funct... | 124 |
+| UST | u4                      /* unit ... | 125 |
+| REEL | u5                      /* tape ... | 126 |
+| BPI_13181 | MT_DENS_800             /* 800 b... | 128 |
+| BPI_13183 | MT_DENS_1600            /* 1600 ... | 129 |
+| GAP_13181 | 48                      /* gap i... | 130 |
+| GAP_13183 | 30                      /* gap i... | 131 |
+| TCAP | (300 * 12 * 800)        /* 300 f... | 132 |
+| FNC_CLR | 00110                   /* clear */ | 136 |
+| FNC_GAP | 00015                   /* write... | 137 |
+| FNC_GFM | 00215                   /* gap+f... | 138 |
+| FNC_RC | 00023                   /* read */ | 139 |
+| FNC_WC | 00031                   /* write */ | 140 |
+| FNC_FSR | 00003                   /* forwa... | 141 |
+| FNC_BSR | 00041                   /* backw... | 142 |
+| FNC_FSF | 00203                   /* forwa... | 143 |
+| FNC_BSF | 00241                   /* backw... | 144 |
+| FNC_REW | 00101                   /* rewin... | 145 |
+| FNC_RWS | 00105                   /* rewin... | 146 |
+| FNC_WFM | 00211                   /* write... | 147 |
+| FNC_RFF | 00223                   /* read ... | 148 |
+| FNC_RRR | 00061                   /* read ... | 149 |
+| FNC_CMPL | 00400                   /* compl... | 150 |
+| FNC_V_SEL | 9                       /* selec... | 151 |
+| FNC_M_SEL | 017 | 152 |
+| FNC_GETSEL(x) | (((x) >> FNC_V_SEL) & FNC_M_SEL) | 153 |
+| FNF_MOT | 00001                   /* motio... | 155 |
+| FNF_OFL | 00004 | 156 |
+| FNF_WRT | 00010                   /* write */ | 157 |
+| FNF_REV | 00040                   /* rever... | 158 |
+| FNF_RWD | 00100                   /* rewin... | 159 |
+| FNF_CHS | 00400                   /* chang... | 160 |
+| FNC_SEL | ((FNC_M_SEL << FNC_V_SEL) \| FNF_... | 162 |
+| STA_PE | 0100000                 /* 1600 ... | 166 |
+| STA_V_SEL | 13                      /* unit ... | 167 |
+| STA_M_SEL | 03 | 168 |
+| STA_SEL | (STA_M_SEL << STA_V_SEL) | 169 |
+| STA_ODD | 0004000                 /* odd b... | 170 |
+| STA_REW | 0002000                 /* rewin... | 171 |
+| STA_TBSY | 0001000                 /* trans... | 172 |
+| STA_BUSY | 0000400                 /* ctrl ... | 173 |
+| STA_EOF | 0000200                 /* end o... | 174 |
+| STA_BOT | 0000100                 /* beg o... | 175 |
+| STA_EOT | 0000040                 /* end o... | 176 |
+| STA_TIM | 0000020                 /* timin... | 177 |
+| STA_REJ | 0000010                 /* progr... | 178 |
+| STA_WLK | 0000004                 /* write... | 179 |
+| STA_PAR | 0000002                 /* parit... | 180 |
+| STA_LOCAL | 0000001                 /* local... | 181 |
+| STA_DYN | (STA_PE  \| STA_SEL \| STA_TBSY \| ... | 182 |
+| UNIT_FLAGS | (UNIT_ATTABLE \| UNIT_ROABLE \| UN... | 377 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| msd_interface | 510-517 |  |
+| while | 518-659 |  |
+| msc_interface | 660-672 |  |
+| while | 673-894 |  |
+| msc_svc | 895-902 |  |
+| if | 903-910 |  |
+| switch | 911-1109 |  |
+| ms_write_gap | 1110-1125 |  |
+| ms_map_err | 1126-1131 |  |
+| switch | 1132-1176 |  |
+| ms_clear | 1177-1182 |  |
+| for | 1183-1210 |  |
+| ms_reset | 1211-1227 |  |
+| for | 1228-1245 |  |
+| msc_attach | 1246-1257 |  |
+| msc_detach | 1258-1266 |  |
+| msc_online | 1267-1274 |  |
+| ms_config_timing | 1275-1285 |  |
+| ms_set_timing | 1286-1295 |  |
+| ms_show_timing | 1296-1304 |  |
+| ms_settype | 1305-1309 |  |
+| for | 1310-1323 |  |
+| ms_showtype | 1324-1337 |  |
+| ms_set_reelsize | 1338-1342 |  |
+| if | 1343-1389 |  |
+| ms_show_reelsize | 1390-1410 |  |
+| ms_cmd_name | 1411-1412 |  |
+| switch | 1413-1641 |  |
+| msc_boot | 1642-1668 |  |
+| calc_crc_lrc | 1669-1675 |  |
+| for | 1676-1692 |  |

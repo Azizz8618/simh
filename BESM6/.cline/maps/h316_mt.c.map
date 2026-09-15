@@ -1,0 +1,81 @@
+=== h316_mt.c — 624 строк ===
+Источник: h316_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test h316_mt.c -nt .cline/maps/h316_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dev_int | 89 | |
+| chan_req | 90 | |
+| stop_inst | 91 | |
+| mt_dib | 125 | |
+| uptr | 192 | |
+| dat | 332 | |
+| tbc | 347 | |
+| passed_eot | 348 | |
+| st | 349 | |
+| SCPE_OK | 491 | |
+| c1 | 498 | |
+| return | 515 | |
+| SCPE_OK | 559 | |
+| return | 571 | |
+| uptr | 579 | |
+| mt_usel | 582 | |
+| mt_mdirq | 583 | |
+| mt_eor | 584 | |
+| mt_busy | 585 | |
+| mt_rdy | 586 | |
+| mt_eof | 587 | |
+| mt_err | 588 | |
+| mt_dma | 589 | |
+| SCPE_OK | 601 | |
+| uptr->UST | 613 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MT_NUMDR | 4                               ... | 56 |
+| DB_N_SIZE | 16                              ... | 57 |
+| DBSIZE | (1 << DB_N_SIZE)                ... | 58 |
+| FNC | u3                              ... | 59 |
+| UST | u4                              ... | 60 |
+| FNC_RBCD2 | 000 | 64 |
+| FNC_RBIN2 | 001 | 65 |
+| FNC_RBIN3 | 002 | 66 |
+| FNC_DMANM | 003 | 67 |
+| FNC_WBCD2 | 004 | 68 |
+| FNC_WBIN2 | 005 | 69 |
+| FNC_WEOF | 006 | 70 |
+| FNC_IOBUS | 007 | 71 |
+| FNC_WBIN3 | 010 | 72 |
+| FNC_FSR | 011 | 73 |
+| FNC_FSF | 012 | 74 |
+| FNC_DMAAU | 013 | 75 |
+| FNC_REW | 014 | 76 |
+| FNC_BSR | 015 | 77 |
+| FNC_BSF | 016 | 78 |
+| FNC_STOPW | 017 | 79 |
+| FNC_2ND | 020                             ... | 80 |
+| FNC_NOP | (FNC_STOPW\|FNC_2ND) | 81 |
+| FNC_EOM | 040                             ... | 82 |
+| STA_BOT | 0000002                         ... | 86 |
+| STA_EOT | 0000001                         ... | 87 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mtio | 189-196 |  |
+| switch | 197-342 |  |
+| mt_svc | 343-350 |  |
+| if | 351-358 |  |
+| switch | 359-482 |  |
+| if | 483-495 |  |
+| mt_wrwd | 496-501 |  |
+| if | 502-519 |  |
+| mt_map_err | 520-521 |  |
+| switch | 522-563 |  |
+| mt_updint | 564-575 |  |
+| mt_reset | 576-591 |  |
+| for | 592-605 |  |
+| mt_attach | 606-618 |  |
+| mt_detach | 619-624 |  |

@@ -1,0 +1,109 @@
+=== FrontPanelTest.c — 870 строк ===
+Источник: FrontPanelTest.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test FrontPanelTest.c -nt .cline/maps/FrontPanelTest.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| arglist | 54 | |
+| len | 55 | |
+| buf | 56 | |
+| buf_size | 57 | |
+| sim_path | 78 | |
+| PC | 84 | |
+| PCQ | 85 | |
+| PSL_bits | 87 | |
+| PC_bits | 88 | |
+| PC_indirect_bits | 89 | |
+| PCQ_3_bits | 90 | |
+| simulation_time | 91 | |
+| update_display | 93 | |
+| debug | 95 | |
+| startup_sleep | 105 | |
+| simulation_time | 111 | |
+| update_display | 112 | |
+| buf1 | 118 | |
+| states | 119 | |
+| max_height | 194 | |
+| halt_cpu | 214 | |
+| panel | 215 | |
+| halt_cpu | 220 | |
+| return | 222 | |
+| -1 | 628 | |
+| match_chars | 634 | |
+| was_halted | 674 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ESC | "\033" | 156 |
+| CSI | ESC "[" | 157 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| my_printf | 52-59 |  |
+| while | 60-107 |  |
+| DisplayCallback | 108-115 |  |
+| DisplayRegisters | 116-128 |  |
+| if | 129-147 |  |
+| if | 148-179 |  |
+| CleanupDisplay | 180-187 |  |
+| InitDisplay | 188-216 |  |
+| halt_handler | 217-224 |  |
+| panel_setup | 225-229 |  |
+| if | 230-257 | Create pseudo config file for a test |
+| if | 258-266 |  |
+| if | 267-278 |  |
+| if | 279-314 |  |
+| if | 315-318 |  |
+| if | 319-322 |  |
+| if | 323-326 |  |
+| if | 327-330 |  |
+| if | 331-334 |  |
+| if | 335-338 |  |
+| if | 339-342 |  |
+| if | 343-346 |  |
+| if | 347-350 |  |
+| if | 351-354 |  |
+| if | 355-358 |  |
+| if | 359-362 |  |
+| if | 363-366 |  |
+| if | 367-370 |  |
+| if | 371-374 |  |
+| if | 375-378 |  |
+| if | 379-382 |  |
+| if | 383-386 |  |
+| if | 387-390 |  |
+| if | 391-394 |  |
+| if | 395-398 |  |
+| if | 399-429 |  |
+| if | 430-433 |  |
+| if | 434-438 |  |
+| if | 439-442 |  |
+| if | 443-446 |  |
+| if | 447-451 |  |
+| if | 452-455 |  |
+| if | 456-459 |  |
+| if | 460-463 |  |
+| if | 464-467 |  |
+| if | 468-471 |  |
+| if | 472-475 |  |
+| if | 476-479 |  |
+| if | 480-483 |  |
+| if | 484-487 |  |
+| if | 488-491 |  |
+| if | 492-495 |  |
+| if | 496-499 |  |
+| if | 500-503 |  |
+| if | 504-507 |  |
+| if | 508-511 |  |
+| if | 512-515 |  |
+| if | 516-631 |  |
+| match_command | 632-638 |  |
+| for | 639-671 |  |
+| main | 672-687 |  |
+| while | 688-702 | process potential arguments |
+| if | 703-751 |  |
+| for | 752-762 |  |
+| while | 763-870 |  |

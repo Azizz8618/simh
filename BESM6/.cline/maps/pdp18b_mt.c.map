@@ -1,0 +1,95 @@
+=== pdp18b_mt.c — 537 строк ===
+Источник: pdp18b_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp18b_mt.c -nt .cline/maps/pdp18b_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_hwre | 132 | |
+| api_vec | 133 | |
+| cpu_unit | 134 | |
+| mt_dib | 160 | |
+| uptr | 215 | |
+| dat | 263 | |
+| wc | 275 | |
+| tbc | 276 | |
+| passed_eot | 277 | |
+| st | 278 | |
+| mt_sta | 415 | |
+| uptr | 423 | |
+| NULL | 430 | |
+| SCPE_OK | 479 | |
+| uptr | 487 | |
+| mt_cu | 489 | |
+| SCPE_OK | 503 | |
+| uptr->USTAT | 522 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MT_NUMDR | 8                               ... | 78 |
+| USTAT | u3                              ... | 79 |
+| MT_MAXFR | (1 << 16)                       ... | 80 |
+| MT_WC | 032                             ... | 81 |
+| MT_CA | 033                             ... | 82 |
+| WC_SIZE | (1 << 12)                       ... | 83 |
+| WC_MASK | (WC_SIZE - 1) | 84 |
+| CU_V_UNIT | 15                              ... | 88 |
+| CU_M_UNIT | 07 | 89 |
+| CU_PARITY | 0040000                         ... | 90 |
+| CU_DUMP | 0020000                         ... | 91 |
+| CU_ERASE | 0010000                         ... | 92 |
+| CU_V_CMD | 9                               ... | 93 |
+| CU_M_CMD | 07 | 94 |
+| FN_NOP | 00 | 95 |
+| FN_REWIND | 01 | 96 |
+| FN_READ | 02 | 97 |
+| FN_CMPARE | 03 | 98 |
+| FN_WRITE | 04 | 99 |
+| FN_WREOF | 05 | 100 |
+| FN_SPACEF | 06 | 101 |
+| FN_SPACER | 07 | 102 |
+| CU_IE | 0000400                         ... | 103 |
+| CU_V_TYPE | 6                               ... | 104 |
+| CU_M_TYPE | 03 | 105 |
+| TY_9TK | 3 | 106 |
+| GET_UNIT(x) | (((x) >> CU_V_UNIT) & CU_M_UNIT) | 107 |
+| GET_CMD(x) | (((x) >> CU_V_CMD) & CU_M_CMD) | 108 |
+| GET_TYPE(x) | (((x) >> CU_V_TYPE) & CU_M_TYPE) | 109 |
+| PACKED(x) | (((x) & CU_DUMP) \|\| (GET_TYPE (x... | 110 |
+| STA_ERR | 0400000                         ... | 114 |
+| STA_REW | 0200000                         ... | 115 |
+| STA_BOT | 0100000                         ... | 116 |
+| STA_ILL | 0040000                         ... | 117 |
+| STA_PAR | 0020000                         ... | 118 |
+| STA_EOF | 0010000                         ... | 119 |
+| STA_EOT | 0004000                         ... | 120 |
+| STA_CPE | 0002000                         ... | 121 |
+| STA_RLE | 0001000                         ... | 122 |
+| STA_DLT | 0000400                         ... | 123 |
+| STA_BAD | 0000200                         ... | 124 |
+| STA_DON | 0000100                         ... | 125 |
+| STA_CLR | 0000077                         ... | 127 |
+| STA_DYN | (STA_REW \| STA_BOT \| STA_EOF \| S... | 128 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt | 212-219 |  |
+| if | 220-231 |  |
+| if | 232-241 |  |
+| if | 242-271 |  |
+| mt_svc | 272-283 |  |
+| if | 284-295 |  |
+| if | 296-301 |  |
+| switch | 302-408 |  |
+| mt_updcsta | 409-419 |  |
+| mt_busy | 420-424 |  |
+| for | 425-434 |  |
+| mt_map_err | 435-436 |  |
+| switch | 437-483 |  |
+| mt_reset | 484-489 |  |
+| for | 490-507 |  |
+| mt_iors | 508-514 |  |
+| mt_attach | 515-528 |  |
+| mt_detach | 529-537 |  |

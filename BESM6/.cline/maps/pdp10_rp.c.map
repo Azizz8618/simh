@@ -1,0 +1,243 @@
+=== pdp10_rp.c — 1402 строк ===
+Источник: pdp10_rp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp10_rp.c -nt .cline/maps/pdp10_rp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ubcs | 338 | |
+| fe_bootrh | 339 | |
+| fe_bootunit | 340 | |
+| drv | 494 | |
+| SCPE_OK | 603 | |
+| cs1f | 608 | |
+| uptr | 609 | |
+| SCPE_OK | 749 | |
+| dc | 756 | |
+| uptr | 757 | |
+| return | 859 | |
+| ba | 872 | |
+| pa10 | 873 | |
+| wc10 | 874 | |
+| dbuf | 875 | |
+| SCPE_OK | 1031 | |
+| rper1 | 1038 | |
+| rpds | 1039 | |
+| rpcs1 | 1040 | |
+| return | 1041 | |
+| uptr | 1055 | |
+| rpds | 1068 | |
+| int_req | 1086 | |
+| return | 1087 | |
+| uptr | 1104 | |
+| rpcs1 | 1106 | |
+| rpcs2 | 1107 | |
+| rpba | 1108 | |
+| SCPE_OK | 1142 | |
+| drives | 1150 | |
+| SCPE_OK | 1161 | |
+| drv | 1168 | |
+| SCPE_OK | 1198 | |
+| SCPE_OK | 1206 | |
+| saved_PC | 1352 | |
+| uptr | 1353 | |
+| uptr | 1356 | |
+| saved_PC | 1369 | |
+| SCPE_OK | 1370 | |
+| RP\n") | 1377 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RP_NUMDR | 8                               ... | 76 |
+| RP_NUMWD | 128                             ... | 77 |
+| RP_MAXFR | 32768                           ... | 78 |
+| SPINUP_DLY | (1000*1000)                     ... | 79 |
+| GET_SECTOR(x,d) | ((int) fmod (sim_gtime() / ((dou... | 80 |
+| MBA_RP_CTRL | 0                               ... | 82 |
+| MBA_RM_CTRL | 1                               ... | 83 |
+| UNIT_V_DTYPE | (DKUF_V_UF + 0)                 ... | 87 |
+| UNIT_W_DTYPE | 3                               ... | 88 |
+| UNIT_M_DTYPE | 7 | 89 |
+| UNIT_V_UTS | (UNIT_V_DTYPE + UNIT_W_DTYPE)   ... | 90 |
+| UNIT_V_NOAUTO | DKUF_V_NOAUTOSIZE               ... | 91 |
+| UNIT_UTS | (1u << UNIT_V_UTS) | 92 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 93 |
+| UNIT_NOAUTO | (1 << UNIT_V_NOAUTO) | 94 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 95 |
+| CYL | u3                              ... | 99 |
+| FUNC | u4                              ... | 100 |
+| CS1_GO | CSR_GO                          ... | 104 |
+| CS1_V_FNC | 1                               ... | 105 |
+| CS1_M_FNC | 037                             ... | 106 |
+| CS1_FNC | (CS1_M_FNC << CS1_V_FNC) | 107 |
+| FNC_NOP | 000                             ... | 108 |
+| FNC_UNLOAD | 001                             ... | 109 |
+| FNC_SEEK | 002                             ... | 110 |
+| FNC_RECAL | 003                             ... | 111 |
+| FNC_DCLR | 004                             ... | 112 |
+| FNC_RELEASE | 005                             ... | 113 |
+| FNC_OFFSET | 006                             ... | 114 |
+| FNC_RETURN | 007                             ... | 115 |
+| FNC_PRESET | 010                             ... | 116 |
+| FNC_PACK | 011                             ... | 117 |
+| FNC_SEARCH | 014                             ... | 118 |
+| FNC_XFER | 024                             ... | 119 |
+| FNC_WCHK | 024                             ... | 120 |
+| FNC_WRITE | 030                             ... | 121 |
+| FNC_WRITEH | 031                             ... | 122 |
+| FNC_READ | 034                             ... | 123 |
+| FNC_READH | 035                             ... | 124 |
+| CS1_IE | CSR_IE                          ... | 125 |
+| CS1_DONE | CSR_DONE                        ... | 126 |
+| CS1_V_UAE | 8                               ... | 127 |
+| CS1_M_UAE | 03 | 128 |
+| CS1_UAE | (CS1_M_UAE << CS1_V_UAE) | 129 |
+| CS1_DVA | 0004000                         ... | 130 |
+| CS1_MCPE | 0020000                         ... | 131 |
+| CS1_TRE | 0040000                         ... | 132 |
+| CS1_SC | 0100000                         ... | 133 |
+| CS1_MBZ | 0012000 | 134 |
+| CS1_DRV | (CS1_FNC \| CS1_GO) | 135 |
+| GET_FNC(x) | (((x) >> CS1_V_FNC) & CS1_M_FNC) | 136 |
+| GET_UAE(x) | (((x) & CS1_UAE) << (16 - CS1_V_... | 137 |
+| BA_MBZ | 0000001                         ... | 143 |
+| DA_V_SC | 0                               ... | 147 |
+| DA_M_SC | 077                             ... | 148 |
+| DA_V_SF | 8                               ... | 149 |
+| DA_M_SF | 077                             ... | 150 |
+| DA_MBZ | 0140300 | 151 |
+| GET_SC(x) | (((x) >> DA_V_SC) & DA_M_SC) | 152 |
+| GET_SF(x) | (((x) >> DA_V_SF) & DA_M_SF) | 153 |
+| CS2_V_UNIT | 0                               ... | 157 |
+| CS2_M_UNIT | 07                              ... | 158 |
+| CS2_UNIT | (CS2_M_UNIT << CS2_V_UNIT) | 159 |
+| CS2_UAI | 0000010                         ... | 160 |
+| CS2_PAT | 0000020                         ... | 161 |
+| CS2_CLR | 0000040                         ... | 162 |
+| CS2_IR | 0000100                         ... | 163 |
+| CS2_OR | 0000200                         ... | 164 |
+| CS2_MDPE | 0000400                         ... | 165 |
+| CS2_MXF | 0001000                         ... | 166 |
+| CS2_PGE | 0002000                         ... | 167 |
+| CS2_NEM | 0004000                         ... | 168 |
+| CS2_NED | 0010000                         ... | 169 |
+| CS2_PE | 0020000                         ... | 170 |
+| CS2_WCE | 0040000                         ... | 171 |
+| CS2_DLT | 0100000                         ... | 172 |
+| CS2_MBZ | (CS2_CLR) | 173 |
+| CS2_RW | (CS2_UNIT \| CS2_UAI \| CS2_PAT \| ... | 174 |
+| CS2_ERR | (CS2_MDPE \| CS2_MXF \| CS2_PGE \| ... | 175 |
+| GET_UNIT(x) | (((x) >> CS2_V_UNIT) & CS2_M_UNIT) | 177 |
+| DS_OF | 0000001                         ... | 181 |
+| DS_VV | 0000100                         ... | 182 |
+| DS_RDY | 0000200                         ... | 183 |
+| DS_DPR | 0000400                         ... | 184 |
+| DS_PGM | 0001000                         ... | 185 |
+| DS_LST | 0002000                         ... | 186 |
+| DS_WRL | 0004000                         ... | 187 |
+| DS_MOL | 0010000                         ... | 188 |
+| DS_PIP | 0020000                         ... | 189 |
+| DS_ERR | 0040000                         ... | 190 |
+| DS_ATA | 0100000                         ... | 191 |
+| DS_MBZ | 0000076 | 192 |
+| ER1_ILF | 0000001                         ... | 196 |
+| ER1_ILR | 0000002                         ... | 197 |
+| ER1_RMR | 0000004                         ... | 198 |
+| ER1_PAR | 0000010                         ... | 199 |
+| ER1_FER | 0000020                         ... | 200 |
+| ER1_WCF | 0000040                         ... | 201 |
+| ER1_ECH | 0000100                         ... | 202 |
+| ER1_HCE | 0000200                         ... | 203 |
+| ER1_HCR | 0000400                         ... | 204 |
+| ER1_AOE | 0001000                         ... | 205 |
+| ER1_IAE | 0002000                         ... | 206 |
+| ER1_WLE | 0004000                         ... | 207 |
+| ER1_DTE | 0010000                         ... | 208 |
+| ER1_OPI | 0020000                         ... | 209 |
+| ER1_UNS | 0040000                         ... | 210 |
+| ER1_DCK | 0100000                         ... | 211 |
+| AS_U0 | 0000001                         ... | 215 |
+| LA_V_SC | 6                               ... | 219 |
+| OF_HCI | 0002000                         ... | 228 |
+| OF_ECI | 0004000                         ... | 229 |
+| OF_F22 | 0010000                         ... | 230 |
+| OF_MBZ | 0161400 | 231 |
+| DC_V_CY | 0                               ... | 235 |
+| DC_M_CY | 01777                           ... | 236 |
+| DC_MBZ | 0176000 | 237 |
+| GET_CY(x) | (((x) >> DC_V_CY) & DC_M_CY) | 238 |
+| GET_DA(c,fs,d) | ((((GET_CY (c) * drv_tab[d].surf... | 239 |
+| RM03_DTYPE | 0 | 269 |
+| RM03_SECT | 30 | 270 |
+| RM03_SURF | 5 | 271 |
+| RM03_CYL | 823 | 272 |
+| RM03_DEV | 020024 | 273 |
+| RM03_SIZE | (RM03_SECT * RM03_SURF * RM03_CY... | 274 |
+| RP04_DTYPE | 1 | 276 |
+| RP04_SECT | 20 | 277 |
+| RP04_SURF | 19 | 278 |
+| RP04_CYL | 411 | 279 |
+| RP04_DEV | 020020 | 280 |
+| RP04_SIZE | (RP04_SECT * RP04_SURF * RP04_CY... | 281 |
+| RM80_DTYPE | 2 | 283 |
+| RM80_SECT | 30 | 284 |
+| RM80_SURF | 14 | 285 |
+| RM80_CYL | 559 | 286 |
+| RM80_DEV | 020026 | 287 |
+| RM80_SIZE | (RM80_SECT * RM80_SURF * RM80_CY... | 288 |
+| RP06_DTYPE | 3 | 290 |
+| RP06_SECT | 20 | 291 |
+| RP06_SURF | 19 | 292 |
+| RP06_CYL | 815 | 293 |
+| RP06_DEV | 020022 | 294 |
+| RP06_SIZE | (RP06_SECT * RP06_SURF * RP06_CY... | 295 |
+| RM05_DTYPE | 4 | 297 |
+| RM05_SECT | 30 | 298 |
+| RM05_SURF | 19 | 299 |
+| RM05_CYL | 823 | 300 |
+| RM05_DEV | 020027 | 301 |
+| RM05_SIZE | (RM05_SECT * RM05_SURF * RM05_CY... | 302 |
+| RP07_DTYPE | 5 | 304 |
+| RP07_SECT | 43 | 305 |
+| RP07_SURF | 32 | 306 |
+| RP07_CYL | 630 | 307 |
+| RP07_DEV | 020042 | 308 |
+| RP07_SIZE | (RP07_SECT * RP07_SURF * RP07_CY... | 309 |
+| DBG_DSK | 0x0001                          ... | 331 |
+| XWC_MBZ | 0000001                         ... | 921 |
+| XBA_MBZ | 0000003                         ... | 922 |
+| BOOT_START | 0377000                         ... | 1218 |
+| BOOT_LEN | (sizeof (boot_rom_dec) / sizeof ... | 1219 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rp_rd | 492-498 |  |
+| if | 499-506 |  |
+| switch | 507-605 |  |
+| rp_wr | 606-614 |  |
+| if | 615-619 |  |
+| if | 620-626 |  |
+| switch | 627-753 |  |
+| rp_go | 754-759 |  |
+| if | 760-764 |  |
+| if | 765-773 |  |
+| switch | 774-868 |  |
+| rp_svc | 869-879 |  |
+| if | 880-888 |  |
+| switch | 889-1035 |  |
+| set_rper | 1036-1051 |  |
+| update_rpcs | 1052-1077 |  |
+| for | 1078-1091 |  |
+| rp_inta | 1092-1100 |  |
+| rp_reset | 1101-1110 |  |
+| for | 1111-1146 |  |
+| rp_attach | 1147-1165 |  |
+| rp_detach | 1166-1174 |  |
+| if | 1175-1189 |  |
+| rp_set_type | 1190-1202 |  |
+| rp_show_type | 1203-1348 |  |
+| rp_boot | 1349-1372 |  |
+| rp_help | 1373-1398 |  |
+| rp_description | 1399-1402 |  |

@@ -1,0 +1,77 @@
+=== s3_cpu.c — 1830 строк ===
+Источник: s3_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s3_cpu.c -nt .cline/maps/s3_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| trace | 384 | |
+| priority | 434 | |
+| PC | 505 | |
+| opcode | 507 | |
+| opaddr | 508 | |
+| int_savelevel | 509 | |
+| devno | 510 | |
+| display | 511 | |
+| val | 512 | |
+| reason | 513 | |
+| reason | 518 | |
+| saved_PC | 575 | |
+| sim_interval | 579 | |
+| saved_PC | 1292 | |
+| reason | 1293 | |
+| STOP_INVDEV | 1779 | |
+| int_req | 1786 | |
+| level | 1787 | |
+| SCPE_OK | 1789 | |
+| SCPE_OK | 1798 | |
+| SCPE_OK | 1807 | |
+| mc | 1812 | |
+| MEMSIZE | 1820 | |
+| SCPE_OK | 1822 | |
+| level | 1827 | |
+| IAR | 1828 | |
+| SCPE_OK | 1829 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_M15 | (UNIT_V_UF)                     ... | 361 |
+| UNIT_M15 | (1 << UNIT_V_M15) | 362 |
+| UNIT_V_DPF | (UNIT_V_UF+1)                   ... | 363 |
+| UNIT_DPF | (1 << UNIT_V_DPF) | 364 |
+| UNIT_V_MSIZE | (UNIT_V_UF+3)                   ... | 365 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 366 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 503-521 |  |
+| while | 522-522 |  |
+| if | 523-526 |  |
+| if | 527-544 |  |
+| if | 545-551 |  |
+| if | 552-555 |  |
+| if | 556-562 |  |
+| if | 563-583 |  |
+| if | 584-668 |  |
+| switch | 669-691 |  |
+| switch | 692-714 |  |
+| switch | 715-1302 |  |
+| GetMem | 1303-1309 |  |
+| PutMem | 1310-1317 |  |
+| condition | 1318-1347 |  |
+| compare | 1348-1380 |  |
+| add_zoned | 1381-1459 |  |
+| subtract_zoned | 1460-1539 |  |
+| add_decimal | 1540-1598 |  |
+| subtract_decimal | 1599-1682 |  |
+| load_decimal | 1683-1723 |  |
+| store_decimal | 1724-1747 |  |
+| cpu | 1748-1774 |  |
+| nulldev | 1775-1783 |  |
+| cpu_reset | 1784-1793 |  |
+| cpu_ex | 1794-1802 |  |
+| cpu_dep | 1803-1809 |  |
+| cpu_set_size | 1810-1824 |  |
+| cpu_boot | 1825-1830 |  |

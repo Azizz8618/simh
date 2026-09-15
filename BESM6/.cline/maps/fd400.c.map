@@ -1,0 +1,30 @@
+=== fd400.c — 519 строк ===
+Источник: fd400.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test fd400.c -nt .cline/maps/fd400.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_ENABLE | (UNIT_V_UF + 0) /* Write Enable */ | 140 |
+| UNIT_ENABLE | (1 << UNIT_V_ENABLE) | 141 |
+| NUM_DISK | 4 | 145 |
+| SECT_SIZE | (8+4+256)  /* sector size=header... | 146 |
+| NUM_SECT | 10              /* sectors/track */ | 147 |
+| TRAK_SIZE | (SECT_SIZE * NUM_SECT) /* trk si... | 148 |
+| HEADS | 1               /* handle as SS ... | 149 |
+| NUM_CYL | 40              /* maximum track... | 150 |
+| DSK_SIZE | (NUM_SECT * HEADS * NUM_CYL * SE... | 151 |
+| TRK | fd400_dsk_unit[fd400.cur_dsk].u4... | 153 |
+| SECT | fd400_dsk_unit[fd400.cur_dsk].u5 | 154 |
+| BUF_SIZE | (SECT_SIZE+16)  // sector buffer... | 156 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| fd400_dsk_reset | 235-261 |  |
+| fd400_fdcstatus | 262-320 |  |
+| fd400_cstatus | 321-329 |  |
+| fd400_data | 330-468 |  |
+| fd400_cursect | 469-489 |  |
+| fd400_startrw | 490-507 |  |
+| fd400_attach | 508-519 |  |

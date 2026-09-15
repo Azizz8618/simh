@@ -1,0 +1,120 @@
+=== hp3000_defs.h — 723 строк ===
+Источник: hp3000_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_defs.h -nt .cline/maps/hp3000_defs.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| BITSET_FORMAT | 674-681 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| REG_X | REG_VMIO                    /* p... | 152 |
+| REG_A | (1u << REG_V_UF + 0)        /* d... | 154 |
+| REG_C | (1u << REG_V_UF + 1)        /* d... | 155 |
+| REG_M | (1u << REG_V_UF + 2)        /* d... | 156 |
+| REG_T | (1u << REG_V_UF + 3)        /* d... | 157 |
+| REGMAP(nm,loc,rdx,wd,off,dep,fl,siz) |  | 202 |
+| REGMAP(nm,loc,rdx,wd,off,dep,fl,siz) |  | 206 |
+| REGMAP(nm,loc,rdx,wd,off,dep,fl,siz) |  | 210 |
+| FBDATA(nm,loc,ofs,dep,fl) | REGMAP   (nm,  (loc),    2,     ... | 217 |
+| SVDATA(nm,loc) | SAVEDATA (nm,  (loc)) | 218 |
+| YRDATA(nm,loc,wid,fl) | BINRDATA (nm,  (loc),         (w... | 219 |
+| DPRINTING(d,f) | (sim_deb && ((d).dctrl & (f))) | 250 |
+| DPPRINTING(d,f) | (sim_deb && ((d)->dctrl & (f))) | 252 |
+| STOP_SYSHALT | 1                   /* system ha... | 305 |
+| STOP_UNIMPL | 2                   /* unimpleme... | 306 |
+| STOP_UNDEF | 3                   /* undefined... | 307 |
+| STOP_PAUS | 4                   /* PAUS inst... | 308 |
+| STOP_RERUN | 4                   /* stops abo... | 310 |
+| STOP_HALT | 5                   /* programme... | 312 |
+| STOP_BRKPNT | 6                   /* breakpoin... | 313 |
+| STOP_INFLOOP | 7                   /* infinite ... | 314 |
+| STOP_CLOAD | 8                   /* cold load... | 315 |
+| STOP_CDUMP | 9                   /* cold dump... | 316 |
+| STOP_ARSINH | 10                  /* auto-rest... | 317 |
+| STOP_POWER | 11                  /* power is ... | 318 |
+| MTAB_XDV | (MTAB_XTD \| MTAB_VDV) | 323 |
+| MTAB_XUN | (MTAB_XTD \| MTAB_VUN) | 324 |
+| VAL_DEVNO | 0                   /* validate ... | 326 |
+| VAL_INTMASK | 1                   /* validate ... | 327 |
+| VAL_INTPRI | 2                   /* validate ... | 328 |
+| VAL_SRNO | 3                   /* validate ... | 329 |
+| USEC_PER_EVENT | 2.57                /* average C... | 349 |
+| S(t) | (uint32) (((t) * 1000000.0) / US... | 353 |
+| R_MASK | 0177777u                    /* 1... | 404 |
+| D4_WIDTH | 4                           /* 4... | 406 |
+| D4_MASK | 0017u                       /* 4... | 407 |
+| D8_WIDTH | 8                           /* 8... | 409 |
+| D8_MASK | 0377u                       /* 8... | 410 |
+| D8_UMAX | 0377u                       /* 8... | 411 |
+| D8_SMAX | 0177u                       /* 8... | 412 |
+| D8_SMIN | 0200u                       /* 8... | 413 |
+| D8_SIGN | 0200u                       /* 8... | 414 |
+| D16_WIDTH | 16                          /* 1... | 416 |
+| D16_MASK | 0177777u                    /* 1... | 417 |
+| D16_UMAX | 0177777u                    /* 1... | 418 |
+| D16_SMAX | 0077777u                    /* 1... | 419 |
+| D16_SMIN | 0100000u                    /* 1... | 420 |
+| D16_SIGN | 0100000u                    /* 1... | 421 |
+| D32_WIDTH | 32                          /* 3... | 423 |
+| D32_MASK | 037777777777u               /* 3... | 424 |
+| D32_UMAX | 037777777777u               /* 3... | 425 |
+| D32_SMAX | 017777777777u               /* 3... | 426 |
+| D32_SMIN | 020000000000u               /* 3... | 427 |
+| D32_SIGN | 020000000000u               /* 3... | 428 |
+| D48_WIDTH | 48                          /* 4... | 430 |
+| D48_MASK | 07777777777777777uL         /* 4... | 431 |
+| D48_UMAX | 07777777777777777uL         /* 4... | 432 |
+| D48_SMAX | 03777777777777777uL         /* 4... | 433 |
+| D48_SMIN | 04000000000000000uL         /* 4... | 434 |
+| D48_SIGN | 04000000000000000uL         /* 4... | 435 |
+| D64_WIDTH | 64                          /* 6... | 437 |
+| D64_MASK | 01777777777777777777777uL   /* 6... | 438 |
+| D64_UMAX | 01777777777777777777777uL   /* 6... | 439 |
+| D64_SMAX | 00777777777777777777777uL   /* 6... | 440 |
+| D64_SMIN | 01000000000000000000000uL   /* 6... | 441 |
+| D64_SIGN | 01000000000000000000000uL   /* 6... | 442 |
+| S16_OVFL_MASK | ((uint32) D16_UMAX << D16_WIDTH \|  | 444 |
+| S32_OVFL_MASK | ((t_uint64) D32_UMAX << D32_WIDT... | 447 |
+| LA_WIDTH | 16                              ... | 453 |
+| LA_MASK | ((1u << LA_WIDTH) - 1)          ... | 454 |
+| LA_MAX | ((1u << LA_WIDTH) - 1)          ... | 455 |
+| BA_WIDTH | 4                               ... | 457 |
+| BA_MASK | ((1u << BA_WIDTH) - 1)          ... | 458 |
+| BA_MAX | ((1u << BA_WIDTH) - 1)          ... | 459 |
+| PA_WIDTH | (LA_WIDTH + BA_WIDTH)           ... | 461 |
+| PA_MASK | ((1u << PA_WIDTH) - 1)          ... | 462 |
+| PA_MAX | ((1u << PA_WIDTH) - 1)          ... | 463 |
+| DV_WIDTH | 16                              ... | 465 |
+| DV_MASK | ((1u << DV_WIDTH) - 1)          ... | 466 |
+| DV_SIGN | ( 1u << (DV_WIDTH - 1))         ... | 467 |
+| DV_UMAX | ((1u << DV_WIDTH) - 1)          ... | 468 |
+| DV_SMAX | ((1u << (DV_WIDTH - 1)) - 1)    ... | 469 |
+| TO_PA(b,o) | (((uint32) (b) & BA_MASK) << LA_... | 489 |
+| TO_BANK(p) | ((p) >> LA_WIDTH & BA_MASK) | 490 |
+| TO_OFFSET(p) | ((p) & LA_MASK) | 491 |
+| UNCHECKED(c) | ((c) & ~1u)         /* reclassif... | 551 |
+| INVERT_CHECK(c) | ((c) ^ 1u)          /* convert c... | 552 |
+| SEXT8(x) | (int32) ((x) & D8_SIGN  ? (x) \| ... | 584 |
+| SEXT16(x) | (int32) ((x) & D16_SIGN ? (x) \| ... | 585 |
+| NEG8(x) | ((~(x) + 1) & D8_MASK) | 587 |
+| NEG16(x) | ((~(x) + 1) & D16_MASK) | 588 |
+| NEG32(x) | ((~(x) + 1) & D32_MASK) | 589 |
+| INT16(u) | ((u) > D16_SMAX ? (-(int16) (D16... | 591 |
+| INT32(u) | ((u) > D32_SMAX ? (-(int32) (D32... | 592 |
+| UPPER_HALF(b) | ((b) >> D4_WIDTH & D4_MASK) | 597 |
+| LOWER_HALF(b) | ((b) & D4_MASK) | 598 |
+| UPPER_BYTE(w) | (uint8)   ((w) >> D8_WIDTH & D8_... | 623 |
+| LOWER_BYTE(w) | (uint8)   ((w) &  D8_MASK) | 624 |
+| TO_WORD(u,l) | (HP_WORD) (((u) & D8_MASK) << D8... | 625 |
+| REPLACE_UPPER(w,b) | ((w) & D8_MASK \| ((b) & D8_MASK)... | 627 |
+| REPLACE_LOWER(w,b) | ((w) & D8_MASK << D8_WIDTH \| (b)... | 628 |
+| UPPER_WORD(d) | (HP_WORD) ((d) >> D16_WIDTH & D1... | 633 |
+| LOWER_WORD(d) | (HP_WORD) ((d) &  D16_MASK) | 634 |
+| TO_DWORD(u,l) | ((uint32) (u) << D16_WIDTH \| (l)) | 636 |
+| TOGGLE(ff) | ff = (FLIP_FLOP) (ff ^ 1)   /* t... | 646 |
+| D_FF(b) | (FLIP_FLOP) ((b) != 0)      /* u... | 648 |
+| FMT_INIT(names,offset,dir,alt,bar) |  | 685 |
+

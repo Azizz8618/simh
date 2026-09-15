@@ -1,0 +1,116 @@
+=== s100_icom.c — 1495 строк ===
+Источник: s100_icom.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_icom.c -nt .cline/maps/s100_icom.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| ICOM_REG | 469-480 |
+| ICOM_INFO | 520-537 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| icom_mem | 198 | |
+| icom_info | 544 | |
+| rdata | 551 | |
+| wdata | 552 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 168 |
+| DBG_PRINT(args) |  | 170 |
+| ICOM_MAX_DRIVES | 4 | 180 |
+| ICOM_SD_SECTOR_LEN | 128 | 181 |
+| ICOM_DD_SECTOR_LEN | 256 | 182 |
+| ICOM_SPT | 26 | 183 |
+| ICOM_TRACKS | 77 | 184 |
+| ICOM_SD_CAPACITY | (256256)      /* Default iCOM Si... | 185 |
+| ICOM_DD_CAPACITY | (509184)      /* Default iCOM Do... | 186 |
+| ICOM_IO_BASE | 0xc0 | 188 |
+| ICOM_IO_SIZE | 2 | 189 |
+| ICOM_PROM_BASE | 0xf000 | 191 |
+| ICOM_PROM_SIZE | 1024 | 192 |
+| ICOM_PROM_MASK | (ICOM_PROM_SIZE-1) | 193 |
+| ICOM_MEM_BASE | 0xf400 | 194 |
+| ICOM_MEM_SIZE | 256                 /* Must be o... | 195 |
+| ICOM_MEM_MASK | (ICOM_MEM_SIZE-1) | 196 |
+| ICOM_REG_COMMAND | 0x00 | 483 |
+| ICOM_REG_DATAI | 0x00 | 484 |
+| ICOM_REG_DATAO | 0x01 | 485 |
+| ICOM_CMD_STATUS | 0x00 | 488 |
+| ICOM_CMD_CMDMSK | 0x01 | 489 |
+| ICOM_CMD_READ | 0x03 | 490 |
+| ICOM_CMD_WRITE | 0x05 | 491 |
+| ICOM_CMD_READCRC | 0x07 | 492 |
+| ICOM_CMD_SEEK | 0x09 | 493 |
+| ICOM_CMD_CLRERRFLGS | 0x0b | 494 |
+| ICOM_CMD_TRACK0 | 0x0d | 495 |
+| ICOM_CMD_WRITEDDM | 0x0f | 496 |
+| ICOM_CMD_LDTRACK | 0x11 | 497 |
+| ICOM_CMD_LDUNITSEC | 0x21 | 498 |
+| ICOM_CMD_LDWRITEBUFNOP | 0x30 | 499 |
+| ICOM_CMD_LDWRITEBUF | 0x31 | 500 |
+| ICOM_CMD_EXREADBUF | 0x40 | 501 |
+| ICOM_CMD_SHREADBUF | 0x41 | 502 |
+| ICOM_CMD_CLEAR | 0x81 | 503 |
+| ICOM_CMD_LDCONF | 0x15 | 504 |
+| ICOM_STAT_BUSY | 0x01 | 506 |
+| ICOM_STAT_UNITMSK | 0x06 | 507 |
+| ICOM_STAT_CRC | 0x08 | 508 |
+| ICOM_STAT_WRITEPROT | 0x10 | 509 |
+| ICOM_STAT_DRVFAIL | 0x20 | 510 |
+| ICOM_STAT_MEDIASTAT | 0x40 | 511 |
+| ICOM_STAT_DDM | 0x80 | 512 |
+| ICOM_CONF_DD | 0x10    /* Double Density */ | 514 |
+| ICOM_CONF_FM | 0x20    /* Format Mode */ | 515 |
+| ICOM_TYPE_3712 | 0x00 | 517 |
+| ICOM_TYPE_3812 | 0x01 | 518 |
+| DATA_MASK | ICOM_DD_SECTOR_LEN-1 | 549 |
+| ICOM_NAME | "iCOM 3712/3812 Floppy Disk System" | 609 |
+| ICOM_SNAME | "ICOM" | 610 |
+| UNIT_V_ICOM_WPROTECT | (UNIT_V_UF + 1)                 ... | 616 |
+| UNIT_ICOM_WPROTECT | (1 << UNIT_V_ICOM_WPROTECT) | 617 |
+| VERBOSE_MSG | (1 << 0) | 636 |
+| ERROR_MSG | (1 << 1) | 637 |
+| RBUF_MSG | (1 << 2) | 638 |
+| WBUF_MSG | (1 << 3) | 639 |
+| CMD_MSG | (1 << 4) | 640 |
+| RD_DATA_MSG | (1 << 5) | 641 |
+| WR_DATA_MSG | (1 << 6) | 642 |
+| STATUS_MSG | (1 << 7) | 643 |
+| RD_DATA_DETAIL_MSG | (1 << 8) | 644 |
+| WR_DATA_DETAIL_MSG | (1 << 9) | 645 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| icom_description | 612-691 |  |
+| icom_reset | 692-743 | Reset routine |
+| icom_svc | 744-751 | Service routine |
+| icom_attach | 752-795 | Attach routine |
+| icom_detach | 796-828 | Detach routine |
+| icom_set_membase | 829-866 |  |
+| icom_show_membase | 867-882 | Show Base Address routine |
+| icom_set_type | 883-902 |  |
+| icom_show_type | 903-909 |  |
+| icom_set_prom | 910-931 |  |
+| icom_show_prom | 932-938 |  |
+| icom_boot | 939-947 |  |
+| icom_set_busy | 948-961 |  |
+| icom_set_crc | 962-988 | Set CRC flag if trying to read/write wrong density |
+| icomdev | 989-997 |  |
+| showReadSec | 998-1017 |  |
+| showWriteSec | 1018-1037 |  |
+| calculate_icom_sec_offset | 1038-1065 |  |
+| ICOM_Read | 1066-1101 |  |
+| ICOM_Write | 1102-1135 |  |
+| ICOM_ReadSector | 1136-1165 |  |
+| ICOM_WriteSector | 1166-1194 |  |
+| ICOM_FormatTrack | 1195-1210 |  |
+| ICOM_DriveNotReady | 1211-1222 |  |
+| ICOM_CommandString | 1223-1280 |  |
+| ICOM_Command | 1281-1473 |  |
+| icomprom | 1474-1486 |  |
+| icommem | 1487-1495 |  |

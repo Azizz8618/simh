@@ -1,0 +1,40 @@
+=== svs_cpu.c — 1848 строк ===
+Источник: svs_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test svs_cpu.c -nt .cline/maps/svs_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| scp_errors | 44 | |
+| sim_name | 201 | |
+| sim_PC | 203 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RPR_WIRED_BITS | (0) | 50 |
+| GRVP_WIRED_BITS | (0) | 52 |
+| ORDATAVM(nm,loc,wd) | REGDATA(nm,(loc),8,wd,0,1,NULL,N... | 82 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_examine | 263-288 | Memory examine |
+| cpu_deposit | 289-315 | Memory deposit |
+| cpu_reset | 316-386 | Reset routine |
+| cpu_req | 387-406 | Request routine |
+| cpu_set_trace | 407-417 | Trace level selector |
+| cpu_set_etrace | 418-428 |  |
+| cpu_set_itrace | 429-439 |  |
+| cpu_clr_trace | 440-445 |  |
+| cpu_show_trace | 446-464 |  |
+| utf8_putc | 465-484 |  |
+| svs_okno | 485-518 | системе "Дубна", которая печатала полное состояние всех регистров. |
+| cmd_002 | 519-817 | Команда "рег" |
+| is_extracode | 818-838 |  |
+| cpu_one_instr | 839-1530 | sending a stop code. |
+| op_int_1 | 1531-1552 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
+| op_int_2 | 1553-1571 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
+| sim_instr | 1572-1795 | Main instruction fetch/decode loop |
+| fast_clk | 1796-1828 | for a better user time/system time ratio. |
+| clk_reset | 1829-1848 |  |

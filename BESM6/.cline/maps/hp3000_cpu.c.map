@@ -1,0 +1,171 @@
+=== hp3000_cpu.c — 4666 строк ===
+Источник: hp3000_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_cpu.c -nt .cline/maps/hp3000_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| abortval | 1423 | |
+| label | 1424 | |
+| trap | 1425 | |
+| exec_test | 1426 | |
+| debug_save | 1427 | |
+| device | 1428 | |
+| status | 1429 | |
+| cptr | 1774 | |
+| gbuf | 1775 | |
+| status | 1776 | |
+| value | 1777 | |
+| gbuf | 1895 | |
+| ctptr | 1896 | |
+| zi | 1897 | |
+| status | 1898 | |
+| request_set | 2037 | |
+| class | 2038 | |
+| return | 2094 | |
+| return | 2130 | |
+| elapsed | 2149 | |
+| return | 2163 | |
+| return | 2193 | |
+| return | 2227 | |
+| return | 2265 | |
+| return | 2301 | |
+| return | 2324 | |
+| return | 2363 | |
+| return | 2407 | |
+| base | 2562 | |
+| class | 2563 | |
+| return | 2656 | |
+| starting_word | 2701 | |
+| label | 2790 | |
+| return | 2833 | |
+| delta_q | 2899 | |
+| return | 2939 | |
+| cst_pointer | 2986 | |
+| return | 3028 | |
+| dst_pointer | 3057 | |
+| new_status | 3125 | |
+| return | 3172 | |
+| temp_status | 3234 | |
+| return | 3288 | |
+| return | 3319 | |
+| status | 3370 | |
+| gbuf | 3507 | |
+| stop | 3508 | |
+| gbuf | 3562 | |
+| match | 3563 | |
+| status | 3564 | |
+| value | 3648 | |
+| status | 3649 | |
+| confirm | 3709 | |
+| new_memsize | 3753 | |
+| status | 3754 | |
+| stop | 3839 | |
+| need_spacer | 3840 | |
+| radix | 3877 | |
+| SCPE_OK | 3918 | |
+| cold_device | 4046 | |
+| address | 4047 | |
+| error_recovery | 4048 | |
+| SCPE_OK | 4314 | |
+| displacement | 4379 | |
+| control | 4380 | |
+| class | 4381 | |
+| selector | 4382 | |
+| branch | 4383 | |
+| status | 4384 | |
+| status | 4665 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCLK_PERIOD | mS (1)                      /* 1... | 758 |
+| PCLK_MULTIPLIER | 10                          /* n... | 760 |
+| PCLK_RATE | (1000 / PCLK_MULTIPLIER)    /* p... | 761 |
+| UNIT_OPTS | (UNIT_EIS)                  /* t... | 763 |
+| CPU_IO_RESET | 0                           /* r... | 765 |
+| IO_RESET | 1                           /* r... | 766 |
+| CNTL_BASE | 8                           /* t... | 768 |
+| CNTL_MAX | 0377                        /* t... | 769 |
+| SIO_JUMP | 0000000u                    /* J... | 771 |
+| SIO_SBANK | 0014000u                    /* S... | 772 |
+| SIO_ENDIN | 0034000u                    /* E... | 773 |
+| SIO_CNTL | 0040000u                    /* C... | 774 |
+| SIO_WRITE | 0060000u                    /* W... | 775 |
+| SIO_READ | 0077760u                    /* R... | 776 |
+| MS_CN_GAP | 0000005u                    /* W... | 778 |
+| MS_CN_WRR | 0000004u                    /* W... | 779 |
+| MS_CN_RST | 0000011u                    /* R... | 780 |
+| MS_CN_BSR | 0000012u                    /* B... | 781 |
+| MS_CN_WFM | 0000015u                    /* W... | 782 |
+| MS_ST_PROTECTED | 0001000u                    /* w... | 784 |
+| MS_ST_READY | 0000400u                    /* u... | 785 |
+| MS_ST_MASK | (MS_ST_PROTECTED \| MS_ST_READY) | 787 |
+| UNIT_FLAGS | (UNIT_PFARS \| UNIT_CALTIME) | 1038 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 1413-1460 |  |
+| if | 1461-1588 |  |
+| while | 1589-1771 |  |
+| cpu_cold_cmd | 1772-1778 |  |
+| if | 1779-1882 |  |
+| cpu_power_cmd | 1883-2034 |  |
+| cpu_run_mode_interrupt | 2035-2039 |  |
+| if | 2040-2048 |  |
+| if | 2049-2110 |  |
+| cpu_front_panel | 2111-2114 |  |
+| switch | 2115-2146 |  |
+| cpu_update_pclk | 2147-2150 |  |
+| if | 2151-2181 |  |
+| cpu_push | 2182-2209 |  |
+| cpu_pop | 2210-2211 |  |
+| if | 2212-2252 |  |
+| cpu_queue_up | 2253-2290 |  |
+| cpu_queue_down | 2291-2314 |  |
+| cpu_flush | 2315-2316 |  |
+| while | 2317-2349 |  |
+| cpu_adjust_sr | 2350-2395 |  |
+| cpu_mark_stack | 2396-2559 |  |
+| cpu_ea | 2560-2564 |  |
+| switch | 2565-2698 |  |
+| cpu_byte_ea | 2699-2707 |  |
+| if | 2708-2787 |  |
+| cpu_setup_irq_handler | 2788-2791 |  |
+| if | 2792-2896 |  |
+| cpu_setup_ics_irq | 2897-2911 |  |
+| if | 2912-2983 |  |
+| cpu_setup_code_segment | 2984-2989 |  |
+| if | 2990-3054 |  |
+| cpu_setup_data_segment | 3055-3122 |  |
+| cpu_call_procedure | 3123-3128 |  |
+| if | 3129-3231 |  |
+| cpu_exit_procedure | 3232-3258 |  |
+| if | 3259-3280 |  |
+| if | 3281-3303 |  |
+| cpu_start_dispatcher | 3304-3366 |  |
+| cpu_service | 3367-3379 |  |
+| if | 3380-3393 |  |
+| if | 3394-3430 |  |
+| cpu_reset | 3431-3432 |  |
+| if | 3433-3452 |  |
+| if | 3453-3504 |  |
+| set_stops | 3505-3509 |  |
+| if | 3510-3559 |  |
+| set_exec | 3560-3645 |  |
+| set_dump | 3646-3653 |  |
+| if | 3654-3706 |  |
+| set_size | 3707-3749 |  |
+| set_model | 3750-3786 |  |
+| set_option | 3787-3812 |  |
+| set_pfars | 3813-3836 |  |
+| show_stops | 3837-3874 |  |
+| show_exec | 3875-3912 |  |
+| show_dump | 3913-3932 |  |
+| show_speed | 3933-4043 |  |
+| halt_mode_interrupt | 4044-4049 |  |
+| if | 4050-4084 |  |
+| if | 4085-4376 |  |
+| machine_instruction | 4377-4385 |  |
+| switch | 4386-4666 |  |

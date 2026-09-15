@@ -1,0 +1,79 @@
+=== mits_2sio.c — 931 строк ===
+Источник: mits_2sio.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test mits_2sio.c -nt .cline/maps/mits_2sio.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| m2sio0_reg | 165 | |
+| m2sio1_reg | 166 | |
+| m2sio0_res | 247 | |
+| m2sio1_res | 248 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| M2SIO_NAME | "MITS 88-2SIO SERIAL ADAPTER" | 101 |
+| M2SIO0_SNAME | "M2SIO0" | 102 |
+| M2SIO1_SNAME | "M2SIO1" | 103 |
+| M2SIO_PORTS | 2 | 105 |
+| M2SIO_WAIT | 250           /* Service Wait In... | 107 |
+| M2SIO0_IOBASE | 0x10 | 109 |
+| M2SIO0_IOSIZE | 2 | 110 |
+| M2SIO1_IOBASE | 0x12 | 111 |
+| M2SIO1_IOSIZE | 2 | 112 |
+| M2SIO_RDRF | 0x01           /* Receive Data R... | 114 |
+| M2SIO_TDRE | 0x02           /* Transmit Data ... | 115 |
+| M2SIO_DCD | 0x04           /* Data Carrier D... | 116 |
+| M2SIO_CTS | 0x08           /* Clear to Send ... | 117 |
+| M2SIO_FE | 0x10           /* Framing Error ... | 118 |
+| M2SIO_OVRN | 0x20           /* Overrun       ... | 119 |
+| M2SIO_PE | 0x40           /* Parity Error  ... | 120 |
+| M2SIO_IRQ | 0x80           /* Interrupt Requ... | 121 |
+| M2SIO_RESET | 0x03           /* Reset         ... | 122 |
+| M2SIO_CLK1 | 0x00           /* Divide Clock b... | 123 |
+| M2SIO_CLK16 | 0x01           /* Divide Clock b... | 124 |
+| M2SIO_CLK64 | 0x02           /* Divide Clock b... | 125 |
+| M2SIO_72E | 0x00           /* 7-2-E         ... | 126 |
+| M2SIO_72O | 0x04           /* 7-2-O         ... | 127 |
+| M2SIO_71E | 0x08           /* 7-1-E         ... | 128 |
+| M2SIO_71O | 0x0C           /* 7-1-O         ... | 129 |
+| M2SIO_82N | 0x10           /* 8-2-N         ... | 130 |
+| M2SIO_81N | 0x14           /* 8-1-N         ... | 131 |
+| M2SIO_81E | 0x18           /* 8-1-E         ... | 132 |
+| M2SIO_81O | 0x1C           /* 8-1-O         ... | 133 |
+| M2SIO_FMTMSK | 0x1c           /* Length, Parity... | 134 |
+| M2SIO_RTSLTID | 0x00           /* RTS Low, Xmit ... | 135 |
+| M2SIO_RTSLTIE | 0x20           /* RTS Low, Xmit ... | 136 |
+| M2SIO_RTSHTID | 0x40           /* RTS High, Xmit... | 137 |
+| M2SIO_RTSHTBR | 0x60           /* RTS High, Xmit... | 138 |
+| M2SIO_RTSMSK | 0x60           /* RTS Bit Mask  ... | 139 |
+| M2SIO_RIE | 0x80           /* Receive Int En... | 140 |
+| M2SIO_BAUD | 9600           /* Default baud r... | 142 |
+| STATUS_MSG | (1 << 0) | 169 |
+| IRQ_MSG | (1 << 1) | 170 |
+| VERBOSE_MSG | (1 << 2) | 171 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| m2sio_description | 361-365 |  |
+| m2sio0_reset | 366-372 |  |
+| m2sio1_reset | 373-379 |  |
+| m2sio_reset | 380-432 |  |
+| m2sio_svc | 433-551 |  |
+| m2sio_attach | 552-584 | Attach routine |
+| m2sio_detach | 585-607 | Detach routine |
+| m2sio_set_console | 608-619 |  |
+| m2sio_set_baud | 620-659 |  |
+| m2sio_show_baud | 660-674 |  |
+| m2sio_config_line | 675-737 |  |
+| m2sio_config_rts | 738-776 |  |
+| m2sio0_io | 777-781 |  |
+| m2sio1_io | 782-786 |  |
+| m2sio_io | 787-799 |  |
+| m2sio_stat | 800-852 |  |
+| m2sio_data | 853-875 |  |
+| m2sio_int | 876-891 |  |
+| m2sio_map_kbdchar | 892-913 |  |
+| m2sio_show_help | 914-931 |  |

@@ -1,0 +1,83 @@
+=== s100_pmmi.c — 705 строк ===
+Источник: s100_pmmi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_pmmi.c -nt .cline/maps/s100_pmmi.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| PMMI_CTX | 110-131 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| pmmi_ctx | 192 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PMMI_NAME | "PMMI MM-103 MODEM" | 48 |
+| PMMI_SNAME | "PMMI" | 49 |
+| PMMI_WAIT | 500            /* Service Wait I... | 51 |
+| PMMI_IOBASE | 0xC0 | 53 |
+| PMMI_IOSIZE | 4 | 54 |
+| PMMI_REG0 | 0              /* Relative Addre... | 56 |
+| PMMI_REG1 | 1              /* Relative Addre... | 57 |
+| PMMI_REG2 | 2              /* Relative Addre... | 58 |
+| PMMI_REG3 | 3              /* Relative Addre... | 59 |
+| PMMI_TBMT | 0x01           /* Transmit Data ... | 61 |
+| PMMI_DAV | 0x02           /* Receive Data R... | 62 |
+| PMMI_TEOC | 0x04           /* Transmit Seria... | 63 |
+| PMMI_RPE | 0x08           /* Parity Error  ... | 64 |
+| PMMI_OR | 0x10           /* Overrun       ... | 65 |
+| PMMI_FE | 0x20           /* Framing Error ... | 66 |
+| PMMI_DT | 0x01           /* Dial Tone     ... | 68 |
+| PMMI_RNG | 0x02           /* Ringing       ... | 69 |
+| PMMI_CTS | 0x04           /* Clear to Send ... | 70 |
+| PMMI_RXBRK | 0x08           /* RX Break      ... | 71 |
+| PMMI_AP | 0x10           /* Answer Phone  ... | 72 |
+| PMMI_FO | 0x20           /* Digital Carrie... | 73 |
+| PMMI_MODE | 0x40           /* Mode          ... | 74 |
+| PMMI_TMR | 0x80           /* Timer Pulses  ... | 75 |
+| PMMI_ST | 0x10           /* Self Test     ... | 77 |
+| PMMI_DTR | 0x40           /* DTR           ... | 78 |
+| PMMI_SH | 0x01           /* Switch Hook   ... | 80 |
+| PMMI_RI | 0x02           /* Ring Indicator... | 81 |
+| PMMI_5BIT | 0x00           /* 5 Data Bits   ... | 82 |
+| PMMI_6BIT | 0x04           /* 6 Data Bits   ... | 83 |
+| PMMI_7BIT | 0x08           /* 7 Data Bits   ... | 84 |
+| PMMI_8BIT | 0x0C           /* 8 Data Bits   ... | 85 |
+| PMMI_BMSK | 0x0C           /* Data Bits Bit ... | 86 |
+| PMMI_OPAR | 0x00           /* Odd Parity    ... | 88 |
+| PMMI_NPAR | 0x10           /* No Parity     ... | 89 |
+| PMMI_EPAR | 0x20           /* Odd Parity    ... | 90 |
+| PMMI_PMSK | 0x30           /* Parity Bit Mas... | 91 |
+| PMMI_1SB | 0x00           /* 1 Stop Bit    ... | 93 |
+| PMMI_15SB | 0x40           /* 1.5 Stop Bits ... | 94 |
+| PMMI_2SB | 0x40           /* 2 Stop Bits   ... | 95 |
+| PMMI_SMSK | 0x40           /* Stop Bits Bit ... | 96 |
+| PMMI_CLOCK | 2500           /* Rate Generator... | 98 |
+| PMMI_BAUD | 300            /* Default baud r... | 99 |
+| STATUS_MSG | (1 << 0) | 102 |
+| ERROR_MSG | (1 << 1) | 103 |
+| VERBOSE_MSG | (1 << 2) | 104 |
+| IO_RD | 0x00            /* IO Read  */ | 107 |
+| IO_WR | 0x01            /* IO Write */ | 108 |
+| UNIT_V_PMMI_RTS | (UNIT_V_UF + 0)     /* RTS follo... | 177 |
+| UNIT_PMMI_RTS | (1 << UNIT_V_PMMI_RTS) | 178 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pmmi_description | 253-257 |  |
+| pmmi_reset | 258-296 |  |
+| pmmi_svc | 297-439 |  |
+| pmmi_attach | 440-464 | Attach routine |
+| pmmi_detach | 465-479 | Detach routine |
+| pmmi_set_baud | 480-500 |  |
+| pmmi_show_baud | 501-509 |  |
+| pmmi_config_line | 510-572 |  |
+| pmmi_io | 573-606 |  |
+| pmmi_reg0 | 607-636 |  |
+| pmmi_reg1 | 637-654 |  |
+| pmmi_reg2 | 655-680 |  |
+| pmmi_reg3 | 681-705 |  |

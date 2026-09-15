@@ -1,0 +1,57 @@
+=== 3b2_stddev.c — 814 строк ===
+Источник: 3b2_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_stddev.c -nt .cline/maps/3b2_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| NVRAM | 56 | |
+| tod_enabled | 260 | |
+| tmr_poll | 262 | |
+| tmxr_poll | 263 | |
+| flt | 717 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TOD_12H(TD) | (((TD)->clkset & 1) == 0) | 236 |
+| TOD_BCDH(V) | (((V) / 10) & 0xf) | 237 |
+| TOD_BCDL(V) | (((V) % 10) & 0xf) | 238 |
+| TOD_LYEAR(TD) | ((TD)->lyear == 0) | 239 |
+| TOD_LYEAR_INC(TD) |  | 240 |
+| CTRL_DISABLE | 0x4 | 247 |
+| CLKSET_PM | 0x2 | 248 |
+| FLAG_DATA_CHANGED | 0x4 | 249 |
+| FLAG_INTERRUPT | 0x1 | 250 |
+| MIN_DIFF | 5l | 251 |
+| MAX_DIFF | 157680000l | 252 |
+| CLK_DELAY | 10000   /* 10 milliseconds per t... | 254 |
+| CLK_TPS | 100l    /* 100 ticks per second */ | 255 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| nvram_ex | 77-93 |  |
+| nvram_dep | 94-110 |  |
+| nvram_reset | 111-125 |  |
+| nvram_description | 126-130 |  |
+| nvram_help | 131-143 |  |
+| nvram_attach | 144-163 |  |
+| nvram_detach | 164-176 |  |
+| nvram_read | 177-201 |  |
+| nvram_write | 202-292 |  |
+| tod_resync | 293-320 | previous time was recorded. |
+| tod_reset | 321-342 |  |
+| tod_attach | 343-359 |  |
+| tod_detach | 360-372 |  |
+| tod_svc | 373-405 |  |
+| tod_tick | 406-485 | logic the chip uses. |
+| tod_read | 486-558 |  |
+| tod_write | 559-646 |  |
+| tod_description | 647-655 |  |
+| tod_help | 656-741 |  |
+| mem_size | 742-764 | Return the configured memory size for a given backplane location. |
+| flt_read | 765-789 |  |
+| flt_write | 790-798 |  |
+| flt_help | 799-808 |  |
+| flt_description | 809-814 |  |

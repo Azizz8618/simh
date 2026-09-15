@@ -1,0 +1,101 @@
+=== linc_cpu.c — 1068 строк ===
+Источник: linc_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test linc_cpu.c -nt .cline/maps/linc_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| HISTORY | 65-72 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| LSW | 52 | |
+| SAM | 53 | |
+| XL | 54 | |
+| paused | 55 | |
+| IBZ | 56 | |
+| OVF | 57 | |
+| INTREQ | 58 | |
+| ENI | 59 | |
+| PINFF | 60 | |
+| DO | 61 | |
+| stop_reason | 63 | |
+| history | 73 | |
+| history_i | 74 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_CPU | 0001 | 31 |
+| DBG_INT | 0002 | 32 |
+| INSN_ENI | 00010 | 34 |
+| INSN_NOP | 00016 | 35 |
+| INSN_OPR | 00500 | 36 |
+| INSN_MTP | 00700 | 37 |
+| INSN_JMP | 06000 | 38 |
+| X(_X) | ((_X) & XMASK) | 40 |
+| C03 | (C & BMASK) | 41 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_ndxp | 142-147 |  |
+| cpu_ndxc | 148-152 |  |
+| cpu_set_S | 153-157 |  |
+| cpu_set_B | 158-162 |  |
+| cpu_4ndxb | 163-167 |  |
+| cpu_4ndxa | 168-172 |  |
+| cpu_mem_read | 173-180 |  |
+| cpu_mem_modify | 181-187 |  |
+| cpu_mem_write | 188-193 |  |
+| cpu_insn_addr | 194-201 |  |
+| cpu_insn_read | 202-207 |  |
+| cpu_fetch | 208-213 |  |
+| cpu_halfword | 214-225 |  |
+| cpu_index | 226-240 |  |
+| cpu_indexing | 241-258 |  |
+| cpu_misc | 259-297 |  |
+| cpu_set | 298-308 |  |
+| cpu_sam | 309-320 |  |
+| cpu_dis | 321-329 |  |
+| cpu_xsk | 330-337 |  |
+| cpu_rol | 338-352 |  |
+| cpu_ror | 353-369 |  |
+| cpu_scr | 370-381 |  |
+| cpu_skip | 382-428 |  |
+| cpu_opr | 429-448 |  |
+| cpu_lmb | 449-454 |  |
+| cpu_umb | 455-460 |  |
+| cpu_tape | 461-466 |  |
+| cpu_lda | 467-472 |  |
+| cpu_sta | 473-480 |  |
+| cpu_ada | 481-490 |  |
+| cpu_adm | 491-497 |  |
+| cpu_lam | 498-511 |  |
+| cpu_mul | 512-541 |  |
+| cpu_ldh | 542-549 |  |
+| cpu_sth | 550-559 |  |
+| cpu_shd | 560-567 |  |
+| cpu_sae | 568-573 |  |
+| cpu_sro | 574-581 |  |
+| cpu_bcl | 582-587 |  |
+| cpu_bse | 588-593 |  |
+| cpu_bco | 594-599 |  |
+| cpu_dsc | 600-623 |  |
+| cpu_add | 624-629 |  |
+| cpu_stc | 630-637 |  |
+| cpu_jmp | 638-649 |  |
+| cpu_insn | 650-787 |  |
+| cpu_do | 788-811 |  |
+| jmp_or_eni | 812-816 |  |
+| mtp_or_opr | 817-821 |  |
+| cpu_interrupt | 822-878 |  |
+| sim_instr | 879-929 |  |
+| cpu_ex | 930-939 |  |
+| cpu_dep | 940-948 |  |
+| cpu_set_hist | 949-971 |  |
+| cpu_show_hist | 972-1004 |  |
+| cpu_reset | 1005-1012 |  |
+| linc_boot | 1013-1059 |  |
+| linc_do | 1060-1068 |  |

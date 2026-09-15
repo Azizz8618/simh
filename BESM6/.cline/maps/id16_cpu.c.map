@@ -1,0 +1,131 @@
+=== id16_cpu.c — 2043 строк ===
+Источник: id16_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test id16_cpu.c -nt .cline/maps/id16_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 167-175 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dib | 448 | |
+| cc | 551 | |
+| reason | 552 | |
+| reason | 591 | |
+| PC | 1489 | |
+| reason | 1491 | |
+| qevent | 1502 | |
+| CC_MASK | 1512 | |
+| cc | 1541 | |
+| slt | 1548 | |
+| slt | 1577 | |
+| ba | 1613 | |
+| sysqe | 1614 | |
+| rpt | 1615 | |
+| cc | 1712 | |
+| pa | 1789 | |
+| val | 1808 | |
+| return | 1812 | |
+| return | 1821 | |
+| pa | 1826 | |
+| return | 1842 | |
+| val | 1852 | |
+| return | 1856 | |
+| return | 1867 | |
+| drmod | 1877 | |
+| SCPE_IERR | 1887 | |
+| SCPE_OK | 1888 | |
+| SCPE_OK | 1904 | |
+| SCPE_OK | 1919 | |
+| mc | 1926 | |
+| MEMSIZE | 1936 | |
+| SCPE_OK | 1939 | |
+| SCPE_OK | 1954 | |
+| SCPE_OK | 1965 | |
+| hst_p | 1986 | |
+| SCPE_OK | 1998 | |
+| op | 2005 | |
+| sim_eval | 2007 | |
+| lnt | 2018 | |
+| SCPE_OK | 2042 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 146 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 147 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 148 |
+| VAMASK | VAMASK16 | 149 |
+| VA_S1 | 0x8000                          ... | 150 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 0)                 ... | 152 |
+| UNIT_V_ID4 | (UNIT_V_UF + 1) | 153 |
+| UNIT_V_716 | (UNIT_V_UF + 2) | 154 |
+| UNIT_V_816 | (UNIT_V_UF + 3) | 155 |
+| UNIT_V_816E | (UNIT_V_UF + 4) | 156 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 157 |
+| UNIT_ID4 | (1 << UNIT_V_ID4) | 158 |
+| UNIT_716 | (1 << UNIT_V_716) | 159 |
+| UNIT_816 | (1 << UNIT_V_816) | 160 |
+| UNIT_816E | (1 << UNIT_V_816E) | 161 |
+| UNIT_TYPE | (UNIT_ID4 \| UNIT_716 \| UNIT_816 ... | 162 |
+| HIST_MIN | 64 | 164 |
+| HIST_MAX | 65536 | 165 |
+| PSW_GETMAP(x) | (((x) >> PSW_V_MAP) & PSW_M_MAP) | 177 |
+| SEXT16(x) | (((x) & SIGN16)? ((int32) ((x) \|... | 178 |
+| CC_GL_16(x) | if ((x) & SIGN16)  | 180 |
+| CC_GL_32(x) | if ((x) & SIGN32)  | 185 |
+| BUILD_PSW(x) | (((PSW & ~CC_MASK) \| (x)) & psw_... | 190 |
+| CPU_x16 | (cpu_unit.flags & (UNIT_716 \| UN... | 191 |
+| CCW16_ERR(x) | (((x)\|CCW16_INIT\|CCW16_NOP\|CCW16... | 1608 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 549-558 |  |
+| if | 559-564 |  |
+| if | 565-570 |  |
+| if | 571-576 |  |
+| if | 577-594 |  |
+| while | 595-1495 |  |
+| newPSW | 1496-1502 |  |
+| if | 1503-1516 |  |
+| swap_psw | 1517-1529 |  |
+| testsysq | 1530-1534 |  |
+| if | 1535-1545 |  |
+| addtoq | 1546-1556 |  |
+| if | 1557-1574 |  |
+| remfmq | 1575-1585 |  |
+| if | 1586-1610 |  |
+| int_auto | 1611-1716 |  |
+| display | 1717-1720 |  |
+| switch | 1721-1772 |  |
+| ReadB | 1773-1779 |  |
+| ReadH | 1780-1786 |  |
+| ReadF | 1787-1792 |  |
+| if | 1793-1803 |  |
+| WriteB | 1804-1814 |  |
+| WriteH | 1815-1823 |  |
+| WriteF | 1824-1829 |  |
+| if | 1830-1844 |  |
+| IOReadB | 1845-1849 |  |
+| IOWriteB | 1850-1858 |  |
+| IOReadH | 1859-1863 |  |
+| IOWriteH | 1864-1871 |  |
+| cpu_reset | 1872-1892 |  |
+| cpu_ex | 1893-1894 |  |
+| if | 1895-1908 |  |
+| cpu_dep | 1909-1910 |  |
+| if | 1911-1923 |  |
+| cpu_set_size | 1924-1943 |  |
+| cpu_set_model | 1944-1947 |  |
+| if | 1948-1958 |  |
+| cpu_set_consint | 1959-1969 |  |
+| cpu_set_hist | 1970-1974 |  |
+| if | 1975-1986 |  |
+| if | 1987-1991 |  |
+| if | 1992-2002 |  |
+| cpu_show_hist | 2003-2012 |  |
+| if | 2013-2022 |  |
+| for | 2023-2043 |  |

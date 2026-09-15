@@ -1,0 +1,66 @@
+=== tt2500_cpu.c — 712 строк ===
+Источник: tt2500_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test tt2500_cpu.c -nt .cline/maps/tt2500_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| HISTORY | 54-61 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PC | 41 | |
+| IR | 42 | |
+| ROM | 43 | |
+| IM | 45 | |
+| STACK | 46 | |
+| SP | 47 | |
+| RES | 49 | |
+| new_XR | 50 | |
+| halt | 52 | |
+| history | 62 | |
+| history_i | 63 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_CPU | 0001 | 34 |
+| DBG_FET | 0002 | 35 |
+| DBG_EXE | 0004 | 36 |
+| DBG_STATE | 0010 | 37 |
+| DBG_INT | 0020 | 38 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| crm_read | 136-144 |  |
+| bus_read | 145-155 |  |
+| cpu_rot | 156-160 |  |
+| cpu_ars | 161-168 |  |
+| cpu_alu | 169-214 |  |
+| mem_read | 215-222 |  |
+| mem_write | 223-230 |  |
+| cpu_reg_op | 231-313 |  |
+| cpu_jump | 314-323 |  |
+| cpu_dis | 324-350 |  |
+| cpu_popj | 351-357 |  |
+| bus_write | 358-377 |  |
+| cpu_bus | 378-408 |  |
+| cpu_branch | 409-435 |  |
+| cpu_fetch | 436-450 |  |
+| cpu_update | 451-463 |  |
+| cpu_execute | 464-502 |  |
+| cpu_insn | 503-515 |  |
+| sim_instr | 516-549 |  |
+| cpu_set_hist | 550-572 |  |
+| cpu_show_hist | 573-601 |  |
+| cpu_ex | 602-619 |  |
+| cpu_dep | 620-633 |  |
+| cpu_is_pc_a_subroutine_call | 634-647 |  |
+| cpu_reset | 648-664 |  |
+| flag_name | 665-678 |  |
+| flag_on | 679-688 |  |
+| flag_off | 689-702 |  |
+| cpu_get_switches | 703-708 |  |
+| cpu_set_switches | 709-712 |  |

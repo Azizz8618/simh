@@ -1,0 +1,47 @@
+=== altair_cpu.c — 1187 строк ===
+Источник: altair_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test altair_cpu.c -nt .cline/maps/altair_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| saved_PC | 841 | |
+| reason | 842 | |
+| saved_PC | 1142 | |
+| int_req | 1143 | |
+| SCPE_OK | 1145 | |
+| SCPE_OK | 1154 | |
+| mc | 1168 | |
+| MEMSIZE | 1176 | |
+| SCPE_OK | 1178 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_OPSTOP | (UNIT_V_UF)                     ... | 85 |
+| UNIT_OPSTOP | (1 << UNIT_V_OPSTOP) | 86 |
+| UNIT_V_CHIP | (UNIT_V_UF+1)                   ... | 87 |
+| UNIT_CHIP | (1 << UNIT_V_CHIP) | 88 |
+| UNIT_V_MSIZE | (UNIT_V_UF+2)                   ... | 89 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 90 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 301-845 |  |
+| cond | 846-882 | Test an 8080 flag condition and return 1 if true, 0 if false |
+| setarith | 883-912 |  |
+| setlogical | 913-932 |  |
+| parity | 933-952 |  |
+| setinc | 953-974 |  |
+| getreg | 975-1000 | Get an 8080 register and return it |
+| putreg | 1001-1038 | Put a value into an 8080 register from memory |
+| getpair | 1039-1057 | Return the value of a selected register pair |
+| getpush | 1058-1086 |  |
+| putpush | 1087-1114 |  |
+| putpair | 1115-1137 | Put a value into an 8080 register pair |
+| cpu_reset | 1138-1149 |  |
+| cpu_ex | 1150-1158 |  |
+| cpu_dep | 1159-1165 |  |
+| cpu_set_size | 1166-1180 |  |
+| nulldev | 1181-1187 |  |

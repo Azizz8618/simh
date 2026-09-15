@@ -1,0 +1,62 @@
+=== hp3000_cpu_fp.c — 892 строк ===
+Источник: hp3000_cpu_fp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_cpu_fp.c -nt .cline/maps/hp3000_cpu_fp.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| FPU | 142-147 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| left | 214 | |
+| result_op | 215 | |
+| trap | 216 | |
+| unpacked | 311 | |
+| word | 312 | |
+| packed | 421 | |
+| integer | 422 | |
+| magnitude | 528 | |
+| ah | 673 | |
+| hh | 674 | |
+| bh | 780 | |
+| c1 | 781 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| EXPONENT_BIAS | 256                 /* the expon... | 111 |
+| MIN_EXPONENT | -256                /* the small... | 113 |
+| MAX_EXPONENT | +255                /* the large... | 114 |
+| EXPONENT_MASK | 0077700u            /* the mask ... | 116 |
+| MANTISSA_MASK | 0000077u            /* the mask ... | 117 |
+| EXPONENT_SHIFT | 6                   /* the expon... | 119 |
+| MANTISSA_SHIFT | 0                   /* the manti... | 120 |
+| UNPACKED_BITS | 54                  /* the numbe... | 122 |
+| IMPLIED_BIT | ((t_uint64) 1uL << UNPACKED_BITS... | 124 |
+| CARRY_BIT | ((t_uint64) 1uL << UNPACKED_BITS... | 125 |
+| DELTA_ALIGNMENT | (D64_WIDTH - UNPACKED_BITS)     ... | 127 |
+| MANTISSA(w) | ((t_uint64) (((w) & MANTISSA_MAS... | 132 |
+| EXPONENT(w) | ((int32)    (((w) & EXPONENT_MAS... | 133 |
+| TO_EXPONENT(w) | ((w) + EXPONENT_BIAS << EXPONENT... | 135 |
+| DENORMALIZED(m) | (((m) & IMPLIED_BIT) == 0) | 137 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| fp_exec | 212-222 |  |
+| switch | 223-308 |  |
+| unpack | 309-313 |  |
+| switch | 314-418 |  |
+| norm_round_pack | 419-425 |  |
+| if | 426-525 |  |
+| add | 526-597 |  |
+| subtract | 598-670 |  |
+| multiply | 671-675 |  |
+| if | 676-777 |  |
+| divide | 778-782 |  |
+| if | 783-787 |  |
+| if | 788-847 |  |
+| ffloat | 848-873 |  |
+| fix | 874-892 |  |

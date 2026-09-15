@@ -1,0 +1,177 @@
+=== vax43_sysdev.c — 1105 строк ===
+Источник: vax43_sysdev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax43_sysdev.c -nt .cline/maps/vax43_sysdev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| boot_code_filename | 37 | |
+| tmr_int | 79 | |
+| clk_unit | 80 | |
+| tmr_poll | 81 | |
+| vc_sel | 82 | |
+| vc_dev | 83 | |
+| rom | 84 | |
+| int_unmask | 205 | |
+| ma | 234 | |
+| dat | 235 | |
+| ma | 259 | |
+| dat | 260 | |
+| ba | 262 | |
+| bc | 263 | |
+| ma | 284 | |
+| dat | 285 | |
+| ma | 309 | |
+| dat | 310 | |
+| ba | 312 | |
+| bc | 313 | |
+| ba | 361 | |
+| bc | 362 | |
+| ba | 411 | |
+| bc | 412 | |
+| rg | 435 | |
+| ddb | 436 | |
+| rg | 442 | |
+| ddb | 448 | |
+| return | 449 | |
+| return | 459 | |
+| cdg_dat | 466 | |
+| return | 489 | |
+| return | 504 | |
+| mem | 510 | |
+| sc | 511 | |
+| val | 517 | |
+| val | 529 | |
+| val | 601 | |
+| return | 664 | |
+| return | 757 | |
+| return | 777 | |
+| return | 857 | |
+| usecs_remaining | 862 | |
+| cur_tir | 870 | |
+| SCPE_OK | 878 | |
+| tmr_tir | 886 | |
+| p2 | 903 | |
+| in_ie | 914 | |
+| in_ie | 923 | |
+| cc | 924 | |
+| temp | 931 | |
+| gbuf | 958 | |
+| cdptr | 972 | |
+| PC | 975 | |
+| PSL | 976 | |
+| conisp | 977 | |
+| conpc | 978 | |
+| conpsl | 979 | |
+| SCPE_OK | 998 | |
+| ka_mser | 1006 | |
+| ka_mear | 1007 | |
+| ka_cfgtst | 1008 | |
+| tmr_tir | 1013 | |
+| tmr_inst | 1014 | |
+| sim_vm_cmd | 1023 | |
+| SCPE_OK | 1025 | |
+| devices" | 1030 | |
+| SCPE_OK | 1035 | |
+| SCPE_OK | 1040 | |
+| gbuf | 1045 | |
+| SCPE_OK | 1090 | |
+| SCPE_OK | 1096 | |
+| SCPE_OK | 1104 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CFGT_VID | 0x0008                          ... | 51 |
+| CFGT_CUR | 0x0010                          ... | 52 |
+| CFGT_L3C | 0x0020                          ... | 53 |
+| CFGT_V_SIM | 16 | 54 |
+| CFGT_M_SIM | 0xFF | 55 |
+| CFGT_SIM | (CFGT_M_SIM << CFGT_V_SIM)      ... | 56 |
+| MSER_PE | 0x00000001                      ... | 60 |
+| MSER_WWP | 0x00000002                      ... | 61 |
+| MSER_PER | 0x00000040                      ... | 62 |
+| MSER_MCD0 | 0x00000100                      ... | 63 |
+| MSER_MBZ | 0xFFFFFEBC | 64 |
+| MSER_RD | (MSER_PE \| MSER_WWP \| MSER_PER \|  | 65 |
+| MSER_WR | (MSER_PE \| MSER_WWP) | 67 |
+| MSER_RS | (MSER_PER) | 68 |
+| MEAR_FAD | 0x00007FFF                      ... | 72 |
+| MEAR_RD | (MEAR_FAD) | 73 |
+| ROM_VEC | 0x8                             ... | 75 |
+| TMR_INC | 10000                           ... | 77 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eval_int | 169-184 |  |
+| if | 185-192 |  |
+| for | 193-201 |  |
+| get_vector | 202-206 |  |
+| if | 207-210 |  |
+| if | 211-213 |  |
+| for | 214-230 |  |
+| Map_ReadB | 231-236 |  |
+| if | 237-255 |  |
+| Map_ReadW | 256-263 |  |
+| if | 264-280 |  |
+| Map_WriteB | 281-286 |  |
+| if | 287-305 |  |
+| Map_WriteW | 306-313 |  |
+| if | 314-330 |  |
+| ddb_WriteB | 331-334 |  |
+| if | 335-356 |  |
+| ddb_WriteW | 357-362 |  |
+| if | 363-381 |  |
+| ddb_ReadB | 382-385 |  |
+| if | 386-406 |  |
+| ddb_ReadW | 407-412 |  |
+| if | 413-431 |  |
+| ddb_rd | 432-438 |  |
+| ddb_wr | 439-442 |  |
+| if | 443-451 |  |
+| sesr_rd | 452-456 |  |
+| sesr_wr | 457-461 |  |
+| cdg_rd | 462-468 |  |
+| cdg_wr | 469-472 |  |
+| if | 473-481 |  |
+| ctg_rd | 482-486 |  |
+| ctg_wr | 487-491 |  |
+| diag_rd | 492-496 |  |
+| diag_wr | 497-506 |  |
+| cfg_rd | 507-512 |  |
+| for | 513-519 |  |
+| ioreset_wr | 520-526 |  |
+| ReadIPR | 527-530 |  |
+| switch | 531-605 |  |
+| WriteIPR | 606-607 |  |
+| switch | 608-711 |  |
+| ReadReg | 712-715 |  |
+| for | 716-731 |  |
+| ReadRegU | 732-746 |  |
+| WriteReg | 747-750 |  |
+| for | 751-769 |  |
+| WriteRegU | 770-781 |  |
+| ka_rd | 782-785 |  |
+| switch | 786-809 |  |
+| ka_wr | 810-813 |  |
+| switch | 814-859 |  |
+| tmr_tir_rd | 860-874 |  |
+| tmr_svc | 875-882 |  |
+| tmr_sched | 883-900 |  |
+| machine_check | 901-904 |  |
+| if | 905-928 |  |
+| con_halt | 929-955 |  |
+| vax43a_boot | 956-968 |  |
+| cpu_boot | 969-981 |  |
+| if | 982-988 |  |
+| for | 989-1002 |  |
+| sysd_reset | 1003-1027 |  |
+| sysd_description | 1028-1032 |  |
+| auto_config | 1033-1037 |  |
+| build_dib_tab | 1038-1042 |  |
+| cpu_set_model | 1043-1061 |  |
+| if | 1062-1074 |  |
+| if | 1075-1092 |  |
+| cpu_print_model | 1093-1098 |  |
+| cpu_model_help | 1099-1105 |  |

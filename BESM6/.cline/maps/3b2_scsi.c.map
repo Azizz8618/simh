@@ -1,0 +1,49 @@
+=== 3b2_scsi.c — 1411 строк ===
+Источник: 3b2_scsi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_scsi.c -nt .cline/maps/3b2_scsi.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ha_state | 52 | |
+| ha_bus | 53 | |
+| ha_buf | 54 | |
+| ha_subdev_cnt | 56 | |
+| ha_crc | 57 | |
+| cq_offset | 58 | |
+| ha_conf | 59 | |
+| cio_unit | 73 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DIAG_CRC_1 | 0x271b114c | 40 |
+| PUMP_CRC | 0x201b3617 | 41 |
+| HA_SCSI_ID | 0 | 43 |
+| HA_MAXFR | (1u << 16) | 44 |
+| SCSI_U_FLAGS | (UNIT_FIX+UNIT_ATTABLE+UNIT_DISA... | 71 |
+| HA_TRACE | 1 | 87 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ha_cio_reset | 130-137 |  |
+| ha_reset | 138-203 |  |
+| ha_calc_subdevs | 204-220 |  |
+| ha_attach | 221-228 |  |
+| ha_detach | 229-236 |  |
+| ha_svc | 237-321 |  |
+| ha_sysgen | 322-362 |  |
+| ha_fast_queue_check | 363-385 |  |
+| ha_express | 386-403 |  |
+| ha_full | 404-423 |  |
+| ha_boot_disk | 424-477 |  |
+| ha_boot_tape | 478-525 |  |
+| ha_read_block_tape | 526-562 |  |
+| ha_read_block_disk | 563-593 |  |
+| ha_write_block_disk | 594-620 |  |
+| ha_build_req | 621-743 |  |
+| ha_cmd_prep | 744-766 |  |
+| ha_cmd | 767-1167 |  |
+| ha_ctrl | 1168-1384 | Handle a raw SCSI control message. |
+| ha_fcm_express | 1385-1411 |  |

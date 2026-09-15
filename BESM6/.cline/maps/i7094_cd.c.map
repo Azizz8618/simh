@@ -1,0 +1,75 @@
+=== i7094_cd.c — 506 строк ===
+Источник: i7094_cd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7094_cd.c -nt .cline/maps/i7094_cd.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cdr_tstop | 65 | |
+| cdr_tleft | 66 | |
+| cdr_tright | 67 | |
+| cdp_tstop | 73 | |
+| cdp_tleft | 74 | |
+| cdp_tright | 75 | |
+| cdp_chob | 76 | |
+| cdp_chob_v | 77 | |
+| cdr_dib | 101 | |
+| cdp_dib | 139 | |
+| SCPE_OK | 197 | |
+| dat | 206 | |
+| SCPE_OK | 265 | |
+| SCPE_OK | 279 | |
+| PC | 302 | |
+| SCPE_OK | 303 | |
+| SCPE_OK | 323 | |
+| SCPE_OK | 354 | |
+| SCPE_IERR | 371 | |
+| SCPE_OK | 411 | |
+| pch | 419 | |
+| dat | 421 | |
+| pch | 427 | |
+| SCPE_OK | 461 | |
+| cdp_chob | 474 | |
+| cdp_chob_v | 475 | |
+| SCPE_OK | 477 | |
+| bcd | 499 | |
+| bcd | 505 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CD_BINLNT | 24                      /* bin b... | 50 |
+| CD_CHRLNT | 80                      /* char ... | 51 |
+| CDS_INIT | 0                       /* card ... | 53 |
+| CDS_DATA | 1                       /* data ... | 54 |
+| CDS_END | 2                       /* card ... | 55 |
+| UNIT_V_CBN | (UNIT_V_UF + 0)         /* colum... | 57 |
+| UNIT_V_PCA | (UNIT_V_UF + 1)         /* A vs ... | 58 |
+| UNIT_CBN | (1 << UNIT_V_CBN) | 59 |
+| UNIT_PCA | (1 << UNIT_V_PCA) | 60 |
+| BOOT_START | 01000 | 284 |
+| BOOT_SIZE | (sizeof (boot_rom) / sizeof (t_u... | 285 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cdr_chsel | 177-181 |  |
+| switch | 182-201 |  |
+| cdr_svc | 202-209 |  |
+| switch | 210-269 |  |
+| cdr_reset | 270-294 |  |
+| cdr_boot | 295-307 |  |
+| cd_attach | 308-327 |  |
+| cd_set_mode | 328-334 |  |
+| cdp_chsel | 335-339 |  |
+| switch | 340-358 |  |
+| cdp_chwr | 359-362 |  |
+| if | 363-375 |  |
+| cdp_svc | 376-379 |  |
+| switch | 380-415 |  |
+| cdp_card_end | 416-429 |  |
+| for | 430-451 |  |
+| if | 452-465 |  |
+| cdp_reset | 466-495 |  |
+| colbin_to_bcd | 496-500 |  |
+| for | 501-506 |  |

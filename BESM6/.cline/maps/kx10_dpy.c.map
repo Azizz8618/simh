@@ -1,0 +1,119 @@
+=== kx10_dpy.c — 809 строк ===
+Источник: kx10_dpy.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_dpy.c -nt .cline/maps/kx10_dpy.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| joy_axes | 349 | |
+| joy_buttons | 350 | |
+| dev420_cono | 469 | |
+| cscope_r | 470 | |
+| cscope_g | 471 | |
+| cscope_b | 472 | |
+| cscope_display | 473 | |
+| fade | 474 | |
+| dot | 475 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_DPY | 0 | 115 |
+| DPY_DEVNUM | 0130 | 122 |
+| FULLSCREEN | (1 << (UNIT_V_UF)) | 124 |
+| RRZ(W) | ((W) & RMASK) | 126 |
+| XWD(L,R) | ((((uint64)(L))<<18)\|((uint64)(R))) | 127 |
+| DPY_CYCLE_US | 50 | 139 |
+| INT_COUNT | (100/DPY_CYCLE_US) | 145 |
+| STAT_REG | u3 | 147 |
+| INT_COUNTDOWN | u4 | 148 |
+| XPOS | us9             /* from LP hit */ | 149 |
+| YPOS | us10            /* from LP hit */ | 150 |
+| STAT_VALID | 01000000        /* internal: inv... | 153 |
+| CONO_MASK | 0000077         /* bits changed ... | 157 |
+| CONI_MASK | 0007677         /* bits read by ... | 158 |
+| CONI_INT_SPEC | 0007400         /* I- "special c... | 160 |
+| CONI_INT_VE | 0004000         /* I- b24: VER E... | 161 |
+| CONI_INT_LP | 0002000         /* I- b25: LIGHT... | 162 |
+| CONI_INT_HE | 0001000         /* I- b26: HOR E... | 163 |
+| CONI_INT_SI | 0000400         /* I- b27: STOP ... | 164 |
+| CONI_INT_DONE | 0000200         /* I- b28: done ... | 165 |
+| CONO_RESUME | 0000200         /* -O b28: resum... | 166 |
+| CONO_INIT | 0000100         /* -O b29: init ... | 167 |
+| CONX_SC | 0000070         /* IO special ch... | 168 |
+| CONX_DC | 0000007         /* IO data chann... | 169 |
+| CONX_SC_SHIFT | 3 | 171 |
+| CONX_DC_SHIFT | 0 | 172 |
+| UPTR(UNIT) | (dpy_unit+(UNIT)) | 191 |
+| JOY_MAX_UNITS | 4 | 345 |
+| JOY_MAX_AXES | 4 | 346 |
+| JOY_MAX_BUTTONS | 4 | 347 |
+| WCNSLS_DEVNUM | 0420 | 459 |
+| UNIT_JOY | (1 << DEV_V_UF)      /* Use USB ... | 461 |
+| UNIT_CSCOPE | (1 << (DEV_V_UF+1))  /* Enable c... | 462 |
+| CONO_BLUE | 0000020  /* Color scope blue ena... | 511 |
+| CONO_SPCWAR | 0000040  /* Spacewar consoles */ | 512 |
+| CONO_GREEN | 0002000  /* Color scope green en... | 513 |
+| CONO_RANDOM | 0004000  /* Random switches */ | 514 |
+| CONO_RED | 0200000  /* Color scope red enab... | 515 |
+| CONO_KNIGHT | 0400000  /* Switches in TK's off... | 516 |
+| CCW | 0400LL                  /* count... | 523 |
+| CW | 0200LL                  /* clock... | 524 |
+| THRUST | 0100LL | 525 |
+| HYPER | 040LL | 526 |
+| FIRE | 020LL | 527 |
+| UR | 0               /* upper right: ... | 530 |
+| LR | 9               /* lower right: ... | 531 |
+| LL | 18              /* lower left: t... | 532 |
+| UL | 27              /* upper left: f... | 533 |
+| JOY_TRIG | 5000 | 535 |
+| JOY0 | (JOY_MAX_AXES*0) | 536 |
+| JOY1 | (JOY_MAX_AXES*1) | 537 |
+| JOY2 | (JOY_MAX_AXES*2) | 538 |
+| JOY3 | (JOY_MAX_AXES*3) | 539 |
+| BUT0 | (JOY_MAX_BUTTONS*0) | 540 |
+| BUT1 | (JOY_MAX_BUTTONS*1) | 541 |
+| BUT2 | (JOY_MAX_BUTTONS*2) | 542 |
+| BUT3 | (JOY_MAX_BUTTONS*3) | 543 |
+| DEBUGSW(X) | (void)0 | 632 |
+| DEBUGSW(X) | printf X | 634 |
+| SWSW(UC, | LC, BIT, POS36, FUNC36)  | 637 |
+| OCNSLS_DEVNUM | 0724 | 726 |
+| OHYPER | 0004LL          /* Hyperspace. */ | 751 |
+| OFIRE | 0010LL          /* Fire torpedo. */ | 752 |
+| OCW | 0020LL          /* Turn clockwis... | 753 |
+| OCCW | 0040LL          /* Turn counter ... | 754 |
+| SLOW | 0100LL          /* Weak thrust. */ | 755 |
+| FAST | 0200LL          /* Strong thrust... | 756 |
+| BEACON | 020000LL        /* Aiming beacon... | 757 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dpy_description | 210-215 |  |
+| dpy_set_int_done | 216-221 | until it's done just one place! |
+| check_interrupt | 222-235 | update interrupt request |
+| dpy_update_status | 236-253 | return true if display not stopped |
+| dpy_devio | 254-330 |  |
+| dpy_svc | 331-351 | Timer service - |
+| dpy_joy_motion | 352-358 |  |
+| dpy_joy_button | 359-366 |  |
+| dpy_keyboard | 367-380 |  |
+| dpy_reset | 381-407 |  |
+| ty340_fetch | 408-414 |  |
+| ty340_store | 415-419 |  |
+| ty340_lp_int | 420-431 |  |
+| ty340_rfd | 432-439 |  |
+| cpu_get_switches | 440-447 |  |
+| cpu_set_switches | 448-504 |  |
+| wcnsls_description | 505-545 |  |
+| cscope_init | 546-554 |  |
+| cscope_plot | 555-575 |  |
+| joystick_switches | 576-626 |  |
+| keyboard_switches | 627-652 |  |
+| wcnsls_svc | 653-661 |  |
+| wcnsls_reset | 662-685 |  |
+| wcnsls_devio | 686-745 |  |
+| ocnsls_description | 746-758 |  |
+| old_switches | 759-795 |  |
+| ocnsls_devio | 796-809 |  |

@@ -1,0 +1,54 @@
+=== i7080_chan.c — 1264 строк ===
+Источник: i7080_chan.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7080_chan.c -nt .cline/maps/i7080_chan.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| iotraps | 56 | |
+| iocheck | 57 | |
+| cpu_unit | 58 | |
+| IC | 59 | |
+| AC | 60 | |
+| chwait | 61 | |
+| selreg | 62 | |
+| selreg2 | 63 | |
+| flags | 64 | |
+| MAC2 | 65 | |
+| irqflags | 66 | |
+| ioflags | 67 | |
+| inquiry | 98 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_MOD | (UNIT_V_UF + 4) | 69 |
+| UNIT_V_HS | (UNIT_V_MOD + 1) | 70 |
+| CHAN_MOD | (1 << UNIT_V_MOD) | 71 |
+| CHAN_HS | (1 << UNIT_V_HS) | 72 |
+| READ_WRD | 1 | 101 |
+| WRITE_WRD | 2 | 102 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| set_chan_type | 178-186 |  |
+| chan_reset | 187-201 |  |
+| chan_mapdev | 202-236 |  |
+| chan_boot | 237-255 |  |
+| chan_issue_cmd | 256-311 |  |
+| chan_decr_reccnt | 312-348 |  |
+| chan_zero_reccnt | 349-361 | Return true if record count is zero |
+| chan_next_addr | 362-385 | Return next channel data address, advance address by 5 if channel |
+| chan_proc | 386-762 |  |
+| chan_set_attn_inq | 763-766 |  |
+| chan_clear_attn_inq | 767-773 |  |
+| chan_cmd | 774-980 |  |
+| chan_chr_13 | 981-1012 |  |
+| chan_write | 1013-1021 |  |
+| chan_read | 1022-1030 |  |
+| chan_write_char | 1031-1123 |  |
+| chan_read_char | 1124-1233 |  |
+| chan9_set_error | 1234-1241 |  |
+| chan_help | 1242-1258 |  |
+| chan_description | 1259-1264 |  |

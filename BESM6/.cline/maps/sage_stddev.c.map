@@ -1,0 +1,37 @@
+=== sage_stddev.c — 637 строк ===
+Источник: sage_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sage_stddev.c -nt .cline/maps/sage_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sagepic_dev | 62 | |
+| sagedip_dev | 173 | |
+| u21 | 284 | |
+| sagetimer1_dev | 425 | |
+| sagetimer2_dev | 426 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sagepic_reset | 98-106 |  |
+| sage_raiseint | 107-216 |  |
+| sagedip_reset | 217-228 |  |
+| set_gr | 229-247 |  |
+| set_groupa | 248-252 |  |
+| set_groupb | 253-257 |  |
+| show_gr | 258-266 |  |
+| show_groupa | 267-271 |  |
+| show_groupb | 272-276 |  |
+| u22_reset | 277-285 |  |
+| u22_calla | 286-294 |  |
+| u22_callb | 295-304 |  |
+| u22_callc | 305-344 | callback handler for FDC bits |
+| u22_ckmode | 345-494 |  |
+| timer1_svc | 495-522 |  |
+| u75_ckmode | 523-528 |  |
+| u75_call0 | 529-582 |  |
+| sagetimer2_reset | 583-591 |  |
+| u74_ckmode | 592-597 |  |
+| u74_call1 | 598-612 |  |
+| timer2_svc | 613-637 |  |

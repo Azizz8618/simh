@@ -1,0 +1,21 @@
+=== sim_frontpanel.h — 647 строк ===
+Источник: sim_frontpanel.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_frontpanel.h -nt .cline/maps/sim_frontpanel.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| OperationalState | 82-595 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SIM_FRONTPANEL_H_ | 0 | 49 |
+| SIM_FRONTPANEL_VERSION | 15 | 59 |
+| DBG_XMT | 1   /* Transmit Data */ | 625 |
+| DBG_RCV | 2   /* Receive Data */ | 626 |
+| DBG_REQ | 4   /* Request Data */ | 627 |
+| DBG_RSP | 8   /* Response Data */ | 628 |
+| DBG_THR | 16   /* Thread Activities */ | 629 |
+| DBG_APP | 32   /* Application Activities */ | 630 |
+

@@ -1,0 +1,117 @@
+=== hp2100_dr.c — 1040 строк ===
+Источник: hp2100_dr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_dr.c -nt .cline/maps/hp2100_dr.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 197-200 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| drd_interface | 235 | |
+| drc_interface | 236 | |
+| signal | 466 | |
+| working_set | 467 | |
+| outbound | 468 | |
+| sec | 579 | |
+| signal | 580 | |
+| working_set | 581 | |
+| outbound | 582 | |
+| trk | 676 | |
+| da | 677 | |
+| drc_sta | 688 | |
+| SCPE_OK | 721 | |
+| ptr | 739 | |
+| curword | 759 | |
+| SCPE_OK | 786 | |
+| result | 798 | |
+| count | 818 | |
+| status | 819 | |
+| SCPE_OK | 847 | |
+| SCPE_OK | 855 | |
+| sz | 862 | |
+| szindex | 863 | |
+| uptr->capac | 868 | |
+| SCPE_OK | 874 | |
+| start | 1027 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DR_NUMWD | 64                              ... | 130 |
+| DR_FNUMSC | 90                              ... | 131 |
+| DR_DNUMSC | 32                              ... | 132 |
+| DR_NUMSC | ((drc_unit [0].flags & UNIT_DRUM... | 133 |
+| DR_SIZE | (512 * DR_DNUMSC * DR_NUMWD)    ... | 134 |
+| DR_FTIME | 4                               ... | 135 |
+| DR_DTIME | 6                               ... | 136 |
+| DR_OVRHEAD | 5                               ... | 137 |
+| UNIT_V_PROT | (UNIT_V_UF + 0)                 ... | 138 |
+| UNIT_V_SZ | (UNIT_V_UF + 1)                 ... | 139 |
+| UNIT_M_SZ | 017                             ... | 140 |
+| UNIT_PROT | (1 << UNIT_V_PROT) | 141 |
+| UNIT_SZ | (UNIT_M_SZ << UNIT_V_SZ) | 142 |
+| UNIT_DRUM | (1 << UNIT_V_SZ)                ... | 143 |
+| SZ_180K | 000                             ... | 144 |
+| SZ_360K | 002 | 145 |
+| SZ_720K | 004 | 146 |
+| SZ_1024K | 001                             ... | 147 |
+| SZ_1536K | 003 | 148 |
+| SZ_384K | 005 | 149 |
+| SZ_512K | 007 | 150 |
+| SZ_640K | 011 | 151 |
+| SZ_768K | 013 | 152 |
+| SZ_896K | 015 | 153 |
+| DR_GETSZ(x) | (((x) >> UNIT_V_SZ) & UNIT_M_SZ) | 154 |
+| CW_WR | 0100000                         ... | 158 |
+| CW_V_FTRK | 7                               ... | 159 |
+| CW_M_FTRK | 0177 | 160 |
+| CW_V_DTRK | 5                               ... | 161 |
+| CW_M_DTRK | 01777 | 162 |
+| MAX_TRK | (((drc_unit [0].flags & UNIT_DRU... | 163 |
+| CW_GETTRK(x) | ((drc_unit [0].flags & UNIT_DRUM)?  | 164 |
+| CW_PUTTRK(x) | ((drc_unit [0].flags & UNIT_DRUM)?  | 167 |
+| CW_V_FSEC | 0                               ... | 170 |
+| CW_M_FSEC | 0177 | 171 |
+| CW_V_DSEC | 0                               ... | 172 |
+| CW_M_DSEC | 037 | 173 |
+| CW_GETSEC(x) | ((drc_unit [0].flags & UNIT_DRUM)?  | 174 |
+| CW_PUTSEC(x) | ((drc_unit [0].flags & UNIT_DRUM)?  | 177 |
+| DRS_V_NS | 8                       /* ^next... | 183 |
+| DRS_M_NS | 0177 | 184 |
+| DRS_SEC | 0100000                 /* ^sect... | 185 |
+| DRS_RDY | 0000200                 /* ^read... | 186 |
+| DRS_RIF | 0000100                 /* ^read... | 187 |
+| DRS_SAC | 0000040                 /* secto... | 188 |
+| DRS_ABO | 0000010                 /* abort */ | 189 |
+| DRS_WEN | 0000004                 /* ^writ... | 190 |
+| DRS_PER | 0000002                 /* parit... | 191 |
+| DRS_BSY | 0000001                 /* ^busy */ | 192 |
+| CALC_SCP(x) | (((int32) fmod ((x) / (double) d... | 194 |
+| TMR_ORG | 0                       /* origi... | 281 |
+| TMR_INH | 1                       /* inhib... | 282 |
+| UNIT_FLAGS | (UNIT_FIX \| UNIT_ATTABLE \| UNIT_... | 352 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| drd_interface | 463-469 |  |
+| while | 470-576 |  |
+| drc_interface | 577-583 |  |
+| while | 584-673 |  |
+| drc_svc | 674-679 |  |
+| if | 680-690 |  |
+| if | 691-725 |  |
+| dr_incda | 726-728 |  |
+| if | 729-756 |  |
+| dr_seccntr | 757-769 |  |
+| drc_reset | 770-774 |  |
+| if | 775-795 |  |
+| drc_attach | 796-815 |  |
+| dr_set_prot | 816-825 |  |
+| switch | 826-851 |  |
+| dr_show_prot | 852-859 |  |
+| dr_set_size | 860-1024 |  |
+| drc_boot | 1025-1040 |  |

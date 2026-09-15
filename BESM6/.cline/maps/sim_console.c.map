@@ -1,0 +1,263 @@
+=== sim_console.c — 4537 строк ===
+Источник: sim_console.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_console.c -nt .cline/maps/sim_console.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+|     unsigned int stat2 | 3357-3362 |
+|     unsigned int dev_status | 3364-3367 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_running_under_debugger | 184 | |
+| sigint_message_issued | 188 | |
+| sim_tt_pchar | 190 | |
+| sim_del_char | 194 | |
+| support" | 251 | |
+| sim_con_send | 264 | |
+| sim_con_expect | 265 | |
+| sim_con_console_port | 267 | |
+| sim_con_console_port | 273 | |
+| SCPE_OK | 274 | |
+| sim_con_stable_registers | 277 | |
+| sim_con_stable_registers | 283 | |
+| SCPE_OK | 284 | |
+| SCPE_OK | 302 | |
+| dptr->units | 307 | |
+| cvptr | 417 | |
+| ctptr | 418 | |
+| SCPE_OK | 436 | |
+| gbuf | 443 | |
+| shptr | 444 | |
+| SCPE_OK | 460 | |
+| Facility" | 499 | |
+| cmd_mode | 3369 | |
+| run_mode | 3370 | |
+| status | 3374 | |
+| iosb | 3375 | |
+| run_mode | 3387 | |
+| run_mode.stat2 | 3389 | |
+| SCPE_OK | 3390 | |
+| status | 3395 | |
+| iosb | 3396 | |
+| SCPE_OK | 3404 | |
+| status | 3409 | |
+| iosb | 3410 | |
+| SCPE_OK | 3418 | |
+| SCPE_OK | 3425 | |
+| status | 3443 | |
+| buf | 3444 | |
+| iosb | 3445 | |
+| sense | 3446 | |
+| term | 3448 | |
+| term | 3454 | |
+| response | 3469 | |
+| status | 3482 | |
+| iosb | 3484 | |
+| SCPE_OK | 3491 | |
+| SCPE_NOFNC | 3496 | |
+| std_input | 3509 | |
+| std_output | 3510 | |
+| std_error | 3511 | |
+| std_output_writer | 3512 | |
+| saved_input_mode | 3513 | |
+| saved_output_mode | 3514 | |
+| saved_error_mode | 3515 | |
+| SCPE_OK | 3581 | |
+| SCPE_OK | 3608 | |
+| SCPE_OK | 3629 | |
+| SCPE_OK | 3634 | |
+| Mode | 3639 | |
+| handle | 3640 | |
+| lengthNeeded | 3664 | |
+| StationName | 3665 | |
+| Result | 3666 | |
+| StationName | 3685 | |
+| Result | 3690 | |
+| nkbevents | 3696 | |
+| rec | 3697 | |
+| SCPE_KFLAG | 3733 | |
+| out_ptr | 3745 | |
+| unused | 3749 | |
+| result | 3750 | |
+| out_ptr | 3761 | |
+| SCPE_OK | 3762 | |
+| now | 3769 | |
+| last_bell_time | 3770 | |
+| SCPE_OK | 3809 | |
+| gbuf | 3814 | |
+| runfl | 3865 | |
+| runtchars.t_stopc | 3877 | |
+| runtchars.t_eofc | 3878 | |
+| runtchars.t_brkc | 3879 | |
+| runltchars.t_dsuspc | 3881 | |
+| runltchars.t_rprntc | 3882 | |
+| runltchars.t_flushc | 3883 | |
+| runltchars.t_werasc | 3884 | |
+| runltchars.t_lnextc | 3885 | |
+| SCPE_OK | 3926 | |
+| SCPE_OK | 3941 | |
+| status | 3963 | |
+| buf | 3964 | |
+| SCPE_OK | 3984 | |
+| SCPE_NOFNC | 3989 | |
+| cmdtty | 4005 | |
+| runfl | 4206 | |
+| runtty | 4211 | |
+| runtty.c_cc | 4229 | |
+| runtty.c_cc | 4230 | |
+| runtty.c_cc | 4231 | |
+| runtty.c_cc | 4232 | |
+| runtty.c_cc | 4234 | |
+| runtty.c_cc | 4235 | |
+| runtty.c_cc | 4240 | |
+| runtty.c_cc | 4243 | |
+| runtty.c_cc | 4246 | |
+| runtty.c_cc | 4249 | |
+| runtty.c_cc | 4251 | |
+| runtty.c_cc | 4254 | |
+| SCPE_OK | 4259 | |
+| SCPE_OK | 4303 | |
+| SCPE_OK | 4317 | |
+| status | 4339 | |
+| buf | 4340 | |
+| SCPE_OK | 4360 | |
+| gbuf | 4365 | |
+| command | 4417 | |
+| response | 4418 | |
+| return | 4459 | |
+| SCPE_OK | 4492 | |
+| SCPE_OK | 4515 | |
+| val | 4522 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MIN(a,b) | (((a) <= (b)) ? (a) : (b)) | 142 |
+| KMAP_WRU | 0 | 174 |
+| KMAP_BRK | 1 | 175 |
+| KMAP_DEL | 2 | 176 |
+| KMAP_DBGINT | 3 | 177 |
+| KMAP_MASK | 0377 | 178 |
+| KMAP_NZ | 0400 | 179 |
+| RUNNING_UNDER_GDB | (sim_running_under_debugger && (... | 186 |
+| RUNNING_UNDER_LLDB | (sim_running_under_debugger && (... | 187 |
+| DBG_TRC | TMXR_DBG_TRC                    ... | 215 |
+| DBG_XMT | TMXR_DBG_XMT                    ... | 216 |
+| DBG_RCV | TMXR_DBG_RCV                    ... | 217 |
+| DBG_RET | TMXR_DBG_RET                    ... | 218 |
+| DBG_CON | TMXR_DBG_CON                    ... | 219 |
+| DBG_EXP | 0x00000001                      ... | 220 |
+| DBG_SND | 0x00000002                      ... | 221 |
+| DBG_SET | 0x00000004                      ... | 222 |
+| CMD_WANTSTR | 0100000 | 339 |
+| MAX_REMOTE_SESSIONS | 40                          /* A... | 463 |
+| REM_CON_BASE_UNITS | 2 | 472 |
+| DBG_MOD | 0x00000004                      ... | 476 |
+| DBG_REP | 0x00000008                      ... | 477 |
+| DBG_SAM | 0x00000010                      ... | 478 |
+| DBG_CMD | 0x00000020                      ... | 479 |
+| EFN | 0 | 3353 |
+| RAW_MODE | 0 | 3506 |
+| ENABLE_VIRTUAL_TERMINAL_INPUT | 0x0200 | 3517 |
+| ENABLE_VIRTUAL_TERMINAL_PROCESSING | 0x0004 | 3520 |
+| BELL_CHAR | 7       /* Bell Character */ | 3736 |
+| BELL_INTERVAL_MS | 500     /* No more than 2 Bell C... | 3737 |
+| ESC_CHAR | 033     /* Escape Character */ | 3738 |
+| CSI_CHAR | 0233    /* Control Sequence Intr... | 3739 |
+| NUL_CHAR | 0000    /* NUL character */ | 3740 |
+| ESC_HOLD_USEC_DELAY | 8000    /* Escape hold interval */ | 3741 |
+| ESC_HOLD_MAX | 32      /* Maximum Escape hold b... | 3742 |
+| O_NONBLOCK | O_NDELAY | 3848 |
+| O_NONBLOCK | FNDELAY | 3851 |
+| TCSETATTR_ACTION | TCSAFLUSH | 3997 |
+| TCSETATTR_ACTION | TCSANOW | 3999 |
+| ESCAPE_CHAR | '~' | 4440 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| UDATA | 211-248 |  |
+| sim_con_telnet_description | 249-270 |  |
+| sim_set_noconsole_port | 271-280 |  |
+| sim_set_stable_registers_state | 281-288 |  |
+| sim_con_poll_svc | 289-304 |  |
+| sim_con_reset | 305-312 |  |
+| sim_con_attach | 313-317 |  |
+| sim_con_detach | 318-414 |  |
+| sim_set_console | 415-422 |  |
+| while | 423-440 |  |
+| sim_show_console | 441-446 |  |
+| if | 447-452 |  |
+| while | 453-496 |  |
+| sim_rem_con_description | 497-3371 |  |
+| sim_os_ttinit | 3372-3392 |  |
+| sim_os_ttrun | 3393-3406 |  |
+| sim_os_ttcmd | 3407-3420 |  |
+| sim_os_ttclose | 3421-3427 |  |
+| sim_os_fd_isatty | 3428-3432 |  |
+| sim_os_is_running_under_gui | 3433-3440 |  |
+| sim_os_poll_kbd_data | 3441-3466 |  |
+| sim_os_poll_kbd | 3467-3472 |  |
+| if | 3473-3479 |  |
+| _sim_os_putchar | 3480-3493 |  |
+| sim_os_connect_telnet | 3494-3532 |  |
+| ControlHandler | 3533-3555 |  |
+| sim_os_ttinit | 3556-3583 |  |
+| sim_os_ttrun | 3584-3602 |  |
+| if | 3603-3610 |  |
+| sim_os_ttcmd | 3611-3614 |  |
+| if | 3615-3631 |  |
+| sim_os_ttclose | 3632-3636 |  |
+| sim_os_fd_isatty | 3637-3641 |  |
+| switch | 3642-3660 |  |
+| sim_os_is_running_under_gui | 3661-3679 |  |
+| if | 3680-3692 |  |
+| sim_os_poll_kbd | 3693-3705 |  |
+| while | 3706-3746 |  |
+| sim_console_write | 3747-3757 |  |
+| sim_out_hold_svc | 3758-3766 |  |
+| _sim_os_putchar | 3767-3772 |  |
+| if | 3773-3811 |  |
+| sim_os_connect_telnet | 3812-3819 |  |
+| if | 3820-3826 |  |
+| if | 3827-3831 |  |
+| if | 3832-3859 |  |
+| sim_os_ttinit | 3860-3889 |  |
+| sim_os_ttrun | 3890-3893 |  |
+| if | 3894-3928 |  |
+| sim_os_ttcmd | 3929-3943 |  |
+| sim_os_ttclose | 3944-3948 |  |
+| sim_os_fd_isatty | 3949-3953 |  |
+| sim_os_is_running_under_gui | 3954-3960 |  |
+| sim_os_poll_kbd | 3961-3977 |  |
+| _sim_os_putchar | 3978-3986 |  |
+| sim_os_connect_telnet | 3987-4161 |  |
+| _tmio_debug | 4162-4179 |  |
+| for | 4180-4191 |  |
+| sim_os_ttinit | 4192-4261 |  |
+| sim_os_ttrun | 4262-4276 |  |
+| if | 4277-4305 |  |
+| sim_os_ttcmd | 4306-4319 |  |
+| sim_os_ttclose | 4320-4324 |  |
+| sim_os_fd_isatty | 4325-4329 |  |
+| sim_os_is_running_under_gui | 4330-4336 |  |
+| sim_os_poll_kbd | 4337-4353 |  |
+| _sim_os_putchar | 4354-4362 |  |
+| sim_os_connect_telnet | 4363-4370 |  |
+| if | 4371-4375 |  |
+| if | 4376-4380 |  |
+| if | 4381-4385 |  |
+| if | 4386-4390 |  |
+| if | 4391-4395 |  |
+| if | 4396-4400 |  |
+| if | 4401-4414 |  |
+| sim_check_running_under_debugger | 4415-4422 | Determine if current process is running under a debugger |
+| if | 4423-4441 |  |
+| decode | 4442-4463 |  |
+| sim_set_halt | 4464-4497 |  |
+| sim_set_response | 4498-4519 |  |
+| sim_set_delay | 4520-4528 |  |
+| if | 4529-4537 |  |

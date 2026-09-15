@@ -1,0 +1,69 @@
+=== pdp11_tv.c — 627 строк ===
+Источник: pdp11_tv.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_tv.c -nt .cline/maps/pdp11_tv.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tv_surface | 43 | |
+| tv_palette | 44 | |
+| tv_vptr | 45 | |
+| tv_updated | 46 | |
+| tv_keys | 48 | |
+| COLORD | 50 | |
+| COLORA | 52 | |
+| tv_source | 53 | |
+| tv_display | 54 | |
+| TVINCR | 55 | |
+| TVRADR | 57 | |
+| tvdata | 58 | |
+| TVWC | 59 | |
+| TVDADR | 60 | |
+| TVSHR | 61 | |
+| TVMSK | 62 | |
+| TVDWIN | 63 | |
+| TVRWIN | 64 | |
+| TVCNSL | 65 | |
+| RAM | 68 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TV_WINDOWS | 2 | 37 |
+| TV_WIDTH | 576                    /* Displa... | 38 |
+| TV_HEIGHT | 454                    /* Displa... | 39 |
+| TV_PIXELS | (TV_WIDTH * TV_HEIGHT) /* Total ... | 40 |
+| TV_KEYS | 16                     /* Max ke... | 41 |
+| FB | (16*1024) | 67 |
+| BASE | ((TVSEL & 077) * FB) | 70 |
+| TVINC | 0077  /* Mask for the increment. */ | 77 |
+| TVRCNS | 0077  /* The console number mask... | 80 |
+| TVNSH | 0000  /* No shift write mode. */ | 81 |
+| TVIOR | 0100  /* The inclusive or mode. */ | 82 |
+| TVXOR | 0200  /* The xor mode. */ | 83 |
+| TVMOV | 0300  /* The move function. */ | 84 |
+| TVSHCN | 0017  /* The shift count. */ | 87 |
+| SCROLL | 007777  /* Scroll pointer. */ | 90 |
+| REVSCR | 010000  /* Reverse video. */ | 91 |
+| IOLN_TV | 064 | 93 |
+| DBG_IO | 0001 | 130 |
+| DBG_VID | 0002 | 131 |
+| DBG_KEY | 0004 | 132 |
+| KEY(NORMAL, | SHIFTED) (shifted ? (SHIFTED) : ... | 391 |
+| CTL(NORMAL, | SHIFTED, CTLED)  | 392 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| render_word | 152-176 |  |
+| render_display | 177-189 |  |
+| tv_alu | 190-211 |  |
+| tv_loop | 212-220 |  |
+| tv_rd | 221-297 |  |
+| tv_wr | 298-385 |  |
+| toggle_fullscreen | 386-395 |  |
+| translate_key | 396-541 |  |
+| keyboard_number | 542-551 |  |
+| tv_svc | 552-580 |  |
+| tv_reset | 581-619 |  |
+| tv_description | 620-627 |  |

@@ -1,0 +1,196 @@
+=== pdp11_fp.c — 1438 строк ===
+Источник: pdp11_fp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_fp.c -nt .cline/maps/pdp11_fp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| save_env | 232 | |
+| cpu_type | 233 | |
+| FEC | 234 | |
+| CPUERR | 235 | |
+| STKLIM | 238 | |
+| cm | 239 | |
+| FR | 240 | |
+| last_pa | 241 | |
+| zero_fac | 243 | |
+| one_fac | 244 | |
+| backup_PC | 259 | |
+| fp_change | 260 | |
+| dst | 290 | |
+| newV | 292 | |
+| fac | 293 | |
+| dstspec | 302 | |
+| qdouble | 303 | |
+| lenf | 304 | |
+| return | 602 | |
+| adr | 609 | |
+| adr | 676 | |
+| return | 761 | |
+| exta | 796 | |
+| TRUE | 820 | |
+| pa | 835 | |
+| return | 858 | |
+| exta | 873 | |
+| exta | 890 | |
+| return | 922 | |
+| reg | 929 | |
+| fac | 930 | |
+| exta | 935 | |
+| fsrc.l | 946 | |
+| pa | 951 | |
+| pa2 | 953 | |
+| fac.l | 954 | |
+| SCPE_OK | 999 | |
+| facexp | 1013 | |
+| facfrac | 1014 | |
+| facexp | 1088 | |
+| facfrac | 1089 | |
+| facexp | 1129 | |
+| facfrac | 1130 | |
+| fsrcfrac.h | 1175 | |
+| facfrac.l | 1199 | |
+| facfrac.h | 1200 | |
+| result | 1231 | |
+| mpc | 1236 | |
+| return | 1265 | |
+| facexp | 1281 | |
+| facfrac | 1282 | |
+| qd | 1296 | |
+| quo | 1299 | |
+| oldst | 1345 | |
+| outf | 1358 | |
+| frac | 1387 | |
+| facp->l | 1403 | |
+| test_code | 1426 | |
+| FPS | 1432 | |
+| FEC | 1433 | |
+| FALSE | 1437 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FPS_ER | (1u << FPS_V_ER)                ... | 112 |
+| FPS_ID | (1u << FPS_V_ID)                ... | 113 |
+| FPS_IUV | (1u << FPS_V_IUV)               ... | 114 |
+| FPS_IU | (1u << FPS_V_IU)                ... | 115 |
+| FPS_IV | (1u << FPS_V_IV)                ... | 116 |
+| FPS_IC | (1u << FPS_V_IC)                ... | 117 |
+| FPS_D | (1u << FPS_V_D)                 ... | 118 |
+| FPS_L | (1u << FPS_V_L)                 ... | 119 |
+| FPS_T | (1u << FPS_V_T)                 ... | 120 |
+| FPS_N | (1u << FPS_V_N) | 121 |
+| FPS_Z | (1u << FPS_V_Z) | 122 |
+| FPS_V | (1u << FPS_V_V) | 123 |
+| FPS_C | (1u << FPS_V_C) | 124 |
+| FPS_CC | (FPS_N + FPS_Z + FPS_V + FPS_C) | 125 |
+| FPS_RW | (FPS_ER + FPS_ID + FPS_IUV + FPS... | 126 |
+| FEC_OP | 2                               ... | 131 |
+| FEC_DZRO | 4                               ... | 132 |
+| FEC_ICVT | 6                               ... | 133 |
+| FEC_OVFLO | 8                               ... | 134 |
+| FEC_UNFLO | 10                              ... | 135 |
+| FEC_UNDFV | 12                              ... | 136 |
+| FP_V_SIGN | (63 - 32)                       ... | 140 |
+| FP_V_EXP | (55 - 32)                       ... | 141 |
+| FP_V_HB | FP_V_EXP                        ... | 142 |
+| FP_V_F0 | (48 - 32)                       ... | 143 |
+| FP_V_F1 | (32 - 32)                       ... | 144 |
+| FP_V_FROUND | (31 - 32)                       ... | 145 |
+| FP_V_F2 | 16                              ... | 146 |
+| FP_V_F3 | 0                               ... | 147 |
+| FP_V_DROUND | (-1)                            ... | 148 |
+| FP_M_EXP | 0377 | 149 |
+| FP_SIGN | (1u << FP_V_SIGN) | 150 |
+| FP_EXP | (FP_M_EXP << FP_V_EXP) | 151 |
+| FP_HB | (1u << FP_V_HB) | 152 |
+| FP_FRACH | ((1u << FP_V_HB) - 1) | 153 |
+| FP_FRACL | 0xFFFFFFFF | 154 |
+| FP_BIAS | 0200                            ... | 155 |
+| FP_GUARD | 3                               ... | 156 |
+| WORD | 2 | 160 |
+| LONG | 4 | 161 |
+| QUAD | 8 | 162 |
+| FPCHG(v,r) | ((int32)((((uint32)(v)) << FPCHG... | 166 |
+| FPCHG_REG | 07                              ... | 167 |
+| FPCHG_V_VAL | 3                               ... | 168 |
+| FPCHG_GETREG(x) | ((x) & FPCHG_REG) | 169 |
+| FPCHG_GETVAL(x) | ((x) >> FPCHG_V_VAL) | 170 |
+| F_LOAD(qd,ac,ds) |  | 174 |
+| F_LOAD_P(qd,ac,ds) |  | 176 |
+| F_LOAD_FRAC(qd,ac,ds) |  | 178 |
+| F_STORE(qd,sr,ac) |  | 181 |
+| F_STORE_P(qd,sr,ac) |  | 183 |
+| F_GET_FRAC_P(sr,ds) |  | 185 |
+| F_ADD(s2,s1,ds) |  | 188 |
+| F_SUB(s2,s1,ds) |  | 191 |
+| F_LT(x,y) | ((x.h < y.h) \|\| ((x.h == y.h) &&... | 194 |
+| F_LT_AP(x,y) | (((x->h & ~FP_SIGN) < (y->h & ~F... | 195 |
+| F_LSH_V(sr,n,ds) |  | 197 |
+| F_RSH_V(sr,n,ds) |  | 202 |
+| F_LSH_1(ds) | ds.h = ((ds.h << 1) \| ((ds.l >> ... | 211 |
+| F_RSH_1(ds) | ds.l = ((ds.l >> 1) & 0x7FFFFFFF... | 213 |
+| F_LSH_K(sr,n,ds) |  | 215 |
+| F_RSH_K(sr,n,ds) |  | 219 |
+| F_LSH_GUARD(ds) | F_LSH_K(ds,FP_GUARD,ds) | 223 |
+| F_RSH_GUARD(ds) | F_RSH_K(ds,FP_GUARD,ds) | 224 |
+| GET_BIT(ir,n) | (((ir) >> (n)) & 1) | 226 |
+| GET_SIGN(ir) | GET_BIT((ir), FP_V_SIGN) | 227 |
+| GET_EXP(ir) | (((ir) >> FP_V_EXP) & FP_M_EXP) | 228 |
+| GET_SIGN_L(ir) | GET_BIT((ir), 31) | 229 |
+| GET_SIGN_W(ir) | GET_BIT((ir), 15) | 230 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| fp11 | 288-304 |  |
+| switch | 305-594 |  |
+| if | 595-606 |  |
+| GeteaFW | 607-612 |  |
+| switch | 613-673 |  |
+| GeteaFP | 674-679 |  |
+| switch | 680-748 |  |
+| fp_reg_change | 749-750 |  |
+| if | 751-773 |  |
+| ReadI | 774-793 |  |
+| ReadFP | 794-797 |  |
+| if | 798-801 |  |
+| if | 802-832 |  |
+| WriteI | 833-836 |  |
+| if | 837-843 |  |
+| if | 844-870 |  |
+| WriteFP | 871-874 |  |
+| if | 875-878 |  |
+| if | 879-885 |  |
+| if | 886-892 |  |
+| if | 893-926 |  |
+| fis11 | 927-935 |  |
+| if | 936-960 |  |
+| switch | 961-986 |  |
+| if | 987-1010 |  |
+| addfp11 | 1011-1015 |  |
+| if | 1016-1022 |  |
+| if | 1023-1035 |  |
+| if | 1036-1085 |  |
+| mulfp11 | 1086-1092 |  |
+| if | 1093-1107 |  |
+| if | 1108-1126 |  |
+| modfp11 | 1127-1133 |  |
+| if | 1134-1149 |  |
+| if | 1150-1164 |  |
+| if | 1165-1168 |  |
+| if | 1169-1228 |  |
+| frac_mulfp11 | 1229-1237 |  |
+| if | 1238-1278 |  |
+| divfp11 | 1279-1285 |  |
+| if | 1286-1299 |  |
+| for | 1300-1309 |  |
+| if | 1310-1319 |  |
+| if | 1320-1337 |  |
+| setfcc | 1338-1355 |  |
+| roundfp11 | 1356-1361 |  |
+| if | 1362-1384 |  |
+| round_and_pack | 1385-1389 |  |
+| if | 1390-1405 |  |
+| if | 1406-1423 |  |
+| fpnotrap | 1424-1438 |  |

@@ -1,0 +1,82 @@
+=== pdp11_stddev.c — 604 строк ===
+Источник: pdp11_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_stddev.c -nt .cline/maps/pdp11_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| SCPE_OK | 318 | |
+| SCPE_OK | 344 | |
+| uptr->pos | 378 | |
+| tti_csr | 379 | |
+| SCPE_OK | 382 | |
+| tti_unit.buf | 390 | |
+| tti_csr | 391 | |
+| SCPE_OK | 394 | |
+| SCPE_NXM | 412 | |
+| SCPE_NXM | 438 | |
+| tto_csr | 455 | |
+| uptr->pos | 458 | |
+| SCPE_OK | 459 | |
+| tto_unit.buf | 466 | |
+| tto_csr | 467 | |
+| SCPE_OK | 470 | |
+| SCPE_OK | 477 | |
+| SCPE_OK | 486 | |
+| orig_csr | 501 | |
+| SCPE_OK | 509 | |
+| orig_csr | 514 | |
+| SCPE_OK | 529 | |
+| SCPE_OK | 547 | |
+| clk_dib.vec | 557 | |
+| SCPE_OK | 577 | |
+| clk_tps | 588 | |
+| SCPE_OK | 589 | |
+| SCPE_OK | 597 | |
+| clock" | 602 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TTICSR_IMP | (CSR_DONE + CSR_IE)             ... | 70 |
+| TTICSR_RW | (CSR_IE) | 71 |
+| TTOCSR_IMP | (CSR_DONE + CSR_IE)             ... | 72 |
+| TTOCSR_RW | (CSR_IE) | 73 |
+| CLKCSR_IMP | (CSR_DONE + CSR_IE)             ... | 74 |
+| CLKCSR_RW | (CSR_IE) | 75 |
+| CLK_DELAY | 16667 | 76 |
+| DBG_RREG | 1   /* register read access */ | 153 |
+| DBG_WREG | 2   /* register write access */ | 154 |
+| DBG_INT | 4   /* interrupt activity */ | 155 |
+| DBG_INTA | 8   /* interrupt activity */ | 156 |
+| DBG_DATA | 16   /* incoming data */ | 157 |
+| IOLN_CLK | 002 | 234 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tti_rd | 297-298 |  |
+| switch | 299-320 |  |
+| tti_wr | 321-322 |  |
+| switch | 323-348 |  |
+| tti_svc | 349-358 |  |
+| if | 359-386 |  |
+| tti_reset | 387-398 |  |
+| tto_rd | 399-400 |  |
+| switch | 401-414 |  |
+| tto_wr | 415-416 |  |
+| switch | 417-442 |  |
+| tto_svc | 443-448 |  |
+| if | 449-463 |  |
+| tto_reset | 464-472 |  |
+| tty_set_mode | 473-479 |  |
+| tty_set_parity | 480-498 |  |
+| clk_rd | 499-511 |  |
+| clk_wr | 512-533 |  |
+| clk_svc | 534-538 |  |
+| if | 539-551 |  |
+| clk_inta | 552-561 |  |
+| clk_reset | 562-581 |  |
+| clk_set_freq | 582-593 |  |
+| clk_show_freq | 594-599 |  |
+| clk_description | 600-604 |  |

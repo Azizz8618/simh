@@ -1,0 +1,50 @@
+=== i7070_chan.c — 1597 строк ===
+Источник: i7070_chan.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7070_chan.c -nt .cline/maps/i7070_chan.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 45 | |
+| pri_latchs | 74 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CHAN_DEF | UNIT_DISABLE\|CHAN_SET | 47 |
+| CHAN_OUTDEV | 0x010000        /* Type out devi... | 76 |
+| CHAN_PRIO | 0x008000        /* Channel has p... | 77 |
+| CHAN_TWE | 0x004000        /* Channel forma... | 78 |
+| CHAN_SEOR | 0x002000        /* Channel saw a... | 79 |
+| CHAN_NORDW | 0x020000        /* No RDW for th... | 80 |
+| CHAN_SEOS | 0x040000        /* Channel saw a... | 81 |
+| CHAN_SCLR | 0x080000        /* Short record */ | 82 |
+| CHAN_FIRST | 0x100000        /* First tranfer... | 83 |
+| CHAN_START | 0x200000        /* Channel has j... | 84 |
+| CHAN_OCTAL | 0x400000        /* Octal convers... | 85 |
+| DELTA_CHAR | 057 | 152 |
+| SM_CHAR | 037 | 153 |
+| SM_MEM | 0x39 | 154 |
+| RM_CHAR | 0x80 | 155 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| chan_reset | 222-241 |  |
+| chan_boot | 242-247 |  |
+| chan_issue_cmd | 248-298 |  |
+| chan_proc | 299-1165 |  |
+| chan_fetch | 1166-1189 |  |
+| chan_set_attn_a | 1190-1193 |  |
+| chan_set_attn_b | 1194-1197 |  |
+| chan_set_attn_inq | 1198-1204 |  |
+| chan_clear_attn_inq | 1205-1214 |  |
+| chan_cmd | 1215-1280 |  |
+| chan_write | 1281-1289 |  |
+| chan_read | 1290-1298 |  |
+| chan_write_char | 1299-1440 |  |
+| chan_read_char | 1441-1562 |  |
+| chan_set_load_mode | 1563-1569 |  |
+| chan9_set_error | 1570-1577 |  |
+| chan_help | 1578-1591 |  |
+| chan_description | 1592-1597 |  |

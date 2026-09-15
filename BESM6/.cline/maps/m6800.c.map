@@ -1,0 +1,69 @@
+=== m6800.c — 2255 строк ===
+Источник: m6800.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test m6800.c -nt .cline/maps/m6800.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 120-128 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_OPSTOP | (UNIT_V_UF)     /* Stop on Inval... | 81 |
+| UNIT_OPSTOP | (1 << UNIT_V_OPSTOP) | 82 |
+| UNIT_V_MSTOP | (UNIT_V_UF+1)   /* Stop on Inval... | 83 |
+| UNIT_MSTOP | (1 << UNIT_V_MSTOP) | 84 |
+| HF | 0x20 | 87 |
+| IF | 0x10 | 88 |
+| NF | 0x08 | 89 |
+| ZF | 0x04 | 90 |
+| VF | 0x02 | 91 |
+| CF | 0x01 | 92 |
+| CC_ALWAYS_ON | (0xC0)        /* for 6800 */ | 95 |
+| CC_MSK | (HF\|IF\|NF\|ZF\|VF\|CF) | 96 |
+| TOGGLE_FLAG(FLAG) | (CC ^= (FLAG)) | 97 |
+| SET_FLAG(FLAG) | (CC \|= (FLAG)) | 98 |
+| CLR_FLAG(FLAG) | (CC &= ~(FLAG)) | 99 |
+| GET_FLAG(FLAG) | (CC & (FLAG)) | 100 |
+| COND_SET_FLAG(COND,FLAG) |  | 101 |
+| COND_SET_FLAG_N(VAR) |  | 103 |
+| COND_SET_FLAG_Z(VAR) |  | 105 |
+| COND_SET_FLAG_H(VAR) |  | 107 |
+| COND_SET_FLAG_C(VAR) |  | 109 |
+| COND_SET_FLAG_V(COND) |  | 111 |
+| HIST_MIN | 64 | 116 |
+| HIST_MAX | (1u << 18) | 117 |
+| HIST_ILNT | 3                               ... | 118 |
+| HLEN | 16 | 1983 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| m6800_desc | 143-331 |  |
+| sim_instr | 332-1805 |  |
+| dump_regs | 1806-1812 |  |
+| fetch_byte | 1813-1823 | fetch an instruction or byte |
+| fetch_word | 1824-1834 | fetch a word |
+| push_byte | 1835-1842 | push a byte to the stack |
+| push_word | 1843-1849 | push a word to the stack |
+| pop_byte | 1850-1859 | pop a byte from the stack |
+| pop_word | 1860-1871 | pop a word from the stack |
+| go_rel | 1872-1885 |  |
+| get_vec_val | 1886-1892 | get the word vector at vec |
+| get_imm_val | 1893-1899 |  |
+| get_dir_val | 1900-1906 |  |
+| get_indir_val | 1907-1913 |  |
+| get_ext_val | 1914-1920 |  |
+| get_flag | 1921-1930 |  |
+| condevalVa | 1931-1941 |  |
+| condevalVs | 1942-1952 |  |
+| condevalHa | 1953-1964 | test and set H for addition |
+| m6800_reset | 1965-1984 |  |
+| sim_load | 1985-2103 |  |
+| fprint_sym | 2104-2158 |  |
+| parse_sym | 2159-2165 |  |
+| cpu_set_hist | 2166-2198 |  |
+| cpu_show_hist | 2199-2235 |  |
+| m6800_ex | 2236-2246 |  |
+| m6800_dep | 2247-2255 |  |

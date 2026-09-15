@@ -1,0 +1,103 @@
+=== hp2100_ipl.c — 1965 строк ===
+Источник: hp2100_ipl.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_ipl.c -nt .cline/maps/hp2100_ipl.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 220-227 |
+| FORWARD_STATE | 352-355 |
+| REVERSE_STATE | 357-360 |
+| STATE_PTRS | 371-374 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ipl_interface | 400 | |
+| iotype | 650 | |
+| signal | 654 | |
+| working_set | 655 | |
+| outbound | 656 | |
+| irq_enabled | 657 | |
+| status | 814 | |
+| uptr | 869 | |
+| SCPE_OK | 893 | |
+| status | 967 | |
+| id_number | 968 | |
+| object_name | 969 | |
+| zptr | 970 | |
+| tptr | 971 | |
+| isp | 972 | |
+| optr | 973 | |
+| optr | 1098 | |
+| io_ptrs | 1134 | |
+| SCPE_OK | 1225 | |
+| signaled | 1260 | |
+| return | 1302 | |
+| return | 1330 | |
+| start | 1556 | |
+| ptr_sc | 1557 | |
+| ptr_dptr | 1558 | |
+| status | 1636 | |
+| status | 1686 | |
+| status | 1711 | |
+| status | 1793 | |
+| until_time | 1849 | |
+| status | 1850 | |
+| status | 1894 | |
+| FALSE | 1946 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NO_EVENT | NULL                /* the initi... | 144 |
+| NO_EVENT | SEM_FAILED          /* the initi... | 157 |
+| NO_EVENT | 0                   /* the initi... | 168 |
+| CARD_COUNT | 2                   /* count of ... | 177 |
+| SP | SWMASK ('S')        /* SP switch */ | 182 |
+| IOP | SWMASK ('I')        /* IOP switc... | 183 |
+| LISTEN | SWMASK ('L')        /* listen sw... | 185 |
+| CONNECT | SWMASK ('C')        /* connect s... | 186 |
+| ID | u3                  /* session i... | 191 |
+| UNIT_DIAG_SHIFT | (UNIT_V_UF + 0)     /* diagnosti... | 196 |
+| UNIT_DIAG | (1u << UNIT_DIAG_SHIFT) | 198 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ipl_interface | 648-658 |  |
+| while | 659-809 |  |
+| card_service | 810-820 |  |
+| if | 821-866 |  |
+| ipl_reset | 867-874 |  |
+| if | 875-884 |  |
+| if | 885-964 |  |
+| ipl_attach | 965-1095 |  |
+| ipl_detach | 1096-1105 |  |
+| if | 1106-1178 |  |
+| ipl_set_diag | 1179-1180 |  |
+| if | 1181-1188 |  |
+| if | 1189-1256 |  |
+| ipl_set_sync | 1257-1264 |  |
+| if | 1265-1298 |  |
+| abort_handler | 1299-1320 |  |
+| activate_unit | 1321-1549 |  |
+| ipl_boot | 1550-1610 |  |
+| create_event | 1611-1633 |  |
+| destroy_event | 1634-1658 |  |
+| event_is_undefined | 1659-1682 |  |
+| wait_event | 1683-1708 |  |
+| signal_event | 1709-1751 |  |
+| create_event | 1752-1790 |  |
+| destroy_event | 1791-1818 |  |
+| event_is_undefined | 1819-1845 |  |
+| wait_event | 1846-1851 |  |
+| if | 1852-1858 |  |
+| if | 1859-1891 |  |
+| signal_event | 1892-1900 |  |
+| if | 1901-1930 |  |
+| create_event | 1931-1937 |  |
+| destroy_event | 1938-1943 |  |
+| event_is_undefined | 1944-1949 |  |
+| wait_event | 1950-1958 |  |
+| signal_event | 1959-1965 |  |

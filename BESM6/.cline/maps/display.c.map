@@ -1,0 +1,84 @@
+=== display.c — 1236 строк ===
+Источник: display.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test display.c -nt .cline/maps/display.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| p29 | 123 | |
+| p31 | 127 | |
+| p39 | 131 | |
+| p19 | 135 | |
+| pred | 146 | |
+| delay_t | 370 | |
+| _head | 383 | |
+| queue_interval | 391 | |
+| initialized | 400 | |
+| display_lp_sw | 407 | |
+| display_tablet | 414 | |
+| scaled_pen_radius_squared | 419 | |
+| xpoints | 422 | |
+| xpixels | 423 | |
+| refresh_rate | 424 | |
+| refresh_interval | 425 | |
+| ncolors | 426 | |
+| display_type | 427 | |
+| scale | 428 | |
+| level_scale | 434 | |
+| colors | 440 | |
+| spacewar_switches | 1150 | |
+| display_last_char | 1152 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DISPLAY_TYPE | DIS_TYPE30 | 65 |
+| PIX_SCALE | RES_HALF | 71 |
+| PEN_RADIUS | 4 | 76 |
+| ELEMENTS(X) | (sizeof(X)/sizeof(X[0])) | 85 |
+| DELAY_UNIT | 250 | 294 |
+| LEVELS_PER_HALFLIFE | 4 | 298 |
+| HALF_LIVES_TO_DISPLAY | 5 | 303 |
+| NTTL | (HALF_LIVES_TO_DISPLAY*LEVELS_PE... | 325 |
+| MAXTTL | NTTL | 332 |
+| NLEVELS | (DISPLAY_INT_MAX-DISPLAY_INT_MIN+1) | 337 |
+| MAXLEVEL | (NLEVELS-1) | 339 |
+| DELAY_T_MAX | USHRT_MAX | 371 |
+| P(X,Y) | (points + (X) + ((Y)*(size_t)xpi... | 394 |
+| X(P) | (((P) - points) % xpixels) | 397 |
+| Y(P) | (((P) - points) / xpixels) | 398 |
+| MAXELAPSED | 100000       /* 10Hz */ | 506 |
+| MINELAPSED | 50000        /* 20Hz */ | 513 |
+| MAXDELAY | 100000         /* 100ms */ | 524 |
+| MINDELAY | 50000          /* 50ms */ | 536 |
+| INITIAL_DELAY_CHECK | 1000    /* 1ms */ | 545 |
+| GAINSHIFT | 3         /* gain=0.125 (12.5%) */ | 553 |
+| ABS(_X) | ((_X) >= 0 ? (_X) : -(_X)) | 825 |
+| SIGN(_X) | ((_X) >= 0 ? 1 : -1) | 826 |
+| COLOR_HALF_LIFE(C) | ((C)->half_life) | 1016 |
+| BOOST | 5 | 1059 |
+| SWSW(LC,UC,BIT,POS36,FUNC36) |  | 1160 |
+| SWSW(LC,UC,BIT,POS36,NAME36) |  | 1177 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| display_lp_radius | 443-454 |  |
+| queue_point | 455-485 |  |
+| display_is_blank | 486-556 |  |
+| display_delay | 557-718 |  |
+| display_repaint | 719-828 |  |
+| xline | 829-852 |  |
+| yline | 853-895 |  |
+| phosphor_init | 896-959 |  |
+| find_type | 960-971 |  |
+| display_init | 972-1086 |  |
+| display_close | 1087-1102 |  |
+| display_reset | 1103-1108 |  |
+| display_sync | 1109-1115 |  |
+| display_beep | 1116-1121 |  |
+| display_xpoints | 1122-1127 |  |
+| display_ypoints | 1128-1133 |  |
+| display_scale | 1134-1155 |  |
+| display_keydown | 1156-1169 |  |
+| display_keyup | 1170-1236 |  |

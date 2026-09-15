@@ -1,0 +1,209 @@
+=== pdp18b_cpu.c — 2435 строк ===
+Источник: pdp18b_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp18b_cpu.c -nt .cline/maps/pdp18b_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 309-315 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| memm_init | 353 | |
+| api_int | 578 | |
+| iot_data | 579 | |
+| last_IR | 580 | |
+| reason | 581 | |
+| LAC | 586 | |
+| MQ | 587 | |
+| reason | 588 | |
+| last_IR | 589 | |
+| reason | 1708 | |
+| ma | 1764 | |
+| dat | 1767 | |
+| MM_OK | 1768 | |
+| ma | 1773 | |
+| MM_OK | 1776 | |
+| sta | 1782 | |
+| sta | 1798 | |
+| ma | 1830 | |
+| MM_OK | 1849 | |
+| ma | 1854 | |
+| MM_OK | 1868 | |
+| sta | 1874 | |
+| sta | 1896 | |
+| pa | 1926 | |
+| MM_OK | 1946 | |
+| pa | 1951 | |
+| MM_OK | 1966 | |
+| gmode | 1973 | |
+| damask | 1974 | |
+| g_mask | 1975 | |
+| sta | 1976 | |
+| sta | 1997 | |
+| pa | 2037 | |
+| pa | 2051 | |
+| pa | 2058 | |
+| g_base | 2059 | |
+| slr_lnt | 2060 | |
+| pa | 2091 | |
+| LAC | 2100 | |
+| MQ | 2101 | |
+| SC | 2102 | |
+| eae_ac_sign | 2103 | |
+| ion | 2104 | |
+| api_enb | 2106 | |
+| BR | 2107 | |
+| RR | 2108 | |
+| MMR | 2109 | |
+| usmd | 2110 | |
+| memm | 2111 | |
+| nexm | 2112 | |
+| emir_pending | 2113 | |
+| SCPE_IERR | 2121 | |
+| SCPE_OK | 2123 | |
+| usmd | 2132 | |
+| MMR | 2133 | |
+| return | 2134 | |
+| SCPE_OK | 2155 | |
+| SCPE_OK | 2175 | |
+| mc | 2182 | |
+| MEMSIZE | 2191 | |
+| SCPE_OK | 2194 | |
+| dptr | 2201 | |
+| dibp | 2202 | |
+| newdev | 2203 | |
+| SCPE_OK | 2220 | |
+| dptr | 2227 | |
+| dibp | 2228 | |
+| SCPE_OK | 2241 | |
+| dptr | 2255 | |
+| dibp | 2256 | |
+| FALSE | 2290 | |
+| newv | 2298 | |
+| SCPE_OK | 2306 | |
+| SCPE_OK | 2315 | |
+| hst_p | 2336 | |
+| SCPE_OK | 2348 | |
+| sim_eval | 2358 | |
+| lnt | 2369 | |
+| SCPE_OK | 2398 | |
+| word | 2405 | |
+| hst | 2407 | |
+| hst | 2408 | |
+| hst | 2411 | |
+| hst | 2412 | |
+| hst | 2413 | |
+| return | 2417 | |
+| hst | 2424 | |
+| hst | 2425 | |
+| hst | 2428 | |
+| hst | 2429 | |
+| hst | 2430 | |
+| return | 2434 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SEXT(x) | ((int32) (((x) & SIGN)? (x) \| ~D... | 285 |
+| UNIT_V_NOEAE | (UNIT_V_UF + 0)                 ... | 287 |
+| UNIT_V_NOAPI | (UNIT_V_UF + 1)                 ... | 288 |
+| UNIT_V_PROT | (UNIT_V_UF + 2)                 ... | 289 |
+| UNIT_V_RELOC | (UNIT_V_UF + 3)                 ... | 290 |
+| UNIT_V_XVM | (UNIT_V_UF + 4)                 ... | 291 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 5)                 ... | 292 |
+| UNIT_NOEAE | (1 << UNIT_V_NOEAE) | 293 |
+| UNIT_NOAPI | (1 << UNIT_V_NOAPI) | 294 |
+| UNIT_PROT | (1 << UNIT_V_PROT) | 295 |
+| UNIT_RELOC | (1 << UNIT_V_RELOC) | 296 |
+| UNIT_XVM | (1 << UNIT_V_XVM) | 297 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 298 |
+| OP_KSF | 0700301 | 299 |
+| HIST_API | 0x40000000 | 301 |
+| HIST_PI | 0x20000000 | 302 |
+| HIST_PC | 0x10000000 | 303 |
+| HIST_MIN | 64 | 304 |
+| HIST_MAX | 65536 | 305 |
+| HIST_M_LVL | 0x3F | 306 |
+| HIST_V_LVL | 6 | 307 |
+| XVM | (cpu_unit.flags & UNIT_XVM) | 317 |
+| RELOC | (cpu_unit.flags & UNIT_RELOC) | 318 |
+| PROT | (cpu_unit.flags & UNIT_PROT) | 319 |
+| EAE_DFLT | UNIT_NOEAE | 322 |
+| EAE_DFLT | 0 | 324 |
+| API_DFLT | UNIT_NOAPI | 327 |
+| PROT_DFLT | 0 | 328 |
+| ASW_DFLT | 017763 | 329 |
+| API_DFLT | 0 | 331 |
+| PROT_DFLT | UNIT_PROT | 332 |
+| ASW_DFLT | 017720 | 333 |
+| INDEX(i,x) | if (!memm && ((i) & I_IDX))  | 403 |
+| INDEX(i,x) |  | 411 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 576-596 |  |
+| while | 597-1712 |  |
+| api_eval | 1713-1721 |  |
+| for | 1722-1728 |  |
+| for | 1729-1740 |  |
+| upd_iors | 1741-1761 |  |
+| Read | 1762-1770 |  |
+| Write | 1771-1778 |  |
+| Ia | 1779-1783 |  |
+| if | 1784-1789 |  |
+| if | 1790-1800 |  |
+| Incr_addr | 1801-1805 |  |
+| Jms_word | 1806-1827 |  |
+| Read | 1828-1830 |  |
+| if | 1831-1851 |  |
+| Write | 1852-1854 |  |
+| if | 1855-1870 |  |
+| Ia | 1871-1875 |  |
+| if | 1876-1882 |  |
+| if | 1883-1898 |  |
+| Incr_addr | 1899-1903 |  |
+| Jms_word | 1904-1923 |  |
+| Read | 1924-1927 |  |
+| if | 1928-1948 |  |
+| Write | 1949-1952 |  |
+| if | 1953-1970 |  |
+| Ia | 1971-1977 |  |
+| if | 1978-1984 |  |
+| if | 1985-1999 |  |
+| Incr_addr | 2000-2008 |  |
+| Jms_word | 2009-2018 |  |
+| Prot15 | 2019-2021 |  |
+| if | 2022-2025 |  |
+| if | 2026-2034 |  |
+| Reloc15 | 2035-2039 |  |
+| if | 2040-2045 |  |
+| if | 2046-2055 |  |
+| RelocXVM | 2056-2085 |  |
+| if | 2086-2097 |  |
+| cpu_reset | 2098-2127 |  |
+| cpu_caf | 2128-2138 |  |
+| cpu_ex | 2139-2141 |  |
+| if | 2142-2159 |  |
+| cpu_dep | 2160-2162 |  |
+| if | 2163-2179 |  |
+| cpu_set_size | 2180-2198 |  |
+| set_devno | 2199-2224 |  |
+| show_devno | 2225-2245 |  |
+| bad_dev | 2246-2252 |  |
+| build_dev_tab | 2253-2266 |  |
+| for | 2267-2272 |  |
+| for | 2273-2294 |  |
+| set_3cyc_reg | 2295-2310 |  |
+| show_3cyc_reg | 2311-2319 |  |
+| cpu_set_hist | 2320-2324 |  |
+| if | 2325-2336 |  |
+| if | 2337-2341 |  |
+| if | 2342-2352 |  |
+| cpu_show_hist | 2353-2363 |  |
+| if | 2364-2373 |  |
+| for | 2374-2402 |  |
+| cpu_inst_hist | 2403-2419 |  |
+| cpu_intr_hist | 2420-2435 |  |

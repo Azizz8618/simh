@@ -1,0 +1,80 @@
+=== s100_disk3.c — 685 строк ===
+Источник: s100_disk3.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_disk3.c -nt .cline/maps/s100_disk3.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ERROR_MSG | (1 << 0) | 42 |
+| SEEK_MSG | (1 << 1) | 43 |
+| CMD_MSG | (1 << 2) | 44 |
+| RD_DATA_MSG | (1 << 3) | 45 |
+| WR_DATA_MSG | (1 << 4) | 46 |
+| IRQ_MSG | (1 << 5) | 47 |
+| VERBOSE_MSG | (1 << 6) | 48 |
+| SPECIFY_MSG | (1 << 7) | 49 |
+| DISK3_MAX_DRIVES | 4 | 51 |
+| DISK3_CSR | 0   /* R=DISK3 Status / W=DISK3 ... | 53 |
+| DISK3_DATA | 1   /* R=Step Pulse / W=Write Da... | 54 |
+| DISK3_OP_DRIVE | 0x00 | 56 |
+| DISK3_OP_CYL | 0x01 | 57 |
+| DISK3_OP_HEAD | 0x02 | 58 |
+| DISK3_OP_SECTOR | 0x03 | 59 |
+| DISK3_CMD_NULL | 0x00 | 61 |
+| DISK3_CMD_READ_DATA | 0x01 | 62 |
+| DISK3_CMD_WRITE_DATA | 0x02 | 63 |
+| DISK3_CMD_WRITE_HEADER | 0x03 | 64 |
+| DISK3_CMD_READ_HEADER | 0x04 | 65 |
+| DISK3_STATUS_BUSY | 0 | 67 |
+| DISK3_STATUS_RANGE | 1 | 68 |
+| DISK3_STATUS_NOT_READY | 2 | 69 |
+| DISK3_STATUS_TIMEOUT | 3 | 70 |
+| DISK3_STATUS_DAT_CRC | 4 | 71 |
+| DISK3_STATUS_WR_FAULT | 5 | 72 |
+| DISK3_STATUS_OVERRUN | 6 | 73 |
+| DISK3_STATUS_HDR_CRC | 7 | 74 |
+| DISK3_STATUS_MAP_FULL | 8 | 75 |
+| DISK3_STATUS_COMPLETE | 0xFF    /* Complete with No Erro... | 76 |
+| DISK3_CODE_NOOP | 0x00 | 78 |
+| DISK3_CODE_VERSION | 0x01 | 79 |
+| DISK3_CODE_GLOBAL | 0x02 | 80 |
+| DISK3_CODE_SPECIFY | 0x03 | 81 |
+| DISK3_CODE_SET_MAP | 0x04 | 82 |
+| DISK3_CODE_HOME | 0x05 | 83 |
+| DISK3_CODE_SEEK | 0x06 | 84 |
+| DISK3_CODE_READ_HDR | 0x07 | 85 |
+| DISK3_CODE_READWRITE | 0x08 | 86 |
+| DISK3_CODE_RELOCATE | 0x09 | 87 |
+| DISK3_CODE_FORMAT | 0x0A | 88 |
+| DISK3_CODE_FORMAT_BAD | 0x0B | 89 |
+| DISK3_CODE_STATUS | 0x0C | 90 |
+| DISK3_CODE_SELECT | 0x0D | 91 |
+| DISK3_CODE_EXAMINE | 0x0E | 92 |
+| DISK3_CODE_MODIFY | 0x0F | 93 |
+| DISK3_CMD_MASK | 0x3F | 95 |
+| DISK3_REQUEST_IRQ | 0x80 | 96 |
+| DISK3_IOPB_LEN | 16 | 98 |
+| DISK3_IOPB_CMD | 0 | 100 |
+| DISK3_IOPB_STATUS | 1 | 101 |
+| DISK3_IOPB_DRIVE | 2 | 102 |
+| DISK3_IOPB_ARG1 | 3 | 103 |
+| DISK3_IOPB_ARG2 | 4 | 104 |
+| DISK3_IOPB_ARG3 | 5 | 105 |
+| DISK3_IOPB_ARG4 | 6 | 106 |
+| DISK3_IOPB_ARG5 | 7 | 107 |
+| DISK3_IOPB_ARG6 | 8 | 108 |
+| DISK3_IOPB_ARG7 | 9 | 109 |
+| DISK3_IOPB_DATA | 10 | 110 |
+| DISK3_IOPB_LINK | 13 | 111 |
+| DISK3_MODE_ABS | 0xFF | 113 |
+| DISK3_MODE_LOGICAL | 0x00 | 114 |
+| C20MB_SECTSIZE | 1024 | 158 |
+| C20MB_NSECTORS | 9 | 159 |
+| C20MB_NHEADS | 4 | 160 |
+| C20MB_NTRACKS | 512 | 161 |
+| UNIT_V_DISK3_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 180 |
+| UNIT_DISK3_VERBOSE | (1 << UNIT_V_DISK3_VERBOSE) | 181 |
+| DISK3_CAPACITY | (C20MB_NTRACKS*C20MB_NHEADS*C20M... | 182 |
+| DISK3_NAME | "Compupro ST-506 Disk Controller" | 228 |
+| SS1_VI1_INT | 1   /* DISK2/DISK3 interrupts ti... | 677 |
+

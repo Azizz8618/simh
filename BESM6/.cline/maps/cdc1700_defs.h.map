@@ -1,0 +1,619 @@
+=== cdc1700_defs.h — 1158 строк ===
+Источник: cdc1700_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_defs.h -nt .cline/maps/cdc1700_defs.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| _CDC1700_DEFS_H |  | 32 |
+| DBGOUT | (sim_deb != NULL ? sim_deb : std... | 37 |
+| SCPE_LOOP | 1               /* Indirect addr... | 42 |
+| SCPE_SSTOP | 2               /* Selective sto... | 43 |
+| SCPE_INVEXI | 3               /* Invalid bit i... | 44 |
+| SCPE_IBKPT | 4               /* Breakpoint */ | 45 |
+| SCPE_REJECT | 5               /* Stop on rejec... | 46 |
+| SCPE_UNIMPL | 6               /* Unimplemented... | 47 |
+| DEV_V_REJECT | (DEV_V_UF + 1)  /* Stop on rejec... | 52 |
+| DEV_V_NOEQUIP | (DEV_V_UF + 2)  /* Not an equipm... | 53 |
+| DEV_V_INDEV | (DEV_V_UF + 3)  /* Input device ... | 54 |
+| DEV_V_OUTDEV | (DEV_V_UF + 4)  /* Output device... | 55 |
+| DEV_V_PROTECT | (DEV_V_UF + 5)  /* Device suppor... | 56 |
+| DEV_V_PROTECTED | (DEV_V_UF + 6)  /* Device protec... | 57 |
+| DEV_V_REVERSE | (DEV_V_UF + 7)  /* DP reverse ad... | 58 |
+| DEV_V_FIXED | (DEV_V_UF + 7)  /* CDD fixed dri... | 59 |
+| DEV_REJECT | (1 << DEV_V_REJECT) | 61 |
+| DEV_NOEQUIP | (1 << DEV_V_NOEQUIP) | 62 |
+| DEV_INDEV | (1 << DEV_V_INDEV) | 63 |
+| DEV_OUTDEV | (1 << DEV_V_OUTDEV) | 64 |
+| DEV_PROTECT | (1 << DEV_V_PROTECT) | 65 |
+| DEV_PROTECTED | (1 << DEV_V_PROTECTED) | 66 |
+| DEV_REVERSE | (1 << DEV_V_REVERSE) | 67 |
+| DEV_FIXED | (1 << DEV_V_FIXED) | 68 |
+| DBG_V_DISASS | 0               /* Disassemble o... | 73 |
+| DBG_V_IDISASS | 1               /* Disassemble d... | 74 |
+| DBG_V_INTR | 2               /* Indicate inte... | 75 |
+| DBG_V_TRACE | 3               /* Trace registe... | 76 |
+| DBG_V_ITRACE | 4               /* Trace during ... | 77 |
+| DBG_V_TARGET | 5               /* Output target... | 78 |
+| DBG_V_INPUT | 6               /* Trace input o... | 79 |
+| DBG_V_OUTPUT | 7               /* Trace output ... | 80 |
+| DBG_V_FULL | 8               /* Full Trace (e... | 81 |
+| DBG_V_INTLVL | 9               /* Prefix with i... | 82 |
+| DBG_V_PROTECT | 10              /* Display prote... | 83 |
+| DBG_V_MISSING | 11              /* Display acces... | 84 |
+| DBG_V_ENH | 12              /* Display enh. ... | 85 |
+| DBG_V_MSOS5 | 13              /* Trace MSOS5 s... | 87 |
+| DBG_DISASS | (1 << DBG_V_DISASS) | 89 |
+| DBG_IDISASS | (1 << DBG_V_IDISASS) | 90 |
+| DBG_INTR | (1 << DBG_V_INTR) | 91 |
+| DBG_TRACE | (1 << DBG_V_TRACE) | 92 |
+| DBG_ITRACE | (1 << DBG_V_ITRACE) | 93 |
+| DBG_TARGET | (1 << DBG_V_TARGET) | 94 |
+| DBG_INPUT | (1 << DBG_V_INPUT) | 95 |
+| DBG_OUTPUT | (1 << DBG_V_OUTPUT) | 96 |
+| DBG_FULL | (1 << DBG_V_FULL) | 97 |
+| DBG_INTLVL | (1 << DBG_V_INTLVL) | 98 |
+| DBG_PROTECT | (1 << DBG_V_PROTECT) | 99 |
+| DBG_MISSING | (1 << DBG_V_MISSING) | 100 |
+| DBG_ENH | (1 << DBG_V_ENH) | 101 |
+| DBG_MSOS5 | (1 << DBG_V_MSOS5) | 102 |
+| DEV_RDX | 16 | 107 |
+| UNIT_V_7TRACK | (MTUF_V_UF + 0) /* 7-track tape ... | 112 |
+| UNIT_V_854 | (UNIT_V_UF + 0) /* 854 vs. 853 d... | 114 |
+| UNIT_V_856_4 | (UNIT_V_UF + 0) /* 856_4 vs. 856... | 115 |
+| UNIT_V_DRMSIZE | (UNIT_V_UF + 0) /* 1752 drum mem... | 116 |
+| UNIT_7TRACK | (1 << UNIT_V_7TRACK) | 118 |
+| UNIT_854 | (1 << UNIT_V_854) | 119 |
+| UNIT_856_4 | (1 << UNIT_V_856_4) | 120 |
+| UNIT_DRMSIZE | (1 << UNIT_V_DRMSIZE) | 121 |
+| INSTR_ORIGINAL | 0                       /* Origi... | 128 |
+| INSTR_BASIC | 1                       /* Basic... | 129 |
+| INSTR_ENHANCED | 2                       /* Enhan... | 130 |
+| INSTR_SET | (cpu_unit.u3) | 132 |
+| MAXMEMSIZE | 65536 | 134 |
+| DEFAULTMEMSIZE | 32768 | 135 |
+| MEMADDR(p) | ((p) & (cpu_unit.capac - 1)) | 143 |
+| SETPROTECT(a) | P[MEMADDR(a)] = 1 | 148 |
+| CLRPROTECT(a) | P[MEMADDR(a)] = 0 | 149 |
+| ISPROTECTED(a) | P[MEMADDR(a)] | 150 |
+| MAXINDIRECT | 10000 | 155 |
+| INCP | Preg = MEMADDR(Preg + 1) | 160 |
+| SIGN | 0x8000 | 171 |
+| MAXPOS | 0x7FFF | 172 |
+| MAXNEG | 0xFFFF | 173 |
+| ABS(v) | (((v) & SIGN) ? ~(v) : (v)) | 174 |
+| MOD_RE | 0x800 | 214 |
+| MOD_IN | 0x400 | 215 |
+| MOD_I1 | 0x200 | 216 |
+| MOD_I2 | 0x100 | 217 |
+| OPC_MASK | 0xF000 | 219 |
+| OPC_ADQ | 0xF000 | 220 |
+| OPC_LDQ | 0xE000 | 221 |
+| OPC_RAO | 0xD000 | 222 |
+| OPC_LDA | 0xC000 | 223 |
+| OPC_EOR | 0xB000 | 224 |
+| OPC_AND | 0xA000 | 225 |
+| OPC_SUB | 0x9000 | 226 |
+| OPC_ADD | 0x8000 | 227 |
+| OPC_SPA | 0x7000 | 228 |
+| OPC_STA | 0x6000 | 229 |
+| OPC_RTJ | 0x5000 | 230 |
+| OPC_STQ | 0x4000 | 231 |
+| OPC_DVI | 0x3000 | 232 |
+| OPC_MUI | 0x2000 | 233 |
+| OPC_JMP | 0x1000 | 234 |
+| OPC_SPECIAL | 0x0000 | 235 |
+| OPC_SPECIALMASK | 0x0F00 | 237 |
+| OPC_SLS | 0x0000 | 239 |
+| OPC_SKIPS | 0x0100 | 241 |
+| OPC_SKIPMASK | 0x00F0 | 242 |
+| OPC_SKIPCOUNT | 0x000F | 243 |
+| OPC_SAZ | (OPC_SKIPS \| 0x00) | 245 |
+| OPC_SAN | (OPC_SKIPS \| 0x10) | 246 |
+| OPC_SAP | (OPC_SKIPS \| 0x20) | 247 |
+| OPC_SAM | (OPC_SKIPS \| 0x30) | 248 |
+| OPC_SQZ | (OPC_SKIPS \| 0x40) | 249 |
+| OPC_SQN | (OPC_SKIPS \| 0x50) | 250 |
+| OPC_SQP | (OPC_SKIPS \| 0x60) | 251 |
+| OPC_SQM | (OPC_SKIPS \| 0x70) | 252 |
+| OPC_SWS | (OPC_SKIPS \| 0x80) | 253 |
+| OPC_SWN | (OPC_SKIPS \| 0x90) | 254 |
+| OPC_SOV | (OPC_SKIPS \| 0xA0) | 255 |
+| OPC_SNO | (OPC_SKIPS \| 0xB0) | 256 |
+| OPC_SPE | (OPC_SKIPS \| 0xC0) | 257 |
+| OPC_SNP | (OPC_SKIPS \| 0xD0) | 258 |
+| OPC_SPF | (OPC_SKIPS \| 0xE0) | 259 |
+| OPC_SNF | (OPC_SKIPS \| 0xF0) | 260 |
+| OPC_INP | 0x0200 | 262 |
+| OPC_OUT | 0x0300 | 263 |
+| OPC_EIN | 0x0400 | 264 |
+| OPC_IIN | 0x0500 | 265 |
+| OPC_ECA | 0x0580 | 266 |
+| OPC_DCA | 0x05C0 | 267 |
+| OPC_SPB | 0x0600 | 268 |
+| OPC_CPB | 0x0700 | 269 |
+| OPC_INTER | 0x0800 | 271 |
+| MOD_LP | 0x80 | 272 |
+| MOD_XR | 0x40 | 273 |
+| MOD_O_A | 0x20 | 274 |
+| MOD_O_Q | 0x10 | 275 |
+| MOD_O_M | 0x08 | 276 |
+| MOD_D_A | 0x04 | 277 |
+| MOD_D_Q | 0x02 | 278 |
+| MOD_D_M | 0x01 | 279 |
+| OPC_AAM | (OPC_INTER \| MOD_O_A \| MOD_O_M) | 280 |
+| OPC_AAQ | (OPC_INTER \| MOD_O_A \| MOD_O_Q) | 281 |
+| OPC_AAB | (OPC_INTER \| MOD_O_A \| MOD_O_Q \|... | 282 |
+| OPC_CLR | (OPC_INTER \| MOD_XR) | 283 |
+| OPC_TCM | (OPC_INTER \| MOD_XR \| MOD_O_M) | 284 |
+| OPC_TCQ | (OPC_INTER \| MOD_XR \| MOD_O_Q) | 285 |
+| OPC_TCB | (OPC_INTER \| MOD_XR \| MOD_O_Q \| ... | 286 |
+| OPC_TCA | (OPC_INTER \| MOD_XR \| MOD_O_A) | 287 |
+| OPC_EAM | (OPC_INTER \| MOD_XR \| MOD_O_A \| ... | 288 |
+| OPC_EAQ | (OPC_INTER \| MOD_XR \| MOD_O_A \| ... | 289 |
+| OPC_EAB | (OPC_INTER \| MOD_XR \| MOD_O_A \| ... | 290 |
+| OPC_SET | (OPC_INTER \| MOD_LP) | 291 |
+| OPC_TRM | (OPC_INTER \| MOD_LP \| MOD_O_M) | 292 |
+| OPC_TRQ | (OPC_INTER \| MOD_LP \| MOD_O_Q) | 293 |
+| OPC_TRB | (OPC_INTER \| MOD_LP \| MOD_O_Q \| ... | 294 |
+| OPC_TRA | (OPC_INTER \| MOD_LP \| MOD_O_A) | 295 |
+| OPC_LAM | (OPC_INTER \| MOD_LP \| MOD_O_A \| ... | 296 |
+| OPC_LAQ | (OPC_INTER \| MOD_LP \| MOD_O_A \| ... | 297 |
+| OPC_LAB | (OPC_INTER \| MOD_LP \| MOD_O_A \| ... | 298 |
+| OPC_CAM | (OPC_INTER \| MOD_LP \| MOD_XR \| M... | 299 |
+| OPC_CAQ | (OPC_INTER \| MOD_LP \| MOD_XR \| M... | 300 |
+| OPC_CAB | (OPC_INTER \| MOD_LP \| MOD_XR \| M... | 301 |
+| OPC_INA | 0x0900 | 303 |
+| OPC_ENA | 0x0A00 | 304 |
+| OPC_NOP | 0x0B00 | 305 |
+| OPC_ENQ | 0x0C00 | 306 |
+| OPC_INQ | 0x0D00 | 307 |
+| OPC_EXI | 0x0E00 | 308 |
+| OPC_MODMASK | 0x00FF | 310 |
+| EXTEND16(v) | (((v) & 0x8000) ? (v) \| 0xFFFF00... | 311 |
+| EXTEND8(v) | (((v) & 0x80) ? (v) \| 0xFF00 : (v)) | 312 |
+| EXTEND4(v) | (((v) & 0x8) ? (v) \| 0xFFF0 : (v)) | 313 |
+| TRUNC16(v) | ((v) & 0xFFFF) | 314 |
+| CANEXTEND8(v) | (((v) & 0xFF80) == 0xFF80) | 315 |
+| OPC_SHIFTS | 0x0F00 | 317 |
+| OPC_SHIFTMASK | 0x00E0 | 318 |
+| MOD_LR | 0x80 | 319 |
+| MOD_S_A | 0x40 | 320 |
+| MOD_S_Q | 0x20 | 321 |
+| OPC_SHIFTCOUNT | 0x001F | 322 |
+| OPC_QRS | (OPC_SHIFTS \| MOD_S_Q) | 324 |
+| OPC_ARS | (OPC_SHIFTS \| MOD_S_A) | 325 |
+| OPC_LRS | (OPC_SHIFTS \| MOD_S_A \| MOD_S_Q) | 326 |
+| OPC_QLS | (OPC_SHIFTS \| MOD_LR \| MOD_S_Q) | 327 |
+| OPC_ALS | (OPC_SHIFTS \| MOD_LR \| MOD_S_A) | 328 |
+| OPC_LLS | (OPC_SHIFTS \| MOD_LR \| MOD_S_A \|... | 329 |
+| OPC_ADDRMASK | 0x00FF | 331 |
+| ISCONSTANT(i) | ((i & (MOD_RE \| MOD_IN \| OPC_ADD... | 332 |
+| MOD_ENHRE | 0x0080 | 388 |
+| MOD_ENHIN | 0x0040 | 389 |
+| MOD_ENHRA | 0x0038 | 390 |
+| MOD_ENHRB | 0x0007 | 391 |
+| REG_NOREG | 0x0 | 393 |
+| REG_R1 | 0x1 | 394 |
+| REG_R2 | 0x2 | 395 |
+| REG_R3 | 0x3 | 396 |
+| REG_R4 | 0x4 | 397 |
+| REG_Q | 0x5 | 398 |
+| REG_A | 0x6 | 399 |
+| REG_I | 0x7 | 400 |
+| OPC_ENHF4 | 0xF000 | 402 |
+| OPC_ENHF5 | 0x0F00 | 403 |
+| WORD_REG | 0x0 | 405 |
+| WORD_MEM | 0x1 | 406 |
+| CHAR_REG | 0x2 | 407 |
+| CHAR_MEM | 0x3 | 408 |
+| OPC_STOSJMP | 0x5000 | 410 |
+| OPC_STOADD | 0x8000 | 411 |
+| OPC_STOSUB | 0x9000 | 412 |
+| OPC_STOAND | 0xA000 | 413 |
+| OPC_STOLOADST | 0xC000 | 414 |
+| OPC_STOOR | 0xD000 | 415 |
+| OPC_STOCRE | 0xE000 | 416 |
+| OPC_FLDF3A | 0x07 | 418 |
+| OPC_FLDRSV1 | 0x0 | 419 |
+| OPC_FLDRSV2 | 0x1 | 420 |
+| OPC_FLDSFZ | 0x2 | 421 |
+| OPC_FLDSFN | 0x3 | 422 |
+| OPC_FLDLOAD | 0x4 | 423 |
+| OPC_FLDSTORE | 0x5 | 424 |
+| OPC_FLDCLEAR | 0x6 | 425 |
+| OPC_FLDSET | 0x7 | 426 |
+| OPC_FLDSTR | 0xF000 | 427 |
+| OPC_FLDLTH | 0x0F00 | 428 |
+| OPC_ENHXFRRA | 0xE0 | 430 |
+| OPC_ENHXFRF2A | 0x18 | 431 |
+| OPC_ENHXFRRB | 0x7 | 432 |
+| OPC_ENHSKIPTY | 0x30 | 434 |
+| OPC_ENHSKIPREG | 0xC0 | 435 |
+| OPC_ENHSKIPCNT | 0xF | 436 |
+| OPC_DRPMBZ | 0x10 | 438 |
+| OPC_DRPRA | 0xE0 | 439 |
+| OPC_DRPSK | 0xF | 440 |
+| OPC_MISCRA | 0xE0 | 442 |
+| OPC_MISCF3 | 0xF | 443 |
+| OPC_ENHLMM | 0x1 | 445 |
+| OPC_ENHLRG | 0x2 | 446 |
+| OPC_ENHSRG | 0x3 | 447 |
+| OPC_ENHSIO | 0x4 | 448 |
+| OPC_ENHSPS | 0x5 | 449 |
+| OPC_ENHDMI | 0x6 | 450 |
+| OPC_ENHCBP | 0x7 | 451 |
+| OPC_ENHGPE | 0x8 | 452 |
+| OPC_ENHGPO | 0x9 | 453 |
+| OPC_ENHASC | 0xA | 454 |
+| OPC_ENHAPM | 0xB | 455 |
+| OPC_ENHPM0 | 0xC | 456 |
+| OPC_ENHPM1 | 0xD | 457 |
+| OPC_ENHLUB | 0x0 | 459 |
+| OPC_ENHLLB | 0x1 | 460 |
+| OPC_ENHEMS | 0x2 | 461 |
+| OPC_ENHWPR | 0x3 | 462 |
+| OPC_ENHRPR | 0x4 | 463 |
+| OPC_ENHECC | 0x5 | 464 |
+| INTERRUPT_BASE | 0x100 | 469 |
+| INTERRUPT_00 | (INTERRUPT_BASE + 0x00) | 470 |
+| INTERRUPT_01 | (INTERRUPT_BASE + 0x04) | 471 |
+| INTERRUPT_02 | (INTERRUPT_BASE + 0x08) | 472 |
+| INTERRUPT_03 | (INTERRUPT_BASE + 0x0C) | 473 |
+| INTERRUPT_04 | (INTERRUPT_BASE + 0x10) | 474 |
+| INTERRUPT_05 | (INTERRUPT_BASE + 0x14) | 475 |
+| INTERRUPT_06 | (INTERRUPT_BASE + 0x18) | 476 |
+| INTERRUPT_07 | (INTERRUPT_BASE + 0x1C) | 477 |
+| INTERRUPT_08 | (INTERRUPT_BASE + 0x20) | 478 |
+| INTERRUPT_09 | (INTERRUPT_BASE + 0x24) | 479 |
+| INTERRUPT_10 | (INTERRUPT_BASE + 0x28) | 480 |
+| INTERRUPT_11 | (INTERRUPT_BASE + 0x2C) | 481 |
+| INTERRUPT_12 | (INTERRUPT_BASE + 0x30) | 482 |
+| INTERRUPT_13 | (INTERRUPT_BASE + 0x34) | 483 |
+| INTERRUPT_14 | (INTERRUPT_BASE + 0x38) | 484 |
+| INTERRUPT_15 | (INTERRUPT_BASE + 0x3C) | 485 |
+| INTR_BASIC | 2 | 487 |
+| INTR_1705 | 16 | 488 |
+| IO_CONTINUE | 0x8000 | 493 |
+| IO_W | 0x7800 | 494 |
+| IO_EQUIPMENT | 0x0780 | 495 |
+| IO_COMMAND | 0x007F | 496 |
+| IO_DIR_STOP | 0x0040                  /* Stop ... | 500 |
+| IO_DIR_START | 0x0020                  /* Start... | 501 |
+| IO_DIR_ALARM | 0x0010                  /* Alarm... | 502 |
+| IO_DIR_EOP | 0x0008                  /* End o... | 503 |
+| IO_DIR_DATA | 0x0004                  /* Data ... | 504 |
+| IO_DIR_CINT | 0x0002                  /* Clear... | 505 |
+| IO_DIR_CCONT | 0x0001                  /* Clear... | 506 |
+| STARTSTOP(v) | (((v) &  | 511 |
+| IO_ST_PARITY | 0x0100                  /* Parit... | 517 |
+| IO_ST_PROT | 0x0080                  /* Prote... | 518 |
+| IO_ST_LOST | 0x0040                  /* Lost ... | 519 |
+| IO_ST_ALARM | 0x0020                  /* Alarm */ | 520 |
+| IO_ST_EOP | 0x0010                  /* End o... | 521 |
+| IO_ST_DATA | 0x0008                  /* Data */ | 522 |
+| IO_ST_INT | 0x0004                  /* Inter... | 523 |
+| IO_ST_BUSY | 0x0002                  /* Devic... | 524 |
+| IO_ST_READY | 0x0001                  /* Devic... | 525 |
+| STATUS | iod_readR[1] | 603 |
+| DEVSTATUS(iod) | ((iod)->iod_readR[1]) | 604 |
+| DCSTATUS(iod) | ((iod)->iod_readR[2]) | 605 |
+| FUNCTION | iod_writeR[1] | 606 |
+| IENABLE | iod_ienable | 607 |
+| OLDIENABLE | iod_oldienable | 608 |
+| ENABLED(iod) | ((iod)->iod_ienable) | 609 |
+| ISENABLED(iod, | mask)  | 610 |
+| SETSTICKY(iod, | reg, value)  | 613 |
+| CLRSTICKY(iod, | reg, value)  | 615 |
+| MASK_REGISTER0 | 0x0001 | 618 |
+| MASK_REGISTER1 | 0x0002 | 619 |
+| MASK_REGISTER2 | 0x0004 | 620 |
+| MASK_REGISTER3 | 0x0008 | 621 |
+| MASK_REGISTER4 | 0x0010 | 622 |
+| MASK_REGISTER5 | 0x0020 | 623 |
+| MASK_REGISTER6 | 0x0040 | 624 |
+| MASK_REGISTER7 | 0x0080 | 625 |
+| MASK_REGISTER8 | 0x0100 | 626 |
+| MASK_REGISTER9 | 0x0200 | 627 |
+| MASK_REGISTER10 | 0x0400 | 628 |
+| MASK_REGISTER11 | 0x0800 | 629 |
+| MASK_REGISTER12 | 0x1000 | 630 |
+| MASK_REGISTER13 | 0x2000 | 631 |
+| MASK_REGISTER14 | 0x4000 | 632 |
+| MASK_REGISTER15 | 0x8000 | 633 |
+| STATUS_ZERO | 0x01 | 635 |
+| DEVICE_DC | 0x02 | 636 |
+| AQ_ONLY | 0x04 | 637 |
+| IODEV(name, | model, id, equ, sta, base, busy,... | 639 |
+| IODEVICE(dev) | ((IO_DEVICE *)dev->ctxt) | 654 |
+| CHANGED(iod, | n) ((iod)->iod_writeR[n] ^ (iod)... | 656 |
+| ICHANGED(iod) | ((iod)->iod_ienable ^ (iod)->iod... | 657 |
+| DEVRESET(iod) |  | 659 |
+| DBG_V_DTRACE | 0                       /* Trace... | 672 |
+| DBG_V_DSTATE | 1                       /* Dump ... | 673 |
+| DBG_V_DINTR | 2                       /* Trace... | 674 |
+| DBG_V_DERROR | 3                       /* Trace... | 675 |
+| DBG_V_LOC | 4                       /* Dump ... | 676 |
+| DBG_V_FIRSTREJ | 5                       /* Dump ... | 677 |
+| DBG_SPECIFIC | 6                       /* Start... | 678 |
+| DBG_DTRACE | (1 << DBG_V_DTRACE) | 681 |
+| DBG_DSTATE | (1 << DBG_V_DSTATE) | 682 |
+| DBG_DINTR | (1 << DBG_V_DINTR) | 683 |
+| DBG_DERROR | (1 << DBG_V_DERROR) | 684 |
+| DBG_DLOC | (1 << DBG_V_LOC) | 685 |
+| DBG_DFIRSTREJ | (1 << DBG_V_FIRSTREJ) | 686 |
+| IO_CPU_INTR | 0 | 696 |
+| IO_CPU_DIRMSK | 0 | 697 |
+| IO_CPU_STMSK | 0 | 698 |
+| IO_CPU_STCINT | 0 | 699 |
+| IO_1706_1_A | 0x1000                  /* 1706-... | 704 |
+| IO_1706_1_B | 0x1800 | 705 |
+| IO_1706_1_C | 0x2000 | 706 |
+| IO_1706_1_D | 0x2800 | 707 |
+| IO_1706_2_A | 0x3800                  /* 1706-... | 708 |
+| IO_1706_2_B | 0x4000 | 709 |
+| IO_1706_2_C | 0x4800 | 710 |
+| IO_1706_2_D | 0x5000 | 711 |
+| IO_1706_3_A | 0x6000                  /* 1706-... | 712 |
+| IO_1706_3_B | 0x6800 | 713 |
+| IO_1706_3_C | 0x7000 | 714 |
+| IO_1706_3_D | 0x7800 | 715 |
+| IO_1706_SET | 0x8000                  /* Set/c... | 717 |
+| IO_1706_EOP | 0x0001                  /* Enabl... | 718 |
+| IO_1706_PROT | 0x0040                  /* Progr... | 720 |
+| IO_1706_REPLY | 0x0200                  /* Devic... | 721 |
+| IO_1706_REJECT | 0x0100                  /* Devic... | 722 |
+| IO_1706_STMSK | (IO_1706_REPLY \| IO_1706_REJECT ... | 723 |
+| IO_DC_INTR | 0 | 730 |
+| IO_DC_DIRMSK | 0 | 731 |
+| IO_DC_STMSK | 0 | 732 |
+| IO_DC_STCINT | 0 | 733 |
+| IO_1706_MAX | 3                       /* Max #... | 735 |
+| IO_1706_DEVS | 8                       /* Max d... | 736 |
+| IDX_FROM_CHAN(c) | (c - 1) | 738 |
+| IO_1711_A | 0x0090 | 743 |
+| IO_1711_B | 0x0091 | 744 |
+| IO_1711_SREAD | 0x0200                  /* Selec... | 746 |
+| IO_1711_SWRITE | 0x0100                  /* Selec... | 747 |
+| IO_1711_DIRMSK | (IO_1711_SREAD \| IO_1711_SWRITE ... | 748 |
+| IO_1711_INTR | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 750 |
+| IO_1711_MANUAL | 0x0800                  /* Manua... | 752 |
+| IO_1711_MON | 0x0400                  /* Motor... | 753 |
+| IO_1711_RMODE | 0x0200                  /* Read ... | 754 |
+| IO_1711_STMSK | (IO_1711_MANUAL \| IO_1711_MON \| ... | 755 |
+| IO_1711_STCINT | (IO_ST_ALARM \| IO_ST_EOP \| IO_ST... | 758 |
+| IO_1721_A | 0x00A0 | 763 |
+| IO_1721_B | 0x00A1 | 764 |
+| IO_1721_DIRMSK | (IO_DIR_STOP \| IO_DIR_START \| IO... | 766 |
+| IO_1721_INTR | (IO_DIR_ALARM \| IO_DIR_DATA) | 768 |
+| IO_1721_POWERON | 0x0400                  /* Power... | 770 |
+| IO_1721_MOTIONF | 0x0200                  /* Paper... | 771 |
+| IO_1721_EXIST | 0x0100                  /* Exist... | 772 |
+| IO_1721_STMSK | (IO_1721_POWERON \| IO_1721_MOTIO... | 773 |
+| IO_1721_STCINT | (IO_ST_ALARM \| IO_ST_DATA) | 776 |
+| IO_1723_A | 0x00C0 | 781 |
+| IO_1723_B | 0x00C1 | 782 |
+| IO_1723_DIRMSK | (IO_DIR_STOP \| IO_DIR_START \| IO... | 784 |
+| IO_1723_INTR | (IO_DIR_ALARM \| IO_DIR_DATA) | 786 |
+| IO_1723_TAPELOW | 0x0800                  /* Tape ... | 788 |
+| IO_1723_POWERON | 0x0400                  /* Power... | 789 |
+| IO_1723_BREAK | 0x0200                  /* Tape ... | 790 |
+| IO_1723_EXIST | 0x0100                  /* Exist... | 791 |
+| IO_1723_STMSK | (IO_1723_TAPELOW \| IO_1723_POWER... | 792 |
+| IO_1723_STCINT | (IO_ST_ALARM \| IO_ST_DATA) | 795 |
+| IO_1726_GATE | 0x0200                  /* gate ... | 800 |
+| IO_1726_NHOL | 0x0400                  /* Negat... | 801 |
+| IO_1726_RHOL | 0x0800                  /* Rel. ... | 802 |
+| IO_1726_RELOAD | 0x1000                  /* Reloa... | 803 |
+| IO_1726_DIRMSK | (IO_1726_RELOAD \| IO_1726_RHOL \|... | 805 |
+| IO_1726_INTR | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 808 |
+| IO_1726_ERROR | 0x0100                  /* Error */ | 810 |
+| IO_1726_BINARY | 0x0200                  /* Binar... | 811 |
+| IO_1726_SEP | 0x0400                  /* Separ... | 812 |
+| IO_1726_FEED | 0x0800                  /* Fail ... | 813 |
+| IO_1726_JAM | 0x1000                  /* Stack... | 814 |
+| IO_1726_EMPTY | 0x2000                  /* Input... | 815 |
+| IO_1726_EOF | 0x4000                  /* End o... | 816 |
+| IO_1726_PWROFF | 0x8000                  /* Motor... | 817 |
+| IO_1726_STMSK | (IO_1726_PWROFF \| IO_1726_EOF \| ... | 818 |
+| IO_1726_STCINT | (IO_ST_ALARM \| IO_ST_EOP \| IO_ST... | 823 |
+| IO_1728_MASK | 0x0060                  /* Stati... | 828 |
+| IO_1728_CR | 0x0020                  /* Card ... | 829 |
+| IO_1728_CP | 0x0040                  /* Card ... | 830 |
+| IO_1728_OFFSET | 0x0100                  /* Offse... | 832 |
+| IO_1728_FEED | 0x0080                  /* Initi... | 833 |
+| IO_1728_DIRMSK | (IO_1728_OFFSET \| IO_1728_FEED \|... | 835 |
+| IO_1728_INTR | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 838 |
+| IO_1728_CBFULL | 0x0800                  /* Chip ... | 840 |
+| IO_1728_EOF | 0x0400                  /* End o... | 841 |
+| IO_1728_FEEDAL | 0x0200                  /* Feed ... | 842 |
+| IO_1728_ERROR | 0x0100                  /* Pre-r... | 843 |
+| IO_1728_STMSK | (IO_1728_CBFULL \| IO_1728_EOF \| ... | 844 |
+| IO_1728_STCINT | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 848 |
+| IO_ST2_INTLOCK | 0x0400                  /* Door ... | 850 |
+| IO_ST2_PUNINH | 0x0200                  /* Punch... | 851 |
+| IO_ST2_MANUAL | 0x0100                  /* Manua... | 852 |
+| IO_ST2_PUNERR | 0x0080                  /* Punch... | 853 |
+| IO_ST2_PREERR | 0x0040                  /* Pre-r... | 854 |
+| IO_ST2_STKJAM | 0x0020                  /* Stack... | 855 |
+| IO_ST2_PUNJAM | 0x0010                  /* Punch... | 856 |
+| IO_ST2_READJAM | 0x0008                  /* Read ... | 857 |
+| IO_ST2_FFEED | 0x0004                  /* Fail ... | 858 |
+| IO_ST2_FULL | 0x0002                  /* Stack... | 859 |
+| IO_ST2_EMPTY | 0x0001                  /* Hoppe... | 860 |
+| IO_1728_ST2MSK | (IO_ST2_INTLOCK \| IO_ST2_PUNINH ... | 861 |
+| IO_1729_A | 0x00E0 | 869 |
+| IO_1729_B | 0x00E1 | 870 |
+| IO_1729_IEOR | 0x0008                  /* Inter... | 872 |
+| IO_1729_DIRMSK | (IO_DIR_STOP \| IO_DIR_START \| IO... | 874 |
+| IO_1729_INTR | (IO_DIR_ALARM \| IO_1729_IEOR \| I... | 877 |
+| IO_1729_EMPTY | 0x0200                  /* Read ... | 879 |
+| IO_1729_EXIST | 0x0100                  /* Exist... | 880 |
+| IO_1729_EOR | 0x0010                  /* End o... | 881 |
+| IO_1729_STMSK | (IO_1729_EMPTY \| IO_1729_EXIST \|... | 882 |
+| IO_1729_STCINT | (IO_ST_ALARM \| IO_1729_EOR \| IO_... | 886 |
+| IO_1732_WRITE | 0x0080                  /* Write... | 891 |
+| IO_1732_READ | 0x0100                  /* Read ... | 892 |
+| IO_1732_BACKSP | 0x0180                  /* Backs... | 893 |
+| IO_1732_WFM | 0x0280                  /* Write... | 894 |
+| IO_1732_SFWD | 0x0300                  /* Searc... | 895 |
+| IO_1732_SBACK | 0x0380                  /* Searc... | 896 |
+| IO_1732_REWL | 0x0400                  /* Rewin... | 897 |
+| IO_1732_MOTION | 0x0780                  /* Motio... | 898 |
+| IO_1732_LRT | 0x1000                  /* Selec... | 900 |
+| IO_1732_DESEL | 0x0800                  /* Desel... | 901 |
+| IO_1732_SEL | 0x0400                  /* Selec... | 902 |
+| IO_1732_UNIT | 0x0180                  /* Unit ... | 903 |
+| IO_1732_ASSEM | 0x0040                  /* Assem... | 904 |
+| IO_1732_1600 | 0x0020                  /* Selec... | 905 |
+| IO_1732_556 | 0x0010                  /* Selec... | 906 |
+| IO_1732_800 | 0x0008                  /* Selec... | 907 |
+| IO_1732_BINARY | 0x0004                  /* Binar... | 908 |
+| IO_1732_BCD | 0x0002                  /* BCD m... | 909 |
+| IO_1732_PARITY | 0x0006                  /* Parit... | 910 |
+| IO_1732_CHAR | 0x0001                  /* Chara... | 911 |
+| IO_1732A_REWU | 0x0600                  /* Rewin... | 914 |
+| IO_1732A_UNIT | 0x0380                  /* Unit ... | 915 |
+| IO_1732A_200 | 0x0020                  /* Selec... | 916 |
+| IO_1732_DIRMSK | (IO_1732_MOTION \| IO_DIR_ALARM \|... | 918 |
+| IO_1732_INTR | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 921 |
+| IO_1732_PROT | 0x8000                  /* Prote... | 923 |
+| IO_1732_SPE | 0x4000                  /* Stora... | 924 |
+| IO_1732_FILL | 0x2000                  /* Odd b... | 925 |
+| IO_1732_ACTIVE | 0x1000                  /* Contr... | 927 |
+| IO_1732_FMARK | 0x0800                  /* At fi... | 928 |
+| IO_1732_BOT | 0x0400                  /* At BO... | 929 |
+| IO_1732_EOT | 0x0200                  /* At EO... | 930 |
+| IO_1732_STMSK | (IO_1732_PROT \| IO_1732_SPE \| IO... | 931 |
+| IO_1732_STCINT | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 937 |
+| IO_ST2_LRT | 0x0200                  /* Low r... | 939 |
+| IO_ST2_IDABORT | 0x0100                  /* ID ab... | 940 |
+| IO_ST2_PETRANS | 0x0080                  /* PE ca... | 941 |
+| IO_ST2_PELOST | 0x0040                  /* PE - ... | 942 |
+| IO_ST2_PEWARN | 0x0020                  /* PE - ... | 943 |
+| IO_ST2_WENABLE | 0x0010                  /* Write... | 944 |
+| IO_ST2_7TRACK | 0x0008                  /* Seven... | 945 |
+| IO_ST2_1600 | 0x0004                  /* 1600 ... | 946 |
+| IO_ST2_800 | 0x0002                  /* 800 B... | 947 |
+| IO_ST2_556 | 0x0001                  /* 556 B... | 948 |
+| IO_1732_ST2MSK | (IO_ST2_LRT \| IO_ST2_IDABORT \| I... | 949 |
+| IO_1732A_ST2MSK | (IO_ST2_WENABLE \| IO_ST2_7TRACK ... | 953 |
+| IO_1733_USC | 0x0600                  /* Unit ... | 959 |
+| IO_1733_USEL | 0x0100                  /* Unit ... | 960 |
+| IO_1733_UDSEL | 0x0080                  /* Unit ... | 961 |
+| IO_1733_RBINT | 0x0004                  /* Ready... | 962 |
+| IO_1733_DIRMSK | (IO_1733_USC \| IO_1733_USEL \| IO... | 963 |
+| IO_1733_INTR | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 966 |
+| IO_1733_DSEEK | 0x8000                  /* Drive... | 968 |
+| IO_1733_SPROT | 0x4000                  /* Stora... | 969 |
+| IO_1733_SPAR | 0x2000                  /* Stora... | 970 |
+| IO_1733_SINGLE | 0x1000                  /* Singl... | 971 |
+| IO_1733_CSEEK | 0x0800                  /* Contr... | 972 |
+| IO_1733_ADDRERR | 0x0400                  /* Addre... | 973 |
+| IO_1733_LOST | 0x0200                  /* Lost ... | 974 |
+| IO_1733_CWERR | 0x0100                  /* Check... | 975 |
+| IO_1733_NOCOMP | 0x0040                  /* No co... | 976 |
+| IO_1733_ONCYL | 0x0008                  /* On cy... | 977 |
+| IO_1733_STMSK | (IO_1733_DSEEK \| IO_1733_SPROT \|... | 978 |
+| IO_1733_STCINT | (IO_ST_ALARM \| IO_ST_EOP) | 984 |
+| IO_1738_USC | 0x0200                  /* Unit ... | 989 |
+| IO_1738_USEL | 0x0100                  /* Unit ... | 990 |
+| IO_1738_REL | 0x0080                  /* Relea... | 991 |
+| IO_1738_RBINT | 0x0004                  /* Ready... | 992 |
+| IO_1738_DIRMSK | (IO_1738_USC \| IO_1738_USEL \| IO... | 993 |
+| IO_1738_INTR | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 996 |
+| IO_1738_SPROT | 0x4000                  /* Stora... | 998 |
+| IO_1738_SPAR | 0x2000                  /* Stora... | 999 |
+| IO_1738_DEFECT | 0x1000                  /* Defec... | 1000 |
+| IO_1738_ADDRERR | 0x0800                  /* Addre... | 1001 |
+| IO_1738_SKERR | 0x0400                  /* Seek ... | 1002 |
+| IO_1738_LOST | 0x0200                  /* Lost ... | 1003 |
+| IO_1738_CWERR | 0x0100                  /* Check... | 1004 |
+| IO_1738_NOCOMP | 0x0040                  /* No co... | 1005 |
+| IO_1738_ONCYL | 0x0008                  /* On cy... | 1006 |
+| IO_1738_STMSK | (IO_1738_SPROT \| IO_1738_SPAR \| ... | 1007 |
+| IO_1738_STCINT | (IO_ST_ALARM \| IO_ST_EOP) | 1012 |
+| IO_1740_CPRINT | 0x0001                  /* Clear... | 1017 |
+| IO_1740_DIRMSK | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 1018 |
+| IO_1740_INTR | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 1020 |
+| IO_1740_L12 | 0x4000                  /* Level... | 1022 |
+| IO_1740_L7 | 0x0200                  /* Level... | 1023 |
+| IO_1740_L6 | 0x0100                  /* Level... | 1024 |
+| IO_1740_L5 | 0x0080                  /* Level... | 1025 |
+| IO_1740_L4 | 0x0040                  /* Level... | 1026 |
+| IO_1740_L3 | 0x0020                  /* Level... | 1027 |
+| IO_1740_L2 | 0x0010                  /* Level... | 1028 |
+| IO_1740_L1 | 0x0008                  /* Level... | 1029 |
+| IO_1740_DSP | 0x0004                  /* Doubl... | 1030 |
+| IO_1740_SSP | 0x0002                  /* Singl... | 1031 |
+| IO_1740_PRINT | 0x0001                  /* Print */ | 1032 |
+| IO_1740_DIR2MSK | (IO_1740_L12 \| IO_1740_L7 \| IO_1... | 1033 |
+| IO_1740_LEVELS | (IO_1740_L1 \| IO_1740_L2 \| IO_17... | 1038 |
+| IO_1740_MOTION | (IO_1740_SSP \| IO_1740_DSP \| IO_... | 1042 |
+| IO_1740_STMSK | (IO_ST_PROT \| IO_ST_ALARM \| IO_S... | 1044 |
+| IO_1740_STCINT | (IO_ST_ALARM \| IO_ST_EOP \| IO_ST... | 1047 |
+| IO_1742_PRINT | 0x0020                  /* Print */ | 1052 |
+| IO_1742_DIRMSK | (IO_1742_PRINT \| IO_DIR_ALARM \| ... | 1053 |
+| IO_1742_INTR | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 1055 |
+| IO_1742_LIMAGE | 0x0100                  /* Load ... | 1057 |
+| IO_1742_ERROR | 0x0040                  /* Devic... | 1058 |
+| IO_1742_STMSK | (IO_1742_LIMAGE \| IO_ST_PROT \| I... | 1060 |
+| IO_1742_STCINT | (IO_ST_ALARM \| IO_ST_EOP \| IO_ST... | 1064 |
+| IO_1752_DIRMSK | (IO_DIR_ALARM \| IO_DIR_EOP \| IO_... | 1069 |
+| IO_1752_INTR | (IO_DIR_ALARM \| IO_DIR_EOP) | 1071 |
+| IO_1752_OVERR | 0x8000                  /* Secto... | 1073 |
+| IO_1752_GUARDED | 0x4000                  /* Guard... | 1074 |
+| IO_1752_SECCMP | 0x2000                  /* Secto... | 1075 |
+| IO_1752_POWERF | 0x1000                  /* Power... | 1076 |
+| IO_1752_TIMERR | 0x0800                  /* Timin... | 1077 |
+| IO_1752_GUARDE | 0x0400                  /* Guard... | 1078 |
+| IO_1752_PROTF | 0x0200                  /* Prote... | 1079 |
+| IO_1752_CHECKW | 0x0100                  /* Check... | 1080 |
+| IO_1752_STMSK | (IO_1752_OVERR \| IO_1752_GUARDED... | 1081 |
+| IO_1752_STCINT | (IO_ST_ALARM \| IO_ST_EOP) | 1087 |
+| IO_10336_ACK | 0x0002                  /* Ackno... | 1092 |
+| IO_10336_STOP | 0x0040                  /* Stop ... | 1093 |
+| IO_10336_START | 0x0080                  /* Start... | 1094 |
+| IO_10336_DIS | 0x4000                  /* Disab... | 1095 |
+| IO_10336_ENA | 0x8000                  /* Enabl... | 1096 |
+| IO_10336_DIRMSK | (IO_10336_ENA \| IO_10336_DIS \| I... | 1098 |
+| IO_10336_INTR | 0 | 1101 |
+| IO_10336_STMSK | 0 | 1102 |
+| IO_10336_STCINT | 0 | 1103 |
+| M05_SAMPLE | 0x0000                  /* Sampl... | 1109 |
+| M05_SET | 0x0008                  /* Set (... | 1110 |
+| M05_DEVICE | 0x0070                  /* Devic... | 1111 |
+| M05_CONTR | 0x0380                  /* Contr... | 1112 |
+| TT_OUT_WAIT | 200                    /* TTY ou... | 1117 |
+| TT_IN_XFER | 60                    /* TTY inp... | 1118 |
+| TT_IN_MOTION | 500                    /* TTY pa... | 1119 |
+| PTP_OUT_WAIT | 500                    /* Punch ... | 1120 |
+| PTR_IN_WAIT | 450                    /* Reader... | 1121 |
+| LP_OUT_WAIT | 15                    /* Line pr... | 1122 |
+| LP_PRINT_WAIT | 3000                    /* Print... | 1123 |
+| LP_CC_WAIT | 300                    /* Contro... | 1124 |
+| MT_MOTION_WAIT | 150                    /* Magtap... | 1126 |
+| MT_RDATA_DELAY | 46                    /* Read da... | 1127 |
+| MT_WDATA_DELAY | 46                    /* Write d... | 1128 |
+| MT_200_WAIT | 134                    /* I/O la... | 1130 |
+| MT_556_WAIT | 48                    /* I/O lat... | 1131 |
+| MT_800_WAIT | 33                    /* I/O lat... | 1132 |
+| MT_1600_WAIT | 16                    /* I/O lat... | 1133 |
+| MT_MIN_WAIT | 10                    /* Minimum... | 1135 |
+| MT_REC_WAIT | 100                    /* Magtap... | 1136 |
+| MT_TM_WAIT | 200                    /* Magtap... | 1137 |
+| MT_EOP_WAIT | 100                    /* Magtap... | 1138 |
+| DP_XFER_WAIT | 300                    /* Contro... | 1140 |
+| DP_SEEK_WAIT | 2000                    /* Seek ... | 1141 |
+| DP_IO_WAIT | 1000                    /* Secto... | 1142 |
+| CD_SEEK_WAIT | 1100                    /* Seek ... | 1144 |
+| CD_IO_WAIT | 800                    /* Sector... | 1145 |
+| CD_RTZS_WAIT | 200                    /* Return... | 1146 |
+| DRM_ACCESS_WAIT | 5800                    /* Avera... | 1148 |
+| DRM_SECTOR_WAIT | 350                    /* Sector... | 1149 |
+| DC_START_WAIT | 4                    /* Startup ... | 1151 |
+| DC_IO_WAIT | 4                    /* I/O tran... | 1152 |
+| DC_EOP_WAIT | 5                    /* EOP dela... | 1153 |
+| RDR_IN_WAIT | 200                    /* Card r... | 1155 |
+| PUN_OUT_WAIT | 200                    /* Card p... | 1156 |
+

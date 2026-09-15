@@ -1,0 +1,98 @@
+=== i7080_cpu.c — 3593 строк ===
+Источник: i7080_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7080_cpu.c -nt .cline/maps/i7080_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dig2 | 145 | |
+| dig3 | 146 | |
+| dig4 | 147 | |
+| comp_bcd | 167 | |
+| drum_addr | 236 | |
+| chan_unit | 237 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_MSIZE | (UNIT_V_UF + 0) | 65 |
+| UNIT_MSIZE | (017 << UNIT_V_MSIZE) | 66 |
+| UNIT_V_CPUMODEL | (UNIT_V_UF + 4) | 67 |
+| UNIT_MODEL | (0x3 << UNIT_V_CPUMODEL) | 68 |
+| CPU_MODEL | ((cpu_unit.flags >> UNIT_V_CPUMO... | 69 |
+| MODEL(x) | (x << UNIT_V_CPUMODEL) | 70 |
+| MEMAMOUNT(x) | (x << UNIT_V_MSIZE) | 71 |
+| UNIT_EMU | (UNIT_V_CPUMODEL + 2) | 72 |
+| EMULATE3 | (1 << UNIT_EMU) | 73 |
+| EMULATE2 | (2 << UNIT_EMU) | 74 |
+| UNIT_V_NONSTOP | (UNIT_EMU + 2) | 75 |
+| NONSTOP | (1 << UNIT_V_NONSTOP) | 76 |
+| UNIT_V_IOIRQ | (UNIT_V_NONSTOP + 1) | 77 |
+| IOIRQ | (1 << UNIT_V_IOIRQ) | 78 |
+| UNIT_V_40K | (UNIT_V_IOIRQ + 1) | 79 |
+| EMU40K | (1 << UNIT_V_40K) | 80 |
+| CPU_702 | 0x0 | 82 |
+| CPU_705 | 0x1 | 83 |
+| CPU_7053 | 0x2 | 84 |
+| CPU_7080 | 0x3 | 85 |
+| HIST_XCT | 1       /* instruction */ | 87 |
+| HIST_INT | 2       /* interrupt cycle */ | 88 |
+| HIST_TRP | 3       /* trap cycle */ | 89 |
+| HIST_MIN | 64 | 90 |
+| HIST_MAX | 65536 | 91 |
+| HIST_NOEA | 0x40000000 | 92 |
+| HIST_PC | 0x80000 | 93 |
+| I | 0x80 | 169 |
+| ASIGN | 0x0001                  /* ACC M... | 183 |
+| BSIGN | 0x0002                  /* ASU M... | 184 |
+| AZERO | 0x0004                  /* ACC A... | 185 |
+| BZERO | 0x0008                  /* ASU Z... | 186 |
+| INSTFLAG | 0x0010                  /* Instr... | 187 |
+| MCHCHK | 0x0020                  /* Machi... | 188 |
+| IOCHK | 0x0040                  /* I/O C... | 189 |
+| RECCHK | 0x0080                  /* Recor... | 190 |
+| ACOFLAG | 0x0100                  /* AC Ov... | 191 |
+| SGNFLAG | 0x0200                  /* Sign ... | 192 |
+| ANYFLAG | 0x0400                  /* Anyfl... | 193 |
+| EIGHTMODE | 0x0800                  /* 7080 ... | 194 |
+| HIGHFLAG | 0x1000                  /* High ... | 195 |
+| LOWFLAG | 0x2000                  /* Low c... | 196 |
+| CMPFLAG | 0x3000                  /* Compa... | 197 |
+| SIGN | (ASIGN\|BSIGN) | 202 |
+| ZERO | (AZERO\|BZERO) | 203 |
+| IRQFLAGS | (ANYFLAG) | 204 |
+| Next(reg) | if (reg == 0) reg = EMEMSIZE; reg-- | 331 |
+| Prev5(reg) | reg += 5; if (reg > EMEMSIZE) re... | 332 |
+| Prev10(reg) | reg += 10; if (reg > EMEMSIZE) r... | 333 |
+| Prev(reg) | reg++; if (reg == EMEMSIZE) reg = 0 | 334 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ReadP | 337-354 | Read 1 character from memory, checking for reducancy error. |
+| Read5 | 355-366 | Read 5 characters from memory starting at addr |
+| WriteP | 367-375 | Write 1 character to memory. |
+| Write5 | 376-385 | Write 5 characters from memory starting at addr |
+| sim_instr | 386-2300 |  |
+| read_addr | 2301-2354 | Read and convert address of instruction |
+| write_addr | 2355-2413 | Write converted address of instruction |
+| store_addr | 2414-2462 | Store converted address in storage |
+| load_addr | 2463-2515 | Read address from storage |
+| store_hex | 2516-2528 | Store converted hex address in storage |
+| load_hex | 2529-2558 | Read hex address from storage |
+| get_acstart | 2559-2573 | Compute starting point in Storage for accumulator |
+| store_cpu | 2574-2628 | Store CPU state in CASU 15 |
+| load_cpu | 2629-2715 | Load CPU State from storage |
+| do_addsub | 2716-2844 |  |
+| do_mult | 2845-2938 |  |
+| do_divide | 2939-3203 |  |
+| do_compare | 3204-3292 |  |
+| mem_init | 3293-3304 |  |
+| cpu_reset | 3305-3400 |  |
+| cpu_ex | 3401-3413 |  |
+| cpu_dep | 3414-3422 |  |
+| cpu_set_size | 3423-3453 |  |
+| cpu_set_hist | 3454-3488 |  |
+| cpu_show_hist | 3489-3553 |  |
+| cpu_description | 3554-3559 |  |
+| cpu_help | 3560-3593 |  |

@@ -1,0 +1,139 @@
+=== hp2100_lpt.c — 2202 строк ===
+Источник: hp2100_lpt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_lpt.c -nt .cline/maps/hp2100_lpt.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| PRINTER_PROPS | 393-401 |
+| DELAY_PROPS | 431-435 |
+| CARD_STATE | 519-528 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lp_interface | 555 | |
+| signal | 768 | |
+| working_set | 769 | |
+| outbound | 770 | |
+| irq_enabled | 771 | |
+| data_byte | 1061 | |
+| channel | 1062 | |
+| line_count | 1063 | |
+| return | 1364 | |
+| return | 1381 | |
+| result | 1418 | |
+| vfu_stream | 1651 | |
+| result | 1652 | |
+| SCPE_OK | 1688 | |
+| header_1 | 1714 | |
+| header_2 | 1715 | |
+| chan | 1719 | |
+| SCPE_OK | 1750 | |
+| return | 1812 | |
+| line | 2025 | |
+| len | 2026 | |
+| buffer | 2027 | |
+| bptr | 2028 | |
+| tape | 2029 | |
+| result | 2173 | |
+| len | 2174 | |
+| len | 2201 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CR | '\r'                /* carriage ... | 280 |
+| LF | '\n'                /* line feed */ | 281 |
+| FF | '\f'                /* form feed */ | 282 |
+| DEL | '\177'              /* delete */ | 283 |
+| DATA_MASK | 0177u               /* printer u... | 285 |
+| FORMAT_VFU | 0100u               /* printer V... | 286 |
+| FORMAT_MASK | 0117u               /* printer f... | 287 |
+| FORMAT_VFU_8_MASK | 0107u               /* printer f... | 288 |
+| FORMAT_SUPPRESS | 0000u               /* format co... | 290 |
+| FORMAT_VFU_CHAN_1 | 0100u               /* format co... | 291 |
+| FORMAT_VFU_BIAS | 0077u               /* bias conv... | 292 |
+| VFU_MAX | 144                 /* maximum n... | 294 |
+| VFU_SIZE | (VFU_MAX + 1)       /* size of t... | 295 |
+| LINE_SIZE | 256                 /* size of t... | 296 |
+| VFU_WIDTH | 12                  /* maximum n... | 298 |
+| VFU_CHANNEL_1 | 04000u              /* top of fo... | 300 |
+| VFU_CHANNEL_2 | 02000u              /* bottom of... | 301 |
+| VFU_CHANNEL_3 | 01000u              /* single sp... | 302 |
+| VFU_CHANNEL_4 | 00400u              /* double sp... | 303 |
+| VFU_CHANNEL_5 | 00200u              /* triple sp... | 304 |
+| VFU_CHANNEL_6 | 00100u              /* half page */ | 305 |
+| VFU_CHANNEL_7 | 00040u              /* quarter p... | 306 |
+| VFU_CHANNEL_8 | 00020u              /* sixth pag... | 307 |
+| VFU_CHANNEL_9 | 00010u              /* bottom of... | 308 |
+| VFU_CHANNEL_10 | 00004u              /* (unassign... | 309 |
+| VFU_CHANNEL_11 | 00002u              /* (unassign... | 310 |
+| VFU_CHANNEL_12 | 00001u              /* (unassign... | 311 |
+| CHARS_MAX | 136                 /* maximum n... | 313 |
+| BUFFER_SIZE | (CHARS_MAX + VFU_MAX * 2)   /* m... | 315 |
+| DEV_DIAG_SHIFT | (DEV_V_UF + 0)              /* d... | 320 |
+| DEV_REALTIME_SHIFT | (DEV_V_UF + 1)              /* t... | 321 |
+| DEV_DIAG | (1u << DEV_DIAG_SHIFT)      /* d... | 323 |
+| DEV_REALTIME | (1u << DEV_REALTIME_SHIFT)  /* r... | 324 |
+| UNIT_MODEL_SHIFT | (UNIT_V_UF + 0)     /* printer m... | 341 |
+| UNIT_EXPAND_SHIFT | (UNIT_V_UF + 3)     /* printer u... | 342 |
+| UNIT_OFFLINE_SHIFT | (UNIT_V_UF + 4)     /* printer i... | 343 |
+| UNIT_POWEROFF_SHIFT | (UNIT_V_UF + 5)     /* printer p... | 344 |
+| UNIT_MODEL_MASK | 0000007u            /* model ID ... | 346 |
+| UNIT_MODEL | (UNIT_MODEL_MASK << UNIT_MODEL_S... | 348 |
+| UNIT_EXPAND | (1u << UNIT_EXPAND_SHIFT) | 349 |
+| UNIT_OFFLINE | (1u << UNIT_OFFLINE_SHIFT) | 350 |
+| UNIT_ONLINE | 0 | 351 |
+| UNIT_POWEROFF | (1u << UNIT_POWEROFF_SHIFT) | 352 |
+| UNIT_2607 | (HP_2607 << UNIT_MODEL_SHIFT) | 354 |
+| UNIT_2613 | (HP_2613 << UNIT_MODEL_SHIFT) | 355 |
+| UNIT_2617 | (HP_2617 << UNIT_MODEL_SHIFT) | 356 |
+| UNIT_2618 | (HP_2618 << UNIT_MODEL_SHIFT) | 357 |
+| GET_MODEL(f) | ((PRINTER_TYPE) (((f) >> UNIT_MO... | 362 |
+| LP_BUFFER_LOAD | uS (1)              /* fast per-... | 447 |
+| LP_PRINT | mS (1)              /* fast prin... | 448 |
+| LP_ADVANCE | uS (50)             /* fast pape... | 449 |
+| CN_FORMAT | 0100000u            /* printer o... | 468 |
+| ST_ONLINE | 0100000u            /* online */ | 486 |
+| ST_NOT_READY | 0040000u            /* not ready */ | 487 |
+| ST_VFU_9 | 0020000u            /* VFU chann... | 488 |
+| ST_VFU_12 | 0010000u            /* VFU chann... | 489 |
+| ST_DEMAND | 0000001u            /* demand */ | 490 |
+| ST_POWEROFF | (ST_ONLINE \| ST_NOT_READY \| ST_D... | 492 |
+| UNIT_FLAGS | (UNIT_ATTABLE \| UNIT_SEQ \| UNIT_... | 594 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lp_interface | 766-772 |  |
+| while | 773-1055 |  |
+| lp_service | 1056-1069 |  |
+| if | 1070-1098 |  |
+| if | 1099-1318 |  |
+| lp_reset | 1319-1324 |  |
+| if | 1325-1356 |  |
+| activate_unit | 1357-1373 |  |
+| report_error | 1374-1415 |  |
+| lp_attach | 1416-1475 |  |
+| lp_detach | 1476-1519 |  |
+| lp_set_mode | 1520-1521 |  |
+| switch | 1522-1561 |  |
+| lp_set_model | 1562-1603 |  |
+| lp_set_on_offline | 1604-1617 |  |
+| if | 1618-1648 |  |
+| lp_set_vfu | 1649-1681 |  |
+| lp_show_mode | 1682-1711 |  |
+| lp_show_vfu | 1712-1775 |  |
+| lp_master_clear | 1776-1791 |  |
+| if | 1792-1796 |  |
+| if | 1797-1828 |  |
+| lp_set_alarm | 1829-1832 |  |
+| if | 1833-1860 |  |
+| lp_set_locality | 1861-1862 |  |
+| if | 1863-2021 |  |
+| lp_load_vfu | 2022-2030 |  |
+| if | 2031-2140 |  |
+| if | 2141-2170 |  |
+| lp_read_line | 2171-2175 |  |
+| while | 2176-2202 |  |

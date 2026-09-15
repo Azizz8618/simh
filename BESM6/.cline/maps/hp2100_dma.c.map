@@ -1,0 +1,69 @@
+=== hp2100_dma.c — 1063 строк ===
+Источник: hp2100_dma.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_dma.c -nt .cline/maps/hp2100_dma.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DMA_STATE | 201-213 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dma_interface | 220 | |
+| dmc_interface | 221 | |
+| signal | 460 | |
+| working_set | 461 | |
+| outbound | 462 | |
+| irq_enabled | 463 | |
+| signal | 647 | |
+| working_set | 648 | |
+| outbound | 649 | |
+| return | 787 | |
+| return | 823 | |
+| return | 870 | |
+| SCPE_OK | 907 | |
+| data | 976 | |
+| result | 977 | |
+| signals | 978 | |
+| return | 1062 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DMA_CHAN_COUNT | 2                   /* number of... | 144 |
+| DMA_1_REQ | (1u << ch1)         /* channel 1... | 151 |
+| DMA_2_REQ | (1u << ch2)         /* channel 2... | 152 |
+| TO_REQ(c) | (1u << (c)) | 154 |
+| CN_STC | 0100000u            /* (S) asser... | 169 |
+| CN_PACK | 0040000u            /* (B) enabl... | 170 |
+| CN_CLC | 0020000u            /* (C) asser... | 171 |
+| CN_SC | 0000077u            /* device se... | 172 |
+| CN_SC_12607 | 0000007u            /* device se... | 173 |
+| CN_12607_MASK | (CN_STC \| CN_CLC \| CN_SC_12607) | 175 |
+| CN_XFRIN | 0100000u            /* (D) trans... | 177 |
+| CN_ADDRESS | 0077777u            /* memory ad... | 178 |
+| CN_ADDRESS_12607 | 0037777u            /* memory ad... | 179 |
+| CN_COUNT_12607 | 0017777u            /* word coun... | 181 |
+| CN_COUNT_12578 | 0037777u            /* word coun... | 182 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| 1 | 263-276 |  |
+| 2 | 277-456 |  |
+| dma_interface | 457-464 |  |
+| while | 465-643 |  |
+| dmc_interface | 644-650 |  |
+| while | 651-763 |  |
+| dma_configure | 764-774 |  |
+| if | 775-806 |  |
+| dma_assert_SRQ | 807-808 |  |
+| if | 809-815 |  |
+| if | 816-861 |  |
+| dma_service | 862-887 |  |
+| dma_reset | 888-895 |  |
+| if | 896-969 |  |
+| dma_cycle | 970-1008 |  |
+| if | 1009-1051 |  |
+| if | 1052-1063 |  |

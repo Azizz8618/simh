@@ -1,0 +1,109 @@
+=== s100_mdsad.c — 818 строк ===
+Источник: s100_mdsad.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_mdsad.c -nt .cline/maps/s100_mdsad.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| MDSAD_DRIVE_INFO | 102-109 |
+| ORDERS | 111-124 |
+| COM_STATUS | 126-131 |
+| A_STATUS | 133-138 |
+| B_STATUS | 140-145 |
+| C_STATUS | 147-149 |
+| MDSAD_INFO | 151-163 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 61 | |
+| mdsad_info_data | 165 | |
+| mdsad_info | 166 | |
+| sdata | 168 | |
+| checksum | 455 | |
+| sec_offset | 456 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 45 |
+| DBG_PRINT(args) |  | 47 |
+| ERROR_MSG | (1 << 0) | 51 |
+| SEEK_MSG | (1 << 1) | 52 |
+| CMD_MSG | (1 << 2) | 53 |
+| RD_DATA_MSG | (1 << 3) | 54 |
+| WR_DATA_MSG | (1 << 4) | 55 |
+| STATUS_MSG | (1 << 5) | 56 |
+| ORDERS_MSG | (1 << 6) | 57 |
+| RD_DATA_DETAIL_MSG | (1 << 7) | 58 |
+| WR_DATA_DETAIL_MSG | (1 << 8) | 59 |
+| MDSAD_MAX_DRIVES | 4 | 67 |
+| MDSAD_SECTOR_LEN_DD | 512 | 68 |
+| MDSAD_SECTOR_LEN_SD | 256 | 69 |
+| MDSAD_SECTORS_PER_TRACK | 10 | 70 |
+| MDSAD_TRACKS | 35 | 71 |
+| MDSAD_ZEROS_LEN_DD | 32 | 72 |
+| MDSAD_ZEROS_LEN_SD | 16 | 73 |
+| MDSAD_SYNC_LEN_DD | 2 | 74 |
+| MDSAD_SYNC_LEN_SD | 1 | 75 |
+| MDSAD_CHECKSUM_LEN | 1 | 76 |
+| MDSAD_RAW_LEN_DD | (MDSAD_ZEROS_LEN_DD + MDSAD_SYNC... | 77 |
+| MDSAD_RAW_LEN_SD | (MDSAD_ZEROS_LEN_SD + MDSAD_SYNC... | 78 |
+| IS_DOUBLE_DENSITY | (pDrive->sector_len == MDSAD_SEC... | 80 |
+| MDSAD_SECTOR_DATA | (IS_DOUBLE_DENSITY ? sdata.u_dd.... | 81 |
+| MDSAD_RAW_LEN | (IS_DOUBLE_DENSITY ? MDSAD_RAW_L... | 82 |
+| MDSAD_SECTOR_LEN | (pDrive->sector_len) | 83 |
+| UNIT_V_MDSAD_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 170 |
+| UNIT_MDSAD_VERBOSE | (1 << UNIT_V_MDSAD_VERBOSE) | 171 |
+| MDSAD_CAPACITY | (70*10*MDSAD_SECTOR_LEN_DD)    /... | 172 |
+| MDSAD_READ_ROM | 0 | 175 |
+| MDSAD_WRITE_DATA | 1 | 176 |
+| MDSAD_CTLR_ORDERS | 2 | 177 |
+| MDSAD_CTLR_COMMAND | 3 | 178 |
+| MDSAD_CMD_NOP | 0 | 181 |
+| MDSAD_CMD_RESET_SF | 1 | 182 |
+| MDSAD_CMD_INTR_DIS | 2 | 183 |
+| MDSAD_CMD_INTR_ARM | 3 | 184 |
+| MDSAD_CMD_SET_BODY | 4 | 185 |
+| MDSAD_CMD_MOTORS_ON | 5 | 186 |
+| MDSAD_CMD_BEGIN_WR | 6 | 187 |
+| MDSAD_CMD_RESET | 7 | 188 |
+| MDSAD_A_STATUS | 1 | 191 |
+| MDSAD_B_STATUS | 2 | 192 |
+| MDSAD_C_STATUS | 3 | 193 |
+| MDSAD_READ_DATA | 4 | 194 |
+| MDSAD_A_SF | 0x80 | 198 |
+| MDSAD_A_IX | 0x40 | 199 |
+| MDSAD_A_DD | 0x20 | 200 |
+| MDSAD_A_MO | 0x10 | 201 |
+| MDSAD_A_WI | 0x08 | 202 |
+| MDSAD_A_RE | 0x04 | 203 |
+| MDSAD_A_SP | 0x02 | 204 |
+| MDSAD_A_BD | 0x01 | 205 |
+| MDSAD_B_SF | 0x80 | 208 |
+| MDSAD_B_IX | 0x40 | 209 |
+| MDSAD_B_DD | 0x20 | 210 |
+| MDSAD_B_MO | 0x10 | 211 |
+| MDSAD_B_WR | 0x08 | 212 |
+| MDSAD_B_SP | 0x04 | 213 |
+| MDSAD_B_WP | 0x02 | 214 |
+| MDSAD_B_T0 | 0x01 | 215 |
+| MDSAD_C_SF | 0x80 | 218 |
+| MDSAD_C_IX | 0x40 | 219 |
+| MDSAD_C_DD | 0x20 | 220 |
+| MDSAD_C_MO | 0x10 | 221 |
+| MDSAD_C_SC | 0x0f | 222 |
+| MDSAD_NAME | "North Star Floppy Controller" | 245 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mdsad_description | 247-286 |  |
+| mdsad_reset | 287-307 | Reset routine |
+| mdsad_attach | 308-366 | Attach routine |
+| mdsad_detach | 367-390 | Detach routine |
+| mdsad_boot | 391-403 |  |
+| mdsaddev | 404-440 |  |
+| showdata | 441-457 |  |
+| calculate_mdsad_sec_offset | 458-472 |  |
+| MDSAD_Read | 473-818 |  |

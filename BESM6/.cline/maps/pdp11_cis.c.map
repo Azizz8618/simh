@@ -1,0 +1,131 @@
+=== pdp11_cis.c — 1670 строк ===
+Источник: pdp11_cis.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_cis.c -nt .cline/maps/pdp11_cis.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DSTR | 168-171 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| Dstr0 | 173 | |
+| isenable | 175 | |
+| match | 333 | |
+| spc | 334 | |
+| old_PC | 336 | |
+| nc | 337 | |
+| st | 338 | |
+| accum | 339 | |
+| mptable | 340 | |
+| Dstr1 | 341 | |
+| SCPE_OK | 1178 | |
+| mask | 1277 | |
+| unsignedtab | 1282 | |
+| return | 1326 | |
+| sm1 | 1373 | |
+| cy | 1385 | |
+| complX | 1403 | |
+| return | 1408 | |
+| dsrc->sign | 1449 | |
+| mtable | 1488 | |
+| return | 1491 | |
+| return | 1512 | |
+| nc | 1574 | |
+| cin | 1576 | |
+| mvlnt | 1592 | |
+| fpd | 1620 | |
+| mvlnt | 1626 | |
+| return | 1645 | |
+| FALSE | 1669 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| INLINE | 0100                            ... | 94 |
+| PACKED | 0020                            ... | 95 |
+| NUMERIC | 0000                            ... | 96 |
+| INT_TEST | 100 | 100 |
+| R0_DESC | 1                               ... | 104 |
+| R2_DESC | 2                               ... | 105 |
+| R4_DESC | 3                               ... | 106 |
+| R4_ARG | 4                               ... | 107 |
+| IN_DESC | 5                               ... | 108 |
+| IN_ARG | 6                               ... | 109 |
+| MAXOPN | 4                               ... | 110 |
+| XZ | 0                               ... | 114 |
+| UZ | 1                               ... | 115 |
+| TO | 2                               ... | 116 |
+| LO | 3                               ... | 117 |
+| TS | 4                               ... | 118 |
+| LS | 5                               ... | 119 |
+| XP | 6                               ... | 120 |
+| UP | 7                               ... | 121 |
+| DTYP_M | 07                              ... | 125 |
+| DTYP_V | 12                              ... | 126 |
+| DLNT_M | 037                             ... | 127 |
+| DLNT_V | 0                               ... | 128 |
+| GET_DTYP(x) | (((x) >> DTYP_V) & DTYP_M) | 129 |
+| GET_DLNT(x) | (((x) >> DLNT_V) & DLNT_M) | 130 |
+| ASHRND_M | 017                             ... | 134 |
+| ASHRND_V | 8                               ... | 135 |
+| ASHLNT_M | 0377                            ... | 136 |
+| ASHLNT_V | 0                               ... | 137 |
+| ASHSGN | 0200                            ... | 138 |
+| GET_ASHRND(x) | (((x) >> ASHRND_V) & ASHRND_M) | 139 |
+| GET_ASHLNT(x) | (((x) >> ASHLNT_V) & ASHLNT_M) | 140 |
+| A1LNT | arg[0] | 144 |
+| A1ADR | arg[1] | 145 |
+| A2LNT | arg[2] | 146 |
+| A2ADR | arg[3] | 147 |
+| A3LNT | arg[4] | 148 |
+| A3ADR | arg[5] | 149 |
+| A1 | &arg[0] | 150 |
+| A2 | &arg[2] | 151 |
+| A3 | &arg[4] | 152 |
+| GET_BIT(ir,n) | (((ir) >> (n)) & 1) | 156 |
+| GET_SIGN_L(ir) | GET_BIT((ir), 31) | 157 |
+| GET_SIGN_W(ir) | GET_BIT((ir), 15) | 158 |
+| GET_SIGN_B(ir) | GET_BIT((ir), 7) | 159 |
+| GET_Z(ir) | ((ir) == 0) | 160 |
+| DSTRLNT | 4 | 164 |
+| DSTRMAX | (DSTRLNT - 1) | 165 |
+| MAXDVAL | 429496730                       ... | 166 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cis11 | 330-344 |  |
+| for | 345-382 |  |
+| switch | 383-1204 |  |
+| ReadDstr | 1205-1211 |  |
+| if | 1212-1273 |  |
+| WriteDstr | 1274-1288 |  |
+| for | 1289-1301 |  |
+| if | 1302-1369 |  |
+| AddDstr | 1370-1374 |  |
+| for | 1375-1399 |  |
+| SubDstr | 1400-1418 |  |
+| CmpDstr | 1419-1422 |  |
+| for | 1423-1440 |  |
+| TestDstr | 1441-1444 |  |
+| for | 1445-1459 |  |
+| LntDstr | 1460-1465 |  |
+| for | 1466-1483 |  |
+| CreateTable | 1484-1500 |  |
+| WordRshift | 1501-1504 |  |
+| if | 1505-1521 |  |
+| WordLshift | 1522-1526 |  |
+| if | 1527-1547 |  |
+| NibbleRshift | 1548-1551 |  |
+| if | 1552-1570 |  |
+| NibbleLshift | 1571-1576 |  |
+| if | 1577-1589 |  |
+| movx_setup | 1590-1593 |  |
+| if | 1594-1597 |  |
+| if | 1598-1630 |  |
+| movx_cleanup | 1631-1633 |  |
+| if | 1634-1649 |  |
+| cis_int_test | 1650-1651 |  |
+| while | 1652-1670 |  |

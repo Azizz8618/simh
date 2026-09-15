@@ -1,0 +1,325 @@
+=== i7000_defs.h — 641 строк ===
+Источник: i7000_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7000_defs.h -nt .cline/maps/i7000_defs.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| _I7000_H_ |  | 26 |
+| NUM_CHAN | 1 | 33 |
+| NUM_DEVS_CDR | 1 | 34 |
+| NUM_DEVS_CDP | 1 | 35 |
+| NUM_DEVS_LPR | 1 | 36 |
+| NUM_DEVS_DR | 1 | 37 |
+| NUM_DEVS_MT | 0 | 38 |
+| MT_CHANNEL_ZERO |  | 39 |
+| NUM_UNITS_MT | 5 | 40 |
+| NUM_UNITS_DR | 16 | 41 |
+| MAXMEMSIZE | 2048 | 42 |
+| CHARSPERWORD | 6 | 43 |
+| NUM_CHAN | 5 | 47 |
+| NUM_DEVS_CDR | 1 | 48 |
+| NUM_DEVS_CDP | 1 | 49 |
+| STACK_DEV | 1 | 50 |
+| NUM_DEVS_LPR | 1 | 51 |
+| NUM_DEVS_CON | 1 | 52 |
+| NUM_DEVS_DSK | 5 | 53 |
+| NUM_DEVS_COM | 1 | 54 |
+| NUM_DEVS_MT | 3 | 55 |
+| CHAN_CHUREC | 1 | 56 |
+| NUM_UNITS_MT | 10      /* A, B */ | 57 |
+| MAXMEMSIZE | (100000) | 58 |
+| CHARSPERWORD | 1 | 59 |
+| NUM_CHAN | 9 | 66 |
+| NUM_DEVS_CDR | 1 | 67 |
+| NUM_DEVS_CDP | 1 | 68 |
+| NUM_DEVS_LPR | 1 | 69 |
+| NUM_DEVS_CON | 1 | 70 |
+| NUM_DEVS_MT | 3 | 71 |
+| NUM_DEVS_DSK | 10 | 72 |
+| NUM_DEVS_HT | 0 | 73 |
+| NUM_DEVS_COM | 1 | 74 |
+| NUM_UNITS_HT | 10 | 75 |
+| NUM_UNITS_MT | 10      /* A, B */ | 76 |
+| NUM_DEVS_CHRON | 1 | 77 |
+| MAXMEMSIZE | (30000) | 78 |
+| CHARSPERWORD | 5 | 79 |
+| NUM_CHAN | 11 | 83 |
+| NUM_DEVS_CDR | 1 | 84 |
+| NUM_DEVS_CDP | 1 | 85 |
+| NUM_DEVS_LPR | 1 | 86 |
+| NUM_DEVS_CON | 1 | 87 |
+| NUM_DEVS_MT | 4 | 88 |
+| NUM_DEVS_CHRON | 1 | 89 |
+| NUM_DEVS_DR | 1 | 90 |
+| NUM_DEVS_DSK | 5 | 91 |
+| NUM_DEVS_HT | 0 | 92 |
+| NUM_DEVS_COM | 1 | 93 |
+| NUM_UNITS_MT | 10 | 94 |
+| MT_CHANNEL_ZERO |  | 95 |
+| NUM_UNITS_HT | 10 | 96 |
+| MAXMEMSIZE | (160000) | 97 |
+| CHARSPERWORD | 1 | 98 |
+| NUM_CHAN | 1 | 102 |
+| NUM_DEVS_CDR | 1 | 103 |
+| NUM_DEVS_CDP | 1 | 104 |
+| NUM_DEVS_LPR | 1 | 105 |
+| NUM_DEVS_DR | 1 | 106 |
+| NUM_DEVS_MT | 0 | 107 |
+| NUM_UNITS_MT | 10 | 108 |
+| MT_CHANNEL_ZERO |  | 109 |
+| NUM_UNITS_DR | 16 | 110 |
+| MAXMEMSIZE | (32*1024) | 111 |
+| CHARSPERWORD | 6 | 112 |
+| NUM_CHAN | 8 | 117 |
+| NUM_DEVS_CDP | 2 | 118 |
+| NUM_DEVS_CDR | 2 | 119 |
+| NUM_DEVS_LPR | 2 | 120 |
+| NUM_DEVS_MT | 4 | 121 |
+| NUM_DEVS_CHRON | 1 | 122 |
+| NUM_DEVS_DSK | 10 | 123 |
+| NUM_DEVS_COM | 1 | 124 |
+| NUM_DEVS_HD | 1 | 125 |
+| NUM_DEVS_HT | 0 | 126 |
+| MT_CHANNEL_ZERO |  | 127 |
+| NUM_UNITS_HT | 10 | 128 |
+| NUM_UNITS_MT | 10      /* A, B */ | 129 |
+| NUM_UNITS_HD | 8 | 130 |
+| MAXMEMSIZE | (32*1024) | 131 |
+| CHARSPERWORD | 6 | 132 |
+| NUM_CHAN | 9 | 136 |
+| NUM_DEVS_CDP | 4 | 137 |
+| NUM_DEVS_CDR | 4 | 138 |
+| NUM_DEVS_LPR | 4 | 139 |
+| NUM_DEVS_MT | 3 | 140 |
+| NUM_DEVS_CHRON | 1 | 141 |
+| NUM_DEVS_DR | 1 | 142 |
+| NUM_DEVS_DSK | 10 | 143 |
+| NUM_DEVS_COM | 1 | 144 |
+| NUM_DEVS_HD | 1 | 145 |
+| NUM_DEVS_HT | 0 | 146 |
+| MT_CHANNEL_ZERO |  | 147 |
+| NUM_UNITS_HT | 10 | 148 |
+| NUM_UNITS_MT | 10      /* A, B */ | 149 |
+| NUM_UNITS_DR | 16 | 150 |
+| NUM_UNITS_HD | 8 | 151 |
+| MAXMEMSIZE | (64*1024) | 152 |
+| CHARSPERWORD | 6 | 153 |
+| STOP_IONRDY | 1               /* I/O dev not r... | 160 |
+| STOP_HALT | 2               /* HALT */ | 161 |
+| STOP_IBKPT | 3               /* breakpoint */ | 162 |
+| STOP_UUO | 4               /* invalid opcod... | 163 |
+| STOP_INDLIM | 5               /* indirect limi... | 164 |
+| STOP_XECLIM | 6               /* XEC limit */ | 165 |
+| STOP_IOCHECK | 7               /* IOCHECK */ | 166 |
+| STOP_MMTRP | 8               /* mm in trap */ | 167 |
+| STOP_INVLIN | 9               /* 7750 invalid ... | 168 |
+| STOP_INVMSG | 10               /* 7750 invalid... | 169 |
+| STOP_NOOFREE | 11               /* 7750 No free... | 170 |
+| STOP_NOIFREE | 12               /* 7750 No free... | 171 |
+| STOP_FIELD | 13               /* Field overfl... | 172 |
+| STOP_ACOFL | 13               /* AC Overflow ... | 173 |
+| STOP_SIGN | 14               /* Sign change */ | 174 |
+| STOP_DIV | 15               /* Divide error */ | 175 |
+| STOP_INDEX | 16               /* 7070 Alpha i... | 176 |
+| STOP_NOWM | 17               /* Stop if no w... | 177 |
+| STOP_INVADDR | 18               /* Stop on inva... | 178 |
+| STOP_INVLEN | 19               /* Invalid leng... | 179 |
+| STOP_RECCHK | 19               /* Record check... | 180 |
+| STOP_PROG | 20               /* Program faul... | 181 |
+| STOP_PROT | 21               /* Protection f... | 182 |
+| MEMSIZE | (cpu_unit.capac)                ... | 185 |
+| MEMMASK | (MEMSIZE - 1)                   ... | 186 |
+| CHAN_PIO | (0)     /* Polled mode I/O */ | 189 |
+| CHAN_UREC | (1)     /* Unit record devices */ | 190 |
+| CHAN_7010 | (1)     /* Channel type for 7010 */ | 191 |
+| CHAN_7604 | (2)     /* 7070 tape controller */ | 192 |
+| CHAN_7607 | (2)     /* Generic 7090 channel */ | 193 |
+| CHAN_7621 | (2)     /* 7080 tape controller */ | 194 |
+| CHAN_7904 | (3)     /* 7040 generic channel */ | 195 |
+| CHAN_7907 | (3)     /* Disk/Hyper/7750 chann... | 196 |
+| CHAN_7908 | (3)     /* Disk/Hyper/7750 chann... | 197 |
+| CHAN_7909 | (3)     /* Disk/Hyper/7750 chann... | 198 |
+| CHAN_7289 | (4)     /* Special CTSS device f... | 199 |
+| CHAN_754 | (4)     /* 705 tape controller */ | 200 |
+| CH_TYP_PIO | 01      /* Can be on PIO channel */ | 202 |
+| CH_TYP_UREC | 02      /* Can be on Unit record... | 203 |
+| CH_TYP_76XX | 04      /* Can be on 76xx Channe... | 204 |
+| CH_TYP_79XX | 010     /* Can be on a 79xx chan... | 205 |
+| CH_TYP_SPEC | 020     /* Special channel */ | 206 |
+| CH_TYP_754 | 020     /* 705 tape controller */ | 207 |
+| DEBUG_CHAN | 0x0000001       /* Show channel ... | 223 |
+| DEBUG_TRAP | 0x0000002       /* Show CPU Trap... | 224 |
+| DEBUG_CMD | 0x0000004       /* Show device c... | 225 |
+| DEBUG_DATA | 0x0000008       /* Show data tra... | 226 |
+| DEBUG_DETAIL | 0x0000020       /* Show details */ | 227 |
+| DEBUG_EXP | 0x0000040       /* Show error co... | 228 |
+| DEBUG_SNS | 0x0000080       /* Shows sense d... | 229 |
+| DEBUG_CTSS | 0x0000100       /* Shows CTSS sp... | 230 |
+| DEBUG_PRIO | 0x0000100       /* Debug Priorit... | 231 |
+| DEBUG_PROT | 0x0000200       /* Protection tr... | 232 |
+| CHAN_CHPIO | 0               /* Puesdo access... | 238 |
+| CHAN_CHUREC | 0               /* Unit record d... | 240 |
+| CHAN_A | 1 | 242 |
+| CHAN_B | 2 | 243 |
+| CHAN_C | 3 | 244 |
+| CHAN_D | 4 | 245 |
+| CHAN_E | 5 | 246 |
+| CHAN_F | 6 | 247 |
+| CHAN_G | 7 | 248 |
+| CHAN_H | 8 | 249 |
+| UNIT_V_SELECT | (UNIT_V_UF + 9)              /* ... | 251 |
+| UNIT_SELECT | (1 << UNIT_V_SELECT) | 252 |
+| UNIT_V_CHAN | (UNIT_V_SELECT + 1)          /* ... | 253 |
+| UNIT_CHAN | (017 << UNIT_V_CHAN)         /* ... | 254 |
+| UNIT_S_CHAN(x) | (UNIT_CHAN & ((x) << UNIT_V_CHAN)) | 255 |
+| UNIT_G_CHAN(x) | ((int)((UNIT_CHAN & (x)) >> UNIT... | 256 |
+| UNIT_V_LOCAL | (UNIT_V_UF + 0)              /* ... | 257 |
+| DEV_BUF_NUM(x) | (((x) & 07) << DEV_V_UF) | 258 |
+| GET_DEV_BUF(x) | (((x) >> DEV_V_UF) & 07) | 259 |
+| UNIT_V_MODE | (UNIT_V_LOCAL + 1)           /* ... | 260 |
+| UNIT_V_MODEL | (UNIT_V_UF + 0) | 263 |
+| CHAN_MODEL | (07 << UNIT_V_MODEL) | 264 |
+| CHAN_S_TYPE(x) | (CHAN_MODEL & ((x) << UNIT_V_MOD... | 265 |
+| CHAN_G_TYPE(x) | ((CHAN_MODEL & (x)) >> UNIT_V_MO... | 266 |
+| UNIT_V_AUTO | (UNIT_V_UF + 4) | 267 |
+| CHAN_AUTO | (1 << UNIT_V_AUTO) | 268 |
+| UNIT_V_SET | (UNIT_V_UF + 5) | 269 |
+| CHAN_SET | (1 << UNIT_V_SET) | 270 |
+| SNS_IOCHECK | 0x00000400      /* IO Check */ | 284 |
+| SNS_SEQCHECK | 0x00000200      /* Sequence chec... | 285 |
+| SNS_UEND | 0x00000100      /* Unusual end */ | 286 |
+| SNS_ATTN1 | 0x00000080      /* Attention 1 */ | 287 |
+| SNS_ATTN2 | 0x00000040      /* Attention 2 */ | 288 |
+| SNS_ADCHECK | 0x00000020      /* Adaptor check */ | 289 |
+| CTL_PREAD | 0x00000010      /* Prepare to re... | 290 |
+| CTL_PWRITE | 0x00000008      /* Prepare to wr... | 291 |
+| CTL_READ | 0x00000004      /* Read Status */ | 292 |
+| CTL_WRITE | 0x00000002      /* Write Status */ | 293 |
+| SNS_IRQ | 0x00000001      /* IRQ */ | 294 |
+| SNS_MASK | 0x000007fe      /* Mask of sense... | 295 |
+| SNS_IRQS | 0x000007e0 | 296 |
+| SNS_IMSK | 0x00000620      /* Non maskable ... | 297 |
+| CTL_END | 0x00000800      /* Transfer is d... | 298 |
+| CTL_INHB | 0x00001000      /* Interupts inh... | 299 |
+| CTL_SEL | 0x00002000      /* Device select */ | 300 |
+| CTL_SNS | 0x00004000      /* Sense transfe... | 301 |
+| CTL_CNTL | 0x00008000      /* Control trans... | 302 |
+| STA_PEND | 0x00010000      /* Pending LCH i... | 304 |
+| STA_ACTIVE | 0x00020000      /* Channel activ... | 305 |
+| STA_WAIT | 0x00040000      /* Channel waiti... | 306 |
+| STA_START | 0x00080000      /* Channel was s... | 307 |
+| STA_TWAIT | 0x00100000      /* Channel waiti... | 308 |
+| CHS_EOT | 0x00200000      /* Channel at EO... | 310 |
+| CHS_BOT | 0x00400000      /* Channel at BO... | 311 |
+| CHS_EOF | 0x00800000      /* Channel at EO... | 312 |
+| CHS_ERR | 0x01000000      /* Channel has E... | 313 |
+| CHS_ATTN | 0x02000000      /* Channel atten... | 314 |
+| DEV_SEL | 0x04000000      /* Channel selec... | 316 |
+| DEV_WRITE | 0x08000000      /* Device is wri... | 317 |
+| DEV_FULL | 0x10000000      /* Buffer full */ | 318 |
+| DEV_REOR | 0x20000000      /* Device at End... | 319 |
+| DEV_DISCO | 0x40000000      /* Channel is do... | 320 |
+| DEV_WEOR | 0x80000000      /* Channel wants... | 321 |
+| URCSTA_EOF | 0001    /* Hit end of file */ | 324 |
+| URCSTA_ERR | 0002    /* Error reading record */ | 325 |
+| URCSTA_CARD | 0004    /* Unit has card in buff... | 326 |
+| URCSTA_FULL | 0004    /* Unit has full buffer */ | 327 |
+| URCSTA_BUSY | 0010    /* Device is busy */ | 328 |
+| URCSTA_WDISCO | 0020    /* Device is wait for di... | 329 |
+| URCSTA_READ | 0040    /* Device is reading cha... | 330 |
+| URCSTA_WRITE | 0100    /* Device is reading cha... | 331 |
+| URCSTA_INPUT | 0200    /* Console fill buffer f... | 332 |
+| URCSTA_ON | 0200    /* 7090 Unit is on */ | 333 |
+| URCSTA_IDLE | 0400    /* 7090 Unit is idle */ | 334 |
+| URCSTA_WMKS | 0400    /* Printer print WM as 1 */ | 335 |
+| URCSTA_SKIPAFT | 01000   /* Skip to line after pr... | 336 |
+| URCSTA_NOXFER | 01000   /* Don't set up to trans... | 337 |
+| URCSTA_LOAD | 01000   /* Load flag for 7070 ca... | 338 |
+| URCSTA_CMD | 01000   /* 7090 Command recieved */ | 339 |
+| DATA_OK | 0       /* Data transfered ok */ | 423 |
+| TIME_ERROR | 1       /* Channel did not trans... | 424 |
+| END_RECORD | 2       /* End of record */ | 425 |
+| SCPE_BUSY | (1)     /* Device is active */ | 428 |
+| SCPE_NODEV | (2)     /* No device exists */ | 429 |
+| IO_RDS | 1       /* Read record */ | 432 |
+| IO_BSR | 2       /* Backspace one record */ | 433 |
+| IO_BSF | 3       /* Backspace one file */ | 434 |
+| IO_WRS | 4       /* Write one record */ | 435 |
+| IO_WEF | 5       /* Write eof */ | 436 |
+| IO_REW | 6       /* Rewind */ | 437 |
+| IO_DRS | 7       /* Set unit offline */ | 438 |
+| IO_SDL | 8       /* Set density low */ | 439 |
+| IO_SDH | 9       /* Set density high */ | 440 |
+| IO_RUN | 10      /* Rewind and unload uni... | 441 |
+| IO_TRS | 11      /* Check it unit ready */ | 442 |
+| IO_CTL | 12      /* Io control device spe... | 443 |
+| IO_RDB | 13      /* Read backwards */ | 444 |
+| IO_SKR | 14      /* Skip record forward */ | 445 |
+| IO_ERG | 15      /* Erase next records fr... | 446 |
+| CHR_ABLANK | 000 | 561 |
+| CHR_MARK | CHR_ABLANK | 562 |
+| CHR_1 | 001 | 563 |
+| CHR_2 | 002 | 564 |
+| CHR_3 | 003 | 565 |
+| CHR_4 | 004 | 566 |
+| CHR_5 | 005 | 567 |
+| CHR_6 | 006 | 568 |
+| CHR_7 | 007 | 569 |
+| CHR_8 | 010 | 570 |
+| CHR_9 | 011 | 571 |
+| CHR_0 | 012 | 572 |
+| CHR_EQ | 013 | 573 |
+| CHR_QUOT | 014     /* Also @ */ | 574 |
+| CHR_COL | 015 | 575 |
+| CHR_GT | 016 | 576 |
+| CHR_TRM | 017 | 577 |
+| CHR_BLANK | 020 | 578 |
+| CHR_SLSH | 021 | 579 |
+| CHR_S | 022 | 580 |
+| CHR_T | 023 | 581 |
+| CHR_U | 024 | 582 |
+| CHR_V | 025 | 583 |
+| CHR_W | 026 | 584 |
+| CHR_X | 027 | 585 |
+| CHR_Y | 030 | 586 |
+| CHR_Z | 031 | 587 |
+| CHR_RM | 032 | 588 |
+| CHR_COM | 033 | 589 |
+| CHR_RPARN | 034     /* Also % */ | 590 |
+| CHR_WM | 035 | 591 |
+| CHR_BSLSH | 036 | 592 |
+| CHR_UND | 037 | 593 |
+| CHR_MINUS | 040 | 594 |
+| CHR_J | 041 | 595 |
+| CHR_K | 042 | 596 |
+| CHR_L | 043 | 597 |
+| CHR_M | 044 | 598 |
+| CHR_N | 045 | 599 |
+| CHR_O | 046 | 600 |
+| CHR_P | 047 | 601 |
+| CHR_Q | 050 | 602 |
+| CHR_R | 051 | 603 |
+| CHR_EXPL | 052 | 604 |
+| CHR_DOL | 053 | 605 |
+| CHR_STAR | 054 | 606 |
+| CHR_LBRK | 055 | 607 |
+| CHR_SEMI | 056 | 608 |
+| CHR_CART | 057 | 609 |
+| CHR_PLUS | 060 | 610 |
+| CHR_A | 061 | 611 |
+| CHR_B | 062 | 612 |
+| CHR_C | 063 | 613 |
+| CHR_D | 064 | 614 |
+| CHR_E | 065 | 615 |
+| CHR_F | 066 | 616 |
+| CHR_G | 067 | 617 |
+| CHR_H | 070 | 618 |
+| CHR_I | 071 | 619 |
+| CHR_QUEST | 072 | 620 |
+| CHR_DOT | 073 | 621 |
+| CHR_LPARN | 074     /* Also Square */ | 622 |
+| CHR_RBRAK | 075 | 623 |
+| CHR_LESS | 076 | 624 |
+| CHR_GM | 077 | 625 |
+

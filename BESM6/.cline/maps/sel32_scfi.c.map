@@ -1,0 +1,145 @@
+=== sel32_scfi.c — 1997 строк ===
+Источник: sel32_scfi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_scfi.c -nt .cline/maps/sel32_scfi.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| inbusy | 292 | |
+| outbusy | 293 | |
+| itm_unit | 296 | |
+| sda_chp | 301 | |
+| sdb_chp | 355 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FAST_FOR_UTX |  | 29 |
+| UNIT_SCFI | UNIT_ATTABLE \| UNIT_IDLE \| UNIT_... | 33 |
+| CHS2STAR(c,h,s) | (((c<<16) & LMASK)\|((h<<8) & 0xf... | 37 |
+| STAR2SEC(star,spt,spc) | ((star&0xff)+(((star>>8)&0xff)*s... | 39 |
+| STAR2TRK(star,tpc) | (((star>>16)&0xffff)*tpc+((star>... | 41 |
+| STAR2CYL(star) | ((star>>16)&RMASK) | 43 |
+| BYTES2SEC(bytes,ssize) | (((bytes) + (ssize-1)) >> 10) | 45 |
+| SPT(type) | (scfi_type[type].spt) | 47 |
+| SPC(type) | (scfi_type[type].spt*scfi_type[t... | 49 |
+| TRK(type) | (scfi_type[type].cyl*scfi_type[t... | 51 |
+| CYL(type) | (scfi_type[type].cyl) | 53 |
+| HDS(type) | (scfi_type[type].nhds) | 55 |
+| CAP(type) | (CYL(type)*HDS(type)*SPT(type)) | 57 |
+| SSB(type) | (scfi_type[type].ssiz*4) | 59 |
+| CAPB(type) | (CAP(type)*SSB(type)) | 61 |
+| GEOM(type) | (CHS2STAR(CYL(type),HDS(type),SP... | 63 |
+| CMD | u3 | 100 |
+| DSK_CMDMSK | 0x00ff                  /* Comma... | 103 |
+| DSK_STAR | 0x0100                  /* STAR ... | 104 |
+| DSK_NU2 | 0x0200                  /*      ... | 105 |
+| DSK_READDONE | 0x0400                  /* Read ... | 106 |
+| DSK_ENDDSK | 0x0800                  /* Sense... | 107 |
+| DSK_SEEKING | 0x1000                  /* Disk ... | 108 |
+| DSK_READING | 0x2000                  /* Disk ... | 109 |
+| DSK_WRITING | 0x4000                  /* Disk ... | 110 |
+| DSK_BUSY | 0x8000                  /* Disk ... | 111 |
+| DSK_INCH | 0x00                    /* Initi... | 113 |
+| DSK_ICH | 0xFF                    /* Initi... | 114 |
+| DSK_INCH2 | 0xF0                    /* Initi... | 115 |
+| DSK_WD | 0x01                    /* Write... | 116 |
+| DSK_RD | 0x02                    /* Read ... | 117 |
+| DSK_NOP | 0x03                    /* No op... | 118 |
+| DSK_SNS | 0x04                    /* Sense */ | 119 |
+| DSK_SCK | 0x07                    /* Seek ... | 120 |
+| DSK_TIC | 0x08                    /* Trans... | 121 |
+| DSK_FNSK | 0x0B                    /* Forma... | 122 |
+| DSK_LPL | 0x13                    /* Lock ... | 123 |
+| DSK_LMR | 0x1F                    /* Load ... | 124 |
+| DSK_RES | 0x23                    /* Reser... | 125 |
+| DSK_WSL | 0x31                    /* Write... | 126 |
+| DSK_RSL | 0x32                    /* Read ... | 127 |
+| DSK_REL | 0x33                    /* Relea... | 128 |
+| DSK_XEZ | 0x37                    /* Rezer... | 129 |
+| DSK_POR | 0x43                    /* Prior... | 130 |
+| DSK_IHA | 0x47                    /* Incre... | 131 |
+| DSK_SRM | 0x4F                    /* Set r... | 132 |
+| DSK_WTL | 0x51                    /* Write... | 133 |
+| DSK_RTL | 0x52                    /* Read ... | 134 |
+| DSK_XRM | 0x5F                    /* Reset... | 135 |
+| DSK_RAP | 0xA2                    /* Read ... | 136 |
+| DSK_TESS | 0xAB                    /* Test ... | 137 |
+| DSK_REC | 0xB2                    /* Read ... | 138 |
+| DSK_ICH | 0xFF                    /* Initi... | 139 |
+| STAR | u4 | 141 |
+| DISK_CYL | 0xFFFF0000              /* cylin... | 144 |
+| DISK_TRACK | 0x0000FF00              /* track... | 145 |
+| DISK_SECTOR | 0x000000ff              /* secto... | 146 |
+| SNS | u5 | 148 |
+| SNS_DROFF | 0x80000000              /* Drive... | 151 |
+| SNS_TRKOFF | 0x40000000              /* Track... | 152 |
+| SNS_RDTMOFF | 0x20000000              /* Read ... | 153 |
+| SNS_RDSTRBT | 0x10000000              /* Read ... | 154 |
+| SNS_DIAGMOD | 0x08000000              /* Diagn... | 155 |
+| SNS_RSVTRK | 0x04000000              /* Reser... | 156 |
+| SNS_FHDOPT | 0x02000000              /* FHD o... | 157 |
+| SNS_RESERV | 0x01000000              /* Reser... | 158 |
+| SNS_CMDREJ | 0x800000                /* Comma... | 161 |
+| SNS_INTVENT | 0x400000                /* Unit ... | 162 |
+| SNS_SPARE1 | 0x200000                /* Spare */ | 163 |
+| SNS_EQUCHK | 0x100000                /* Equip... | 164 |
+| SNS_DATCHK | 0x080000                /* Data ... | 165 |
+| SNS_OVRRUN | 0x040000                /* Data ... | 166 |
+| SNS_DSKFERR | 0x020000                /* Disk ... | 167 |
+| SNS_DEFTRK | 0x010000                /* Defec... | 168 |
+| SNS_LAST | 0x8000                  /* Last ... | 171 |
+| SNS_AATT | 0x4000                  /* At Al... | 172 |
+| SNS_WPER | 0x2000                  /* Write... | 173 |
+| SNS_WRL | 0x1000                  /* Write... | 174 |
+| SNS_MOCK | 0x0800                  /* Mode ... | 175 |
+| SNS_INAD | 0x0400                  /* Inval... | 176 |
+| SNS_RELF | 0x0200                  /* Relea... | 177 |
+| SNS_CHER | 0x0100                  /* Chain... | 178 |
+| SNS_REVL | 0x80                    /* Revol... | 181 |
+| SNS_DADE | 0x40                    /* Disc ... | 182 |
+| SNS_BUCK | 0x20                    /* Buffe... | 183 |
+| SNS_ECCS | 0x10                    /* ECC e... | 184 |
+| SNS_ECCD | 0x08                    /* ECC e... | 185 |
+| SNS_ECCT | 0x04                    /* ECC e... | 186 |
+| SNS_RTAE | 0x02                    /* Reser... | 187 |
+| SNS_UESS | 0x01                    /* Uncor... | 188 |
+| SNS2 | us9 | 190 |
+| SNS_SEND | 0x8000                  /* Seek ... | 195 |
+| SNS_USEL | 0x4000                  /* Unit ... | 196 |
+| SNS_SPC0 | 0x2000                  /* Secto... | 197 |
+| SNS_SPC1 | 0x1000                  /* Secto... | 198 |
+| SNS_SPC2 | 0x0800                  /* Secto... | 199 |
+| SNS_SPC3 | 0x0400                  /* Secto... | 200 |
+| SNS_SPC4 | 0x0200                  /* Secto... | 201 |
+| SNS_SPC5 | 0x0100                  /* Secto... | 202 |
+| SNS_FLT | 0x80                    /* Disk ... | 205 |
+| SNS_SKER | 0x40                    /* Seek ... | 206 |
+| SNS_ONC | 0x20                    /* On Cy... | 207 |
+| SNS_UNR | 0x10                    /* Unit ... | 208 |
+| SNS_WRP | 0x08                    /* Write... | 209 |
+| SNS_BUSY | 0x04                    /* Drive... | 210 |
+| SNS_NU1 | 0x02                    /* Spare... | 211 |
+| SNS_NU2 | 0x01                    /* Spare... | 212 |
+| CHS | u6 | 214 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| scfisec2star | 401-412 | convert sector disk address to star values (c,h,s) |
+| scfi_preio | 413-432 | start a disk operation |
+| scfi_iocl | 433-667 | return = 1 error, chan_status will have reason |
+| scfi_startcmd | 668-759 |  |
+| scfi_haltio | 760-795 | Handle haltio transfers for disk |
+| scfi_srv | 796-1544 | Handle processing of disk requests. |
+| scfi_rschnlio | 1545-1556 | handle rschnlio cmds for disk |
+| scfi_ini | 1557-1573 | initialize the disk |
+| scfi_reset | 1574-1580 |  |
+| scfi_format | 1581-1678 | create the disk file for the specified device |
+| scfi_attach | 1679-1896 | attach the selected file to the disk |
+| scfi_detach | 1897-1903 | detach a disk device |
+| scfi_boot | 1904-1932 | boot from the specified disk unit |
+| scfi_set_type | 1933-1956 | set the disk type attached to unit |
+| scfi_get_type | 1957-1966 |  |
+| scfi_help | 1967-1991 | help information for disk |
+| scfi_description | 1992-1997 |  |

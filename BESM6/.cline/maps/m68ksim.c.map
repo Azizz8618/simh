@@ -1,0 +1,72 @@
+=== m68ksim.c — 562 строк ===
+Источник: m68ksim.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test m68ksim.c -nt .cline/maps/m68ksim.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 123 | |
+| SIMHSleep | 124 | |
+| m68k_registers | 163 | |
+| cpu_unit | 164 | |
+| idleCount | 285 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| READ_BYTE(BASE, | ADDR) (BASE)[ADDR] | 83 |
+| READ_WORD(BASE, | ADDR) (((BASE)[ADDR] << 8) \|     | 84 |
+| READ_LONG(BASE, | ADDR) (((BASE)[ADDR] << 24) \|    | 86 |
+| WRITE_BYTE(BASE, | ADDR, VAL) (BASE)[ADDR] = (VAL) ... | 91 |
+| WRITE_WORD(BASE, | ADDR, VAL) (BASE)[ADDR] = ((VAL)... | 92 |
+| WRITE_LONG(BASE, | ADDR, VAL) (BASE)[ADDR] = ((VAL)... | 94 |
+| MC6850_STAT | 0xff1000L   // command/status re... | 102 |
+| MC6850_DATA | 0xff1002L   // receive/transmit ... | 103 |
+| DISK_BASE | 0xff0000L | 106 |
+| DISK_SET_DMA | (DISK_BASE) | 107 |
+| DISK_SET_DRIVE | (DISK_BASE + 4) | 108 |
+| DISK_SET_SECTOR | (DISK_BASE + 8) | 109 |
+| DISK_READ | (DISK_BASE + 12) | 110 |
+| DISK_WRITE | (DISK_BASE + 16) | 111 |
+| DISK_STATUS | (DISK_BASE + 20) | 112 |
+| DISK_FLUSH | (DISK_BASE + 24) | 113 |
+| M68K_GET_TIME | (0xff7ff8)  // read long to get ... | 116 |
+| M68K_STOP_CPU | (0xff7ffc)  // write long to sto... | 117 |
+| IRQ_NMI_DEVICE | 7 | 120 |
+| IRQ_MC6850 | 5 | 121 |
+| M68K_BOOT_LENGTH | (32 * 1024)                 /* s... | 169 |
+| M68K_BOOT_PC | 0x000400                    /* i... | 170 |
+| M68K_BOOT_SP | 0xfe0000                    /* i... | 171 |
+| INITIAL_IDLE | 100 | 284 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| m68k_CPUToView | 208-213 |  |
+| m68k_viewToCPU | 214-219 |  |
+| sim_instr_m68k | 220-245 |  |
+| m68k_clear_memory | 246-251 |  |
+| m68k_cpu_reset | 252-276 |  |
+| MC6850_reset | 277-286 |  |
+| m68k_input_device_update | 287-306 |  |
+| MC6850_data_read | 307-326 | wait until character becomes available |
+| MC6850_status_read | 327-331 |  |
+| MC6850_device_ack | 332-335 | Implementation for the output device |
+| MC6850_data_write | 336-343 |  |
+| MC6850_control_write | 344-348 |  |
+| m68k_cpu_read_byte_raw | 349-358 | Read data from RAM |
+| m68k_cpu_read_byte | 359-380 |  |
+| m68k_cpu_read_word | 381-396 |  |
+| m68k_cpu_read_long | 397-416 |  |
+| m68k_cpu_write_byte_raw | 417-426 | Write data to RAM or a device |
+| m68k_cpu_write_byte | 427-450 |  |
+| m68k_cpu_write_word | 451-460 |  |
+| m68k_cpu_write_long | 461-511 |  |
+| m68k_cpu_pulse_reset | 512-516 | Called when the CPU pulses the RESET line |
+| m68k_cpu_set_fc | 517-521 | Called when the CPU changes the function code pins |
+| m68k_cpu_irq_ack | 522-532 | Called when the CPU acknowledges an interrupt |
+| nmi_device_ack | 533-538 | Implementation for the NMI device |
+| int_controller_set | 539-547 | Implementation for the interrupt controller |
+| int_controller_clear | 548-555 |  |
+| m68k_read_disassembler_16 | 556-559 |  |
+| m68k_read_disassembler_32 | 560-562 |  |

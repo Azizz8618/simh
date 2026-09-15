@@ -1,0 +1,45 @@
+=== insns.h — 661 строк ===
+Источник: insns.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test insns.h -nt .cline/maps/insns.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NASM_INSNS_H |  | 11 |
+| ITEMPLATE_END | {-1,-1,{-1,-1,-1},NULL,0} | 595 |
+| IF_SM | 0x00000001UL         /* size mat... | 624 |
+| IF_SM2 | 0x00000002UL         /* size mat... | 625 |
+| IF_SB | 0x00000004UL         /* unsized ... | 626 |
+| IF_SW | 0x00000008UL         /* unsized ... | 627 |
+| IF_SD | 0x00000010UL         /* unsized ... | 628 |
+| IF_AR0 | 0x00000020UL         /* SB, SW, ... | 629 |
+| IF_AR1 | 0x00000040UL         /* SB, SW, ... | 630 |
+| IF_AR2 | 0x00000060UL         /* SB, SW, ... | 631 |
+| IF_ARMASK | 0x00000060UL         /* mask for... | 632 |
+| IF_PRIV | 0x00000100UL         /* it's a p... | 633 |
+| IF_SMM | 0x00000200UL         /* it's onl... | 634 |
+| IF_PROT | 0x00000400UL         /* it's pro... | 635 |
+| IF_UNDOC | 0x00001000UL         /* it's an ... | 636 |
+| IF_FPU | 0x00002000UL         /* it's an ... | 637 |
+| IF_MMX | 0x00004000UL         /* it's an ... | 638 |
+| IF_3DNOW | 0x00008000UL         /* it's a 3... | 639 |
+| IF_SSE | 0x00010000UL         /* it's a S... | 640 |
+| IF_SSE2 | 0x00020000UL         /* it's a S... | 641 |
+| IF_SSE3 | 0x00040000UL         /* it's a S... | 642 |
+| IF_PMASK | 0xFF000000UL         /* the mask... | 643 |
+| IF_PLEVEL | 0x0F000000UL         /* the mask... | 644 |
+| IF_PFMASK | 0xF001FF00UL         /* the mask... | 646 |
+| IF_8086 | 0x00000000UL         /* 8086 ins... | 647 |
+| IF_186 | 0x01000000UL         /* 186+ ins... | 648 |
+| IF_286 | 0x02000000UL         /* 286+ ins... | 649 |
+| IF_386 | 0x03000000UL         /* 386+ ins... | 650 |
+| IF_486 | 0x04000000UL         /* 486+ ins... | 651 |
+| IF_PENT | 0x05000000UL         /* Pentium ... | 652 |
+| IF_P6 | 0x06000000UL         /* P6 instr... | 653 |
+| IF_KATMAI | 0x07000000UL         /* Katmai i... | 654 |
+| IF_WILLAMETTE | 0x08000000UL         /* Willamet... | 655 |
+| IF_PRESCOTT | 0x09000000UL     /* Prescott ins... | 656 |
+| IF_IA64 | 0x0F000000UL         /* IA64 ins... | 657 |
+| IF_CYRIX | 0x10000000UL         /* Cyrix-sp... | 658 |
+| IF_AMD | 0x20000000UL         /* AMD-spec... | 659 |
+

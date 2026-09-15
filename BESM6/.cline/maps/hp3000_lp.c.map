@@ -1,0 +1,247 @@
+=== hp3000_lp.c — 3771 строк ===
+Источник: hp3000_lp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_lp.c -nt .cline/maps/hp3000_lp.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| PRINTER_PROPS | 566-574 |
+| DELAY_PROPS | 604-608 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ui_interface | 1085 | |
+| signal | 1384 | |
+| working_set | 1385 | |
+| outbound_value | 1386 | |
+| outbound_signals | 1387 | |
+| abort_transfer | 1388 | |
+| device_flag_last | 1720 | |
+| result | 1721 | |
+| signals | 1722 | |
+| status | 1768 | |
+| status | 1777 | |
+| return | 1904 | |
+| return | 1928 | |
+| return | 1945 | |
+| outbound_signals | 1985 | |
+| outbound_signals | 2179 | |
+| last_state | 2180 | |
+| SCPE_OK | 2356 | |
+| SCPE_OK | 2398 | |
+| new_status | 2431 | |
+| outbound_signals | 2432 | |
+| overprint_index | 2638 | |
+| model | 2639 | |
+| data_byte | 2640 | |
+| channel | 2641 | |
+| line_count | 2642 | |
+| result | 2915 | |
+| vfu_stream | 3187 | |
+| result | 3188 | |
+| SCPE_OK | 3224 | |
+| header_1 | 3250 | |
+| header_2 | 3251 | |
+| chan | 3255 | |
+| SCPE_OK | 3286 | |
+| signals | 3327 | |
+| new_status | 3328 | |
+| result | 3329 | |
+| signals | 3449 | |
+| line | 3606 | |
+| len | 3607 | |
+| buffer | 3608 | |
+| bptr | 3609 | |
+| tape | 3610 | |
+| result | 3742 | |
+| len | 3743 | |
+| len | 3770 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PULSE_TIME | uS (8)              /* device co... | 424 |
+| XFER_TIME | S (5)               /* transfer ... | 425 |
+| CR | '\r'                /* carriage ... | 429 |
+| LF | '\n'                /* line feed */ | 430 |
+| FF | '\f'                /* form feed */ | 431 |
+| DEL | '\177'              /* delete */ | 432 |
+| DATA_MASK | 0177u               /* printer u... | 434 |
+| FORMAT_VFU | 0100u               /* printer V... | 435 |
+| FORMAT_MASK | 0117u               /* printer f... | 436 |
+| FORMAT_VFU_8_MASK | 0107u               /* printer f... | 437 |
+| FORMAT_SUPPRESS | 0000u               /* format co... | 439 |
+| FORMAT_VFU_CHAN_1 | 0100u               /* format co... | 440 |
+| FORMAT_VFU_BIAS | 0077u               /* bias conv... | 441 |
+| VFU_MAX | 144                 /* maximum n... | 443 |
+| VFU_SIZE | (VFU_MAX + 1)       /* size of t... | 444 |
+| LINE_SIZE | 256                 /* size of t... | 445 |
+| VFU_WIDTH | 12                  /* maximum n... | 447 |
+| VFU_CHANNEL_1 | 04000u              /* top of fo... | 449 |
+| VFU_CHANNEL_2 | 02000u              /* bottom of... | 450 |
+| VFU_CHANNEL_3 | 01000u              /* single sp... | 451 |
+| VFU_CHANNEL_4 | 00400u              /* double sp... | 452 |
+| VFU_CHANNEL_5 | 00200u              /* triple sp... | 453 |
+| VFU_CHANNEL_6 | 00100u              /* half page */ | 454 |
+| VFU_CHANNEL_7 | 00040u              /* quarter p... | 455 |
+| VFU_CHANNEL_8 | 00020u              /* sixth pag... | 456 |
+| VFU_CHANNEL_9 | 00010u              /* bottom of... | 457 |
+| VFU_CHANNEL_10 | 00004u              /* (unassign... | 458 |
+| VFU_CHANNEL_11 | 00002u              /* (unassign... | 459 |
+| VFU_CHANNEL_12 | 00001u              /* (unassign... | 460 |
+| CHARS_MAX | 136                 /* maximum n... | 462 |
+| BUFFER_SIZE | (CHARS_MAX + VFU_MAX * 2)   /* m... | 464 |
+| PRINTER_JUMPERS | (W4 \| W8 \| W9)      /* jumpers J... | 466 |
+| DEB_CMD | (1u << 0)           /* trace con... | 471 |
+| DEB_CSRW | (1u << 1)           /* trace com... | 472 |
+| DEB_STATE | (1u << 2)           /* trace dev... | 473 |
+| DEB_SERV | (1u << 3)           /* trace cha... | 474 |
+| DEB_XFER | (1u << 4)           /* trace dat... | 475 |
+| DEB_IOB | (1u << 5)           /* trace I/O... | 476 |
+| DEV_DIAG_SHIFT | (DEV_V_UF + 0)              /* D... | 481 |
+| DEV_REALTIME_SHIFT | (DEV_V_UF + 1)              /* t... | 482 |
+| DEV_DIAG | (1u << DEV_DIAG_SHIFT)      /* d... | 484 |
+| DEV_REALTIME | (1u << DEV_REALTIME_SHIFT)  /* r... | 485 |
+| UNIT_MODEL_SHIFT | (UNIT_V_UF + 0)     /* printer m... | 501 |
+| UNIT_EXPAND_SHIFT | (UNIT_V_UF + 3)     /* printer u... | 502 |
+| UNIT_OFFLINE_SHIFT | (UNIT_V_UF + 4)     /* printer i... | 503 |
+| UNIT_MODEL_MASK | 0000007u            /* model ID ... | 505 |
+| UNIT_MODEL | (UNIT_MODEL_MASK << UNIT_MODEL_S... | 507 |
+| UNIT_EXPAND | (1u << UNIT_EXPAND_SHIFT) | 508 |
+| UNIT_OFFLINE | (1u << UNIT_OFFLINE_SHIFT) | 509 |
+| UNIT_ONLINE | 0 | 510 |
+| UNIT_2607 | (HP_2607 << UNIT_MODEL_SHIFT) | 512 |
+| UNIT_2613 | (HP_2613 << UNIT_MODEL_SHIFT) | 513 |
+| UNIT_2617 | (HP_2617 << UNIT_MODEL_SHIFT) | 514 |
+| UNIT_2618 | (HP_2618 << UNIT_MODEL_SHIFT) | 515 |
+| GET_MODEL(f) | ((PRINTER_TYPE) (((f) >> UNIT_MO... | 520 |
+| LP_BUFFER_LOAD | uS (1)              /* fast per-... | 620 |
+| LP_PRINT | mS (1)              /* fast prin... | 621 |
+| LP_ADVANCE | uS (50)             /* fast pape... | 622 |
+| W1 | (1u << 0)           /* SR set by... | 686 |
+| W2 | (1u << 1)           /* +/- edge ... | 687 |
+| W3 | (1u << 2)           /* Device Co... | 688 |
+| W4 | (1u << 3)           /* inhibit/e... | 689 |
+| W5 | (1u << 4)           /* Data In l... | 690 |
+| W6 | (1u << 5)           /* -/+ edge ... | 691 |
+| W7 | (1u << 6)           /* normal/te... | 692 |
+| W8 | (1u << 7)           /* inhibit/e... | 693 |
+| W9 | (1u << 8)           /* inhibit/e... | 694 |
+| W10 | (1u << 9)           /* Device Co... | 695 |
+| J2W1_INSTALLED | ((jumper_set & W1)  != 0) | 697 |
+| J2W2_INSTALLED | ((jumper_set & W2)  != 0) | 698 |
+| J2W3_INSTALLED | ((jumper_set & W3)  != 0) | 699 |
+| J2W4_INSTALLED | ((jumper_set & W4)  != 0) | 700 |
+| J2W5_INSTALLED | ((jumper_set & W5)  != 0) | 701 |
+| J2W6_INSTALLED | ((jumper_set & W6)  != 0) | 702 |
+| J2W7_INSTALLED | ((jumper_set & W7)  != 0) | 703 |
+| J2W8_INSTALLED | ((jumper_set & W8)  != 0) | 704 |
+| J2W9_INSTALLED | ((jumper_set & W9)  != 0) | 705 |
+| J2W10_INSTALLED | ((jumper_set & W10) != 0) | 706 |
+| DHA_MR | 0100000u            /* (M) a mas... | 754 |
+| DHA_FLAG_SEL | 0040000u            /* (F) devic... | 755 |
+| DHA_STAT_SEL | 0020000u            /* (S) statu... | 756 |
+| DHA_JUMPER_MASK | 0001777u            /* J2Wx jump... | 757 |
+| DHA_CLEAR | 0001777u            /* control r... | 758 |
+| CN_MR | 0100000u            /* (M) maste... | 771 |
+| CN_RIN | 0040000u            /* (R) reset... | 772 |
+| CN_RIN_MASK | 0034000u            /* reset int... | 773 |
+| CN_RIN_XFR_TMR | 0004000u            /* reset wat... | 774 |
+| CN_ACQUIRE | 0002000u            /* (A) acqui... | 775 |
+| CN_DHA_FN_MASK | 0001700u            /* diagnosti... | 776 |
+| CN_DHA_ST_MASK | 0001600u            /* diagnosti... | 777 |
+| CN_DHA_FLAG | 0001000u            /* diagnosti... | 778 |
+| CN_DHA_FN_ENABLE | 0000040u            /* (E) enabl... | 779 |
+| CN_XFR_IRQ_ENABLE | 0000020u            /* (X) enabl... | 780 |
+| CN_DEVSTAT | 0000010u            /* (S) inter... | 781 |
+| CN_BYTE_XFER | 0000004u            /* (B) word/... | 782 |
+| CN_IRQ_ENABLE | 0000002u            /* (I) enabl... | 783 |
+| CN_XFR_TMR_ENABLE | 0000001u            /* (T) enabl... | 784 |
+| CN_RIN_SHIFT | 11                  /* reset int... | 786 |
+| CN_DHA_ST_SHIFT | 7                  /* diagnostic... | 787 |
+| CN_DHA_FN_SHIFT | 6                  /* diagnostic... | 788 |
+| CN_RESET(c) | (((c) & CN_RIN_MASK)    >> CN_RI... | 790 |
+| CN_DHA_ST(c) | (((c) & CN_DHA_ST_MASK) >> CN_DH... | 791 |
+| CN_DHA_FN(c) | (((c) & CN_DHA_FN_MASK) >> CN_DH... | 792 |
+| CN_FORMAT | 0000040u            /* printer o... | 855 |
+| ST_SIO_OK | 0100000u            /* (S) SIO O... | 897 |
+| ST_DIO_OK | 0040000u            /* (D) direc... | 898 |
+| ST_IRQ_PENDING | 0020000u            /* (I) inter... | 899 |
+| ST_SEQ_COUNT_0 | 0000000u            /* sequence ... | 900 |
+| ST_SEQ_COUNT_1 | 0010000u            /* sequence ... | 901 |
+| ST_SEQ_COUNT_2 | 0014000u            /* sequence ... | 902 |
+| ST_SEQ_COUNT_3 | 0004000u            /* sequence ... | 903 |
+| ST_DEVFLAG | 0002000u            /* (F) devic... | 904 |
+| ST_DEVSTAT | 0001000u            /* interrupt... | 905 |
+| ST_DEVIRQ_MASK | 0000340u            /* device in... | 906 |
+| ST_ST8_IRQ | 0000200u            /* device st... | 907 |
+| ST_DHA_MR | 0000200u            /* diagnosti... | 908 |
+| ST_ST9_IRQ | 0000100u            /* device st... | 909 |
+| ST_DHA_PON | 0000100u            /* diagnosti... | 910 |
+| ST_ST10_IRQ | 0000040u            /* device st... | 911 |
+| ST_DHA_NOT_PF | 0000040u            /* diagnosti... | 912 |
+| ST_DHA_DEVSTAT_MASK | 0000037u            /* diagnosti... | 913 |
+| ST_XFR_IRQ | 0000020u            /* (X) data ... | 914 |
+| ST_ST11_SR | 0000020u            /* device st... | 915 |
+| ST_CLRIF_IRQ | 0000010u            /* (C) clear... | 916 |
+| ST_IOSYS_IRQ | 0000004u            /* (Y) I/O s... | 917 |
+| ST_XFERERR_IRQ | 0000002u            /* (E) trans... | 918 |
+| ST_XFR_TMR_IRQ | 0000001u            /* (T) trans... | 919 |
+| ST_DEVIRQ_SHIFT | 5                   /* device st... | 921 |
+| ST_DEVIRQ(n) | ((n) << ST_DEVIRQ_SHIFT & ST_DEV... | 923 |
+| ST_CLRIL | (ST_CLRIF_IRQ \| ST_XFERERR_IRQ) ... | 925 |
+| ST_ONLINE | 0000140u            /* online */ | 999 |
+| ST_NOT_READY | 0000020u            /* not ready */ | 1000 |
+| ST_VFU_12 | 0000010u            /* VFU chann... | 1001 |
+| ST_VFU_9 | 0000004u            /* VFU chann... | 1002 |
+| UNIT_FLAGS | (UNIT_ATTABLE \| UNIT_SEQ \| UNIT_... | 1154 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ui_interface | 1382-1392 |  |
+| while | 1393-1717 |  |
+| xfer_service | 1718-1765 |  |
+| pulse_service | 1766-1789 |  |
+| timer_service | 1790-1820 |  |
+| ui_reset | 1821-1848 |  |
+| master_reset | 1849-1894 |  |
+| clear_interface_logic | 1895-1920 |  |
+| activate_unit | 1921-1937 |  |
+| report_error | 1938-1957 |  |
+| set_interrupt | 1958-1982 |  |
+| set_device_status | 1983-1986 |  |
+| if | 1987-2174 |  |
+| handshake_xfer | 2175-2340 |  |
+| diag_service | 2341-2383 |  |
+| diag_reset | 2384-2385 |  |
+| if | 2386-2428 |  |
+| diag_control | 2429-2469 |  |
+| if | 2470-2634 |  |
+| lp_service | 2635-2651 |  |
+| if | 2652-2677 |  |
+| if | 2678-2912 |  |
+| lp_attach | 2913-2988 |  |
+| lp_detach | 2989-3046 |  |
+| lp_set_mode | 3047-3048 |  |
+| switch | 3049-3090 |  |
+| lp_set_model | 3091-3139 |  |
+| lp_set_on_offline | 3140-3153 |  |
+| if | 3154-3184 |  |
+| lp_set_vfu | 3185-3217 |  |
+| lp_show_mode | 3218-3247 |  |
+| lp_show_vfu | 3248-3323 |  |
+| lp_reset | 3324-3330 |  |
+| if | 3331-3350 |  |
+| if | 3351-3381 |  |
+| lp_control | 3382-3400 |  |
+| lp_set_alarm | 3401-3404 |  |
+| if | 3405-3446 |  |
+| lp_set_locality | 3447-3450 |  |
+| if | 3451-3602 |  |
+| lp_load_vfu | 3603-3611 |  |
+| if | 3612-3707 |  |
+| if | 3708-3739 |  |
+| lp_read_line | 3740-3744 |  |
+| while | 3745-3771 |  |

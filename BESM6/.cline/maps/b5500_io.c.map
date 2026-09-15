@@ -1,0 +1,39 @@
+=== b5500_io.c — 777 строк ===
+Источник: b5500_io.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test b5500_io.c -nt .cline/maps/b5500_io.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| EOR | 1 | 26 |
+| USEGM | 2 | 27 |
+| WC(x) | (uint16)(((x) & DEV_WC) >> DEV_W... | 45 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| chan_reset | 89-109 |  |
+| chan_boot | 110-119 |  |
+| find_chan | 120-137 |  |
+| chan_release | 138-142 |  |
+| chan_advance | 143-170 |  |
+| start_io | 171-287 |  |
+| chan_set_end | 288-310 |  |
+| chan_set_eof | 311-315 |  |
+| chan_set_parity | 316-320 |  |
+| chan_set_error | 321-325 |  |
+| chan_set_wcflg | 326-330 |  |
+| chan_set_read | 331-335 |  |
+| chan_set_gm | 336-340 |  |
+| chan_set_notrdy | 341-346 |  |
+| chan_set_eot | 347-352 |  |
+| chan_set_bot | 353-358 |  |
+| chan_set_blank | 359-364 |  |
+| chan_set_wrp | 365-369 |  |
+| chan_set_wc | 370-446 |  |
+| chan_write_char | 447-572 |  |
+| chan_read_char | 573-652 |  |
+| chan_read_disk | 653-678 |  |
+| chan_advance_drum | 679-704 |  |
+| chan_write_drum | 705-753 |  |
+| chan_read_drum | 754-777 |  |

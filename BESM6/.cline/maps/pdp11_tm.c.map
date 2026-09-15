@@ -1,0 +1,119 @@
+=== pdp11_tm.c — 793 строк ===
+Источник: pdp11_tm.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_tm.c -nt .cline/maps/pdp11_tm.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| uptr | 268 | |
+| SCPE_OK | 304 | |
+| uptr | 309 | |
+| SCPE_OK | 359 | |
+| return | 389 | |
+| xma | 401 | |
+| tbc | 402 | |
+| st | 403 | |
+| tm_sta | 516 | |
+| tm_cmd | 519 | |
+| tm_sta | 522 | |
+| tm_cmd | 529 | |
+| return | 532 | |
+| SCPE_OK | 579 | |
+| uptr | 587 | |
+| tm_bc | 590 | |
+| uptr->USTAT | 648 | |
+| SCPE_OK | 651 | |
+| SCPE_OK | 734 | |
+| text2 | 739 | |
+| SCPE_OK | 787 | |
+| controller" | 792 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TM_NUMDR | 8                               ... | 90 |
+| USTAT | u3                              ... | 91 |
+| MTC_ERR | (1 << CSR_V_ERR)                ... | 95 |
+| MTC_V_DEN | 13                              ... | 96 |
+| MTC_M_DEN | 03 | 97 |
+| MTC_DEN | (MTC_M_DEN << MTC_V_DEN) | 98 |
+| MTC_INIT | 0010000                         ... | 99 |
+| MTC_LPAR | 0004000                         ... | 100 |
+| MTC_V_UNIT | 8                               ... | 101 |
+| MTC_M_UNIT | 07 | 102 |
+| MTC_UNIT | (MTC_M_UNIT << MTC_V_UNIT) | 103 |
+| MTC_DONE | (1 << CSR_V_DONE)               ... | 104 |
+| MTC_IE | (1 << CSR_V_IE)                 ... | 105 |
+| MTC_V_EMA | 4                               ... | 106 |
+| MTC_M_EMA | 03 | 107 |
+| MTC_EMA | (MTC_M_EMA << MTC_V_EMA) | 108 |
+| MTC_V_FNC | 1                               ... | 109 |
+| MTC_M_FNC | 07 | 110 |
+| MTC_UNLOAD | 00 | 111 |
+| MTC_READ | 01 | 112 |
+| MTC_WRITE | 02 | 113 |
+| MTC_WREOF | 03 | 114 |
+| MTC_SPACEF | 04 | 115 |
+| MTC_SPACER | 05 | 116 |
+| MTC_WREXT | 06 | 117 |
+| MTC_REWIND | 07 | 118 |
+| MTC_FNC | (MTC_M_FNC << MTC_V_FNC) | 119 |
+| MTC_GO | (1 << CSR_V_GO)                 ... | 120 |
+| MTC_RW | (MTC_DEN \| MTC_LPAR \| MTC_UNIT \|... | 121 |
+| GET_EMA(x) | (((x) & MTC_EMA) << (16 - MTC_V_... | 123 |
+| GET_UNIT(x) | (((x) >> MTC_V_UNIT) & MTC_M_UNIT) | 124 |
+| GET_FNC(x) | (((x) >> MTC_V_FNC) & MTC_M_FNC) | 125 |
+| STA_ILL | 0100000                         ... | 129 |
+| STA_EOF | 0040000                         ... | 130 |
+| STA_CRC | 0020000                         ... | 131 |
+| STA_PAR | 0010000                         ... | 132 |
+| STA_DLT | 0004000                         ... | 133 |
+| STA_EOT | 0002000                         ... | 134 |
+| STA_RLE | 0001000                         ... | 135 |
+| STA_BAD | 0000400                         ... | 136 |
+| STA_NXM | 0000200                         ... | 137 |
+| STA_ONL | 0000100                         ... | 138 |
+| STA_BOT | 0000040                         ... | 139 |
+| STA_7TK | 0000020                         ... | 140 |
+| STA_SDN | 0000010                         ... | 141 |
+| STA_WLK | 0000004                         ... | 142 |
+| STA_REW | 0000002                         ... | 143 |
+| STA_TUR | 0000001                         ... | 144 |
+| STA_CLR | (STA_7TK \| STA_SDN)             ... | 146 |
+| STA_DYN | (STA_EOF \| STA_EOT \| STA_ONL \| S... | 147 |
+| STA_EFLGS | (STA_ILL \| STA_EOF \| STA_CRC \| S... | 149 |
+| RDL_CLK | 0100000                         ... | 155 |
+| IOLN_TM | 014 | 190 |
+| BOOT_START | 016000 | 665 |
+| BOOT_ENTRY | (BOOT_START + 2) | 666 |
+| BOOT_UNIT | (BOOT_START + 010) | 667 |
+| BOOT_CSR | (BOOT_START + 014) | 668 |
+| BOOT1_LEN | (sizeof (boot1_rom) / sizeof (in... | 669 |
+| BOOT2_LEN | (sizeof (boot2_rom) / sizeof (in... | 670 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tm_rd | 266-270 |  |
+| switch | 271-306 |  |
+| tm_wr | 307-310 |  |
+| switch | 311-363 |  |
+| tm_go | 364-378 |  |
+| if | 379-397 |  |
+| tm_svc | 398-409 |  |
+| if | 410-421 |  |
+| if | 422-432 |  |
+| switch | 433-508 |  |
+| tm_updcsta | 509-526 |  |
+| tm_set_done | 527-536 |  |
+| tm_map_err | 537-538 |  |
+| switch | 539-583 |  |
+| tm_reset | 584-591 |  |
+| for | 592-609 |  |
+| tm_attach | 610-625 |  |
+| tm_detach | 626-640 |  |
+| tm_vlock | 641-717 |  |
+| tm_boot | 718-722 |  |
+| if | 723-736 |  |
+| tm_help | 737-789 |  |
+| tm_description | 790-793 |  |

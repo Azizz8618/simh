@@ -1,0 +1,113 @@
+=== sigma_mt.c — 733 строк ===
+Источник: sigma_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sigma_mt.c -nt .cline/maps/sigma_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mt_stopioe | 110 | |
+| mt_bptr | 116 | |
+| mt_blim | 117 | |
+| chan_ctl_time | 138 | |
+| ascii_to_ebcdic | 139 | |
+| ebcdic_to_ascii | 140 | |
+| mt_dib | 167 | |
+| uptr | 240 | |
+| cmd | 312 | |
+| un | 313 | |
+| dva | 314 | |
+| tbc | 317 | |
+| SCPE_OK | 504 | |
+| un | 511 | |
+| SCPE_OK | 516 | |
+| un | 531 | |
+| dva | 532 | |
+| SCPE_OK | 568 | |
+| uptr | 576 | |
+| st | 589 | |
+| st | 594 | |
+| uptr | 595 | |
+| st | 607 | |
+| SCPE_OK | 618 | |
+| iu | 625 | |
+| return | 651 | |
+| return | 660 | |
+| return | 672 | |
+| return | 682 | |
+| mt_rwi | 699 | |
+| mt_bptr | 700 | |
+| mt_blim | 701 | |
+| SCPE_OK | 705 | |
+| un | 713 | |
+| uptr->UST | 718 | |
+| uptr->UST | 730 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MT_NUMDR | 8                               ... | 63 |
+| MT_REW | (MT_NUMDR)                      ... | 64 |
+| UST | u3                              ... | 65 |
+| UCMD | u4                              ... | 66 |
+| MT_MAXFR | (1 << 16)                       ... | 67 |
+| MCM_INIT | 0x100 | 71 |
+| MCM_END | 0x101 | 72 |
+| MCM_WRITE | 0x01 | 73 |
+| MCM_READ | 0x02 | 74 |
+| MCM_SETC | 0x03 | 75 |
+| MCM_SENSE | 0x04 | 76 |
+| MCM_RDBK | 0x0C | 77 |
+| MCM_RWI | 0x13 | 78 |
+| MCM_RWU | 0x23 | 79 |
+| MCM_REW | 0x33 | 80 |
+| MCM_SFWR | 0x43 | 81 |
+| MCM_SBKR | 0x4B | 82 |
+| MCM_SFWF | 0x53 | 83 |
+| MCM_SBKF | 0x5B | 84 |
+| MCM_ERS | 0x63 | 85 |
+| MCM_WTM | 0x73 | 86 |
+| O_ATT | 0x01                            ... | 90 |
+| O_WRE | 0x02                            ... | 91 |
+| O_REV | 0x04                            ... | 92 |
+| O_NMT | 0x10                            ... | 93 |
+| MTDV_OVR | 0x80                            ... | 97 |
+| MTDV_WRE | 0x40                            ... | 98 |
+| MTDV_WLE | 0x20                            ... | 99 |
+| MTDV_EOF | 0x10                            ... | 100 |
+| MTDV_DTE | 0x08                            ... | 101 |
+| MTDV_BOT | 0x04                            ... | 102 |
+| MTDV_EOT | 0x02                            ... | 103 |
+| MTDV_REW | 0x01                            ... | 104 |
+| MTAI_MASK | (MTDV_OVR\|MTDV_WLE\|MTDV_EOF\|MTDV... | 106 |
+| MTAI_V_INT | 6 | 107 |
+| MTAI_INT | (1u << MTAI_V_INT) | 108 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt_disp | 237-246 |  |
+| switch | 247-309 |  |
+| mtu_svc | 310-319 |  |
+| if | 320-348 |  |
+| if | 349-372 |  |
+| switch | 373-508 |  |
+| mtr_svc | 509-518 |  |
+| mt_flush_buf | 519-527 |  |
+| mt_map_err | 528-533 |  |
+| switch | 534-572 |  |
+| mt_tio_status | 573-583 |  |
+| for | 584-591 |  |
+| mt_tdv_status | 592-596 |  |
+| if | 597-612 |  |
+| mt_chan_err | 613-622 |  |
+| mt_clr_int | 623-626 |  |
+| if | 627-631 |  |
+| for | 632-646 |  |
+| mt_set_rwi | 647-655 |  |
+| mt_set_atn | 656-664 |  |
+| mt_clr_rwi | 665-674 |  |
+| mt_clr_atn | 675-686 |  |
+| mt_reset | 687-690 |  |
+| for | 691-709 |  |
+| mt_attach | 710-725 |  |
+| mt_detach | 726-733 |  |

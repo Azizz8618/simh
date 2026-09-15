@@ -1,0 +1,35 @@
+=== ibm1130_sys.c — 512 строк ===
+Источник: ibm1130_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_sys.c -nt .cline/maps/ibm1130_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dev | 29 | |
+| tti_dev | 30 | |
+| gdu_dev | 31 | |
+| cpu_unit | 33 | |
+| cpu_reg | 34 | |
+| saved_PC | 35 | |
+| is_1800 | 36 | |
+| sim_name | 48 | |
+| sim_PC | 50 | |
+| sim_emax | 52 | |
+| lsopcode | 262 | |
+| rsopcode | 263 | |
+| tagc | 264 | |
+| -1 | 399 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| my_load | 110-167 |  |
+| my_save | 168-205 |  |
+| sim_load | 206-278 |  |
+| ebcdic_to_ascii | 279-289 |  |
+| fprint_sym | 290-396 |  |
+| get_reg | 397-414 |  |
+| get_addr | 415-455 |  |
+| parse_sym | 456-462 |  |
+| strnicmp | 463-489 |  |
+| strcmpi | 490-512 |  |

@@ -1,0 +1,213 @@
+=== pdp11_vh.c — 1970 строк ===
+Источник: pdp11_vh.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_vh.c -nt .cline/maps/pdp11_vh.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| TMLX | 416-435 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 91 | |
+| vh_charsizes | 240 | |
+| vh_parity | 243 | |
+| vh_stopbits | 244 | |
+| vh_mcount | 387 | |
+| vh_timeo | 388 | |
+| vh_stall | 391 | |
+| bitmask | 401 | |
+| vh_rbuf | 406 | |
+| txq_idx | 411 | |
+| vh_txq | 412 | |
+| vh_ldsc | 437 | |
+| vh_desc | 438 | |
+| vh_parm | 439 | |
+| vh_poll_unit | 525 | |
+| vh_xmit_unit | 526 | |
+| vh_timer_unit | 527 | |
+| lp->txfifo_cnt | 837 | |
+| newln | 1817 | |
+| vh_desc.lines | 1841 | |
+| SCPE_OK | 1853 | |
+| gbuf | 1861 | |
+| ln | 1862 | |
+| ln | 1880 | |
+| SCPE_OK | 1901 | |
+| SCPE_OK | 1956 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MS2SIMH(ms) | (((ms) * clk_tps) / 1000) | 93 |
+| VH_MUXES | (4) | 96 |
+| VH_MAXMUX | (vh_desc.lines/VH_LINES - 1) | 98 |
+| VH_LINES | (8) | 102 |
+| VH_LINES | (16) | 104 |
+| VH_LINES | (UNIBUS?16:8) | 107 |
+| VH_LINES_ALLOC | 16 | 109 |
+| UNIT_V_MODEDHU | (UNIT_V_UF + 0) | 111 |
+| UNIT_V_FASTDMA | (UNIT_V_UF + 1) | 112 |
+| UNIT_V_MODEM | (UNIT_V_UF + 2) | 113 |
+| UNIT_V_HANGUP | (UNIT_V_UF + 3) | 114 |
+| UNIT_MODEDHU | (1 << UNIT_V_MODEDHU) | 115 |
+| UNIT_FASTDMA | (1 << UNIT_V_FASTDMA) | 116 |
+| UNIT_MODEM | (1 << UNIT_V_MODEM) | 117 |
+| UNIT_HANGUP | (1 << UNIT_V_HANGUP) | 118 |
+| CSR_M_IND_ADDR | (017) | 122 |
+| CSR_SKIP | (1 << 4) | 123 |
+| CSR_MASTER_RESET | (1 << 5) | 124 |
+| CSR_RXIE | (1 << 6) | 125 |
+| CSR_RX_DATA_AVAIL | (1 << 7) | 126 |
+| CSR_M_TX_LINE | (017) | 127 |
+| CSR_V_TX_LINE | (8) | 128 |
+| CSR_TX_DMA_ERR | (1 << 12) | 129 |
+| CSR_DIAG_FAIL | (1 << 13) | 130 |
+| CSR_TXIE | (1 << 14) | 131 |
+| CSR_TX_ACTION | (1 << 15) | 132 |
+| CSR_GETCHAN(x) | ((x) & CSR_M_IND_ADDR) | 133 |
+| CSR_RW |  | 134 |
+| RESET_ABORT | (052525) | 136 |
+| FIFO_SIZE | (256) | 155 |
+| FIFO_ALARM | (191) | 156 |
+| FIFO_HALF | (FIFO_SIZE / 2) | 157 |
+| RBUF_M_RX_CHAR | (0377) | 158 |
+| RBUF_M_RX_LINE | (07) | 159 |
+| RBUF_V_RX_LINE | (8) | 160 |
+| RBUF_PARITY_ERR | (1 << 12) | 161 |
+| RBUF_FRAME_ERR | (1 << 13) | 162 |
+| RBUF_OVERRUN_ERR | (1 << 14) | 163 |
+| RBUF_DATA_VALID | (1 << 15) | 164 |
+| RBUF_GETLINE(u,x) | (((x) >> RBUF_V_RX_LINE) & ((vh_... | 165 |
+| RBUF_PUTLINE(u,x) | (((x) & ((vh_unit[(u)].flags & U... | 166 |
+| RBUF_DIAG |  | 167 |
+| XON | (021) | 169 |
+| XOFF | (023) | 170 |
+| TXCHAR_M_CHAR | (0377) | 184 |
+| TXCHAR_TX_DATA_VALID | (1 << 15) | 185 |
+| RXTIMER_M_RX_TIMER | (0377) | 196 |
+| LPR_DISAB_XRPT | (1 << 0)    /* not impl. in real... | 207 |
+| LPR_V_DIAG | (1) | 208 |
+| LPR_M_DIAG | (03) | 209 |
+| LPR_V_CHAR_LGTH | (3) | 210 |
+| LPR_M_CHAR_LGTH | (03) | 211 |
+| LPR_V_PARITY_ENAB | (5) | 212 |
+| LPR_PARITY_ENAB | (1 << LPR_V_PARITY_ENAB) | 213 |
+| LPR_V_EVEN_PARITY | (6) | 214 |
+| LPR_EVEN_PARITY | (1 << LPR_V_EVEN_PARITY) | 215 |
+| LPR_V_STOP_CODE | (7) | 216 |
+| LPR_STOP_CODE | (1 << LPR_V_STOP_CODE) | 217 |
+| LPR_V_RX_SPEED | (8) | 218 |
+| LPR_M_RX_SPEED | (017) | 219 |
+| LPR_V_TX_SPEED | (12) | 220 |
+| LPR_M_TX_SPEED | (017) | 221 |
+| RATE_50 | (0) | 223 |
+| RATE_75 | (1) | 224 |
+| RATE_110 | (2) | 225 |
+| RATE_134 | (3) | 226 |
+| RATE_150 | (4) | 227 |
+| RATE_300 | (5) | 228 |
+| RATE_600 | (6) | 229 |
+| RATE_1200 | (7) | 230 |
+| RATE_1800 | (8) | 231 |
+| RATE_2000 | (9) | 232 |
+| RATE_2400 | (10) | 233 |
+| RATE_4800 | (11) | 234 |
+| RATE_7200 | (12) | 235 |
+| RATE_9600 | (13) | 236 |
+| RATE_19200 | (14) | 237 |
+| RATE_38400 | (15) | 238 |
+| LPR_GETSPD(x) | vh_baudrates[((x) >> LPR_V_RX_SP... | 258 |
+| LPR_GETCHARSIZE(x) | vh_charsizes[((x) >> LPR_V_CHAR_... | 259 |
+| LPR_GETPARITY(x) | vh_parity[(((x) >> LPR_V_PARITY_... | 260 |
+| LPR_GETSTOPBITS(x) | vh_stopbits[(((x) >> LPR_V_STOP_... | 261 |
+| STAT_DHUID | (1 << 8)    /* mode: 0=DHV, 1=DH... | 265 |
+| STAT_MDL | (1 << 9)    /* always 0, has mod... | 266 |
+| STAT_CTS | (1 << 11)   /* CTS from modem */ | 267 |
+| STAT_DCD | (1 << 12)   /* DCD from modem */ | 268 |
+| STAT_RI | (1 << 13)   /* RI from modem */ | 269 |
+| STAT_DSR | (1 << 15)   /* DSR from modem */ | 270 |
+| FIFOSIZE_M_SIZE | (0377) | 287 |
+| FIFODATA_W0 | (0377) | 297 |
+| FIFODATA_V_W1 | (8) | 298 |
+| FIFODATA_M_W1 | (0377) | 299 |
+| LNCTRL_TX_ABORT | (1 << 0) | 309 |
+| LNCTRL_IAUTO | (1 << 1) | 310 |
+| LNCTRL_RX_ENA | (1 << 2) | 311 |
+| LNCTRL_BREAK | (1 << 3) | 312 |
+| LNCTRL_OAUTO | (1 << 4) | 313 |
+| LNCTRL_FORCE_XOFF | (1 << 5) | 314 |
+| LNCTRL_V_MAINT | (6) | 315 |
+| LNCTRL_M_MAINT | (03) | 316 |
+| LNCTRL_LINK_TYPE | (1 << 8)    /* 0=data leads only... | 317 |
+| LNCTRL_DTR | (1 << 9)    /* DTR to modem */ | 318 |
+| LNCTRL_RTS | (1 << 12)   /* RTS to modem */ | 319 |
+| TB2_M_TBUFFAD | (077) | 346 |
+| TB2_TX_DMA_START | (1 << 7) | 347 |
+| TB2_TX_ENA | (1 << 15) | 348 |
+| SELF_NULL | (0201) | 368 |
+| SELF_SKIP | (0203) | 369 |
+| SELF_OCT | (0211) | 370 |
+| SELF_RAM | (0225) | 371 |
+| SELF_RCD | (0231) | 372 |
+| SELF_DRD | (0235) | 373 |
+| BMP_OK | (0305) | 375 |
+| BMP_BAD | (0307) | 376 |
+| LOOP_NONE | (0) | 380 |
+| LOOP_H325 | (1) | 381 |
+| LOOP_H3101 | (2) /* p.2-13 DHQ manual */ | 382 |
+| TXQ_SIZE | (16) | 410 |
+| TX_FIFO_SIZE | 64 | 425 |
+| TXS_IDLE | 0 | 431 |
+| TXS_PIO_START | 1 | 432 |
+| TXS_PIO_PENDING | 2 | 433 |
+| TXS_DMA_PENDING | 3 | 434 |
+| DBG_RREG | 0x0001                          ... | 442 |
+| DBG_WREG | 0x0002                          ... | 443 |
+| DBG_REG | DBG_RREG\|DBG_WREG               ... | 444 |
+| DBG_INT | 0x0004                          ... | 445 |
+| DBG_TIM | 0x0008                          ... | 446 |
+| DBG_TIMTRC | 0x0010                          ... | 447 |
+| DBG_RCVSCH | 0x0020                          ... | 448 |
+| DBG_XMTSCH | 0x0040                          ... | 449 |
+| DBG_XMT | TMXR_DBG_XMT                    ... | 450 |
+| DBG_RCV | TMXR_DBG_RCV                    ... | 451 |
+| DBG_MDM | TMXR_DBG_MDM                    ... | 452 |
+| DBG_CFG | TMXR_DBG_CFG                    ... | 453 |
+| DBG_CON | TMXR_DBG_CON                    ... | 454 |
+| DBG_TRC | TMXR_DBG_TRC                    ... | 455 |
+| DBG_ASY | TMXR_DBG_ASY                    ... | 456 |
+| IOLN_VH | 020 | 507 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| vh_clr_rxint | 634-642 |  |
+| vh_set_rxint | 643-650 |  |
+| vh_rxinta | 651-664 |  |
+| vh_clr_txint | 665-673 |  |
+| vh_set_txint | 674-682 |  |
+| vh_txinta | 683-782 |  |
+| fifo_get | 783-834 |  |
+| tx_fifo_free_count | 835-849 |  |
+| tx_fifo_get | 850-865 |  |
+| dq_tx_report | 866-947 |  |
+| vh_getc | 948-982 |  |
+| vh_set_config | 983-1426 |  |
+| vh_timersvc | 1427-1463 |  |
+| vh_svc | 1464-1513 |  |
+| vh_xmt_svc | 1514-1664 |  |
+| vh_reset | 1665-1739 |  |
+| vh_detach | 1740-1744 |  |
+| vh_show_vec | 1745-1814 |  |
+| vh_setnl | 1815-1826 |  |
+| if | 1827-1846 |  |
+| vh_setmode | 1847-1857 |  |
+| vh_set_log | 1858-1876 |  |
+| vh_set_nolog | 1877-1891 |  |
+| vh_show_log | 1892-1895 |  |
+| for | 1896-1903 |  |
+| vh_help | 1904-1958 |  |
+| vh_help_attach | 1959-1966 |  |
+| vh_description | 1967-1970 |  |

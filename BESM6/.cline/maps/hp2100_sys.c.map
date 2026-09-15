@@ -1,0 +1,169 @@
+=== hp2100_sys.c — 5094 строк ===
+Источник: hp2100_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_sys.c -nt .cline/maps/hp2100_sys.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| OP_PROP | 249-253 |
+| OP_DESC | 422-427 |
+| OP_ENTRY | 429-434 |
+| PARSER_ENTRY | 1786-1789 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| record | 2119 | |
+| result | 2120 | |
+| SCPE_OK | 2232 | |
+| formats | 2360 | |
+| radix | 2361 | |
+| source | 2362 | |
+| formats | 2552 | |
+| radix | 2553 | |
+| status | 2554 | |
+| target | 2555 | |
+| result | 2681 | |
+| result | 2698 | |
+| status | 2732 | |
+| value | 2733 | |
+| index | 2734 | |
+| index | 2788 | |
+| fmtptr | 3140 | |
+| bnptr | 3294 | |
+| test_bit | 3295 | |
+| name_length | 3296 | |
+| return | 3393 | |
+| nptr | 3436 | |
+| argptr | 3437 | |
+| debptr | 3438 | |
+| format | 3439 | |
+| return | 3475 | |
+| return | 3488 | |
+| systab | 3506 | |
+| inited | 3507 | |
+| inited | 3511 | |
+| sim_vm_release | 3513 | |
+| sim_vm_release_message | 3514 | |
+| return | 3547 | |
+| dptr | 3605 | |
+| page | 3642 | |
+| return | 3656 | |
+| sptr | 3718 | |
+| page | 3719 | |
+| address | 3720 | |
+| cptr | 3848 | |
+| cbuf | 3849 | |
+| dptr | 3850 | |
+| op_type | 4018 | |
+| op_index | 4019 | |
+| instruction | 4020 | |
+| status | 4021 | |
+| iptr | 4324 | |
+| address | 4325 | |
+| gptr | 4424 | |
+| pptr | 4425 | |
+| eptr | 4426 | |
+| gbuf | 4427 | |
+| gptr | 4573 | |
+| mptr | 4574 | |
+| gbuf | 4575 | |
+| op_type | 4576 | |
+| accumulator | 4577 | |
+| status | 4578 | |
+| op_value | 4579 | |
+| op_implicit | 4580 | |
+| op_flag | 4581 | |
+| SCPE_INCOMP | 4971 | |
+| c1 | 4985 | |
+| status | 5011 | |
+| status | 5041 | |
+| SCPE_OK | 5055 | |
+| SCPE_OK | 5066 | |
+| poll_time | 5081 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| GET_SWITCHES(cp) |  | 129 |
+| VAL_EMPTY | (1u << PA_WIDTH)    /* flag indi... | 165 |
+| SCPE_OK_2_WORDS | ((t_stat) -1)       /* two words... | 170 |
+| A_SWITCH | SWMASK ('A') | 175 |
+| B_SWITCH | SWMASK ('B') | 176 |
+| C_SWITCH | SWMASK ('C') | 177 |
+| D_SWITCH | SWMASK ('D') | 178 |
+| H_SWITCH | SWMASK ('H') | 179 |
+| M_SWITCH | SWMASK ('M') | 180 |
+| O_SWITCH | SWMASK ('O') | 181 |
+| MODE_SWITCHES | (C_SWITCH \| M_SWITCH) | 183 |
+| FORMAT_SWITCHES | (A_SWITCH \| B_SWITCH \| D_SWITCH ... | 184 |
+| SYMBOLIC_SWITCHES | (C_SWITCH \| M_SWITCH \| A_SWITCH) | 185 |
+| ALL_SWITCHES | (MODE_SWITCHES \| FORMAT_SWITCHES) | 187 |
+| OP_LINEAR | 0u                  /* (mask) ta... | 416 |
+| OP_SINGLE | 0u                  /* (shift) m... | 417 |
+| OP_MULTIPLE | 1u                  /* (shift) m... | 418 |
+| AB_UNUSED | 0000000u            /* mask to u... | 420 |
+| E | 0400u               /* parity bi... | 1908 |
+| O | 0000u               /* parity bi... | 1909 |
+| DEVICE_COUNT | (sizeof sim_devices / sizeof sim... | 1968 |
+| FLAG_SIZE | 32                          /* s... | 3431 |
+| FORMAT_SIZE | 1024                        /* s... | 3432 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load | 2114-2115 |  |
+| TO_WORD | 2116-2127 |  |
+| if | 2128-2357 |  |
+| fprint_sym | 2358-2401 |  |
+| if | 2402-2436 |  |
+| if | 2437-2549 |  |
+| parse_sym | 2550-2606 |  |
+| if | 2607-2624 |  |
+| if | 2625-2678 |  |
+| hp_attach | 2679-2728 |  |
+| hp_set_dib | 2729-2784 |  |
+| hp_show_dib | 2785-2892 |  |
+| fprint_cpu | 2893-2898 |  |
+| if | 2899-2907 |  |
+| if | 2908-3128 |  |
+| fmt_char | 3129-3286 |  |
+| fmt_bitset | 3287-3368 |  |
+| if | 3369-3387 |  |
+| hp_initialize_trace | 3388-3433 |  |
+| hp_trace | 3434-3442 |  |
+| if | 3443-3480 |  |
+| hp_enbdis_pair | 3481-3503 |  |
+| hp_one_time_init | 3504-3515 |  |
+| while | 3516-3602 |  |
+| fprint_stopped | 3603-3606 |  |
+| if | 3607-3614 |  |
+| if | 3615-3639 |  |
+| fprint_addr | 3640-3643 |  |
+| if | 3644-3715 |  |
+| parse_addr | 3716-3765 |  |
+| hp_exdep_cmd | 3766-3786 |  |
+| hp_run_cmd | 3787-3807 |  |
+| hp_brk_cmd | 3808-3845 |  |
+| hp_load_cmd | 3846-3855 |  |
+| if | 3856-3888 |  |
+| fprint_value | 3889-4037 |  |
+| if | 4038-4099 |  |
+| if | 4100-4105 |  |
+| if | 4106-4113 |  |
+| switch | 4114-4321 |  |
+| parse_address | 4322-4328 |  |
+| if | 4329-4333 |  |
+| if | 4334-4338 |  |
+| if | 4339-4360 |  |
+| parse_value | 4361-4421 |  |
+| parse_cpu | 4422-4570 |  |
+| parse_instruction | 4571-4947 |  |
+| parse_micro_ops | 4948-4982 |  |
+| fgetword | 4983-5008 |  |
+| fputword | 5009-5038 |  |
+| poll_service | 5039-5047 |  |
+| if | 5048-5058 |  |
+| poll_reset | 5059-5078 |  |
+| hp_sync_poll | 5079-5082 |  |
+| if | 5083-5094 |  |

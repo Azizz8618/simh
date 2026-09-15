@@ -1,0 +1,44 @@
+=== vax_vmb_exe.h — 2853 строк ===
+Источник: vax_vmb_exe.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_vmb_exe.h -nt .cline/maps/vax_vmb_exe.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ROM_vax_vmb_exe_H | 0 | 2 |
+| BOOT_CODE_SIZE | 0xAE00 | 10 |
+| BOOT_CODE_CHECKSUM | 0xFFC014BB | 11 |
+| BOOT_CODE_FILENAME | "vmb.exe" | 12 |
+| BOOT_CODE_FILEPATH | "VAX/vmb.exe" | 13 |
+| BOOT_CODE_ARRAY | NULL | 15 |
+| BOOT_CODE_ARRAY | vax_vmb_exe | 17 |
+| BOOT_CODE_URL | NULL | 19 |
+| BOOT_CODE_SIZE_1 | 0xAE00 | 22 |
+| BOOT_CODE_CHECKSUM_1 | 0xFFC014BB | 23 |
+| BOOT_CODE_FILENAME_1 | "vmb.exe" | 24 |
+| BOOT_CODE_FILEPATH_1 | "VAX/vmb.exe" | 25 |
+| BOOT_CODE_ARRAY_1 | NULL | 27 |
+| BOOT_CODE_ARRAY_1 | vax_vmb_exe | 29 |
+| BOOT_CODE_URL_1 | NULL | 31 |
+| BOOT_CODE_SIZE_2 | 0xAE00 | 33 |
+| BOOT_CODE_CHECKSUM_2 | 0xFFC014BB | 34 |
+| BOOT_CODE_FILENAME_2 | "vmb.exe" | 35 |
+| BOOT_CODE_FILEPATH_2 | "VAX/vmb.exe" | 36 |
+| BOOT_CODE_ARRAY_2 | NULL | 38 |
+| BOOT_CODE_ARRAY_2 | vax_vmb_exe | 40 |
+| BOOT_CODE_URL_2 | NULL | 42 |
+| BOOT_CODE_SIZE_3 | 0xAE00 | 44 |
+| BOOT_CODE_CHECKSUM_3 | 0xFFC014BB | 45 |
+| BOOT_CODE_FILENAME_3 | "vmb.exe" | 46 |
+| BOOT_CODE_FILEPATH_3 | "VAX/vmb.exe" | 47 |
+| BOOT_CODE_ARRAY_3 | NULL | 49 |
+| BOOT_CODE_ARRAY_3 | vax_vmb_exe | 51 |
+| BOOT_CODE_URL_3 | NULL | 53 |
+| BOOT_CODE_SIZE_4 | 0xAE00 | 55 |
+| BOOT_CODE_CHECKSUM_4 | 0xFFC014BB | 56 |
+| BOOT_CODE_FILENAME_4 | "vmb.exe" | 57 |
+| BOOT_CODE_FILEPATH_4 | "VAX/vmb.exe" | 58 |
+| BOOT_CODE_ARRAY_4 | NULL | 60 |
+| BOOT_CODE_ARRAY_4 | vax_vmb_exe | 62 |
+| BOOT_CODE_URL_4 | NULL | 64 |
+

@@ -1,0 +1,65 @@
+=== altairz80_dsk.c — 748 строк ===
+Источник: altairz80_dsk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test altairz80_dsk.c -nt .cline/maps/altairz80_dsk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 170 | |
+| PCX | 171 | |
+| current_disk | 183 | |
+| current_track | 184 | |
+| current_sector | 185 | |
+| current_byte | 186 | |
+| current_flag | 187 | |
+| current_imageSize | 192 | |
+| in9_count | 197 | |
+| in9_message | 198 | |
+| warnLevelDSK | 200 | |
+| warnLock | 201 | |
+| warnAttached | 202 | |
+| warnDSK10 | 203 | |
+| warnDSK11 | 204 | |
+| warnDSK12 | 205 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IN_MSG | (1 << 0) | 135 |
+| OUT_MSG | (1 << 1) | 136 |
+| READ_MSG | (1 << 2) | 137 |
+| WRITE_MSG | (1 << 3) | 138 |
+| SECTOR_STUCK_MSG | (1 << 4) | 139 |
+| TRACK_STUCK_MSG | (1 << 5) | 140 |
+| VERBOSE_MSG | (1 << 6) | 141 |
+| UNIT_V_DSK_WLK | (UNIT_V_UF + 0)         /* write... | 143 |
+| UNIT_DSK_WLK | (1 << UNIT_V_DSK_WLK) | 144 |
+| DSK_SECTSIZE | 137                     /* size ... | 145 |
+| DSK_SECT | 32                      /* secto... | 146 |
+| MAX_TRACKS | 2048                    /* numbe... | 147 |
+| DSK_TRACSIZE | (DSK_SECTSIZE * DSK_SECT) | 149 |
+| MAX_DSK_SIZE | (DSK_TRACSIZE * MAX_TRACKS) | 150 |
+| NUM_OF_DSK_MASK | (NUM_OF_DSK - 1) | 151 |
+| BOOTROM_SIZE_DSK | 256                     /* size ... | 152 |
+| MINI_DISK_SECT | 16                      /* mini ... | 154 |
+| MINI_DISK_TRACKS | 35                      /* numbe... | 155 |
+| MINI_DISK_SIZE | (MINI_DISK_TRACKS * MINI_DISK_SE... | 156 |
+| MINI_DISK_DELTA | 4096                    /* thres... | 157 |
+| ALTAIR_DISK_SIZE | 337664                  /* size ... | 159 |
+| ALTAIR_DISK_DELTA | 256                     /* thres... | 160 |
+| DSK_NAME | "Altair Floppy Disk" | 341 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dsk_description | 343-375 |  |
+| selectInOut | 376-382 |  |
+| dsk_reset | 383-405 |  |
+| dsk_attach | 406-427 |  |
+| install_ALTAIRbootROM | 428-442 |  |
+| dsk_boot | 443-476 |  |
+| dskseek | 477-482 |  |
+| writebuf | 483-538 | precondition: current_disk < NUM_OF_DSK |
+| dsk10 | 539-588 |  |
+| dsk11 | 589-689 |  |
+| dsk12 | 690-748 |  |

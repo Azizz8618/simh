@@ -1,0 +1,108 @@
+=== sigma_cis.c — 995 строк ===
+Источник: sigma_cis.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sigma_cis.c -nt .cline/maps/sigma_cis.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| dstr_t | 61-64 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| Dstr_zero | 71 | |
+| CC | 74 | |
+| PSW1 | 75 | |
+| bvamqrx | 76 | |
+| cpu_model | 77 | |
+| src1 | 103 | |
+| sc | 105 | |
+| tr | 106 | |
+| wd | 392 | |
+| FALSE | 403 | |
+| ppneg | 427 | |
+| return | 460 | |
+| wd | 484 | |
+| return | 503 | |
+| tr | 520 | |
+| src->sign | 543 | |
+| tr | 580 | |
+| return | 618 | |
+| return | 648 | |
+| sm1 | 696 | |
+| cy | 708 | |
+| complm | 725 | |
+| return | 730 | |
+| nz | 765 | |
+| dst->sign | 775 | |
+| sc | 790 | |
+| sc1 | 791 | |
+| return | 801 | |
+| sc | 816 | |
+| sc1 | 817 | |
+| sa | 885 | |
+| tr | 886 | |
+| tr | 966 | |
+| return | 994 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DSTRLNT | 4                               ... | 37 |
+| DECA | 12                              ... | 38 |
+| ZONE_E | 0xF0                            ... | 42 |
+| ZONE_A | 0x30                            ... | 43 |
+| ZONE | ((PSW1 & PSW1_AS)? ZONE_A: ZONE_E) | 44 |
+| PKPLUS_E | 0xC                             ... | 45 |
+| PKPLUS_A | 0xA                             ... | 46 |
+| PKPLUS | ((PSW1 & PSW1_AS)? PKPLUS_A: PKP... | 47 |
+| BLANK_E | 0x40                            ... | 48 |
+| BLANK_A | 0x20                            ... | 49 |
+| BLANK | ((PSW1 & PSW1_AS)? BLANK_A: BLAN... | 50 |
+| ED_DS | 0x20                            ... | 54 |
+| ED_SS | 0x21                            ... | 55 |
+| ED_FS | 0x22                            ... | 56 |
+| ED_SI | 0x23                            ... | 57 |
+| ReadDecA(src) | for (i = 0; i < DSTRLNT; i++)  | 68 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cis_dec | 101-111 |  |
+| switch | 112-388 |  |
+| cis_test_int | 389-393 |  |
+| for | 394-424 |  |
+| cis_dm_int | 425-449 |  |
+| if | 450-481 |  |
+| cis_dd_int | 482-516 |  |
+| ReadDstr | 517-522 |  |
+| for | 523-533 |  |
+| TestDstrValid | 534-545 |  |
+| for | 546-557 |  |
+| DstrInvd | 558-576 |  |
+| WriteDstr | 577-584 |  |
+| for | 585-603 |  |
+| WriteDecA | 604-608 |  |
+| for | 609-628 |  |
+| SetCC2Dstr | 629-639 |  |
+| for | 640-692 |  |
+| AddDstr | 693-697 |  |
+| for | 698-721 |  |
+| SubDstr | 722-741 |  |
+| CmpDstr | 742-745 |  |
+| for | 746-762 |  |
+| LntDstr | 763-766 |  |
+| for | 767-785 |  |
+| GenRshift | 786-791 |  |
+| if | 792-810 |  |
+| GenLshift | 811-817 |  |
+| if | 818-840 |  |
+| NibbleRshift | 841-845 |  |
+| if | 846-865 |  |
+| NibbleLshift | 866-869 |  |
+| if | 870-882 |  |
+| cis_ebs | 883-889 |  |
+| while | 890-963 |  |
+| ed_getsrc | 964-979 |  |
+| ed_advsrc | 980-982 |  |
+| if | 983-995 |  |

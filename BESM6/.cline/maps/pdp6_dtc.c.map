@@ -1,0 +1,137 @@
+=== pdp6_dtc.c — 1299 строк ===
+Источник: pdp6_dtc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp6_dtc.c -nt .cline/maps/pdp6_dtc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dtc_dct | 239 | |
+| dtc_dib | 266 | |
+| delay | 330 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_DTC | 0 | 90 |
+| DTC_DEVNUM | 0210 | 94 |
+| DTC_NUMDR | 8                           /* #... | 95 |
+| UNIT_V_8FMT | (UNIT_V_UF + 0)             /* 1... | 96 |
+| UNIT_V_11FMT | (UNIT_V_UF + 1)             /* 1... | 97 |
+| UNIT_8FMT | (1 << UNIT_V_8FMT) | 98 |
+| UNIT_11FMT | (1 << UNIT_V_11FMT) | 99 |
+| DT_LPERMC | 6                           /* l... | 103 |
+| DT_BLKWD | 1                           /* b... | 104 |
+| DT_CSMWD | 4                           /* c... | 105 |
+| DT_HTWRD | 5                           /* h... | 106 |
+| DT_EZLIN | (8192 * DT_LPERMC)          /* e... | 107 |
+| DT_BFLIN | (200 * DT_LPERMC)           /* b... | 108 |
+| DT_BLKLN | (DT_BLKWD * DT_LPERMC)      /* b... | 109 |
+| DT_CSMLN | (DT_CSMWD * DT_LPERMC)      /* c... | 110 |
+| DT_HTLIN | (DT_HTWRD * DT_LPERMC)      /* h... | 111 |
+| D18_WSIZE | 6                           /* w... | 115 |
+| D18_BSIZE | 256                         /* b... | 116 |
+| D18_TSIZE | 578                         /* t... | 117 |
+| D18_LPERB | (DT_HTLIN + (D18_BSIZE * DT_WSIZ... | 118 |
+| D18_FWDEZ | (DT_EZLIN + (D18_LPERB * D18_TSI... | 119 |
+| D18_CAPAC | (D18_TSIZE * D18_BSIZE)     /* t... | 120 |
+| D11_FILSIZ | (D18_CAPAC * sizeof (int16)) | 121 |
+| D8_WSIZE | 4                           /* w... | 125 |
+| D8_BSIZE | 86                          /* b... | 126 |
+| D8_TSIZE | 1474                        /* t... | 127 |
+| D8_LPERB | (DT_HTLIN + (D8_BSIZE * DT_WSIZE... | 128 |
+| D8_FWDEZ | (DT_EZLIN + (D8_LPERB * D8_TSIZE)) | 129 |
+| D8_CAPAC | (D8_TSIZE * D8_BSIZE)       /* t... | 130 |
+| D8_NBSIZE | ((D8_BSIZE * D18_WSIZE) / D8_WSIZE) | 132 |
+| D8_FILSIZ | (D8_NBSIZE * D8_TSIZE * sizeof (... | 133 |
+| DT_CAPAC | D18_CAPAC                   /* d... | 137 |
+| DT_WSIZE | D18_WSIZE | 138 |
+| DTU_BSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_BS... | 142 |
+| DTU_TSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_TS... | 143 |
+| DTU_LPERB(u) | (((u)->flags & UNIT_8FMT)? D8_LP... | 144 |
+| DTU_FWDEZ(u) | (((u)->flags & UNIT_8FMT)? D8_FW... | 145 |
+| DTU_CAPAC(u) | (((u)->flags & UNIT_8FMT)? D8_CA... | 146 |
+| DT_LIN2BL(p,u) | (((p) - DT_EZLIN) / DTU_LPERB (u)) | 148 |
+| DT_LIN2OF(p,u) | (((p) - DT_EZLIN) % DTU_LPERB (u)) | 149 |
+| DT_LIN2WD(p,u) | ((DT_LIN2OF (p,u) - DT_HTLIN) / ... | 150 |
+| DT_BLK2LN(p,u) | (((p) * DTU_LPERB (u)) + DT_EZLIN) | 151 |
+| DT_QREZ(u) | (((u)->pos) < DT_EZLIN) | 152 |
+| DT_QFEZ(u) | (((u)->pos) >= ((uint32) DTU_FWD... | 153 |
+| DT_QEZ(u) | (DT_QREZ (u) \|\| DT_QFEZ (u)) | 154 |
+| CMD | u3 | 157 |
+| DTC_FLAG_PIA | 07                  /* PI Channe... | 158 |
+| DTC_V_UNIT | 3                   /* unit sele... | 159 |
+| DTC_M_UNIT | 07 | 160 |
+| DTC_V_FNC | 6 | 161 |
+| DTC_M_FNC | 07 | 162 |
+| FNC_MOVE | 00                 /* move */ | 163 |
+| FNC_RALL | 01                 /* read all */ | 164 |
+| FNC_SRCH | 02                 /* search */ | 165 |
+| FNC_READ | 03                 /* read */ | 166 |
+| FNC_WMRK | 04                 /* write timi... | 167 |
+| FNC_WALL | 05                 /* write All */ | 168 |
+| FNC_WBLK | 06                 /* Write Bloc... | 169 |
+| FNC_WRIT | 07                 /* write data */ | 170 |
+| DTC_DELAY | 0003000             /* Initial d... | 171 |
+| DTC_TIME | 0004000             /* Delay */ | 172 |
+| DTC_RVDRV | 0010000             /* Move unit... | 173 |
+| DTC_START | 0020000             /* Start uni... | 174 |
+| DTC_JDONE | 0040000             /* Enable Jo... | 175 |
+| DTC_ETF | 0100000             /* Enable En... | 176 |
+| DTC_SEL | 0200000             /* Select un... | 177 |
+| DTC_FNC_STOP | 010                 /* Unit stop... | 180 |
+| DTC_FNC_START | DTC_START           /* Start uni... | 181 |
+| DTC_FNC_REV | DTC_RVDRV           /* Unit to c... | 182 |
+| DTC_GETFNC(x) | (((x) >> DTC_V_FNC) & DTC_M_FNC) | 184 |
+| DTC_GETUNI(x) | (((x) >> DTC_V_UNIT) & DTC_M_UNIT) | 185 |
+| DTB_DONE | 0000001 | 189 |
+| DTB_EOT | 0000002 | 190 |
+| DTB_ILL | 0000004 | 191 |
+| DTB_PAR | 0000010 | 192 |
+| DTB_TIME | 0000020 | 193 |
+| DTB_WR | 0000040 | 194 |
+| DTB_INCBLK | 0000100 | 195 |
+| DTB_NULL | 0000200 | 196 |
+| DTB_ACT | 0000400 | 197 |
+| DTB_REQ | 0001000 | 198 |
+| DTB_DLY | 0002000 | 199 |
+| DSTATE | u5              /* Dectape curre... | 201 |
+| DTC_FEND | 0                    /* Tape in ... | 203 |
+| DTC_FBLK | 1                    /* In forwa... | 204 |
+| DTC_FCHK | 2                    /* In forwa... | 205 |
+| DTC_BLOCK | 3                    /* In block */ | 206 |
+| DTC_RCHK | 4                    /* In rever... | 207 |
+| DTC_RBLK | 5                    /* In rever... | 208 |
+| DTC_REND | 7                    /* In final... | 209 |
+| DTC_MOTMASK | 0370 | 211 |
+| DTC_MOT | 0010                 /* Tape in ... | 212 |
+| DTC_REV | 0020                 /* Tape in ... | 213 |
+| DTC_XFR | 0040                 /* Tranfer ... | 214 |
+| DTC_STOP | 0100                 /* Tape to ... | 215 |
+| DTC_ACCL | 0200                 /* Tape acc... | 216 |
+| DTC_V_WORD | 8                    /* Shift fo... | 218 |
+| DTC_M_WORD | 0177                 /* 128 word... | 219 |
+| DTC_V_BLK | 16                   /* Shift fo... | 220 |
+| DTC_M_BLK | 01777                /* Block ma... | 221 |
+| DELAY | u4             /* Hold delay tim... | 223 |
+| LOG_MS | 00200                 /* move, s... | 226 |
+| LOG_RW | 00400                 /* read, w... | 227 |
+| LOG_RA | 01000                 /* read al... | 228 |
+| LOG_BL | 02000                 /* block #... | 229 |
+| ABS(x) | (((x) < 0)? (-(x)): (x)) | 231 |
+| DT_WRDTIM | 15000 | 233 |
+| WRITTEN | u6 | 235 |
+| D | DEV_DIS | 261 |
+| D | 0 | 263 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dtc_devio | 334-430 |  |
+| dtc_svc | 431-1069 |  |
+| dtc_boot | 1070-1105 |  |
+| dtc_set_dct | 1106-1120 |  |
+| dtc_show_dct | 1121-1132 |  |
+| dtc_reset | 1133-1156 |  |
+| dtc_attach | 1157-1241 |  |
+| dtc_flush | 1242-1281 |  |
+| dtc_detach | 1282-1299 |  |

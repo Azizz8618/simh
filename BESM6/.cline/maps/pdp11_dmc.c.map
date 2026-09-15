@@ -1,0 +1,672 @@
+=== pdp11_dmc.c — 4054 строк ===
+Источник: pdp11_dmc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_dmc.c -nt .cline/maps/pdp11_dmc.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| ControllerState | 280-287 |
+| BUFFER_QUEUE | 448-454 |
+| BUFFER | 535-543 |
+| DDCMP | 554-626 |
+| CONTROL_OUT | 628-631 |
+| CTLR | 639-674 |
+| DDCMP_STATETABLE | 762-768 |
+| DDCMP_CONDITION_NAME | 879-882 |
+| DDCMP_ACTION_NAME | 945-948 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| entry->next | 471 | |
+| entry->prev | 472 | |
+| entry->queue | 473 | |
+| pred->next->prev | 474 | |
+| pred->next | 475 | |
+| TRUE | 477 | |
+| entry->prev->next | 492 | |
+| entry->next->prev | 493 | |
+| entry->next | 495 | |
+| entry->queue | 496 | |
+| head->next | 518 | |
+| head->queue | 519 | |
+| head->queue->count | 520 | |
+| head->queue->size | 521 | |
+| return | 526 | |
+| buf | 928 | |
+| Name | 929 | |
+| buf | 931 | |
+| buf | 942 | |
+| buf | 990 | |
+| Name | 991 | |
+| buf | 993 | |
+| buf | 1004 | |
+| buf | 1009 | |
+| buf | 1012 | |
+| buf | 1017 | |
+| buf | 1030 | |
+| NewState | 1033 | |
+| Actions | 1034 | |
+| dmc_csrs | 1133 | |
+| dmc_sel0 | 1134 | |
+| dmc_sel2 | 1135 | |
+| dmc_sel4 | 1136 | |
+| dmc_sel6 | 1137 | |
+| dmc_speed | 1140 | |
+| dmc_peer | 1141 | |
+| dmc_port | 1142 | |
+| dmc_baseaddr | 1143 | |
+| dmc_basesize | 1144 | |
+| dmc_modem | 1145 | |
+| dmc_microdiag | 1146 | |
+| dmc_corruption | 1147 | |
+| dmp_csrs | 1149 | |
+| dmp_sel0 | 1150 | |
+| dmp_sel2 | 1151 | |
+| dmp_sel4 | 1152 | |
+| dmp_sel6 | 1153 | |
+| dmp_sel10 | 1154 | |
+| dmp_speed | 1156 | |
+| dmp_peer | 1157 | |
+| dmp_port | 1158 | |
+| dmp_baseaddr | 1159 | |
+| dmp_basesize | 1160 | |
+| dmp_modem | 1161 | |
+| dmp_corruption | 1162 | |
+| dmc_rcv_queues | 1171 | |
+| dmc_completion_queues | 1172 | |
+| dmc_xmt_queues | 1173 | |
+| dmc_ack_wait_queues | 1174 | |
+| dmc_free_queues | 1175 | |
+| dmc_buffers | 1176 | |
+| dmp_rcv_queues | 1182 | |
+| dmp_completion_queues | 1183 | |
+| dmp_xmt_queues | 1184 | |
+| dmp_ack_wait_queues | 1185 | |
+| dmp_free_queues | 1186 | |
+| dmp_buffers | 1187 | |
+| dmc_dev | 1225 | |
+| dmp_dev | 1257 | |
+| dmv_dev | 1282 | |
+| dmc_ctrls | 1354 | |
+| UNIT_ATT | 1358 | |
+| SCPE_OK | 1394 | |
+| host | 1402 | |
+| SCPE_OK | 1413 | |
+| SCPE_OK | 1426 | |
+| newspeed | 1436 | |
+| speeds | 1443 | |
+| SCPE_OK | 1444 | |
+| SCPE_OK | 1452 | |
+| appetite | 1465 | |
+| SCPE_OK | 1476 | |
+| SCPE_OK | 1493 | |
+| gbuf | 1499 | |
+| SCPE_OK | 1511 | |
+| SCPE_OK | 1532 | |
+| gbuf | 1537 | |
+| status | 1538 | |
+| status | 1554 | |
+| SCPE_OK | 1575 | |
+| states | 1656 | |
+| tstates | 1657 | |
+| SCPE_OK | 1674 | |
+| controller->receive_buffer_output_transfers_completed | 1681 | |
+| controller->transmit_buffer_output_transfers_completed | 1682 | |
+| controller->receive_buffer_input_transfers_completed | 1683 | |
+| controller->transmit_buffer_input_transfers_completed | 1684 | |
+| controller->control_out_operations_completed | 1685 | |
+| controller->ddcmp_control_packets_received | 1686 | |
+| controller->ddcmp_control_packets_sent | 1687 | |
+| SCPE_OK | 1691 | |
+| SCPE_OK | 1699 | |
+| status | 1704 | |
+| newpoll | 1706 | |
+| newln | 1721 | |
+| dptr->numunits | 1754 | |
+| dptr->units | 1755 | |
+| dptr->units | 1757 | |
+| mp->lines | 1759 | |
+| SCPE_OK | 1769 | |
+| states | 1775 | |
+| SCPE_OK | 1794 | |
+| devname | 1997 | |
+| devcount | 1998 | |
+| connectpoll | 1999 | |
+| controller->in_int | 2020 | |
+| controller->in_int | 2027 | |
+| controller->out_int | 2045 | |
+| controller->out_int | 2052 | |
+| ans | 2073 | |
+| type_str | 2078 | |
+| dmc_types | 2080 | |
+| type_str | 2125 | |
+| dmc_types | 2127 | |
+| type_str | 2129 | |
+| ans | 2215 | |
+| ans | 2243 | |
+| trace | 2248 | |
+| DMC_SEL0_M_MCLEAR | 2278 | |
+| DMC_SEL0_M_RUN | 2291 | |
+| ans | 2296 | |
+| ans | 2302 | |
+| ans | 2307 | |
+| ans | 2313 | |
+| ans | 2318 | |
+| ans | 2324 | |
+| ans | 2329 | |
+| ans | 2335 | |
+| ans | 2340 | |
+| ans | 2346 | |
+| DMC_SEL2_M_RDO | 2351 | |
+| modem_bits | 2423 | |
+| ans | 2473 | |
+| ans | 2479 | |
+| control | 2489 | |
+| controller->link.state | 2494 | |
+| controller->state | 2495 | |
+| controller->control_out | 2500 | |
+| controller->transfer_state | 2521 | |
+| controller->transfer_state | 2529 | |
+| controller->transfer_state | 2540 | |
+| buffer | 2548 | |
+| controller->link.xmt_done_buffer | 2551 | |
+| controller->link.xmt_done_buffer | 2553 | |
+| buffer->actual_bytes_transferred | 2555 | |
+| controller->buffers_transmitted_to_net++ | 2556 | |
+| controller->link.xmt_buffer | 2564 | |
+| dptr | 2570 | |
+| SCPE_OK | 2612 | |
+| controller | 2618 | |
+| dmc | 2620 | |
+| SCPE_OK | 2678 | |
+| dmc | 2683 | |
+| controller | 2686 | |
+| SCPE_OK | 2704 | |
+| q->name | 2709 | |
+| q->controller | 2711 | |
+| buffer->address | 2759 | |
+| buffer->count | 2760 | |
+| buffer->transfer_buffer | 2762 | |
+| buffer->actual_bytes_transferred | 2763 | |
+| buffer->buffer_return_time | 2765 | |
+| buffer | 2766 | |
+| buffer | 2784 | |
+| last | 2796 | |
+| control->sel6 | 2798 | |
+| ans | 2812 | |
+| ans | 2828 | |
+| count | 2834 | |
+| controller->transfer_state | 2855 | |
+| buffer | 2861 | |
+| controller->transmit_buffer_output_transfers_completed++ | 2869 | |
+| controller->transfer_state | 2870 | |
+| control | 2876 | |
+| controller->transfer_state | 2884 | |
+| controller->control_out | 2885 | |
+| controller->control_out_operations_completed++ | 2887 | |
+| ans | 3007 | |
+| ans | 3022 | |
+| controller->link.TimerRunning | 3051 | |
+| controller->link.TimeRemaining | 3052 | |
+| controller->link.TimerRunning | 3057 | |
+| data_packets | 3061 | |
+| buffer | 3062 | |
+| controller->link.R | 3064 | |
+| controller->link.N | 3065 | |
+| controller->link.A | 3066 | |
+| controller->link.T | 3067 | |
+| controller->link.X | 3068 | |
+| controller->link.SACK | 3069 | |
+| controller->link.SNAK | 3070 | |
+| controller->link.SREP | 3071 | |
+| controller->link.state | 3072 | |
+| controller->link.nak_reason | 3073 | |
+| buffer->count | 3104 | |
+| buffer->count | 3114 | |
+| buffer->count | 3124 | |
+| buffer->count | 3134 | |
+| buffer->count | 3144 | |
+| controller->link.SACK | 3151 | |
+| controller->link.SACK | 3155 | |
+| controller->link.SNAK | 3159 | |
+| controller->link.SNAK | 3163 | |
+| controller->link.SREP | 3167 | |
+| controller->link.SREP | 3171 | |
+| controller->link.R++ | 3175 | |
+| controller->link.A | 3179 | |
+| controller->link.T | 3183 | |
+| controller->link.T++ | 3187 | |
+| controller->link.nak_reason | 3191 | |
+| controller->link.nak_reason | 3195 | |
+| qh | 3200 | |
+| controller->link.T | 3309 | |
+| controller->link.SACK | 3310 | |
+| controller->link.X | 3322 | |
+| breturn | 3402 | |
+| breturn | 3408 | |
+| breturn | 3418 | |
+| breturn | 3428 | |
+| FALSE | 3470 | |
+| breturn | 3535 | |
+| table | 3547 | |
+| matched | 3548 | |
+| states | 3549 | |
+| controller->link.Scanning | 3558 | |
+| controller->link.Scanning | 3589 | |
+| SCPE_OK | 3730 | |
+| SCPE_OK | 3774 | |
+| ans | 3793 | |
+| ans | 3812 | |
+| ans | 3817 | |
+| controller | 3818 | |
+| dmc_desc.packet | 3823 | |
+| dmc_desc.buffered | 3824 | |
+| dmp_desc.packet | 3825 | |
+| dmp_desc.buffered | 3826 | |
+| ans | 3974 | |
+| ans | 3982 | |
+| attach_string | 3985 | |
+| mp->dptr | 4005 | |
+| ans | 4011 | |
+| lp | 4019 | |
+| uptr->filename | 4036 | |
+| controller" | 4043 | |
+| controller" | 4045 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DMP_NUMDEVICE | 1         /* Minimum number for ... | 102 |
+| DMC_CONNECT_POLL | 2   /* Seconds */ | 115 |
+| DMC_NUMDEVICE | 8         /* default MAX # DMC-1... | 123 |
+| DMP_NUMDEVICE | 8         /* default MAX # DMP-1... | 127 |
+| DMC_RDX | 8 | 130 |
+| DMC_SEL0_V_ITYPE | 0 | 134 |
+| DMC_SEL0_S_ITYPE | 4 | 135 |
+| DMC_SEL0_M_ITYPE | (((1<<DMC_SEL0_S_ITYPE)-1)<<DMC_... | 136 |
+| DMC_C_TYPE_XBACC | 0      /* Transmit Buffer Addres... | 137 |
+| DMC_C_TYPE_CNTL | 1      /* Control In Command and... | 138 |
+| DMC_C_TYPE_HALT | 2      /* Halt In Command */ | 139 |
+| DMC_C_TYPE_BASEIN | 3      /* Base In Command */ | 140 |
+| DMC_C_TYPE_RBACC | 4      /* Receive Buffer Address... | 141 |
+| DMC_SEL0_V_RQI | 5 | 142 |
+| DMC_SEL0_M_RQI | 0x0020 | 143 |
+| DMC_SEL0_V_IEI | 6 | 144 |
+| DMC_SEL0_M_IEI | 0x0040 | 145 |
+| DMC_SEL0_V_RDI | 7 | 146 |
+| DMC_SEL0_M_RDI | 0x0080 | 147 |
+| DMC_SEL0_V_STEPUP | 8 | 148 |
+| DMC_SEL0_M_STEPUP | 0x0100 | 149 |
+| DMC_SEL0_V_ROMI | 9 | 150 |
+| DMC_SEL0_M_ROMI | 0x0200 | 151 |
+| DMC_SEL0_V_ROMO | 10 | 152 |
+| DMC_SEL0_M_ROMO | 0x0400 | 153 |
+| DMC_SEL0_V_LU_LOOP | 11 | 154 |
+| DMC_SEL0_M_LU_LOOP | 0x0800 | 155 |
+| DMC_SEL0_V_STEPLU | 12 | 156 |
+| DMC_SEL0_M_STEPLU | 0x1000 | 157 |
+| DMC_SEL0_V_UDIAG | 13 | 158 |
+| DMC_SEL0_M_UDIAG | 0x2000 | 159 |
+| DMC_SEL0_V_MCLEAR | 14 | 160 |
+| DMC_SEL0_M_MCLEAR | 0x4000 | 161 |
+| DMC_SEL0_V_RUN | 15 | 162 |
+| DMC_SEL0_M_RUN | 0x8000 | 163 |
+| DMP_SEL0_V_IEI | 0 | 166 |
+| DMP_SEL0_M_IEI | 0x0001 | 167 |
+| DMP_SEL0_V_IEO | 4 | 168 |
+| DMP_SEL0_M_IEO | 0x0010 | 169 |
+| DMP_SEL0_V_RQI | 7 | 170 |
+| DMP_SEL0_M_RQI | 0x0080 | 171 |
+| DMC_SEL2_V_CODE | 0 | 174 |
+| DMC_SEL2_S_CODE | 3 | 175 |
+| DMC_SEL2_M_CODE | (((1<<DMC_SEL2_S_CODE)-1)<<DMC_S... | 176 |
+| DMC_SEL2_V_IEO | 6 | 177 |
+| DMC_SEL2_M_IEO | 0x0040 | 178 |
+| DMC_SEL2_V_RDO | 7 | 179 |
+| DMC_SEL2_M_RDO | 0x0080 | 180 |
+| DMP_SEL2_V_CODE | 0 | 183 |
+| DMP_SEL2_S_CODE | 3 | 184 |
+| DMP_SEL2_M_CODE | (((1<<DMP_SEL2_S_CODE)-1)<<DMP_S... | 185 |
+| DMP_C_TYPE_RBACC | 0      /* Receive Buffer Address... | 186 |
+| DMP_C_TYPE_CNTL | 1      /* Control Command or Con... | 187 |
+| DMP_C_TYPE_MODE | 2      /* Mode Definition Comman... | 188 |
+| DMP_C_TYPE_UNUSED | 3      /* Receive Buffer disposi... | 189 |
+| DMP_C_TYPE_XBACC | 4      /* Transmit Buffer Addres... | 190 |
+| DMP_C_TYPE_RESERVED | 5      /* Reserved/Unused code */ | 191 |
+| DMP_C_TYPE_SENT | 6      /* Buffer disposition (se... | 192 |
+| DMP_C_TYPE_UNSENT | 7      /* Buffer disposition (no... | 193 |
+| DMP_SEL2_V_22BIT | 3 | 194 |
+| DMP_SEL2_M_22BIT | 0x0008 | 195 |
+| DMP_SEL2_V_RDI | 4 | 196 |
+| DMP_SEL2_M_RDI | 0x0010 | 197 |
+| DMP_SEL2_V_RDO | 7 | 198 |
+| DMP_SEL2_M_RDO | 0x0080 | 199 |
+| DMC_SEL4_V_CAR | 0 | 202 |
+| DMC_SEL4_M_CAR | 0x0001 | 203 |
+| DMC_SEL4_V_STN | 1 | 204 |
+| DMC_SEL4_M_STN | 0x0002 | 205 |
+| DMC_SEL4_V_CTS | 2 | 206 |
+| DMC_SEL4_M_CTS | 0x0004 | 207 |
+| DMC_SEL4_V_DSR | 3 | 208 |
+| DMC_SEL4_M_DSR | 0x0008 | 209 |
+| DMC_SEL4_V_HDX | 4 | 210 |
+| DMC_SEL4_M_HDX | 0x0010 | 211 |
+| DMC_SEL4_V_RTS | 5 | 212 |
+| DMC_SEL4_M_RTS | 0x0020 | 213 |
+| DMC_SEL4_V_DTR | 6 | 214 |
+| DMC_SEL4_M_DTR | 0x0040 | 215 |
+| DMC_SEL4_V_RI | 7 | 216 |
+| DMC_SEL4_M_RI | 0x0080 | 217 |
+| DMP_TYPE_INPUT_MASK | 0x0007 | 220 |
+| DMC_SEL6_V_NAKTRSH | 0      /* NAK Threshold */ | 224 |
+| DMC_SEL6_M_NAKTRSH | 0x0001 | 225 |
+| DMC_SEL6_V_TIMEOUT | 1 | 226 |
+| DMC_SEL6_M_TIMEOUT | 0x0002 | 227 |
+| DMC_SEL6_V_NOBUF | 2 | 228 |
+| DMC_SEL6_M_NOBUF | 0x0004 | 229 |
+| DMC_SEL6_V_MAINTRCV | 3 | 230 |
+| DMC_SEL6_M_MAINTRCV | 0x0008 | 231 |
+| DMC_SEL6_V_LOSTDATA | 4 | 232 |
+| DMC_SEL6_M_LOSTDATA | 0x0010 | 233 |
+| DMC_SEL6_V_DISCONN | 6 | 234 |
+| DMC_SEL6_M_DISCONN | 0x0040 | 235 |
+| DMC_SEL6_V_STRTRCVD | 7 | 236 |
+| DMC_SEL6_M_STRTRCVD | 0x0080 | 237 |
+| DMC_SEL6_V_NXM | 8 | 238 |
+| DMC_SEL6_M_NXM | 0x0100 | 239 |
+| DMC_SEL6_V_HALTCOMP | 9 | 240 |
+| DMC_SEL6_M_HALTCOMP | 0x0200 | 241 |
+| DMC_SEL6_V_MAINT | 8      /* NAK Threshold */ | 243 |
+| DMC_SEL6_M_MAINT | 0x0100 | 244 |
+| DMC_SEL6_V_HDX | 10 | 245 |
+| DMC_SEL6_M_HDX | 0x0400 | 246 |
+| DMC_SEL6_V_LONGSTRT | 11 | 247 |
+| DMC_SEL6_M_LONGSTRT | 0x0800 | 248 |
+| DMC_SEL6_V_LMODEM | 11 | 250 |
+| DMC_SEL6_M_LMODEM | 0x0800 | 251 |
+| DSPDSR | 0x22b3    /* KMC opcode to move ... | 253 |
+| DROPDTR | 0xa40b    /* KMC opcode to drop ... | 254 |
+| UINST_CNF | 0x2296    /* KMC opcode to get c... | 255 |
+| UINST_CNF3 | 0x2293    /* KMC opcode ditto bu... | 256 |
+| UINST_RROM | 0x8100    /* KMC opcode to read ... | 257 |
+| SEL2_TYPEO_BIT | 0 | 259 |
+| SEL2_RDO_BIT | 7 | 260 |
+| SEL2_IEO_BIT | 6 | 261 |
+| SEL2_OUT_IO_BIT | 2 | 262 |
+| SEL2_LINE_BIT | 8 | 263 |
+| SEL2_LINE_BIT_LENGTH | 6 | 264 |
+| SEL2_PRIO_BIT | 14 | 265 |
+| SEL2_PRIO_BIT_LENGTH | 2 | 266 |
+| DMC_QUEUE_SIZE | 7 | 268 |
+| DMR_QUEUE_SIZE | 64 | 269 |
+| DMP_QUEUE_SIZE | 64 | 270 |
+| DIM(x) | (sizeof(x)/sizeof((x)[0])) | 511 |
+| MAX_LIST_SIZE(q) | DIM(q),    (q),       sizeof(q[0]) | 513 |
+| INIT_HDR_ONLY | 0,         NULL,      0 | 514 |
+| DDCMP_EVENT_XMIT_DONE | 0x001 | 622 |
+| DDCMP_EVENT_PKT_RCVD | 0x002 | 623 |
+| DDCMP_EVENT_TIMER | 0x004 | 624 |
+| DDCMP_EVENT_MAINTMODE | 0x008 | 625 |
+| NAME(name) | {ddcmp_##name,#name} | 884 |
+| DBG_TRC | 0x0001                          ... | 1099 |
+| DBG_REG | 0x0002                          ... | 1100 |
+| DBG_RGC | 0x0004                          ... | 1101 |
+| DBG_WRN | 0x0008                          ... | 1102 |
+| DBG_INF | 0x0010                          ... | 1103 |
+| DBG_DTS | (DDCMP_DBG_PXMT\|DDCMP_DBG_PRCV) ... | 1104 |
+| DBG_DAT | (DBG_DTS\|DDCMP_DBG_PDAT)        ... | 1105 |
+| DBG_MDM | 0x0040                          ... | 1106 |
+| DBG_CON | TMXR_DBG_CON                    ... | 1107 |
+| DBG_INT | 0x0080                          ... | 1108 |
+| PEERSIZE | 512 | 1139 |
+| IOLN_DMC | 010 | 1305 |
+| IOLN_DMP | 010 | 1309 |
+| IOLN_DMV | 020 | 1313 |
+| DMC_HLP_ATTACH | "Configuration Attach" | 1882 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| insqueue | 466-487 |  |
+| remqueue | 488-515 |  |
+| initqueue | 516-925 |  |
+| ddcmp_conditions | 926-931 |  |
+| while | 932-987 |  |
+| ddcmp_actions | 988-993 |  |
+| while | 994-1006 |  |
+| ddcmp_link_state | 1007-1014 |  |
+| controller_queue_state | 1015-1355 |  |
+| dmc_is_attached | 1356-1360 |  |
+| dmc_is_dmc | 1361-1365 |  |
+| dmc_get_controller_from_unit | 1366-1370 |  |
+| dmc_get_controller_from_address | 1371-1374 |  |
+| for | 1375-1383 |  |
+| dmc_showpeer | 1384-1396 |  |
+| dmc_setpeer | 1397-1415 |  |
+| dmc_showspeed | 1416-1429 |  |
+| dmc_setspeed | 1430-1446 |  |
+| dmc_show_microdiag | 1447-1458 |  |
+| dmc_setcorrupt | 1459-1480 | See ddcmp_feedCorruptionTroll for usage. |
+| dmc_showcorrupt | 1481-1495 |  |
+| dmc_set_microdiag | 1496-1513 |  |
+| dmc_showtype | 1514-1517 |  |
+| switch | 1518-1534 |  |
+| dmc_settype | 1535-1556 |  |
+| dmc_showstats | 1557-1577 |  |
+| dmc_showqueue | 1578-1584 |  |
+| if | 1585-1652 |  |
+| dmc_showqueues | 1653-1666 |  |
+| if | 1667-1676 |  |
+| dmc_setstats | 1677-1693 |  |
+| dmc_showconnectpoll | 1694-1701 |  |
+| dmc_setconnectpoll | 1702-1718 |  |
+| dmc_setnumdevices | 1719-1729 |  |
+| for | 1730-1748 |  |
+| for | 1749-1763 |  |
+| dmc_shownumdevices | 1764-1771 |  |
+| dmc_showddcmp | 1772-1796 |  |
+| dmc_help | 1797-2007 |  |
+| dmc_help_attach | 2008-2012 |  |
+| dmc_setinint | 2013-2016 |  |
+| if | 2017-2024 |  |
+| dmc_clrinint | 2025-2027 |  |
+| if | 2028-2037 |  |
+| dmc_setoutint | 2038-2041 |  |
+| if | 2042-2049 |  |
+| dmc_clroutint | 2050-2052 |  |
+| if | 2053-2062 |  |
+| dmc_getsel | 2063-2067 |  |
+| dmc_bitfld | 2068-2075 |  |
+| dmc_dumpregsel0 | 2076-2081 |  |
+| if | 2082-2122 |  |
+| dmc_dumpregsel2 | 2123-2146 |  |
+| dmc_dumpregsel4 | 2147-2148 |  |
+| if | 2149-2176 |  |
+| dmc_dumpregsel6 | 2177-2178 |  |
+| if | 2179-2200 |  |
+| dmc_dumpregsel10 | 2201-2212 |  |
+| dmc_getreg | 2213-2216 |  |
+| switch | 2217-2245 |  |
+| dmc_setreg | 2246-2249 |  |
+| switch | 2250-2275 |  |
+| dmc_is_master_clear_set | 2276-2280 |  |
+| dmc_is_lu_loop_set | 2281-2288 |  |
+| dmc_is_run_set | 2289-2293 |  |
+| dmc_is_rqi_set | 2294-2304 |  |
+| dmc_is_rdyi_set | 2305-2315 |  |
+| dmc_is_iei_set | 2316-2326 |  |
+| dmc_is_ieo_set | 2327-2337 |  |
+| dmc_is_in_io | 2338-2348 |  |
+| dmc_is_rdyo_set | 2349-2353 |  |
+| dmc_set_rdyi | 2354-2355 |  |
+| if | 2356-2369 |  |
+| dmc_clear_rdyi | 2370-2377 |  |
+| dmc_set_rdyo | 2378-2384 |  |
+| dmc_get_addr | 2385-2392 |  |
+| dmc_set_addr | 2393-2394 |  |
+| if | 2395-2404 |  |
+| dmc_get_count | 2405-2412 |  |
+| dmc_set_count | 2413-2420 |  |
+| dmc_get_modem | 2421-2435 |  |
+| dmc_set_modem_dtr | 2436-2437 |  |
+| if | 2438-2445 |  |
+| dmc_clr_modem_dtr | 2446-2447 |  |
+| if | 2448-2454 |  |
+| dmc_set_lost_data | 2455-2459 |  |
+| dmc_clear_master_clear | 2460-2465 |  |
+| dmc_set_run | 2466-2470 |  |
+| dmc_get_input_transfer_type | 2471-2481 |  |
+| dmc_set_type_output | 2482-2486 |  |
+| dmc_process_master_clear | 2487-2495 |  |
+| while | 2496-2500 |  |
+| if | 2501-2514 |  |
+| if | 2515-2525 |  |
+| dmc_start_input_transfer | 2526-2532 |  |
+| dmc_start_control_output_transfer | 2533-2545 |  |
+| dmc_complete_transmit | 2546-2556 |  |
+| if | 2557-2566 |  |
+| dmc_svc | 2567-2574 |  |
+| if | 2575-2582 | Perform delayed register actions |
+| if | 2583-2614 |  |
+| dmc_poll_svc | 2615-2624 |  |
+| if | 2625-2633 |  |
+| for | 2634-2680 |  |
+| dmc_timer_svc | 2681-2689 |  |
+| for | 2690-2706 |  |
+| dmc_buffer_queue_init | 2707-2713 |  |
+| dmc_transmit_queue_empty | 2714-2718 |  |
+| dmc_buffer_queue_init_all | 2719-2733 |  |
+| dmc_buffer_allocate | 2734-2737 |  |
+| if | 2738-2768 |  |
+| dmc_buffer_queue_add | 2769-2772 |  |
+| if | 2773-2787 |  |
+| dmc_buffer_queue_head | 2788-2792 |  |
+| dmc_queue_control_out | 2793-2798 |  |
+| if | 2799-2809 |  |
+| dmc_buffer_fill_receive_buffers | 2810-2813 | returns true if some data was received |
+| if | 2814-2830 |  |
+| dmc_start_transfer_buffer | 2831-2840 |  |
+| switch | 2841-2858 |  |
+| dmc_check_for_output_transfer_completion | 2859-2873 |  |
+| dmc_check_for_output_control_completion | 2874-2890 |  |
+| dmc_process_input_transfer_completion | 2891-2892 |  |
+| if | 2893-3004 |  |
+| Mod256Cmp | 3005-3024 | DDCMP Modulo 256 compare - from Rob Jarratt |
+| ddcmp_compare | 3025-3028 |  |
+| switch | 3029-3048 |  |
+| ddcmp_StartTimer | 3049-3054 |  |
+| ddcmp_StopTimer | 3055-3058 |  |
+| ddcmp_ResetVariables | 3059-3075 |  |
+| while | 3076-3084 |  |
+| while | 3085-3098 |  |
+| ddcmp_SendStrt | 3099-3108 |  |
+| ddcmp_SendStack | 3109-3118 |  |
+| ddcmp_SendAck | 3119-3128 |  |
+| ddcmp_SendNak | 3129-3138 |  |
+| ddcmp_SendRep | 3139-3148 |  |
+| ddcmp_SetSACK | 3149-3152 |  |
+| ddcmp_ClearSACK | 3153-3156 |  |
+| ddcmp_SetSNAK | 3157-3160 |  |
+| ddcmp_ClearSNAK | 3161-3164 |  |
+| ddcmp_SetSREP | 3165-3168 |  |
+| ddcmp_ClearSREP | 3169-3172 |  |
+| ddcmp_IncrementR | 3173-3176 |  |
+| ddcmp_SetAeqRESP | 3177-3180 |  |
+| ddcmp_SetTequalAplus1 | 3181-3184 |  |
+| ddcmp_IncrementT | 3185-3188 |  |
+| ddcmp_SetNAKreason3 | 3189-3192 |  |
+| ddcmp_SetNAKReasonCRCError | 3193-3196 |  |
+| ddcmp_NAKMissingPacket | 3197-3201 |  |
+| while | 3202-3224 |  |
+| ddcmp_IfTleAthenSetTeqAplus1 | 3225-3229 |  |
+| ddcmp_IfAltXthenStartTimer | 3230-3234 |  |
+| ddcmp_IfAgeXthenStopTimer | 3235-3239 |  |
+| ddcmp_Ignore | 3240-3242 |  |
+| ddcmp_GiveBufferToUser | 3243-3246 |  |
+| if | 3247-3258 |  |
+| ddcmp_CompleteAckedTransmits | 3259-3262 |  |
+| while | 3263-3272 |  |
+| ddcmp_ReTransmitMessageT | 3273-3278 |  |
+| for | 3279-3290 |  |
+| ddcmp_NotifyDisconnect | 3291-3294 |  |
+| ddcmp_NotifyStartRcvd | 3295-3298 |  |
+| ddcmp_NotifyMaintRcvd | 3299-3302 |  |
+| ddcmp_SendDataMessage | 3303-3312 |  |
+| ddcmp_SendMaintMessage | 3313-3319 |  |
+| ddcmp_SetXSetNUM | 3320-3326 |  |
+| ddcmp_UserHalt | 3327-3330 |  |
+| ddcmp_UserStartup | 3331-3334 |  |
+| ddcmp_UserMaintenanceMode | 3335-3338 |  |
+| ddcmp_ReceiveStack | 3339-3346 |  |
+| ddcmp_ReceiveStrt | 3347-3354 |  |
+| ddcmp_TimerRunning | 3355-3358 |  |
+| ddcmp_TimerNotRunning | 3359-3362 |  |
+| ddcmp_TimerExpired | 3363-3366 |  |
+| ddcmp_ReceiveMaintMessage | 3367-3373 |  |
+| ddcmp_ReceiveAck | 3374-3381 |  |
+| ddcmp_ReceiveNak | 3382-3389 |  |
+| ddcmp_ReceiveRep | 3390-3397 |  |
+| ddcmp_NUMEqRplus1 | 3398-3403 |  |
+| ddcmp_NUMGtRplus1 | 3404-3409 |  |
+| ddcmp_ReceiveDataMsg | 3410-3419 |  |
+| ddcmp_ReceiveMaintMsg | 3420-3429 |  |
+| ddcmp_ALtRESPleN | 3430-3435 |  |
+| ddcmp_ALeRESPleN | 3436-3441 |  |
+| ddcmp_RESPleAOrRESPgtN | 3442-3447 |  |
+| ddcmp_TltNplus1 | 3448-3451 |  |
+| ddcmp_TeqNplus1 | 3452-3455 |  |
+| ddcmp_ReceiveMessageError | 3456-3457 |  |
+| if | 3458-3471 |  |
+| ddcmp_NumEqR | 3472-3476 |  |
+| ddcmp_NumNeR | 3477-3481 |  |
+| ddcmp_TransmitterIdle | 3482-3485 |  |
+| ddcmp_TramsmitterBusy | 3486-3489 |  |
+| ddcmp_SACKisSet | 3490-3493 |  |
+| ddcmp_SACKisClear | 3494-3497 |  |
+| ddcmp_SNAKisSet | 3498-3501 |  |
+| ddcmp_SNAKisClear | 3502-3505 |  |
+| ddcmp_SREPisSet | 3506-3509 |  |
+| ddcmp_SREPisClear | 3510-3513 |  |
+| ddcmp_UserSendMessage | 3514-3519 |  |
+| ddcmp_LineConnected | 3520-3523 |  |
+| ddcmp_LineDisconnected | 3524-3527 |  |
+| ddcmp_DataMessageSent | 3528-3536 |  |
+| ddcmp_REPMessageSent | 3537-3544 |  |
+| ddcmp_dispatch | 3545-3550 |  |
+| if | 3551-3559 |  |
+| for | 3560-3585 |  |
+| if | 3586-3590 |  |
+| if | 3591-3600 |  |
+| dmc_ddcmp_start_transmitter | 3601-3609 |  |
+| while | 3610-3634 |  |
+| dmc_check_romi | 3635-3675 |  |
+| dmc_process_immediate | 3676-3677 |  |
+| if | 3678-3684 |  |
+| dmc_process_command | 3685-3686 |  |
+| if | 3687-3690 |  |
+| if | 3691-3694 |  |
+| if | 3695-3699 |  |
+| if | 3700-3710 | transfer_state Idle |
+| if | 3711-3716 |  |
+| dmc_rd | 3717-3722 |  |
+| if | 3723-3732 |  |
+| dmc_wr | 3733-3738 |  |
+| if | 3739-3745 |  |
+| if | 3746-3766 |  |
+| if | 3767-3776 |  |
+| dmc_ininta | 3777-3781 |  |
+| for | 3782-3795 |  |
+| dmc_outinta | 3796-3800 |  |
+| for | 3801-3814 |  |
+| dmc_reset | 3815-3827 |  |
+| for | 3828-3851 | Connect structures together |
+| for | 3852-3877 |  |
+| if | 3878-3924 |  |
+| if | 3925-3976 |  |
+| dmc_attach | 3977-3990 |  |
+| if | 3991-4013 |  |
+| dmc_detach | 4014-4029 |  |
+| if | 4030-4039 |  |
+| dmc_description | 4040-4048 |  |
+| dmp_description | 4049-4054 |  |

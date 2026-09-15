@@ -1,0 +1,70 @@
+=== isbc201.c — 762 строк ===
+Источник: isbc201.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test isbc201.c -nt .cline/maps/isbc201.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| FDDDEF | 246-249 |
+| FDCDEF | 251-263 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 211 | |
+| isbc201_onetime | 241 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_WPMODE | (UNIT_V_UF)     /* Write protect */ | 163 |
+| UNIT_WPMODE | (1 << UNIT_V_WPMODE) | 164 |
+| FDD_NUM | 2 | 166 |
+| SECSIZ | 128 | 167 |
+| DNOP | 0x00            //disk no operation | 170 |
+| DSEEK | 0x01            //disk seek | 171 |
+| DFMT | 0x02            //disk format | 172 |
+| DHOME | 0x03            //disk home | 173 |
+| DREAD | 0x04            //disk read | 174 |
+| DVCRC | 0x05            //disk verify CRC | 175 |
+| DWRITE | 0x06            //disk write | 176 |
+| RDY0 | 0x01            //FDD 0 ready | 179 |
+| RDY1 | 0x02            //FDD 1 ready | 180 |
+| FDCINT | 0x04            //FDC interrupt ... | 181 |
+| FDCPRE | 0x08            //FDC board present | 182 |
+| ROK | 0x00            //FDC OK OR ERROR | 185 |
+| RCHG | 0x02            //FDC DISK CHANGED | 186 |
+| RB0DR | 0x01            //deleted record | 189 |
+| RB0CRC | 0x02            //CRC error | 190 |
+| RB0SEK | 0x04            //seek error | 191 |
+| RB0ADR | 0x08            //address error | 192 |
+| RB0OU | 0x10            //data overrun/u... | 193 |
+| RB0WP | 0x20            //write protect | 194 |
+| RB0WE | 0x40            //write error | 195 |
+| RB0NR | 0x80            //not ready | 196 |
+| RB1RD0 | 0x40            //drive 0 ready | 199 |
+| RB1RD1 | 0x80            //drive 1 ready | 200 |
+| MDSSD | 256256          //single density... | 203 |
+| MAXSECSD | 26              //single density... | 204 |
+| MAXTRK | 76              //last track | 205 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| isbc201_desc | 242-338 |  |
+| isbc201_cfg | 339-366 |  |
+| isbc201_clr | 367-382 |  |
+| isbc201_set_mode | 383-403 |  |
+| isbc201_set_port | 404-423 |  |
+| isbc201_set_int | 424-436 |  |
+| isbc201_set_verb | 437-455 |  |
+| isbc201_show_param | 456-469 |  |
+| isbc201_reset | 470-479 |  |
+| isbc201_reset_dev | 480-508 |  |
+| isbc201_attach | 509-539 |  |
+| isbc201r0 | 540-547 |  |
+| isbc201r1 | 548-560 |  |
+| isbc201r2 | 561-573 |  |
+| isbc201r3 | 574-591 |  |
+| isbc201r7 | 592-603 |  |
+| isbc201_diskio | 604-762 |  |

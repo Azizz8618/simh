@@ -1,0 +1,349 @@
+=== pdp11_mscp.h — 518 строк ===
+Источник: pdp11_mscp.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_mscp.h -nt .cline/maps/pdp11_mscp.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PDP11_MSCP_H_ | 0 | 33 |
+| UID_DISK | 2                               ... | 37 |
+| UID_TAPE | 3                               ... | 38 |
+| OP_ABO | 1                               ... | 42 |
+| OP_GCS | 2                               ... | 43 |
+| OP_GUS | 3                               ... | 44 |
+| OP_SCC | 4                               ... | 45 |
+| OP_AVL | 8                               ... | 46 |
+| OP_ONL | 9                               ... | 47 |
+| OP_SUC | 10                              ... | 48 |
+| OP_DAP | 11                              ... | 49 |
+| OP_ACC | 16                              ... | 50 |
+| OP_CCD | 17                              ... | 51 |
+| OP_ERS | 18                              ... | 52 |
+| OP_FLU | 19                              ... | 53 |
+| OP_ERG | 22                              ... | 54 |
+| OP_CMP | 32                              ... | 55 |
+| OP_RD | 33                              ... | 56 |
+| OP_WR | 34                              ... | 57 |
+| OP_WTM | 36                              ... | 58 |
+| OP_POS | 37                              ... | 59 |
+| OP_FMT | 47                              ... | 60 |
+| OP_AVA | 64                              ... | 61 |
+| OP_END | 0x80                            ... | 62 |
+| MD_EXP | 0x8000                          ... | 66 |
+| MD_CMP | 0x4000                          ... | 67 |
+| MD_CSE | 0x2000                          ... | 68 |
+| MD_ERR | 0x1000                          ... | 69 |
+| MD_CDL | 0x1000                          ... | 70 |
+| MD_SCH | 0x0800                          ... | 71 |
+| MD_SEC | 0x0200                          ... | 72 |
+| MD_SER | 0x0100                          ... | 73 |
+| MD_DLE | 0x0080                          ... | 74 |
+| MD_IMM | 0x0040                          ... | 75 |
+| MD_EXA | 0x0020                          ... | 76 |
+| MD_SHD | 0x0010                          ... | 77 |
+| MD_UNL | 0x0010                          ... | 78 |
+| MD_ERW | 0x0008                          ... | 79 |
+| MD_REV | 0x0008                          ... | 80 |
+| MD_SWP | 0x0004                          ... | 81 |
+| MD_OBC | 0x0004                          ... | 82 |
+| MD_IMF | 0x0002                          ... | 83 |
+| MD_RWD | 0x0002                          ... | 84 |
+| MD_ACL | 0x0002                          ... | 85 |
+| MD_NXU | 0x0001                          ... | 86 |
+| MD_RIP | 0x0001                          ... | 87 |
+| MD_SPD | 0x0001                          ... | 88 |
+| EF_LOG | 0x0020                          ... | 92 |
+| EF_SXC | 0x0010                          ... | 93 |
+| EF_EOT | 0x0008                          ... | 94 |
+| EF_PLS | 0x0004                          ... | 95 |
+| EF_DLS | 0x0002                          ... | 96 |
+| CF_RPL | 0x8000                          ... | 100 |
+| CF_ATN | 0x0080                          ... | 101 |
+| CF_MSC | 0x0040                          ... | 102 |
+| CF_OTH | 0x0020                          ... | 103 |
+| CF_THS | 0x0010                          ... | 104 |
+| CF_MSK | (CF_ATN\|CF_MSC\|CF_OTH\|CF_THS) | 105 |
+| UF_RPL | 0x8000                          ... | 109 |
+| UF_CAC | 0x8000                          ... | 110 |
+| UF_WPH | 0x2000                          ... | 111 |
+| UF_WPS | 0x1000                          ... | 112 |
+| UF_SCH | 0x0800                          ... | 113 |
+| UF_EXA | 0x0400                          ... | 114 |
+| UF_WPD | 0x0100                          ... | 115 |
+| UF_RMV | 0x0080                          ... | 116 |
+| UF_WBN | 0x0040                          ... | 117 |
+| UF_VSS | 0x0020                          ... | 118 |
+| UF_VSU | 0x0010                          ... | 119 |
+| UF_EWR | 0x0008                          ... | 120 |
+| UF_CMW | 0x0002                          ... | 121 |
+| UF_CMR | 0x0001                          ... | 122 |
+| LF_SUC | 0x0080                          ... | 126 |
+| LF_CON | 0x0040                          ... | 127 |
+| LF_BBR | 0x0020                          ... | 128 |
+| LF_RCT | 0x0010                          ... | 129 |
+| LF_SNR | 0x0001                          ... | 130 |
+| FM_CNT | 0                               ... | 134 |
+| FM_BAD | 1                               ... | 135 |
+| FM_DSK | 2                               ... | 136 |
+| FM_SDI | 3                               ... | 137 |
+| FM_SDE | 4                               ... | 138 |
+| FM_TAP | 5                               ... | 139 |
+| FM_RPL | 9                               ... | 140 |
+| ST_SUC | 0                               ... | 144 |
+| ST_CMD | 1                               ... | 145 |
+| ST_ABO | 2                               ... | 146 |
+| ST_OFL | 3                               ... | 147 |
+| ST_AVL | 4                               ... | 148 |
+| ST_MFE | 5                               ... | 149 |
+| ST_WPR | 6                               ... | 150 |
+| ST_CMP | 7                               ... | 151 |
+| ST_DAT | 8                               ... | 152 |
+| ST_HST | 9                               ... | 153 |
+| ST_CNT | 10                              ... | 154 |
+| ST_DRV | 11                              ... | 155 |
+| ST_FMT | 12                              ... | 156 |
+| ST_BOT | 13                              ... | 157 |
+| ST_TMK | 14                              ... | 158 |
+| ST_RDT | 16                              ... | 159 |
+| ST_POL | 17                              ... | 160 |
+| ST_SXC | 18                              ... | 161 |
+| ST_LED | 19                              ... | 162 |
+| ST_BBR | 20                              ... | 163 |
+| ST_DIA | 31                              ... | 164 |
+| ST_V_SUB | 5                               ... | 165 |
+| ST_V_INV | 8                               ... | 166 |
+| SB_SUC_IGN | (1 << ST_V_SUB)                 ... | 170 |
+| SB_SUC_ON | (8 << ST_V_SUB)                 ... | 171 |
+| SB_SUC_EOT | (32 << ST_V_SUB)                ... | 172 |
+| SB_SUC_RO | (128 << ST_V_SUB)               ... | 173 |
+| SB_OFL_NV | (1 << ST_V_SUB)                 ... | 174 |
+| SB_OFL_INOP | (2 << ST_V_SUB)                 ... | 175 |
+| SB_AVL_INU | (32 << ST_V_SUB)                ... | 176 |
+| SB_WPR_SW | (128 << ST_V_SUB)               ... | 177 |
+| SB_WPR_HW | (256 << ST_V_SUB)               ... | 178 |
+| SB_HST_OA | (1 << ST_V_SUB)                 ... | 179 |
+| SB_HST_OC | (2 << ST_V_SUB)                 ... | 180 |
+| SB_HST_NXM | (3 << ST_V_SUB)                 ... | 181 |
+| SB_HST_PAR | (4 << ST_V_SUB)                 ... | 182 |
+| SB_HST_PTE | (5 << ST_V_SUB)                 ... | 183 |
+| SB_DAT_RDE | (7 << ST_V_SUB)                 ... | 184 |
+| I_OPCD | (8 << ST_V_INV)                 ... | 188 |
+| I_FLAG | (9 << ST_V_INV)                 ... | 189 |
+| I_MODF | (10 << ST_V_INV)                ... | 190 |
+| I_BCNT | (12 << ST_V_INV)                ... | 191 |
+| I_LBN | (28 << ST_V_INV)                ... | 192 |
+| I_VRSN | (12 << ST_V_INV)                ... | 193 |
+| I_FMTI | (28 << ST_V_INV)                ... | 194 |
+| TF_9TK | 0x0100                          ... | 198 |
+| TF_9TK_NRZ | 0x0001                          ... | 199 |
+| TF_9TK_PE | 0x0002                          ... | 200 |
+| TF_9TK_GRP | 0x0004                          ... | 201 |
+| TF_CTP | 0x0200                          ... | 202 |
+| TF_CTP_LO | 0x0001                          ... | 203 |
+| TF_CTP_HI | 0x0002                          ... | 204 |
+| TF_3480 | 0x0300                          ... | 205 |
+| TF_WOD | 0x0400                          ... | 206 |
+| CMD_REFL | 2                               ... | 212 |
+| CMD_REFH | 3 | 213 |
+| CMD_UN | 4                               ... | 214 |
+| CMD_OPC | 6                               ... | 216 |
+| CMD_MOD | 7                               ... | 217 |
+| CMD_OPC_V_OPC | 0                               ... | 219 |
+| CMD_OPC_M_OPC | 0xFF | 220 |
+| CMD_OPC_V_CAA | 8                               ... | 221 |
+| CMD_OPC_M_CAA | 0xFF | 222 |
+| CMD_OPC_V_FLG | 8                               ... | 223 |
+| CMD_OPC_M_FLG | 0xFF | 224 |
+| RSP_LNT | 12 | 228 |
+| RSP_REFL | 2                               ... | 229 |
+| RSP_REFH | 3 | 230 |
+| RSP_UN | 4                               ... | 231 |
+| RSP_RSV | 5                               ... | 232 |
+| RSP_OPF | 6                               ... | 233 |
+| RSP_STS | 7                               ... | 234 |
+| RSP_OPF_V_OPC | 0                               ... | 236 |
+| RSP_OPF_V_FLG | 8                               ... | 237 |
+| ABO_LNT | 16 | 241 |
+| ABO_REFL | 8                               ... | 242 |
+| ABO_REFH | 9 | 243 |
+| AVL_LNT | 12 | 247 |
+| ERS_LNT | 12 | 251 |
+| ERG_LNT | 12 | 255 |
+| FLU_LNT | 32 | 259 |
+| FLU_POSL | 16                              ... | 261 |
+| FLU_POSH | 17 | 262 |
+| WTM_LNT | 32 | 266 |
+| WTM_POSL | 16                              ... | 268 |
+| WTM_POSH | 17 | 269 |
+| GCS_LNT | 20 | 273 |
+| GCS_REFL | 8                               ... | 274 |
+| GCS_REFH | 9 | 275 |
+| GCS_STSL | 10                              ... | 276 |
+| GCS_STSH | 11 | 277 |
+| FMT_LNT | 12 | 281 |
+| FMT_IH | 17                              ... | 282 |
+| GUS_LNT_D | 48 | 286 |
+| GUS_LNT_T | 44 | 287 |
+| GUS_MLUN | 8                               ... | 288 |
+| GUS_UFL | 9                               ... | 289 |
+| GUS_RSVL | 10                              ... | 290 |
+| GUS_RSVH | 11 | 291 |
+| GUS_UIDA | 12                              ... | 292 |
+| GUS_UIDB | 13 | 293 |
+| GUS_UIDC | 14 | 294 |
+| GUS_UIDD | 15 | 295 |
+| GUS_MEDL | 16                              ... | 296 |
+| GUS_MEDH | 17 | 297 |
+| GUS_UVER | 23                              ... | 298 |
+| GUS_SHUN | 18                              ... | 302 |
+| GUS_SHST | 19 | 303 |
+| GUS_TRK | 20                              ... | 304 |
+| GUS_GRP | 21                              ... | 305 |
+| GUS_CYL | 22                              ... | 306 |
+| GUS_RCTS | 24                              ... | 307 |
+| GUS_RBSC | 25                              ... | 308 |
+| GUS_FMT | 18                              ... | 312 |
+| GUS_SPEED | 19                              ... | 313 |
+| GUS_MENU | 20                              ... | 314 |
+| GUS_CAP | 21                              ... | 315 |
+| GUS_FVER | 22                              ... | 316 |
+| GUS_UIDD_V_MOD | 0                               ... | 318 |
+| GUS_UIDD_V_CLS | 8                               ... | 319 |
+| GUS_RB_V_RBNS | 0                               ... | 320 |
+| GUS_RB_V_RCTC | 8                               ... | 321 |
+| ONL_LNT | 44 | 325 |
+| ONL_MLUN | 8                               ... | 326 |
+| ONL_UFL | 9                               ... | 327 |
+| ONL_RSVL | 10                              ... | 328 |
+| ONL_RSVH | 11 | 329 |
+| ONL_UIDA | 12                              ... | 330 |
+| ONL_UIDB | 13 | 331 |
+| ONL_UIDC | 14 | 332 |
+| ONL_UIDD | 15 | 333 |
+| ONL_MEDL | 16                              ... | 334 |
+| ONL_MEDH | 17 | 335 |
+| ONL_SHUN | 18                              ... | 339 |
+| ONL_SHST | 19 | 340 |
+| ONL_SIZL | 20                              ... | 341 |
+| ONL_SIZH | 21 | 342 |
+| ONL_VSNL | 22                              ... | 343 |
+| ONL_VSNH | 23 | 344 |
+| ONL_FMT | 18                              ... | 348 |
+| ONL_SPD | 19                              ... | 349 |
+| ONL_MAXL | 20                              ... | 350 |
+| ONL_MAXH | 21 | 351 |
+| ONL_NREC | 22                              ... | 352 |
+| ONL_RSVE | 23                              ... | 353 |
+| ONL_UIDD_V_MOD | 0                               ... | 355 |
+| ONL_UIDD_V_CLS | 8                               ... | 356 |
+| SCC_LNT | 32 | 360 |
+| SCC_MSV | 8                               ... | 361 |
+| SCC_CFL | 9                               ... | 362 |
+| SCC_TMO | 10                              ... | 363 |
+| SCC_VER | 11                              ... | 364 |
+| SCC_CIDA | 12                              ... | 365 |
+| SCC_CIDB | 13 | 366 |
+| SCC_CIDC | 14 | 367 |
+| SCC_CIDD | 15 | 368 |
+| SCC_MBCL | 16                              ... | 369 |
+| SCC_MBCH | 17 | 370 |
+| SCC_VER_V_SVER | 0                               ... | 372 |
+| SCC_VER_V_HVER | 8                               ... | 373 |
+| SCC_CIDD_V_MOD | 0                               ... | 374 |
+| SCC_CIDD_V_CLS | 8                               ... | 375 |
+| SUC_LNT | 44 | 379 |
+| POS_LNT | 32 | 383 |
+| POS_RCL | 8                               ... | 384 |
+| POS_RCH | 9 | 385 |
+| POS_TMCL | 10                              ... | 386 |
+| POS_TMCH | 11 | 387 |
+| POS_POSL | 16                              ... | 389 |
+| POS_POSH | 17 | 390 |
+| RW_LNT_D | 32 | 395 |
+| RW_LNT_T | 36 | 396 |
+| RW_BCL | 8                               ... | 397 |
+| RW_BCH | 9 | 398 |
+| RW_BAL | 10                              ... | 399 |
+| RW_BAH | 11 | 400 |
+| RW_MAPL | 12                              ... | 401 |
+| RW_MAPH | 13 | 402 |
+| RW_LBNL | 16                              ... | 408 |
+| RW_LBNH | 17 | 409 |
+| RW_WBCL | 18                              ... | 410 |
+| RW_WBCH | 19 | 411 |
+| RW_WBAL | 20                              ... | 412 |
+| RW_WBAH | 21 | 413 |
+| RW_WBLL | 22                              ... | 414 |
+| RW_WBLH | 23 | 415 |
+| RW_WMPL | 24                              ... | 416 |
+| RW_WMPH | 25 | 417 |
+| RW_POSL | 16                              ... | 421 |
+| RW_POSH | 17 | 422 |
+| RW_RSZL | 18                              ... | 423 |
+| RW_RSZH | 19 | 424 |
+| ELP_REFL | 2                               ... | 428 |
+| ELP_REFH | 3 | 429 |
+| ELP_UN | 4                               ... | 430 |
+| ELP_SEQ | 5 | 431 |
+| ELP_FF | 6                               ... | 432 |
+| ELP_EVT | 7                               ... | 433 |
+| ELP_EV_V_FMT | 0                               ... | 435 |
+| ELP_EV_V_FLG | 8                               ... | 436 |
+| PLF_LNT | 24                              ... | 440 |
+| PLF_CIDA | 8                               ... | 441 |
+| PLF_CIDB | 9 | 442 |
+| PLF_CIDC | 10 | 443 |
+| PLF_CIDD | 11 | 444 |
+| PLF_VER | 12                              ... | 445 |
+| PLF_ERR | 13                              ... | 446 |
+| PLF_CIDD_V_MOD | 0                               ... | 448 |
+| PLF_CIDD_V_CLS | 8                               ... | 449 |
+| PLF_VER_V_SVER | 0                               ... | 450 |
+| PLF_VER_V_HVER | 8                               ... | 451 |
+| DTE_LNT | 48 | 455 |
+| DTE_CIDA | 8                               ... | 456 |
+| DTE_CIDB | 9 | 457 |
+| DTE_CIDC | 10 | 458 |
+| DTE_CIDD | 11 | 459 |
+| DTE_VER | 12                              ... | 460 |
+| DTE_MLUN | 13                              ... | 461 |
+| DTE_UIDA | 14                              ... | 462 |
+| DTE_UIDB | 15 | 463 |
+| DTE_UIDC | 16 | 464 |
+| DTE_UIDD | 17 | 465 |
+| DTE_UVER | 18 | 466 |
+| DTE_D2 | 23 | 467 |
+| DTE_D3 | 24 | 468 |
+| DTE_D4 | 25 | 469 |
+| DTE_SCYL | 19                              ... | 473 |
+| DTE_VSNL | 20                              ... | 474 |
+| DTE_VSNH | 21 | 475 |
+| DTE_D1 | 22                              ... | 476 |
+| DTE_RETR | 19                              ... | 480 |
+| DTE_POSL | 20                              ... | 481 |
+| DTE_POSH | 21 | 482 |
+| DTE_FVER | 22                              ... | 483 |
+| DTE_CIDD_V_MOD | 0                               ... | 485 |
+| DTE_CIDD_V_CLS | 8                               ... | 486 |
+| DTE_VER_V_SVER | 0                               ... | 487 |
+| DTE_VER_V_HVER | 8                               ... | 488 |
+| DTE_UIDD_V_MOD | 0                               ... | 489 |
+| DTE_UIDD_V_CLS | 8                               ... | 490 |
+| DTE_D2_V_SECT | 8 | 491 |
+| DTE_D3_V_SURF | 0 | 492 |
+| DTE_D3_V_CYL | 8 | 493 |
+| HBE_LNT | 28 | 497 |
+| HBE_CIDA | 8                               ... | 498 |
+| HBE_CIDB | 9 | 499 |
+| HBE_CIDC | 10 | 500 |
+| HBE_CIDD | 11 | 501 |
+| HBE_VER | 12                              ... | 502 |
+| HBE_RSV | 13                              ... | 503 |
+| HBE_BADL | 14                              ... | 504 |
+| HBE_BADH | 15 | 505 |
+| HBE_CIDD_V_MOD | 0                               ... | 507 |
+| HBE_CIDD_V_CLS | 8                               ... | 508 |
+| HBE_VER_V_SVER | 0                               ... | 509 |
+| HBE_VER_V_HVER | 8                               ... | 510 |
+| UNA_LNT | 32 | 516 |
+

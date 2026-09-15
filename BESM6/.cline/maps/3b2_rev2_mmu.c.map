@@ -1,0 +1,31 @@
+=== 3b2_rev2_mmu.c — 822 строк ===
+Источник: 3b2_rev2_mmu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_rev2_mmu.c -nt .cline/maps/3b2_rev2_mmu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mmu_state | 39 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| get_sdce | 90-113 | Find an SD in the cache. |
+| get_pdce | 114-143 | permissions. |
+| put_sdce | 144-154 |  |
+| put_pdce | 155-201 |  |
+| flush_sdce | 202-212 |  |
+| flush_pdce | 213-235 |  |
+| flush_cache_sec | 236-248 |  |
+| flush_caches | 249-257 |  |
+| mmu_check_perm | 258-285 |  |
+| mmu_update_sd | 286-306 | Update the M (modified) or R (referenced) bit the SD and cache |
+| mmu_update_pd | 307-338 | Update the M (modified) or R (referenced) bit the PD and cache |
+| mmu_init | 339-344 |  |
+| mmu_read | 345-423 |  |
+| mmu_write | 424-699 |  |
+| mmu_decode_va | 700-788 |  |
+| mmu_xlate_addr | 789-804 |  |
+| mmu_enable | 805-811 |  |
+| mmu_disable | 812-818 |  |
+| mmu_description | 819-822 |  |

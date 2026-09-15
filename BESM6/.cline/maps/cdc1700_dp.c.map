@@ -1,0 +1,62 @@
+=== cdc1700_dp.c — 1159 строк ===
+Источник: cdc1700_dp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_dp.c -nt .cline/maps/cdc1700_dp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 35 | |
+| IOFWinitialized | 63 | |
+| ExecutionStarted | 65 | |
+| cpu_unit | 67 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ADDRSTATUS | iod_readR[2] | 33 |
+| DP_NUMWD | (96)            /* words/sector */ | 81 |
+| DP_NUMBY | (DP_NUMWD * sizeof(uint16)) | 82 |
+| DP_NUMSC | (16)            /* sectors/track */ | 83 |
+| DP_NUMTR | (10)            /* tracks/cylind... | 84 |
+| DP_853CY | (100)           /* cylinders for... | 85 |
+| DP_854CY | (203)           /* cylinders for... | 86 |
+| DP853_SIZE | (DP_853CY * DP_NUMTR * DP_NUMSC ... | 87 |
+| DP854_SIZE | (DP_854CY * DP_NUMTR * DP_NUMSC ... | 88 |
+| DPLBA(i) |  | 90 |
+| DP_NUMDR | 2               /* # drives */ | 93 |
+| DP_IDLE | 0x0000          /* Idle */ | 97 |
+| DP_XFER | 0x0001          /* Control info ... | 98 |
+| DP_SEEK | 0x0002          /* Seeking */ | 99 |
+| DP_WRITE | 0x0003          /* Write data */ | 100 |
+| DP_READ | 0x0004          /* Read data */ | 101 |
+| DP_COMPARE | 0x0005          /* Compare data */ | 102 |
+| DP_CHECKWORD | 0x0006          /* Checkword che... | 103 |
+| DP_WRITEADDR | 0x0007          /* Write address... | 104 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| show_drive | 317-331 | Display disk pack drive type |
+| set_dp853 | 332-353 | changes. |
+| set_dp854 | 354-374 | changes. |
+| show_addressing | 375-388 | Display the device addressing mode |
+| set_normal | 389-400 | Set device to normal addressing. |
+| set_reverse | 401-416 | Set device to reverse addressing. |
+| DPstate | 417-442 |  |
+| DPintr | 443-451 | Determine if a non-standard interrupt condition is present. |
+| LoadDiskAddress | 452-475 | Load and validate disk address in the A register |
+| StartDPDiskIO | 476-510 | Set up a disk I/O operation with the A register containing FWA - 1. |
+| DPDiskIOIncSector | 511-526 | Increment sector # and update Sector Record Address. |
+| DPDiskIORead | 527-562 | Initiate a read operation on a disk. |
+| DPDiskIOWrite | 563-597 | Initiate a write operation on a disk. |
+| DPDiskIOCompare | 598-633 | Initiate a compare operation on a disk. |
+| DPDiskIO | 634-699 | service routine. |
+| dp_svc | 700-806 |  |
+| dp_reset | 807-834 |  |
+| dp_attach | 835-889 |  |
+| dp_detach | 890-903 |  |
+| DPreject | 904-944 |  |
+| DPin | 945-952 |  |
+| DPout | 953-1105 |  |
+| DPautoload | 1106-1125 | Autoload support |
+| dp_help | 1126-1159 |  |

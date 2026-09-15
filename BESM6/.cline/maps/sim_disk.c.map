@@ -1,0 +1,404 @@
+=== sim_disk.c — 8701 строк ===
+Источник: sim_disk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_disk.c -nt .cline/maps/sim_disk.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| ultrix_disklabel | 1650-1657 |
+| NetBSD_disklabel | 1941-2023 |
+| RSTS_MFDLABEL | 2088-2096 |
+| RSTS_PACKLABEL | 2098-2113 |
+| RSTS_MFDBLOCKETTE | 2121-2131 |
+| RSTS_GFDBLOCKETTE | 2141-2151 |
+| RSTS_UFDBLOCKETTE | 2162-2172 |
+| RSTS_UNAME | 2182-2191 |
+| RSTS_FNAME | 2193-2200 |
+| RSTS_ACNT | 2202-2210 |
+| RSTS_RETR | 2212-2216 |
+| RSTS_DCMAP | 2218-2222 |
+| rstsContext | 2248-2255 |
+| VHD_Footer | 5561-5724 |
+| VHD_DynamicDiskHeader | 5732-5850 |
+| DISK_INFO_CTX | 7716-7719 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| value | 168 | |
+| value | 178 | |
+| NULL | 307 | |
+| callback | 324 | |
+| FALSE | 345 | |
+| FALSE | 361 | |
+| fmt_buf | 466 | |
+| encodings | 467 | |
+| "invalid" | 475 | |
+| SCPE_OK | 481 | |
+| encoding | 486 | |
+| encoding | 510 | |
+| cap | 517 | |
+| SCPE_OK | 529 | |
+| cap_units | 536 | |
+| SCPE_OK | 550 | |
+| ctx | 557 | |
+| is_available | 558 | |
+| is_available | 597 | |
+| dptr | 611 | |
+| dev | 612 | |
+| saved_sim_show_message | 613 | |
+| sim_show_message | 615 | |
+| sim_show_message | 644 | |
+| SCPE_OK | 647 | |
+| SCPE_OK | 670 | |
+| SCPE_OK | 682 | |
+| dptr | 687 | |
+| dev | 688 | |
+| saved_sim_show_message | 689 | |
+| sim_show_message | 691 | |
+| sim_show_message | 720 | |
+| SCPE_OK | 723 | |
+| SCPE_OK | 744 | |
+| SCPE_OK | 756 | |
+| physical_size | 772 | |
+| saved_quiet | 773 | |
+| physical_size | 777 | |
+| sim_quiet | 778 | |
+| sim_quiet | 780 | |
+| filesystem_size | 784 | |
+| attr | 795 | |
+| ctx->asynch_io | 799 | |
+| ctx->asynch_io_latency | 800 | |
+| uptr->a_check_completion | 815 | |
+| uptr->a_is_active | 816 | |
+| uptr->cancel | 817 | |
+| SCPE_OK | 818 | |
+| SCPE_NOFNC | 827 | |
+| SCPE_OK | 846 | |
+| da | 854 | |
+| err | 855 | |
+| tbc | 862 | |
+| SCPE_OK | 892 | |
+| sread | 900 | |
+| tbuf | 901 | |
+| rbuf | 902 | |
+| da | 1015 | |
+| err | 1016 | |
+| tbc | 1023 | |
+| SCPE_OK | 1035 | |
+| tbuf | 1043 | |
+| written | 1044 | |
+| buf | 1180 | |
+| lba | 1181 | |
+| SCPE_OK | 1192 | |
+| uptr->filename | 1226 | |
+| uptr->disk_ctx | 1228 | |
+| stat | 1229 | |
+| sectno | 1235 | |
+| status | 1236 | |
+| status | 1263 | |
+| saved_capac | 1664 | |
+| sector_buf | 1667 | |
+| max_lbn | 1671 | |
+| sects_read | 1672 | |
+| saved_capac | 1674 | |
+| uptr->capac | 1675 | |
+| uptr->capac | 1696 | |
+| ret_val | 1699 | |
+| saved_capac | 2028 | |
+| sector_buf | 2031 | |
+| max_lbn | 2035 | |
+| sects_read | 2036 | |
+| sum | 2037 | |
+| pdata | 2038 | |
+| saved_capac | 2040 | |
+| uptr->capac | 2041 | |
+| uptr->capac | 2075 | |
+| ret_val | 2078 | |
+| rad50 | 2257 | |
+| buf | 2261 | |
+| buf | 2263 | |
+| buf | 2264 | |
+| SCPE_IOERR | 2280 | |
+| sects_read | 2286 | |
+| SCPE_IOERR | 2292 | |
+| temp | 2300 | |
+| SCPE_IOERR | 2309 | |
+| dcs | 2314 | |
+| root | 2315 | |
+| buf | 2316 | |
+| SCPE_IOERR | 2423 | |
+| bitmap | 2428 | |
+| acnt | 2430 | |
+| retr | 2431 | |
+| SCPE_IOERR | 2485 | |
+| saved_capac | 2490 | |
+| buf | 2493 | |
+| context | 2495 | |
+| saved_capac | 2497 | |
+| uptr->capac | 2498 | |
+| context.uptr | 2500 | |
+| context.sects | 2501 | |
+| uptr->capac | 2563 | |
+| ret_val | 2566 | |
+| dptr | 7723 | |
+| uptr | 7724 | |
+| filestat | 7726 | |
+| fullname | 7727 | |
+| errno | 7729 | |
+| FullPath | 7791 | |
+| footer | 7792 | |
+| container | 7794 | |
+| container_size | 7795 | |
+| disk_info_state | 8005 | |
+| stat | 8006 | |
+| disk_info_state.flag | 8012 | |
+| text | 8054 | |
+| D0 | 8055 | |
+| D1 | 8056 | |
+| A0 | 8057 | |
+| A1 | 8058 | |
+| A2 | 8059 | |
+| byte | 8060 | |
+| num | 8061 | |
+| text | 8080 | |
+| D0 | 8085 | |
+| D1 | 8086 | |
+| num | 8087 | |
+| A0 | 8088 | |
+| A1 | 8089 | |
+| A2 | 8090 | |
+| result | 8114 | |
+| result | 8118 | |
+| cap | 8125 | |
+| max | 8126 | |
+| uptr->drvtyp | 8162 | |
+| SCPE_OK | 8167 | |
+| toks | 8172 | |
+| SCPE_OK | 8225 | |
+| typestr | 8230 | |
+| NULL | 8243 | |
+| dptr | 8249 | |
+| cmd | 8250 | |
+| dev_disabled | 8251 | |
+| unit_disabled | 8259 | |
+| dptr | 8274 | |
+| NULL | 8289 | |
+| tries | 8312 | |
+| unexpected_data | 8313 | |
+| filename | 8450 | |
+| uptr | 8451 | |
+| specific_test | 8453 | |
+| cmd | 8561 | |
+| SCPE_OK | 8644 | |
+| fmt | 8649 | |
+| sect_size | 8650 | |
+| xfr_size | 8651 | |
+| uptr | 8653 | |
+| filename | 8654 | |
+| SIM_TEST_INIT | 8657 | |
+| SCPE_OK | 8700 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| _FILE_OFFSET_BITS | 64    /* 64 bit file offset for ... | 89 |
+| DKUF_F_AUTO | 0                              /... | 98 |
+| DKUF_F_STD | 1                              /... | 99 |
+| DKUF_F_RAW | 2                              /... | 100 |
+| DKUF_F_VHD | 3                              /... | 101 |
+| DKUF_E_AUTO | 0                              /... | 103 |
+| DKUF_E_DLD9 | 1                              /... | 104 |
+| DKUF_E_DBD9 | 2                              /... | 105 |
+| DK_GET_FMT(u) | (((u)->flags >> DKUF_V_FMT) & DK... | 107 |
+| DK_GET_ENC(u) | (((u)->flags >> DKUF_V_ENC) & DK... | 108 |
+| FOOTER_VERSION | 1 | 131 |
+| DONT_DO_VHD_SUPPORT | /* VAX/VMS compilers don't have ... | 146 |
+| __BYTE_ORDER__ | __ORDER_LITTLE_ENDIAN__ | 151 |
+| __BYTE_ORDER__ | UNKNOWN | 155 |
+| AIO_CALLSETUP |  | 230 |
+| AIO_CALL(op, | _lba, _buf, _rsects, _sects,  _c... | 235 |
+| DOP_DONE | 0             /* close */ | 262 |
+| DOP_RSEC | 1             /* sim_disk_rdsect... | 263 |
+| DOP_WSEC | 2             /* sim_disk_wrsect... | 264 |
+| DOP_IAVL | 3             /* sim_disk_isavai... | 265 |
+| AIO_CALLSETUP |  | 364 |
+| AIO_CALL(op, | _lba, _buf, _rsects, _sects,  _c... | 365 |
+| RX0xNSECT | 26                      /* 26 se... | 1273 |
+| RX0xINTER | 2                       /* 2 sec... | 1274 |
+| RX0xISKEW | 6                       /* 6 sec... | 1275 |
+| HM1_C_LEVEL1 | 0401 | 1294 |
+| HM1_C_LEVEL2 | 0402 | 1295 |
+| PT_MAGIC | 0x032957        /* Partition mag... | 1659 |
+| PT_VALID | 1               /* Indicates if ... | 1660 |
+| BSD_DISKMAGIC | ((uint32) 0x82564557)   /* The d... | 1799 |
+| BSD_211_MAXPARTITIONS | 8 | 1800 |
+| NDDATA | 5 | 1860 |
+| NSPARE | 5 | 1862 |
+| WORDSWAP(l) | (((l >> 16) & 0xFFFF) \| ((l & 0x... | 1894 |
+| NETBSD_MAXPARTITIONS | 22 | 1939 |
+| NDDATA | 5 | 1999 |
+| NSPARE | 5 | 2001 |
+| PK_LVL0 | 0000 | 2103 |
+| PK_LVL11 | 0401 | 2104 |
+| PK_LVL12 | 0402 | 2105 |
+| PK_UC_NEW | 0020000 | 2108 |
+| MB_ID | 0051064 | 2130 |
+| IS_VALID_RSTS_MFD(b) |  | 2132 |
+| GB_ID | 0026264 | 2150 |
+| IS_VALID_RSTS_GFD(b, | g)  | 2152 |
+| UB_ID | 0102064 | 2171 |
+| IS_VALID_RSTS_UFD(b, | g, u)  | 2173 |
+| RT_ENTRIES | 7 | 2215 |
+| DC_MASK | 0077777 | 2220 |
+| DL_USE | 0000001 | 2227 |
+| DL_BAD | 0000002 | 2228 |
+| DL_CHE | 0000004 | 2229 |
+| DL_CLN | 0000010 | 2230 |
+| DL_ENO | 0000760 | 2231 |
+| DL_CLO | 0007000 | 2232 |
+| DL_BLO | 0170000 | 2233 |
+| DLSH_ENO | 4 | 2235 |
+| DLSH_CLO | 9 | 2236 |
+| DLSH_BLO | 12 | 2237 |
+| BLOCKETTE_SZ | (8 * sizeof(uint16)) | 2239 |
+| MAP_OFFSET | (31 * BLOCKETTE_SZ) | 2240 |
+| SATT0 | 0073374 | 2242 |
+| SATT1 | 0076400 | 2243 |
+| SATT2 | 0075273 | 2244 |
+| HB_C_SYSVER_V3A | 36521 | 2582 |
+| HB_C_SYSVER_V04 | 36434 | 2583 |
+| HB_C_SYSVER_V05 | 36435 | 2584 |
+| HB_C_SYSID | "DECRT11A    " | 2588 |
+| HB_C_VMSSYSID | "DECVMSEXCHNG" | 2589 |
+| DH_C_MAXSEG | 31 | 2598 |
+| DE_C_PRE | 0000020 | 2605 |
+| DE_C_TENT | 0000400 | 2606 |
+| DE_C_EMPTY | 0001000 | 2607 |
+| DE_C_PERM | 0002000 | 2608 |
+| DE_C_EOS | 0004000 | 2609 |
+| DE_C_READ | 0040000 | 2610 |
+| DE_C_PROT | 0100000 | 2611 |
+| RT11_MAXPARTITIONS | 256             /* Max partition... | 2621 |
+| RT11_HOME | 1             /* Home block # */ | 2622 |
+| RT11_NOPART | 0 | 2624 |
+| RT11_SINGLEPART | 1 | 2625 |
+| RT11_MULTIPART | 2 | 2626 |
+| DONT_DO_VHD_SUPPORT | /* VAX/VMS compilers don't have ... | 5461 |
+| VHD_BAT_FREE_ENTRY | (0xFFFFFFFF) | 5852 |
+| VHD_DATA_BLOCK_ALIGNMENT | ((uint64)4096)    /* Optimum whe... | 5853 |
+| VHD_DT_Fixed | 2  /* Fixed hard disk */ | 5855 |
+| VHD_DT_Dynamic | 3  /* Dynamic hard disk */ | 5856 |
+| VHD_DT_Differencing | 4  /* Differencing hard disk */ | 5857 |
+| VHD_Internal_SectorSize | 512 | 5859 |
+| __BYTE_ORDER__ | __ORDER_LITTLE_ENDIAN__ | 5909 |
+| __BYTE_ORDER__ | UNKNOWN | 5913 |
+| SEP | (0 == ((toks++) % 4)) ? ",\n\t" ... | 8174 |
+| BITMAP_IS_SET(n) | (c->wbitmap[(n) >> 5] & (1 << ((... | 8321 |
+| SET_BITMAP(n) | c->wbitmap[(n) >> 5] \|= (1 << ((... | 8322 |
+| DMB | 1024*1024 | 8466 |
+| DKB | 1024 | 8467 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| NtoHl | 159-165 |  |
+| NtoHl | 166-171 |  |
+| NtoHl | 172-267 |  |
+| _disk_io | 268-281 |  |
+| while | 282-320 |  |
+| _disk_completion_dispatch | 321-330 |  |
+| if | 331-336 |  |
+| _disk_is_active | 337-340 |  |
+| if | 341-347 |  |
+| _disk_cancel | 348-351 |  |
+| if | 352-424 |  |
+| sim_disk_set_fmt | 425-432 |  |
+| for | 433-443 |  |
+| if | 444-450 |  |
+| if | 451-462 |  |
+| sim_disk_fmt | 463-477 |  |
+| sim_disk_show_fmt | 478-483 |  |
+| _disk_tranfer_encoding | 484-487 |  |
+| switch | 488-514 |  |
+| sim_disk_set_capac | 515-533 |  |
+| sim_disk_show_capac | 534-541 |  |
+| if | 542-554 |  |
+| sim_disk_isavailable | 555-562 |  |
+| switch | 563-599 |  |
+| sim_disk_isavailable_a | 600-608 |  |
+| sim_disk_set_all_noautosize | 609-615 |  |
+| for | 616-651 |  |
+| sim_disk_set_autosize | 652-674 |  |
+| sim_disk_show_autosize | 675-684 |  |
+| sim_disk_set_all_autozap | 685-691 |  |
+| for | 692-727 |  |
+| sim_disk_set_autozap | 728-748 |  |
+| sim_disk_show_autozap | 749-761 |  |
+| sim_disk_wrp | 762-768 |  |
+| sim_disk_size | 769-788 |  |
+| sim_disk_set_async | 789-800 |  |
+| if | 801-823 |  |
+| sim_disk_clr_async | 824-835 |  |
+| if | 836-851 |  |
+| _sim_disk_rdsect | 852-864 |  |
+| while | 865-894 |  |
+| sim_disk_rdsect | 895-1001 |  |
+| sim_disk_rdsect_a | 1002-1012 |  |
+| _sim_disk_wrsect | 1013-1037 |  |
+| sim_disk_wrsect | 1038-1050 |  |
+| if | 1051-1079 |  |
+| switch | 1080-1098 |  |
+| if | 1099-1138 |  |
+| if | 1139-1148 |  |
+| sim_disk_wrsect_a | 1149-1157 |  |
+| sim_disk_unload | 1158-1161 |  |
+| switch | 1162-1176 |  |
+| sim_disk_erase | 1177-1198 |  |
+| _sim_disk_io_flush | 1199-1209 |  |
+| switch | 1210-1222 |  |
+| _err_return | 1223-1231 |  |
+| _sim_disk_rdsect_interleave | 1232-1276 |  |
+| _DEC_rdsect | 1277-1661 |  |
+| get_ultrix_filesystem_size | 1662-1683 |  |
+| for | 1684-2025 |  |
+| get_NetBSD_filesystem_size | 2026-2062 |  |
+| for | 2063-2258 | Walk through the partitions |
+| r50Asc | 2259-2266 |  |
+| rstsValidateClusterSize | 2267-2282 |  |
+| rstsReadBlock | 2283-2294 |  |
+| rstsReadBlockette | 2295-2311 |  |
+| rstsFind01UFD | 2312-2317 |  |
+| if | 2318-2425 |  |
+| rstsLoadAndScanSATT | 2426-2432 |  |
+| if | 2433-2487 |  |
+| get_rsts_filesystem_size | 2488-2505 |  |
+| for | 2506-7720 | Check all possible device cluster sizes |
+| sim_disk_check_attached_container | 7721-7737 |  |
+| for | 7738-7798 |  |
+| if | 7799-7887 |  |
+| if | 7888-8002 |  |
+| sim_disk_info_cmd | 8003-8051 |  |
+| sim_disk_decode_mediaid | 8052-8082 |  |
+| sim_disk_drive_type_to_mediaid | 8083-8110 |  |
+| sim_disk_get_mediaid | 8111-8120 |  |
+| sim_disk_set_drive_type | 8121-8133 |  |
+| if | 8134-8144 |  |
+| if | 8145-8169 |  |
+| sim_disk_show_drive_type | 8170-8175 |  |
+| if | 8176-8227 |  |
+| sim_disk_drive_type_set_string | 8228-8231 |  |
+| if | 8232-8246 |  |
+| sim_disk_set_drive_type_by_name | 8247-8270 |  |
+| sim_disk_find_type | 8271-8277 |  |
+| for | 8278-8303 |  |
+| sim_disk_test_exercise | 8304-8314 |  |
+| if | 8315-8418 |  |
+| if | 8419-8428 |  |
+| _sim_disk_test_create | 8429-8447 |  |
+| sim_disk_sizing_test | 8448-8557 | RK  - 1 sized disk with reserved cylinders |
+| sim_disk_meta_attach_test | 8558-8569 |  |
+| if | 8570-8646 |  |
+| sim_disk_test | 8647-8658 |  |
+| if | 8659-8668 |  |
+| for | 8669-8701 |  |

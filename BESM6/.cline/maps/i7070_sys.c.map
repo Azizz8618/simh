@@ -1,0 +1,47 @@
+=== i7070_sys.c — 1100 строк ===
+Источник: i7070_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7070_sys.c -nt .cline/maps/i7070_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_name | 40 | |
+| sim_PC | 42 | |
+| sim_emax | 44 | |
+| cdr_dib | 93 | |
+| cdp_dib | 96 | |
+| lpr_dib | 99 | |
+| con_dib | 102 | |
+| mt_dib | 104 | |
+| chron_dib | 106 | |
+| dsk_dib | 109 | |
+| ht_dib | 112 | |
+| com_dib | 115 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TYPE_A | 0               /* Basic oo ii f... | 235 |
+| TYPE_S | 1               /* Shift control */ | 236 |
+| TYPE_B | 2               /* Basic oo ii x... | 237 |
+| TYPE_C | 3               /* Alternate swi... | 238 |
+| TYPE_D | 4               /* Electronic sw... | 239 |
+| TYPE_E | 5               /* Extended memo... | 240 |
+| TYPE_F | 6               /* Branch type 2 */ | 241 |
+| TYPE_Z | 8               /* Sign control */ | 242 |
+| TYPE_I | 9               /* Basic oo ii I... | 243 |
+| TYPE_X | 10              /* No extra valu... | 244 |
+| TYPE_T | 11              /* Tape control */ | 245 |
+| TYPE_U | 12              /* unit record c... | 246 |
+| TYPE_V | 13              /* Channel IO */ | 247 |
+| TYPE_G | 14              /* Diag SW */ | 248 |
+| TYPE_P1 | 15              /* Branch priori... | 249 |
+| TYPE_P2 | 16              /* Set Priority ... | 250 |
+| TYPE_P3 | 17              /* Clear Priorit... | 251 |
+| TYPE_IQ | 18              /* Inquiry instr... | 252 |
+| TYPE_TB | 19              /* Binary Tape o... | 253 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load | 220-1100 |  |

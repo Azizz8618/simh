@@ -1,0 +1,52 @@
+=== hp2100_pt.c — 1172 строк ===
+Источник: hp2100_pt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_pt.c -nt .cline/maps/hp2100_pt.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 263-270 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| pt_interface | 289 | |
+| signal | 551 | |
+| working_set | 552 | |
+| outbound | 553 | |
+| irq_enabled | 554 | |
+| delay | 555 | |
+| start | 973 | |
+| byte | 1024 | |
+| SCPE_OK | 1171 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CARD_COUNT | 2                   /* count of ... | 202 |
+| NUL | '\000'              /* null */ | 207 |
+| UNIT_DIAG_SHIFT | (UNIT_V_UF + 0)     /* diagnosti... | 212 |
+| UNIT_REALTIME_SHIFT | (UNIT_V_UF + 1)     /* realistic... | 213 |
+| UNIT_DIAG | (1u << UNIT_DIAG_SHIFT) | 215 |
+| UNIT_REALTIME | (1u << UNIT_REALTIME_SHIFT) | 216 |
+| PTR_FAST_TIME | 100                 /* paper tap... | 234 |
+| PTR_REAL_TIME | mS (2)              /* paper tap... | 235 |
+| PTP_FAST_TIME | 200                 /* paper tap... | 237 |
+| PTP_REAL_TIME | mS (13.3)           /* paper tap... | 238 |
+| PT_DIAG_TIME | 2                   /* interface... | 240 |
+| PS_LOW_TAPE | 0000040             /* low tape ... | 251 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pt_interface | 547-556 |  |
+| while | 557-698 |  |
+| set_mode | 699-733 |  |
+| ptr_reset | 734-755 |  |
+| ptr_attach | 756-970 |  |
+| ptr_boot | 971-1021 |  |
+| ptr_service | 1022-1068 |  |
+| if | 1069-1111 |  |
+| ptp_reset | 1112-1140 |  |
+| ptp_service | 1141-1144 |  |
+| if | 1145-1172 |  |

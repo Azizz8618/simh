@@ -1,0 +1,52 @@
+=== linc_sys.c — 696 строк ===
+Источник: linc_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test linc_sys.c -nt .cline/maps/linc_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_emax | 31 | |
+| sim_name | 32 | |
+| sim_PC | 35 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| get_binary_word | 56-72 |  |
+| get_octal_word | 73-102 |  |
+| sim_load | 103-156 |  |
+| build_dev_tab | 157-168 |  |
+| fprint_next | 169-176 |  |
+| fprint_misc | 177-212 |  |
+| fprint_index | 213-223 |  |
+| fprint_set | 224-230 |  |
+| fprint_sam | 231-235 |  |
+| fprint_dis | 236-241 |  |
+| fprint_xsk | 242-247 |  |
+| fprint_rol | 248-253 |  |
+| fprint_ror | 254-259 |  |
+| fprint_scr | 260-265 |  |
+| fprint_skip | 266-311 |  |
+| fprint_opr | 312-335 |  |
+| fprint_lmb | 336-340 |  |
+| fprint_umb | 341-345 |  |
+| fprint_tape | 346-380 |  |
+| fprint_lda | 381-386 |  |
+| fprint_sta | 387-392 |  |
+| fprint_ada | 393-398 |  |
+| fprint_adm | 399-404 |  |
+| fprint_lam | 405-410 |  |
+| fprint_mul | 411-416 |  |
+| fprint_ldh | 417-422 |  |
+| fprint_sth | 423-428 |  |
+| fprint_shd | 429-434 |  |
+| fprint_sae | 435-440 |  |
+| fprint_sro | 441-446 |  |
+| fprint_bcl | 447-452 |  |
+| fprint_bse | 453-458 |  |
+| fprint_bco | 459-464 |  |
+| fprint_dsc | 465-470 |  |
+| fprint_add | 471-475 |  |
+| fprint_stc | 476-480 |  |
+| fprint_jmp | 481-485 |  |
+| fprint_sym | 486-696 |  |

@@ -1,0 +1,119 @@
+=== alpha_cpu.c — 1871 строк ===
+Источник: alpha_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test alpha_cpu.c -nt .cline/maps/alpha_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 136-142 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| pcc_enb | 167 | |
+| cpu_astop | 183 | |
+| save_env | 187 | |
+| reason | 363 | |
+| abortval | 364 | |
+| tracing | 365 | |
+| reason | 379 | |
+| pcc_l | 1566 | |
+| PC | 1569 | |
+| reason | 1570 | |
+| op | 1585 | |
+| ahi | 1592 | |
+| alo | 1595 | |
+| blo | 1597 | |
+| rhi | 1598 | |
+| rmid1 | 1599 | |
+| rmid2 | 1600 | |
+| rlo | 1601 | |
+| rlo | 1610 | |
+| quo | 1617 | |
+| trap_summ | 1640 | |
+| return | 1644 | |
+| FR | 1652 | |
+| pal_mode | 1653 | |
+| dmapen | 1654 | |
+| fpen | 1655 | |
+| vax_flag | 1656 | |
+| lock_flag | 1657 | |
+| trap_summ | 1658 | |
+| trap_mask | 1659 | |
+| SCPE_IERR | 1664 | |
+| SCPE_OK | 1666 | |
+| SCPE_ARG | 1673 | |
+| SCPE_NXM | 1689 | |
+| SCPE_NXM | 1704 | |
+| mc | 1711 | |
+| nM | 1713 | |
+| MEMSIZE | 1724 | |
+| SCPE_OK | 1725 | |
+| va | 1734 | |
+| SCPE_OK | 1755 | |
+| hst_p | 1775 | |
+| SCPE_OK | 1786 | |
+| op | 1793 | |
+| sim_val | 1794 | |
+| pc | 1807 | |
+| sim_val | 1834 | |
+| SCPE_OK | 1838 | |
+| lnt | 1856 | |
+| SCPE_OK | 1870 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_CONH | (UNIT_V_UF + 0)                 ... | 127 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 1) | 128 |
+| UNIT_CONH | (1 << UNIT_V_CONH) | 129 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 130 |
+| HIST_PC | 0x2 | 132 |
+| HIST_MIN | 64 | 133 |
+| HIST_MAX | (1 << 18) | 134 |
+| H_A | 0x01 | 144 |
+| H_B | 0x02 | 145 |
+| H_B_LIT | 0x04 | 146 |
+| H_EA | 0x08 | 147 |
+| H_EA_B | 0x10 | 148 |
+| H_EA_L16 | 0x20 | 149 |
+| H_MRF | (H_A\|H_B\|H_EA) | 150 |
+| H_BRA | (H_A\|H_EA\|H_EA_B) | 151 |
+| H_IOP | (H_A\|H_B\|H_B_LIT) | 152 |
+| H_FOP | (H_A\|H_B) | 153 |
+| H_PAL | (H_A\|H_EA\|H_EA_L16) | 154 |
+| H_JMP | (H_A\|H_B\|H_EA\|H_EA_L16) | 155 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 361-368 |  |
+| if | 369-386 |  |
+| while | 387-1576 |  |
+| byte_zap | 1577-1581 |  |
+| for | 1582-1589 |  |
+| uemul64 | 1590-1614 |  |
+| ufdiv64 | 1615-1620 |  |
+| for | 1621-1635 |  |
+| arith_trap | 1636-1648 |  |
+| cpu_reset | 1649-1670 |  |
+| cpu_boot | 1671-1677 |  |
+| cpu_ex | 1678-1680 |  |
+| if | 1681-1684 |  |
+| if | 1685-1693 |  |
+| cpu_dep | 1694-1695 |  |
+| if | 1696-1699 |  |
+| if | 1700-1708 |  |
+| cpu_set_size | 1709-1729 |  |
+| cpu_show_virt | 1730-1735 |  |
+| if | 1736-1759 |  |
+| cpu_set_hist | 1760-1764 |  |
+| if | 1765-1775 |  |
+| if | 1776-1780 |  |
+| if | 1781-1790 |  |
+| cpu_fprint_one_inst | 1791-1813 |  |
+| if | 1814-1822 |  |
+| if | 1823-1842 |  |
+| cpu_show_hist | 1843-1850 |  |
+| if | 1851-1859 |  |
+| for | 1860-1871 |  |

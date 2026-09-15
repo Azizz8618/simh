@@ -1,0 +1,78 @@
+=== sage_i8272.c — 1054 строк ===
+Источник: sage_i8272.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sage_i8272.c -nt .cline/maps/sage_i8272.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 80 | |
+| i8272_dev | 127 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NEXTSTATE(s) | TRACE_PRINT2(DBG_FD_STATE,"TRANS... | 75 |
+| NEXTSTATE(s) | chip->fdc_state = s | 77 |
+| IMAGE_TYPE_DSK | 1               /* Flat binary "... | 89 |
+| IMAGE_TYPE_IMD | 2               /* ImageDisk "IM... | 90 |
+| IMAGE_TYPE_CPT | 3               /* CP/M Transfer... | 91 |
+| I8272_READ_TRACK | 0x02 | 94 |
+| I8272_SPECIFY | 0x03 | 95 |
+| I8272_SENSE_DRIVE_STATUS | 0x04 | 96 |
+| I8272_WRITE_DATA | 0x05 | 97 |
+| I8272_READ_DATA | 0x06 | 98 |
+| I8272_RECALIBRATE | 0x07 | 99 |
+| I8272_SENSE_INTR_STATUS | 0x08 | 100 |
+| I8272_WRITE_DELETED_DATA | 0x09 | 101 |
+| I8272_READ_ID | 0x0A | 102 |
+| I8272_READ_DELETED_DATA | 0x0C | 103 |
+| I8272_FORMAT_TRACK | 0x0D | 104 |
+| I8272_SEEK | 0x0F | 105 |
+| UPD765_VERSION | 0x10 | 106 |
+| I8272_SCAN_EQUAL | 0x11 | 107 |
+| I8272_SCAN_LOW_EQUAL | 0x19 | 108 |
+| I8272_SCAN_HIGH_EQUAL | 0x1D | 109 |
+| DRIVE_STATUS_TWO_SIDED | 0x08 | 112 |
+| DRIVE_STATUS_TRACK0 | 0x10 | 113 |
+| DRIVE_STATUS_READY | 0x20 | 114 |
+| DRIVE_STATUS_WP | 0x40 | 115 |
+| DRIVE_STATUS_FAULT | 0x80 | 116 |
+| I8272_MSR_RQM | (1 << 7) | 118 |
+| I8272_MSR_DATA_OUT | (1 << 6) | 119 |
+| I8272_MSR_NON_DMA | (1 << 5) | 120 |
+| I8272_MSR_FDC_BUSY | (1 << 4) | 121 |
+| I8272_SEC2SZ(s) | (128 << (s)) | 124 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| i8272_seldrv | 180-187 | but the Sage FD does not use US0/US1 bits of FDC, for whatever reason...  |
+| find_unit_index | 188-202 | find_unit_index   find index of a unit |
+| i8272_attach | 203-269 | Attach routine |
+| i8272_detach | 270-288 | Detach routine |
+| i8272_setDMA | 289-294 |  |
+| i8272_io | 295-304 |  |
+| i8272_reset | 305-313 |  |
+| floorlog2 | 314-325 |  |
+| i8272_resultphase | 326-342 |  |
+| i8272_finish | 343-364 | stops polling after 2 sectors by asserting TC |
+| i8272_abortio | 365-389 | terminating I/O immediately and going to S_RESULT state. |
+| i8272_dataread | 390-414 |  |
+| i8272_select_drive | 415-423 |  |
+| i8272_secread | 424-472 |  |
+| i8272_read | 473-562 |  |
+| i8272_makeresult | 563-576 |  |
+| i8272_decodecmdbits | 577-595 |  |
+| i8272_nodriveerror | 596-606 |  |
+| i8272_format | 607-669 |  |
+| i8272_readid | 670-724 |  |
+| i8272_seek | 725-741 |  |
+| i8272_senseint | 742-754 |  |
+| i8272_sensedrive | 755-783 |  |
+| i8272_recalibrate | 784-802 |  |
+| i8272_specify | 803-817 |  |
+| i8272_secrw | 818-865 |  |
+| i8272_secwrite | 866-889 |  |
+| i8272_datawrite | 890-922 |  |
+| i8272_write | 923-1048 |  |
+| i8272_interrupt | 1049-1054 |  |

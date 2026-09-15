@@ -1,0 +1,322 @@
+=== sim_defs.h — 1130 строк ===
+Источник: sim_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_defs.h -nt .cline/maps/sim_defs.h.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int8 | 192 | |
+| int16 | 193 | |
+| uint8 | 195 | |
+| uint16 | 196 | |
+| int8 | 202 | |
+| int16 | 203 | |
+| uint8 | 205 | |
+| uint16 | 206 | |
+| t_int64 | 216 | |
+| t_uint64 | 217 | |
+| t_int64 | 219 | |
+| t_uint64 | 220 | |
+| t_int64 | 222 | |
+| t_uint64 | 223 | |
+| t_int64 | 225 | |
+| t_uint64 | 226 | |
+| t_svalue | 241 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SIM_DEFS_H_ | 0 | 110 |
+| EXIT_FAILURE | 1 | 132 |
+| EXIT_SUCCESS | 0 | 135 |
+| __FUNCTION__ | " a function in " __FILE__ " at ... | 139 |
+| TRUE | 1 | 165 |
+| FALSE | 0 | 166 |
+| CONST | const | 178 |
+| __STR_QUOTE(tok) | #tok | 183 |
+| __STR(tok) | __STR_QUOTE(tok) | 184 |
+| INT64_C(x) | x ## LL | 232 |
+| T_VALUE_MAX | 0xffffffffffffffffuLL | 238 |
+| T_SVALUE_MAX | 0x7fffffffffffffffLL | 239 |
+| T_VALUE_MAX | 0xffffffffUL | 243 |
+| T_SVALUE_MAX | 0x7fffffffL | 244 |
+| T_ADDR_W | 64 | 249 |
+| T_ADDR_FMT | LL_FMT | 250 |
+| T_ADDR_W | 32 | 253 |
+| T_ADDR_FMT | "" | 254 |
+| NO_vsnprintf |  | 261 |
+| STACKBUFSIZE | 16384 | 264 |
+| STACKBUFSIZE | 2048 | 266 |
+| LL_FMT | "I64" | 270 |
+| LL_TYPE | long long | 271 |
+| LL_FMT | "l" | 274 |
+| LL_TYPE | long | 275 |
+| LL_FMT | "ll" | 277 |
+| LL_TYPE | long long | 278 |
+| HAVE_GLOB |  | 283 |
+| HAVE_C99_STRFTIME | 1 | 287 |
+| NULL_DEVICE | "NUL:" | 291 |
+| NULL_DEVICE | "NL:" | 293 |
+| NULL_DEVICE | "/dev/null" | 295 |
+| SIM_INLINE | _inline | 301 |
+| SIM_NOINLINE | _declspec (noinline) | 302 |
+| SIM_INLINE | inline | 304 |
+| SIM_NOINLINE | __attribute__ ((noinline)) | 305 |
+| SIM_INLINE |  | 307 |
+| SIM_NOINLINE |  | 308 |
+| PACKED_BEGIN | __pragma( pack(push, 1) ) | 314 |
+| PACKED_END | __pragma( pack(pop) ) | 315 |
+| PACKED_BEGIN |  | 317 |
+| PACKED_END | __attribute__((gcc_struct, packed)) | 319 |
+| PACKED_END | __attribute__((packed)) | 321 |
+| FLIP_SIZE | (1 << 16)                       ... | 328 |
+| PATH_MAX | 512 | 330 |
+| CBUFSIZE | (128 + PATH_MAX)                ... | 333 |
+| CBUFSIZE | 256 | 335 |
+| SIM_BKPT_N_SPC | (1 << (32 - SIM_BKPT_V_SPC))    ... | 340 |
+| SIM_BKPT_V_SPC | (BRK_TYP_MAX + 1)               ... | 341 |
+| SIM_SW_HIDE | (1u << 26)                      ... | 345 |
+| SIM_SW_REST | (1u << 27)                      ... | 346 |
+| SIM_SW_REG | (1u << 28)                      ... | 347 |
+| SIM_SW_STOP | (1u << 29)                      ... | 348 |
+| SIM_SW_SHUT | (1u << 30)                      ... | 349 |
+| SCPE_OK | 0                               ... | 358 |
+| SCPE_BASE | 64                              ... | 359 |
+| SCPE_NXM | (SCPE_BASE + 0)                 ... | 360 |
+| SCPE_UNATT | (SCPE_BASE + 1)                 ... | 361 |
+| SCPE_IOERR | (SCPE_BASE + 2)                 ... | 362 |
+| SCPE_CSUM | (SCPE_BASE + 3)                 ... | 363 |
+| SCPE_FMT | (SCPE_BASE + 4)                 ... | 364 |
+| SCPE_NOATT | (SCPE_BASE + 5)                 ... | 365 |
+| SCPE_OPENERR | (SCPE_BASE + 6)                 ... | 366 |
+| SCPE_MEM | (SCPE_BASE + 7)                 ... | 367 |
+| SCPE_ARG | (SCPE_BASE + 8)                 ... | 368 |
+| SCPE_STEP | (SCPE_BASE + 9)                 ... | 369 |
+| SCPE_UNK | (SCPE_BASE + 10)                ... | 370 |
+| SCPE_RO | (SCPE_BASE + 11)                ... | 371 |
+| SCPE_INCOMP | (SCPE_BASE + 12)                ... | 372 |
+| SCPE_STOP | (SCPE_BASE + 13)                ... | 373 |
+| SCPE_EXIT | (SCPE_BASE + 14)                ... | 374 |
+| SCPE_TTIERR | (SCPE_BASE + 15)                ... | 375 |
+| SCPE_TTOERR | (SCPE_BASE + 16)                ... | 376 |
+| SCPE_EOF | (SCPE_BASE + 17)                ... | 377 |
+| SCPE_REL | (SCPE_BASE + 18)                ... | 378 |
+| SCPE_NOPARAM | (SCPE_BASE + 19)                ... | 379 |
+| SCPE_ALATT | (SCPE_BASE + 20)                ... | 380 |
+| SCPE_TIMER | (SCPE_BASE + 21)                ... | 381 |
+| SCPE_SIGERR | (SCPE_BASE + 22)                ... | 382 |
+| SCPE_TTYERR | (SCPE_BASE + 23)                ... | 383 |
+| SCPE_SUB | (SCPE_BASE + 24)                ... | 384 |
+| SCPE_NOFNC | (SCPE_BASE + 25)                ... | 385 |
+| SCPE_UDIS | (SCPE_BASE + 26)                ... | 386 |
+| SCPE_NORO | (SCPE_BASE + 27)                ... | 387 |
+| SCPE_INVSW | (SCPE_BASE + 28)                ... | 388 |
+| SCPE_MISVAL | (SCPE_BASE + 29)                ... | 389 |
+| SCPE_2FARG | (SCPE_BASE + 30)                ... | 390 |
+| SCPE_2MARG | (SCPE_BASE + 31)                ... | 391 |
+| SCPE_NXDEV | (SCPE_BASE + 32)                ... | 392 |
+| SCPE_NXUN | (SCPE_BASE + 33)                ... | 393 |
+| SCPE_NXREG | (SCPE_BASE + 34)                ... | 394 |
+| SCPE_NXPAR | (SCPE_BASE + 35)                ... | 395 |
+| SCPE_NEST | (SCPE_BASE + 36)                ... | 396 |
+| SCPE_IERR | (SCPE_BASE + 37)                ... | 397 |
+| SCPE_MTRLNT | (SCPE_BASE + 38)                ... | 398 |
+| SCPE_LOST | (SCPE_BASE + 39)                ... | 399 |
+| SCPE_TTMO | (SCPE_BASE + 40)                ... | 400 |
+| SCPE_STALL | (SCPE_BASE + 41)                ... | 401 |
+| SCPE_AFAIL | (SCPE_BASE + 42)                ... | 402 |
+| SCPE_INVREM | (SCPE_BASE + 43)                ... | 403 |
+| SCPE_EXPECT | (SCPE_BASE + 44)                ... | 404 |
+| SCPE_AMBREG | (SCPE_BASE + 45)                ... | 405 |
+| SCPE_REMOTE | (SCPE_BASE + 46)                ... | 406 |
+| SCPE_INVEXPR | (SCPE_BASE + 47)                ... | 407 |
+| SCPE_SIGTERM | (SCPE_BASE + 48)                ... | 408 |
+| SCPE_FSSIZE | (SCPE_BASE + 49)                ... | 409 |
+| SCPE_RUNTIME | (SCPE_BASE + 50)                ... | 410 |
+| SCPE_INCOMPDSK | (SCPE_BASE + 51)                ... | 411 |
+| SCPE_AMBASSIGN | (SCPE_BASE + 52)                ... | 412 |
+| SCPE_MAX_ERR | (SCPE_BASE + 52)                ... | 414 |
+| SCPE_KFLAG | 0x10000000                      ... | 415 |
+| SCPE_BREAK | 0x20000000                      ... | 416 |
+| SCPE_NOMESSAGE | 0x40000000                      ... | 417 |
+| SCPE_BARE_STATUS(stat) | ((stat) & ~(SCPE_NOMESSAGE\|SCPE_... | 418 |
+| PV_RZRO | 0                               ... | 422 |
+| PV_RSPC | 1                               ... | 423 |
+| PV_RCOMMA | 2                               ... | 424 |
+| PV_LEFT | 3                               ... | 425 |
+| PV_RCOMMASIGN | 6                               ... | 426 |
+| PV_LEFTSIGN | 7                               ... | 427 |
+| KBD_POLL_WAIT | 5000                            ... | 431 |
+| SERIAL_IN_WAIT | 100                             ... | 432 |
+| SERIAL_OUT_WAIT | 100                             ... | 433 |
+| NOQUEUE_WAIT | 1000000                         ... | 434 |
+| SWMASK(x) | (1u << (((int) (x)) - ((int) 'A'))) | 438 |
+| MATCH_CMD(ptr,cmd) | ((NULL == (ptr)) \|\| (!*(ptr)) \|\|... | 442 |
+| QUEUE_LIST_END | ((UNIT *)1) | 450 |
+| DEV_V_DIS | 0                               ... | 521 |
+| DEV_V_DISABLE | 1                               ... | 522 |
+| DEV_V_DYNM | 2                               ... | 523 |
+| DEV_V_DEBUG | 3                               ... | 524 |
+| DEV_V_TYPE | 4                               ... | 525 |
+| DEV_S_TYPE | 4                               ... | 526 |
+| DEV_V_SECTORS | 8                               ... | 527 |
+| DEV_V_DONTAUTO | 9                               ... | 528 |
+| DEV_V_FLATHELP | 10                              ... | 529 |
+| DEV_V_NOSAVE | 11                              ... | 530 |
+| DEV_V_UF_31 | 12                              ... | 531 |
+| DEV_V_UF | 16                              ... | 532 |
+| DEV_V_RSV | 31                              ... | 533 |
+| DEV_DIS | (1 << DEV_V_DIS)                ... | 535 |
+| DEV_DISABLE | (1 << DEV_V_DISABLE)            ... | 536 |
+| DEV_DYNM | (1 << DEV_V_DYNM)               ... | 537 |
+| DEV_DEBUG | (1 << DEV_V_DEBUG)              ... | 538 |
+| DEV_SECTORS | (1 << DEV_V_SECTORS)            ... | 539 |
+| DEV_DONTAUTO | (1 << DEV_V_DONTAUTO)           ... | 540 |
+| DEV_FLATHELP | (1 << DEV_V_FLATHELP)           ... | 541 |
+| DEV_NOSAVE | (1 << DEV_V_NOSAVE)             ... | 542 |
+| DEV_NET | 0                               ... | 543 |
+| DEV_TYPEMASK | (((1 << DEV_S_TYPE) - 1) << DEV_... | 546 |
+| DEV_DISK | (1 << DEV_V_TYPE)               ... | 547 |
+| DEV_TAPE | (2 << DEV_V_TYPE)               ... | 548 |
+| DEV_SCSI | (3 << DEV_V_TYPE)               ... | 549 |
+| DEV_MUX | (4 << DEV_V_TYPE)               ... | 550 |
+| DEV_CARD | (5 << DEV_V_TYPE)               ... | 551 |
+| DEV_ETHER | (6 << DEV_V_TYPE)               ... | 552 |
+| DEV_DISPLAY | (7 << DEV_V_TYPE)               ... | 553 |
+| DEV_TYPE(dptr) | ((dptr)->flags & DEV_TYPEMASK) | 554 |
+| DEV_UFMASK_31 | (((1u << DEV_V_RSV) - 1) & ~((1u... | 556 |
+| DEV_UFMASK | (((1u << DEV_V_RSV) - 1) & ~((1u... | 557 |
+| DEV_RFLAGS | (DEV_UFMASK\|DEV_DIS)            ... | 558 |
+| UNIT_V_UF_31 | 12              /* dev spec, V3.... | 624 |
+| UNIT_V_UF | 16              /* device specif... | 625 |
+| UNIT_V_RSV | 31              /* reserved!! */ | 626 |
+| UNIT_ATTABLE | 0000001         /* attachable */ | 628 |
+| UNIT_RO | 0000002         /* read only */ | 629 |
+| UNIT_FIX | 0000004         /* fixed capacit... | 630 |
+| UNIT_SEQ | 0000010         /* sequential */ | 631 |
+| UNIT_ATT | 0000020         /* attached */ | 632 |
+| UNIT_BINK | 0000040         /* K = power of ... | 633 |
+| UNIT_BUFABLE | 0000100         /* bufferable */ | 634 |
+| UNIT_MUSTBUF | 0000200         /* must buffer */ | 635 |
+| UNIT_BUF | 0000400         /* buffered */ | 636 |
+| UNIT_ROABLE | 0001000         /* read only ok */ | 637 |
+| UNIT_DISABLE | 0002000         /* disable-able */ | 638 |
+| UNIT_DIS | 0004000         /* disabled */ | 639 |
+| UNIT_IDLE | 0040000         /* idle eligible */ | 640 |
+| UNIT_WLK | 0100000         /* hardware writ... | 641 |
+| UNIT_WPRT | (UNIT_WLK\|UNIT_RO)/* write prote... | 642 |
+| UNIT_TEXT | 0000000         /* text mode - n... | 645 |
+| UNIT_UFMASK_31 | (((1u << UNIT_V_RSV) - 1) & ~((1... | 647 |
+| UNIT_UFMASK | (((1u << UNIT_V_RSV) - 1) & ~((1... | 648 |
+| UNIT_RFLAGS | (UNIT_UFMASK\|UNIT_DIS)          ... | 649 |
+| UNIT_ATTMULT | 0000001         /* Allow multipl... | 655 |
+| UNIT_TM_POLL | 0000002         /* TMXR Polling ... | 656 |
+| UNIT_NO_FIO | 0000004         /* fileref is NO... | 657 |
+| UNIT_DISK_CHK | 0000010         /* disk data deb... | 658 |
+| UNIT_TMR_UNIT | 0000200         /* Unit register... | 659 |
+| UNIT_TAPE_MRK | 0000400         /* Tape Unit Tap... | 660 |
+| UNIT_TAPE_PNU | 0001000         /* Tape Unit Pos... | 661 |
+| UNIT_V_DF_TAPE | 10              /* Bit offset fo... | 662 |
+| UNIT_S_DF_TAPE | 3               /* Bits Reserved... | 663 |
+| UNIT_V_TAPE_FMT | 13              /* Bit offset fo... | 664 |
+| UNIT_S_TAPE_FMT | 4               /* Bits Reserved... | 665 |
+| UNIT_M_TAPE_FMT | (((1 << UNIT_S_TAPE_FMT) - 1) <<... | 666 |
+| UNIT_V_TAPE_ANSI | 17              /* Bit offset fo... | 667 |
+| UNIT_S_TAPE_ANSI | 4               /* Bits Reserved... | 668 |
+| UNIT_M_TAPE_ANSI | (((1 << UNIT_S_TAPE_ANSI) - 1) <... | 669 |
+| REG_FMT | 00017                           ... | 705 |
+| REG_DOUBLE | 00010                           ... | 706 |
+| REG_RO | 00020                           ... | 707 |
+| REG_HIDDEN | 00040                           ... | 708 |
+| REG_NZ | 00100                           ... | 709 |
+| REG_CIRC | 00200                           ... | 710 |
+| REG_VMIO | 00400                           ... | 711 |
+| REG_VMAD | 01000                           ... | 712 |
+| REG_FIT | 00000                           ... | 713 |
+| REG_DEPOSIT | 04000                           ... | 714 |
+| REG_HRO | (REG_RO \| REG_HIDDEN)           ... | 715 |
+| REG_V_UF | 16                              ... | 717 |
+| REG_UFMASK | (~((1u << REG_V_UF) - 1))       ... | 718 |
+| REG_VMFLAGS | (REG_VMIO \| REG_UFMASK)         ... | 719 |
+| MTAB_XTD | (1u << UNIT_V_RSV)              ... | 770 |
+| MTAB_VDV | (0001 \| MTAB_XTD)               ... | 771 |
+| MTAB_VUN | (0002 \| MTAB_XTD)               ... | 772 |
+| MTAB_VALR | (0004 \| MTAB_XTD)               ... | 773 |
+| MTAB_VALO | (0010 \| MTAB_XTD)               ... | 774 |
+| MTAB_NMO | (0020 \| MTAB_XTD)               ... | 775 |
+| MTAB_NC | (0040 \| MTAB_XTD)               ... | 776 |
+| MTAB_QUOTE | (0100 \| MTAB_XTD)               ... | 777 |
+| MTAB_SHP | (0200 \| MTAB_XTD)               ... | 778 |
+| MTAB_SH_NL | (0400 \| MTAB_XTD)               ... | 779 |
+| MODMASK(mptr,flag) | (((mptr)->mask & (uint32)(flag))... | 780 |
+| BRK_TYP_USR_TYPES | ((1 << ('Z'-'A'+1)) - 1)/* all t... | 797 |
+| BRK_TYP_DYN_STEPOVER | (SWMASK ('Z'+1)) | 798 |
+| BRK_TYP_DYN_USR | (SWMASK ('Z'+2)) | 799 |
+| BRK_TYP_DYN_ALL | (BRK_TYP_DYN_USR\|BRK_TYP_DYN_STE... | 800 |
+| BRK_TYP_TEMP | (SWMASK ('Z'+3))        /* Tempo... | 801 |
+| BRK_TYP_MAX | (('Z'-'A')+3)           /* Maxim... | 802 |
+| BRKTYPE(typ,descrip) | {SWMASK(typ), descrip} | 815 |
+| DEBUG_PRS(d) | (sim_deb && d.dctrl) | 827 |
+| DEBUG_PRD(d) | (sim_deb && d->dctrl) | 828 |
+| DEBUG_PRI(d,m) | (sim_deb && (d.dctrl & (m))) | 829 |
+| DEBUG_PRJ(d,m) | (sim_deb && ((d)->dctrl & (m))) | 830 |
+| UDATA(act,fl,cap) | NULL,act,NULL,NULL,NULL,NULL,0,0... | 854 |
+| UDATA(act,fl,cap) | NULL,act,NULL,NULL,NULL,NULL,0,0... | 857 |
+| _RegCheck(nm,loc,rdx,wd,off,dep,desc,flds,qptr,siz,elesiz,macro) |  | 973 |
+| REGDATA(nm,loc,rdx,wd,off,dep,desc,flds,fl,qptr,siz) |  | 979 |
+| XRDATA(nm,loc,rdx,wd,off,dep,siz,str) |  | 982 |
+| XRDATAD(nm,loc,rdx,wd,off,dep,siz,str,desc) |  | 984 |
+| XRDATADF(nm,loc,rdx,wd,off,dep,siz,str,desc,flds) |  | 986 |
+| ORDATA(nm,loc,wd) |  | 990 |
+| ORDATAD(nm,loc,wd,desc) |  | 992 |
+| ORDATADF(nm,loc,wd,desc,flds) |  | 994 |
+| DRDATA(nm,loc,wd) |  | 997 |
+| DRDATAD(nm,loc,wd,desc) |  | 999 |
+| DRDATADF(nm,loc,wd,desc,flds) |  | 1001 |
+| HRDATA(nm,loc,wd) |  | 1004 |
+| HRDATAD(nm,loc,wd,desc) |  | 1006 |
+| HRDATADF(nm,loc,wd,desc,flds) |  | 1008 |
+| BINRDATA(nm,loc,wd) |  | 1011 |
+| BINRDATAD(nm,loc,wd,desc) |  | 1013 |
+| BINRDATADF(nm,loc,wd,desc,flds) |  | 1015 |
+| FLDATA(nm,loc,pos) |  | 1018 |
+| FLDATAD(nm,loc,pos,desc) |  | 1020 |
+| FLDATADF(nm,loc,pos,desc,flds) |  | 1022 |
+| DBRDATA(nm,loc) |  | 1025 |
+| DBRDATAD(nm,loc,desc) |  | 1027 |
+| GRDATA(nm,loc,rdx,wd,pos) |  | 1030 |
+| GRDATAD(nm,loc,rdx,wd,pos,desc) |  | 1032 |
+| GRDATADF(nm,loc,rdx,wd,pos,desc,flds) |  | 1034 |
+| BRDATA(nm,aloc,rdx,wd,dep) |  | 1037 |
+| BRDATAD(nm,aloc,rdx,wd,dep,desc) |  | 1039 |
+| BRDATADF(nm,aloc,rdx,wd,dep,desc,flds) |  | 1041 |
+| CRDATA(nm,aloc,rdx,wd,dep) |  | 1044 |
+| CRDATAD(nm,aloc,rdx,wd,dep,desc) |  | 1046 |
+| CRDATADF(nm,aloc,rdx,wd,dep,desc,flds) |  | 1048 |
+| VBRDATA(nm,loc,rdx,wd,dep) |  | 1052 |
+| VBRDATAD(nm,loc,rdx,wd,dep,desc) |  | 1054 |
+| VBRDATADF(nm,loc,rdx,wd,dep,desc,flds) |  | 1056 |
+| URDATA(nm,loc,rdx,wd,off,dep,fl) |  | 1059 |
+| URDATAD(nm,loc,rdx,wd,off,dep,fl,desc) |  | 1061 |
+| URDATADF(nm,loc,rdx,wd,off,dep,fl,desc,flds) |  | 1063 |
+| SRDATA(nm,aloc,floc,rdx,wd,off,dep) |  | 1066 |
+| SRDATAD(nm,aloc,floc,rdx,wd,off,dep,desc) |  | 1068 |
+| SRDATADF(nm,aloc,floc,rdx,wd,off,dep,desc,flds) |  | 1070 |
+| STRDATA(nm,loc,rdx,wd,off,dep,siz,fl) |  | 1074 |
+| STRDATAD(nm,loc,rdx,wd,off,dep,siz,fl,desc) |  | 1076 |
+| STRDATADF(nm,loc,rdx,wd,off,dep,siz,fl,desc,flds) |  | 1078 |
+| SAVEDATA(nm,loc) |  | 1081 |
+| STARTBIT | {"",  0x00000000, 0,  NULL, NULL... | 1083 |
+| BIT(nm) | {#nm, 0xffffffff, 1,  NULL, NULL... | 1084 |
+| BITNC | {"",  0xffffffff, 1,  NULL, NULL... | 1085 |
+| BITF(nm,sz) | {#nm, 0xffffffff, sz, NULL, NULL... | 1086 |
+| BITNCF(sz) | {"",  0xffffffff, sz, NULL, NULL... | 1087 |
+| BITFFMT(nm,sz,fmt) | {#nm, 0xffffffff, sz, NULL, #fmt... | 1088 |
+| BITFNAM(nm,sz,names) | {#nm, 0xffffffff, sz, names,NULL... | 1089 |
+| ENDBITS | {NULL}  /* end of bitfield list */ | 1090 |
+| ASSURE(_Expression) | while (!(_Expression)) {        ... | 1104 |
+| AIO_CHECK_EVENT | sim_aio_check_event() | 1119 |
+| AIO_SET_INTERRUPT_LATENCY(instpersec) | sim_aio_set_interrupt_latency(in... | 1120 |
+| AIO_CHECK_EVENT |  | 1122 |
+| AIO_SET_INTERRUPT_LATENCY(instpersec) |  | 1123 |
+

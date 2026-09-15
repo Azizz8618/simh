@@ -1,0 +1,77 @@
+=== nova_qty.c — 1074 строк ===
+Источник: nova_qty.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test nova_qty.c -nt .cline/maps/nova_qty.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 109 | |
+| alm_dev | 124 | |
+| qty_dib | 152 | |
+| alm_dib | 838 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_8B | (UNIT_V_UF + 0)                 ... | 104 |
+| UNIT_8B | (1 << UNIT_V_8B) | 105 |
+| QTY_MAX | 64                          /*  ... | 127 |
+| DG_RETURN( | status, data )   (int32)(((statu... | 199 |
+| QTY_S_RI | 0x8000                          ... | 210 |
+| QTY_S_TI | 0x4000                          ... | 211 |
+| QTY_S_LMASK | 0x3F00                          ... | 212 |
+| QTY_S_DMASK | 0x00FF                          ... | 213 |
+| QTY_MASTER_ACTIVE( | desc )   ( (desc)->master ) | 217 |
+| QTY_LINE_EXTRACT( | x )       (((x) & QTY_S_LMASK) >... | 219 |
+| QTY_LINE_TX_CHAR( | line )    qty_tx_chr[ ((line) % ... | 221 |
+| QTY_LINE_RX_CHAR( | line )    (qty_status[ (line) ] ... | 222 |
+| QTY_UNIT_ACTIVE( | unitp )    ( (unitp)->conn ) | 223 |
+| QTY_LINE_BITS( | line, bits ) (qty_status[ (line)... | 225 |
+| QTY_LINE_SET_BIT( | line, bit )  qty_status[ (line) ... | 227 |
+| QTY_LINE_CLEAR_BIT( | line, bit )  qty_status[ (line) ... | 228 |
+| QTY_LINE_BIT_SET( | line, bit )   (qty_status[ (line... | 229 |
+| QTY_L_RXE | 0x800000                        ... | 236 |
+| QTY_L_RXBZ | 0x400000                        ... | 237 |
+| QTY_L_RXDN | 0x200000                        ... | 238 |
+| QTY_L_TXE | 0x080000                        ... | 239 |
+| QTY_L_TXBZ | 0x040000                        ... | 240 |
+| QTY_L_TXDN | 0x020000                        ... | 241 |
+| QTY_L_BREAK | 0x008000                        ... | 243 |
+| QTY_L_RING | 0x004000                        ... | 244 |
+| QTY_L_CD | 0x002000                        ... | 245 |
+| QTY_L_DTR | 0x001000                        ... | 246 |
+| QTY_L_LOOPBK | 0x00010000                      ... | 249 |
+| QTY_L_OVRERR | 0x00020000                      ... | 250 |
+| QTY_L_FRMERR | 0x00040000                      ... | 251 |
+| QTY_L_PARERR | 0x00080000                      ... | 252 |
+| QTY_L_MODEM | 0x0080                          ... | 258 |
+| QTY_L_TELNET | 0x0040                          ... | 259 |
+| QTY_L_AUTODIS | 0x0020                          ... | 260 |
+| QTY_L_PARITY |  | 261 |
+| QTY_L_7BIT |  | 262 |
+| QTY_L_BAUD | /*  <4 bits>            */ | 263 |
+| QTY_L_DMASK | 0x000FF                         ... | 266 |
+| ALM_LINE_EXTRACT( | x )       (((x) >> 1) & alm_line... | 873 |
+| ALM_SECT_EXTRACT( | x )       ((x) & 0x0001) | 874 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| / | 159-273 |  |
+| qty_tmxr_putc | 274-320 |  |
+| qty_update_rcvi | 321-363 |  |
+| qty_update_xmti | 364-402 |  |
+| qty_update_status | 403-475 |  |
+| qty_attach | 476-515 |  |
+| qty_detach | 516-526 |  |
+| qty_clear | 527-548 |  |
+| qty_common_reset | 549-575 |  |
+| qty_reset | 576-595 |  |
+| qty_common_svc | 596-637 |  |
+| qty_svc | 638-647 |  |
+| qty | 648-753 |  |
+| qty_setnl | 754-843 |  |
+| / | 844-880 |  |
+| alm_reset | 881-890 |  |
+| alm_svc | 891-900 |  |
+| alm | 901-1074 |  |

@@ -1,0 +1,68 @@
+=== ibm1130_plot.c — 794 строк ===
+Источник: ibm1130_plot.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_plot.c -nt .cline/maps/ibm1130_plot.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NONDLL | // I am linking statically to av... | 40 |
+| PLOT1627_DSW_OP_COMPLETE | 0x8000 | 125 |
+| PLOT1627_DSW_BUSY | 0x0200 | 126 |
+| PLOT1627_DSW_NOT_READY | 0x0100 | 127 |
+| IS_ONLINE(u) | (((u)->flags & (UNIT_ATT\|UNIT_DI... | 129 |
+| IS_DEBUG | ((plot_unit->flags & UNIT_DEBUG)... | 130 |
+| IS_PENDOWN | ((plot_unit->flags & UNIT_PEN) !... | 131 |
+| PEN_DOWN | 0x80000000 | 154 |
+| PEN_UP | 0x00000000 | 155 |
+| UNIT_V_COLOR | (UNIT_V_UF + 0)             /* c... | 174 |
+| UNIT_V_WIDTH | (UNIT_V_UF + 3)             /* w... | 175 |
+| UNIT_V_NOOP | (UNIT_V_UF + 5)             /* d... | 176 |
+| UNIT_V_DEBUG | (UNIT_V_UF + 6)             /* f... | 177 |
+| UNIT_V_PEN | (UNIT_V_UF + 7)             /* t... | 178 |
+| UNIT_WIDTH | (3u << UNIT_V_WIDTH)       /* tw... | 180 |
+| UNIT_COLOR | (7u << UNIT_V_COLOR)       /* th... | 181 |
+| UNIT_NOOP | (1u << UNIT_V_NOOP)        /* du... | 182 |
+| UNIT_DEBUG | (1u << UNIT_V_DEBUG)       /* sh... | 183 |
+| UNIT_PEN | (1u << UNIT_V_PEN)         /* th... | 184 |
+| PEN_BLACK | (0u << UNIT_V_COLOR) | 186 |
+| PEN_RED | (1u << UNIT_V_COLOR) | 187 |
+| PEN_BLUE | (2u << UNIT_V_COLOR) | 188 |
+| PEN_GREEN | (3u << UNIT_V_COLOR) | 189 |
+| PEN_YELLOW | (4u << UNIT_V_COLOR) | 190 |
+| PEN_PURPLE | (5u << UNIT_V_COLOR) | 191 |
+| PEN_LTGREY | (6u << UNIT_V_COLOR) | 192 |
+| PEN_GREY | (7u << UNIT_V_COLOR) | 193 |
+| SET_COLOR(op) | (plot_unit[0].flags = (plot_unit... | 195 |
+| GET_COLOR | (plot_unit[0].flags & UNIT_COLOR) | 196 |
+| BLACK | 0,0,0 | 198 |
+| BLUE | 0,0,255 | 199 |
+| RED | 255,0,0 | 200 |
+| GREEN | 0,255,0 | 201 |
+| YELLOW | 200,200,0 | 202 |
+| PURPLE | 150,0,150 | 203 |
+| LTGREY | 200,200,200 | 204 |
+| GREY | 120,120,120 | 205 |
+| WHITE | 255,255,255 | 206 |
+| PEN_SINGLE | (0u << UNIT_V_WIDTH) | 208 |
+| PEN_DOUBLE | (1u << UNIT_V_WIDTH) | 209 |
+| PEN_TRIPLE | (2u << UNIT_V_WIDTH) | 210 |
+| PEN_QUAD | (3u << UNIT_V_WIDTH) | 211 |
+| GET_WIDTH() | (plot_unit[0].flags & UNIT_WIDTH) | 213 |
+| SET_WIDTH(cd) | (plot_unit[0].flags = (plot_unit... | 214 |
+| LONGEST_ROLL | 1440000                    /* lo... | 720 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| xio_1627_plotter | 266-350 |  |
+| plot_svc | 351-364 |  |
+| plot_reset | 365-390 |  |
+| plot_attach | 391-453 |  |
+| update_pen | 454-541 |  |
+| plot_detach | 542-607 |  |
+| process_cmd | 608-714 |  |
+| plot_set_length | 715-740 |  |
+| plot_set_pos | 741-763 |  |
+| plot_show_vals | 764-772 |  |
+| plot_show_nl | 773-786 |  |
+| plot_validate_change | 787-794 |  |

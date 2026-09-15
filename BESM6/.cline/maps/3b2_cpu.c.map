@@ -1,0 +1,94 @@
+=== 3b2_cpu.c — 4880 строк ===
+Источник: 3b2_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_cpu.c -nt .cline/maps/3b2_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ROM | 122 | |
+| RAM | 125 | |
+| save_env | 128 | |
+| abort_context | 129 | |
+| cpu_instr | 132 | |
+| inst | 135 | |
+| INST | 138 | |
+| cpu_hist_size | 139 | |
+| cpu_hist_p | 140 | |
+| cpu_in_wait | 142 | |
+| cpu_exception_stack_depth | 144 | |
+| stop_reason | 145 | |
+| abort_reason | 146 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MAX_SUB_RETURN_SKIP | 9 | 70 |
+| PRIVREG(V) | ((V) == NUM_PSW \|\| (V) == NUM_PC... | 74 |
+| PRIVREG(V) | ((V) == NUM_PSW \|\| (V) == NUM_PC... | 77 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_show_stack | 806-840 |  |
+| cpu_show_cio | 841-858 |  |
+| sys_boot | 859-874 |  |
+| sys_boot | 875-895 |  |
+| cpu_boot | 896-941 |  |
+| cpu_ex | 942-966 |  |
+| cpu_dep | 967-985 |  |
+| build_int_map | 986-1030 | Pre-populate the interrupt->IPL map "int_map" |
+| cpu_reset | 1031-1093 |  |
+| cpu_is_pc_a_subroutine_call | 1094-1131 |  |
+| fprint_sym_m | 1132-1401 |  |
+| fprint_sym_hist | 1402-1425 |  |
+| cpu_show_virt | 1426-1452 |  |
+| cpu_set_hist | 1453-1502 |  |
+| cpu_show_hist | 1503-1568 |  |
+| cpu_register_name | 1569-1597 |  |
+| cpu_show_operand | 1598-1732 |  |
+| cpu_set_size | 1733-1757 |  |
+| clear_instruction | 1758-1780 |  |
+| decode_operand | 1781-2009 | stream. Returns the number of bytes consumed during decode. |
+| decode_instruction | 2010-2121 | returns: a Normal Exception if an error occured, or 0 on success. |
+| cpu_context_switch_3 | 2122-2149 |  |
+| cpu_context_switch_2 | 2150-2166 |  |
+| cpu_context_switch_1 | 2167-2197 |  |
+| cpu_on_interrupt | 2198-2309 |  |
+| sim_instr | 2310-3945 |  |
+| cpu_on_process_exception | 3946-3972 |  |
+| cpu_on_reset_exception | 3973-3998 |  |
+| cpu_on_stack_exception | 3999-4030 |  |
+| cpu_on_normal_exception | 4031-4071 |  |
+| cpu_perform_gate | 4072-4111 |  |
+| cpu_effective_address | 4112-4365 | cpu_show_hist smarter. |
+| cpu_read_op | 4366-4466 |  |
+| cpu_write_op | 4467-4530 |  |
+| op_type | 4531-4538 | or default type. |
+| op_signed | 4539-4542 |  |
+| sign_extend_b | 4543-4549 |  |
+| sign_extend_h | 4550-4559 |  |
+| cpu_execution_level | 4560-4564 | Returns the current CPU execution level. |
+| cpu_z_flag | 4565-4569 |  |
+| cpu_n_flag | 4570-4574 |  |
+| cpu_c_flag | 4575-4579 |  |
+| cpu_v_flag | 4580-4585 |  |
+| cpu_x_flag | 4586-4591 |  |
+| cpu_set_z_flag | 4592-4600 |  |
+| cpu_set_n_flag | 4601-4609 |  |
+| cpu_set_c_flag | 4610-4619 |  |
+| cpu_set_x_flag | 4620-4629 |  |
+| cpu_set_v_flag_op | 4630-4648 |  |
+| cpu_set_v_flag | 4649-4660 |  |
+| cpu_set_nz_flags | 4661-4683 |  |
+| cpu_push_word | 4684-4689 |  |
+| cpu_pop_word | 4690-4699 |  |
+| irq_push_word | 4700-4705 |  |
+| irq_pop_word | 4706-4711 |  |
+| op_is_psw | 4712-4716 |  |
+| sub | 4717-4729 |  |
+| add | 4730-4773 |  |
+| add_bcd | 4774-4803 | is a carry. |
+| sub_bcd | 4804-4833 | there is a carry. |
+| cpu_abort | 4834-4848 | state appropriately. |
+| cpu_description | 4849-4857 |  |
+| cpu_help | 4858-4880 |  |

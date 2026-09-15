@@ -1,0 +1,107 @@
+=== ibm1130_gdu.c — 1145 строк ===
+Источник: ibm1130_gdu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_gdu.c -nt .cline/maps/ibm1130_gdu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| hInstance | 665 | |
+| hwGDU | 666 | |
+| hdcGDU | 667 | |
+| hBmp | 668 | |
+| curwid | 669 | |
+| curht | 670 | |
+| wcInited | 671 | |
+| GDUPumpID | 672 | |
+| hGDUPump | 673 | |
+| hGreenPen | 674 | |
+| hRedBrush | 675 | |
+| hRedPen | 677 | |
+| hGrayBrush | 679 | |
+| hBlackPen | 680 | |
+| idTimer | 682 | |
+| painting | 683 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BLIT_MODE | /* define for better performance... | 24 |
+| DEFAULT_GDU_RATE | 20    /* default frame rate */ | 27 |
+| DEFAULT_PEN_THRESHOLD | 3    /* default looseness of lig... | 28 |
+| INDWIDTH | 32    /* width of an indicator (... | 29 |
+| INITSIZE | 512    /* initial window size */ | 30 |
+| GDU_DSW_ORDER_CONTROLLED_INTERRUPT | 0x8000 | 32 |
+| GDU_DSW_KEYBOARD_INTERUPT | 0x4000 | 33 |
+| GDU_DSW_DETECT_INTERRUPT | 0x2000 | 34 |
+| GDU_DSW_CYCLE_STEAL_CHECK | 0x1000 | 35 |
+| GDU_DSW_DETECT_STATUS | 0x0800 | 36 |
+| GDU_DSW_LIGHT_PEN_SWITCH | 0x0100 | 37 |
+| GDU_DSW_BUSY | 0x0080 | 38 |
+| GDU_DSW_CHARACTER_MODE | 0x0040 | 39 |
+| GDU_DSW_POINT_MODE | 0x0020 | 40 |
+| GDU_DSW_ADDR_DISP | 0x0003 | 41 |
+| GDU_FKEY_DATA_AVAILABLE | 0x8000 | 43 |
+| GDU_FKEY_KEY_CODE | 0x1F00 | 44 |
+| GDU_FKEY_OVERLAY_CODE | 0x00FF | 45 |
+| GDU_AKEY_DATA_AVAILABLE | 0x8000 | 47 |
+| GDU_AKEY_END | 0x1000 | 48 |
+| GDU_AKEY_CANCEL | 0x0800 | 49 |
+| GDU_AKEY_ADVANCE | 0x0400 | 50 |
+| GDU_AKEY_BACKSPACE | 0x0200 | 51 |
+| GDU_AKEY_JUMP | 0x0100 | 52 |
+| GDU_AKEY_KEY_CODE | 0x00FF | 53 |
+| UNIT_V_DISPLAYED | (UNIT_V_UF + 0) | 57 |
+| UNIT_V_DETECTS_ENABLED | (UNIT_V_UF + 1) | 58 |
+| UNIT_V_INTERRUPTS_DEFERRED | (UNIT_V_UF + 2) | 59 |
+| UNIT_V_LARGE_CHARS | (UNIT_V_UF + 3) | 60 |
+| UNIT_DISPLAYED | (1u << UNIT_V_DISPLAYED)        ... | 62 |
+| UNIT_DETECTS_ENABLED | (1u << UNIT_V_DETECTS_ENABLED)  ... | 63 |
+| UNIT_INTERRUPTS_DEFERRED | (1u << UNIT_V_INTERRUPTS_DEFERRE... | 64 |
+| UNIT_LARGE_CHARS | (1u << UNIT_V_LARGE_CHARS)      ... | 65 |
+| DIST2(x0,y0,x1,y1) | (((x1)-(x0))*((x1)-(x0))+((y1)-(... | 288 |
+| APPCLASS | "IBM2250GDU"                   /... | 660 |
+| RGB_GREEN | RGB(0,255,0)                  //... | 662 |
+| RGB_RED | RGB(255,0,0) | 663 |
+| HANDLE(msg) | case msg: return HANDLE_##msg(hW... | 963 |
+| HANDLE_WM_SIZING(hwnd, | wParam, lParam, fn)  | 967 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| gdu_reset | 105-109 |  |
+| xio_2250_display | 110-114 |  |
+| gdu_active | 115-151 |  |
+| xio_2250_display | 152-205 |  |
+| gdu_reset | 206-218 |  |
+| clear_interrupts | 219-225 |  |
+| gdu_interrupt | 226-233 |  |
+| set_indicators | 234-240 |  |
+| start_regeneration | 241-254 |  |
+| halt_regeneration | 255-265 |  |
+| notify_window_closed | 266-277 |  |
+| read_gduword | 278-289 |  |
+| draw | 290-400 |  |
+| generate_image | 401-568 |  |
+| draw_characters | 569-686 |  |
+| destroy_GDU_window | 687-729 |  |
+| CreateGDUWindow | 730-750 |  |
+| gdu_WM_CLOSE | 751-757 |  |
+| gdu_WM_DESTROY | 758-772 |  |
+| gdu_WM_GETMINMAXINFO | 773-778 |  |
+| PaintImage | 779-880 |  |
+| gdu_WM_PAINT | 881-900 |  |
+| gdu_WM_SIZE | 901-911 |  |
+| gdu_WM_SIZING | 912-935 |  |
+| gdu_WM_TIMER | 936-970 |  |
+| GDUWndProc | 971-988 |  |
+| DrawLine | 989-994 |  |
+| DrawPoint | 995-999 |  |
+| UpdateGDUIndicators | 1000-1005 |  |
+| CheckGDUKeyboard | 1006-1009 |  |
+| StartGDUUpdates | 1010-1015 |  |
+| StopGDUUpdates | 1016-1020 |  |
+| GetMouseCoordinates | 1021-1045 |  |
+| gdu_active | 1046-1050 |  |
+| EraseGDUScreen | 1051-1058 |  |
+| GDUPump | 1059-1132 |  |
+| ShowPenHit | 1133-1145 |  |

@@ -1,0 +1,92 @@
+=== i8080.c — 1636 строк ===
+Источник: i8080.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i8080.c -nt .cline/maps/i8080.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 166-178 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PC | 194 | |
+| uptr | 195 | |
+| IR | 198 | |
+| devnum | 199 | |
+| cpu_onetime | 200 | |
+| sim_int_char | 242 | |
+| dev_table | 257 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_OPSTOP | (UNIT_V_UF)     /* Stop on Inval... | 114 |
+| UNIT_OPSTOP | (1 << UNIT_V_OPSTOP) | 115 |
+| UNIT_V_MSTOP | (UNIT_V_UF+1)   /* Stop on Inval... | 116 |
+| UNIT_MSTOP | (1 << UNIT_V_MSTOP) | 117 |
+| UNIT_V_8085 | (UNIT_V_UF+2)   /* 8080/8085 swi... | 118 |
+| UNIT_8085 | (1 << UNIT_V_8085) | 119 |
+| UNIT_V_XACK | (UNIT_V_UF+3)   /*  XACK switch */ | 120 |
+| UNIT_XACK | (1 << UNIT_V_XACK) | 121 |
+| CF | 0x01 | 124 |
+| PF | 0x04 | 125 |
+| AF | 0x10 | 126 |
+| ZF | 0x40 | 127 |
+| SF | 0x80 | 128 |
+| PSW_ALWAYS_ON | (0x02)        /* for 8080 */ | 132 |
+| PSW_MSK | (CF\|PF\|AF\|ZF\|SF) | 133 |
+| TOGGLE_FLAG(FLAG) | (PSW ^= FLAG) | 134 |
+| SET_FLAG(FLAG) | (PSW \|= FLAG) | 135 |
+| CLR_FLAG(FLAG) | (PSW &= ~FLAG) | 136 |
+| GET_FLAG(FLAG) | (PSW & FLAG) | 137 |
+| COND_SET_FLAG(COND,FLAG) |  | 138 |
+| SET_XACK(VAL) | (xack = VAL) | 141 |
+| GET_XACK(FLAG) | (xack &= FLAG) | 142 |
+| ITRAP | 0x100 | 145 |
+| SID | 0x80 | 146 |
+| SOD | 0x80 | 147 |
+| SDE | 0x40 | 148 |
+| R75 | 0x10 | 149 |
+| IE | 0x08 | 150 |
+| MSE | 0x08 | 151 |
+| M75 | 0x04 | 152 |
+| M65 | 0x02 | 153 |
+| M55 | 0x01 | 154 |
+| BYTE_R | 0xFF | 157 |
+| WORD_R | 0xFFFF | 158 |
+| HIST_MIN | 64 | 162 |
+| HIST_MAX | (1u << 18) | 163 |
+| HIST_ILNT | 3                               ... | 164 |
+| HLEN | 16 | 1302 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| i8080_desc | 206-265 |  |
+| UDATA | 266-421 |  |
+| set_cpuint | 422-428 |  |
+| sim_instr | 429-978 | instruction simulator |
+| dumpregs | 979-992 | dump the registers |
+| fetch_byte | 993-1003 | fetch an instruction or byte |
+| fetch_word | 1004-1018 | fetch a word |
+| push_word | 1019-1027 | push a word to the stack |
+| pop_word | 1028-1039 | pop a word from the stack |
+| cond | 1040-1076 | Test an 8080 flag condition and return 1 if true, 0 if false |
+| setarith | 1077-1089 |  |
+| setlogical | 1090-1102 |  |
+| parity | 1103-1124 |  |
+| setinc | 1125-1132 |  |
+| getreg | 1133-1158 | Get an 8080 register and return it |
+| putreg | 1159-1196 | Put a value into an 8-bit 8080 register from memory |
+| getpair | 1197-1215 | Return the value of a selected register pair |
+| getpush | 1216-1238 |  |
+| putpush | 1239-1261 |  |
+| putpair | 1262-1283 | Put a value into an 8080 register pair |
+| i8080_reset | 1284-1303 |  |
+| sim_load | 1304-1459 |  |
+| parse_sym | 1460-1545 |  |
+| cpu_set_hist | 1546-1578 |  |
+| cpu_show_hist | 1579-1616 |  |
+| i8080_ex | 1617-1627 |  |
+| i8080_dep | 1628-1636 |  |

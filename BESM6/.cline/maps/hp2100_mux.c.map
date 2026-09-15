@@ -1,0 +1,157 @@
+=== hp2100_mux.c — 1821 строк ===
+Источник: hp2100_mux.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_mux.c -nt .cline/maps/hp2100_mux.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 524-528 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| muxl_interface | 573 | |
+| muxu_interface | 574 | |
+| muxc_interface | 575 | |
+| ln | 940 | |
+| signal | 941 | |
+| working_set | 942 | |
+| outbound | 943 | |
+| irq_enabled | 944 | |
+| signal | 1158 | |
+| working_set | 1159 | |
+| outbound | 1160 | |
+| ln | 1209 | |
+| signal | 1210 | |
+| working_set | 1211 | |
+| outbound | 1212 | |
+| irq_enabled | 1213 | |
+| ln | 1393 | |
+| loopback | 1394 | |
+| SCPE_OK | 1452 | |
+| loopback | 1463 | |
+| result | 1464 | |
+| SCPE_OK | 1525 | |
+| return | 1576 | |
+| return | 1637 | |
+| return | 1669 | |
+| return | 1690 | |
+| mux_rpar | 1699 | |
+| mux_rchp | 1700 | |
+| mux_sta | 1701 | |
+| return | 1710 | |
+| SCPE_OK | 1747 | |
+| status | 1755 | |
+| status | 1767 | |
+| ln | 1809 | |
+| SCPE_OK | 1820 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TERM_COUNT | 16                              ... | 300 |
+| AUX_COUNT | 5                               ... | 301 |
+| RECV_CHAN_COUNT | (TERM_COUNT + AUX_COUNT)        ... | 303 |
+| SEND_CHAN_COUNT | TERM_COUNT                      ... | 304 |
+| UNIT_COUNT | TERM_COUNT                      ... | 305 |
+| FIRST_TERM | 0                               ... | 307 |
+| LAST_TERM | (FIRST_TERM + TERM_COUNT - 1)   ... | 308 |
+| FIRST_AUX | TERM_COUNT                      ... | 309 |
+| LAST_AUX | (FIRST_AUX + AUX_COUNT - 1)     ... | 310 |
+| MUXL_WAIT | 500                             ... | 315 |
+| UNIT_V_MDM | (TTUF_V_UF + 0)                 ... | 320 |
+| UNIT_V_DIAG | (TTUF_V_UF + 1)                 ... | 321 |
+| UNIT_MDM | (1 << UNIT_V_MDM) | 322 |
+| UNIT_DIAG | (1 << UNIT_V_DIAG) | 323 |
+| MUX_V_CHAN | 10                              ... | 328 |
+| MUX_M_CHAN | 037 | 329 |
+| MUX_CHAN(x) | (((x) >> MUX_V_CHAN) & MUX_M_CHAN) | 330 |
+| OTL_P | 0100000                         ... | 334 |
+| OTL_TX | 0040000                         ... | 335 |
+| OTL_ENB | 0020000                         ... | 336 |
+| OTL_TPAR | 0010000                         ... | 337 |
+| OTL_ECHO | 0010000                         ... | 338 |
+| OTL_DIAG | 0004000                         ... | 339 |
+| OTL_SYNC | 0004000                         ... | 340 |
+| OTL_V_LNT | 8                               ... | 341 |
+| OTL_M_LNT | 07 | 342 |
+| OTL_LNT(x) | (((x) >> OTL_V_LNT) & OTL_M_LNT) | 343 |
+| OTL_V_BAUD | 0                               ... | 344 |
+| OTL_M_BAUD | 0377 | 345 |
+| OTL_BAUD(x) | (((x) >> OTL_V_BAUD) & OTL_M_BAUD) | 346 |
+| OTL_CHAR | 03777                           ... | 347 |
+| OTL_PAR | 0200                            ... | 348 |
+| BAUD_RATE(p) | ((28800 / (OTL_BAUD (p) + 1) + 1... | 350 |
+| LIL_PAR | 0100000                         ... | 379 |
+| PUT_DCH(x) | (((x) & MUX_M_CHAN) << MUX_V_CHAN) | 380 |
+| LIL_CHAR | 01777                           ... | 381 |
+| LIU_SEEK | 0100000                         ... | 393 |
+| LIU_DG | 0000010                         ... | 394 |
+| LIU_BRK | 0000004                         ... | 395 |
+| LIU_LOST | 0000002                         ... | 396 |
+| LIU_TR | 0000001                         ... | 397 |
+| OTC_SCAN | 0100000                         ... | 424 |
+| OTC_UPD | 0040000                         ... | 425 |
+| OTC_V_CHAN | 10                              ... | 426 |
+| OTC_M_CHAN | 017 | 427 |
+| OTC_CHAN(x) | (((x) >> OTC_V_CHAN) & OTC_M_CHAN) | 428 |
+| OTC_EC2 | 0000200                         ... | 429 |
+| OTC_EC1 | 0000100 | 430 |
+| OTC_C2 | 0000040                         ... | 431 |
+| OTC_C1 | 0000020 | 432 |
+| OTC_V_C | 4                               ... | 433 |
+| OTC_ES2 | 0000010                         ... | 434 |
+| OTC_ES1 | 0000004 | 435 |
+| OTC_V_ES | 2 | 436 |
+| OTC_SS2 | 0000002                         ... | 437 |
+| OTC_SS1 | 0000001 | 438 |
+| OTC_RW | (OTC_ES2\|OTC_ES1\|OTC_SS2\|OTC_SS1) | 439 |
+| LIC_MBO | 0140000                         ... | 466 |
+| LIC_V_CHAN | 10                              ... | 467 |
+| LIC_M_CHAN | 017 | 468 |
+| PUT_CCH(x) | (((x) & OTC_M_CHAN) << OTC_V_CHAN) | 469 |
+| LIC_I2 | 0001000                         ... | 470 |
+| LIC_I1 | 0000400 | 471 |
+| LIC_S2 | 0000002                         ... | 472 |
+| LIC_S1 | 0000001 | 473 |
+| LIC_V_I | 8                               ... | 474 |
+| LIC_TSTI(ch) | (((muxc_lia[ch] ^ muxc_ota[ch]) &  | 476 |
+| RTS | OTC_C2              /* Control c... | 498 |
+| DTR | OTC_C1              /* Control c... | 499 |
+| DCD | LIC_S2              /* Control c... | 500 |
+| DSR | LIC_S1              /* Control c... | 501 |
+| RCV_PAR(x) | (odd_parity [(x) & 0377] ? 0 : L... | 518 |
+| XMT_PAR(x) | (odd_parity [(x) & 0377] ? 0 : O... | 519 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| muxl_interface | 938-945 |  |
+| while | 946-1155 |  |
+| muxu_interface | 1156-1161 |  |
+| while | 1162-1206 |  |
+| muxc_interface | 1207-1214 |  |
+| while | 1215-1390 |  |
+| muxi_svc | 1391-1400 |  |
+| if | 1401-1425 |  |
+| for | 1426-1457 |  |
+| muxo_svc | 1458-1473 |  |
+| if | 1474-1530 |  |
+| mux_receive | 1531-1532 |  |
+| if | 1533-1581 |  |
+| mux_data_int | 1582-1585 |  |
+| for | 1586-1602 |  |
+| for | 1603-1619 |  |
+| for | 1620-1649 |  |
+| mux_ctrl_int | 1650-1655 |  |
+| for | 1656-1674 |  |
+| mux_diag | 1675-1678 |  |
+| for | 1679-1695 |  |
+| mux_reset_ln | 1696-1715 |  |
+| muxc_reset | 1716-1733 |  |
+| if | 1734-1752 |  |
+| mux_attach | 1753-1761 |  |
+| if | 1762-1772 |  |
+| mux_detach | 1773-1806 |  |
+| mux_setdiag | 1807-1810 |  |
+| if | 1811-1821 |  |

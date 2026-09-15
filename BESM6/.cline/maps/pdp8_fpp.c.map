@@ -1,0 +1,192 @@
+=== pdp8_fpp.c — 1536 строк ===
+Источник: pdp8_fpp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp8_fpp.c -nt .cline/maps/pdp8_fpp.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| FPN | 153-156 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 102 | |
+| stop_inst | 104 | |
+| cpu_unit | 105 | |
+| fpp_zero | 171 | |
+| fpp_one | 172 | |
+| fpp_dib | 224 | |
+| AC | 336 | |
+| AC | 354 | |
+| ir | 362 | |
+| sc | 364 | |
+| SCPE_OK | 756 | |
+| ad | 763 | |
+| ad | 768 | |
+| fpp_opa | 771 | |
+| ad | 772 | |
+| ad | 777 | |
+| ad | 785 | |
+| fpp_opa | 795 | |
+| ad | 796 | |
+| ad | 801 | |
+| xr | 810 | |
+| return | 887 | |
+| return | 919 | |
+| return | 966 | |
+| sext | 973 | |
+| a->fr | 980 | |
+| FALSE | 989 | |
+| TRUE | 1047 | |
+| return | 1060 | |
+| a->exp | 1069 | |
+| a->fr | 1075 | |
+| a->fr | 1076 | |
+| return | 1077 | |
+| FALSE | 1095 | |
+| cin | 1103 | |
+| cin | 1108 | |
+| return | 1119 | |
+| cin | 1136 | |
+| return | 1148 | |
+| fill | 1187 | |
+| return | 1215 | |
+| limits | 1224 | |
+| FALSE | 1255 | |
+| cin | 1268 | |
+| return | 1311 | |
+| return | 1333 | |
+| return | 1345 | |
+| return | 1357 | |
+| return | 1369 | |
+| return | 1395 | |
+| return | 1410 | |
+| fpp_opa | 1417 | |
+| return | 1422 | |
+| ea | 1427 | |
+| ea | 1435 | |
+| return | 1440 | |
+| ea | 1445 | |
+| ea | 1451 | |
+| return | 1454 | |
+| wd0 | 1461 | |
+| return | 1475 | |
+| wd0 | 1480 | |
+| fpp_flag | 1499 | |
+| return | 1502 | |
+| fpp_flag | 1510 | |
+| fpp_last_lockbit | 1511 | |
+| SCPE_OK | 1530 | |
+| processor" | 1535 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SEXT12(x) | (((x) & 04000)? (x) \| ~07777: (x... | 107 |
+| FPC_DP | 04000                           ... | 116 |
+| FPC_UNFX | 02000                           ... | 117 |
+| FPC_FIXF | 01000                           ... | 118 |
+| FPC_IE | 00400                           ... | 119 |
+| FPC_V_FAST | 4                               ... | 120 |
+| FPC_M_FAST | 017 | 121 |
+| FPC_LOCK | 00010                           ... | 122 |
+| FPC_V_APTF | 0 | 123 |
+| FPC_M_APTF | 07                              ... | 124 |
+| FPC_STA | (FPC_DP\|FPC_LOCK) | 125 |
+| FPC_GETFAST(x) | (((x) >> FPC_V_FAST) & FPC_M_FAST) | 126 |
+| FPC_GETAPTF(x) | (((x) >> FPC_V_APTF) & FPC_M_APTF) | 127 |
+| FPS_DP | (FPC_DP)                        ... | 131 |
+| FPS_TRPX | 02000                           ... | 132 |
+| FPS_HLTX | 01000                           ... | 133 |
+| FPS_DVZX | 00400                           ... | 134 |
+| FPS_IOVX | 00200                           ... | 135 |
+| FPS_FOVX | 00100                           ... | 136 |
+| FPS_UNF | 00040                           ... | 137 |
+| FPS_XXXM | 00020                           ... | 138 |
+| FPS_LOCK | (FPC_LOCK)                      ... | 139 |
+| FPS_EP | 00004                           ... | 140 |
+| FPS_PAUSE | 00002                           ... | 141 |
+| FPS_RUN | 00001                           ... | 142 |
+| FPN_FRSIGN | 04000 | 146 |
+| FPN_NFR_FP | 2                               ... | 147 |
+| FPN_NFR_EP | 5                               ... | 148 |
+| FPN_NFR_MDS | 6                               ... | 149 |
+| EXACT | (uint32)((fpp_sta & FPS_EP)? FPN... | 150 |
+| EXTEND | ((uint32) FPN_NFR_EP) | 151 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| fpp55 | 266-267 |  |
+| switch | 268-338 |  |
+| fpp56 | 339-340 |  |
+| switch | 341-358 |  |
+| fpp_svc | 359-760 |  |
+| fpp_1wd_dir | 761-774 |  |
+| fpp_2wd_dir | 775-782 |  |
+| fpp_indir | 783-798 |  |
+| fpp_ad15 | 799-807 |  |
+| fpp_adxr | 808-813 |  |
+| if | 814-817 |  |
+| if | 818-832 |  |
+| fpp_add | 833-841 |  |
+| if | 842-891 |  |
+| fpp_mul | 892-897 |  |
+| if | 898-901 |  |
+| if | 902-923 |  |
+| fpp_div | 924-927 |  |
+| if | 928-935 |  |
+| if | 936-970 |  |
+| fpp_imul | 971-993 |  |
+| fpp_cond_met | 994-995 |  |
+| switch | 996-1026 |  |
+| fpp_norm | 1027-1028 |  |
+| if | 1029-1037 |  |
+| while | 1038-1041 |  |
+| if | 1042-1051 |  |
+| fpp_copy | 1052-1064 |  |
+| fpp_zcopy | 1065-1069 |  |
+| for | 1070-1081 |  |
+| fpp_test_xp | 1082-1083 |  |
+| if | 1084-1087 |  |
+| if | 1088-1099 |  |
+| fpp_round | 1100-1108 |  |
+| for | 1109-1130 |  |
+| for | 1131-1138 |  |
+| fpp_fr_sub | 1139-1142 |  |
+| for | 1143-1171 |  |
+| fpp_fr_mul | 1172-1188 |  |
+| for | 1189-1207 |  |
+| if | 1208-1219 |  |
+| fpp_fr_div | 1220-1235 |  |
+| for | 1236-1259 |  |
+| fpp_fr_neg | 1260-1263 |  |
+| for | 1264-1272 |  |
+| fpp_fr_test | 1273-1278 |  |
+| for | 1279-1287 |  |
+| fpp_fr_cmp | 1288-1293 |  |
+| for | 1294-1304 |  |
+| fpp_fr_fill | 1305-1315 |  |
+| fpp_fr_lshn | 1316-1319 |  |
+| if | 1320-1323 |  |
+| while | 1324-1337 |  |
+| fpp_fr_lsh12 | 1338-1349 |  |
+| fpp_fr_lsh1 | 1350-1361 |  |
+| fpp_fr_rsh1 | 1362-1373 |  |
+| fpp_fr_algn | 1374-1378 |  |
+| if | 1379-1382 |  |
+| while | 1383-1399 |  |
+| fpp_read_op | 1400-1403 |  |
+| if | 1404-1412 |  |
+| fpp_write_op | 1413-1424 |  |
+| fpp_read | 1425-1432 |  |
+| fpp_write | 1433-1442 |  |
+| apt_read | 1443-1448 |  |
+| apt_write | 1449-1458 |  |
+| fpp_load_apt | 1459-1464 |  |
+| if | 1465-1477 |  |
+| fpp_dump_apt | 1478-1489 |  |
+| if | 1490-1506 |  |
+| fpp_reset | 1507-1512 |  |
+| if | 1513-1532 |  |
+| fpp_description | 1533-1536 |  |

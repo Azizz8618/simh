@@ -1,0 +1,115 @@
+=== sigma_map.c — 593 строк ===
+Источник: sigma_map.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sigma_map.c -nt .cline/maps/sigma_map.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| mmc_ctl_t | 61-67 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mmc_rel | 69 | |
+| mmc_acc | 70 | |
+| mmc_wlk | 71 | |
+| mem_sr0 | 73 | |
+| mem_sr1 | 74 | |
+| PSW1 | 89 | |
+| CC | 90 | |
+| stop_op | 91 | |
+| cpu_model | 92 | |
+| chan_num | 93 | |
+| cpu_unit | 94 | |
+| cpu_tab | 95 | |
+| bpa | 132 | |
+| bpa | 147 | |
+| bpa | 166 | |
+| bpa | 180 | |
+| bpa | 198 | |
+| bpa | 214 | |
+| bpa | 234 | |
+| bpa | 249 | |
+| SCPE_IERR | 284 | |
+| bpa | 292 | |
+| tr | 293 | |
+| bpa | 303 | |
+| tr | 304 | |
+| tr | 349 | |
+| sc | 356 | |
+| ba | 358 | |
+| sc | 368 | |
+| ba | 370 | |
+| pa | 382 | |
+| pa | 391 | |
+| lnt | 402 | |
+| tr | 403 | |
+| tr | 433 | |
+| wd | 434 | |
+| maps_per_word | 437 | |
+| SCPE_OK | 476 | |
+| opnd | 483 | |
+| tr | 501 | |
+| SCPE_OK | 592 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BVA_REG | (RF_NUM << 2) | 31 |
+| BPAMASK | ((cpu_tab[cpu_model].pamask << 2... | 32 |
+| NUM_MUNITS | (MAXMEMSIZE / CPU_MUNIT_SIZE) | 33 |
+| S89_SR0_BADLMS | 0x00800000                      ... | 37 |
+| S89_SR0_RD | (S89_SR0_BADLMS) | 38 |
+| S89_SR0_V_PORTS | 12 | 39 |
+| S89_SR1_FIXED | 0x50C40000                      ... | 41 |
+| S89_SR1_M_MEMU | 0xF                             ... | 42 |
+| S89_SR1_V_MEMU | 24 | 43 |
+| S89_SR1_MARG | 0x00F80000                      ... | 44 |
+| S89_SR1_MAROFF | 2                               ... | 45 |
+| S5X0_SR0_FIXED | 0x40000000 | 49 |
+| S5X0_SR0_BADLMS | 0x00000004                      ... | 50 |
+| S5X0_SR0_RD | (S5X0_SR0_BADLMS) | 51 |
+| S5X0_SR0_V_PORTS | 21 | 52 |
+| S5X0_SR1_FIXED | 0xB0000000                      ... | 54 |
+| S5X0_SR1_M_MEMU | 0x7                             ... | 55 |
+| S5X0_SR1_V_MEMU | 25 | 56 |
+| S5X0_SR1_V_SA | 18                              ... | 57 |
+| S8 |  | 59 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ReadB | 130-144 |  |
+| ReadH | 145-148 |  |
+| if | 149-163 |  |
+| ReadW | 164-177 |  |
+| ReadD | 178-181 |  |
+| if | 182-195 |  |
+| WriteB | 196-211 |  |
+| WriteH | 212-215 |  |
+| if | 216-231 |  |
+| WriteW | 232-246 |  |
+| WriteD | 247-250 |  |
+| if | 251-266 |  |
+| ReadHist | 267-268 |  |
+| switch | 269-289 |  |
+| ReadMemVW | 290-300 |  |
+| WriteMemVW | 301-313 |  |
+| map_reloc | 314-315 |  |
+| if | 316-324 |  |
+| if | 325-337 |  |
+| map_viol | 338-353 |  |
+| ReadPB | 354-365 |  |
+| WritePB | 366-379 |  |
+| ReadPW | 380-388 |  |
+| WritePW | 389-399 |  |
+| map_lra | 400-406 |  |
+| if | 407-411 |  |
+| if | 412-430 |  |
+| map_mmc | 431-480 |  |
+| map_las | 481-498 |  |
+| map_lms | 499-505 |  |
+| if | 506-549 |  |
+| switch | 550-581 |  |
+| map_reset | 582-585 |  |
+| for | 586-593 |  |

@@ -1,0 +1,144 @@
+=== pdp10_mdfp.c — 812 строк ===
+Источник: pdp10_mdfp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp10_mdfp.c -nt .cline/maps/pdp10_mdfp.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| UFP | 105-110 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rs | 166 | |
+| rs | 177 | |
+| TRUE | 200 | |
+| return | 237 | |
+| dvd | 251 | |
+| TRUE | 283 | |
+| mpc | 296 | |
+| return | 339 | |
+| sign | 347 | |
+| return | 393 | |
+| ediff | 409 | |
+| savhi | 486 | |
+| rem | 487 | |
+| TRUE | 510 | |
+| a.exp | 525 | |
+| a.flo | 540 | |
+| sc | 549 | |
+| so | 550 | |
+| return | 569 | |
+| ediff | 580 | |
+| return | 630 | |
+| xh | 644 | |
+| yh | 657 | |
+| yl | 658 | |
+| return | 666 | |
+| qu | 680 | |
+| return | 708 | |
+| fphi | 715 | |
+| r->flo | 722 | |
+| return | 742 | |
+| normtab | 754 | |
+| return | 782 | |
+| val | 789 | |
+| val | 799 | |
+| val | 811 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MSK32 | 0xFFFFFFFF | 112 |
+| FIT27 | (DMASK - 0x07FFFFFF) | 113 |
+| FIT32 | (DMASK - MSK32) | 114 |
+| SFRC | TRUE                            ... | 115 |
+| AFRC | FALSE                           ... | 116 |
+| FP_BIAS | 0200                            ... | 120 |
+| FP_N_FHI | 27                              ... | 121 |
+| FP_V_FHI | 0                               ... | 122 |
+| FP_M_FHI | INT64_C(0000777777777) | 123 |
+| FP_N_EXP | 8                               ... | 124 |
+| FP_V_EXP | (FP_V_FHI + FP_N_FHI) | 125 |
+| FP_M_EXP | 0377 | 126 |
+| FP_V_SIGN | (FP_V_EXP + FP_N_EXP)           ... | 127 |
+| FP_N_FLO | 35                              ... | 128 |
+| FP_V_FLO | 0                               ... | 129 |
+| FP_M_FLO | INT64_C(0377777777777) | 130 |
+| GET_FPSIGN(x) | ((int32) (((x) >> FP_V_SIGN) & 1)) | 131 |
+| GET_FPEXP(x) | ((int32) (((x) >> FP_V_EXP) & FP... | 132 |
+| GET_FPHI(x) | ((x) & FP_M_FHI) | 133 |
+| GET_FPLO(x) | ((x) & FP_M_FLO) | 134 |
+| FP_N_GUARD | 1                               ... | 138 |
+| FP_V_UFLO | FP_N_GUARD                      ... | 139 |
+| FP_V_URNDD | (FP_V_UFLO - 1)                 ... | 140 |
+| FP_V_UFHI | (FP_V_UFLO + FP_N_FLO)          ... | 141 |
+| FP_V_URNDS | (FP_V_UFHI - 1)                 ... | 142 |
+| FP_V_UCRY | (FP_V_UFHI + FP_N_FHI)          ... | 143 |
+| FP_V_UNORM | (FP_V_UCRY - 1)                 ... | 144 |
+| FP_UFHI | INT64_C(0x7FFFFFF000000000) | 145 |
+| FP_UFLO | INT64_C(0x0000000FFFFFFFFE) | 146 |
+| FP_UFRAC | INT64_C(0x7FFFFFFFFFFFFFFE) | 147 |
+| FP_URNDD | INT64_C(0x0000000000000001) | 148 |
+| FP_URNDS | INT64_C(0x0000000800000000) | 149 |
+| FP_UNORM | INT64_C(0x4000000000000000) | 150 |
+| FP_UCRY | INT64_C(0x8000000000000000) | 151 |
+| FP_ONES | INT64_C(0xFFFFFFFFFFFFFFFF) | 152 |
+| UNEG(x) | ((~x) + 1) | 154 |
+| DUNEG(x) | x.flo = UNEG (x.flo); x.fhi = ~x... | 155 |
+| FP_V_SPM | (FP_V_UFHI - (32 - FP_N_FHI - 1)) | 459 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| imul | 164-167 |  |
+| if | 168-172 |  |
+| if | 173-184 |  |
+| idiv | 185-189 |  |
+| if | 190-204 |  |
+| mul | 205-210 |  |
+| if | 211-214 |  |
+| if | 215-229 |  |
+| if | 230-232 |  |
+| if | 233-244 |  |
+| divi | 245-254 |  |
+| if | 255-257 |  |
+| if | 258-261 |  |
+| if | 262-289 |  |
+| dmul | 290-300 |  |
+| if | 301-303 |  |
+| if | 304-310 |  |
+| for | 311-325 |  |
+| if | 326-333 |  |
+| if | 334-343 |  |
+| ddiv | 344-352 |  |
+| if | 353-360 |  |
+| if | 361-364 |  |
+| if | 365-369 |  |
+| for | 370-382 |  |
+| if | 383-385 |  |
+| if | 386-406 |  |
+| fad | 407-459 |  |
+| fmp | 460-482 |  |
+| fdv | 483-490 |  |
+| if | 491-494 |  |
+| if | 495-514 |  |
+| fsc | 515-531 |  |
+| fltr | 532-546 |  |
+| fix | 547-576 |  |
+| dfad | 577-582 |  |
+| if | 583-640 |  |
+| dfmp | 641-648 |  |
+| if | 649-675 |  |
+| dfdv | 676-684 |  |
+| if | 685-688 |  |
+| if | 689-712 |  |
+| funpack | 713-722 |  |
+| if | 723-746 |  |
+| fnorm | 747-755 |  |
+| if | 756-761 |  |
+| if | 762-765 |  |
+| while | 766-774 |  |
+| if | 775-786 |  |
+| fpack | 787-799 |  |
+| if | 800-812 |  |

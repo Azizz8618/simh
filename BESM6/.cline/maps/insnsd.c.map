@@ -1,0 +1,4 @@
+=== insnsd.c — 4550 строк ===
+Источник: insnsd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test insnsd.c -nt .cline/maps/insnsd.c.map
+

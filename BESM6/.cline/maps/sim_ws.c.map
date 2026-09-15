@@ -1,0 +1,68 @@
+=== sim_ws.c — 500 строк ===
+Источник: sim_ws.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_ws.c -nt .cline/maps/sim_ws.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CURSOR | 79-86 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ws_lp_x | 55 | |
+| ws_lp_y | 56 | |
+| xpixels | 72 | |
+| pix_size | 73 | |
+| window_name | 74 | |
+| colors | 75 | |
+| ncolors | 76 | |
+| surface | 77 | |
+| arrow_cursor | 88 | |
+| cross_cursor | 89 | |
+| byte | 312 | |
+| data | 313 | |
+| mask | 314 | |
+| black | 315 | |
+| result | 316 | |
+| width | 317 | |
+| hot_x | 318 | |
+| black | 325 | |
+| white | 326 | |
+| transparent | 327 | |
+| bit | 335 | |
+| byte | 336 | |
+| result | 373 | |
+| tnew | 489 | |
+| ret | 490 | |
+| ret | 499 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PIX_SIZE | 1 | 48 |
+| MODKEY(L, | R, mod)    | 158 |
+| MODIFIER_KEYS |  | 160 |
+| SPCLKEY(K, | LC, UC)   | 165 |
+| SPECIAL_CHAR_KEYS |  | 170 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| map_key | 93-153 |  |
+| key_to_ascii | 154-209 |  |
+| ws_poll | 210-309 |  |
+| ws_create_cursor | 310-329 |  |
+| if | 330-336 |  |
+| for | 337-360 |  |
+| if | 361-375 |  |
+| ws_free_cursor | 376-386 |  |
+| ws_init | 387-408 |  |
+| ws_shutdown | 409-416 |  |
+| ws_color_rgb | 417-440 |  |
+| ws_color_black | 441-446 |  |
+| ws_color_white | 447-452 |  |
+| ws_display_point | 453-475 |  |
+| ws_sync | 476-481 |  |
+| ws_beep | 482-486 |  |
+| os_elapsed | 487-500 |  |

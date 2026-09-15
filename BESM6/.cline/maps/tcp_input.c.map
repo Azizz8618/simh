@@ -1,0 +1,21 @@
+=== tcp_input.c — 1496 строк ===
+Источник: tcp_input.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test tcp_input.c -nt .cline/maps/tcp_input.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TCPREXMTTHRESH | 3 | 44 |
+| TCP_PAWS_IDLE | (24 * 24 * 60 * 60 * PR_SLOWHZ) | 46 |
+| TSTMP_LT(a,b) | ((int)((a)-(b)) < 0) | 49 |
+| TSTMP_GEQ(a,b) | ((int)((a)-(b)) >= 0) | 50 |
+| TCP_REASS(tp, | ti, m, so, flags) { | 63 |
+| TCP_REASS(tp, | ti, m, so, flags) {  | 83 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tcp_input | 216-1298 |  |
+| tcp_dooptions | 1299-1380 |  |
+| tcp_xmit_timer | 1381-1467 |  |
+| tcp_mss | 1468-1496 |  |

@@ -1,0 +1,86 @@
+=== ibm1130_sca.c — 1132 строк ===
+Источник: ibm1130_sca.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_sca.c -nt .cline/maps/ibm1130_sca.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| {SCA_TIMER_INACTIVE | 150 | |
+| sca_state | 159 | |
+| sca_frame | 162 | |
+| sca_lsock | 173 | |
+| sca_sock | 174 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEBUG_SCA_FLUSH | 0x0001                      /* d... | 88 |
+| DEBUG_SCA_TRANSMIT | 0x0002 | 89 |
+| DEBUG_SCA_CHECK_INDATA | 0x0004 | 90 |
+| DEBUG_SCA_RECEIVE_SYNC | 0x0008 | 91 |
+| DEBUG_SCA_RECEIVE_DATA | 0x0010 | 92 |
+| DEBUG_SCA_XIO_READ | 0x0020 | 93 |
+| DEBUG_SCA_XIO_WRITE | 0x0040 | 94 |
+| DEBUG_SCA_XIO_CONTROL | 0x0080 | 95 |
+| DEBUG_SCA_XIO_INITW | 0x0100 | 96 |
+| DEBUG_SCA_XIO_INITR | 0x0200 | 97 |
+| DEBUG_SCA_XIO_SENSE_DEV | 0x0400 | 98 |
+| DEBUG_SCA_TIMERS | 0x0800 | 99 |
+| DEBUG_SCA_ALL | 0xFFFF | 100 |
+| DEBUG_SCA | (DEBUG_SCA_TIMERS\|DEBUG_SCA_FLUS... | 103 |
+| SCA_DEFAULT_PORT | "2703"                      /* d... | 105 |
+| MAX_SYNS | 100                        /* nu... | 107 |
+| SCA_DSW_READ_RESPONSE | 0x8000      /* receive buffer fu... | 113 |
+| SCA_DSW_WRITE_RESPONSE | 0x4000      /* transmitter buffe... | 114 |
+| SCA_DSW_CHECK | 0x2000      /* data overrun or c... | 115 |
+| SCA_DSW_TIMEOUT | 0x1000      /* timer interrupt, ... | 116 |
+| SCA_DSW_AUTOANSWER_REQUEST | 0x0800      /* dataset is ringin... | 117 |
+| SCA_DSW_BUSY | 0x0400      /* adapter is in eit... | 118 |
+| SCA_DSW_AUTOANSWER_ENABLED | 0x0200      /* 1 when autoanswer... | 119 |
+| SCA_DSW_READY | 0x0100      /* Carrier detect? C... | 120 |
+| SCA_DSW_RECEIVE_RUN | 0x0080      /* used in two-wire ... | 121 |
+| IS_ONLINE(u) | (((u)->flags & (UNIT_ATT\|UNIT_DI... | 123 |
+| TIMER_3S | 0       /* 3 second timer       ... | 152 |
+| TIMER_125S | 1       /* 1.25 second timer */ | 153 |
+| TIMER_035S | 2       /* 0.35 second timer */ | 154 |
+| SCA_SENDBUF_SIZE | 145                             ... | 176 |
+| SCA_RCVBUF_SIZE | 256                             ... | 177 |
+| SCA_SEND_THRESHHOLD | 140                             ... | 178 |
+| SCA_IDLE_THRESHHOLD | 3                             /*... | 179 |
+| UNIT_V_BISYNC | (UNIT_V_UF + 0)                 ... | 187 |
+| UNIT_V_BAUD | (UNIT_V_UF + 1)                 ... | 188 |
+| UNIT_V_FULLDUPLEX | (UNIT_V_UF + 4) | 189 |
+| UNIT_V_AUTOANSWER | (UNIT_V_UF + 5) | 190 |
+| UNIT_V_LISTEN | (UNIT_V_UF + 6)                 ... | 191 |
+| UNIT_BISYNC | (1u << UNIT_V_BISYNC) | 193 |
+| UNIT_BAUDMASK | (7u << UNIT_V_BAUD) | 194 |
+| UNIT_BAUD600 | (0u << UNIT_V_BAUD) | 195 |
+| UNIT_BAUD1200 | (1u << UNIT_V_BAUD) | 196 |
+| UNIT_BAUD2000 | (2u << UNIT_V_BAUD) | 197 |
+| UNIT_BAUD2400 | (3u << UNIT_V_BAUD) | 198 |
+| UNIT_BAUD4800 | (4u << UNIT_V_BAUD) | 199 |
+| UNIT_FULLDUPLEX | (1u << UNIT_V_FULLDUPLEX) | 200 |
+| UNIT_AUTOANSWER | (1u << UNIT_V_AUTOANSWER) | 201 |
+| UNIT_LISTEN | (1u << UNIT_V_LISTEN) | 202 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mode | 125-244 |  |
+| sca_set_baud | 245-276 |  |
+| mstring | 277-294 |  |
+| sca_socket_error | 295-330 |  |
+| sca_flush | 331-360 |  |
+| sca_transmit_byte | 361-414 |  |
+| sca_interrupt | 415-426 |  |
+| sca_reset | 427-449 |  |
+| sca_attach | 450-548 |  |
+| sca_detach | 549-581 |  |
+| sca_check_connect | 582-605 |  |
+| sca_check_indata | 606-643 |  |
+| sca_svc | 644-795 |  |
+| sca_toggle_timer | 796-813 |  |
+| sca_start_timer | 814-823 |  |
+| sca_halt_timer | 824-837 |  |
+| sca_start_transmit | 838-871 |  |
+| xio_sca | 872-1132 |  |

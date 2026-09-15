@@ -1,0 +1,67 @@
+=== i1401_cd.c — 587 строк ===
+Источник: i1401_cd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i1401_cd.c -nt .cline/maps/i1401_cd.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ind | 100 | |
+| conv_old | 101 | |
+| s1sel | 103 | |
+| SCPE_OK | 276 | |
+| SCPE_OK | 306 | |
+| use_h | 322 | |
+| use_h | 328 | |
+| SCPE_OK | 358 | |
+| uptr | 365 | |
+| SCPE_OK | 387 | |
+| SCPE_OK | 407 | |
+| SCPE_OK | 432 | |
+| SCPE_OK | 465 | |
+| SCPE_OK | 475 | |
+| SCPE_OK | 488 | |
+| saved_IS | 531 | |
+| saved_IS | 537 | |
+| SCPE_OK | 538 | |
+| cdp_buf_full | 545 | |
+| bcd | 580 | |
+| bcd | 586 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_PCH | (UNIT_V_UF + 0)                 ... | 94 |
+| UNIT_PCH | (1 << UNIT_V_PCH) | 95 |
+| UNIT_V_CONS | (UNIT_V_UF + 1)                 ... | 96 |
+| UNIT_CONS | (1 << UNIT_V_CONS) | 97 |
+| BOOT_START | 0 | 521 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (uns... | 522 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| read_card | 231-235 |  |
+| if | 236-252 |  |
+| if | 253-288 |  |
+| cdr_svc | 289-298 |  |
+| if | 299-318 |  |
+| punch_card | 319-332 |  |
+| if | 333-362 |  |
+| cdp_npr | 363-378 |  |
+| if | 379-396 |  |
+| select_stack | 397-411 |  |
+| cdr_read_file | 412-413 |  |
+| if | 414-416 |  |
+| if | 417-425 |  |
+| if | 426-436 |  |
+| cdr_read_cons | 437-441 |  |
+| for | 442-469 |  |
+| cd_reset | 470-481 |  |
+| cdr_chg_cons | 482-492 |  |
+| cdr_attach | 493-506 |  |
+| cdr_detach | 507-527 |  |
+| cdr_boot | 528-542 |  |
+| cdp_attach | 543-550 |  |
+| cdp_detach | 551-576 |  |
+| colbin_to_bcd | 577-581 |  |
+| for | 582-587 |  |

@@ -1,0 +1,84 @@
+=== pdp11_uc15.c — 542 строк ===
+Источник: pdp11_uc15.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_uc15.c -nt .cline/maps/pdp11_uc15.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 84 | |
+| cpu_unit | 85 | |
+| ucb_csr | 90 | |
+| ucb_buf | 91 | |
+| pdp15_mem | 96 | |
+| uc15_memsize | 97 | |
+| SCPE_NXM | 200 | |
+| SCPE_NXM | 231 | |
+| SCPE_NXM | 268 | |
+| SCPE_NXM | 299 | |
+| SCPE_OK | 311 | |
+| SCPE_OK | 332 | |
+| uca_buf | 362 | |
+| return | 375 | |
+| basead | 388 | |
+| uca_csr | 390 | |
+| uca_buf | 391 | |
+| ucb_csr | 392 | |
+| ucb_buf | 393 | |
+| SCPE_OK | 410 | |
+| SCPE_OK | 421 | |
+| SCPE_OK | 429 | |
+| SCPE_NOFNC | 436 | |
+| SCPE_OK | 447 | |
+| return | 486 | |
+| return | 501 | |
+| alim | 508 | |
+| alim | 527 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UCAC_APID | (CSR_DONE) | 68 |
+| UCAB_V_TCBHI | 0 | 69 |
+| UCAB_M_TCBHI | 03 | 70 |
+| UCAB_API2 | 0000100 | 71 |
+| UCAB_API0 | 0000200 | 72 |
+| UCAB_V_LOCAL | 8 | 73 |
+| UCAB_M_LOCAL | 07 | 74 |
+| UCAB_API3 | 0040000 | 75 |
+| UCAB_API1 | 0100000 | 76 |
+| UCBC_NTCB | (CSR_DONE) | 80 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| uca_rd | 184-185 |  |
+| switch | 186-202 |  |
+| uca_wr | 203-204 |  |
+| switch | 205-233 |  |
+| ucb_rd | 234-235 |  |
+| switch | 236-270 |  |
+| ucb_wr | 271-272 |  |
+| switch | 273-303 |  |
+| uc15_api_req | 304-315 |  |
+| uc15_svc | 316-320 |  |
+| if | 321-327 |  |
+| if | 328-341 |  |
+| uc15_get_uca_buf | 342-352 |  |
+| for | 353-356 |  |
+| if | 357-366 |  |
+| uc15_set_memsize | 367-384 |  |
+| uc15_reset | 385-395 |  |
+| if | 396-401 |  |
+| if | 402-414 |  |
+| uc15_ex | 415-423 |  |
+| uc15_dep | 424-433 |  |
+| uc15_attach | 434-440 |  |
+| uc15_detach | 441-457 |  |
+| uc15_RdMemW | 458-467 |  |
+| uc15_RdMemB | 468-477 |  |
+| uc15_WrMemW | 478-488 |  |
+| uc15_WrMemB | 489-505 |  |
+| Map_Read18 | 506-516 |  |
+| for | 517-524 |  |
+| Map_Write18 | 525-535 |  |
+| for | 536-542 |  |

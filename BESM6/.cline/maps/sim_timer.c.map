@@ -1,0 +1,531 @@
+=== sim_timer.c — 3936 строк ===
+Источник: sim_timer.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_timer.c -nt .cline/maps/sim_timer.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| RTC | 199-238 |
+|     unsigned int dev_status | 517-520 |
+| ITEM | 522-527 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| idle_clock | 106 | |
+| real_sim_os_sleep_min_ms | 118 | |
+| real_sim_os_sleep_inc_ms | 119 | |
+| tick_left | 125 | |
+| sim_vm_initial_ips | 158 | |
+| sim_precalibrate_ips | 160 | |
+| sim_os_sleep_min_ms | 168 | |
+| sim_os_sleep_inc_ms | 169 | |
+| sim_os_clock_resoluton_ms | 170 | |
+| sim_os_tick_hz | 171 | |
+| sim_idle_stable | 172 | |
+| sim_idle_calib_pct | 173 | |
+| sim_idle_backward_jumps | 174 | |
+| sim_idle_backward_total | 175 | |
+| sim_idle_forward_jumps | 176 | |
+| sim_idle_forward_total | 177 | |
+| sim_timer_stop_time | 178 | |
+| sim_rom_delay | 179 | |
+| sim_throt_ms_start | 180 | |
+| sim_throt_ms_stop | 181 | |
+| sim_throt_type | 182 | |
+| sim_throt_val | 183 | |
+| sim_throt_drift_pct | 184 | |
+| sim_throt_state | 185 | |
+| sim_throt_cps | 186 | |
+| sim_throt_peak_cps | 187 | |
+| sim_throt_inst_start | 188 | |
+| sim_throt_sleep_time | 189 | |
+| sim_throt_wait | 190 | |
+| sim_throt_delay | 191 | |
+| sim_int_clk_tps | 194 | |
+| sim_timer_calib_enabled | 195 | |
+| sim_timer_uncalib_base_time | 196 | |
+| sim_throttle_has_been_active | 197 | |
+| rtcs | 240 | |
+| sim_catchup_ticks | 246 | |
+| sim_asynch_timer | 250 | |
+| sim_wallclock_queue | 254 | |
+| sim_wallclock_entry | 255 | |
+| sim_os_sleep_tot_ms | 278 | |
+| sim_os_sleep_inc_tot_ms | 279 | |
+| real_sim_os_sleep_min_ms | 291 | |
+| real_sim_os_sleep_inc_ms | 296 | |
+| sim_os_sleep_tot_ms | 301 | |
+| sim_os_sleep_min_ms | 303 | |
+| sim_os_sleep_inc_tot_ms | 307 | |
+| sim_os_sleep_inc_ms | 309 | |
+| sim_os_sleep_min_ms | 311 | |
+| end_time | 325 | |
+| start_time | 326 | |
+| timedout | 327 | |
+| sim_idle_wait | 337 | |
+| sim_idle_wait | 340 | |
+| val | 388 | |
+| SCPE_OK | 393 | |
+| sched_policy | 399 | |
+| sched_priority | 400 | |
+| SCPE_OK | 420 | |
+| rtc_avail | 446 | |
+| quo | 450 | |
+| quo | 460 | |
+| quo | 471 | |
+| qtime | 487 | |
+| nsfactor | 488 | |
+| zero | 489 | |
+| secs | 500 | |
+| tp->tv_sec | 511 | |
+| tp->tv_nsec | 512 | |
+| CPUtime | 531 | |
+| iosb | 534 | |
+| SCPE_OK | 542 | |
+| rtc_avail | 549 | |
+| timers | 561 | |
+| mm_status | 570 | |
+| now | 602 | |
+| unixbase | 609 | |
+| ftCreation | 621 | |
+| SCPE_OK | 626 | |
+| rtc_avail | 639 | |
+| ts | 643 | |
+| usage | 665 | |
+| SCPE_OK | 673 | |
+| clockid_t | 678 | |
+| cur | 681 | |
+| foo | 682 | |
+| tp->tv_sec | 690 | |
+| tp->tv_nsec | 691 | |
+| treq | 700 | |
+| treq.tv_sec | 702 | |
+| errno | 718 | |
+| SCPE_OK | 735 | |
+| SCPE_OK | 745 | |
+| sim_timer_dev | 855 | |
+| sim_throttle_dev | 856 | |
+| sim_stop_dev | 857 | |
+| rtc | 872 | |
+| rtc | 882 | |
+| rtc->vtime | 904 | |
+| rtc->nxintv | 905 | |
+| rtc->ticks | 906 | |
+| rtc->last_hz | 907 | |
+| rtc->hz | 908 | |
+| rtc->based | 909 | |
+| rtc->currd | 910 | |
+| rtc->initd | 911 | |
+| rtc->elapsed | 912 | |
+| rtc->calibrations | 913 | |
+| rtc->clock_ticks | 915 | |
+| rtc->calib_tick_time | 917 | |
+| rtc->clock_catchup_pending | 918 | |
+| rtc->clock_catchup_eligible | 919 | |
+| rtc->clock_catchup_ticks | 921 | |
+| rtc->clock_catchup_ticks_curr | 922 | |
+| rtc->calib_ticks_acked | 924 | |
+| time | 928 | |
+| rtc | 933 | |
+| new_rtime | 940 | |
+| delta_vtime | 941 | |
+| new_gtime | 942 | |
+| new_currd | 943 | |
+| itmr | 944 | |
+| rtc | 945 | |
+| rtc | 953 | |
+| catchup_ticks_curr | 995 | |
+| rtc->clock_catchup_ticks_curr | 996 | |
+| rtc->currd | 1121 | |
+| tmr | 1140 | |
+| clock_start | 1141 | |
+| sim_stop_unit.action | 1158 | |
+| SIM_INTERNAL_UNIT.flags | 1159 | |
+| sim_throttle_unit.action | 1162 | |
+| sim_os_clock_resoluton_ms | 1169 | |
+| tmr | 1220 | |
+| now | 1221 | |
+| time_t_now | 1222 | |
+| calibration_type | 1225 | |
+| SCPE_OK | 1423 | |
+| tmr | 1428 | |
+| SCPE_OK | 1490 | |
+| SCPE_OK | 1572 | |
+| SCPE_OK | 1578 | |
+| tptr | 1585 | |
+| val | 1587 | |
+| tmr | 1588 | |
+| sim_timer_calib_enabled | 1650 | |
+| sim_time_at_sim_prompt | 1651 | |
+| SCPE_OK | 1676 | |
+| base | 1681 | |
+| msecs | 1682 | |
+| secs | 1683 | |
+| fields | 1684 | |
+| msecs | 1693 | |
+| sim_timer_uncalib_base_time.tv_sec | 1702 | |
+| sim_timer_uncalib_base_time.tv_nsec | 1703 | |
+| SCPE_OK | 1707 | |
+| stop_time | 1715 | |
+| SCPE_OK | 1727 | |
+| SCPE_OK | 1746 | |
+| facilities" | 1772 | |
+| Timer" | 1777 | |
+| facility" | 1782 | |
+| facility" | 1787 | |
+| cvptr | 1822 | |
+| ctptr | 1823 | |
+| SCPE_OK | 1841 | |
+| w_ms | 1868 | |
+| act_cyc | 1869 | |
+| in_nowait | 1870 | |
+| cyc_since_idle | 1871 | |
+| rtc | 1872 | |
+| rtc | 1876 | |
+| in_nowait | 1960 | |
+| TRUE | 1980 | |
+| sim_idle_enab | 2004 | |
+| SCPE_OK | 2009 | |
+| sim_idle_enab | 2016 | |
+| SCPE_OK | 2017 | |
+| SCPE_OK | 2030 | |
+| tptr | 2037 | |
+| saved_throt_type | 2039 | |
+| factor | 2040 | |
+| val | 2041 | |
+| sim_throt_sleep_time | 2059 | |
+| SCPE_OK | 2157 | |
+| SCPE_OK | 2207 | |
+| tmr | 2245 | |
+| delta_ms | 2246 | |
+| a_cps | 2247 | |
+| rtc | 2248 | |
+| SCPE_OK | 2441 | |
+| stat | 2448 | |
+| rtc | 2449 | |
+| stat | 2532 | |
+| SCPE_STOP | 2537 | |
+| sim_timer_uncalib_base_time | 2542 | |
+| &sim_timer_uncalib_base_time | 2547 | |
+| ts_now | 2566 | |
+| ts_now.tv_sec | 2572 | |
+| tmr | 2614 | |
+| bReturn | 2615 | |
+| bReturn | 2670 | |
+| rtc | 2675 | |
+| rtc | 2679 | |
+| SCPE_OK | 2683 | |
+| now | 2702 | |
+| sim_timer_startup_cond | 2711 | |
+| sim_timer_thread_running | 2712 | |
+| sched_policy | 2717 | |
+| sched_priority | 2718 | |
+| sim_timer_thread_running | 2730 | |
+| sim_timer_thread_running | 2804 | |
+| NULL | 2809 | |
+| SCPE_OK | 2834 | |
+| tmr | 2862 | |
+| rtc | 2863 | |
+| sim_calb_tmr | 2952 | |
+| sim_timer_dev.description | 2959 | |
+| sim_throttle_dev.description | 2960 | |
+| sim_int_timer_dev.description | 2961 | |
+| sim_stop_dev.description | 2962 | |
+| SCPE_OK | 2967 | |
+| tmr | 2972 | |
+| registered_units | 2978 | |
+| tmr | 3028 | |
+| SCPE_OK | 3122 | |
+| inst_per_sec | 3131 | |
+| rtc | 3132 | |
+| rtc | 3136 | |
+| inst_per_sec | 3140 | |
+| ouptr | 3173 | |
+| inst_delay | 3174 | |
+| inst_delay_d | 3175 | |
+| stat | 3176 | |
+| crtc | 3177 | |
+| usec_delay | 3330 | |
+| uptr->usecs_remaining | 3331 | |
+| uptr->usecs_remaining | 3333 | |
+| stat | 3338 | |
+| rtc | 3345 | |
+| rtc | 3353 | |
+| rtc->clock_unit | 3375 | |
+| SCPE_OK | 3381 | |
+| rtc | 3392 | |
+| rtc | 3429 | |
+| rtc | 3443 | |
+| SCPE_OK | 3477 | |
+| AIO_UPDATE_QUEUE | 3489 | |
+| FALSE | 3529 | |
+| tmr | 3534 | |
+| FALSE | 3544 | |
+| tmr | 3549 | |
+| SCPE_IERR | 3559 | |
+| tmr | 3565 | |
+| b_return | 3566 | |
+| AIO_UPDATE_QUEUE | 3568 | |
+| b_return | 3621 | |
+| tmr | 3626 | |
+| FALSE | 3637 | |
+| cptr | 3643 | |
+| tmr | 3644 | |
+| cptr | 3706 | |
+| tmr | 3707 | |
+| result | 3708 | |
+| rom_loopval | 3815 | |
+| rom_loopval | 3823 | |
+| sim_rom_delay | 3861 | |
+| sim_rom_delay | 3866 | |
+| cmd | 3881 | |
+| start | 3882 | |
+| saved_switches | 3883 | |
+| tmr | 3884 | |
+| sim_switches | 3895 | |
+| sim_inst_per_sec_last | 3923 | |
+| sim_idle_stable | 3924 | |
+| sim_switches | 3925 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NOT_MUX_USING_CODE | /* sim_tmxr library provider or ... | 86 |
+| SIM_INTERNAL_CLK | (SIM_NTIMERS+(1<<30)) | 92 |
+| SIM_INTERNAL_UNIT | sim_internal_timer_unit | 93 |
+| MIN(a,b) | (((a) < (b)) ? (a) : (b)) | 95 |
+| MAX(a,b) | (((a) > (b)) ? (a) : (b)) | 98 |
+| CLK_TPS | 100 | 192 |
+| CLK_INIT | (sim_precalibrate_ips/CLK_TPS) | 193 |
+| NEED_THREAD_PRIORITY |  | 374 |
+| NANOS_PER_MILLI | 1000000 | 636 |
+| MILLIS_PER_SEC | 1000 | 637 |
+| DBG_IDL | TIMER_DBG_IDLE        /* idling */ | 826 |
+| DBG_QUE | TIMER_DBG_QUEUE       /* queue a... | 827 |
+| DBG_MUX | TIMER_DBG_MUX         /* tmxr qu... | 828 |
+| DBG_TRC | 0x008                 /* tracing */ | 829 |
+| DBG_CAL | 0x010                 /* calibra... | 830 |
+| DBG_TIM | 0x020                 /* timer t... | 831 |
+| DBG_THR | 0x040                 /* throttl... | 832 |
+| DBG_ACK | 0x080                 /* interru... | 833 |
+| DBG_CHK | 0x100                 /* check s... | 834 |
+| DBG_INT | 0x200                 /* interna... | 835 |
+| DBG_GET | 0x400                 /* get_tim... | 836 |
+| DBG_TIK | 0x800                 /* tick ac... | 837 |
+| SIM_TIMER_ABORT(msg) | _sim_timer_abort (msg, __FILE__,... | 1844 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_idle_ms_sleep | 121-140 |  |
+| _sim_os_msec | 141-145 |  |
+| sim_os_ms_sleep | 146-269 |  |
+| sim_os_msec | 270-280 |  |
+| _compute_minimum_sleep | 281-322 |  |
+| sim_idle_ms_sleep | 323-331 |  |
+| if | 332-344 |  |
+| if | 345-352 |  |
+| if | 353-357 | backwards, the return value is 0. |
+| if | 358-365 |  |
+| sim_idle_ms_sleep | 366-385 |  |
+| sim_os_set_thread_priority | 386-396 | to manage thread priority |
+| sim_os_set_thread_priority | 397-407 | Native pthreads priority implementation |
+| switch | 408-447 |  |
+| _sim_os_msec | 448-460 |  |
+| for | 461-473 |  |
+| sim_os_sleep | 474-478 |  |
+| sim_os_ms_sleep_init | 479-483 |  |
+| sim_os_ms_sleep | 484-497 |  |
+| clock_gettime | 498-501 |  |
+| if | 502-528 |  |
+| sim_os_process_cpu_times | 529-531 |  |
+| {sizeof | 532-550 |  |
+| _sim_os_msec | 551-555 |  |
+| sim_os_sleep | 556-562 |  |
+| sim_timer_exit | 563-567 |  |
+| sim_os_ms_sleep_init | 568-572 |  |
+| if | 573-576 |  |
+| if | 577-581 |  |
+| if | 582-590 |  |
+| sim_os_ms_sleep | 591-599 |  |
+| clock_gettime | 600-603 |  |
+| if | 604-618 |  |
+| sim_os_process_cpu_times | 619-640 |  |
+| _sim_os_msec | 641-649 |  |
+| sim_os_sleep | 650-654 |  |
+| sim_os_ms_sleep_init | 655-662 |  |
+| sim_os_process_cpu_times | 663-668 |  |
+| if | 669-678 |  |
+| clock_gettime | 679-683 |  |
+| if | 684-696 |  |
+| sim_os_ms_sleep | 697-712 |  |
+| sim_os_set_thread_priority | 713-718 |  |
+| switch | 719-742 |  |
+| sim_os_set_thread_priority | 743-757 |  |
+| sim_timespec_diff | 758-762 |  |
+| while | 763-769 | Borrow as needed for the nsec value |
+| while | 770-786 | Normalize the result |
+| sim_timespec_compare | 787-788 |  |
+| while | 789-792 |  |
+| while | 793-859 |  |
+| sim_rtcn_init | 860-864 |  |
+| sim_rtcn_init_unit | 865-869 |  |
+| sim_rtcn_init_unit_ticks | 870-897 |  |
+| if | 898-930 |  |
+| sim_rtcn_calb_tick | 931-937 |  |
+| sim_rtcn_calb | 938-953 |  |
+| if | 954-982 |  |
+| if | 983-986 |  |
+| if | 987-1000 |  |
+| if | 1001-1013 |  |
+| if | 1014-1031 |  |
+| if | 1032-1049 |  |
+| if | 1050-1064 |  |
+| if | 1065-1069 |  |
+| if | 1070-1113 |  |
+| for | 1114-1125 | Adjust calibration for other timers which depend on this timer's calibration |
+| sim_rtc_init | 1126-1130 |  |
+| sim_rtc_calb | 1131-1137 |  |
+| sim_timer_init | 1138-1146 |  |
+| for | 1147-1207 |  |
+| sim_timer_idle_capable | 1208-1217 |  |
+| sim_show_timers | 1218-1232 | sim_show_timers - show running timer information |
+| if | 1233-1244 |  |
+| if | 1245-1247 |  |
+| if | 1248-1306 |  |
+| if | 1307-1314 |  |
+| for | 1315-1425 |  |
+| sim_show_clock_queues | 1426-1431 |  |
+| if | 1432-1456 |  |
+| for | 1457-1560 |  |
+| sim_timer_set_catchup | 1561-1562 |  |
+| if | 1563-1574 |  |
+| sim_timer_show_catchup | 1575-1582 |  |
+| sim_timer_set_calib | 1583-1589 |  |
+| if | 1590-1622 |  |
+| if | 1623-1653 |  |
+| for | 1654-1668 |  |
+| sim_show_calibration | 1669-1678 |  |
+| sim_timer_set_uncalib_base | 1679-1685 |  |
+| if | 1686-1697 |  |
+| if | 1698-1711 |  |
+| sim_timer_set_stop | 1712-1731 |  |
+| sim_timer_set_async | 1732-1733 |  |
+| if | 1734-1769 |  |
+| sim_timer_description | 1770-1774 |  |
+| sim_int_timer_description | 1775-1779 |  |
+| sim_int_stop_description | 1780-1784 |  |
+| sim_throttle_description | 1785-1819 |  |
+| sim_set_timers | 1820-1827 |  |
+| while | 1828-1844 |  |
+| _sim_timer_abort | 1845-1865 |  |
+| sim_idle | 1866-1876 |  |
+| if | 1877-1882 |  |
+| if | 1883-1899 |  |
+| if | 1900-1928 |  |
+| if | 1929-1933 |  |
+| if | 1934-1948 |  |
+| if | 1949-1955 |  |
+| if | 1956-1982 |  |
+| sim_timer_idle | 1983-1990 |  |
+| sim_set_idle | 1991-1997 |  |
+| if | 1998-2004 |  |
+| if | 2005-2013 |  |
+| sim_clr_idle | 2014-2021 |  |
+| sim_show_idle | 2022-2034 |  |
+| sim_set_throt | 2035-2042 |  |
+| if | 2043-2060 |  |
+| if | 2061-2072 |  |
+| if | 2073-2097 |  |
+| if | 2098-2107 |  |
+| if | 2108-2159 |  |
+| sim_show_throt | 2160-2209 |  |
+| sim_throt_sched | 2210-2211 |  |
+| if | 2212-2228 |  |
+| sim_throt_cancel | 2229-2242 |  |
+| sim_throt_svc | 2243-2251 |  |
+| switch | 2252-2444 |  |
+| sim_timer_tick_svc | 2445-2534 | Clock assist activities |
+| sim_timer_stop_svc | 2535-2539 |  |
+| sim_rtcn_set_debug_basetime | 2540-2544 |  |
+| sim_rtcn_get_debug_basetime | 2545-2549 |  |
+| sim_rtcn_debug_time | 2550-2557 |  |
+| sim_rtcn_get_time | 2558-2563 |  |
+| sim_get_time | 2564-2611 |  |
+| _rtcn_tick_catchup_check | 2612-2618 |  |
+| if | 2619-2672 |  |
+| sim_rtcn_tick_ack | 2673-2686 |  |
+| _timespec_to_double | 2687-2691 |  |
+| _double_to_timespec | 2692-2699 |  |
+| sim_timenow_double | 2700-2714 |  |
+| _timer_thread | 2715-2731 |  |
+| while | 2732-2828 |  |
+| sim_timer_clock_tick_svc | 2829-2859 |  |
+| _rtcn_configure_calibrated_clock | 2860-2866 |  |
+| for | 2867-2873 |  |
+| if | 2874-2914 |  |
+| if | 2915-2954 |  |
+| sim_timer_clock_reset | 2955-2962 |  |
+| if | 2963-2969 |  |
+| sim_start_timer_services | 2970-2980 |  |
+| for | 2981-2993 |  |
+| if | 2994-3009 |  |
+| if | 3010-3025 |  |
+| sim_stop_timer_services | 3026-3034 |  |
+| for | 3035-3069 |  |
+| if | 3070-3084 |  |
+| if | 3085-3113 |  |
+| sim_timer_change_asynch | 3114-3128 |  |
+| sim_timer_inst_per_sec | 3129-3142 |  |
+| sim_timer_activate | 3143-3149 |  |
+| if | 3150-3170 |  |
+| sim_timer_activate_after | 3171-3180 |  |
+| for | 3181-3190 | If this is a clock unit, we need to schedule the related timer unit instead |
+| if | 3191-3217 |  |
+| if | 3218-3271 |  |
+| if | 3272-3342 | truncation has happened. |
+| sim_register_clock_unit_tmr | 3343-3353 |  |
+| if | 3354-3384 |  |
+| sim_rtcn_calibrated_tmr | 3385-3389 | Default timer is 0, otherwise use a calibrated one if it exists |
+| sim_rtcn_tick_size | 3390-3396 |  |
+| sim_rtcn_calibrated_tick_size | 3397-3403 |  |
+| sim_register_clock_unit | 3404-3408 |  |
+| sim_clock_coschedule | 3409-3417 |  |
+| sim_clock_coschedule_abs | 3418-3426 |  |
+| sim_clock_coschedule_tmr | 3427-3432 |  |
+| if | 3433-3443 |  |
+| if | 3444-3479 |  |
+| sim_clock_coschedule_tmr_abs | 3480-3486 |  |
+| _sim_coschedule_cancel | 3487-3489 | Cancel a unit on the coschedule queue |
+| if | 3490-3531 |  |
+| sim_timer_is_active | 3532-3537 |  |
+| for | 3538-3546 |  |
+| sim_timer_cancel | 3547-3552 |  |
+| for | 3553-3562 |  |
+| _sim_wallclock_cancel | 3563-3570 |  |
+| for | 3571-3578 | If this is a clock unit, we need to cancel both this and the related timer unit |
+| if | 3579-3623 |  |
+| _sim_wallclock_is_active | 3624-3630 |  |
+| for | 3631-3640 | If this is a clock unit, we need to examine the related timer unit instead |
+| _sim_timer_activate_time | 3641-3646 |  |
+| if | 3647-3677 |  |
+| if | 3678-3695 |  |
+| for | 3696-3703 |  |
+| sim_timer_activate_time_usecs | 3704-3710 |  |
+| for | 3711-3719 | If this is a clock unit, we need to return the related clock assist unit instead |
+| if | 3720-3724 |  |
+| if | 3725-3749 |  |
+| if | 3750-3756 |  |
+| if | 3757-3776 |  |
+| for | 3777-3808 |  |
+| _rom_swapb | 3809-3816 |  |
+| sim_rom_read_with_delay | 3817-3825 |  |
+| sim_get_rom_delay_factor | 3826-3833 |  |
+| if | 3834-3863 |  |
+| sim_set_rom_delay_factor | 3864-3878 |  |
+| sim_timer_precalibrate_execution_rate | 3879-3904 |  |
+| for | 3905-3910 |  |
+| if | 3911-3916 |  |
+| for | 3917-3930 |  |
+| sim_host_speed_factor | 3931-3936 |  |

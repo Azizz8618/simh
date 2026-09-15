@@ -1,0 +1,75 @@
+=== altairz80_mhdsk.c — 561 строк ===
+Источник: altairz80_mhdsk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test altairz80_mhdsk.c -nt .cline/maps/altairz80_mhdsk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 67 | |
+| diskBuf1 | 148 | |
+| diskBuf2 | 149 | |
+| diskBuf3 | 150 | |
+| diskBuf4 | 151 | |
+| diskBuf | 152 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| HDSK_SECTOR_SIZE | 256             /* size of secto... | 50 |
+| HDSK_SECTORS_PER_TRACK | 24              /* sectors per t... | 51 |
+| HDSK_NUM_HEADS | 2               /* heads per dis... | 52 |
+| HDSK_NUM_TRACKS | 406             /* tracks per su... | 53 |
+| HDSK_TRACK_SIZE | (HDSK_SECTOR_SIZE * HDSK_SECTORS... | 54 |
+| HDSK_CYLINDER_SIZE | (HDSK_TRACK_SIZE * 2) | 55 |
+| HDSK_CAPACITY | (HDSK_CYLINDER_SIZE * HDSK_NUM_T... | 56 |
+| HDSK_NUMBER | 8               /* number of har... | 57 |
+| IO_IN | 0               /* I/O operation... | 58 |
+| IO_OUT | 1               /* I/O operation... | 59 |
+| UNIT_V_DSK_WLK | (UNIT_V_UF + 0)         /* write... | 60 |
+| UNIT_DSK_WLK | (1 << UNIT_V_DSK_WLK) | 61 |
+| READ_MSG | (1 << 0) | 64 |
+| WRITE_MSG | (1 << 1) | 65 |
+| VERBOSE_MSG | (1 << 2) | 66 |
+| BOOTROM_SIZE_MHDSK | 256 | 70 |
+| MHDSK_BOOT_ADDRESS | 0xfc00 | 71 |
+| CMD_SHIFT | 4       // shift right 4 places | 77 |
+| CMD_MASK | 0x0f    // mask after shifting | 78 |
+| CMD_SEEK | 0       // seek to track | 79 |
+| CMD_WRITE_SEC | 2       // write sector from buf n | 80 |
+| CMD_READ_SEC | 3       // read sector into buf n | 81 |
+| CMD_WRITE_BUF | 4       // load buffer n from CPU | 82 |
+| CMD_READ_BUF | 5       // read buffer n into CPU | 83 |
+| CMD_READ_STATUS | 6       // read controller IV byte | 84 |
+| CMD_SET_IV_BYTE | 8       // set controller IV byte | 85 |
+| CMD_READ_UNFMT | 10      // read unformatted sector | 86 |
+| CMD_FORMAT | 12 | 87 |
+| CMD_INITIALIZE | 14 | 88 |
+| CMD_MAX | (CMD_INITIALIZE + 1) | 89 |
+| UNIT_SHIFT | 2       // shift right 2 places | 111 |
+| UNIT_MASK | 0x03    // mask after shifting | 112 |
+| BUFFER_MASK | 0x03    // mask - no shift needed | 114 |
+| TRACK_SHIFTH | 8       // shift left 8 places i... | 116 |
+| TRACK_MASKH | 0x01    // msb of track number | 117 |
+| TRACK_MASKL | 0xff    // entire lsb of track n... | 118 |
+| HEAD_SHIFT | 5       // shift right 5 places | 120 |
+| HEAD_MASK | 0x03    // mask after shifting (... | 121 |
+| SECTOR_MASK | 0x1f    // mask - no shift needed | 123 |
+| CSTAT_WRITE_PROTECT | 0x80    // disk is write protected | 127 |
+| CSTAT_NOT_READY | 0x01    // drive not ready | 128 |
+| CSTAT_BAD_SECTOR | 0x02    // invalid sector number | 129 |
+| MHDSK_NAME | "MITS Hard Disk" | 181 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mhdsk_description | 183-246 |  |
+| mhdsk_boot | 247-254 |  |
+| cmdTranslate | 255-268 |  |
+| dsk_reset | 269-307 |  |
+| hdReturnReady | 308-327 |  |
+| hdCstat | 328-346 |  |
+| hdAcmd | 347-455 |  |
+| hdCdata | 456-480 |  |
+| hdAdata | 481-504 |  |
+| doRead | 505-535 |  |
+| doWrite | 536-561 |  |

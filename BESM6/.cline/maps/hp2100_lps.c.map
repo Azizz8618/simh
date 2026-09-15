@@ -1,0 +1,69 @@
+=== hp2100_lps.c — 732 строк ===
+Источник: hp2100_lps.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_lps.c -nt .cline/maps/hp2100_lps.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lps_timers | 216 | |
+| lps_interface | 223 | |
+| signal | 338 | |
+| working_set | 339 | |
+| outbound | 340 | |
+| irq_enabled | 341 | |
+| current_line | 342 | |
+| lps.flag_buffer | 549 | |
+| SCPE_OK | 590 | |
+| SCPE_OK | 608 | |
+| SCPE_OK | 629 | |
+| SCPE_OK | 638 | |
+| SCPE_OK | 656 | |
+| result | 683 | |
+| result | 695 | |
+| SCPE_OK | 720 | |
+| SCPE_OK | 731 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CR | '\r'                /* carriage ... | 148 |
+| LF | '\n'                /* line feed */ | 149 |
+| FF | '\f'                /* form feed */ | 150 |
+| DATA_MASK | 0177u               /* printer u... | 152 |
+| LPS_ZONECNT | 20                  /* zone char... | 154 |
+| LPS_PAGECNT | 80                  /* page char... | 155 |
+| LPS_PAGELNT | 60                  /* page line... | 156 |
+| LPS_FORMLNT | 66                  /* form line... | 157 |
+| LPS_ON | 0                   /* power is ... | 161 |
+| LPS_OFF | 1                   /* power is ... | 162 |
+| LPS_TURNING_ON | 2                   /* power is ... | 163 |
+| LPS_BUSY | 0000001             /* busy stat... | 165 |
+| LPS_NRDY | 0100000             /* not ready... | 166 |
+| LPS_PWROFF | LPS_BUSY \| LPS_NRDY /* power-off... | 167 |
+| UNIT_V_DIAG | (UNIT_V_UF + 0)     /* diagnosti... | 169 |
+| UNIT_V_POWEROFF | (UNIT_V_UF + 1)     /* unit powe... | 170 |
+| UNIT_V_OFFLINE | (UNIT_V_UF + 2)     /* unit offl... | 171 |
+| UNIT_DIAG | (1 << UNIT_V_DIAG) | 173 |
+| UNIT_POWEROFF | (1 << UNIT_V_POWEROFF) | 174 |
+| UNIT_OFFLINE | (1 << UNIT_V_OFFLINE) | 175 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lps_interface | 336-343 |  |
+| while | 344-528 |  |
+| lps_svc | 529-532 |  |
+| if | 533-539 |  |
+| if | 540-557 |  |
+| if | 558-569 |  |
+| if | 570-579 |  |
+| if | 580-595 |  |
+| lps_reset | 596-597 |  |
+| if | 598-624 |  |
+| lps_restart | 625-633 |  |
+| lps_poweroff | 634-642 |  |
+| lps_poweron | 643-644 |  |
+| if | 645-680 |  |
+| lps_attach | 681-705 |  |
+| lps_set_timing | 706-724 |  |
+| lps_show_timing | 725-732 |  |

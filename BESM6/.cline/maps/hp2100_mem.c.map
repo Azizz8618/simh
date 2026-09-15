@@ -1,0 +1,153 @@
+=== hp2100_mem.c — 2381 строк ===
+Источник: hp2100_mem.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_mem.c -nt .cline/maps/hp2100_mem.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| ACCESS_PROPERTIES | 294-297 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mp_interface | 588 | |
+| tbg_dptr | 734 | |
+| index | 799 | |
+| map | 800 | |
+| protection | 801 | |
+| index | 934 | |
+| map | 935 | |
+| protection | 936 | |
+| return | 1006 | |
+| word | 1034 | |
+| word | 1071 | |
+| return | 1082 | |
+| return | 1118 | |
+| address | 1133 | |
+| return | 1168 | |
+| return | 1313 | |
+| return | 1343 | |
+| return | 1386 | |
+| return | 1404 | |
+| return | 1427 | |
+| return | 1546 | |
+| return | 1569 | |
+| map | 1630 | |
+| SCPE_OK | 1681 | |
+| return | 1708 | |
+| dms_fence | 1725 | |
+| map_register | 1766 | |
+| signal | 1874 | |
+| working_set | 1875 | |
+| outbound | 1876 | |
+| irq_enabled | 1877 | |
+| return | 2047 | |
+| return | 2106 | |
+| return | 2127 | |
+| return | 2162 | |
+| return | 2198 | |
+| return | 2223 | |
+| SCPE_OK | 2338 | |
+| SCPE_OK | 2361 | |
+| SCPE_OK | 2380 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IR_MRG | (MRG \| AB_MASK)     /* MRG instr... | 286 |
+| IR_ISZ | 0034000u            /* ISZ instr... | 288 |
+| IR_STF | 0102100u            /* STF instr... | 289 |
+| ALL_MAPMODES | (SWMASK ('S') \| SWMASK ('U') \|   | 365 |
+| MAP_COUNT | 4                   /* number of... | 371 |
+| REG_COUNT | 32                  /* number of... | 372 |
+| LWA_BASE_PAGE | 0001777u            /* address o... | 377 |
+| MAP_MASK | (MAP_COUNT - 1)     /* mask to t... | 379 |
+| ALTERNATE_MAP(m) | ((MEU_MAP_SELECTOR) ((m) ^ 1))  ... | 381 |
+| READ_PROTECTED | 0100000u            /* (R) read ... | 402 |
+| WRITE_PROTECTED | 0040000u            /* (W) write... | 403 |
+| MAP_RESERVED | 0036000u            /* reserved ... | 404 |
+| PAGE_MASK | PP_MASK             /* physical ... | 405 |
+| NO_PROTECTION | 0000000u            /* no read/w... | 407 |
+| MAP_PAGE(r) | ((r) & PAGE_MASK)   /* extract t... | 409 |
+| MEST_ENBL_INT | 0100000u            /* (I) MEM w... | 421 |
+| MEST_UMAP_INT | 0040000u            /* (M) User ... | 422 |
+| MEST_ENABLED | 0020000u            /* (E) MEM i... | 423 |
+| MEST_USER_MAP | 0010000u            /* (U) User ... | 424 |
+| MEST_PROTECTED | 0004000u            /* (P) Prote... | 425 |
+| MEST_BELOW | 0002000u            /* (B) Base ... | 426 |
+| MEST_FENCE_MASK | 0001777u            /* Base page... | 427 |
+| MEST_DYNAMIC | (MEST_USER_MAP \| MEST_PROTECTED) | 429 |
+| MEST_DYNAMIC_IAK | (MEST_ENBL_INT \| MEST_UMAP_INT) | 430 |
+| MEVI_READ | 0100000u            /* (R) = Rea... | 441 |
+| MEVI_WRITE | 0040000u            /* (W) = Wri... | 442 |
+| MEVI_BASE_PAGE | 0020000u            /* (B) = Bas... | 443 |
+| MEVI_PRIVILEGE | 0010000u            /* (P) = Pri... | 444 |
+| MEVI_BUS_ENABLED | 0000200u            /* (S) = ME ... | 445 |
+| MEVI_MEM_ENABLED | 0000100u            /* (E) = MEM... | 446 |
+| MEVI_USER_MAP | 0000040u            /* (M) = Use... | 447 |
+| MEVI_INDEX_MASK | 0000037u            /* Page regi... | 448 |
+| UNIT_V_MP_JSB | (UNIT_V_UF + 0)             /* M... | 547 |
+| UNIT_V_MP_INT | (UNIT_V_UF + 1)             /* M... | 548 |
+| UNIT_V_MP_SEL1 | (UNIT_V_UF + 2)             /* M... | 549 |
+| UNIT_MP_JSB | (1 << UNIT_V_MP_JSB)        /* 1... | 551 |
+| UNIT_MP_INT | (1 << UNIT_V_MP_INT)        /* 1... | 552 |
+| UNIT_MP_SEL1 | (1 << UNIT_V_MP_SEL1)       /* 1... | 553 |
+| MPVR_PARITY_ERROR | 0100000u            /* (P) parit... | 564 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mem_initialize | 732-796 |  |
+| mem_read | 797-804 |  |
+| switch | 805-931 |  |
+| mem_write | 932-939 |  |
+| switch | 940-1030 |  |
+| mem_read_byte | 1031-1067 |  |
+| mem_write_byte | 1068-1095 |  |
+| mem_fast_read | 1096-1112 |  |
+| mem_zero | 1113-1130 |  |
+| mem_is_empty | 1131-1154 |  |
+| mem_copy_loader | 1155-1214 |  |
+| mem_is_idle_loop | 1215-1255 |  |
+| mem_trace_registers | 1256-1266 |  |
+| if | 1267-1284 |  |
+| mem_examine | 1285-1304 |  |
+| mem_deposit | 1305-1332 |  |
+| meu_configure | 1333-1355 |  |
+| meu_read_map | 1356-1376 |  |
+| meu_write_map | 1377-1396 |  |
+| meu_set_fence | 1397-1413 |  |
+| meu_set_state | 1414-1457 |  |
+| meu_update_violation | 1458-1459 |  |
+| if | 1460-1500 |  |
+| meu_update_status | 1501-1528 |  |
+| meu_assert_IAK | 1529-1563 |  |
+| meu_privileged | 1564-1589 |  |
+| meu_breakpoint_type | 1590-1627 |  |
+| meu_map_address | 1628-1671 |  |
+| meu_reset | 1672-1696 |  |
+| dm_violation | 1697-1700 |  |
+| if | 1701-1722 |  |
+| is_mapped | 1723-1729 |  |
+| if | 1730-1763 |  |
+| map_address | 1764-1767 |  |
+| if | 1768-1871 |  |
+| mp_interface | 1872-1878 |  |
+| while | 1879-2014 |  |
+| mp_initialize | 2015-2034 |  |
+| mp_configure | 2035-2084 |  |
+| mp_check_jmp | 2085-2089 |  |
+| if | 2090-2122 |  |
+| mp_check_jsb | 2123-2150 |  |
+| mp_check_io | 2151-2152 |  |
+| if | 2153-2186 |  |
+| mp_violation | 2187-2188 |  |
+| if | 2189-2213 |  |
+| mp_disable | 2214-2235 |  |
+| mp_is_on | 2236-2251 |  |
+| mp_reenable_interrupts | 2252-2267 |  |
+| mp_trace_violation | 2268-2325 |  |
+| mp_service | 2326-2332 |  |
+| if | 2333-2353 |  |
+| mp_set_jsb | 2354-2373 |  |
+| mp_reset | 2374-2381 |  |

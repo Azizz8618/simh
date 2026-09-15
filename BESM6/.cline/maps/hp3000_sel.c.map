@@ -1,0 +1,59 @@
+=== hp3000_sel.c — 1339 строк ===
+Источник: hp3000_sel.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_sel.c -nt .cline/maps/hp3000_sel.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| outbound | 539 | |
+| return | 554 | |
+| return | 619 | |
+| return | 645 | |
+| inbound_data | 803 | |
+| inbound_signals | 804 | |
+| outbound | 805 | |
+| cycles | 806 | |
+| return_address | 807 | |
+| return | 1191 | |
+| outbound | 1216 | |
+| SCPE_OK | 1223 | |
+| SCPE_OK | 1247 | |
+| return | 1278 | |
+| return | 1317 | |
+| return | 1338 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SR_WAIT_TIMER | mS (1000)           /* 1000 mill... | 326 |
+| NS_PER_CYCLE | 175                 /* each cloc... | 328 |
+| CYCLES_PER_FETCH | 6 | 330 |
+| CYCLES_PER_PREFETCH | 1 | 331 |
+| CYCLES_PER_EXECUTE | 1 | 332 |
+| CYCLES_PER_RELOAD | 3 | 333 |
+| CYCLES_PER_READ | 4 | 334 |
+| CYCLES_PER_WRITE | 4 | 335 |
+| CYCLES_PER_EVENT | (uint32) (USEC_PER_EVENT * 1000 ... | 337 |
+| CNTR_MASK | 0007777u            /* word coun... | 339 |
+| CNTR_MAX | 0007777u            /* word coun... | 340 |
+| DEB_CSRW | (1u << 0)           /* trace cha... | 373 |
+| DEB_PIO | (1u << 1)           /* trace pro... | 374 |
+| DEB_STATE | (1u << 2)           /* trace sta... | 375 |
+| DEB_SR | (1u << 3)           /* trace ser... | 376 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sel_initialize | 537-540 |  |
+| if | 541-582 |  |
+| sel_assert_REQ | 583-584 |  |
+| if | 585-636 |  |
+| sel_assert_CHANSR | 637-800 |  |
+| sel_service | 801-810 |  |
+| while | 811-1213 |  |
+| sel_timer | 1214-1237 |  |
+| sel_reset | 1238-1268 |  |
+| end_channel | 1269-1289 |  |
+| abort_channel | 1290-1306 |  |
+| load_control | 1307-1328 |  |
+| load_address | 1329-1339 |  |

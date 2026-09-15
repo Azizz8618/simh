@@ -1,0 +1,160 @@
+=== pdp11_rh.c — 1062 строк ===
+Источник: pdp11_rh.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_rh.c -nt .cline/maps/pdp11_rh.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| MBACTX | 151-160 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| massbus | 162 | |
+| ofs | 391 | |
+| SCPE_OK | 451 | |
+| ofs | 456 | |
+| cs1dt | 458 | |
+| SCPE_OK | 585 | |
+| pa | 600 | |
+| pa | 639 | |
+| pa | 678 | |
+| return | 727 | |
+| return | 735 | |
+| return | 741 | |
+| dibp | 753 | |
+| dibp->ba | 758 | |
+| dibp | 763 | |
+| return | 769 | |
+| dibp | 774 | |
+| return | 780 | |
+| return | 800 | |
+| massbus | 807 | |
+| return | 809 | |
+| dibp | 851 | |
+| -1 | 873 | |
+| mb | 880 | |
+| mb | 881 | |
+| massbus | 884 | |
+| massbus | 887 | |
+| massbus | 888 | |
+| massbus | 889 | |
+| massbus | 890 | |
+| massbus | 891 | |
+| massbus | 892 | |
+| dibp | 927 | |
+| SCPE_OK | 935 | |
+| SCPE_OK | 947 | |
+| mba_devs | 955 | |
+| idx | 976 | |
+| mbus_devs | 977 | |
+| buf | 1043 | |
+| mb | 1044 | |
+| buf | 1061 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CS1_OF | 0 | 66 |
+| CS1_GO | CSR_GO                          ... | 67 |
+| CS1_V_FNC | 1                               ... | 68 |
+| CS1_M_FNC | 037                             ... | 69 |
+| CS1_FNC | (CS1_M_FNC << CS1_V_FNC) | 70 |
+| FNC_XFER | 024                             ... | 71 |
+| CS1_IE | CSR_IE                          ... | 72 |
+| CS1_DONE | CSR_DONE                        ... | 73 |
+| CS1_V_UAE | 8                               ... | 74 |
+| CS1_M_UAE | 03 | 75 |
+| CS1_UAE | (CS1_M_UAE << CS1_V_UAE) | 76 |
+| CS1_MCPE | 0020000                         ... | 77 |
+| CS1_TRE | 0040000                         ... | 78 |
+| CS1_SC | 0100000                         ... | 79 |
+| CS1_MBZ | 0012000 | 80 |
+| CS1_DRV | (CS1_FNC \| CS1_GO) | 81 |
+| GET_FNC(x) | (((x) >> CS1_V_FNC) & CS1_M_FNC) | 82 |
+| WC_OF | 1 | 86 |
+| BA_OF | 2 | 90 |
+| BA_MBZ | 0000001                         ... | 91 |
+| CS2_OF | 3 | 95 |
+| CS2_V_UNIT | 0                               ... | 96 |
+| CS2_M_UNIT | 07                              ... | 97 |
+| CS2_UNIT | (CS2_M_UNIT << CS2_V_UNIT) | 98 |
+| CS2_UAI | 0000010                         ... | 99 |
+| CS2_PAT | 0000020                         ... | 100 |
+| CS2_CLR | 0000040                         ... | 101 |
+| CS2_IR | 0000100                         ... | 102 |
+| CS2_OR | 0000200                         ... | 103 |
+| CS2_MDPE | 0000400                         ... | 104 |
+| CS2_MXF | 0001000                         ... | 105 |
+| CS2_PGE | 0002000                         ... | 106 |
+| CS2_NEM | 0004000                         ... | 107 |
+| CS2_NED | 0010000                         ... | 108 |
+| CS2_PE | 0020000                         ... | 109 |
+| CS2_WCE | 0040000                         ... | 110 |
+| CS2_DLT | 0100000                         ... | 111 |
+| CS2_MBZ | (CS2_CLR) | 112 |
+| CS2_RW | (CS2_UNIT \| CS2_UAI \| CS2_PAT \| ... | 113 |
+| CS2_ERR | (CS2_MDPE \| CS2_MXF \| CS2_PGE \| ... | 114 |
+| GET_UNIT(x) | (((x) >> CS2_V_UNIT) & CS2_M_UNIT) | 116 |
+| DB_OF | 4 | 120 |
+| BAE_OF | 5 | 124 |
+| AE_M_MAE | 0                               ... | 125 |
+| AE_V_MAE | 077                             ... | 126 |
+| AE_MBZ | 0177700 | 127 |
+| CS3_OF | 6 | 131 |
+| CS3_APE | 0100000                         ... | 132 |
+| CS3_DPO | 0040000                         ... | 133 |
+| CS3_DPE | 0020000                         ... | 134 |
+| CS3_WCO | 0010000                         ... | 135 |
+| CS3_WCE | 0004000                         ... | 136 |
+| CS3_DBL | 0002000                         ... | 137 |
+| CS3_IPCK | 0000017                         ... | 138 |
+| CS3_ERR | (CS3_APE\|CS3_DPO\|CS3_DPE\|CS3_WCO... | 139 |
+| CS3_MBZ | 0001660 | 140 |
+| CS3_RW | (CS1_IE \| CS3_IPCK) | 141 |
+| MBA_OFSMASK | 077                             ... | 143 |
+| INT | 0000                            ... | 144 |
+| EXT | 0100                            ... | 145 |
+| RH11 | (UNIBUS && (cpu_model != MOD_1170)) | 149 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mba_mapofs[ | 190-388 |  |
+| mba_rd | 389-399 |  |
+| if | 400-410 |  |
+| switch | 411-453 |  |
+| mba_wr | 454-464 |  |
+| if | 465-479 |  |
+| switch | 480-596 |  |
+| mba_rdbufW | 597-608 |  |
+| for | 609-635 |  |
+| mba_wrbufW | 636-647 |  |
+| for | 648-674 |  |
+| mba_chbufW | 675-686 |  |
+| for | 687-720 |  |
+| mba_set_don | 721-729 |  |
+| mba_upd_ata | 730-737 |  |
+| mba_set_exc | 738-743 |  |
+| mba_get_bc | 744-750 |  |
+| mba_get_csr | 751-760 |  |
+| mba_set_int | 761-771 |  |
+| mba_clr_int | 772-782 |  |
+| mba_upd_cs1 | 783-802 |  |
+| mba_set_cs2 | 803-813 |  |
+| mba0_inta | 814-821 |  |
+| mba1_inta | 822-829 |  |
+| mba2_inta | 830-837 |  |
+| mba3_inta | 838-847 |  |
+| mba_map_pa | 848-852 |  |
+| for | 853-877 |  |
+| mba_reset | 878-900 |  |
+| mba_set_enbdis | 901-923 |  |
+| mba_show_num | 924-939 |  |
+| mba_show_type | 940-951 |  |
+| init_mbus_tab | 952-956 |  |
+| for | 957-962 |  |
+| for | 963-973 |  |
+| build_mbus_tab | 974-1003 |  |
+| rh_help | 1004-1040 |  |
+| rh_description | 1041-1062 |  |

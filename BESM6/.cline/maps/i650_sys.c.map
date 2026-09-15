@@ -1,0 +1,42 @@
+=== i650_sys.c — 1247 строк ===
+Источник: i650_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i650_sys.c -nt .cline/maps/i650_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_name | 38 | |
+| sim_PC | 40 | |
+| sim_emax | 42 | |
+| cdr_dib | 55 | |
+| cdp_dib | 56 | |
+| mt_dib | 57 | |
+| dsk_dib | 58 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_ascii_to_hol | 181-185 |  |
+| sim_hol_to_ascii | 186-209 |  |
+| vm_init | 210-229 |  |
+| sim_load | 230-352 |  |
+| print_opcode | 353-390 |  |
+| fprint_sym | 391-430 |  |
+| find_opcode | 431-454 |  |
+| parse_sgn | 455-466 |  |
+| parse_n | 467-502 |  |
+| ascii_to_NN | 503-511 | convert ascii char to two digits IBM 650 code |
+| parse_sym | 512-581 |  |
+| word_to_ascii | 582-601 | to convert the full word use (buf, 1, 5, d) |
+| Get_HiDigit | 602-609 | return hi digit (digit 10) al leftmost position in number (no sign) |
+| Shift_Digits | 610-710 | return value of shifted digits (without sign) |
+| deck_alloc | 711-718 | Allocate space for a card deck of nCards cards. |
+| deck_free | 719-729 | Free a deck previously obtained from deck_alloc(). |
+| deck_load | 730-788 | Uses cdr0 device/unit. |
+| deck_save | 789-825 | uses cdr0 device/unit |
+| deck_print_echo | 826-860 | uses cdp0 device/unit |
+| deck_split_cmd | 861-1074 | carddeck split   PAT   <dev\|file0> <file1> <file2> |
+| deck_join_cmd | 1075-1133 | carddeck join <file1> <file2> ... as <file> |
+| deck_print_cmd | 1134-1163 | carddeck print <file>  |
+| deck_echolast_cmd | 1164-1218 | carddeck echolast <dev> <count> |
+| ibm650_deck_cmd | 1219-1247 |  |

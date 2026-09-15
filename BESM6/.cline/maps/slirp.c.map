@@ -1,0 +1,49 @@
+=== slirp.c — 1202 строк ===
+Источник: slirp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test slirp.c -nt .cline/maps/slirp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| loopback_addr | 31 | |
+| loopback_mask | 33 | |
+| curtime | 40 | |
+| dns_addr | 45 | |
+| dns_addr_time | 46 | |
+| dns_addr_stat | 107 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TIMEOUT_FAST | 2  /* milliseconds */ | 48 |
+| TIMEOUT_SLOW | 499  /* milliseconds */ | 49 |
+| TIMEOUT_DEFAULT | 1000  /* milliseconds */ | 51 |
+| CONN_CANFSEND(so) | (((so)->so_state & (SS_FCANTSEND... | 265 |
+| CONN_CANFRCV(so) | (((so)->so_state & (SS_FCANTRCVM... | 266 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| get_dns_addr | 55-99 |  |
+| winsock_cleanup | 100-108 |  |
+| get_dns_addr | 109-175 |  |
+| slirp_init_once | 176-249 |  |
+| slirp_cleanup | 250-267 |  |
+| slirp_update_timeout | 268-293 |  |
+| slirp_pollfds_fill | 294-456 |  |
+| slirp_pollfds_poll | 457-666 |  |
+| arp_input | 667-725 |  |
+| slirp_input | 726-762 |  |
+| if_encap | 763-887 | re-queued. |
+| slirp_send | 888-898 |  |
+| slirp_find_ctl_socket | 899-945 |  |
+| slirp_tcp_save | 946-992 |  |
+| slirp_sbuf_save | 993-1005 |  |
+| slirp_socket_save | 1006-1021 |  |
+| slirp_bootp_save | 1022-1031 |  |
+| slirp_state_save | 1032-1054 |  |
+| slirp_tcp_load | 1055-1102 |  |
+| slirp_sbuf_load | 1103-1125 |  |
+| slirp_socket_load | 1126-1148 |  |
+| slirp_bootp_load | 1149-1158 |  |
+| slirp_state_load | 1159-1202 |  |

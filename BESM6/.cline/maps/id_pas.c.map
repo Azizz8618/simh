@@ -1,0 +1,83 @@
+=== id_pas.c — 577 строк ===
+Источник: id_pas.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test id_pas.c -nt .cline/maps/id_pas.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 95 | |
+| lfc_poll | 96 | |
+| pas_dib | 130 | |
+| ln | 320 | |
+| SCPE_OK | 371 | |
+| SCPE_OK | 401 | |
+| SCPE_OK | 477 | |
+| SCPE_OK | 490 | |
+| newln | 511 | |
+| PAS_ENAB | 541 | |
+| SCPE_OK | 542 | |
+| pas_cmd | 555 | |
+| pas_rchp | 556 | |
+| pas_sta | 557 | |
+| return | 561 | |
+| pas_tplte | 575 | |
+| return | 576 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PAS_LINES | 32 | 53 |
+| UNIT_V_MDM | (TTUF_V_UF + 0)                 ... | 55 |
+| UNIT_MDM | (1 << UNIT_V_MDM) | 56 |
+| PASL_WAIT | 500 | 58 |
+| STA_OVR | 0x80                            ... | 62 |
+| STA_PF | 0x40                            ... | 63 |
+| STA_NCL2S | 0x40                            ... | 64 |
+| STA_FR | 0x20                            ... | 65 |
+| STA_RCR | 0x10                            ... | 66 |
+| STA_CROF | 0x02                            ... | 67 |
+| STA_RING | 0x01                            ... | 68 |
+| STA_RCV | (STA_OVR\|STA_PF\|STA_FR\|STA_RCR\|S... | 69 |
+| SET_EX | (STA_OVR\|STA_PF\|STA_FR) | 70 |
+| STA_XMT | (STA_BSY) | 71 |
+| CMD_DTR | (0x20 << 8)                     ... | 75 |
+| CMD_ECHO | (0x10 << 8)                     ... | 76 |
+| CMD_RCT | (0x08 << 8)                     ... | 77 |
+| CMD_XMTB | (0x04 << 8)                     ... | 78 |
+| CMD_WRT | (0x02 << 8)                     ... | 79 |
+| CMD_V_CLK | 6                               ... | 80 |
+| CMD_M_CLK | 0x3 | 81 |
+| CMD_V_DB | 4                               ... | 82 |
+| CMD_M_DB | 0x3 | 83 |
+| CMD_STOP | 0x80                            ... | 84 |
+| CMD_V_PAR | 1                               ... | 85 |
+| CMD_M_PAR | 0x3 | 86 |
+| GET_PAR(x) | (((x) >> CMD_V_PAR) & CMD_M_PAR) | 87 |
+| PAR_NONE | 0 | 88 |
+| PAR_RAW | 1 | 89 |
+| PAR_ODD | 2 | 90 |
+| PAR_EVEN | 3 | 91 |
+| CMD_TYP | 0x01                            ... | 93 |
+| PAS_ENAB | pas_desc.lines | 109 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pas | 247-252 |  |
+| switch | 253-317 |  |
+| pasi_svc | 318-325 |  |
+| if | 326-335 |  |
+| for | 336-375 |  |
+| paso_svc | 376-380 |  |
+| if | 381-403 |  |
+| pas_par | 404-441 |  |
+| switch | 442-459 |  |
+| pas_reset | 460-463 |  |
+| if | 464-481 |  |
+| pas_attach | 482-494 |  |
+| pas_detach | 495-508 |  |
+| pas_vlines | 509-520 |  |
+| if | 521-546 |  |
+| pas_reset_ln | 547-565 |  |
+| pas_ini | 566-569 |  |
+| for | 570-577 |  |

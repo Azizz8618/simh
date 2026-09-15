@@ -1,0 +1,334 @@
+=== pdp10_cpu.c — 2618 строк ===
+Источник: pdp10_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp10_cpu.c -nt .cline/maps/pdp10_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 150-155 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| pag_dev | 158 | |
+| cst | 175 | |
+| pur | 176 | |
+| cstm | 177 | |
+| dbr2 | 179 | |
+| dbr3 | 180 | |
+| dbr4 | 181 | |
+| save_env | 202 | |
+| op | 702 | |
+| ea | 703 | |
+| inst | 704 | |
+| return | 1668 | |
+| return | 1693 | |
+| return | 1726 | |
+| return | 1749 | |
+| fill | 1758 | |
+| so | 1759 | |
+| fill | 1778 | |
+| so | 1779 | |
+| return | 1816 | |
+| indrct | 1829 | |
+| ea | 1848 | |
+| xr | 1861 | |
+| ea | 1862 | |
+| ea | 1876 | |
+| mb | 1886 | |
+| bp | 1915 | |
+| return | 1927 | |
+| ba | 1934 | |
+| bp | 1936 | |
+| wd | 1945 | |
+| ba | 1952 | |
+| bp | 1954 | |
+| val | 1962 | |
+| return | 1965 | |
+| bp | 1976 | |
+| return | 2000 | |
+| lnt | 2014 | |
+| srcv | 2015 | |
+| flg | 2016 | |
+| return | 2037 | |
+| lnt | 2052 | |
+| srcv | 2053 | |
+| flg | 2054 | |
+| return | 2079 | |
+| imm | 2110 | |
+| left | 2111 | |
+| val | 2149 | |
+| return | 2160 | |
+| FALSE | 2186 | |
+| apr_lvl | 2195 | |
+| FALSE | 2210 | |
+| FALSE | 2216 | |
+| return | 2249 | |
+| lvl | 2278 | |
+| FALSE | 2295 | |
+| FALSE | 2301 | |
+| reqlvl | 2326 | |
+| qintr | 2329 | |
+| qintr | 2338 | |
+| return | 2345 | |
+| sim_vm_pc_value | 2384 | |
+| sim_vm_is_subroutine_call | 2385 | |
+| sim_clock_precalibrate_commands | 2386 | |
+| sim_clock_precalibrate_cleanup_commands | 2387 | |
+| sim_vm_initial_ips | 2388 | |
+| SCPE_OK | 2395 | |
+| returns | 2413 | |
+| caveats_displayed | 2414 | |
+| ea | 2415 | |
+| inst | 2416 | |
+| adn | 2418 | |
+| xr | 2419 | |
+| inst | 2427 | |
+| SCPE_OK | 2476 | |
+| SCPE_OK | 2495 | |
+| rptr | 2502 | |
+| return | 2510 | |
+| hst_p | 2531 | |
+| SCPE_OK | 2543 | |
+| lnt | 2562 | |
+| SCPE_OK | 2586 | |
+| lnt | 2593 | |
+| apr_serial | 2603 | |
+| SCPE_OK | 2604 | |
+| SCPE_OK | 2617 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 142 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 143 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 144 |
+| HIST_PC | 0x40000000 | 146 |
+| HIST_MIN | 64 | 147 |
+| HIST_MAX | 65536 | 148 |
+| JRST_U | 1                               ... | 474 |
+| JRST_E | 2                               ... | 475 |
+| JRST_UIO | 3                               ... | 476 |
+| IM | ((d10) ea) | 485 |
+| IMS | (((d10) ea) << 18) | 486 |
+| JUMP(x) | PCQ_ENTRY, PC = ((a10) (x)) & AMASK | 487 |
+| SUBJ(x) | CLRF (F_AFI \| F_FPD \| F_TR); JUM... | 488 |
+| INCPC | PC = INCA (PC) | 489 |
+| AOBAC | AC(ac) = AOB (AC(ac)) | 493 |
+| SOBAC | AC(ac) = SOB (AC(ac)) | 494 |
+| G2AC | rs[0] = AC(ac), rs[1] = AC(P1) | 495 |
+| S1AC | AC(ac) = rs[0] | 496 |
+| S2AC | S1AC, AC(P1) = rs[1] | 497 |
+| LAC | if (ac) AC(ac) = mb | 498 |
+| RD | mb = Read (ea, MM_OPND) | 502 |
+| RDAC | AC(ac) = Read (ea, MM_OPND) | 503 |
+| RM | mb = ReadM (ea, MM_OPND) | 504 |
+| RMAC | AC(ac) = ReadM (ea, MM_OPND) | 505 |
+| RDP | mb = Read (((a10) AC(ac)) & AMAS... | 506 |
+| RD2 | rs[0] = Read (ea, MM_OPND);  | 507 |
+| WR | Write (ea, mb, MM_OPND) | 509 |
+| WRAC | Write (ea, AC(ac), MM_OPND) | 510 |
+| WRP(x) | Write (((a10) INCA (AC(ac))), (x... | 511 |
+| WR1 | Write (ea, rs[0], MM_OPND) | 512 |
+| WR2 | ReadM (INCA (ea), MM_OPND);  | 513 |
+| TL(a) | (TSTS (a) != 0) | 519 |
+| TE(a) | ((a) == 0) | 520 |
+| TLE(a) | (TL (a) \|\| TE (a)) | 521 |
+| TGE(a) | (TSTS (a) == 0) | 522 |
+| TN(a) | ((a) != 0) | 523 |
+| TG(a) | (TGE (a) && TN (a)) | 524 |
+| CL(a) | ((TSTS (AC(ac) ^ a))? (a < AC(ac... | 525 |
+| CE(a) | (AC(ac) == a) | 526 |
+| CLE(a) | (CL (a) \|\| CE (a)) | 527 |
+| CGE(a) | (!CL (a)) | 528 |
+| CN(a) | (AC(ac) != a) | 529 |
+| CG(a) | (CGE (a) && CN (a)) | 530 |
+| FLPC | XWD (flags, PC) | 534 |
+| UUOWORD | (((d10) op) << INST_V_OP) \| (((d... | 535 |
+| APRHWORD | ((apr_flg << APR_V_FLG) \| (apr_l... | 536 |
+| APRWORD | ((apr_enb << (APR_V_FLG + 18)) \|... | 538 |
+| PIHWORD | ((pi_act << PI_V_ACT) \| (pi_on <... | 539 |
+| PIWORD | ((pi_prq << PI_V_PRQ) \| PIHWORD) | 541 |
+| CIBP | if (!TSTF (F_FPD)) { ibp (ea, pf... | 545 |
+| LDB | AC(ac) = ldb (ea, pflgs) | 546 |
+| DPB | dpb (AC(ac), ea, pflgs) | 547 |
+| FAD(s) | fad (AC(ac), s, FALSE, 0) | 548 |
+| FADR(s) | fad (AC(ac), s, TRUE, 0) | 549 |
+| FSB(s) | fad (AC(ac), s, FALSE, 1) | 550 |
+| FSBR(s) | fad (AC(ac), s, TRUE, 1) | 551 |
+| FMP(s) | fmp (AC(ac), s, FALSE) | 552 |
+| FMPR(s) | fmp (AC(ac), s, TRUE) | 553 |
+| FDV(s) | fdv (AC(ac), s, rs, FALSE) | 554 |
+| FDVR(s) | fdv (AC(ac), s, rs, TRUE) | 555 |
+| MOVN(s) | NEG (s); MOVNF(s) | 556 |
+| MOVM(s) | ABS (s); MOVMF(s) | 557 |
+| ADD(s) | add (AC(ac), s) | 558 |
+| SUB(s) | sub (AC(ac), s) | 559 |
+| IMUL(s) | imul (AC(ac), s) | 560 |
+| IDIV(s) | idiv (AC(ac), s, rs) | 561 |
+| MUL(s) | mul (AC(ac), s, rs) | 562 |
+| DIV(s) | divi (ac, s, rs) | 563 |
+| AOJ | AC(ac) = INC (AC(ac)); INCF (AC(... | 564 |
+| AOS | RM; mb = INC (mb); WR; INCF (mb)... | 565 |
+| SOJ | AC(ac) = DEC (AC(ac)); DECF (AC(... | 566 |
+| SOS | RM; mb = DEC (mb); WR; DECF (mb)... | 567 |
+| SETCA(s) | ~AC(ac) & DMASK | 568 |
+| SETCM(s) | ~(s) & DMASK; | 569 |
+| AND(s) | AC(ac) & (s) | 570 |
+| ANDCA(s) | ~AC(ac) & (s) | 571 |
+| ANDCM(s) | AC(ac) & ~(s) | 572 |
+| ANDCB(s) | (~AC(ac) & ~(s)) & DMASK | 573 |
+| IOR(s) | AC(ac) \| (s) | 574 |
+| ORCA(s) | (~AC(ac) \| (s)) & DMASK | 575 |
+| ORCM(s) | (AC(ac) \| ~(s)) & DMASK | 576 |
+| ORCB(s) | (~AC(ac) \| ~(s)) & DMASK | 577 |
+| XOR(s) | AC(ac) ^ (s) | 578 |
+| EQV(s) | (~(AC(ac) ^ (s))) & DMASK | 579 |
+| LL(s,d) | ((s) & LMASK) \| ((d) & RMASK) | 580 |
+| RL(s,d) | (((s) << 18) & LMASK) \| ((d) & R... | 581 |
+| RR(s,d) | ((s) & RMASK) \| ((d) & LMASK) | 582 |
+| LR(s,d) | (((s) >> 18) & RMASK) \| ((d) & L... | 583 |
+| LLO(s) | ((s) & LMASK) \| RMASK | 584 |
+| RLO(s) | (((s) << 18) & LMASK) \| RMASK | 585 |
+| RRO(s) | ((s) & RMASK) \| LMASK | 586 |
+| LRO(s) | (((s) >> 18) & RMASK) \| LMASK | 587 |
+| LLE(s) | ((s) & LMASK) \| (((s) & LSIGN)? ... | 588 |
+| RLE(s) | (((s) << 18) & LMASK) \| (((s) & ... | 589 |
+| RRE(s) | ((s) & RMASK) \| (((s) & RSIGN)? ... | 590 |
+| LRE(s) | (((s) >> 18) & RMASK) \| (((s) & ... | 591 |
+| TD_ | RD | 592 |
+| TS_ | RD; mb = SWP (mb) | 593 |
+| TL_ | mb = IMS | 594 |
+| TR_ | mb = IM | 595 |
+| T_Z | AC(ac) = AC(ac) & ~mb | 596 |
+| T_O | AC(ac) = AC(ac) \| mb | 597 |
+| T_C | AC(ac) = AC(ac) ^ mb | 598 |
+| T__E | if ((AC(ac) & mb) == 0) INCPC | 599 |
+| T__N | if ((AC(ac) & mb) != 0) INCPC | 600 |
+| T__A | INCPC | 601 |
+| IOC | if (TSTF (F_USR) && !TSTF (F_UIO... | 602 |
+| IO7(x,y) | IOC; fptr = ((Q_ITS)? x[ac]: y[a... | 603 |
+| IOA | IOC; if (!Q_ITS) ea = calc_ioea ... | 606 |
+| IOAM | IOC; ea = ((Q_ITS)? ((a10) Read ... | 607 |
+| MOVNF(x) | if ((x) == MAXNEG) SETF (F_C1 \| ... | 612 |
+| MOVMF(x) | if ((x) == MAXNEG) SETF (F_C1 \| ... | 614 |
+| INCF(x) | if ((x) == 0) SETF (F_C0 \| F_C1);  | 615 |
+| DECF(x) | if ((x) == MAXPOS) SETF (F_C0 \| ... | 617 |
+| PUSHF | if (LRZ (AC(ac)) == 0) SETF (F_T2) | 619 |
+| POPF | if (LRZ (AC(ac)) == RMASK) SETF ... | 620 |
+| DMOVNF | if (rs[1] == 0) { MOVNF (rs[0]); } | 621 |
+| BYTE1 | INT64_C(0776000000000) | 2042 |
+| BYTE2 | INT64_C(0001774000000) | 2043 |
+| BYTE3 | INT64_C(0000003770000) | 2044 |
+| BYTE4 | INT64_C(0000000007760) | 2045 |
+| MAX_SUB_RETURN_SKIP | 10 | 2412 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| t_bool | 450-453 |  |
+| t_bool | 454-457 |  |
+| t_bool | 458-462 |  |
+| t_bool | 463-466 |  |
+| t_bool | 467-622 |  |
+| pdp10_pc_value | 623-627 |  |
+| sim_instr | 628-653 |  |
+| if | 654-666 |  |
+| if | 667-700 |  |
+| for | 701-710 |  |
+| if | 711-742 |  |
+| if | 743-820 |  |
+| if | 821-852 |  |
+| for | 853-869 |  |
+| if | 870-878 |  |
+| switch | 879-882 |  |
+| if | 883-926 |  |
+| if | 927-932 | case 0101:   MUUO                                  *//* unassigned |
+| if | 933-1005 |  |
+| if | 1006-1009 |  |
+| if | 1010-1048 |  |
+| if | 1049-1052 |  |
+| if | 1053-1068 |  |
+| if | 1069-1073 | case 0254: *//* shown later                        *//* JRST |
+| if | 1074-1539 |  |
+| if | 1540-1572 |  |
+| add | 1573-1577 |  |
+| if | 1578-1583 |  |
+| if | 1584-1595 |  |
+| sub | 1596-1600 |  |
+| if | 1601-1606 |  |
+| if | 1607-1619 |  |
+| lsh | 1620-1632 |  |
+| rot | 1633-1647 |  |
+| dadd | 1648-1654 |  |
+| if | 1655-1659 |  |
+| if | 1660-1672 |  |
+| dsub | 1673-1679 |  |
+| if | 1680-1684 |  |
+| if | 1685-1698 |  |
+| lshc | 1699-1705 |  |
+| if | 1706-1730 |  |
+| rotc | 1731-1740 |  |
+| if | 1741-1753 |  |
+| ash | 1754-1772 |  |
+| ashc | 1773-1786 |  |
+| if | 1787-1825 |  |
+| calc_ea | 1826-1830 |  |
+| for | 1831-1858 |  |
+| calc_ioea | 1859-1865 |  |
+| if | 1866-1870 |  |
+| if | 1871-1882 |  |
+| calc_jrstfea | 1883-1887 |  |
+| for | 1888-1911 |  |
+| ibp | 1912-1920 |  |
+| if | 1921-1931 |  |
+| ldb | 1932-1949 |  |
+| dpb | 1950-1972 |  |
+| adjbp | 1973-1981 |  |
+| if | 1982-2009 |  |
+| blt | 2010-2018 |  |
+| for | 2019-2047 |  |
+| bltu | 2048-2056 |  |
+| for | 2057-2083 |  |
+| test_int | 2084-2087 |  |
+| if | 2088-2107 |  |
+| adjsp | 2108-2123 |  |
+| jffo | 2124-2129 |  |
+| for | 2130-2143 |  |
+| circ | 2144-2154 |  |
+| for | 2155-2175 |  |
+| aprid | 2176-2190 |  |
+| wrapr | 2191-2199 |  |
+| if | 2200-2204 |  |
+| if | 2205-2212 |  |
+| rdapr | 2213-2218 |  |
+| czapr | 2219-2223 |  |
+| coapr | 2224-2233 |  |
+| set_newflags | 2234-2237 |  |
+| if | 2238-2242 |  |
+| if | 2243-2275 |  |
+| wrpi | 2276-2297 |  |
+| rdpi | 2298-2303 |  |
+| czpi | 2304-2308 |  |
+| copi | 2309-2323 |  |
+| pi_eval | 2324-2329 |  |
+| if | 2330-2340 |  |
+| pi_dismiss | 2341-2366 |  |
+| cpu_reset | 2367-2409 |  |
+| cpu_is_pc_a_subroutine_call | 2410-2420 |  |
+| if | 2421-2427 |  |
+| switch | 2428-2459 |  |
+| cpu_ex | 2460-2480 |  |
+| cpu_dep | 2481-2499 |  |
+| set_ac_display | 2500-2514 |  |
+| cpu_set_hist | 2515-2519 |  |
+| if | 2520-2531 |  |
+| if | 2532-2536 |  |
+| if | 2537-2547 |  |
+| cpu_show_hist | 2548-2556 |  |
+| if | 2557-2566 |  |
+| for | 2567-2590 |  |
+| cpu_set_serial | 2591-2595 |  |
+| if | 2596-2608 |  |
+| cpu_show_serial | 2609-2611 |  |
+| if | 2612-2618 |  |

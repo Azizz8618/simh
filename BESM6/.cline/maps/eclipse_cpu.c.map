@@ -1,0 +1,178 @@
+=== eclipse_cpu.c — 6783 строк ===
+Источник: eclipse_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test eclipse_cpu.c -nt .cline/maps/eclipse_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| SHORT_FLOAT | 452-456 |
+| LONG_FLOAT | 458-462 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PrevPC | 370 | |
+| AMASK | 371 | |
+| hpc | 382 | |
+| hinst | 383 | |
+| hinst2 | 384 | |
+| hac0 | 385 | |
+| hac1 | 386 | |
+| hac2 | 387 | |
+| hac3 | 388 | |
+| hflags | 389 | |
+| shift | 467 | |
+| lsfract | 468 | |
+| Trace | 495 | |
+| reason | 498 | |
+| pit_time | 653 | |
+| pit_dib | 672 | |
+| PC | 697 | |
+| mddata | 698 | |
+| sAC0 | 699 | |
+| sddata | 700 | |
+| fpnum | 701 | |
+| simeval | 702 | |
+| debmap | 706 | |
+| debcar | 707 | |
+| DisMap | 708 | |
+| cmdptr | 710 | |
+| cmslen | 711 | |
+| tabaddr | 712 | |
+| reason | 727 | |
+| PrevPC | 855 | |
+| sim_interval | 906 | |
+| saved_PC | 5324 | |
+| reason | 5325 | |
+| dev_disable | 5713 | |
+| return | 5719 | |
+| int_req | 5726 | |
+| pimask | 5727 | |
+| dev_disable | 5728 | |
+| pwr_low | 5729 | |
+| SCPE_OK | 5731 | |
+| SCPE_OK | 5746 | |
+| SCPE_OK | 5761 | |
+| mc | 5768 | |
+| MEMSIZE | 5776 | |
+| SCPE_OK | 5778 | |
+| SCPE_OK | 5785 | |
+| SCPE_OK | 5795 | |
+| SCPE_OK | 5805 | |
+| SCPE_OK | 5812 | |
+| iodata | 5821 | |
+| iodata | 5849 | |
+| SCPE_OK | 5867 | |
+| int_req | 5877 | |
+| SCPE_OK | 5880 | |
+| saved_PC | 5930 | |
+| saved_PC | 5933 | |
+| SCPE_OK | 5934 | |
+| dptr | 6018 | |
+| dibp | 6019 | |
+| SCPE_OK | 6036 | |
+| pgm_check | 6253 | |
+| shift | 6254 | |
+| pgm_check | 6413 | |
+| shift | 6414 | |
+| wk | 6572 | |
+| wk | 6620 | |
+| wk | 6677 | |
+| wk | 6729 | |
+| wk2 | 6730 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_MICRO | (UNIT_V_UF)                     ... | 341 |
+| UNIT_V_17B | (UNIT_V_UF)                     ... | 342 |
+| UNIT_V_UP | (UNIT_V_UF)                     ... | 343 |
+| UNIT_V_MSIZE | (UNIT_V_UF+1)                   ... | 344 |
+| UNIT_MICRO | (1 << UNIT_V_MICRO) | 345 |
+| UNIT_17B | (1 << UNIT_V_17B) | 346 |
+| UNIT_UP | (1 << UNIT_V_UP) | 347 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 348 |
+| HISTMAX | 4096 | 377 |
+| PAGEMASK | 01777                           ... | 424 |
+| MAPMASK | 0101777                         ... | 425 |
+| INVALID | 0101777                         ... | 426 |
+| BOOT_START | 00000 | 5885 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int)) | 5886 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 695-727 |  |
+| if | 728-738 |  |
+| while | 739-739 |  |
+| if | 740-746 |  |
+| if | 747-770 |  |
+| if | 771-782 |  |
+| if | 783-834 |  |
+| if | 835-841 |  |
+| if | 842-846 |  |
+| if | 847-856 |  |
+| if | 857-896 |  |
+| if | 897-921 |  |
+| if | 922-4694 |  |
+| if | 4695-4784 |  |
+| if | 4785-4936 |  |
+| if | 4937-5331 |  |
+| effective | 5332-5377 |  |
+| LEFmode | 5378-5431 |  |
+| Bytepointer | 5432-5458 |  |
+| indirect | 5459-5488 |  |
+| pushrtn | 5489-5509 |  |
+| GetMap | 5510-5571 |  |
+| PutMap | 5572-5621 |  |
+| GetDCHMap | 5622-5631 |  |
+| PutDCHMap | 5632-5650 |  |
+| MapAddr | 5651-5661 |  |
+| LoadMap | 5662-5699 |  |
+| unimp | 5700-5708 |  |
+| mask_out | 5709-5713 |  |
+| for | 5714-5723 |  |
+| cpu_reset | 5724-5735 |  |
+| cpu_ex | 5736-5737 |  |
+| if | 5738-5750 |  |
+| cpu_dep | 5751-5752 |  |
+| if | 5753-5765 |  |
+| cpu_set_size | 5766-5782 |  |
+| map_svc | 5783-5789 |  |
+| map_ex | 5790-5799 |  |
+| map_dep | 5800-5809 |  |
+| fpu_svc | 5810-5818 |  |
+| pit | 5819-5822 |  |
+| if | 5823-5828 |  |
+| if | 5829-5832 |  |
+| switch | 5833-5853 |  |
+| pit_svc | 5854-5860 |  |
+| if | 5861-5871 |  |
+| pit_reset | 5872-5926 |  |
+| cpu_boot | 5927-5936 |  |
+| Debug_Entry | 5937-5954 |  |
+| Debug_Dump | 5955-5959 |  |
+| Dump_History | 5960-6015 |  |
+| build_devtab | 6016-6021 |  |
+| for | 6022-6026 |  |
+| for | 6027-6045 |  |
+| get_sf | 6046-6054 |  |
+| store_sf | 6055-6064 |  |
+| get_lf | 6065-6074 |  |
+| store_lf | 6075-6085 |  |
+| overflow_sf | 6086-6097 |  |
+| normal_sf | 6098-6123 |  |
+| normal_lf | 6124-6153 |  |
+| overflow_lf | 6154-6163 |  |
+| underflow_sf | 6164-6175 |  |
+| underflow_lf | 6176-6187 |  |
+| over_under_flow_sf | 6188-6206 |  |
+| over_under_flow_lf | 6207-6223 |  |
+| significance_sf | 6224-6231 |  |
+| significance_lf | 6232-6250 |  |
+| add_sf | 6251-6410 |  |
+| add_lf | 6411-6569 |  |
+| mul_sf | 6570-6617 |  |
+| mul_lf | 6618-6674 |  |
+| div_sf | 6675-6726 |  |
+| div_lf | 6727-6783 |  |

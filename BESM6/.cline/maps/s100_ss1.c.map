@@ -1,0 +1,94 @@
+=== s100_ss1.c — 717 строк ===
+Источник: s100_ss1.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_ss1.c -nt .cline/maps/s100_ss1.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| RTC_REGS | 171-176 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ss1_rtc | 178 | |
+| currentTime | 321 | |
+| newcount | 455 | |
+| bc | 456 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 44 |
+| DBG_PRINT(args) |  | 46 |
+| ERROR_MSG | (1 << 0) | 50 |
+| TRACE_MSG | (1 << 1) | 51 |
+| PIC_MSG | (1 << 2) | 52 |
+| TC_MSG | (1 << 3) | 53 |
+| RTC_MSG | (1 << 4) | 54 |
+| MATH_MSG | (1 << 5) | 55 |
+| UART_MSG | (1 << 6) | 56 |
+| IRQ_MSG | (1 << 7) | 57 |
+| SS1_MAX_TIMERS | 3 | 59 |
+| MASTER_PIC | 0 | 104 |
+| SLAVE_PIC | 1 | 105 |
+| VI0_IRQ_OFFSET | 0 | 107 |
+| VI1_IRQ_OFFSET | 1 | 108 |
+| VI2_IRQ_OFFSET | 2 | 109 |
+| VI3_IRQ_OFFSET | 3 | 110 |
+| VI4_IRQ_OFFSET | 4 | 111 |
+| VI5_IRQ_OFFSET | 5 | 112 |
+| VI6_IRQ_OFFSET | 6 | 113 |
+| VI7_IRQ_OFFSET | 0 | 114 |
+| TC0_IRQ_OFFSET | 1 | 115 |
+| TC1_IRQ_OFFSET | 2 | 116 |
+| TC2_IRQ_OFFSET | 3 | 117 |
+| MSVRQ_IRQ_OFFSET | 4 | 118 |
+| MEND_IRQ_OFFSET | 5 | 119 |
+| TXRDY_IRQ_OFFSET | 6 | 120 |
+| RXRDY_IRQ_OFFSET | 7 | 121 |
+| I8253_CTL_SC_MASK | 0xC0 | 152 |
+| I8253_CTL_RL_MASK | 0x30 | 153 |
+| I8253_CTL_MODE_MASK | 0x0E | 154 |
+| I8253_CTL_BCD | 0x01 | 155 |
+| RTS_SECONDS_1_DIGIT | 0 | 157 |
+| RTS_SECONDS_10_DIGIT | 1 | 158 |
+| RTS_MINUTES_1_DIGIT | 2 | 159 |
+| RTS_MINUTES_10_DIGIT | 3 | 160 |
+| RTS_HOURS_1_DIGIT | 4 | 161 |
+| RTS_HOURS_10_DIGIT | 5 | 162 |
+| RTS_DAY_OF_WEEK_DIGIT | 6 | 163 |
+| RTS_DAYS_1_DIGIT | 7 | 164 |
+| RTS_DAYS_10_DIGIT | 8 | 165 |
+| RTS_MONTHS_1_DIGIT | 9 | 166 |
+| RTS_MONTHS_10_DIGIT | 10 | 167 |
+| RTS_YEARS_1_DIGIT | 11 | 168 |
+| RTS_YEARS_10_DIGIT | 12 | 169 |
+| SS1_M8259_L | 0x00 | 301 |
+| SS1_M8259_H | 0x01 | 302 |
+| SS1_S8259_L | 0x02 | 303 |
+| SS1_S8259_H | 0x03 | 304 |
+| SS1_8253_TC0 | 0x04 | 305 |
+| SS1_8253_TC1 | 0x05 | 306 |
+| SS1_8253_TC2 | 0x06 | 307 |
+| SS1_8253_CTL | 0x07 | 308 |
+| SS1_9511A_DATA | 0x08 | 309 |
+| SS1_9511A_CMD | 0x09 | 310 |
+| SS1_RTC_CMD | 0x0A | 311 |
+| SS1_RTC_DATA | 0x0B | 312 |
+| SS1_UART_DATA | 0x0C | 313 |
+| SS1_UART_STAT | 0x0D | 314 |
+| SS1_UART_MODE | 0x0E | 315 |
+| SS1_UART_CMD | 0x0F | 316 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ss1_description | 228-260 |  |
+| ss1_reset | 261-289 | Reset routine |
+| ss1dev | 290-322 |  |
+| SS1_Read | 323-458 |  |
+| setClockSS1 | 459-476 | setClockSS1 sets the new ClockSS1Delta based on the provided digits |
+| SS1_Write | 477-618 |  |
+| raise_ss1_interrupt | 619-632 |  |
+| generate_ss1_interrupt | 633-668 |  |
+| ss1_svc | 669-717 | Unit 0-2 = Timer0-2, Unit3=ISR queue |

@@ -1,0 +1,61 @@
+=== sol20.c — 2613 строк ===
+Источник: sol20.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sol20.c -nt .cline/maps/sol20.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| nmiInterrupt | 93 | |
+| sol20_ram | 153 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VERBOSE_MSG | (1 << 0) | 96 |
+| ERROR_MSG | (1 << 1) | 97 |
+| STATUS_MSG | (1 << 2) | 98 |
+| SOL20_RAM_BASE | 0xc800 | 149 |
+| SOL20_RAM_SIZE | 1024 | 150 |
+| SOL20_RAM_MASK | (SOL20_RAM_SIZE-1) | 151 |
+| SOL20_ROM_BASE | 0xc000 | 155 |
+| SOL20_ROM_SIZE | 2048 | 156 |
+| SOL20_ROM_MASK | (SOL20_ROM_SIZE-1) | 157 |
+| SOL20_SERST | 0xf8    /* SERIAL STATUS PORT   ... | 1207 |
+| SOL20_SDATA | 0xf9    /* SERIAL DATA          ... | 1208 |
+| SOL20_STAPT | 0xfa    /* STATUS PORT GENERAL  ... | 1209 |
+| SOL20_TDATA | 0xfb    /* TAPE DATA            ... | 1210 |
+| SOL20_KDATA | 0xfc    /* KEYBOARD DATA        ... | 1211 |
+| SOL20_PDATA | 0xfd    /* PARALLEL DATA        ... | 1212 |
+| SOL20_SCD | 0x01    /* SERIAL CARRIER DETECT... | 1216 |
+| SOL20_SDSR | 0x02    /* SERIAL DATA SET READY... | 1217 |
+| SOL20_SPE | 0x04    /* SERIAL PARITY ERROR  ... | 1218 |
+| SOL20_SFE | 0x08    /* SERIAL FRAMING ERROR ... | 1219 |
+| SOL20_SOE | 0x10    /* SERIAL OVERRUN ERROR ... | 1220 |
+| SOL20_SCTS | 0x20    /* SERIAL CLEAR TO SEND ... | 1221 |
+| SOL20_SDR | 0x40    /* SERIAL DATA READY    ... | 1222 |
+| SOL20_STBE | 0x80    /* SERIAL TRANSMITTER BU... | 1223 |
+| SOL20_KDR | 0x01    /* KEYBOARD DATA READY  ... | 1225 |
+| SOL20_PDR | 0x02    /* PARALLEL DATA READY  ... | 1226 |
+| SOL20_PXDR | 0x04    /* PARALLEL DEVICE READY... | 1227 |
+| SOL20_TFE | 0x08    /* TAPE FRAMING ERROR   ... | 1228 |
+| SOL20_TOE | 0x10    /* TAPE OVERRUN ERROR   ... | 1229 |
+| SOL20_TDR | 0x40    /* TAPE DATA READY      ... | 1230 |
+| SOL20_TTBE | 0x80    /* TAPE TRANSMITTER BUFF... | 1231 |
+| SOL20_TAPE1 | 0x80    /* 1=TURN TAPE ONE ON   ... | 1233 |
+| SOL20_TAPE2 | 0x40    /* 1=TURN TAPE TWO ON   ... | 1234 |
+| SOL20_NAME | "Processor Technology Sol-20" | 1240 |
+| SOL20_SNAME | "SOL20" | 1241 |
+| SOL20K_NAME | "Sol-20 Keyboard" | 1330 |
+| SOL20K_SNAME | "SOL20K" | 1331 |
+| SOL20T_NAME | "Sol-20 Tape Port" | 1402 |
+| SOL20T_SNAME | "SOL20T" | 1403 |
+| SOL20_TAPE_NORMAL | 4000 | 1405 |
+| SOL20_TAPE_FAST | 100 | 1406 |
+| SOL20S_NAME | "Sol-20 Serial Port" | 1480 |
+| SOL20S_SNAME | "SOL20S" | 1481 |
+| SOL20P_NAME | "Sol-20 Printer Port" | 1555 |
+| SOL20P_SNAME | "SOL20P" | 1556 |
+| KEY(NORMAL, | SHIFTED) (shifted ? (SHIFTED) : ... | 2233 |
+| CAPS(NORMAL, | SHIFTED) (shifted \|\| caps ? (SHI... | 2234 |
+| CTL(NORMAL, | SHIFTED, CTLED)  | 2235 |
+

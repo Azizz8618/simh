@@ -1,0 +1,118 @@
+=== ibc.c — 2235 строк ===
+Источник: ibc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibc.c -nt .cline/maps/ibc.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| IBC_INFO | 73-90 |
+| IO_RESOURCE_LIST | 1520-1526 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| wd179x_infop | 92 | |
+| ibc_info_data | 179 | |
+| ibc_info | 180 | |
+| current_baud | 182 | |
+| baud_unlock | 183 | |
+| ibc_ram | 189 | |
+| currentTime | 1869 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEV_NAME | "IBC" | 43 |
+| ERROR_MSG | (1 << 0) | 46 |
+| DRIVE_MSG | (1 << 1) | 47 |
+| PIO_MSG | (1 << 2) | 48 |
+| SBD_MSG | (1 << 3) | 49 |
+| RTC_MSG | (1 << 4) | 50 |
+| BANK_MSG | (1 << 5) | 51 |
+| UART_MSG | (1 << 6) | 52 |
+| CACHE_MSG | (1 << 7) | 53 |
+| UNHANDLED_IO_MSG | (1 << 8) | 54 |
+| FIFO_MSG | (1 << 9) | 55 |
+| DIPSW_MSG | (1 << 10) | 56 |
+| VERBOSE_MSG | (1 << 11) | 57 |
+| IBC_MAX_UNITS | (4) | 59 |
+| IBC_NUM_SIO | 16      /* Number of serial port... | 60 |
+| IBC_ROM_SIZE | (8 * 1024) | 61 |
+| IBC_ROM_ADDR_MASK | (IBC_ROM_SIZE - 1) | 62 |
+| FDC_FIFO_LEN | (1024) | 63 |
+| FDC_FIFO_MASK | (FDC_FIFO_LEN - 1) | 64 |
+| IBC_SW_E_DEFAULT_VALUE | 0xFF | 66 |
+| IBC_CAPACITY | (77*1*26*128)   /* Default SSSD ... | 114 |
+| MOTOR_TO_LIMIT | 128 | 116 |
+| IBC_PARAM_DDENS | (1 << 3)    /* FDC Parameter Reg... | 141 |
+| IBC_SIO | 0x04    /* 0x04-0x13: UARTs (usi... | 144 |
+| IBC_FDC_DATA | 0x28    /* FDC Data Register */ | 145 |
+| IBC_PARAM | 0x2a    /* FDC PARAM Register */ | 146 |
+| IBC_DIPSWE | 0x3c    /* CPU Board DIP Switch ... | 147 |
+| IBC_BANKSEL | 0x38    /* Bank Select Register */ | 148 |
+| IBC_FIFO_CTRL | 0x3e    /* FDC FIFO Control */ | 149 |
+| IBC_ROM_CTRL | 0x3f    /* ROM Control Register */ | 150 |
+| IBC_SCC_BANKSEL | 0x58    /* Bank Select register */ | 151 |
+| IBC_SCC_FIFO_CTRL | 0x5e    /* FDC FIFO Control */ | 152 |
+| IBC_SCC_ROM_CTRL | 0x5f    /* ROM Control Register */ | 153 |
+| IBC_HDC | 0x40    /* 0x40-0x4F: Hard Disk ... | 154 |
+| IBC_CART | 0x60    /* 0x60-0x63: Cartridge ... | 155 |
+| IBC_REEL | 0x64    /* 0x64-0x67: Reel to Re... | 156 |
+| IBC_RTC | 0x70    /* 0x70-0x7F: RTC */ | 157 |
+| IBC_DEV31 | 0x80    /* 0x80-0x83: SYSTEM.DEV... | 158 |
+| IBC_PIO | 0xec    /* 0xEC-0xEF: Centronics... | 159 |
+| IBC_CACHE_BASE_H | 0x00 | 161 |
+| IBC_CACHE_BASE_L_WR | 0x01 | 162 |
+| IBC_CACHE_BASE_L_RD | 0x02 | 163 |
+| IBC_CACHE_DATA | 0x03 | 164 |
+| IRQ_VI0 | (1 << 0) | 167 |
+| IRQ_VI1 | (1 << 1) | 168 |
+| IRQ_VI10 | (1 << 10) | 169 |
+| IRQ_VI15 | (1 << 15) | 170 |
+| IBC_CACHE_SIZE | (256 * 1024)    /* CACHE is 256K */ | 172 |
+| IBC_CACHE_MASK | (IBC_CACHE_SIZE - 1) | 173 |
+| RST_OPCODE_TO_VECTOR(x) | (x & 0x38) | 175 |
+| DEFAULT_TIMER_DELTA | 100         /* default value for... | 177 |
+| IBC_WAIT | 16 | 191 |
+| IBC_UDATA(act,fl,wait,u4,name) | NULL,act,NULL,NULL,NULL,0,0,(fl)... | 192 |
+| IBC_NAME | "IBC Middi Cadet HP (IBC MCC CPU)" | 212 |
+| UNIT_IBC_V_MCC | (UNIT_V_UF+1)               /* S... | 224 |
+| UNIT_IBC_MCC | (1 << UNIT_IBC_V_MCC) | 225 |
+| UNIT_IBC_V_SCC | (UNIT_V_UF+2)               /* S... | 226 |
+| UNIT_IBC_SCC | (1 << UNIT_IBC_V_SCC) | 227 |
+| TIMER_MSG | (1 << 1) | 307 |
+| IN_MSG | (1 << 2) | 308 |
+| OUT_MSG | (1 << 3) | 309 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ibc_description | 214-298 |  |
+| ibctimer_description | 299-329 |  |
+| ibctimer_dev | 330-344 | Port 0x14 IBC Periodic Timer |
+| ibctimer_reset | 345-356 |  |
+| ibctimer_svc | 357-405 | Unit service routine |
+| ibcrtctimer_description | 406-423 |  |
+| ibcrtctimer_dev | 424-440 | port 0x20 IBC Super Cadet RTC Timer |
+| ibcrtctimer_reset | 441-452 |  |
+| ibcrtctimer_svc | 453-466 | Unit service routine |
+| ibc_show_vectable | 467-1569 |  |
+| ibc_set_model | 1570-1605 |  |
+| ibc_reset | 1606-1654 | Reset routine |
+| ibc_boot | 1655-1668 |  |
+| ibc_attach | 1669-1680 | Attach routine |
+| ibc_detach | 1681-1691 | Detach routine |
+| ibc_rom | 1692-1706 |  |
+| ibc_sio | 1707-1739 | IBC Cadet SIO ports |
+| ibc_param_reg | 1740-1773 | Disk Control/Flags Register, 0x2a |
+| ibc_banksel | 1774-1848 | DIP Switch E (0x3c) / ROM Control (0x3f) |
+| ibc_fdc_data | 1849-1875 | IBC FDC Data Port (0x28) |
+| ibc_rtc | 1876-1940 | Microprocessor-Compatible Real-Time Clock |
+| ibc_cart | 1941-1979 | IBC Cartridge Tape Controller (0x60-0x63) |
+| ibc_reel | 1980-2018 | IBC Reel to Reel Tape Controller (0x64-0x67) |
+| ibc_dev31 | 2019-2057 | IBC DEV31 (Unknown) (0x80-0x83) |
+| ibc_pio | 2058-2097 | IBC Cadet PIO port |
+| ibc_sc_cache | 2098-2169 | IBC Cadet CACHE |
+| ibc_sc_baud | 2170-2204 | IBC Super Cadet Baud Rate Control port |
+| ibc_sc_dtr | 2205-2222 | IBC Super Cadet DTR Control ports |
+| ibc_unhandled | 2223-2235 | IBC Cadet Unhandled ports |

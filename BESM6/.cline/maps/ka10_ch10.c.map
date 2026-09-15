@@ -1,0 +1,73 @@
+=== ka10_ch10.c — 556 строк ===
+Источник: ka10_ch10.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ka10_ch10.c -nt .cline/maps/ka10_ch10.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| peer | 104 | |
+| address | 105 | |
+| ch10_status | 106 | |
+| rx_count | 107 | |
+| rx_pos | 108 | |
+| tx_count | 109 | |
+| rx_buffer | 110 | |
+| tx_buffer | 111 | |
+| ch10_lines | 113 | |
+| ch10_tmxr | 114 | |
+| ch10_dib | 138 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_CH10 | 0 | 35 |
+| CH_DEVNUM | 0470 | 39 |
+| PIA | 00000007LL /* Interrupt channel */ | 42 |
+| TXIE | 00000010LL /* Transmit interrupt... | 43 |
+| RXIE | 00000020LL /* Receive interrupt ... | 44 |
+| SPY | 00000040LL /* Spy */ | 45 |
+| LOOP | 00000100LL /* Loop back */ | 46 |
+| SWAP | 00000200LL /* Swap bytes */ | 47 |
+| HALF | 00000400LL /* Halfword output */ | 48 |
+| TXD | 00001000LL /* Transmit done */ | 49 |
+| RXD | 00002000LL /* Receive done */ | 50 |
+| TXA | 00004000LL /* Transmit abort */ | 51 |
+| CTX | 00004000LL /* Clear transmitter */ | 52 |
+| LOST | 00170000LL /* Lost count */ | 53 |
+| RESET | 00010000LL /* Reset */ | 54 |
+| CRC | 00200000LL /* CRC error */ | 55 |
+| WLE | 00400000LL /* Word length error */ | 56 |
+| PLE | 01000000LL /* Packet length erro... | 57 |
+| OVER | 02000000LL /* Overrun */ | 58 |
+| STATUS_BITS | (PIA\|TXIE\|RXIE\|SPY\|LOOP\|SWAP\|HAL... | 60 |
+| CHUDP_HEADER | 4 | 82 |
+| IOLN_CH | 020 | 83 |
+| DBG_TRC | 0x0001 | 84 |
+| DBG_REG | 0x0002 | 85 |
+| DBG_PKT | 0x0004 | 86 |
+| DBG_DAT | 0x0008 | 87 |
+| DBG_INT | 0x0010 | 88 |
+| DBG_ERR | 0x0020 | 89 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ch10_checksum | 160-179 |  |
+| ch10_test_int | 180-194 |  |
+| ch10_validate | 195-222 |  |
+| ch10_transmit | 223-258 |  |
+| ch10_receive | 259-297 |  |
+| ch10_clear | 298-313 |  |
+| ch10_command | 314-340 |  |
+| ch10_devio | 341-412 |  |
+| ch10_svc | 413-426 |  |
+| ch10_attach | 427-451 |  |
+| ch10_detach | 452-458 |  |
+| ch10_reset | 459-466 |  |
+| ch10_show_peer | 467-472 |  |
+| ch10_set_peer | 473-489 |  |
+| ch10_show_node | 490-498 |  |
+| ch10_set_node | 499-516 |  |
+| ch10_description | 517-521 |  |
+| ch10_help | 522-543 |  |
+| ch10_help_attach | 544-556 |  |

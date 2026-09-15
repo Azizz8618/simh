@@ -1,0 +1,75 @@
+=== ibc_mcc_hdc.c — 682 строк ===
+Источник: ibc_mcc_hdc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibc_mcc_hdc.c -nt .cline/maps/ibc_mcc_hdc.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| IBC_HDC_DRIVE_INFO | 88-101 |
+| IBC_HDC_INFO | 103-114 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ibc_hdc_info_data | 116 | |
+| ibc_hdc_info | 117 | |
+| PCX | 119 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ERROR_MSG | (1 << 0) | 41 |
+| CMD_MSG | (1 << 1) | 42 |
+| RD_DATA_MSG | (1 << 2) | 43 |
+| WR_DATA_MSG | (1 << 3) | 44 |
+| FIFO_MSG | (1 << 4) | 45 |
+| TF_MSG | (1 << 5) | 46 |
+| VERBOSE_MSG | (1 << 6) | 47 |
+| IBC_HDC_MAX_DRIVES | 4       /* Maximum number of dri... | 49 |
+| IBC_HDC_MAX_SECLEN | 256     /* Maximum of 256 bytes ... | 50 |
+| IBC_HDC_FORMAT_FILL_BYTE | 0xe5    /* Real controller uses ... | 51 |
+| IBC_HDC_MAX_CYLS | 1024 | 54 |
+| IBC_HDC_MAX_HEADS | 16 | 55 |
+| IBC_HDC_MAX_SPT | 256 | 56 |
+| DEV_NAME | "IBCHDC" | 58 |
+| TF_CSEC | 0 | 61 |
+| TF_HEAD | 1 | 62 |
+| TF_NSEC | 2 | 63 |
+| TF_SA3 | 3 | 64 |
+| TF_CMD | 4 | 65 |
+| TF_DRIVE | 5 | 66 |
+| TF_TRKL | 6 | 67 |
+| TF_TRKH | 7 | 68 |
+| TF_FIFO | 8 | 69 |
+| IBC_HDC_STATUS_BUSY | (1 << 4) | 71 |
+| IBC_HDC_STATUS_ERROR | (1 << 0) | 72 |
+| IBC_HDC_ERROR_ID_NOT_FOUND | (1 << 4) | 74 |
+| IBC_HDC_CMD_MASK | 0x7f | 76 |
+| IBC_HDC_CMD_RESET | 0x00 | 77 |
+| IBC_HDC_CMD_READ_SECT | 0x01 | 78 |
+| IBC_HDC_CMD_WRITE_SECT | 0x02 | 79 |
+| IBC_HDC_CMD_FORMAT_TRK | 0x08 | 80 |
+| IBC_HDC_CMD_ACCESS_FIFO | 0x0b | 81 |
+| IBC_HDC_CMD_READ_PARAMETERS | 0x10 | 82 |
+| IBC_HDC_REG_STATUS | 0x40 | 84 |
+| IBC_HDC_REG_FIFO_STATUS | 0x44 | 85 |
+| IBC_HDC_REG_FIFO | 0x48 | 86 |
+| UNIT_V_IBC_HDC_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 127 |
+| UNIT_IBC_HDC_VERBOSE | (1 << UNIT_V_IBC_HDC_VERBOSE) | 128 |
+| IBC_HDC_CAPACITY | (512*4*32*256)   /* Default Disk... | 129 |
+| IBC_HDC_NAME | "IBC MCC ST-506 Hard Disk Contro... | 165 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ibc_hdc_description | 167-205 |  |
+| ibc_hdc_reset | 206-227 | Reset routine |
+| ibc_hdc_attach | 228-285 | Attach routine |
+| ibc_hdc_detach | 286-311 | Detach routine |
+| ibc_hdc_unit_set_geometry | 312-364 | Set geometry of the disk drive |
+| ibc_hdc_unit_show_geometry | 365-385 | Show geometry of the disk drive |
+| ibchdcdev | 386-396 | IBC HDC I/O Dispatch |
+| IBC_HDC_Write | 397-449 | I/O Write to IBC Disk Slave Task File |
+| IBC_HDC_Read | 450-480 | I/O Read from IBC Disk Slave Task File |
+| IBC_HDC_Validate_CHSN | 481-534 | disk drive geometry. |
+| IBC_HDC_doCommand | 535-682 | Perform IBC Disk Controller Command |

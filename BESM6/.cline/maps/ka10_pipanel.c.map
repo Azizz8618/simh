@@ -1,0 +1,88 @@
+=== ka10_pipanel.c — 763 строк ===
+Источник: ka10_pipanel.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ka10_pipanel.c -nt .cline/maps/ka10_pipanel.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| xrows | 163 | |
+| cols | 165 | |
+| intervl | 167 | |
+| blink_thread | 179 | |
+| blink_thread_terminate | 180 | |
+| input_wait | 560 | |
+| input_buffer | 561 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MB_MASK0 | RMASK       /* 18-35 */ | 83 |
+| MB_V_0 | 0           /* right */ | 84 |
+| MB_MASK1 | LMASK       /* 0-17 */ | 87 |
+| MB_V_1 | 18          /* right */ | 88 |
+| AB_MASK2 | RMASK       /* 18-35 */ | 91 |
+| AB_V_2 | 0           /* right */ | 92 |
+| IX_MASK3 | 017 | 95 |
+| IX_V_3 | 0            /* left */ | 96 |
+| IND_LAMP | 020 | 97 |
+| AC_MASK3 | 017 | 98 |
+| AC_V_3 | 5            /* left */ | 99 |
+| IR_MASK3 | 0777         /* 0-9 */ | 100 |
+| IR_V_3 | 9            /* left */ | 101 |
+| PC_MASK4 | RMASK        /* 18-35 */ | 104 |
+| PC_V_4 | 0            /* right */ | 105 |
+| PI_IOB_MASK5 | 0177 | 108 |
+| PI_IOB_V_5 | 7            /* left */ | 109 |
+| PI_ENB_MASK5 | 0177 | 110 |
+| PI_ENB_V_5 | 0            /* left */ | 111 |
+| PROG_STOP_LAMP | 0040000 | 112 |
+| USER_LAMP | 0100000 | 113 |
+| MEM_STOP_LAMP | 0200000 | 114 |
+| PWR_LAMP | 0400000 | 115 |
+| PI_REQ_MASK6 | 0177 | 118 |
+| PI_REQ_V_6 | 0            /* left */ | 119 |
+| PI_PRO_MASK6 | 0177 | 120 |
+| PI_PRO_V_6 | 7            /* left */ | 121 |
+| RUN_LAMP | 0040000 | 122 |
+| PION_LAMP | 0100000 | 123 |
+| PI_LAMP | 0200000 | 124 |
+| MI_LAMP | 0400000 | 125 |
+| SR_MASK0 | RMASK | 128 |
+| SR_V_0 | 0           /* Left */ | 129 |
+| SR_MASK1 | LMASK | 132 |
+| SR_V_1 | 18          /* Left */ | 133 |
+| MA_SW_MASK3 | RMASK | 136 |
+| MA_SW_V_3 | 0           /* Left */ | 137 |
+| EXAM_NEXT | 000001        /* SW=0 */ | 140 |
+| EXAM_THIS | 000002        /* SW=1 */ | 141 |
+| XCT_SW | 000004        /* SW=2 Set xct_in... | 142 |
+| RESET_SW | 000010        /* SW=3 Call reset */ | 143 |
+| STOP_SW | 000020        /* SW=4 Set RUN = ... | 144 |
+| CONT_SW | 000040        /* SW=5 call sim_i... | 145 |
+| START_SW | 000100        /* SW=6 Call reset... | 146 |
+| READ_SW | 000200        /* SW=7 Boot funct... | 147 |
+| DEP_NEXT | 000400        /* SW=8 */ | 148 |
+| DEP_THIS | 001000        /* SW=9 */ | 149 |
+| ADR_BRK_SW | 000001       /* Address Break */ | 152 |
+| ADR_STOP_SW | 000002       /* Address stop */ | 153 |
+| WRITE_SW | 000004       /* Write stop */ | 154 |
+| DATA_FETCH | 000010       /* Data fetch stop */ | 155 |
+| INST_FETCH | 000020       /* Instruct fetch s... | 156 |
+| REP_SW | 000040       /* Repeat switch */ | 157 |
+| NXM_STOP | 000100       /* set nxm_stop */ | 158 |
+| PAR_STOP | 000200       /* Nop */ | 159 |
+| SING_CYCL | 000400       /* Nop */ | 160 |
+| SING_INST | 001000       /* set sing_inst */ | 161 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| gpio_mux_thread_start | 182-198 |  |
+| debounce_sw | 199-217 | Debounce a momentary switch. |
+| read_sw | 218-292 |  |
+| blink | 293-566 |  |
+| read_line_handler | 567-579 |  |
+| vm_read | 580-729 |  |
+| vm_post | 730-736 |  |
+| pi_panel_start | 737-752 | Start panel thread, and install console read functions. |
+| pi_panel_stop | 753-763 | Stop display thread. |

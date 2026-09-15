@@ -1,0 +1,83 @@
+=== kx10_rc.c — 573 строк ===
+Источник: kx10_rc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_rc.c -nt .cline/maps/kx10_rc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rc_df10 | 109 | |
+| rc_buf | 110 | |
+| rc_ipr | 111 | |
+| uptr->CUR_CYL | 537 | |
+| uptr->UFLAGS | 538 | |
+| SCPE_OK | 539 | |
+| SCPE_OK | 565 | |
+| controller" | 570 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_RC | 0 | 27 |
+| RC_DEVNUM | 0170                    /* 0174 */ | 32 |
+| NUM_UNITS_RC | 4 | 33 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 0)                 ... | 37 |
+| UNIT_M_DTYPE | 1 | 38 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 39 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 40 |
+| CUR_CYL | u3              /* current cylin... | 44 |
+| DATAPTR | u4              /* data pointer */ | 45 |
+| UFLAGS | u5              /* Function */ | 46 |
+| DISK_SEL | 0600000000000LL | 49 |
+| TRACK | 0177600000000LL | 50 |
+| SEGMENT | 0000177000000LL | 51 |
+| INIT_PAR | 0000000770000LL   /* Read */ | 52 |
+| DPE_STOP | 0000000004000LL | 53 |
+| CPE_STOP | 0000000002000LL | 54 |
+| WRITE | 0000000001000LL | 55 |
+| EPAR | 0000000000001LL | 56 |
+| SEC_SEL | 0000000001400LL   /* Read */ | 57 |
+| SECT_CNT | 0000000000377LL   /* Read */ | 58 |
+| PI | 0000007 | 60 |
+| WCW | 0000040 | 61 |
+| SEC_SCTR | 0600000 | 62 |
+| RST_MSK | 0000000177710LL   /* CONO reset ... | 64 |
+| B22_FLAG | 0040000000000LL   /* 22 bit cont... | 65 |
+| MAINT_SEG | 0010000000000LL | 66 |
+| PRTLT | 0004000000000LL   /* Protected a... | 67 |
+| STS | 0003777000000LL | 68 |
+| SCRCHCMP | 0000000400000LL   /* Tranfer in ... | 69 |
+| S_ERROR | 0000000200000LL   /* Segment not... | 70 |
+| DSK_DES_E | 0000000100000LL   /* Duplicate d... | 71 |
+| TRK_SEL_E | 0000000040000LL   /* Track not B... | 72 |
+| NOT_RDY | 0000000020000LL   /* Drive not r... | 73 |
+| PSW_FAIL | 0000000010000LL   /* Power suppl... | 74 |
+| DSK_PAR_E | 0000000004000LL   /* Disk Parity... | 75 |
+| CH_PAR_D | 0000000002000LL   /* Channel Dat... | 76 |
+| CH_PAR_C | 0000000001000LL   /* Channel Con... | 77 |
+| NXM_ERR | 0000000000400LL   /* Non existan... | 78 |
+| ILL_WR | 0000000000200LL   /* Write to pr... | 79 |
+| OVRRUN | 0000000000100LL   /* Over run */ | 80 |
+| CCW_COMP | 0000000000040LL   /* Control wor... | 81 |
+| RD10_DTYPE | 0 | 83 |
+| RD10_WDS | 32 | 84 |
+| RD10_SEGS | 80 | 85 |
+| RD10_CYL | 200 | 86 |
+| RD10_SIZE | (RD10_SEGS * RD10_CYL * RD10_WDS) | 87 |
+| RM10_DTYPE | 1 | 89 |
+| RM10_WDS | 64 | 90 |
+| RM10_SEGS | 60 | 91 |
+| RM10_CYL | 90 | 92 |
+| RM10_SIZE | (RM10_SEGS * RM10_CYL * RM10_WDS) | 93 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rc_devio | 220-349 |  |
+| rc_svc | 350-466 |  |
+| rc_set_type | 467-481 |  |
+| rc_reset | 482-500 |  |
+| rc_boot | 501-528 |  |
+| rc_attach | 529-543 |  |
+| rc_detach | 544-552 |  |
+| rc_help | 553-567 |  |
+| rc_description | 568-573 |  |

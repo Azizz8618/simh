@@ -1,0 +1,50 @@
+=== s100_simh.c — 618 строк ===
+Источник: s100_simh.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_simh.c -nt .cline/maps/s100_simh.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| NameNode_t | 132-135 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpmCommandLine | 137 | |
+| nameListHead | 138 | |
+| currentName | 139 | |
+| currentNameIndex | 140 | |
+| lastPathSeparatorIndex | 141 | |
+| firstPathCharacterIndex | 142 | |
+| version | 239 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IN_MSG | (1 << 0) | 56 |
+| OUT_MSG | (1 << 1) | 57 |
+| CMD_MSG | (1 << 2) | 58 |
+| VERBOSE_MSG | (1 << 3) | 59 |
+| CPM_COMMAND_LINE_LENGTH | 128 | 70 |
+| CPM_FCB_ADDRESS | 0x0080      /* Default FCB addre... | 71 |
+| SIMH_CAN_READ | 0x01               /* bit 0 is s... | 73 |
+| SIMH_CAN_WRITE | 0x02               /* bit 1 is s... | 74 |
+| SIMH_RESET | 0x03               /* Command to... | 75 |
+| CONTROLZ_CHAR | 0x1a               /* control Z ... | 76 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| simh_description | 119-240 |  |
+| simh_reset | 241-260 |  |
+| deleteNameList | 261-273 |  |
+| processDirEntry | 274-286 |  |
+| createCPMCommandLine | 287-295 |  |
+| attachCPM | 296-330 | The CP/M command line is used as the name of a file and UNIT* uptr is attached to it. |
+| detachCPM | 331-352 |  |
+| simh_cmd_in | 353-407 |  |
+| simh_cmd_out | 408-506 |  |
+| simh_io_status | 507-533 | port 0x12 is a device for communication SIMH <--> Altair machine |
+| simh_io_data | 534-584 | port 0x13 is a device for communication SIMH <--> Altair machine |
+| simh_io_cmd | 585-607 | port 0xfe is a device for communication SIMH <--> Altair machine |
+| simh_show_help | 608-618 |  |

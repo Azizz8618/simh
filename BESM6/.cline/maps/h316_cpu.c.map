@@ -1,0 +1,143 @@
+=== h316_cpu.c — 1808 строк ===
+Источник: h316_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test h316_cpu.c -nt .cline/maps/h316_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 254-263 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dib | 327 | |
+| AR | 405 | |
+| ut | 406 | |
+| reason | 408 | |
+| BR | 433 | |
+| XR | 434 | |
+| reason | 436 | |
+| iack | 511 | |
+| sim_interval | 537 | |
+| saved_AR | 1047 | |
+| saved_BR | 1048 | |
+| saved_XR | 1049 | |
+| reason | 1051 | |
+| SCPE_OK | 1096 | |
+| dat | 1277 | |
+| clatr | 1350 | |
+| cbitl | 1351 | |
+| aleg | 1352 | |
+| ARx | 1429 | |
+| saved_AR | 1438 | |
+| dp | 1440 | |
+| ext | 1441 | |
+| dev_ext_int | 1443 | |
+| chan_req | 1446 | |
+| SCPE_IERR | 1450 | |
+| SCPE_OK | 1455 | |
+| SCPE_OK | 1466 | |
+| SCPE_OK | 1478 | |
+| SCPE_OK | 1487 | |
+| mc | 1492 | |
+| MEMSIZE | 1502 | |
+| SCPE_OK | 1505 | |
+| SCPE_OK | 1545 | |
+| SCPE_OK | 1555 | |
+| SCPE_OK | 1567 | |
+| dptr | 1574 | |
+| dibp | 1575 | |
+| dibp->chan | 1585 | |
+| SCPE_OK | 1586 | |
+| dptr | 1591 | |
+| dibp | 1592 | |
+| newc | 1593 | |
+| SCPE_OK | 1610 | |
+| dptr | 1615 | |
+| dibp | 1616 | |
+| newc | 1617 | |
+| SCPE_OK | 1634 | |
+| dptr | 1641 | |
+| dibp | 1642 | |
+| SCPE_OK | 1657 | |
+| dptr | 1683 | |
+| dibp | 1684 | |
+| FALSE | 1721 | |
+| hst_p | 1742 | |
+| SCPE_OK | 1754 | |
+| cr | 1761 | |
+| lnt | 1776 | |
+| SCPE_OK | 1807 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 233 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 234 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 235 |
+| PCQ_TOP | pcq[pcq_p] | 236 |
+| HIST_PC | 0x40000000 | 248 |
+| HIST_C | 0x20000000 | 249 |
+| HIST_EA | 0x10000000 | 250 |
+| HIST_MIN | 64 | 251 |
+| HIST_MAX | 65536 | 252 |
+| Read(ad) | M[(ad)] | 415 |
+| GETDBL_S(h,l) | (((h) << 15) \| ((l) & MMASK)) | 416 |
+| GETDBL_U(h,l) | (((h) << 16) \| (l)) | 417 |
+| PUTDBL_S(x) | AR = ((x) >> 15) & DMASK;  | 418 |
+| PUTDBL_U(x) | AR = ((x) >> 16) & DMASK;  | 420 |
+| PUTDBL_Z(x) | AR = ((x) >> 15) & DMASK;  | 422 |
+| SEXT(x) | (((x) & SIGN)? ((x) \| ~DMASK): (... | 424 |
+| NEWA(c,n) | (ext? (((c) & ~X_AMASK) \| ((n) &... | 425 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 403-439 |  |
+| while | 440-441 |  |
+| if | 442-448 |  |
+| if | 449-511 |  |
+| if | 512-537 |  |
+| if | 538-551 |  |
+| switch | 552-1068 |  |
+| Ea | 1069-1074 |  |
+| if | 1075-1088 |  |
+| if | 1089-1100 |  |
+| Write | 1101-1116 |  |
+| Add16 | 1117-1126 |  |
+| Add31 | 1127-1138 |  |
+| cpu_interrupt | 1139-1148 |  |
+| cpu_ext_interrupt | 1149-1186 | [RLA] Extended (priority) interrupt action ... |
+| undio | 1187-1193 |  |
+| sim_ota_2024 | 1194-1250 |  |
+| dmaio | 1251-1254 |  |
+| switch | 1255-1346 |  |
+| Operate | 1347-1369 |  |
+| if | 1370-1407 |  |
+| if | 1408-1433 |  |
+| cpu_reset | 1434-1459 |  |
+| cpu_ex | 1460-1470 |  |
+| cpu_dep | 1471-1482 |  |
+| cpu_set_noext | 1483-1489 |  |
+| cpu_set_size | 1490-1509 |  |
+| cpu_set_interrupts | 1510-1520 |  |
+| cpu_show_interrupts | 1521-1529 |  |
+| cpu_set_nchan | 1530-1540 |  |
+| for | 1541-1549 |  |
+| cpu_show_nchan | 1550-1559 |  |
+| cpu_show_dma | 1560-1571 |  |
+| io_set_iobus | 1572-1588 |  |
+| io_set_dma | 1589-1612 |  |
+| io_set_dmc | 1613-1638 |  |
+| io_show_chan | 1639-1662 |  |
+| set_chanmap | 1663-1680 |  |
+| devtab_init | 1681-1690 |  |
+| for | 1691-1716 |  |
+| for | 1717-1725 |  |
+| cpu_set_hist | 1726-1730 |  |
+| if | 1731-1742 |  |
+| if | 1743-1747 |  |
+| if | 1748-1758 |  |
+| cpu_show_hist | 1759-1770 |  |
+| if | 1771-1781 |  |
+| for | 1782-1808 |  |

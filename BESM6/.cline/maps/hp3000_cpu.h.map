@@ -1,0 +1,311 @@
+=== hp3000_cpu.h — 1120 строк ===
+Источник: hp3000_cpu.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_cpu.h -nt .cline/maps/hp3000_cpu.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BP_EXEC | (SWMASK ('E'))      /* an execut... | 62 |
+| BP_SUPPORTED | (BP_EXEC)           /* the list ... | 63 |
+| UNIT_MODEL_SHIFT | (UNIT_V_UF + 0)     /* the CPU m... | 68 |
+| UNIT_EIS_SHIFT | (UNIT_V_UF + 1)     /* the Exten... | 69 |
+| UNIT_CALTIME_SHIFT | (UNIT_V_UF + 2)     /* the proce... | 70 |
+| UNIT_PFARS_SHIFT | (UNIT_V_UF + 3)     /* the power... | 71 |
+| UNIT_CIS_SHIFT | (UNIT_V_UF + 4)     /* the COBOL... | 72 |
+| UNIT_MODEL_MASK | 0000001u            /* model ID ... | 74 |
+| UNIT_MODEL | (UNIT_MODEL_MASK << UNIT_MODEL_S... | 76 |
+| UNIT_SERIES_III | (0u << UNIT_MODEL_SHIFT)    /* t... | 78 |
+| UNIT_SERIES_II | (1u << UNIT_MODEL_SHIFT)    /* t... | 79 |
+| UNIT_EIS | (1u << UNIT_EIS_SHIFT)      /* t... | 80 |
+| UNIT_CALTIME | (1u << UNIT_CALTIME_SHIFT)  /* t... | 81 |
+| UNIT_PFARS | (1u << UNIT_PFARS_SHIFT)    /* t... | 82 |
+| UNIT_CIS | (1u << UNIT_CIS_SHIFT)      /* t... | 83 |
+| UNIT_CPU_MODEL | (cpu_unit [0].flags & UNIT_MODEL) | 85 |
+| CPU_MODEL(f) | ((f) >> UNIT_MODEL_SHIFT & UNIT_... | 87 |
+| MEMSIZE | (cpu_unit [0].capac)        /* t... | 89 |
+| DEB_ALL | ~0u                 /* trace eve... | 94 |
+| DEB_INSTR | (1u << 0)           /* trace ins... | 96 |
+| DEB_REG | (1u << 1)           /* trace reg... | 97 |
+| DEB_PSERV | (1u << 2)           /* trace PCL... | 98 |
+| DEB_EXEC | (1u << 3)           /* trace mat... | 99 |
+| BOV_FORMAT | "%02o.%06o  %06o  " /* bank-offs... | 101 |
+| SS_LOOP | (1u << 0)           /* stop on i... | 106 |
+| SS_PAUSE | (1u << 1)           /* stop on P... | 107 |
+| SS_UNDEF | (1u << 2)           /* stop on u... | 108 |
+| SS_UNIMPL | (1u << 3)           /* stop on u... | 109 |
+| SS_PAUSE_RESUMED | (1u << 30)          /* stop resu... | 111 |
+| SS_BYPASSED | (1u << 31)          /* stops are... | 112 |
+| CPX1_IRQ_SET | (cpx1_INTOVFL \| cpx1_BNDVIOL  \|  | 192 |
+| CPX2_IRQ_SET | (cpx2_RUNSWCH  \| cpx2_DUMPSWCH \|  | 217 |
+| PARAM(i) | (uint32)     UPPER_WORD (i) | 336 |
+| TRAP(i) | (TRAP_CLASS) LOWER_WORD (i) | 337 |
+| MICRO_ABORT(t) | longjmp (cpu_save_env, (t)) | 339 |
+| MICRO_ABORTP(t,p) | longjmp (cpu_save_env, TO_DWORD ... | 340 |
+| MODULE_MEMORY_LOWER | 0               /* lower memory ... | 345 |
+| MODULE_MEMORY_UPPER | 2               /* upper memory ... | 346 |
+| MODULE_MEMORY | 3               /* upper bound o... | 347 |
+| MODULE_PORT_CNTLR | 4               /* selector chan... | 348 |
+| MODULE_CPU | 5               /* CPU MCU addre... | 349 |
+| MODULE_UNDEFINED | 6               /* addresses 6-7... | 350 |
+| MOP_NOP | 0               /* module operat... | 352 |
+| MOP_WRITE | 1               /* module operat... | 353 |
+| MOP_READ | 2               /* module operat... | 354 |
+| MOP_READ_WRITE_ONES | 3               /* module operat... | 355 |
+| MOD_MOP_MASK | 0030000u            /* MOD regis... | 375 |
+| MOD_FROM_MASK | 0003400u            /* MOD regis... | 376 |
+| MOD_CPU_2 | 0000010u            /* CPU numbe... | 377 |
+| MOD_CPU_1 | 0000004u            /* CPU numbe... | 378 |
+| MOD_MOP_SHIFT | 12                  /* MOD regis... | 380 |
+| MOD_FROM_SHIFT | 8                   /* MOD regis... | 381 |
+| TO_MOD_MOP(v) | ((v) << MOD_MOP_SHIFT  & MOD_MOP... | 383 |
+| TO_MOD_FROM(v) | ((v) << MOD_FROM_SHIFT & MOD_FRO... | 384 |
+| STATUS_M | 0100000u            /* mode flag */ | 413 |
+| STATUS_I | 0040000u            /* interrupt... | 414 |
+| STATUS_T | 0020000u            /* trap flag */ | 415 |
+| STATUS_R | 0010000u            /* right-han... | 416 |
+| STATUS_O | 0004000u            /* overflow ... | 417 |
+| STATUS_C | 0002000u            /* carry fla... | 418 |
+| STATUS_CCG | 0000000u            /* condition... | 420 |
+| STATUS_CCL | 0000400u            /* condition... | 421 |
+| STATUS_CCE | 0001000u            /* condition... | 422 |
+| STATUS_CCI | 0001400u            /* condition... | 423 |
+| STATUS_CC_MASK | 0001400u            /* condition... | 425 |
+| STATUS_CC_SHIFT | 8                   /* condition... | 426 |
+| STATUS_CS_MASK | 0000377u            /* code segm... | 428 |
+| STATUS_CS_SHIFT | 0                   /* code segm... | 429 |
+| STATUS_CS_WIDTH | 8                   /* code segm... | 430 |
+| STATUS_CS(s) | (((s) & STATUS_CS_MASK) >> STATU... | 432 |
+| STATUS_OVTRAP | (STATUS_T \| STATUS_O) | 435 |
+| STATUS_NPRV | (STATUS_T \| STATUS_O \| STATUS_C ... | 436 |
+| TO_CCN(s) | (((s) & STATUS_CC_MASK) >> STATU... | 438 |
+| PRIV | (STA & STATUS_M)            /* c... | 443 |
+| NPRV | (!PRIV)                     /* c... | 444 |
+| CFL | 0000400u            /* condition... | 473 |
+| CFE | 0001000u            /* condition... | 474 |
+| CFG | 0002000u            /* condition... | 475 |
+| TO_CCF(s) | ((s) & STATUS_CC_MASK ? (s) & ST... | 477 |
+| SET_CCG | STA = STA & ~STATUS_CC_MASK \| ST... | 523 |
+| SET_CCL | STA = STA & ~STATUS_CC_MASK \| ST... | 524 |
+| SET_CCE | STA = STA & ~STATUS_CC_MASK \| ST... | 525 |
+| SET_CCA(u,l) | STA = STA & ~STATUS_CC_MASK \|  | 567 |
+| SET_CCB(b) | STA = STA & ~STATUS_CC_MASK \|  | 609 |
+| SET_CCC(u1,l1,u2,l2) | STA = STA & ~STATUS_CC_MASK \|  | 657 |
+| SET_CARRY(b) | STA = ((b) ? STA \| STATUS_C : ST... | 676 |
+| SET_OVERFLOW(b) | if (b) {  | 678 |
+| PREADJUST_SR(n) | if (SR < (n))  | 692 |
+| BITS_0_3_MASK | 0170000u            /* bits 0-3 ... | 698 |
+| BITS_0_3_SHIFT | 12                  /* bits 0-3 ... | 699 |
+| BITS_0_3(v) | (((v) & BITS_0_3_MASK) >> BITS_0... | 701 |
+| BITS_4_5_MASK | 0006000u            /* bits 4-5 ... | 703 |
+| BITS_4_5_SHIFT | 10                  /* bits 4-5 ... | 704 |
+| BITS_4_5(v) | (((v) & BITS_4_5_MASK) >> BITS_4... | 706 |
+| BITS_4_7_MASK | 0007400u            /* bits 4-7 ... | 708 |
+| BITS_4_7_SHIFT | 8                   /* bits 4-7 ... | 709 |
+| BITS_4_7(v) | (((v) & BITS_4_7_MASK) >> BITS_4... | 711 |
+| BITS_4_9_MASK | 0007700u            /* bits 4-9 ... | 713 |
+| BITS_4_9_SHIFT | 6                   /* bits 4-9 ... | 714 |
+| BITS_4_9(v) | (((v) & BITS_4_9_MASK) >> BITS_4... | 716 |
+| BITS_5_9_MASK | 0003700u            /* bits 5-9 ... | 718 |
+| BITS_5_9_SHIFT | 6                   /* bits 5-9 ... | 719 |
+| BITS_5_9(v) | (((v) & BITS_5_9_MASK) >> BITS_5... | 721 |
+| BITS_8_11_MASK | 0000360u            /* bits 8-11... | 723 |
+| BITS_8_11_SHIFT | 4                   /* bits 8-11... | 724 |
+| BITS_8_11(v) | (((v) & BITS_8_11_MASK) >> BITS_... | 726 |
+| BITS_8_12_MASK | 0000370u            /* bits 8-12... | 728 |
+| BITS_8_12_SHIFT | 3                   /* bits 8-12... | 729 |
+| BITS_8_12(v) | (((v) & BITS_8_12_MASK) >> BITS_... | 731 |
+| BITS_10_15_MASK | 0000077u            /* bits 10-1... | 733 |
+| BITS_10_15_SHIFT | 0                   /* bits 10-1... | 734 |
+| BITS_10_15(v) | (((v) & BITS_10_15_MASK) >> BITS... | 736 |
+| BITS_12_15_MASK | 0000017u            /* bits 12-1... | 738 |
+| BITS_12_15_SHIFT | 0                   /* bits 12-1... | 739 |
+| BITS_12_15(v) | (((v) & BITS_12_15_MASK) >> BITS... | 741 |
+| SUBOP_MASK | BITS_0_3_MASK       /* subopcode... | 746 |
+| SUBOP_SHIFT | BITS_0_3_SHIFT      /* subopcode... | 747 |
+| SUBOP(v) | BITS_0_3(v)         /* subopcode... | 748 |
+| STACKOP_A_MASK | BITS_4_9_MASK       /* stack ope... | 750 |
+| STACKOP_A_SHIFT | BITS_4_9_SHIFT      /* stack ope... | 751 |
+| STACKOP_A(v) | BITS_4_9(v)         /* stack ope... | 752 |
+| STACKOP_B_MASK | BITS_10_15_MASK     /* stack ope... | 754 |
+| STACKOP_B_SHIFT | BITS_10_15_SHIFT    /* stack ope... | 755 |
+| STACKOP_B(v) | BITS_10_15(v)       /* stack ope... | 756 |
+| SBBOP_MASK | BITS_5_9_MASK       /* shift/bra... | 758 |
+| SBBOP_SHIFT | BITS_5_9_SHIFT      /* shift/bra... | 759 |
+| SBBOP(v) | BITS_5_9(v)         /* shift/bra... | 760 |
+| MSFIFROP_MASK | BITS_4_7_MASK       /* move/spec... | 762 |
+| MSFIFROP_SHIFT | BITS_4_7_SHIFT      /* move/spec... | 763 |
+| MSFIFROP(v) | BITS_4_7(v)         /* move/spec... | 764 |
+| MSSUBOP_MASK | BITS_8_12_MASK      /* move/spec... | 766 |
+| MSSUBOP_SHIFT | BITS_8_12_SHIFT     /* move/spec... | 767 |
+| MSSUBOP(v) | BITS_8_12(v)        /* move/spec... | 768 |
+| SPECOP_MASK | BITS_12_15_MASK     /* special o... | 770 |
+| SPECOP_SHIFT | BITS_12_15_SHIFT    /* special o... | 771 |
+| SPECOP(v) | BITS_12_15(v)       /* special o... | 772 |
+| IOCPIMOP_MASK | BITS_4_7_MASK       /* I-O/contr... | 774 |
+| IOCPIMOP_SHIFT | BITS_4_7_SHIFT      /* I-O/contr... | 775 |
+| IOCPIMOP(v) | BITS_4_7(v)         /* I-O/contr... | 776 |
+| IOCSUBOP_MASK | BITS_8_11_MASK      /* I-O/contr... | 778 |
+| IOCSUBOP_SHIFT | BITS_8_11_SHIFT     /* I-O/contr... | 779 |
+| IOCSUBOP(v) | BITS_8_11(v)        /* I-O/contr... | 780 |
+| CNTLOP_MASK | BITS_12_15_MASK     /* control o... | 782 |
+| CNTLOP_SHIFT | BITS_12_15_SHIFT    /* control o... | 783 |
+| CNTLOP(v) | BITS_12_15(v)       /* control o... | 784 |
+| MLBOP_MASK | BITS_0_3_MASK       /* memory/lo... | 786 |
+| MLBOP_SHIFT | BITS_0_3_SHIFT      /* memory/lo... | 787 |
+| MLBOP(v) | BITS_0_3(v)         /* memory/lo... | 788 |
+| FIRMEXTOP_MASK | BITS_8_11_MASK      /* firmware ... | 790 |
+| FIRMEXTOP_SHIFT | BITS_8_11_SHIFT     /* firmware ... | 791 |
+| FIRMEXTOP(v) | BITS_8_11(v)        /* firmware ... | 792 |
+| FMEXSUBOP_MASK | BITS_12_15_MASK     /* firmware ... | 794 |
+| FMEXSUBOP_SHIFT | BITS_12_15_SHIFT    /* firmware ... | 795 |
+| FMEXSUBOP(v) | BITS_12_15(v)       /* firmware ... | 796 |
+| IOOP_K_MASK | 0000017u            /* I/O K-fie... | 801 |
+| IOOP_K_SHIFT | 0000000u            /* I/O K-fie... | 802 |
+| IO_K(v) | (((v) & IOOP_K_MASK) >> IOOP_K_S... | 803 |
+| X_FLAG | 0004000u            /* index fla... | 805 |
+| I_FLAG_BIT_4 | 0004000u            /* indirect ... | 806 |
+| I_FLAG_BIT_5 | 0002000u            /* indirect ... | 807 |
+| M_FLAG | 0001000u            /* memory su... | 808 |
+| START_BIT_MASK | 0000360u            /* start bit... | 810 |
+| START_BIT_SHIFT | 4                   /* start bit... | 811 |
+| START_BIT(v) | (((v) & START_BIT_MASK) >> START... | 812 |
+| BIT_COUNT_MASK | 0000017u            /* bit count... | 814 |
+| BIT_COUNT_SHIFT | 0                   /* bit count... | 815 |
+| BIT_COUNT(v) | (((v) & BIT_COUNT_MASK) >> BIT_C... | 816 |
+| BIT_POSITION_MASK | 0000077u            /* bit posit... | 818 |
+| BIT_POSITION_SHIFT | 0                   /* bit posit... | 819 |
+| BIT_POSITION(v) | (((v) & BIT_POSITION_MASK) >> BI... | 820 |
+| SHIFT_COUNT_MASK | 0000077u            /* shift cou... | 822 |
+| SHIFT_COUNT_SHIFT | 0                   /* shift cou... | 823 |
+| SHIFT_COUNT(v) | (((v) & SHIFT_COUNT_MASK) >> SHI... | 824 |
+| SHIFT_RIGHT_FLAG | 0000100u            /* shift ins... | 826 |
+| MODE_DISP_MASK | 0001777u            /* memory-re... | 828 |
+| MODE_MASK | 0001700u            /* memory-re... | 829 |
+| MODE_SHIFT | 6                   /* memory-re... | 830 |
+| DISPL_31_SIGN | 0000040u            /* sign bit ... | 832 |
+| DISPL_255_SIGN | 0000400u            /* sign bit ... | 833 |
+| DISPL_31_MASK | 0000037u            /* mask for ... | 835 |
+| DISPL_63_MASK | 0000077u            /* mask for ... | 836 |
+| DISPL_127_MASK | 0000177u            /* mask for ... | 837 |
+| DISPL_255_MASK | 0000377u            /* mask for ... | 838 |
+| DISPL_P_FLAG | 0001000u            /* P-relativ... | 840 |
+| DISPL_DB_FLAG | 0000400u            /* DB-relati... | 841 |
+| DISPL_QPOS_FLAG | 0000200u            /* positive ... | 842 |
+| DISPL_QNEG_FLAG | 0000100u            /* negative ... | 843 |
+| IMMED_MASK | 0000377u            /* mask for ... | 845 |
+| SDEC2_MASK | 0000003u            /* two-bit S... | 847 |
+| SDEC3_MASK | 0000007u            /* three-bit... | 848 |
+| SDEC_SHIFT | 0                   /* S-decreme... | 849 |
+| SDEC2(v) | (((v) & SDEC2_MASK) >> SDEC_SHIFT) | 850 |
+| SDEC3(v) | (((v) & SDEC3_MASK) >> SDEC_SHIFT) | 851 |
+| DB_FLAG | 0000020u            /* base set ... | 853 |
+| CIS_DB_FLAG | 0000001u            /* CIS set P... | 854 |
+| NOP | 0000000u            /* no operat... | 859 |
+| QASR | 0015700u            /* quadruple... | 860 |
+| DMUL | 0020570u            /* double in... | 861 |
+| DDIV | 0020571u            /* double in... | 862 |
+| SETR | 0027400u            /* set regis... | 863 |
+| SETR_X | 0027404u            /* set regis... | 864 |
+| SED_1 | 0030041u            /* set enabl... | 865 |
+| HALT_10 | 0030370u            /* halt 10 */ | 866 |
+| MTFDS_MASK | 0177730u            /* move to/f... | 868 |
+| MTFDS | 0020130u            /* move to/f... | 869 |
+| EXIT_MASK | 0177400u            /* exit proc... | 871 |
+| EXIT | 0031400u            /* exit proc... | 872 |
+| PAUS_MASK | 0177760u            /* pause mas... | 874 |
+| PAUS | 0030020u            /* pause */ | 875 |
+| BR_MASK | 0173000u            /* condition... | 877 |
+| BR_DBQS_I | 0143000u            /* branch un... | 878 |
+| BCC | 0141000u            /* branch co... | 879 |
+| BCC_CCF_SHIFT | 2                   /* CCF align... | 880 |
+| LSDX_MASK | 0175000u            /* load/stor... | 882 |
+| LDD_X | 0155000u            /* load doub... | 883 |
+| STD_X | 0165000u            /* store dou... | 884 |
+| TBR_MASK | 0177000u            /* test and ... | 886 |
+| TBA | 0050000u            /* test and ... | 887 |
+| MTBA | 0052000u            /* modify, t... | 888 |
+| TBX | 0054000u            /* test and ... | 889 |
+| MTBX | 0056000u            /* modify, t... | 890 |
+| CMD_TO_MASK | 0000007u            /* CMD comma... | 892 |
+| CMD_MOP_MASK | 0000060u            /* CMD comma... | 893 |
+| CMD_TO_SHIFT | 0                   /* CMD comma... | 895 |
+| CMD_MOP_SHIFT | 4                   /* CMD comma... | 896 |
+| CMD_TO(v) | (((v) & CMD_TO_MASK)  >> CMD_TO_... | 898 |
+| CMD_MOP(v) | (((v) & CMD_MOP_MASK) >> CMD_MOP... | 899 |
+| MVBW_CCF | 0000030u            /* MVBW cond... | 901 |
+| MVBW_N_FLAG | 0000020u            /* MVBW nume... | 902 |
+| MVBW_A_FLAG | 0000010u            /* MVBW alph... | 903 |
+| MVBW_S_FLAG | 0000004u            /* MVBW upsh... | 904 |
+| MVBW_CCF_SHIFT | 6                   /* CCF align... | 905 |
+| NABS_FLAG | 0000100u            /* CVDA nega... | 907 |
+| ABS_FLAG | 0000040u            /* CVDA abso... | 908 |
+| CVND_SC_MASK | 0000016u            /* CVND sign... | 910 |
+| CVND_SC_SHIFT | 1                   /* CVND sign... | 911 |
+| EIS_SDEC_MASK | 0000020u            /* EIS S-dec... | 913 |
+| EIS_SDEC_SHIFT | 4                   /* EIS S-dec... | 914 |
+| CIS_SDEC_MASK | 0000001u            /* CIS S-dec... | 916 |
+| CIS_SDEC_SHIFT | 0                   /* CIS S-dec... | 917 |
+| TCCS_CCF_SHIFT | 8                   /* CIS TCCS ... | 919 |
+| PSR_RL_MASK | 0000001u            /* PSHR/SETR... | 924 |
+| PSR_LR_MASK | 0000200u            /* PSHR/SETR... | 925 |
+| PSR_SBANK | 0000200u            /* Stack ban... | 927 |
+| PSR_DB_DBANK | 0000100u            /* Data base... | 928 |
+| PSR_DL | 0000040u            /* Data limi... | 929 |
+| PSR_Z | 0000020u            /* Stack lim... | 930 |
+| PSR_STA | 0000010u            /* Status re... | 931 |
+| PSR_X | 0000004u            /* Index reg... | 932 |
+| PSR_Q | 0000002u            /* Frame poi... | 933 |
+| PSR_S | 0000001u            /* Stack poi... | 934 |
+| PSR_PRIV | (PSR_SBANK \| PSR_DB_DBANK \| PSR_... | 936 |
+| PCN_SERIES_II | 1                   /* CPU numbe... | 941 |
+| PCN_SERIES_III | 2                   /* CPU numbe... | 942 |
+| EDIT_SUFS | 013                 /* highest o... | 947 |
+| EDIT_EXOP | 017                 /* extended ... | 948 |
+| EDIT_TE | (EDIT_EXOP + 000)   /* first ext... | 950 |
+| EDIT_MDWO | (EDIT_EXOP + 004)   /* last exte... | 951 |
+| EDIT_DBNZ | (EDIT_EXOP + 011)   /* last exte... | 952 |
+| CSTB_POINTER | 0000000u            /* code segm... | 957 |
+| CSTX_POINTER | 0000001u            /* code segm... | 958 |
+| DST_POINTER | 0000002u            /* data segm... | 959 |
+| ICS_Q | 0000005u            /* interrupt... | 960 |
+| ICS_Z | 0000006u            /* interrupt... | 961 |
+| INTERRUPT_MASK | 0000007u            /* interrupt... | 962 |
+| SGT_POINTER | 0001000u            /* system gl... | 963 |
+| CST_A_BIT | 0100000u            /* code segm... | 968 |
+| CST_M_BIT | 0040000u            /* code segm... | 969 |
+| CST_R_BIT | 0020000u            /* code segm... | 970 |
+| CST_T_BIT | 0010000u            /* code segm... | 971 |
+| CST_SEGLEN_MASK | 0007777u            /* code segm... | 972 |
+| CST_BANK_MASK | 0000017u            /* code segm... | 973 |
+| CST_RESERVED | 0000300u            /* number of... | 975 |
+| DST_A_BIT | 0100000u            /* data segm... | 980 |
+| DST_C_BIT | 0040000u            /* data segm... | 981 |
+| DST_R_BIT | 0020000u            /* data segm... | 982 |
+| DST_SEGLEN_MASK | 0017777u            /* data segm... | 983 |
+| DST_BANK_MASK | 0000017u            /* data segm... | 984 |
+| STT_LENGTH_MASK | 0000377u            /* STT lengt... | 989 |
+| STT_LENGTH_SHIFT | 0                   /* STT lengt... | 991 |
+| STT_LENGTH(l) | (((l) & STT_LENGTH_MASK) >> STT_... | 993 |
+| LABEL_EXTERNAL | 0100000u            /* external ... | 998 |
+| LABEL_STTN_MASK | 0077400u            /* external ... | 999 |
+| LABEL_SEGMENT_MASK | 0000377u            /* external ... | 1000 |
+| LABEL_STTN_SHIFT | 8                   /* STT numbe... | 1002 |
+| LABEL_SEGMENT_SHIFT | 0                   /* segment n... | 1003 |
+| LABEL_LOCAL | 0000000u            /* local pro... | 1005 |
+| LABEL_UNCALLABLE | 0040000u            /* local pro... | 1006 |
+| LABEL_ADDRESS_MASK | 0037777u            /* local pro... | 1007 |
+| STT_NUMBER(l) | (((l) & LABEL_STTN_MASK) >> LABE... | 1009 |
+| STT_SEGMENT(l) | (((l) & LABEL_SEGMENT_MASK) >> L... | 1010 |
+| ISR_SEGMENT | 1                   /* segment n... | 1012 |
+| LABEL_IRQ | (LABEL_EXTERNAL \| ISR_SEGMENT)  ... | 1014 |
+| LABEL_STTN_MAX | (LABEL_STTN_MASK >> LABEL_STTN_S... | 1015 |
+| TO_LABEL(s,n) | ((s) \| (n) << LABEL_STTN_SHIFT) ... | 1017 |
+| STMK_D | 0100000u            /* dispatche... | 1022 |
+| STMK_T | 0100000u            /* trace fla... | 1023 |
+| STMK_M | 0040000u            /* mapped fl... | 1024 |
+| STMK_RTN_ADDR | 0037777u            /* PB-relati... | 1025 |
+| RA | TR [0] | 1057 |
+| RB | TR [1] | 1058 |
+| RC | TR [2] | 1059 |
+| RD | TR [3] | 1060 |
+

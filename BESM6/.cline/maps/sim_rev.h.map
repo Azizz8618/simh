@@ -1,0 +1,16 @@
+=== sim_rev.h — 2733 строк ===
+Источник: sim_rev.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_rev.h -nt .cline/maps/sim_rev.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SIM_REV_H_ | 0 | 28 |
+| SIM_MAJOR | 4 | 31 |
+| SIM_MINOR | 0 | 34 |
+| SIM_PATCH | 0 | 37 |
+| SIM_DELTA | 0 | 40 |
+| SIM_VERSION_MODE | "Current" | 44 |
+| SIM_ARCHIVE_GIT_COMMIT_ID | $Format:%H$ | 59 |
+| SIM_ARCHIVE_GIT_COMMIT_TIME | $Format:%aI$ | 60 |
+

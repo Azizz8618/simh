@@ -84,8 +84,8 @@
 # === ПРАВИЛО ТРАС (ОБЯЗАТЕЛЬНОЕ, ПЕРВИЧНЫЙ ИСТОЧНИК) ===
 # При любом разрыве «ОС не реагирует / обработчик не выполняется» —
 # ПЕРВЫМ действием снимать трассу выполненных команд ОС:
-#   printf '\007' > /tmp/besm6_in      # ^G (WRU=7) → промпт sim>
-#   echo 'set pult=NN' > /tmp/besm6_in # NN>10 → dump_touched → файл OSZAGR/NN
+#   tmux send-keys -t besm6 C-g              # ^G (WRU=7) → промпт sim>
+#   tmux send-keys -t besm6 'set pult=NN' Enter  # NN>10 → dump_touched → файл OSZAGR/NN
 #   cd ~/Yandex.Disk/re_dispak/re-dispak && ./touched.pl <путь>/NN > /tmp/trNN.txt
 #   grep 'адреса' /tmp/trNN.txt        # выполнялся ли целевой код
 # Эмуляторный debug.txt — ВТОРИЧНЫЙ источник (эмуляторные события, не путь ОС).
@@ -97,7 +97,7 @@
 # нстдкс вышел после первой команды (71501) — тело 71502-71506
 # (ПВ ТБУФ/ФИЗОБМ) не исполнялось; гипотеза: БАЗСВ7≠0 при входе.
 # Подробности и план: AGENTS.md «Находка 2026-09-07в».
-# После снимка — 'cont' в FIFO.
+# После снимка: tmux send-keys -t besm6 'cont' Enter
 # Механизм: besm6_cpu.c cpu_set_pult (NN>10 → dump_touched(NN)).
 
 # === .clinerules — Оптимизация работы Cline для проекта БЭСМ-6 ===
@@ -301,8 +301,7 @@ DEBUG_CMD   = tail -f debug.txt | grep -iE "(DKS|KDP|PRP)"
 # обнулять логи, чтобы они не раздувались (debug.txt растёт до 200+ МБ
 # за часы работы; grep по нему — сотни тысяч токенов):
 #   rm -f $PROJECT_ROOT/debug.txt $PROJECT_ROOT/log.txt \
-#         /tmp/besm6_run.log /tmp/besm6_in
-# FIFO /tmp/besm6_in пересоздаётся: mkfifo /tmp/besm6_in
+#         $PROJECT_ROOT/logs/debug_*.log
 # Если лог уже > 50 МБ в ходе долгой сессии — усечь на месте,
 # НЕ останавливая эмулятор:  : > debug.txt   (эмулятор пишет в append)
 # Перед любым чтением лога — grep/tail, никогда не cat.
@@ -311,15 +310,15 @@ DEBUG_CMD   = tail -f debug.txt | grep -iE "(DKS|KDP|PRP)"
 # Завершением этапа считаются: получение результата трассы/прогона,
 # вывод сводки, остановка по просьбе пользователя, конец рабочей сессии.
 # По завершении этапа — ВСЕГДА останавливать эмулятор и чистить логи:
-#   pkill -9 -f besm6; sleep 1
+#   tmux kill-session -t besm6 2>/dev/null || pkill -9 -f besm6; sleep 1
 #   rm -f $PROJECT_ROOT/debug.txt $PROJECT_ROOT/log.txt \
 #         $PROJECT_ROOT/OSZAGR/debug.txt $PROJECT_ROOT/OSZAGR/log.txt \
-#         $PROJECT_ROOT/OSZAGR/1[0-9] \
-#         /tmp/besm6_run.log /tmp/besm6_in /tmp/besm6_bg.log
+#         $PROJECT_ROOT/OSZAGR/logs/debug_*.log \
+#         $PROJECT_ROOT/OSZAGR/1[0-9]
 # (OSZAGR/1[0-9] — дампы set pult; расшифрованные трассы /tmp/tr*.txt
 #  сохраняются до внесения результатов в AGENTS.md.)
-# НЕ оставлять эмулятор работать «в фо��е на всякий случай» — без присмотра
-# он за часы набирает 100+ МБ debug.txt и держит порты/FIFO.
+# НЕ оставлять эмулятор работать «в фоне на всякий случай» — без присмотра
+# он за часы набирает 100+ МБ debug.txt и держит порты.
 # Проверка остановки: ps aux | grep '[b]esm6' → 0 строк.
 # Обратное: этап НЕ завершён (идёт прогон/сбор данных) — эмулятор не трогать.
 

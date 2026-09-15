@@ -1,0 +1,79 @@
+=== zx200a.c — 909 строк ===
+Источник: zx200a.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test zx200a.c -nt .cline/maps/zx200a.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| FDDDEF | 233-237 |
+| FDCDEF | 239-252 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 197 | |
+| zx200a_onetime | 228 | |
+| zx200a | 254 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_WPMODE | (UNIT_V_UF)     /* Write protect */ | 142 |
+| UNIT_WPMODE | (1 << UNIT_V_WPMODE) | 143 |
+| FDD_NUM | 6 | 145 |
+| SECSIZ | 128 | 146 |
+| DNOP | 0x00            //disk no operation | 149 |
+| DSEEK | 0x01            //disk seek | 150 |
+| DFMT | 0x02            //disk format | 151 |
+| DHOME | 0x03            //disk home | 152 |
+| DREAD | 0x04            //disk read | 153 |
+| DVCRC | 0x05            //disk verify CRC | 154 |
+| DWRITE | 0x06            //disk write | 155 |
+| RDY0 | 0x01            //FDD 0 ready | 158 |
+| RDY1 | 0x02            //FDD 1 ready | 159 |
+| FDCINT | 0x04            //FDC interrupt ... | 160 |
+| FDCPRE | 0x08            //FDC board present | 161 |
+| FDCDD | 0x10            //fdc is DD | 162 |
+| RDY2 | 0x20            //FDD 2 ready | 163 |
+| RDY3 | 0x40            //FDD 3 ready | 164 |
+| ROK | 0x00            //FDC error | 167 |
+| RCHG | 0x02            //FDC OK OR disk... | 168 |
+| RB0DR | 0x01            //deleted record | 171 |
+| RB0CRC | 0x02            //CRC error | 172 |
+| RB0SEK | 0x04            //seek error | 173 |
+| RB0ADR | 0x08            //address error | 174 |
+| RB0OU | 0x10            //data overrun/u... | 175 |
+| RB0WP | 0x20            //write protect | 176 |
+| RB0WE | 0x40            //write error | 177 |
+| RB0NR | 0x80            //not ready | 178 |
+| RB1RD2 | 0x10            //drive 2 ready | 181 |
+| RB1RD3 | 0x20            //drive 3 ready | 182 |
+| RB1RD0 | 0x40            //drive 0 ready | 183 |
+| RB1RD1 | 0x80            //drive 1 ready | 184 |
+| MDSSD | 256256          //single density... | 187 |
+| MDSDD | 512512          //double density... | 188 |
+| MAXSECSD | 26              //single density... | 189 |
+| MAXSECDD | 52              //double density... | 190 |
+| MAXTRK | 76              //last track | 191 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| zx200a_desc | 229-336 |  |
+| zx200a_set_mode | 337-356 |  |
+| zx200a_set_port | 357-384 |  |
+| zx200a_set_int | 385-397 |  |
+| zx200a_set_verb | 398-417 |  |
+| zx200a_show_param | 418-435 |  |
+| zx200a_reset | 436-487 |  |
+| zx200a_reset_dev | 488-539 |  |
+| zx200a_attach | 540-587 |  |
+| zx200ar0SD | 588-595 |  |
+| zx200ar0DD | 596-603 |  |
+| zx200ar1SD | 604-616 |  |
+| zx200ar1DD | 617-629 |  |
+| zx200ar2SD | 630-642 |  |
+| zx200ar2DD | 643-655 |  |
+| zx200ar3 | 656-674 |  |
+| zx200ar7 | 675-686 | reset ZX-200A |
+| zx200a_diskio | 687-909 |  |

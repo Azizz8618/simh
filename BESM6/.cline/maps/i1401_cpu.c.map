@@ -1,0 +1,88 @@
+=== i1401_cpu.c — 1975 строк ===
+Источник: i1401_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i1401_cpu.c -nt .cline/maps/i1401_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 149-153 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_emax | 211 | |
+| len_table | 390 | |
+| IS | 525 | |
+| op | 526 | |
+| carry | 528 | |
+| quo | 529 | |
+| qzero | 530 | |
+| reason | 531 | |
+| IS | 535 | |
+| reason | 541 | |
+| BS | 1674 | |
+| reason | 1676 | |
+| thous | 1689 | |
+| thous | 1702 | |
+| return | 1766 | |
+| STOP_INVM | 1789 | |
+| as_err | 1827 | |
+| bs_err | 1828 | |
+| SCPE_IERR | 1834 | |
+| SCPE_OK | 1836 | |
+| SCPE_OK | 1847 | |
+| SCPE_OK | 1857 | |
+| mc | 1864 | |
+| MEMSIZE | 1873 | |
+| cpu_unit.flags | 1878 | |
+| SCPE_OK | 1879 | |
+| hst_p | 1900 | |
+| SCPE_OK | 1912 | |
+| sim_eval | 1921 | |
+| lnt | 1932 | |
+| SCPE_OK | 1956 | |
+| conv_old | 1963 | |
+| SCPE_OK | 1964 | |
+| SCPE_OK | 1974 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 142 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 143 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 144 |
+| HIST_MIN | 64 | 146 |
+| HIST_MAX | 65536 | 147 |
+| MM(x) | x = x - 1;  | 160 |
+| PP(x) | x = x + 1;  | 167 |
+| BRANCH | if (ADDR_ERR (AS)) {  | 174 |
+| BRANCH_CS | if (ADDR_ERR (AS)) {  | 184 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 523-544 |  |
+| while | 545-1686 |  |
+| store_addr_h | 1687-1694 |  |
+| store_addr_t | 1695-1699 |  |
+| store_addr_u | 1700-1709 |  |
+| div_add | 1710-1729 |  |
+| div_sub | 1730-1745 |  |
+| if | 1746-1755 |  |
+| div_sign | 1756-1778 |  |
+| iomod | 1779-1800 |  |
+| iodisp | 1801-1815 |  |
+| cpu_reset | 1816-1819 |  |
+| for | 1820-1840 |  |
+| cpu_ex | 1841-1851 |  |
+| cpu_dep | 1852-1861 |  |
+| cpu_set_size | 1862-1883 |  |
+| cpu_set_hist | 1884-1888 |  |
+| if | 1889-1900 |  |
+| if | 1901-1905 |  |
+| if | 1906-1916 |  |
+| cpu_show_hist | 1917-1926 |  |
+| if | 1927-1936 |  |
+| for | 1937-1960 |  |
+| cpu_set_conv | 1961-1968 |  |
+| cpu_show_conv | 1969-1975 |  |

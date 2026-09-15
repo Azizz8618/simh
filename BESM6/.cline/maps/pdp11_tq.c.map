@@ -1,0 +1,365 @@
+=== pdp11_tq.c — 2480 строк ===
+Источник: pdp11_tq.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_tq.c -nt .cline/maps/pdp11_tq.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| SCPE_OK | 594 | |
+| SCPE_OK | 617 | |
+| base | 625 | |
+| zero | 626 | |
+| base | 637 | |
+| OK | 649 | |
+| pkt | 666 | |
+| nuptr | 667 | |
+| nuptr | 796 | |
+| SCPE_OK | 813 | |
+| sts | 820 | |
+| uptr | 825 | |
+| tpkt | 917 | |
+| uptr | 918 | |
+| sts | 963 | |
+| uptr | 964 | |
+| tpkt | 994 | |
+| uptr | 995 | |
+| tq_pkt | 1006 | |
+| sts | 1016 | |
+| uptr | 1017 | |
+| sts | 1049 | |
+| uptr | 1050 | |
+| sts | 1106 | |
+| uptr | 1107 | |
+| sts | 1130 | |
+| uptr | 1131 | |
+| sts | 1148 | |
+| uptr | 1149 | |
+| sts | 1172 | |
+| objp | 1173 | |
+| uptr | 1174 | |
+| sts | 1199 | |
+| objp | 1200 | |
+| uptr | 1201 | |
+| sts | 1240 | |
+| objp | 1241 | |
+| uptr | 1242 | |
+| res->io_status | 1305 | |
+| res->io_complete | 1306 | |
+| wbc | 1315 | |
+| io_complete | 1324 | |
+| res->io_complete | 1330 | |
+| SCPE_OK | 1500 | |
+| SCPE_IOERR | 1510 | |
+| OK | 1540 | |
+| ST_SUC | 1593 | |
+| st | 1607 | |
+| ST_SUC | 1620 | |
+| st | 1632 | |
+| ST_SUC | 1644 | |
+| pkt | 1651 | |
+| lu | 1652 | |
+| tq_pkt | 1666 | |
+| tq_pkt | 1667 | |
+| tq_pkt | 1673 | |
+| tq_pkt | 1674 | |
+| pkt | 1688 | |
+| tq_pkt | 1700 | |
+| tq_pkt | 1701 | |
+| tq_pkt | 1705 | |
+| pkt | 1715 | |
+| tq_pkt | 1722 | |
+| tq_pkt | 1723 | |
+| tq_pkt | 1726 | |
+| pkt | 1737 | |
+| lu | 1738 | |
+| tq_pkt | 1744 | |
+| tq_pkt | 1745 | |
+| OK | 1766 | |
+| ptr | 1775 | |
+| return | 1784 | |
+| return | 1800 | |
+| addr | 1809 | |
+| addr | 1833 | |
+| addr | 1875 | |
+| OK | 1881 | |
+| prva | 1893 | |
+| OK | 1914 | |
+| uptr | 1923 | |
+| NULL | 1931 | |
+| return | 1942 | |
+| tq_pkt | 1971 | |
+| tq_pkt | 1972 | |
+| return | 1983 | |
+| tq_pkt | 1992 | |
+| return | 1996 | |
+| return | 2005 | |
+| flag | 2013 | |
+| return | 2018 | |
+| ERR | 2039 | |
+| SCPE_OK | 2053 | |
+| SCPE_OK | 2067 | |
+| uptr | 2075 | |
+| plugs_inited | 2076 | |
+| SCPE_OK | 2131 | |
+| uptr | 2246 | |
+| SCPE_OK | 2253 | |
+| SCPE_NOFNC | 2260 | |
+| return | 2291 | |
+| return | 2313 | |
+| pkt | 2318 | |
+| SCPE_OK | 2341 | |
+| SCPE_OK | 2387 | |
+| max | 2395 | |
+| tq_typ | 2410 | |
+| SCPE_OK | 2413 | |
+| SCPE_OK | 2421 | |
+| SCPE_OK | 2429 | |
+| plug | 2436 | |
+| uptr->unit_plug | 2451 | |
+| SCPE_OK | 2452 | |
+| devtype | 2457 | |
+| SCPE_OK | 2473 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| INIT_TYPE | TQ8_TYPE | 77 |
+| INIT_CAP | TQ8_CAP | 78 |
+| INIT_TYPE | TQ5_TYPE | 80 |
+| INIT_CAP | TQ5_CAP | 81 |
+| INIT_TYPE | TQ5_TYPE | 86 |
+| INIT_CAP | TQ5_CAP | 87 |
+| UF_MSK | (UF_SCH\|UF_VSS\|UF_CMR\|UF_CMW)   ... | 94 |
+| TQ_SH_MAX | 24                              ... | 96 |
+| TQ_SH_PPL | 8                               ... | 97 |
+| TQ_SH_DPL | 4                               ... | 98 |
+| TQ_SH_RI | 001                             ... | 99 |
+| TQ_SH_FR | 002                             ... | 100 |
+| TQ_SH_RS | 004                             ... | 101 |
+| TQ_SH_UN | 010                             ... | 102 |
+| TQ_SH_ALL | 017                             ... | 103 |
+| TQ_CLASS | 1                               ... | 105 |
+| TQ_DHTMO | 0                               ... | 106 |
+| TQ_DCTMO | 120                             ... | 107 |
+| TQ_NUMDR | 4                               ... | 108 |
+| TQ_MAXFR | (1 << 16)                       ... | 109 |
+| UNIT_V_ONL | (MTUF_V_UF + 0)                 ... | 111 |
+| UNIT_V_ATP | (MTUF_V_UF + 1)                 ... | 112 |
+| UNIT_V_SXC | (MTUF_V_UF + 2)                 ... | 113 |
+| UNIT_V_POL | (MTUF_V_UF + 3)                 ... | 114 |
+| UNIT_V_TMK | (MTUF_V_UF + 4)                 ... | 115 |
+| UNIT_ONL | (1 << UNIT_V_ONL) | 116 |
+| UNIT_ATP | (1 << UNIT_V_ATP) | 117 |
+| UNIT_SXC | (1 << UNIT_V_SXC) | 118 |
+| UNIT_POL | (1 << UNIT_V_POL) | 119 |
+| UNIT_TMK | (1 << UNIT_V_TMK) | 120 |
+| TQ_WPH(u) | ((sim_tape_wrp (u))? UF_WPH: 0) | 128 |
+| CST_S1 | 0                               ... | 131 |
+| CST_S1_WR | 1                               ... | 132 |
+| CST_S2 | 2                               ... | 133 |
+| CST_S3 | 3                               ... | 134 |
+| CST_S3_PPA | 4                               ... | 135 |
+| CST_S3_PPB | 5                               ... | 136 |
+| CST_S4 | 6                               ... | 137 |
+| CST_UP | 7                               ... | 138 |
+| CST_DEAD | 8                               ... | 139 |
+| ERR | 0                               ... | 143 |
+| OK | 1 | 144 |
+| CMF_IMM | 0x10000                         ... | 146 |
+| CMF_SEQ | 0x20000                         ... | 147 |
+| CMF_WR | 0x40000                         ... | 148 |
+| CMF_RW | 0x80000                         ... | 149 |
+| TQ_NPKTS | 32                              ... | 153 |
+| TQ_M_NPKTS | (TQ_NPKTS - 1)                  ... | 154 |
+| TQ_PKT_SIZE_W | 32                              ... | 155 |
+| TQ_PKT_SIZE | (TQ_PKT_SIZE_W * sizeof (int16)) | 156 |
+| GETP(p,w,f) | ((tq_pkt[p].d[w] >> w##_V_##f) &... | 165 |
+| GETP32(p,w) | (((uint32) tq_pkt[p].d[w]) \|  | 166 |
+| PUTP32(p,w,x) | tq_pkt[p].d[w] = (x) & 0xFFFF;  | 168 |
+| TQ5_TYPE | 0                               ... | 173 |
+| TQ5_UQPM | 3                               ... | 174 |
+| TQ5_CMOD | 9                               ... | 175 |
+| TQ5_UMOD | 3                               ... | 176 |
+| TQ5_MED | 0x6D68B032                      ... | 177 |
+| TQ5_CREV | ((1 << 8) \| 5)                  ... | 178 |
+| TQ5_FREV | 0                               ... | 179 |
+| TQ5_UREV | 0                               ... | 180 |
+| TQ5_CAP | (94 * (1 << 20))                ... | 181 |
+| TQ5_FMT | (TF_CTP\|TF_CTP_LO)              ... | 182 |
+| TQ7_TYPE | 1                               ... | 184 |
+| TQ7_UQPM | 14                              ... | 185 |
+| TQ7_CMOD | 14                              ... | 186 |
+| TQ7_UMOD | 14                              ... | 187 |
+| TQ7_MED | 0x6D68B046                      ... | 188 |
+| TQ7_CREV | ((1 << 8) \| 5)                  ... | 189 |
+| TQ7_FREV | 0                               ... | 190 |
+| TQ7_UREV | 0                               ... | 191 |
+| TQ7_CAP | (300 * (1 << 20))               ... | 192 |
+| TQ7_FMT | (TF_CTP\|TF_CTP_LO)              ... | 193 |
+| TQ8_TYPE | 2                               ... | 195 |
+| TQ8_UQPM | 5                               ... | 196 |
+| TQ8_CMOD | 5                               ... | 197 |
+| TQ8_UMOD | 2                               ... | 198 |
+| TQ8_MED | 0x6D695051                      ... | 199 |
+| TQ8_CREV | ((1 << 8) \| 5)                  ... | 200 |
+| TQ8_FREV | 0                               ... | 201 |
+| TQ8_UREV | 0                               ... | 202 |
+| TQ8_CAP | (180 * (1 << 20))               ... | 203 |
+| TQ8_FMT | (TF_9TK\|TF_9TK_GRP)             ... | 204 |
+| TQU_TYPE | 3                               ... | 206 |
+| TQU_UQPM | 3                               ... | 207 |
+| TQU_CMOD | 9                               ... | 208 |
+| TQU_UMOD | 3                               ... | 209 |
+| TQU_MED | 0x6D68B032                      ... | 210 |
+| TQU_CREV | ((1 << 8) \| 5)                  ... | 211 |
+| TQU_FREV | 0                               ... | 212 |
+| TQU_UREV | 0                               ... | 213 |
+| TQU_CAP | (94 * (1 << 20))                ... | 214 |
+| TQU_FMT | (TF_CTP\|TF_CTP_LO)              ... | 215 |
+| TQU_MINC | 30                              ... | 216 |
+| TQU_MAXC | 2000                            ... | 217 |
+| TQU_EMAXC | 2000000000                      ... | 218 |
+| TQ_DRV(d) |  | 220 |
+| TEST_EOT(u) | (sim_tape_eot (u)) | 225 |
+| IOLN_TQ | 004 | 415 |
+| TQ_TIMER | (TQ_NUMDR) | 431 |
+| TQ_QUEUE | (TQ_TIMER + 1) | 432 |
+| DBG_TRC | 0x0001                          ... | 523 |
+| DBG_INI | 0x0002                          ... | 524 |
+| DBG_REG | 0x0004                          ... | 525 |
+| DBG_REQ | 0x0008                          ... | 526 |
+| DBG_TAP | MTSE_DBG_API                    ... | 527 |
+| DBG_STR | MTSE_DBG_STR                    ... | 528 |
+| DBG_POS | MTSE_DBG_POS                    ... | 529 |
+| DBG_DAT | MTSE_DBG_DAT                    ... | 530 |
+| BOOT_START | 016000                          ... | 2138 |
+| BOOT_ENTRY | (BOOT_START + 002)              ... | 2139 |
+| BOOT_UNIT | (BOOT_START + 010)              ... | 2140 |
+| BOOT_CSR | (BOOT_START + 014)              ... | 2141 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 2142 |
+| B_CMDINT | (BOOT_START - 01000)            ... | 2146 |
+| B_RSPINT | (B_CMDINT + 002)                ... | 2147 |
+| B_RING | (B_RSPINT + 002)                ... | 2148 |
+| B_RSPH | (B_RING + 010)                  ... | 2149 |
+| B_TKRSP | (B_RSPH + 004)                  ... | 2150 |
+| B_CMDH | (B_TKRSP + 060)                 ... | 2151 |
+| B_TKCMD | (B_CMDH + 004)                  ... | 2152 |
+| B_UNIT | (B_TKCMD + 004)                 ... | 2153 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tq_rd | 574-577 |  |
+| switch | 578-596 |  |
+| tq_wr | 597-600 |  |
+| switch | 601-621 |  |
+| tq_step4 | 622-662 |  |
+| tq_quesvc | 663-670 |  |
+| if | 671-732 |  |
+| for | 733-744 |  |
+| if | 745-780 |  |
+| if | 781-792 |  |
+| tq_tmrsvc | 793-800 |  |
+| for | 801-817 |  |
+| tq_mscp | 818-828 |  |
+| if | 829-832 |  |
+| if | 833-836 |  |
+| if | 837-912 |  |
+| tq_abo | 913-922 |  |
+| if | 923-958 |  |
+| tq_avl | 959-967 |  |
+| if | 968-989 |  |
+| tq_gcs | 990-1012 |  |
+| tq_gus | 1013-1020 |  |
+| if | 1021-1026 |  |
+| if | 1027-1045 |  |
+| tq_onl | 1046-1053 |  |
+| if | 1054-1075 |  |
+| tq_scc | 1076-1102 |  |
+| tq_suc | 1103-1110 |  |
+| if | 1111-1126 |  |
+| tq_flu | 1127-1143 |  |
+| tq_erase | 1144-1152 |  |
+| if | 1153-1168 |  |
+| tq_wtm | 1169-1177 |  |
+| if | 1178-1195 |  |
+| tq_pos | 1196-1204 |  |
+| if | 1205-1234 |  |
+| tq_rw | 1235-1245 |  |
+| if | 1246-1271 |  |
+| tq_mot_valid | 1272-1281 |  |
+| if | 1282-1298 |  |
+| tq_io_complete | 1299-1311 |  |
+| tq_svc | 1312-1332 |  |
+| if | 1333-1337 |  |
+| if | 1338-1349 |  |
+| if | 1350-1353 |  |
+| switch | 1354-1504 |  |
+| tq_mot_err | 1505-1514 |  |
+| tq_mot_end | 1515-1530 |  |
+| if | 1531-1544 |  |
+| tq_map_status | 1545-1546 |  |
+| switch | 1547-1597 |  |
+| tq_rdbuff_top | 1598-1604 |  |
+| tq_rdbuff_bottom | 1605-1610 |  |
+| if | 1611-1622 |  |
+| tq_rdbufr_top | 1623-1629 |  |
+| tq_rdbufr_bottom | 1630-1635 |  |
+| if | 1636-1648 |  |
+| tq_dte | 1649-1685 |  |
+| tq_hbe | 1686-1712 |  |
+| tq_plf | 1713-1734 |  |
+| tq_una | 1735-1758 |  |
+| tq_deqf | 1759-1768 |  |
+| tq_deqh | 1769-1777 |  |
+| tq_enqh | 1778-1786 |  |
+| tq_enqt | 1787-1806 |  |
+| tq_getpkt | 1807-1812 |  |
+| if | 1813-1830 |  |
+| tq_putpkt | 1831-1846 |  |
+| if | 1847-1872 |  |
+| tq_getdesc | 1873-1889 |  |
+| tq_putdesc | 1890-1899 |  |
+| if | 1900-1919 |  |
+| tq_getucb | 1920-1924 |  |
+| for | 1925-1935 |  |
+| tq_setf_unit | 1936-1946 |  |
+| tq_efl | 1947-1950 |  |
+| if | 1951-1963 |  |
+| tq_putr_unit | 1964-1975 |  |
+| if | 1976-1987 |  |
+| tq_putr | 1988-2000 |  |
+| tq_init_int | 2001-2009 |  |
+| tq_ring_int | 2010-2022 |  |
+| tq_inta | 2023-2029 |  |
+| tq_fatal | 2030-2043 |  |
+| tq_attach | 2044-2057 |  |
+| tq_detach | 2058-2071 |  |
+| tq_reset | 2072-2080 |  |
+| if | 2081-2106 |  |
+| for | 2107-2117 |  |
+| for | 2118-2242 |  |
+| tq_boot | 2243-2257 |  |
+| tq_boot | 2258-2266 |  |
+| tq_show_ring | 2267-2278 |  |
+| for | 2279-2293 |  |
+| tq_show_pkt | 2294-2302 |  |
+| for | 2303-2315 |  |
+| tq_show_unitq | 2316-2319 |  |
+| if | 2320-2323 |  |
+| if | 2324-2329 |  |
+| if | 2330-2343 |  |
+| tq_show_ctrl | 2344-2347 |  |
+| if | 2348-2351 |  |
+| if | 2352-2360 |  |
+| if | 2361-2373 |  |
+| if | 2374-2382 |  |
+| if | 2383-2391 |  |
+| tq_set_type | 2392-2399 |  |
+| for | 2400-2403 |  |
+| if | 2404-2417 |  |
+| tq_show_type | 2418-2425 |  |
+| tq_show_plug | 2426-2433 |  |
+| tq_set_plug | 2434-2454 |  |
+| tq_help | 2455-2475 |  |
+| tq_description | 2476-2480 |  |

@@ -1,0 +1,47 @@
+=== 3b2_ctc.c — 748 строк ===
+Источник: 3b2_ctc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_ctc.c -nt .cline/maps/3b2_ctc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ctc_state | 91 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CTQRESIZE | 20 | 38 |
+| CTQCESIZE | 16 | 39 |
+| DELAY_SYSGEN | 2500 | 41 |
+| DELAY_FMT | 1000000 | 42 |
+| DELAY_RW | 10000 | 43 |
+| DELAY_OPEN | 2500 | 44 |
+| DELAY_CLOSE | 2500 | 45 |
+| DELAY_CONFIG | 2500 | 46 |
+| DELAY_DLM | 1000 | 47 |
+| DELAY_ULM | 1000 | 48 |
+| DELAY_FCF | 1000 | 49 |
+| DELAY_DOS | 1000 | 50 |
+| DELAY_DSD | 1000 | 51 |
+| DELAY_UNK | 1000 | 52 |
+| DELAY_CATCHUP | 10000 | 53 |
+| CTC_DIAG_CRC1 | 0xa4a5752f | 55 |
+| CTC_DIAG_CRC2 | 0xd3d20eb3 | 56 |
+| CTC_DIAG_CRC3 | 0x0f387ce3  /* Used by SVR 2.0.5 */ | 57 |
+| TAPE_DEV | 0    /* CTAPE device */ | 59 |
+| XMF_DEV | 1    /* XM Floppy device */ | 60 |
+| VTOC_BLOCK | 0 | 62 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cio_irq | 141-150 |  |
+| ctc_write_vtoc | 151-167 | Write a VTOC and pdinfo to the tape file |
+| ctc_read_vtoc | 168-630 | Load a VTOC and pdinfo from the tape file |
+| ctc_sysgen | 631-654 |  |
+| ctc_express | 655-668 |  |
+| ctc_full | 669-683 |  |
+| ctc_reset | 684-711 |  |
+| ctc_svc | 712-739 |  |
+| ctc_attach | 740-744 |  |
+| ctc_detach | 745-748 |  |

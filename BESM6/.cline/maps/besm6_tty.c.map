@@ -1,114 +1,108 @@
-=== besm6_tty.c — 1716 строк ===
+=== besm6_tty.c — 1680 строк ===
 Источник: besm6_tty.c | Автогенерация: scripts/gen_code_map.sh
 Регенерировать: test besm6_tty.c -nt .cline/maps/besm6_tty.c.map
-
-=== СТРУКТУРЫ / TYPEDEF ===
-| Имя | Строки |
-|-----|--------|
-| dks_term_t | 200-204 |
 
 === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
 | Имя | Стр | Назначение |
 |-----|-----|------------|
-| reg | 63 | |
-| tty_active | 86 | |
-| tty_typed | 87 | |
-| tty_last_time | 90 | |
-| tty_idle_count | 91 | |
-| tty_lnorder | 92 | |
-| tty_rate | 95 | |
-| tty_turbo | 98 | |
-| vt_sending | 100 | |
-| tt_sending | 101 | |
-| tt_mask | 104 | |
-| TTY_OUT | 106 | |
-| CONSUL_IN | 107 | |
-| MUX_SYLLABLE | 108 | |
-| CONS_CAN_PRINT | 110 | |
-| CONS_HAS_INPUT | 111 | |
-| CONS_READY | 113 | |
-| vt_cbuf | 115 | |
-| vt_cptr | 116 | |
-| attached_console | 125 | |
-| tty_line | 172 | |
-| kadopam_mem | 197 | |
-| dks_terminals | 206 | |
-| cons_is_printing | 1578 | |
+| reg | 60 | |
+| tty_active | 83 | |
+| tty_typed | 84 | |
+| tty_last_time | 87 | |
+| tty_idle_count | 88 | |
+| tty_lnorder | 89 | |
+| tty_rate | 92 | |
+| tty_turbo | 95 | |
+| vt_sending | 97 | |
+| tt_sending | 98 | |
+| tt_mask | 101 | |
+| TTY_OUT | 103 | |
+| CONSUL_IN | 104 | |
+| cons_input_pending | 109 | |
+| MUX_SYLLABLE | 110 | |
+| CONS_CAN_PRINT | 112 | |
+| CONS_HAS_INPUT | 113 | |
+| CONS_READY | 115 | |
+| vt_cbuf | 117 | |
+| vt_cptr | 118 | |
+| attached_console | 127 | |
+| tty_line | 174 | |
+| cons_is_printing | 1506 | |
 
 === КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
 | Имя | Значение | Стр |
 |-----|----------|-----|
-| TTY_MAX | 24              /* Serial TTY li... | 36 |
-| LINES_MAX | TTY_MAX + 2     /* Including par... | 37 |
-| TTY_UNICODE_CHARSET | 0 | 175 |
-| TTY_KOI7_JCUKEN_CHARSET | (1<<UNIT_V_UF) | 176 |
-| TTY_KOI7_QWERTY_CHARSET | (2<<UNIT_V_UF) | 177 |
-| TTY_RAW_CHARSET | (3<<UNIT_V_UF) | 178 |
-| TTY_CHARSET_MASK | (3<<UNIT_V_UF) | 179 |
-| TTY_OFFLINE_STATE | 0 | 180 |
-| TTY_TELETYPE_STATE | (1<<(UNIT_V_UF+2)) | 181 |
-| TTY_VT340_STATE | (2<<(UNIT_V_UF+2)) | 182 |
-| TTY_CONSUL_STATE | (3<<(UNIT_V_UF+2)) | 183 |
-| TTY_STATE_MASK | (3<<(UNIT_V_UF+2)) | 184 |
-| TTY_DESTRUCTIVE_BSPACE | 0 | 185 |
-| TTY_AUTHENTIC_BSPACE | (1<<(UNIT_V_UF+4)) | 186 |
-| TTY_BSPACE_MASK | (1<<(UNIT_V_UF+4)) | 187 |
-| TTY_CMDLINE_MASK | (1<<(UNIT_V_UF+5)) | 188 |
-| TTY_INVERSE_READY | (1<<(UNIT_V_UF+6)) | 189 |
-| TTY_MUX_MODE | (1<<(UNIT_V_UF+7)) | 190 |
-| TTY_DKS_MODE | (1<<(UNIT_V_UF+8)) | 191 |
-| DIRECT |  | 1498 |
-| TT_CLEAR(x,y) | x &= ~(y) | 1500 |
-| TT_SET(x,y) | x \|= (y) | 1501 |
-| TT_SET(x,y) | x &= ~(y) | 1503 |
-| TT_CLEAR(x,y) | x \|= (y) | 1504 |
+| TTY_MAX | 24              /* Serial TTY li... | 33 |
+| LINES_MAX | TTY_MAX + 2     /* Including par... | 34 |
+| TTY_UNICODE_CHARSET | 0 | 178 |
+| TTY_KOI7_JCUKEN_CHARSET | (1<<UNIT_V_UF) | 179 |
+| TTY_KOI7_QWERTY_CHARSET | (2<<UNIT_V_UF) | 180 |
+| TTY_RAW_CHARSET | (3<<UNIT_V_UF) | 181 |
+| TTY_RAW8_CHARSET | (4<<UNIT_V_UF) | 182 |
+| TTY_CHARSET_MASK | (7<<UNIT_V_UF) | 183 |
+| TTY_OFFLINE_STATE | 0 | 184 |
+| TTY_TELETYPE_STATE | (1<<(UNIT_V_UF+3)) | 185 |
+| TTY_VT340_STATE | (2<<(UNIT_V_UF+3)) | 186 |
+| TTY_CONSUL_STATE | (3<<(UNIT_V_UF+3)) | 187 |
+| TTY_STATE_MASK | (3<<(UNIT_V_UF+3)) | 188 |
+| TTY_DESTRUCTIVE_BSPACE | 0 | 189 |
+| TTY_AUTHENTIC_BSPACE | (1<<(UNIT_V_UF+5)) | 190 |
+| TTY_BSPACE_MASK | (1<<(UNIT_V_UF+5)) | 191 |
+| TTY_CMDLINE_MASK | (1<<(UNIT_V_UF+6)) | 192 |
+| TTY_INVERSE_READY | (1<<(UNIT_V_UF+7)) | 193 |
+| TTY_MUX_MODE | (1<<(UNIT_V_UF+8)) | 194 |
+| DIRECT |  | 1426 |
+| TT_CLEAR(x,y) | x &= ~(y) | 1428 |
+| TT_SET(x,y) | x \|= (y) | 1429 |
+| TT_SET(x,y) | x &= ~(y) | 1431 |
+| TT_CLEAR(x,y) | x \|= (y) | 1432 |
 
 === ФУНКЦИИ ===
 | Имя | Строки | Назначение |
 |-----|--------|------------|
-| tomtk2 | 51-64 |  |
-| process | 65-217 |  |
-| dks_register | 218-266 | kadopam_mem[0156] = адрес буфера S-терминала |
-| dks_poll | 267-300 | Generate interrupt when a character is received |
-| reset_line | 301-308 |  |
-| tty_reset | 309-333 |  |
-| vt_clk | 334-442 | Bit 19 of GRP, should be <tty_rate> Hz |
-| tty_setmode | 443-519 |  |
-| tty_attach | 520-571 | Where <port> is the port number for telnet, e.g. 4199. |
-| tty_detach | 572-576 |  |
-| tty_showrate | 577-581 |  |
-| tty_showturbo | 582-586 |  |
-| tty_setrate | 587-601 |  |
-| tty_setturbo | 602-691 |  |
-| tty_send | 692-702 |  |
-| vt_putc | 703-720 | Sending a character to a terminal with the given number. |
-| vt_puts | 721-743 | Sending a string to a terminal with the given number. |
-| vt_send | 744-817 | Videoton-340 employed single byte control codes rather than ESC sequences. |
-| vt_print | 818-864 | Handling output to all connected terminals. |
-| tt_print | 865-912 |  |
-| unicode_to_koi7 | 913-956 | Returns -1 if unsuccessful. |
-| cmd_set | 957-1007 | Set command |
-| cmd_show | 1008-1052 | Show command |
-| cmd_exit | 1053-1092 | Exit command |
-| lookup_cmd | 1093-1108 | Find command routine |
-| cmd_help | 1109-1139 | Help command |
-| vt_cmd_exec | 1140-1167 | Executing a command. |
-| vt_cmd_loop | 1168-1239 | Command line interface mode. |
-| vt_getc | 1240-1307 | Returns -1 if there is no char to input. |
-| vt_kbd_input_unicode | 1308-1344 | If no input, returns -1. |
-| vt_kbd_input_koi7 | 1345-1396 | Semicolon is }, quote is \|. |
-| odd_parity | 1397-1408 |  |
-| vt_fix | 1409-1423 | unless the mode is RAW. |
-| getsym | 1424-1440 | Receive a character (in KOI-7) from a line. |
-| vt_receive | 1441-1509 | Handling input from all connected terminals. |
-| tt_receive | 1510-1566 | Input from Baudot teletypes. |
-| vt_is_idle | 1567-1571 | SIMH should not enter idle mode until they are. |
-| tty_query | 1572-1579 |  |
-| consul_print | 1580-1608 |  |
-| consul_receive | 1609-1634 |  |
-| consul_read | 1635-1641 |  |
-| mux_read | 1642-1648 |  |
-| mux_event | 1649-1653 |  |
-| mux_send | 1654-1682 |  |
-| mux_receive | 1683-1706 |  |
-| mux_clear | 1707-1716 |  |
+| tomtk2 | 48-61 |  |
+| process | 62-199 |  |
+| tty_raw | 200-210 | no Enter/Backspace fix-up. |
+| tty_raw8 | 211-215 | where RAW keeps the authentic 7-bits-plus-parity contract of the hardware. |
+| reset_line | 216-223 |  |
+| tty_reset | 224-247 |  |
+| vt_clk | 248-370 | Bit 19 of GRP, should be <tty_rate> Hz |
+| tty_setmode | 371-427 |  |
+| tty_attach | 428-479 | Where <port> is the port number for telnet, e.g. 4199. |
+| tty_detach | 480-484 |  |
+| tty_showrate | 485-489 |  |
+| tty_showturbo | 490-494 |  |
+| tty_setrate | 495-509 |  |
+| tty_setturbo | 510-602 |  |
+| tty_send | 603-613 |  |
+| vt_putc | 614-631 | Sending a character to a terminal with the given number. |
+| vt_puts | 632-654 | Sending a string to a terminal with the given number. |
+| vt_send | 655-728 | Videoton-340 employed single byte control codes rather than ESC sequences. |
+| vt_print | 729-775 | Handling output to all connected terminals. |
+| tt_print | 776-823 |  |
+| unicode_to_koi7 | 824-867 | Returns -1 if unsuccessful. |
+| cmd_set | 868-921 | Set command |
+| cmd_show | 922-966 | Show command |
+| cmd_exit | 967-1007 | Exit command |
+| lookup_cmd | 1008-1023 | Find command routine |
+| cmd_help | 1024-1054 | Help command |
+| vt_cmd_exec | 1055-1082 | Executing a command. |
+| vt_cmd_loop | 1083-1154 | Command line interface mode. |
+| vt_getc | 1155-1231 | Returns -1 if there is no char to input. |
+| vt_kbd_input_unicode | 1232-1268 | If no input, returns -1. |
+| vt_kbd_input_koi7 | 1269-1320 | Semicolon is }, quote is \|. |
+| odd_parity | 1321-1332 |  |
+| vt_fix | 1333-1347 | unless the mode is RAW. |
+| getsym | 1348-1365 | Receive a character (in KOI-7) from a line. |
+| vt_receive | 1366-1437 | Handling input from all connected terminals. |
+| tt_receive | 1438-1494 | Input from Baudot teletypes. |
+| vt_is_idle | 1495-1499 | SIMH should not enter idle mode until they are. |
+| tty_query | 1500-1507 |  |
+| consul_print | 1508-1542 |  |
+| consul_receive | 1543-1586 |  |
+| consul_read | 1587-1595 |  |
+| mux_read | 1596-1602 |  |
+| mux_event | 1603-1607 |  |
+| mux_send | 1608-1637 |  |
+| mux_receive | 1638-1670 |  |
+| mux_clear | 1671-1680 |  |

@@ -1,0 +1,171 @@
+=== vax730_rb.c — 679 строк ===
+Источник: vax730_rb.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax730_rb.c -nt .cline/maps/vax730_rb.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| SCPE_OK | 296 | |
+| SCPE_OK | 301 | |
+| uptr | 306 | |
+| SCPE_OK | 350 | |
+| uptr | 355 | |
+| SCPE_OK | 425 | |
+| curr | 439 | |
+| err | 440 | |
+| ma | 442 | |
+| comp | 443 | |
+| rbba | 585 | |
+| SCPE_OK | 594 | |
+| rbcs | 602 | |
+| return | 611 | |
+| uptr | 619 | |
+| rbcs | 621 | |
+| rbda | 622 | |
+| SCPE_OK | 634 | |
+| controller" | 639 | |
+| SCPE_OK | 661 | |
+| SCPE_OK | 671 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RB02_NUMWD | 128                             ... | 49 |
+| RB02_NUMSC | 40                              ... | 50 |
+| RB02_NUMSF | 2                               ... | 51 |
+| RB02_NUMCY | 512                             ... | 52 |
+| RB02_SIZE | (RB02_NUMCY * RB02_NUMSF *  | 53 |
+| RB80_NUMWD | 256                             ... | 55 |
+| RB80_NUMSC | 32                              ... | 56 |
+| RB80_NUMSF | 14                              ... | 57 |
+| RB80_NUMCY | 559                             ... | 58 |
+| RB80_SIZE | (RB80_NUMCY * RB80_NUMSF *  | 59 |
+| RB_NUMWD(u) | ((u->flags & UNIT_RB80) ? RB80_N... | 62 |
+| RB_NUMSC(u) | ((u->flags & UNIT_RB80) ? RB80_N... | 63 |
+| RB_NUMSF(u) | ((u->flags & UNIT_RB80) ? RB80_N... | 64 |
+| RB_NUMCY(u) | ((u->flags & UNIT_RB80) ? RB80_N... | 65 |
+| RB_SIZE(u) | ((u->flags & UNIT_RB80) ? RB80_S... | 66 |
+| RB_NUMDR | 4                               ... | 68 |
+| RB_MAXFR | (1 << 16)                       ... | 69 |
+| UNIT_V_RB80 | (UNIT_V_UF + 0)                 ... | 73 |
+| UNIT_V_DUMMY | (UNIT_V_UF + 1)                 ... | 74 |
+| UNIT_DUMMY | (1 << UNIT_V_DUMMY) | 75 |
+| UNIT_RB80 | (1u << UNIT_V_RB80) | 76 |
+| TRK | u3                              ... | 80 |
+| STAT | u4                              ... | 81 |
+| SIP | u5                              ... | 82 |
+| RB02DS_LOAD | 0                               ... | 86 |
+| RB02DS_LOCK | 5                               ... | 87 |
+| RB02DS_BHO | 0000010                         ... | 88 |
+| RB02DS_HDO | 0000020                         ... | 89 |
+| RB02DS_CVO | 0000040                         ... | 90 |
+| RB02DS_HD | 0000100                         ... | 91 |
+| RB02DS_DSE | 0000400                         ... | 92 |
+| RB02DS_VCK | 0001000                         ... | 93 |
+| RB02DS_WGE | 0002000                         ... | 94 |
+| RB02DS_SPE | 0004000                         ... | 95 |
+| RB02DS_STO | 0010000                         ... | 96 |
+| RB02DS_WLK | 0020000                         ... | 97 |
+| RB02DS_HCE | 0040000                         ... | 98 |
+| RB02DS_WDE | 0100000                         ... | 99 |
+| RB02DS_ATT | (RB02DS_HDO+RB02DS_BHO+RB02DS_LO... | 100 |
+| RB02DS_UNATT | (RB02DS_CVO+RB02DS_LOAD)        ... | 101 |
+| RB02DS_ERR | (RB02DS_WDE+RB02DS_HCE+RB02DS_ST... | 102 |
+| RB80DS_SCNT | 0x0000000F | 105 |
+| RB80DS_FLT | 0x00000100 | 106 |
+| RB80DS_PLV | 0x00000200 | 107 |
+| RB80DS_SKE | 0x00000400 | 108 |
+| RB80DS_OCY | 0x00000800 | 109 |
+| RB80DS_RDY | 0x00001000 | 110 |
+| RB80DS_WLK | 0x00002000 | 111 |
+| RBCS_DRDY | 0x00000001                      ... | 115 |
+| RBCS_M_FUNC | 0x7                             ... | 116 |
+| RBCS_NOP | 0 | 117 |
+| RBCS_WCHK | 1 | 118 |
+| RBCS_GSTA | 2 | 119 |
+| RBCS_SEEK | 3 | 120 |
+| RBCS_RHDR | 4 | 121 |
+| RBCS_WRITE | 5 | 122 |
+| RBCS_READ | 6 | 123 |
+| RBCS_RNOHDR | 7 | 124 |
+| RBCS_V_FUNC | 1 | 125 |
+| RBCS_M_DRIVE | 0x3 | 126 |
+| RBCS_V_DRIVE | 8 | 127 |
+| RBCS_INCMP | 0x00000400                      ... | 128 |
+| RBCS_CRC | 0x00000800                      ... | 129 |
+| RBCS_DLT | 0x00001000                      ... | 130 |
+| RBCS_HDE | 0x00001400                      ... | 131 |
+| RBCS_NXM | 0x00002000                      ... | 132 |
+| RBCS_DRE | 0x00004000                      ... | 133 |
+| RBCS_ERR | 0x00008000                      ... | 134 |
+| RBCS_ALLERR | (RBCS_ERR+RBCS_DRE+RBCS_NXM+RBCS... | 135 |
+| RBCS_M_ATN | 0xF | 136 |
+| RBCS_V_ATN | 16 | 137 |
+| RBCS_ATN | (RBCS_M_ATN << RBCS_V_ATN) | 138 |
+| RBCS_M_ECC | 0x2 | 139 |
+| RBCS_V_ECC | 20 | 140 |
+| RBCS_SSI | 0x00400000 | 141 |
+| RBCS_SSE | 0x00800000 | 142 |
+| RBCS_IRQ | 0x01000000 | 143 |
+| RBCS_MTN | 0x02000000 | 144 |
+| RBCS_R80 | 0x04000000 | 145 |
+| RBCS_ASI | 0x08000000 | 146 |
+| RBCS_TOI | 0x10000000 | 147 |
+| RBCS_FMT | 0x20000000 | 148 |
+| RBCS_MATN | 0x80000000 | 149 |
+| RBCS_RW | ((RBCS_M_FUNC << RBCS_V_FUNC) +  | 151 |
+| RBCS_C0 | RBCS_SSE | 156 |
+| RBCS_C1 | (rbcs & RBCS_MATN) ? RBCS_IRQ :  | 157 |
+| GET_FUNC(x) | (((x) >> RBCS_V_FUNC) & RBCS_M_F... | 159 |
+| GET_DRIVE(x) | (((x) >> RBCS_V_DRIVE) & RBCS_M_... | 160 |
+| RBBA_RW | 0x0003FFFF | 164 |
+| RBMP_MRK | 0x00000001 | 170 |
+| RBMP_GST | 0x00000002 | 171 |
+| RBMP_RST | 0x00000008 | 172 |
+| RBDA_V_SECT | 0                               ... | 176 |
+| RBDA_M_SECT | 0xFF | 177 |
+| RBDA_V_TRACK | 8                               ... | 178 |
+| RBDA_M_TRACK | 0xFF | 179 |
+| RBDA_V_CYL | 16                              ... | 180 |
+| RBDA_M_CYL | 0xFFFFu | 181 |
+| RBDA_TRACK | (RBDA_M_TRACK << RBDA_V_TRACK) | 182 |
+| RBDA_CYL | (RBDA_M_CYL << RBDA_V_CYL) | 183 |
+| GET_SECT(x) | (((x) >> RBDA_V_SECT) & RBDA_M_S... | 184 |
+| GET_CYL(x) | (((x) >> RBDA_V_CYL) & RBDA_M_CYL) | 185 |
+| GET_TRACK(x) | (((x) >> RBDA_V_TRACK) & RBDA_M_... | 186 |
+| GET_DA(x,u) | ((GET_TRACK (x) * RB_NUMCY(u) * ... | 188 |
+| DBG_REG | 0x0001                          ... | 192 |
+| DBG_CMD | 0x0002                          ... | 193 |
+| DBG_RD | 0x0004                          ... | 194 |
+| DBG_WR | 0x0008                          ... | 195 |
+| IOLN_RB | 002 | 227 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rb_rd16 | 293-298 |  |
+| rb_wr16 | 299-303 |  |
+| rb_rd32 | 304-307 |  |
+| switch | 308-352 |  |
+| rb_wr32 | 353-358 |  |
+| switch | 359-436 |  |
+| rb_svc | 437-445 |  |
+| if | 446-466 |  |
+| if | 467-475 |  |
+| if | 476-485 |  |
+| if | 486-492 |  |
+| if | 493-535 |  |
+| if | 536-547 |  |
+| if | 548-562 |  |
+| if | 563-580 |  |
+| if | 581-588 |  |
+| if | 589-598 |  |
+| rb_set_done | 599-602 |  |
+| if | 603-615 |  |
+| rb_reset | 616-623 |  |
+| for | 624-636 |  |
+| rb_description | 637-643 |  |
+| rb_attach | 644-655 |  |
+| if | 656-665 |  |
+| rb_set_size | 666-675 |  |
+| rb_set_bad | 676-679 |  |

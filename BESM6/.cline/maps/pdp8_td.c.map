@@ -1,0 +1,149 @@
+=== pdp8_td.c — 960 строк ===
+Источник: pdp8_td.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp8_td.c -nt .cline/maps/pdp8_td.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| td_stopoffr | 190 | |
+| td_dib | 220 | |
+| pulse | 279 | |
+| diff | 281 | |
+| AC | 336 | |
+| prev_mving | 350 | |
+| uptr | 351 | |
+| FALSE | 390 | |
+| new_time | 413 | |
+| delta | 414 | |
+| uptr->pos | 446 | |
+| FALSE | 453 | |
+| mot | 460 | |
+| dir | 461 | |
+| unum | 462 | |
+| mtkb | 464 | |
+| SCPE_OK | 570 | |
+| nibp | 585 | |
+| nibp | 618 | |
+| uptr->WRITTEN | 665 | |
+| return | 668 | |
+| uptr | 676 | |
+| td_cmd | 696 | |
+| td_csum | 697 | |
+| SCPE_OK | 698 | |
+| td_unit | 754 | |
+| SCPE_OK | 758 | |
+| pdp18b | 772 | |
+| pdp11b | 773 | |
+| ba | 777 | |
+| uptr->io_flush | 810 | |
+| SCPE_OK | 854 | |
+| pdp18b | 866 | |
+| pdp11b | 867 | |
+| ba | 869 | |
+| uptr->pos | 916 | |
+| SCPE_OK | 954 | |
+| DECtape" | 959 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DT_NUMDR | 2                               ... | 84 |
+| UNIT_V_8FMT | (UNIT_V_UF + 0)                 ... | 85 |
+| UNIT_V_11FMT | (UNIT_V_UF + 1)                 ... | 86 |
+| UNIT_8FMT | (1 << UNIT_V_8FMT) | 87 |
+| UNIT_11FMT | (1 << UNIT_V_11FMT) | 88 |
+| STATE | u3                              ... | 89 |
+| LASTT | u4                              ... | 90 |
+| WRITTEN | u5                              ... | 91 |
+| DT_LPERMC | 6                               ... | 95 |
+| DT_EZLIN | (8192 * DT_LPERMC)              ... | 96 |
+| DT_BFLIN | (200 * DT_LPERMC)               ... | 97 |
+| DT_HTLIN | (5 * DT_LPERMC)                 ... | 98 |
+| D18_WSIZE | 6                               ... | 102 |
+| D18_BSIZE | 384                             ... | 103 |
+| D18_TSIZE | 578                             ... | 104 |
+| D18_LPERB | (DT_HTLIN + (D18_BSIZE * DT_WSIZ... | 105 |
+| D18_FWDEZ | (DT_EZLIN + (D18_LPERB * D18_TSI... | 106 |
+| D18_CAPAC | (D18_TSIZE * D18_BSIZE)         ... | 107 |
+| D18_NBSIZE | ((D18_BSIZE * D8_WSIZE) / D18_WS... | 109 |
+| D18_FILSIZ | (D18_NBSIZE * D18_TSIZE * sizeof... | 110 |
+| D11_FILSIZ | (D18_NBSIZE * D18_TSIZE * sizeof... | 111 |
+| D8_WSIZE | 4                               ... | 115 |
+| D8_BSIZE | 129                             ... | 116 |
+| D8_TSIZE | 1474                            ... | 117 |
+| D8_LPERB | (DT_HTLIN + (D8_BSIZE * DT_WSIZE... | 118 |
+| D8_FWDEZ | (DT_EZLIN + (D8_LPERB * D8_TSIZE)) | 119 |
+| D8_CAPAC | (D8_TSIZE * D8_BSIZE)           ... | 120 |
+| D8_FILSIZ | (D8_CAPAC * sizeof (int16)) | 121 |
+| DT_CAPAC | D8_CAPAC                        ... | 125 |
+| DT_WSIZE | D8_WSIZE | 126 |
+| DTU_BSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_BS... | 130 |
+| DTU_TSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_TS... | 131 |
+| DTU_LPERB(u) | (((u)->flags & UNIT_8FMT)? D8_LP... | 132 |
+| DTU_FWDEZ(u) | (((u)->flags & UNIT_8FMT)? D8_FW... | 133 |
+| DTU_CAPAC(u) | (((u)->flags & UNIT_8FMT)? D8_CA... | 134 |
+| DT_LIN2BL(p,u) | (((p) - DT_EZLIN) / DTU_LPERB (u)) | 136 |
+| DT_LIN2OF(p,u) | (((p) - DT_EZLIN) % DTU_LPERB (u)) | 137 |
+| TDC_UNIT | 04000                           ... | 141 |
+| TDC_FWDRV | 02000                           ... | 142 |
+| TDC_STPGO | 01000                           ... | 143 |
+| TDC_RW | 00400                           ... | 144 |
+| TDC_MASK | 07400                           ... | 145 |
+| TDC_GETUNIT(x) | (((x) & TDC_UNIT)? 1: 0) | 146 |
+| TDS_WLO | 00200                           ... | 150 |
+| TDS_TME | 00100                           ... | 151 |
+| MTK_MASK | 077 | 155 |
+| MTK_REV_END | 055                             ... | 156 |
+| MTK_INTER | 025                             ... | 157 |
+| MTK_FWD_BLK | 026                             ... | 158 |
+| MTK_REV_GRD | 032                             ... | 159 |
+| MTK_FWD_PRE | 010                             ... | 160 |
+| MTK_DATA | 070                             ... | 161 |
+| MTK_REV_PRE | 073                             ... | 162 |
+| MTK_FWD_GRD | 051                             ... | 163 |
+| MTK_REV_BLK | 045                             ... | 164 |
+| MTK_FWD_END | 022                             ... | 165 |
+| STA_STOP | 0                               ... | 169 |
+| STA_DEC | 2                               ... | 170 |
+| STA_ACC | 4                               ... | 171 |
+| STA_UTS | 6                               ... | 172 |
+| STA_DIR | 1                               ... | 173 |
+| ABS(x) | (((x) < 0)? (-(x)): (x)) | 175 |
+| MTK_BIT(c,p) | (((c) >> (DT_LPERMC - 1 - ((p) %... | 176 |
+| BOOT_START | 07300 | 713 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 714 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| td77 | 277-282 |  |
+| switch | 283-347 |  |
+| td_newsa | 348-366 |  |
+| if | 367-410 |  |
+| td_setpos | 411-420 |  |
+| switch | 421-457 |  |
+| td_svc | 458-473 |  |
+| if | 474-478 |  |
+| switch | 479-526 |  |
+| if | 527-539 |  |
+| if | 540-563 |  |
+| if | 564-582 |  |
+| td_header | 583-586 |  |
+| switch | 587-615 |  |
+| td_trailer | 616-620 |  |
+| switch | 621-644 |  |
+| td_read | 645-656 |  |
+| td_write | 657-672 |  |
+| td_reset | 673-677 |  |
+| for | 678-745 |  |
+| td_boot | 746-769 |  |
+| td_attach | 770-781 |  |
+| if | 782-797 |  |
+| if | 798-863 |  |
+| td_flush | 864-870 |  |
+| if | 871-902 |  |
+| td_detach | 903-922 |  |
+| td_set_mtk | 923-933 |  |
+| td_show_pos | 934-938 |  |
+| if | 939-956 |  |
+| td_description | 957-960 |  |

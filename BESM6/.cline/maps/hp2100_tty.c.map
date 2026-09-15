@@ -1,0 +1,61 @@
+=== hp2100_tty.c — 980 строк ===
+Источник: hp2100_tty.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_tty.c -nt .cline/maps/hp2100_tty.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 214-223 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tty_interface | 232 | |
+| signal | 419 | |
+| working_set | 420 | |
+| outbound | 421 | |
+| irq_enabled | 422 | |
+| SCPE_OK | 740 | |
+| status | 793 | |
+| input | 794 | |
+| status | 872 | |
+| print_char | 937 | |
+| status | 938 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUL | '\000'              /* null */ | 134 |
+| CR | '\r'                /* carriage ... | 135 |
+| LF | '\n'                /* line feed */ | 136 |
+| MARK | '\377'              /* all bits ... | 137 |
+| DEV_REALTIME_SHIFT | (DEV_V_UF + 0)              /* r... | 142 |
+| DEV_REALTIME | (1u << DEV_REALTIME_SHIFT)  /* r... | 144 |
+| UNIT_AUTOLF_SHIFT | (TTUF_V_UF + 0)             /* a... | 149 |
+| UNIT_AUTOLF | (1u << UNIT_AUTOLF_SHIFT)   /* a... | 151 |
+| TTY_FAST_TIME | 200                 /* teleprint... | 165 |
+| TTY_REAL_TIME | mS (100)            /* teleprint... | 166 |
+| CN_CONTROL | 0100000u                /* outpu... | 179 |
+| CN_INPUT | 0040000u                /* set t... | 180 |
+| CN_PRINT | 0020000u                /* enabl... | 181 |
+| CN_PUNCH | 0010000u                /* enabl... | 182 |
+| ST_BUSY | 0100000u                /* inter... | 202 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tty_interface | 417-423 |  |
+| while | 424-594 |  |
+| set_filter | 595-620 |  |
+| set_auto | 621-638 |  |
+| set_mode | 639-665 |  |
+| set_endis | 666-691 |  |
+| show_mode | 692-718 |  |
+| tty_reset | 719-720 |  |
+| if | 721-790 |  |
+| keyboard_service | 791-801 |  |
+| if | 802-830 |  |
+| if | 831-869 |  |
+| print_punch_service | 870-877 |  |
+| if | 878-934 |  |
+| output | 935-980 |  |

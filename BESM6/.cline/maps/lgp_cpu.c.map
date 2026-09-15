@@ -1,0 +1,93 @@
+=== lgp_cpu.c — 763 строк ===
+Источник: lgp_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test lgp_cpu.c -nt .cline/maps/lgp_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| delay | 145 | |
+| oPC | 269 | |
+| ea | 326 | |
+| ovf_this_cycle | 327 | |
+| reason | 328 | |
+| reason | 498 | |
+| return | 511 | |
+| sgn | 527 | |
+| ah | 528 | |
+| al | 539 | |
+| bl | 540 | |
+| rmid1 | 542 | |
+| rmid2 | 543 | |
+| rlo | 544 | |
+| M32 | 558 | |
+| sgn | 565 | |
+| tmin | 592 | |
+| tmax | 593 | |
+| nsc | 594 | |
+| OVF | 626 | |
+| inp_strt | 627 | |
+| inp_done | 628 | |
+| out_strt | 629 | |
+| out_done | 630 | |
+| lgp21_sov | 631 | |
+| delay | 632 | |
+| SCPE_IERR | 637 | |
+| SCPE_OK | 639 | |
+| SCPE_OK | 648 | |
+| SCPE_ARG | 661 | |
+| SCPE_OK | 662 | |
+| SCPE_ARG | 675 | |
+| SCPE_OK | 676 | |
+| SCPE_OK | 703 | |
+| SCPE_OK | 714 | |
+| SCPE_OK | 724 | |
+| inst | 731 | |
+| inst | 739 | |
+| inst | 752 | |
+| IR | 761 | |
+| SCPE_OK | 762 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 122 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 123 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 124 |
+| M16 | 0xFFFF | 125 |
+| M32 | 0xFFFFFFFF | 126 |
+| NEG(x) | ((~(x) + 1) & DMASK) | 127 |
+| ABS(x) | (((x) & SIGN)? NEG (x): (x)) | 128 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 266-274 |  |
+| if | 275-323 |  |
+| cpu_one_inst | 324-331 |  |
+| switch | 332-492 |  |
+| if | 493-502 |  |
+| Read | 503-507 |  |
+| Write | 508-515 |  |
+| shift_in | 516-524 |  |
+| Mul64 | 525-529 |  |
+| if | 530-551 |  |
+| if | 552-562 |  |
+| Div32 | 563-571 |  |
+| for | 572-589 |  |
+| I_delay | 590-595 |  |
+| if | 596-611 |  |
+| if | 612-623 |  |
+| cpu_reset | 624-643 |  |
+| cpu_set_30opt | 644-652 |  |
+| cpu_set_30opt_i | 653-666 |  |
+| cpu_set_30opt_o | 667-680 |  |
+| cpu_set_model | 681-689 |  |
+| cpu_show_model | 690-697 |  |
+| if | 698-707 |  |
+| cpu_ex | 708-718 |  |
+| cpu_dep | 719-728 |  |
+| cpu_set_exec | 729-733 |  |
+| if | 734-739 |  |
+| while | 740-749 |  |
+| cpu_set_fill | 750-754 |  |
+| if | 755-763 |  |

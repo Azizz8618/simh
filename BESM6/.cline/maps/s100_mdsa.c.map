@@ -1,0 +1,84 @@
+=== s100_mdsa.c — 645 строк ===
+Источник: s100_mdsa.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_mdsa.c -nt .cline/maps/s100_mdsa.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| MDSA_DRIVE_INFO | 58-64 |
+| COM_STATUS | 66-70 |
+| A_STATUS | 72-77 |
+| B_STATUS | 79-81 |
+| MDSA_INFO | 83-96 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 35 | |
+| mdsa_info_data | 98 | |
+| mdsa_info | 99 | |
+| sdata | 101 | |
+| checksum | 357 | |
+| sec_offset | 358 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 20 |
+| DBG_PRINT(args) |  | 22 |
+| ERROR_MSG | (1 << 0) | 26 |
+| SEEK_MSG | (1 << 1) | 27 |
+| CMD_MSG | (1 << 2) | 28 |
+| RD_DATA_MSG | (1 << 3) | 29 |
+| WR_DATA_MSG | (1 << 4) | 30 |
+| STATUS_MSG | (1 << 5) | 31 |
+| RD_DATA_DETAIL_MSG | (1 << 6) | 32 |
+| WR_DATA_DETAIL_MSG | (1 << 7) | 33 |
+| MDSA_MAX_DRIVES | 3 | 41 |
+| MDSA_SECTOR_LEN | 256 | 42 |
+| MDSA_SECTORS_PER_TRACK | 10 | 43 |
+| MDSA_TRACKS | 35 | 44 |
+| MDSA_RAW_LEN | (16 + 1 + MDSA_SECTOR_LEN + 1) | 45 |
+| UNIT_V_MDSA_VERBOSE | (UNIT_V_UF + 1)   /* verbose mod... | 104 |
+| UNIT_MDSA_VERBOSE | (1 << UNIT_V_MDSA_VERBOSE) | 105 |
+| MDSA_CAPACITY | (35*10*MDSA_SECTOR_LEN)    /* De... | 106 |
+| MDSA_READ_ROM0 | 0 | 109 |
+| MDSA_READ_ROM1 | 1 | 110 |
+| MDSA_WRITE_DATA | 2 | 111 |
+| MDSA_CTLR_COMMAND | 3 | 112 |
+| MDSA_MOTORS_ON | 0x80     /* 1 = motor on */ | 115 |
+| MDSA_READ_DATA | 0x40     /* 1 = return byte read... | 116 |
+| MDSA_B_STATUS | 0x20     /* 1 = return B status,... | 117 |
+| MDSA_CMD_DRIVE | 0        /* select drive in M1,M... | 120 |
+| MDSA_CMD_BEGIN_WR | 1        /* start write */ | 121 |
+| MDSA_CMD_STEP | 2        /* load step bit from M... | 122 |
+| MDSA_CMD_INTR | 3        /* load interrupt enabl... | 123 |
+| MDSA_CMD_NOP | 4 | 124 |
+| MDSA_CMD_RESET_SF | 5        /* reset sector flag */ | 125 |
+| MDSA_CMD_RESET | 6        /* reset controller, ra... | 126 |
+| MDSA_CMD_STEP_DIR | 7        /* load step direction ... | 127 |
+| MDSA_A_SF | 0x80 | 131 |
+| MDSA_A_WI | 0x40 | 132 |
+| MDSA_A_MO | 0x10 | 133 |
+| MDSA_A_WR | 0x08 | 134 |
+| MDSA_A_BD | 0x04 | 135 |
+| MDSA_A_WP | 0x02 | 136 |
+| MDSA_A_T0 | 0x01 | 137 |
+| MDSA_B_SF | 0x80 | 140 |
+| MDSA_B_WI | 0x40 | 141 |
+| MDSA_B_MO | 0x10 | 142 |
+| MDSA_B_SC | 0x0f | 143 |
+| MDSA_NAME | "North Star Single Density Contr... | 166 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mdsa_description | 168-206 |  |
+| mdsa_reset | 207-227 | Reset routine |
+| mdsa_attach | 228-279 | Attach routine |
+| mdsa_detach | 280-303 | Detach routine |
+| mdsa_boot | 304-314 |  |
+| mdsadev | 315-345 |  |
+| showdata | 346-359 |  |
+| calculate_mdsa_sec_offset | 360-364 |  |
+| MDSA_Read | 365-645 |  |

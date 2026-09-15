@@ -1,0 +1,40 @@
+=== pdq3_sys.c — 628 строк ===
+Источник: pdq3_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdq3_sys.c -nt .cline/maps/pdq3_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dev | 44 | |
+| cpu_unit | 45 | |
+| tty_dev | 46 | |
+| fdc_dev | 47 | |
+| tim_dev | 48 | |
+| cpu_reg | 49 | |
+| reg_pc | 51 | |
+| sim_name | 62 | |
+| sim_emax | 64 | |
+| return | 192 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load | 97-137 | Loader proper |
+| pdq3_sprint_addr | 138-152 | half contains the offset. If the upper half is NIL, it is a word address |
+| pdq3_fprint_addr | 153-160 |  |
+| pdq3_parse_addr | 161-185 |  |
+| pdq3_vm_init | 186-194 |  |
+| pdq3_cmd_exstack | 195-211 |  |
+| pdq3_cmd_exmscw | 212-217 |  |
+| pdq3_cmd_extib | 218-223 |  |
+| pdq3_cmd_exseg | 224-252 |  |
+| pdq3_cmd_calltree | 253-256 |  |
+| pdq3_cmd_namealias | 257-391 |  |
+| UB | 392-395 |  |
+| DB | 396-399 |  |
+| W | 400-406 |  |
+| SW | 407-410 |  |
+| SB | 411-416 |  |
+| B | 417-430 |  |
+| print_hd | 431-624 |  |
+| parse_sym | 625-628 |  |

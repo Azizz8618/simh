@@ -1,0 +1,68 @@
+=== s3_disk.c — 792 строк ===
+Источник: s3_disk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s3_disk.c -nt .cline/maps/s3_disk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| IAR | 39 | |
+| trace | 40 | |
+| debug_reg | 41 | |
+| opstr | 65 | |
+| seekbusy | 624 | |
+| SCPE_OK | 625 | |
+| seekbusy | 629 | |
+| SCPE_OK | 630 | |
+| seekbusy | 634 | |
+| SCPE_OK | 635 | |
+| seekbusy | 639 | |
+| SCPE_OK | 640 | |
+| found | 649 | |
+| SCPE_OK | 652 | |
+| found | 657 | |
+| SCPE_OK | 660 | |
+| found | 665 | |
+| SCPE_OK | 668 | |
+| found | 673 | |
+| SCPE_OK | 676 | |
+| found | 684 | |
+| found | 691 | |
+| found | 698 | |
+| found | 705 | |
+| r1_unit.u3 | 715 | |
+| SCPE_OK | 720 | |
+| f1_unit.u3 | 725 | |
+| SCPE_OK | 730 | |
+| r2_unit.u3 | 735 | |
+| SCPE_OK | 740 | |
+| f2_unit.u3 | 745 | |
+| SCPE_OK | 750 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dsk1 | 182-189 |  |
+| dsk2 | 190-199 |  |
+| dsk | 200-621 |  |
+| r1_svc | 622-626 |  |
+| f1_svc | 627-631 |  |
+| r2_svc | 632-636 |  |
+| f2_svc | 637-645 |  |
+| r1_reset | 646-653 |  |
+| f1_reset | 654-661 |  |
+| r2_reset | 662-669 |  |
+| f2_reset | 670-680 |  |
+| r1_attach | 681-687 |  |
+| f1_attach | 688-694 |  |
+| r2_attach | 695-701 |  |
+| f2_attach | 702-711 |  |
+| r1_boot | 712-716 |  |
+| for | 717-721 |  |
+| f1_boot | 722-726 |  |
+| for | 727-731 |  |
+| r2_boot | 732-736 |  |
+| for | 737-741 |  |
+| f2_boot | 742-746 |  |
+| for | 747-755 |  |
+| read_sector | 756-773 |  |
+| write_sector | 774-792 |  |

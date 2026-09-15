@@ -1,0 +1,200 @@
+=== pdp11_tu.c — 1110 строк ===
+Источник: pdp11_tu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_tu.c -nt .cline/maps/pdp11_tu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| wbuf | 239 | |
+| dt_map | 243 | |
+| tu_dib | 278 | |
+| drv | 351 | |
+| SCPE_OK | 410 | |
+| drv | 417 | |
+| SCPE_OK | 475 | |
+| fnc | 482 | |
+| uptr | 483 | |
+| MBE_GOE | 620 | |
+| fnc | 639 | |
+| fc | 640 | |
+| st | 642 | |
+| SCPE_OK | 817 | |
+| tuer | 824 | |
+| tufs | 825 | |
+| return | 827 | |
+| return | 837 | |
+| return | 862 | |
+| SCPE_OK | 926 | |
+| uptr | 934 | |
+| tucs1 | 937 | |
+| tufc | 938 | |
+| tuer | 939 | |
+| tufs | 940 | |
+| drv | 968 | |
+| drv | 987 | |
+| dptr->flags | 1008 | |
+| SCPE_OK | 1009 | |
+| SCPE_OK | 1019 | |
+| SCPE_OK | 1071 | |
+| SCPE_NOFNC | 1078 | |
+| SCPE_OK | 1104 | |
+| formatter" | 1109 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEV_DIS_INIT | DEV_DIS | 68 |
+| DEV_DIS_INIT | 0 | 72 |
+| TU_NUMFM | 1                               ... | 80 |
+| TU_NUMDR | 8                               ... | 81 |
+| USTAT | u3                              ... | 82 |
+| UDENS | u4                              ... | 83 |
+| UD_UNK | 0                               ... | 84 |
+| MT_MAXFR | (1 << 16)                       ... | 85 |
+| DEV_V_TM03 | (DEV_V_FFUF + 0)                ... | 86 |
+| DEV_TM03 | (1 << DEV_V_TM03) | 87 |
+| UNIT_V_TYPE | (MTUF_V_UF + 0) | 88 |
+| UNIT_M_TYPE | 03 | 89 |
+| UNIT_TYPE | (UNIT_M_TYPE << UNIT_V_TYPE) | 90 |
+| UNIT_TE16 | (0 << UNIT_V_TYPE) | 91 |
+| UNIT_TU45 | (1 << UNIT_V_TYPE) | 92 |
+| UNIT_TU77 | (2 << UNIT_V_TYPE) | 93 |
+| GET_TYPE(x) | (((x) >> UNIT_V_TYPE) & UNIT_M_T... | 94 |
+| CS1_OF | 0 | 98 |
+| CS1_GO | CSR_GO                          ... | 99 |
+| CS1_V_FNC | 1                               ... | 100 |
+| CS1_M_FNC | 037                             ... | 101 |
+| CS1_N_FNC | (CS1_M_FNC + 1) | 102 |
+| FNC_NOP | 000                             ... | 103 |
+| FNC_UNLOAD | 001                             ... | 104 |
+| FNC_REWIND | 003                             ... | 105 |
+| FNC_FCLR | 004                             ... | 106 |
+| FNC_RIP | 010                             ... | 107 |
+| FNC_ERASE | 012                             ... | 108 |
+| FNC_WREOF | 013                             ... | 109 |
+| FNC_SPACEF | 014                             ... | 110 |
+| FNC_SPACER | 015                             ... | 111 |
+| FNC_XFER | 024                             ... | 112 |
+| FNC_WCHKF | 024                             ... | 113 |
+| FNC_WCHKR | 027                             ... | 114 |
+| FNC_WRITE | 030                             ... | 115 |
+| FNC_READF | 034                             ... | 116 |
+| FNC_READR | 037                             ... | 117 |
+| CS1_RW | 077 | 118 |
+| CS1_DVA | 04000                           ... | 119 |
+| GET_FNC(x) | (((x) >> CS1_V_FNC) & CS1_M_FNC) | 120 |
+| FS_OF | 1 | 128 |
+| FS_SAT | 0000001                         ... | 129 |
+| FS_BOT | 0000002                         ... | 130 |
+| FS_TMK | 0000004                         ... | 131 |
+| FS_ID | 0000010                         ... | 132 |
+| FS_SLOW | 0000020                         ... | 133 |
+| FS_PE | 0000040                         ... | 134 |
+| FS_SSC | 0000100                         ... | 135 |
+| FS_RDY | 0000200                         ... | 136 |
+| FS_FPR | 0000400                         ... | 137 |
+| FS_EOT | 0002000                         ... | 138 |
+| FS_WRL | 0004000                         ... | 139 |
+| FS_MOL | 0010000                         ... | 140 |
+| FS_PIP | 0020000                         ... | 141 |
+| FS_ERR | 0040000                         ... | 142 |
+| FS_ATA | 0100000                         ... | 143 |
+| FS_REW | 0200000                         ... | 144 |
+| FS_DYN | (FS_ERR \| FS_PIP \| FS_MOL \| FS_W... | 146 |
+| ER_OF | 2 | 151 |
+| ER_ILF | 0000001                         ... | 152 |
+| ER_ILR | 0000002                         ... | 153 |
+| ER_RMR | 0000004                         ... | 154 |
+| ER_MCP | 0000010                         ... | 155 |
+| ER_FER | 0000020                         ... | 156 |
+| ER_MDP | 0000040                         ... | 157 |
+| ER_VPE | 0000100                         ... | 158 |
+| ER_CRC | 0000200                         ... | 159 |
+| ER_NSG | 0000400                         ... | 160 |
+| ER_FCE | 0001000                         ... | 161 |
+| ER_ITM | 0002000                         ... | 162 |
+| ER_NXF | 0004000                         ... | 163 |
+| ER_DTE | 0010000                         ... | 164 |
+| ER_OPI | 0020000                         ... | 165 |
+| ER_UNS | 0040000                         ... | 166 |
+| ER_DCK | 0100000                         ... | 167 |
+| MR_OF | 3 | 171 |
+| MR_RW | 0177637                         ... | 172 |
+| AS_OF | 4 | 176 |
+| AS_U0 | 0000001                         ... | 177 |
+| FC_OF | 5 | 181 |
+| DT_OF | 6 | 185 |
+| DT_NSA | 0100000                         ... | 186 |
+| DT_TAPE | 0040000                         ... | 187 |
+| DT_PRES | 0002000                         ... | 188 |
+| DT_TM03 | 0000040                         ... | 189 |
+| DT_OFF | 0000010                         ... | 190 |
+| DT_TU16 | 0000011                         ... | 191 |
+| DT_TU45 | 0000012                         ... | 192 |
+| DT_TU77 | 0000014                         ... | 193 |
+| CC_OF | 7 | 197 |
+| CC_MBZ | 0177000                         ... | 198 |
+| SN_OF | 8 | 202 |
+| TC_OF | 9 | 206 |
+| TC_V_UNIT | 0                               ... | 207 |
+| TC_M_UNIT | 07 | 208 |
+| TC_V_EVN | 0000010                         ... | 209 |
+| TC_V_FMT | 4                               ... | 210 |
+| TC_M_FMT | 017 | 211 |
+| TC_STD | 014                            /... | 212 |
+| TC_CDUMP | 015                            /... | 213 |
+| TC_V_DEN | 8                               ... | 214 |
+| TC_M_DEN | 07 | 215 |
+| TC_800 | 3                              /... | 216 |
+| TC_1600 | 4                              /... | 217 |
+| TC_AER | 0010000                         ... | 218 |
+| TC_SAC | 0020000                         ... | 219 |
+| TC_FCS | 0040000                         ... | 220 |
+| TC_ACC | 0100000                         ... | 221 |
+| TC_RW | 0013777 | 222 |
+| TC_MBZ | 0004000 | 223 |
+| TC_RIP | ((TC_800 << TC_V_DEN) \| (TC_STD ... | 224 |
+| GET_DEN(x) | (((x) >> TC_V_DEN) & TC_M_DEN) | 225 |
+| GET_FMT(x) | (((x) >> TC_V_FMT) & TC_M_FMT) | 226 |
+| GET_DRV(x) | (((x) >> TC_V_UNIT) & TC_M_UNIT) | 227 |
+| IOLN_TU | 040 | 277 |
+| BOOT_START | 016000                          ... | 1028 |
+| BOOT_ENTRY | (BOOT_START + 002)              ... | 1029 |
+| BOOT_UNIT | (BOOT_START + 010)              ... | 1030 |
+| BOOT_CSR | (BOOT_START + 014)              ... | 1031 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (uin... | 1032 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tu_mbrd | 349-352 |  |
+| if | 353-359 |  |
+| switch | 360-414 |  |
+| tu_mbwr | 415-422 |  |
+| switch | 423-479 |  |
+| tu_go | 480-487 |  |
+| if | 488-503 |  |
+| switch | 504-624 |  |
+| tu_abort | 625-636 |  |
+| tu_svc | 637-644 |  |
+| if | 645-658 |  |
+| if | 659-665 |  |
+| switch | 666-805 |  |
+| if | 806-810 |  |
+| if | 811-821 |  |
+| tu_set_er | 822-831 |  |
+| tu_clr_as | 832-841 |  |
+| tu_update_fs | 842-846 |  |
+| if | 847-868 |  |
+| tu_map_err | 869-870 |  |
+| switch | 871-930 |  |
+| tu_reset | 931-943 |  |
+| for | 944-965 |  |
+| tu_attach | 966-984 |  |
+| tu_detach | 985-997 |  |
+| tu_set_fmtr | 998-1011 |  |
+| tu_show_fmtr | 1012-1061 |  |
+| tu_boot | 1062-1075 |  |
+| tu_boot | 1076-1082 |  |
+| tu_help | 1083-1106 |  |
+| tu_description | 1107-1110 |  |

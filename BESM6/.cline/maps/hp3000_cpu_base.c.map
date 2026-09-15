@@ -1,0 +1,119 @@
+=== hp3000_cpu_base.c — 4024 строк ===
+Источник: hp3000_cpu_base.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_cpu_base.c -nt .cline/maps/hp3000_cpu_base.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| PROPERTY | 2054-2058 |
+| PROPERTY | 2181-2186 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| device_number | 175 | |
+| displacement | 238 | |
+| status | 239 | |
+| sum | 280 | |
+| difference | 312 | |
+| product | 337 | |
+| check | 338 | |
+| entry_status | 431 | |
+| operation | 432 | |
+| product | 433 | |
+| operand_u | 434 | |
+| status | 435 | |
+| opcode | 1085 | |
+| operation | 1086 | |
+| status | 1087 | |
+| divisor | 1364 | |
+| operation | 1365 | |
+| new_sbank | 1366 | |
+| status | 1367 | |
+| class | 1706 | |
+| operation | 1707 | |
+| field | 1708 | |
+| status | 1709 | |
+| sum | 1952 | |
+| difference | 1984 | |
+| count | 2065 | |
+| return | 2131 | |
+| count | 2195 | |
+| operand | 2196 | |
+| return | 2268 | |
+| address | 2341 | |
+| device | 2342 | |
+| test | 2402 | |
+| device | 2403 | |
+| return | 2457 | |
+| operand | 2510 | |
+| increment | 2511 | |
+| status | 2512 | |
+| byte_count | 2647 | |
+| operation | 2648 | |
+| operand | 2649 | |
+| byte | 2650 | |
+| source_bank | 2651 | |
+| stack_db | 2652 | |
+| q_is_qi | 2653 | |
+| class | 2654 | |
+| status | 2655 | |
+| dividend | 3465 | |
+| operation | 3466 | |
+| product | 3467 | |
+| check | 3468 | |
+| status | 3469 | |
+| operation | 3615 | |
+| operand | 3616 | |
+| status | 3617 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SIO_OK | 0100000u            /* TIO bit 0... | 88 |
+| DIO_OK | 0040000u            /* TIO bit 1... | 89 |
+| NORM_BIT | (D48_SIGN >> 6)     /* triple no... | 91 |
+| NORM_MASK | (D48_MASK >> 6)     /* triple no... | 92 |
+| TO_UPPERCASE(b) | ((b) & ~040u)       /* alphabeti... | 94 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_interrupt_pending | 173-178 |  |
+| if | 179-201 |  |
+| if | 202-235 |  |
+| cpu_branch_short | 236-247 |  |
+| if | 248-277 |  |
+| cpu_add_16 | 278-309 |  |
+| cpu_sub_16 | 310-334 |  |
+| cpu_mpy_16 | 335-417 |  |
+| cpu_stack_op | 418-438 |  |
+| if | 439-454 |  |
+| switch | 455-1075 |  |
+| cpu_shift_branch_bit_op | 1076-1092 |  |
+| switch | 1093-1356 |  |
+| cpu_move_spec_fw_imm_field_reg_op | 1357-1372 |  |
+| switch | 1373-1698 |  |
+| cpu_io_cntl_prog_imm_mem_op | 1699-1716 |  |
+| switch | 1717-1949 |  |
+| add_32 | 1950-1981 |  |
+| sub_32 | 1982-2051 |  |
+| shift_16_32 | 2052-2076 |  |
+| switch | 2077-2178 |  |
+| shift_48_64 | 2179-2202 |  |
+| if | 2203-2228 |  |
+| if | 2229-2301 |  |
+| check_stack_bounds | 2302-2338 |  |
+| tcs_io | 2339-2354 |  |
+| if | 2355-2399 |  |
+| srw_io | 2400-2412 |  |
+| if | 2413-2449 |  |
+| decrement_stack | 2450-2451 |  |
+| while | 2452-2526 |  |
+| while | 2527-2637 |  |
+| move_spec | 2638-2660 |  |
+| switch | 2661-3462 |  |
+| firmware_extension | 3463-3472 |  |
+| switch | 3473-3607 |  |
+| io_control | 3608-3622 |  |
+| switch | 3623-4024 |  |

@@ -1,0 +1,61 @@
+=== s100_scp300f.c — 958 строк ===
+Источник: s100_scp300f.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_scp300f.c -nt .cline/maps/s100_scp300f.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ERROR_MSG | (1 << 0) | 39 |
+| VERBOSE_MSG | (1 << 1) | 40 |
+| PIC_MSG | (1 << 2) | 41 |
+| TIMER_MSG | (1 << 3) | 42 |
+| ROM_MSG | (1 << 4) | 43 |
+| PIO_MSG | (1 << 5) | 44 |
+| UART_MSG | (1 << 6) | 45 |
+| IRQ_MSG | (1 << 7) | 46 |
+| SSW_MSG | (1 << 8) | 47 |
+| SCP300F_MAX_UNITS | 1 | 49 |
+| SCP300F_ROM_SIZE | (2048) | 50 |
+| SCP300F_ADDR_MASK | (SCP300F_ROM_SIZE - 1) | 51 |
+| SCP300F_IO_SIZE | (14) | 53 |
+| SCP300F_IO_MASK | (0x0F) | 54 |
+| SCP300F_ROM_TARBELL | 0   /* Tarbell Double-Density Mo... | 57 |
+| SCP300F_ROM_CROMEMCO | 1   /* Cromemco 16FDC Monitor v1... | 58 |
+| CMD_9513_LOAD_DPTR | 0 | 60 |
+| CMD_9513_ARM_COUNTERS | 1 | 61 |
+| CMD_9513_LOAD_SELECTED | 2 | 62 |
+| CMD_9513_LOAD_AND_ARM | 3 | 63 |
+| CMD_9513_DISARM_AND_SAVE | 4 | 64 |
+| CMD_9513_SAVE_INTO_HOLD | 5 | 65 |
+| CMD_9513_DISARM_SELECTED | 6 | 66 |
+| CMD_9513_MISC | 7 | 67 |
+| SCP300F_MPIC_0 | 0x00 /* Master PIC */ | 69 |
+| SCP300F_MPIC_1 | 0x01 /* Master PIC */ | 70 |
+| SCP300F_SPIC_0 | 0x02 /* Slave PIC */ | 71 |
+| SCP300F_SPIC_1 | 0x03 /* Slave PIC */ | 72 |
+| SCP300F_9513_DATA | 0x04 /* 9513 counter/timer Data ... | 73 |
+| SCP300F_9513_STATUS | 0x05 /* 9513 counter/timer Statu... | 74 |
+| SCP300F_UART_DATA | 0x06 /* UART Data Register */ | 75 |
+| SCP300F_UART_STATUS | 0x07 /* UART Status */ | 76 |
+| SCP300F_PIO_DATA | 0x0C /* PIO Data */ | 78 |
+| SCP300F_PIO_STATUS | 0x0D /* PIO Status */ | 79 |
+| SCP300F_EPROM_DIS | 0x0E /* EPROM Disable */ | 80 |
+| SCP300F_SENSE_SW | 0x0F /* Sense Switch */ | 81 |
+| MASTER_PIC | 0 | 105 |
+| SLAVE_PIC | 1 | 106 |
+| VI0_IRQ_OFFSET | 0 | 108 |
+| VI1_IRQ_OFFSET | 1 | 109 |
+| VI2_IRQ_OFFSET | 2 | 110 |
+| VI3_IRQ_OFFSET | 3 | 111 |
+| VI4_IRQ_OFFSET | 4 | 112 |
+| VI5_IRQ_OFFSET | 5 | 113 |
+| VI6_IRQ_OFFSET | 6 | 114 |
+| VI7_IRQ_OFFSET | 0 | 115 |
+| TC0_IRQ_OFFSET | 1 | 116 |
+| TC1_IRQ_OFFSET | 2 | 117 |
+| TC2_IRQ_OFFSET | 3 | 118 |
+| MSVRQ_IRQ_OFFSET | 4 | 119 |
+| MEND_IRQ_OFFSET | 5 | 120 |
+| TXRDY_IRQ_OFFSET | 6 | 121 |
+| RXRDY_IRQ_OFFSET | 7 | 122 |
+

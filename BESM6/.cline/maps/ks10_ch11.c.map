@@ -1,0 +1,66 @@
+=== ks10_ch11.c — 572 строк ===
+Источник: ks10_ch11.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ks10_ch11.c -nt .cline/maps/ks10_ch11.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| peer | 96 | |
+| address | 97 | |
+| ch11_csr | 98 | |
+| rx_count | 99 | |
+| rx_pos | 100 | |
+| tx_count | 101 | |
+| rx_buffer | 102 | |
+| tx_buffer | 103 | |
+| ch11_lines | 105 | |
+| ch11_tmxr | 106 | |
+| ch11_dib | 139 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_CH11 | 0 | 35 |
+| CSR_BSY | 0000001   /* Xmit busy RO */ | 42 |
+| CSR_LUP | 0000002   /* Loop back R/W */ | 43 |
+| CSR_SPY | 0000004   /* Receive msgs from a... | 44 |
+| CSR_RCL | 0000010   /* Clear receiver WO */ | 45 |
+| CSR_REN | 0000020   /* Receiver int enable... | 46 |
+| CSR_TEN | 0000040   /* Transmitter int ena... | 47 |
+| CSR_TAB | 0000100   /* Transmit abort by c... | 48 |
+| CSR_TDN | 0000200   /* Transmit Done */ | 49 |
+| CSR_TCL | 0000400   /* Clear transmitter W... | 50 |
+| CSR_LOS | 0017000   /* Lost count RO */ | 51 |
+| CSR_RST | 0020000   /* I/O Reset WO */ | 52 |
+| CSR_ERR | 0040000   /* CRC Error RO */ | 53 |
+| CSR_RDN | 0100000   /* Receive done */ | 54 |
+| CHUDP_HEADER | 4 | 68 |
+| IOLN_CH | 020 | 69 |
+| DBG_TRC | 0x0001 | 70 |
+| DBG_REG | 0x0002 | 71 |
+| DBG_PKT | 0x0004 | 72 |
+| DBG_DAT | 0x0008 | 73 |
+| DBG_INT | 0x0010 | 74 |
+| DBG_ERR | 0x0020 | 75 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ch11_write | 163-221 |  |
+| ch11_read | 222-271 |  |
+| ch11_checksum | 272-291 |  |
+| ch11_validate | 292-320 |  |
+| ch11_transmit | 321-356 |  |
+| ch11_receive | 357-399 |  |
+| ch11_clear | 400-416 |  |
+| ch11_svc | 417-440 |  |
+| ch11_attach | 441-465 |  |
+| ch11_detach | 466-472 |  |
+| ch11_reset | 473-482 |  |
+| ch11_show_peer | 483-488 |  |
+| ch11_set_peer | 489-505 |  |
+| ch11_show_node | 506-514 |  |
+| ch11_set_node | 515-532 |  |
+| ch11_description | 533-537 |  |
+| ch11_help | 538-559 |  |
+| ch11_help_attach | 560-572 |  |

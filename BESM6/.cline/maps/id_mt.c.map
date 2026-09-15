@@ -1,0 +1,69 @@
+=== id_mt.c — 546 строк ===
+Источник: id_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test id_mt.c -nt .cline/maps/id_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 84 | |
+| mt_tplte | 96 | |
+| mt_dib | 121 | |
+| uptr | 182 | |
+| tbc | 271 | |
+| passed_eot | 272 | |
+| st | 273 | |
+| SCPE_OK | 461 | |
+| uptr | 469 | |
+| SCPE_OK | 484 | |
+| uptr->UST | 497 | |
+| uptr->UST | 517 | |
+| SCPE_OK | 518 | |
+| sch_dib | 533 | |
+| sch_dev | 534 | |
+| PC | 544 | |
+| SCPE_OK | 545 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UST | u3                              ... | 56 |
+| UCMD | u4                              ... | 57 |
+| MT_MAXFR | (1 << 24)                       ... | 58 |
+| MTC_SPCR | 0x11                            ... | 62 |
+| MTC_SKFR | 0x13                            ... | 63 |
+| MTC_CLR | 0x20                            ... | 64 |
+| MTC_RD | 0x21                            ... | 65 |
+| MTC_WR | 0x22                            ... | 66 |
+| MTC_SKFF | 0x23                            ... | 67 |
+| MTC_WEOF | 0x30                            ... | 68 |
+| MTC_REW | 0x38                            ... | 69 |
+| MTC_MASK | 0x3F | 70 |
+| MTC_STOP1 | 0x40                            ... | 71 |
+| MTC_STOP2 | 0x80                            ... | 72 |
+| STA_ERR | 0x80                            ... | 76 |
+| STA_EOF | 0x40                            ... | 77 |
+| STA_EOT | 0x20                            ... | 78 |
+| STA_NMTN | 0x10                            ... | 79 |
+| STA_UFLGS | (STA_EOT\|STA_NMTN)              ... | 80 |
+| STA_MASK | (STA_ERR\|STA_EOF\|STA_BSY\|STA_EOM) | 81 |
+| SET_EX | (STA_ERR\|STA_EOF\|STA_NMTN) | 82 |
+| BOOT_START | 0x50 | 523 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (uin... | 524 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt | 178-183 |  |
+| switch | 184-265 |  |
+| mt_svc | 266-274 |  |
+| if | 275-284 |  |
+| if | 285-293 |  |
+| if | 294-303 |  |
+| switch | 304-420 |  |
+| mt_map_err | 421-424 |  |
+| switch | 425-465 |  |
+| mt_reset | 466-473 |  |
+| for | 474-488 |  |
+| mt_attach | 489-504 |  |
+| mt_detach | 505-530 |  |
+| mt_boot | 531-546 |  |

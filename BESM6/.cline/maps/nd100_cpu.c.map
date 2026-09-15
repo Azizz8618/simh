@@ -1,0 +1,97 @@
+=== nd100_cpu.c — 1796 строк ===
+Источник: nd100_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test nd100_cpu.c -nt .cline/maps/nd100_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| Hist_entry | 34-44 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| hist_p | 50 | |
+| hist_cnt | 51 | |
+| hist | 52 | |
+| env | 54 | |
+| ald | 60 | |
+| s2r | 628 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MAXMEMSIZE | 512*1024 | 32 |
+| HIST_IR_INVALID | -1 | 46 |
+| HIST_MIN | 0 | 47 |
+| HIST_MAX | 1000000 | 48 |
+| SETC() | (regSTL \|= STS_C) | 62 |
+| CLRC() | (regSTL &= ~STS_C) | 63 |
+| SETQ() | (regSTL \|= STS_Q) | 64 |
+| CLRQ() | (regSTL &= ~STS_Q) | 65 |
+| SETO() | (regSTL \|= STS_O) | 66 |
+| CLRO() | (regSTL &= ~STS_O) | 67 |
+| ID(x) | (((x) & ND_MEMMSK) >> ND_MEMSH) | 115 |
+| BYTELN(x) | ((x) & 07777) | 388 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| int | 117-164 |  |
+| sim_instr | 165-175 |  |
+| while | 176-241 |  |
+| cpu_reset | 242-249 |  |
+| cpu_ex | 250-260 |  |
+| cpu_dep | 261-266 |  |
+| cpu_set_size | 267-272 |  |
+| cpu_boot | 273-281 |  |
+| ins_store | 282-292 |  |
+| ins_stdf | 293-307 |  |
+| ins_lddf | 308-321 |  |
+| ins_load | 322-331 |  |
+| ins_min | 332-346 |  |
+| ins_add | 347-361 |  |
+| ins_andor | 362-400 |  |
+| ins_bfill | 401-435 |  |
+| ins_movb | 436-486 |  |
+| ins_movbf | 487-519 |  |
+| ins_skip_ext | 520-629 |  |
+| ins_srb | 630-653 |  |
+| ins_lrb | 654-672 |  |
+| nd_mis_opc | 673-722 |  |
+| ins_mis | 723-782 |  |
+| ins_sht | 783-841 |  |
+| ins_na | 842-847 |  |
+| ins_iox | 848-853 |  |
+| ins_arg | 854-863 |  |
+| ins_bop | 864-975 |  |
+| mkfp48 | 976-1003 |  |
+| ins_dnz | 1004-1036 |  |
+| ins_nlz | 1037-1072 |  |
+| ins_fmu | 1073-1116 |  |
+| ins_fdv | 1117-1171 |  |
+| add48 | 1172-1211 |  |
+| sub48 | 1212-1250 |  |
+| ins_fad | 1251-1266 |  |
+| ins_fsb | 1267-1287 |  |
+| add3 | 1288-1309 |  |
+| ins_mpy | 1310-1323 |  |
+| ins_jmpl | 1324-1335 |  |
+| ins_cjp | 1336-1357 |  |
+| ins_skp | 1358-1383 |  |
+| ins_rop | 1384-1419 |  |
+| iox_check | 1420-1437 |  |
+| getoff | 1438-1456 |  |
+| nd_mcl | 1457-1484 |  |
+| nd_mst | 1485-1511 |  |
+| nd_trr | 1512-1555 |  |
+| nd_tra | 1556-1598 |  |
+| highest_level | 1599-1612 |  |
+| fls | 1613-1628 |  |
+| intrpt14 | 1629-1644 |  |
+| extint | 1645-1660 |  |
+| identrm | 1661-1678 |  |
+| hist_save | 1679-1700 |  |
+| hist_set | 1701-1733 |  |
+| hist_fprintf | 1734-1752 |  |
+| ioxprint | 1753-1760 |  |
+| hist_show | 1761-1796 |  |

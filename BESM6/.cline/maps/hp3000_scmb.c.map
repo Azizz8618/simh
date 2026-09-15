@@ -1,0 +1,83 @@
+=== hp3000_scmb.c — 1227 строк ===
+Источник: hp3000_scmb.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_scmb.c -nt .cline/maps/hp3000_scmb.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| SCMB_STATE | 364-380 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| scmb_interface | 387 | |
+| load_operation | 703 | |
+| assert_sr | 704 | |
+| saved_devno | 705 | |
+| signal | 706 | |
+| working_set | 707 | |
+| outbound_value | 708 | |
+| outbound_signals | 709 | |
+| SCPE_OK | 1094 | |
+| SCPE_OK | 1130 | |
+| SCPE_OK | 1154 | |
+| return | 1180 | |
+| return | 1207 | |
+| return | 1226 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SERVICE_DELAY | uS (5)              /* 5 microse... | 204 |
+| UNIT_W1_SHIFT | (UNIT_V_UF + 0)     /* jumper W1 */ | 209 |
+| UNIT_W1_SEL | (1u << UNIT_W1_SHIFT) | 211 |
+| MPX_BUS(card) | ((scmb_unit [card].flags & UNIT_... | 213 |
+| SEL_BUS(card) | ((scmb_unit [card].flags & UNIT_... | 214 |
+| DEB_CSRW | (1u << 0)           /* trace com... | 219 |
+| DEB_XFER | (1u << 1)           /* trace cha... | 220 |
+| DEB_SERV | (1u << 2)           /* trace uni... | 221 |
+| DEB_IOB | (1u << 3)           /* trace I/O... | 222 |
+| CN_MR | 0100000u            /* M = maste... | 233 |
+| CN_IRQ_RESET | 0040000u            /* R = inter... | 234 |
+| CN_JMPMET | 0020000u            /* J = set j... | 235 |
+| CN_DEVEND | 0010000u            /* V = set d... | 236 |
+| CN_NOACK | 0004000u            /* A = inhib... | 237 |
+| CN_NOSR | 0002000u            /* S = inhib... | 238 |
+| CN_LOAD_MASK | 0001400u            /* load oper... | 239 |
+| CN_HSREQ | 0000200u            /* H = high ... | 240 |
+| CN_DEVNO | 0000100u            /* N = speci... | 241 |
+| CN_TERM_COUNT | 0000040u            /* T = termi... | 242 |
+| CN_TERM_COMP | 0000020u            /* C = termi... | 243 |
+| CN_CLEAR_IF | 0000010u            /* L = clear... | 244 |
+| CN_CNTR_MASK | 0000007u            /* counter o... | 245 |
+| CN_LOAD_SHIFT | 8                   /* load oper... | 247 |
+| CN_CNTR_SHIFT | 0                   /* counter o... | 248 |
+| CN_LOAD(c) | ((LOAD_OP) (((c) & CN_LOAD_MASK)... | 250 |
+| CN_CNTR(c) | ((CNTR_OP) (((c) & CN_CNTR_MASK)... | 251 |
+| ST_SIO_OK | 0100000u            /* S = SIO O... | 321 |
+| ST_DIO_OK | 0040000u            /* D = direc... | 322 |
+| ST_INTREQ | 0020000u            /* R = inter... | 323 |
+| ST_INTACT | 0010000u            /* A = inter... | 324 |
+| ST_XFERERR | 0004000u            /* X = trans... | 325 |
+| ST_SIOENABLED | 0002000u            /* N = SIO e... | 326 |
+| ST_DEVEND | 0001000u            /* V = devic... | 327 |
+| ST_EOT | 0000400u            /* E = end o... | 328 |
+| ST_END_MISCMP | 0000200u            /* C = end o... | 329 |
+| ST_END_COUNT | 0000100u            /* T = end o... | 330 |
+| ST_INXFER | 0000040u            /* I = input... | 331 |
+| ST_OUTXFER | 0000020u            /* O = outpu... | 332 |
+| ST_CLEAR_IF | 0000010u            /* L = clear... | 333 |
+| END_CONDITION | (ST_END_MISCMP \| ST_END_COUNT) | 335 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| scmb_interface | 700-718 |  |
+| while | 719-1082 |  |
+| scmb_service | 1083-1111 |  |
+| scmb_reset | 1112-1141 |  |
+| scmb_set_bus | 1142-1145 |  |
+| if | 1146-1170 |  |
+| sio_reset | 1171-1191 |  |
+| clear_logic | 1192-1217 |  |
+| increment_counter | 1218-1227 |  |

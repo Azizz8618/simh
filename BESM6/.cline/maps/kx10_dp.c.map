@@ -1,0 +1,125 @@
+=== kx10_dp.c — 1007 строк ===
+Источник: kx10_dp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_dp.c -nt .cline/maps/kx10_dp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dp_df10 | 167 | |
+| dp_cur_unit | 168 | |
+| dp_buf | 169 | |
+| readin_flag | 170 | |
+| SCPE_OK | 999 | |
+| controller" | 1004 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_DP | 0 | 28 |
+| DP_DIS | DEV_DIS | 34 |
+| DP_DIS | 0 | 38 |
+| BUF_EMPTY(u) | (u->hwmark == 0xFFFFFFFF) | 41 |
+| CLR_BUF(u) | u->hwmark = 0xFFFFFFFF | 42 |
+| RP_NUMWD | 128     /* 36bit words/sec */ | 44 |
+| DP_DEVNUM | 0250    /* First device number */ | 45 |
+| NUM_UNITS_DP | 8 | 46 |
+| DEV_WHDR | (1 << DEV_V_UF)                /... | 50 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 1)                 ... | 51 |
+| UNIT_M_DTYPE | 3 | 52 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 53 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 54 |
+| CUR_CYL | u3              /* current cylin... | 58 |
+| DATAPTR | u4              /* data pointer */ | 59 |
+| UFLAGS | u5              /* Function */ | 60 |
+| STATUS | u6              /* Drive status */ | 61 |
+| SECT_CNT | up7             /* Sector counte... | 62 |
+| CONTROL | 007 | 63 |
+| CMD_MASK | 070 | 64 |
+| SEEK_DONE | 0100            /* Seek finished */ | 65 |
+| SEEK_STATE | 0200            /* Seek in progr... | 66 |
+| DONE | 0400            /* Done bit */ | 67 |
+| CCW_COMP | 0000000000040LL | 71 |
+| SUF_ERR | 0000000000100LL | 72 |
+| SEC_ERR | 0000000000200LL | 73 |
+| ILL_CMD | 0000000000400LL | 74 |
+| ILL_WR | 0000000001000LL | 75 |
+| NOT_RDY | 0000000002000LL      /* Clear CX... | 76 |
+| PRT_ERR | 0000000004000LL      /* 14-17 Cl... | 77 |
+| NXM_ERR | 0000000010000LL | 78 |
+| SLW_CHN | 0000000020000LL | 79 |
+| SRC_ERR | 0000000040000LL | 80 |
+| PWR_FAIL_10 | 0000000100000LL | 81 |
+| END_CYL | 0000000200000LL      /* No effec... | 82 |
+| SRC_DONE | 0000000400000LL      /* No effec... | 83 |
+| DSK_PRTY | 0000001000000LL      /* No effec... | 84 |
+| CHN_PRTY | 0000002000000LL      /* No effec... | 85 |
+| SEC_PRTY | 0000004000000LL      /* No effec... | 86 |
+| CCW_PRTY | 0000010000000LL      /* No effec... | 87 |
+| B22_FLAG | 0000020000000LL | 88 |
+| CLRMSK | 0000000177710LL | 90 |
+| CLRMSK2 | 0000176000000LL | 91 |
+| DWPE_STOP | 0000000001000LL | 94 |
+| SPARE | 0000000002000LL | 95 |
+| DSPE_STOP | 0000000004000LL | 96 |
+| SECTOR | 0000000170000LL | 97 |
+| CYL256 | 0000000200000LL | 98 |
+| SURFACE | 0000017400000LL | 99 |
+| CYL | 0007760000000LL | 100 |
+| DRIVE | 0070000000000LL | 101 |
+| OP | 0700000000000LL | 102 |
+| RD | 0 | 104 |
+| WR | 1 | 105 |
+| RV | 2 | 106 |
+| WH | 3 | 107 |
+| SK | 4 | 108 |
+| CL | 5 | 109 |
+| NO | 6 | 110 |
+| RC | 7 | 111 |
+| ATTN | 0000000000776LL | 114 |
+| DEFECT | 0000000001000LL | 115 |
+| SEL_RP03 | 0000000002000LL | 116 |
+| SEL_CYL256 | 0000000004000LL | 117 |
+| SEL_SPARE | 0000000010000LL | 118 |
+| SEL_SEC | 0000000760000LL | 119 |
+| WR_HD_LK | 0000001000000LL | 120 |
+| RD_ONLY | 0000002000000LL | 121 |
+| NO_DRIVE | 0000004000000LL | 122 |
+| FILE_UNSAFE | 0000010000000LL | 123 |
+| DRV_ONLINE | 0000020000000LL | 124 |
+| ON_CYL | 0000040000000LL | 125 |
+| SEEK_INC | 0000100000000LL | 126 |
+| SEL_CYL | 0077600000000LL | 127 |
+| SEL_DRIVE | 0700000000000LL | 128 |
+| RP01_DTYPE | 0 | 130 |
+| RP01_SECT | 5 | 131 |
+| RP01_SURF | 10 | 132 |
+| RP01_CYL | 203 | 133 |
+| RP01_DEV | 0 | 134 |
+| RP01_SIZE | (RP01_SECT * RP01_SURF * RP01_CY... | 135 |
+| RP02_DTYPE | 1 | 137 |
+| RP02_SECT | 10 | 138 |
+| RP02_SURF | 20 | 139 |
+| RP02_CYL | 203 | 140 |
+| RP02_DEV | 0 | 141 |
+| RP02_SIZE | (RP02_SECT * RP02_SURF * RP02_CY... | 142 |
+| RP03_DTYPE | 2 | 144 |
+| RP03_SECT | 10 | 145 |
+| RP03_SURF | 20 | 146 |
+| RP03_CYL | 406 | 147 |
+| RP03_DEV | 1 | 148 |
+| RP03_SIZE | (RP03_SECT * RP03_SURF * RP03_CY... | 149 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dp_devio | 397-608 |  |
+| dp_svc | 609-869 |  |
+| dp_set_type | 870-885 |  |
+| dp_set_hdr | 886-896 |  |
+| dp_show_hdr | 897-912 |  |
+| dp_reset | 913-931 |  |
+| dp_boot | 932-952 |  |
+| dp_attach | 953-977 |  |
+| dp_detach | 978-986 |  |
+| dp_help | 987-1001 |  |
+| dp_description | 1002-1007 |  |

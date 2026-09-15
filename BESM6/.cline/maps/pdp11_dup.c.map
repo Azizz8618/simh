@@ -1,0 +1,441 @@
+=== pdp11_dup.c — 2170 строк ===
+Источник: pdp11_dup.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_dup.c -nt .cline/maps/pdp11_dup.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dup_rxcsr | 69 | |
+| dup_rxdbuf | 70 | |
+| dup_parcsr | 71 | |
+| dup_txcsr | 72 | |
+| dup_txdbuf | 73 | |
+| dup_W3 | 74 | |
+| dup_W5 | 75 | |
+| dup_W6 | 76 | |
+| dup_rcv_packet_data_callback | 94 | |
+| dup_xmt_complete_callback | 95 | |
+| dup_modem_change_callback | 96 | |
+| tsyns | 514 | |
+| bitdefs | 737 | |
+| dpv_bitdefs | 738 | |
+| regs | 739 | |
+| orig_val | 741 | |
+| SCPE_OK | 780 | |
+| bitdefs | 784 | |
+| dpv_bitdefs | 785 | |
+| regs | 786 | |
+| orig_val | 788 | |
+| SCPE_OK | 949 | |
+| bits_to_set | 954 | |
+| SCPE_OK | 961 | |
+| modem_bits | 966 | |
+| old_rxcsr | 967 | |
+| old_rxcsr_a_modem_bits | 968 | |
+| lp | 969 | |
+| new_modem_change | 970 | |
+| SCPE_OK | 1039 | |
+| dptr | 1048 | |
+| dup_rcv_packet_data_callback | 1062 | |
+| dup_xmt_complete_callback | 1063 | |
+| dup_modem_change_callback | 1064 | |
+| dup_ldsc | 1111 | |
+| SCPE_OK | 1113 | |
+| SCPE_OK | 1126 | |
+| orig_val | 1131 | |
+| orig_val | 1135 | |
+| dup_rxcsr | 1136 | |
+| SCPE_OK | 1144 | |
+| dup_rxcsr | 1165 | |
+| dup_txcsr | 1167 | |
+| SCPE_OK | 1178 | |
+| dup_W3 | 1185 | |
+| SCPE_OK | 1186 | |
+| dup_W5 | 1193 | |
+| SCPE_OK | 1194 | |
+| dup_W6 | 1201 | |
+| SCPE_OK | 1202 | |
+| breturn | 1208 | |
+| charmode | 1209 | |
+| breturn | 1274 | |
+| SCPE_OK | 1294 | |
+| crcoffset | 1299 | |
+| dup_rxcsr | 1315 | |
+| dup_rxdbuf | 1320 | |
+| dup_rxdbuf | 1321 | |
+| dup_rxcsr | 1322 | |
+| SCPE_OK | 1382 | |
+| dptr | 1390 | |
+| lp | 1392 | |
+| txdone | 1393 | |
+| SCPE_OK | 1458 | |
+| SCPE_OK | 1541 | |
+| return | 1552 | |
+| return | 1560 | |
+| dup | 1565 | |
+| return | 1583 | |
+| return | 1591 | |
+| dup | 1596 | |
+| dup_txdbuf | 1615 | |
+| SCPE_OK | 1630 | |
+| dup_desc.packet | 1640 | |
+| dup_desc.buffered | 1641 | |
+| dptr | 1699 | |
+| attach_string | 1701 | |
+| dptr | 1720 | |
+| lp | 1722 | |
+| uptr->filename | 1737 | |
+| dup_rcvpacket | 1739 | |
+| dup_rcvpksize | 1740 | |
+| dup_rcvpkbytes | 1741 | |
+| dup_xmtpacket | 1743 | |
+| dup_xmtpksize | 1744 | |
+| dup_xmtpkoffset | 1745 | |
+| dptr | 1753 | |
+| SCPE_OK | 1760 | |
+| dptr | 1765 | |
+| newspeed | 1768 | |
+| dup_speed | 1775 | |
+| SCPE_OK | 1776 | |
+| dptr | 1783 | |
+| SCPE_OK | 1790 | |
+| dptr | 1795 | |
+| appetite | 1798 | |
+| dup_corruption | 1805 | |
+| SCPE_OK | 1806 | |
+| dptr | 1813 | |
+| SCPE_OK | 1820 | |
+| dptr | 1825 | |
+| dup_W3 | 1828 | |
+| SCPE_OK | 1829 | |
+| dptr | 1836 | |
+| SCPE_OK | 1843 | |
+| dptr | 1848 | |
+| dup_W5 | 1851 | |
+| SCPE_OK | 1852 | |
+| dptr | 1859 | |
+| SCPE_OK | 1866 | |
+| dptr | 1871 | |
+| dup_W6 | 1874 | |
+| SCPE_OK | 1875 | |
+| newln | 1882 | |
+| dptr | 1885 | |
+| dup_units | 1904 | |
+| dup_desc.lines | 1905 | |
+| dptr->numunits | 1907 | |
+| crc | 1953 | |
+| crc | 1961 | |
+| busname | 2150 | |
+| devcount | 2151 | |
+| connectpoll | 2152 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DUP_LINES | 8 | 57 |
+| INITIAL_DUP_LINES | 1 | 59 |
+| DUP_WAIT | 50           /* Minimum characte... | 61 |
+| DUP_CONNECT_POLL | 2   /* Seconds */ | 62 |
+| RXCSR_V_BDATSET | 0 | 137 |
+| RXCSR_M_BDATSET | (1<<RXCSR_V_BDATSET) | 138 |
+| RXCSR_V_DTR | 1 | 140 |
+| RXCSR_M_DTR | (1<<RXCSR_V_DTR) | 141 |
+| RXCSR_V_RTS | 2 | 143 |
+| RXCSR_M_RTS | (1<<RXCSR_V_RTS) | 144 |
+| RXCSR_V_SECXMT | 3 | 146 |
+| RXCSR_M_SECXMT | (1<<RXCSR_V_SECXMT) | 147 |
+| RXCSR_V_RCVEN | 4 | 149 |
+| RXCSR_M_RCVEN | (1<<RXCSR_V_RCVEN) | 150 |
+| RXCSR_V_DSCIE | 5 | 152 |
+| RXCSR_M_DSCIE | (1<<RXCSR_V_DSCIE) | 153 |
+| RXCSR_V_RXIE | 6 | 155 |
+| RXCSR_M_RXIE | (1<<RXCSR_V_RXIE) | 156 |
+| RXCSR_V_RXDONE | 7 | 158 |
+| RXCSR_M_RXDONE | (1<<RXCSR_V_RXDONE) | 159 |
+| RXCSR_V_STRSYN | 8 | 161 |
+| RXCSR_M_STRSYN | (1<<RXCSR_V_STRSYN) | 162 |
+| RXCSR_V_DSR | 9 | 164 |
+| RXCSR_M_DSR | (1<<RXCSR_V_DSR) | 165 |
+| RXCSR_V_SECRCV | 10 | 167 |
+| RXCSR_M_SECRCV | (1<<RXCSR_V_SECRCV) | 168 |
+| RXCSR_V_RXACT | 11 | 170 |
+| RXCSR_M_RXACT | (1<<RXCSR_V_RXACT) | 171 |
+| RXCSR_V_DCD | 12 | 173 |
+| RXCSR_M_DCD | (1<<RXCSR_V_DCD) | 174 |
+| RXCSR_V_CTS | 13 | 176 |
+| RXCSR_M_CTS | (1<<RXCSR_V_CTS) | 177 |
+| RXCSR_V_RING | 14 | 179 |
+| RXCSR_M_RING | (1<<RXCSR_V_RING) | 180 |
+| RXCSR_V_DSCHNG | 15 | 182 |
+| RXCSR_M_DSCHNG | (1<<RXCSR_V_DSCHNG) | 183 |
+| RXCSR_A_MODEM_BITS | (RXCSR_M_RING \| RXCSR_M_CTS) | 186 |
+| RXCSR_B_MODEM_BITS | (RXCSR_M_DSR \| RXCSR_M_DCD) | 187 |
+| RXCSR_WRITEABLE | (RXCSR_M_STRSYN\|RXCSR_M_RXIE\|RXC... | 188 |
+| RXDBUF_V_RXDBUF | 0 | 194 |
+| RXDBUF_S_RXDBUF | 8 | 195 |
+| RXDBUF_M_RXDBUF | (((1<<RXDBUF_S_RXDBUF)-1)<<RXDBU... | 196 |
+| RXDBUF_V_RSTRMSG | 8 | 198 |
+| RXDBUF_M_RSTRMSG | (1<<RXDBUF_V_RSTRMSG) | 199 |
+| RXDBUF_V_RENDMSG | 9 | 201 |
+| RXDBUF_M_RENDMSG | (1<<RXDBUF_V_RENDMSG) | 202 |
+| RXDBUF_V_RABRT | 10 | 204 |
+| RXDBUF_M_RABRT | (1<<RXDBUF_V_RABRT) | 205 |
+| RXDBUF_V_RCRCER | 12 | 208 |
+| RXDBUF_M_RCRCER | (1<<RXDBUF_V_RCRCER) | 209 |
+| RXDBUF_V_RXOVR | 14 | 212 |
+| RXDBUF_M_RXOVR | (1<<RXDBUF_V_RXOVR) | 213 |
+| RXDBUF_V_RXERR | 15 | 215 |
+| RXDBUF_M_RXERR | (1<<RXDBUF_V_RXERR) | 216 |
+| RXDBUF_MBZ | ((1<<13)\|(1<<11)) | 219 |
+| PARCSR_V_ADSYNC | 0 | 225 |
+| PARCSR_S_ADSYNC | 8 | 226 |
+| PARCSR_M_ADSYNC | (((1<<PARCSR_S_ADSYNC)-1)<<PARCS... | 227 |
+| PARCSR_V_NOCRC | 9 | 230 |
+| PARCSR_M_NOCRC | (1<<PARCSR_V_NOCRC) | 231 |
+| PARCSR_V_SECMODE | 12 | 234 |
+| PARCSR_M_SECMODE | (1<<PARCSR_V_SECMODE) | 235 |
+| PARCSR_V_DECMODE | 15 | 238 |
+| PARCSR_M_DECMODE | (1<<PARCSR_V_DECMODE) | 239 |
+| PARCSR_MBZ | ((1<<14)\|(1<<13)\|(1<<11)\|(1<<10)... | 242 |
+| PARCSR_WRITEABLE | (PARCSR_M_DECMODE\|PARCSR_M_SECMO... | 243 |
+| TXCSR_V_HALFDUP | 3 | 250 |
+| TXCSR_M_HALFDUP | (1<<TXCSR_V_HALFDUP) | 251 |
+| TXCSR_V_SEND | 4 | 253 |
+| TXCSR_M_SEND | (1<<TXCSR_V_SEND) | 254 |
+| TXCSR_V_TXIE | 6 | 257 |
+| TXCSR_M_TXIE | (1<<TXCSR_V_TXIE) | 258 |
+| TXCSR_V_TXDONE | 7 | 260 |
+| TXCSR_M_TXDONE | (1<<TXCSR_V_TXDONE) | 261 |
+| TXCSR_V_DRESET | 8 | 263 |
+| TXCSR_M_DRESET | (1<<TXCSR_V_DRESET) | 264 |
+| TXCSR_V_TXACT | 9 | 266 |
+| TXCSR_M_TXACT | (1<<TXCSR_V_TXACT) | 267 |
+| TXCSR_V_MAIDATA | 10 | 269 |
+| TXCSR_M_MAIDATA | (1<<TXCSR_V_MAIDATA) | 270 |
+| TXCSR_V_MAISEL | 11 | 272 |
+| TXCSR_S_MAISEL | 2 | 273 |
+| TXCSR_M_MAISEL | (((1<<TXCSR_S_MAISEL)-1)<<TXCSR_... | 274 |
+| TXCSR_GETMAISEL(x) | (((x) & TXCSR_M_MAISEL) >> TXCSR... | 275 |
+| TXCSR_V_MAISSCLK | 13 | 277 |
+| TXCSR_M_MAISSCLK | (1<<TXCSR_V_MAISSCLK) | 278 |
+| TXCSR_V_TXMNTOUT | 14 | 280 |
+| TXCSR_M_TXMNTOUT | (1<<TXCSR_V_TXMNTOUT) | 281 |
+| TXCSR_V_TXDLAT | 15 | 283 |
+| TXCSR_M_TXDLAT | (1<<TXCSR_V_TXDLAT) | 284 |
+| TXCSR_MBZ | ((1<<5)\|(1<<2)\|(1<<1)\|(1<<0)) | 287 |
+| TXCSR_WRITEABLE | (TXCSR_M_MAISSCLK\|TXCSR_M_MAISEL... | 288 |
+| TXDBUF_V_TXDBUF | 0 | 294 |
+| TXDBUF_S_TXDBUF | 8 | 295 |
+| TXDBUF_M_TXDBUF | (((1<<TXDBUF_S_TXDBUF)-1)<<TXDBU... | 296 |
+| TXDBUF_V_TSOM | 8 | 298 |
+| TXDBUF_M_TSOM | (1<<TXDBUF_V_TSOM) | 299 |
+| TXDBUF_V_TEOM | 9 | 301 |
+| TXDBUF_M_TEOM | (1<<TXDBUF_V_TEOM) | 302 |
+| TXDBUF_V_TABRT | 10 | 304 |
+| TXDBUF_M_TABRT | (1<<TXDBUF_V_TABRT) | 305 |
+| TXDBUF_V_MAINTT | 11 | 307 |
+| TXDBUF_M_MAINTT | (1<<TXDBUF_V_MAINTT) | 308 |
+| TXDBUF_V_TCRCTIN | 12 | 310 |
+| TXDBUF_M_TCRCTIN | (1<<TXDBUF_V_TCRCTIN) | 311 |
+| TXDBUF_V_RCRCTIN | 14 | 314 |
+| TXDBUF_M_RCRCTIN | (1<<TXDBUF_V_RCRCTIN) | 315 |
+| TXDBUF_MBZ | ((1<<15)\|(1<<13)) | 319 |
+| TXDBUF_WRITEABLE | (TXDBUF_M_TABRT\|TXDBUF_M_TEOM\|TX... | 320 |
+| RXCSR_V_DPV_SFRL | 0 | 330 |
+| RXCSR_M_DPV_SFRL | (1<<RXCSR_V_DPV_SFRL) | 331 |
+| RXCSR_V_DPV_DTR | 1 | 333 |
+| RXCSR_M_DPV_DTR | (1<<RXCSR_V_DPV_DTR) | 334 |
+| RXCSR_V_DPV_RTS | 2 | 336 |
+| RXCSR_M_DPV_RTS | (1<<RXCSR_V_DPV_RTS) | 337 |
+| RXCSR_V_DPV_LL | 3 | 339 |
+| RXCSR_M_DPV_LL | (1<<RXCSR_V_DPV_LL) | 340 |
+| RXCSR_V_DPV_RCVEN | 4 | 342 |
+| RXCSR_M_DPV_RCVEN | (1<<RXCSR_V_DPV_RCVEN) | 343 |
+| RXCSR_V_DPV_DSCIE | 5 | 345 |
+| RXCSR_M_DPV_DSCIE | (1<<RXCSR_V_DPV_DSCIE) | 346 |
+| RXCSR_V_DPV_RXIE | 6 | 348 |
+| RXCSR_M_DPV_RXIE | (1<<RXCSR_V_DPV_RXIE) | 349 |
+| RXCSR_V_DPV_RXDONE | 7 | 351 |
+| RXCSR_M_DPV_RXDONE | (1<<RXCSR_V_DPV_RXDONE) | 352 |
+| RXCSR_V_DPV_DETSYN | 8 | 354 |
+| RXCSR_M_DPV_DETSYN | (1<<RXCSR_V_DPV_DETSYN) | 355 |
+| RXCSR_V_DPV_DSR | 9 | 357 |
+| RXCSR_M_DPV_DSR | (1<<RXCSR_V_DPV_DSR) | 358 |
+| RXCSR_V_DPV_RSTARY | 10 | 360 |
+| RXCSR_M_DPV_RSTARY | (1<<RXCSR_V_DPV_RSTARY) | 361 |
+| RXCSR_V_DPV_RXACT | 11 | 363 |
+| RXCSR_M_DPV_RXACT | (1<<RXCSR_V_DPV_RXACT) | 364 |
+| RXCSR_V_DPV_DCD | 12 | 366 |
+| RXCSR_M_DPV_DCD | (1<<RXCSR_V_DPV_DCD) | 367 |
+| RXCSR_V_DPV_CTS | 13 | 369 |
+| RXCSR_M_DPV_CTS | (1<<RXCSR_V_DPV_CTS) | 370 |
+| RXCSR_V_DPV_RING | 14 | 372 |
+| RXCSR_M_DPV_RING | (1<<RXCSR_V_DPV_RING) | 373 |
+| RXCSR_V_DPV_DSCHNG | 15 | 375 |
+| RXCSR_M_DPV_DSCHNG | (1<<RXCSR_V_DPV_DSCHNG) | 376 |
+| RXCSR_DPV_MODEM_BITS | (RXCSR_M_DPV_RING\|RXCSR_M_DPV_CT... | 379 |
+| RXCSR_DPV_WRITEABLE | (RXCSR_M_DPV_SFRL\|RXCSR_M_DPV_DT... | 380 |
+| RXDBUF_V_DPV_RXDBUF | 0 | 386 |
+| RXDBUF_S_DPV_RXDBUF | 8 | 387 |
+| RXDBUF_M_DPV_RXDBUF | (((1<<RXDBUF_S_DPV_RXDBUF)-1)<<R... | 388 |
+| RXDBUF_V_DPV_RSTRMSG | 8 | 390 |
+| RXDBUF_M_DPV_RSTRMSG | (1<<RXDBUF_V_DPV_RSTRMSG) | 391 |
+| RXDBUF_V_DPV_RENDMSG | 9 | 393 |
+| RXDBUF_M_DPV_RENDMSG | (1<<RXDBUF_V_DPV_RENDMSG) | 394 |
+| RXDBUF_V_DPV_RABRT | 10 | 396 |
+| RXDBUF_M_DPV_RABRT | (1<<RXDBUF_V_DPV_RABRT) | 397 |
+| RXDBUF_V_DPV_RXOVR | 11 | 399 |
+| RXDBUF_M_DPV_RXOVR | (1<<RXDBUF_V_DPV_RXOVR) | 400 |
+| RXDBUF_V_DPV_ABC | 12 | 402 |
+| RXDBUF_S_DPV_ABC | 3 | 403 |
+| RXDBUF_M_DPV_ABC | (((1<<RXDBUF_S_DPV_ABC)-1)<<RXDB... | 404 |
+| RXDBUF_V_DPV_RCRCER | 15 | 406 |
+| RXDBUF_M_DPV_RCRCER | (1<<RXDBUF_V_DPV_RCRCER) | 407 |
+| PARCSR_V_DPV_ADSYNC | 0 | 415 |
+| PARCSR_S_DPV_ADSYNC | 8 | 416 |
+| PARCSR_M_DPV_ADSYNC | (((1<<PARCSR_S_DPV_ADSYNC)-1)<<P... | 417 |
+| PARCSR_V_DPV_ERRDET | 8 | 419 |
+| PARCSR_S_DPV_ERRDET | 3 | 420 |
+| PARCSR_M_DPV_ERRDET | (((1<<PARCSR_S_DPV_ERRDET)-1)<<P... | 421 |
+| PARCSR_V_DPV_IDLEMODE | 11 | 423 |
+| PARCSR_M_DPV_IDLEMODE | (1<<PARCSR_V_DPV_IDLEMODE) | 424 |
+| PARCSR_V_DPV_SECMODE | 12 | 426 |
+| PARCSR_M_DPV_SECMODE | (1<<PARCSR_V_DPV_SECMODE) | 427 |
+| PARCSR_V_DPV_STRSYN | 13 | 429 |
+| PARCSR_M_DPV_STRSYN | (1<<PARCSR_V_DPV_STRSYN) | 430 |
+| PARCSR_V_DPV_PROTSEL | 14 | 432 |
+| PARCSR_M_DPV_PROTSEL | (1<<PARCSR_V_DPV_PROTSEL) | 433 |
+| PARCSR_V_DPV_APA | 15 | 435 |
+| PARCSR_M_DPV_APA | (1<<PARCSR_V_DPV_APA) | 436 |
+| TXCSR_V_DPV_RESET | 0 | 444 |
+| TXCSR_M_DPV_RESET | (1<<TXCSR_V_DPV_RESET) | 445 |
+| TXCSR_V_DPV_TXACT | 1 | 447 |
+| TXCSR_M_DPV_TXACT | (1<<TXCSR_V_DPV_TXACT) | 448 |
+| TXCSR_V_DPV_TBEMPTY | 2 | 450 |
+| TXCSR_M_DPV_TBEMPTY | (1<<TXCSR_V_DPV_TBEMPTY) | 451 |
+| TXCSR_V_DPV_MAINT | 3 | 453 |
+| TXCSR_M_DPV_MAINT | (1<<TXCSR_V_DPV_MAINT) | 454 |
+| TXCSR_V_DPV_SEND | 4 | 456 |
+| TXCSR_M_DPV_SEND | (1<<TXCSR_V_DPV_SEND) | 457 |
+| TXCSR_V_DPV_SQTM | 5 | 459 |
+| TXCSR_M_DPV_SQTM | (1<<TXCSR_V_DPV_SQTM) | 460 |
+| TXCSR_V_DPV_TXIE | 6 | 462 |
+| TXCSR_M_DPV_TXIE | (1<<TXCSR_V_DPV_TXIE) | 463 |
+| TXCSR_V_DPV_RXCHARSIZE | 8 | 466 |
+| TXCSR_S_DPV_RXCHARSIZE | 3 | 467 |
+| TXCSR_M_DPV_RXCHARSIZE | (((1<<TXCSR_S_DPV_RXCHARSIZE)-1)... | 468 |
+| TXCSR_V_DPV_EXTCONT | 11 | 470 |
+| TXCSR_M_DPV_EXTCONT | (1<<TXCSR_V_DPV_EXTCONT) | 471 |
+| TXCSR_V_DPV_EXTADDR | 12 | 473 |
+| TXCSR_M_DPV_EXTADDR | (1<<TXCSR_V_DPV_EXTADDR) | 474 |
+| TXCSR_V_DPV_TXCHARSIZE | 13 | 476 |
+| TXCSR_S_DPV_TXCHARSIZE | 3 | 477 |
+| TXCSR_M_DPV_TXCHARSIZE | (((1<<TXCSR_S_DPV_TXCHARSIZE)-1)... | 478 |
+| TXCSR_DPV_MBZ | ((1<<7)) | 481 |
+| TXCSR_DPV_WRITEABLE | (TXCSR_M_DPV_RESET\|TXCSR_M_DPV_M... | 482 |
+| TXDBUF_V_DPV_TXDBUF | 0 | 488 |
+| TXDBUF_S_DPV_TXDBUF | 8 | 489 |
+| TXDBUF_M_DPV_TXDBUF | (((1<<TXDBUF_S_DPV_TXDBUF)-1)<<T... | 490 |
+| TXDBUF_V_DPV_TSOM | 8 | 492 |
+| TXDBUF_M_DPV_TSOM | (1<<TXDBUF_V_DPV_TSOM) | 493 |
+| TXDBUF_V_DPV_TEOM | 9 | 495 |
+| TXDBUF_M_DPV_TEOM | (1<<TXDBUF_V_DPV_TEOM) | 496 |
+| TXDBUF_V_DPV_TABRT | 10 | 498 |
+| TXDBUF_M_DPV_TABRT | (1<<TXDBUF_V_DPV_TABRT) | 499 |
+| TXDBUF_V_DPV_GOAHEAD | 11 | 501 |
+| TXDBUF_M_DPV_GOAHEAD | (1<<TXDBUF_V_DPV_GOAHEAD) | 502 |
+| TXDBUF_V_DPV_TERR | 15 | 505 |
+| TXDBUF_M_DPV_TERR | (1<<TXDBUF_V_DPV_TERR) | 506 |
+| TXDBUF_DPV_MBZ | ((7<<12)) | 509 |
+| TXDBUF_DPV_WRITEABLE | (TXDBUF_M_DPV_GOAHEAD\|TXDBUF_M_D... | 510 |
+| TRAILING_SYNS | 8 | 513 |
+| IOLN_DUP | 010 | 523 |
+| DBG_REG | 0x0001                          ... | 648 |
+| DBG_INT | 0x0002                          ... | 649 |
+| DBG_PKT | (TMXR_DBG_PXMT\|TMXR_DBG_PRCV)   ... | 650 |
+| DBG_XMT | TMXR_DBG_XMT                    ... | 651 |
+| DBG_RCV | TMXR_DBG_RCV                    ... | 652 |
+| DBG_MDM | TMXR_DBG_MDM                    ... | 653 |
+| DBG_CON | TMXR_DBG_CON                    ... | 654 |
+| DBG_TRC | TMXR_DBG_TRC                    ... | 655 |
+| DBG_ASY | TMXR_DBG_ASY                    ... | 656 |
+| DUPDPTR | ((UNIBUS) ? &dup_dev : &dpv_dev) | 714 |
+| DUP_HLP_ATTACH | "Configuration Attach" | 2037 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dup_rd | 735-746 |  |
+| switch | 747-781 |  |
+| dup_wr | 782-800 |  |
+| switch | 801-951 |  |
+| dup_set_modem | 952-963 |  |
+| dup_get_modem | 964-971 |  |
+| if | 972-1045 |  |
+| dup_csr_to_linenum | 1046-1057 |  |
+| dup_set_callback_mode | 1058-1066 |  |
+| dup_get_DCD | 1067-1073 |  |
+| dup_get_DSR | 1074-1080 |  |
+| dup_get_CTS | 1081-1087 |  |
+| dup_get_RING | 1088-1094 |  |
+| dup_get_RCVEN | 1095-1101 |  |
+| dup_set_DTR | 1102-1115 |  |
+| dup_set_RTS | 1116-1128 |  |
+| dup_set_RCVEN | 1129-1146 |  |
+| dup_setup_dup | 1147-1150 |  |
+| if | 1151-1154 |  |
+| if | 1155-1157 |  |
+| if | 1158-1172 |  |
+| dup_reset_dup | 1173-1180 |  |
+| dup_set_W3_option | 1181-1188 |  |
+| dup_set_W5_option | 1189-1196 |  |
+| dup_set_W6_option | 1197-1205 |  |
+| dup_put_msg_bytes | 1206-1215 |  |
+| if | 1216-1269 |  |
+| if | 1270-1276 |  |
+| dup_get_packet | 1277-1281 |  |
+| if | 1282-1287 |  |
+| if | 1288-1296 |  |
+| dup_rcv_byte | 1297-1305 |  |
+| if | 1306-1322 |  |
+| if | 1323-1376 |  |
+| if | 1377-1387 |  |
+| dup_svc | 1388-1395 |  |
+| if | 1396-1408 |  |
+| if | 1409-1420 |  |
+| if | 1421-1460 |  |
+| dup_poll_svc | 1461-1469 |  |
+| for | 1470-1545 |  |
+| dup_clr_rxint | 1546-1554 |  |
+| dup_set_rxint | 1555-1562 |  |
+| dup_rxinta | 1563-1566 |  |
+| for | 1567-1576 |  |
+| dup_clr_txint | 1577-1585 |  |
+| dup_set_txint | 1586-1593 |  |
+| dup_txinta | 1594-1597 |  |
+| for | 1598-1609 |  |
+| dup_clear | 1610-1618 |  |
+| if | 1619-1632 |  |
+| dup_reset | 1633-1641 |  |
+| if | 1642-1650 |  |
+| if | 1651-1659 |  |
+| if | 1660-1675 |  |
+| for | 1676-1695 |  |
+| dup_attach | 1696-1717 |  |
+| dup_detach | 1718-1750 |  |
+| dup_showspeed | 1751-1762 |  |
+| dup_setspeed | 1763-1780 |  |
+| dup_showcorrupt | 1781-1792 |  |
+| dup_setcorrupt | 1793-1810 |  |
+| dup_show_W3 | 1811-1822 |  |
+| dup_set_W3 | 1823-1833 |  |
+| dup_show_W5 | 1834-1845 |  |
+| dup_set_W5 | 1846-1856 |  |
+| dup_show_W6 | 1857-1868 |  |
+| dup_set_W6 | 1869-1879 |  |
+| dup_setnl | 1880-1899 |  |
+| for | 1900-1915 |  |
+| dup_crc_ccitt | 1916-1963 | that both agree with each other, so hopefully it's the correct one. |
+| dup_help | 1964-2160 |  |
+| dup_help_attach | 2161-2165 |  |
+| dup_description | 2166-2170 |  |

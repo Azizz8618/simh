@@ -1,0 +1,216 @@
+=== nova_dkp.c — 1093 строк ===
+Источник: nova_dkp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test nova_dkp.c -nt .cline/maps/nova_dkp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 331 | |
+| int_req | 332 | |
+| saved_PC | 333 | |
+| dkp_trace | 344 | |
+| dkp_dib | 362 | |
+| uptr | 507 | |
+| rval | 510 | |
+| rval | 652 | |
+| uptr | 662 | |
+| oldCyl | 663 | |
+| sa | 797 | |
+| dx | 798 | |
+| dtype | 799 | |
+| awc | 800 | |
+| rval | 801 | |
+| rval | 805 | |
+| err | 861 | |
+| DEV_UPDATE_INTR | 963 | |
+| rval | 964 | |
+| uptr | 972 | |
+| dkp_map | 979 | |
+| SCPE_OK | 985 | |
+| SCPE_OK | 1008 | |
+| SCPE_OK | 1018 | |
+| saved_PC | 1058 | |
+| unitno | 1061 | |
+| saved_PC | 1065 | |
+| SR | 1066 | |
+| SCPE_OK | 1067 | |
+| saved_PC | 1090 | |
+| SR | 1091 | |
+| SCPE_OK | 1092 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DKP_NUMDR | 4                               ... | 68 |
+| DKP_NUMWD | 256                             ... | 69 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 0)                 ... | 70 |
+| UNIT_M_DTYPE | 017 | 71 |
+| UNIT_V_AUTO | (UNIT_V_UF + 5)                 ... | 72 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 73 |
+| UNIT_AUTO | (1 << UNIT_V_AUTO) | 74 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 75 |
+| FUNC | u3                              ... | 76 |
+| CYL | u4                              ... | 77 |
+| USSC_V_COUNT | 0                               ... | 85 |
+| USSC_M_COUNT | 017 | 86 |
+| USSC_V_OSECTOR | 4                               ... | 87 |
+| USSC_M_OSECTOR | 017 | 88 |
+| USSC_V_OSURFACE | 8                               ... | 89 |
+| USSC_M_OSURFACE | 077 | 90 |
+| USSC_V_NSECTOR | 4                               ... | 91 |
+| USSC_M_NSECTOR | 037 | 92 |
+| USSC_V_NSURFACE | 9                               ... | 93 |
+| USSC_M_NSURFACE | 037 | 94 |
+| USSC_V_UNIT | 14                              ... | 95 |
+| USSC_M_UNIT | 03 | 96 |
+| USSC_UNIT | (USSC_M_UNIT << USSC_V_UNIT) | 97 |
+| GET_COUNT(x) | (((x) >> USSC_V_COUNT) & USSC_M_... | 98 |
+| GET_SECT(x,dt) | ((drv_tab[dt].newf)?  | 99 |
+| GET_SURF(x,dt) | ((drv_tab[dt].newf)?  | 102 |
+| GET_UNIT(x) | (((x) >> USSC_V_UNIT) & USSC_M_U... | 105 |
+| FCCY_V_OCYL | 0                               ... | 113 |
+| FCCY_M_OCYL | 0377 | 114 |
+| FCCY_V_OCMD | 8                               ... | 115 |
+| FCCY_M_OCMD | 3 | 116 |
+| FCCY_V_OCEX | 10                              ... | 117 |
+| FCCY_OCEX | (1 << FCCY_V_OCEX) | 118 |
+| FCCY_V_NCYL | 0                               ... | 119 |
+| FCCY_M_NCYL | 0777 | 120 |
+| FCCY_V_NCMD | 9                               ... | 121 |
+| FCCY_M_NCMD | 3 | 122 |
+| FCCY_READ | 0 | 123 |
+| FCCY_WRITE | 1 | 124 |
+| FCCY_SEEK | 2 | 125 |
+| FCCY_RECAL | 3 | 126 |
+| FCCY_FLAGS | 0174000                         ... | 127 |
+| GET_CMD(x,dt) | ((drv_tab[dt].newf)?  | 129 |
+| SET_CMD(x,dt) | dkp_fccy = (dkp_fccy & ((drv_tab... | 133 |
+| GET_CYL(x,dt) | ((drv_tab[dt].newf)?  | 139 |
+| DKP_UPDATE_USSC( | type, count, surf, sect )       ... | 148 |
+| STA_ERR | 0000001                         ... | 159 |
+| STA_DLT | 0000002                         ... | 160 |
+| STA_CRC | 0000004                         ... | 161 |
+| STA_UNS | 0000010                         ... | 162 |
+| STA_XCY | 0000020                         ... | 163 |
+| STA_CYL | 0000040                         ... | 164 |
+| STA_DRDY | 0000100                         ... | 165 |
+| STA_SEEK3 | 0000200                         ... | 166 |
+| STA_SEEK2 | 0000400                         ... | 167 |
+| STA_SEEK1 | 0001000                         ... | 168 |
+| STA_SEEK0 | 0002000                         ... | 169 |
+| STA_SKDN3 | 0004000                         ... | 170 |
+| STA_SKDN2 | 0010000                         ... | 171 |
+| STA_SKDN1 | 0020000                         ... | 172 |
+| STA_SKDN0 | 0040000                         ... | 173 |
+| STA_DONE | 0100000                         ... | 174 |
+| STA_DYN | (STA_DRDY \| STA_CYL)            ... | 176 |
+| STA_EFLGS | (STA_ERR \| STA_DLT \| STA_CRC \| S... | 177 |
+| STA_DFLGS | (STA_DONE \| STA_SKDN0 \| STA_SKDN... | 179 |
+| GET_SA(cy,sf,sc,t) | (((((cy)*drv_tab[t].surf)+(sf))*  | 182 |
+| TYPE_FLP | 0 | 211 |
+| SECT_FLP | 8 | 212 |
+| SURF_FLP | 1 | 213 |
+| CYL_FLP | 77 | 214 |
+| SIZE_FLP | (SECT_FLP * SURF_FLP * CYL_FLP *... | 215 |
+| NFMT_FLP | FALSE | 216 |
+| TYPE_DSDD | 1 | 218 |
+| TYPE_6097 | TYPE_DSDD | 219 |
+| SECT_DSDD | 16 | 220 |
+| SURF_DSDD | 2 | 221 |
+| CYL_DSDD | 77 | 222 |
+| SIZE_DSDD | (SECT_DSDD * SURF_DSDD * CYL_DSD... | 223 |
+| NFMT_DSDD | TRUE | 224 |
+| TYPE_D31 | 2 | 226 |
+| SECT_D31 | 12 | 227 |
+| SURF_D31 | 2 | 228 |
+| CYL_D31 | 203 | 229 |
+| SIZE_D31 | (SECT_D31 * SURF_D31 * CYL_D31 *... | 230 |
+| NFMT_D31 | FALSE | 231 |
+| TYPE_6225 | 3 | 233 |
+| SECT_6225 | 20 | 234 |
+| SURF_6225 | 2 | 235 |
+| CYL_6225 | 245 | 236 |
+| SIZE_6225 | (SECT_6225 * SURF_6225 * CYL_622... | 237 |
+| NFMT_6225 | TRUE | 238 |
+| TYPE_C111 | 4 | 240 |
+| SECT_C111 | 6 | 241 |
+| SURF_C111 | 10 | 242 |
+| CYL_C111 | 203 | 243 |
+| SIZE_C111 | (SECT_C111 * SURF_C111 * CYL_C11... | 244 |
+| NFMT_C111 | FALSE | 245 |
+| TYPE_D44 | 5 | 247 |
+| SECT_D44 | 12 | 248 |
+| SURF_D44 | 4 | 249 |
+| CYL_D44 | 408 | 250 |
+| SIZE_D44 | (SECT_D44 * SURF_D44 * CYL_D44 *... | 251 |
+| NFMT_D44 | FALSE | 252 |
+| TYPE_6099 | 6 | 254 |
+| SECT_6099 | 32 | 255 |
+| SURF_6099 | 4 | 256 |
+| CYL_6099 | 192 | 257 |
+| SIZE_6099 | (SECT_6099 * SURF_6099 * CYL_609... | 258 |
+| NFMT_6099 | TRUE | 259 |
+| TYPE_6227 | 7 | 261 |
+| SECT_6227 | 20 | 262 |
+| SURF_6227 | 6 | 263 |
+| CYL_6227 | 245 | 264 |
+| SIZE_6227 | (SECT_6227 * SURF_6227 * CYL_622... | 265 |
+| NFMT_6227 | TRUE | 266 |
+| TYPE_6070 | 8 | 268 |
+| SECT_6070 | 24 | 269 |
+| SURF_6070 | 4 | 270 |
+| CYL_6070 | 408 | 271 |
+| SIZE_6070 | (SECT_6070 * SURF_6070 * CYL_607... | 272 |
+| NFMT_6070 | TRUE | 273 |
+| TYPE_C114 | 9 | 275 |
+| SECT_C114 | 12 | 276 |
+| SURF_C114 | 20 | 277 |
+| CYL_C114 | 203 | 278 |
+| SIZE_C114 | (SECT_C114 * SURF_C114 * CYL_C11... | 279 |
+| NFMT_C114 | FALSE | 280 |
+| TYPE_6103 | 10 | 282 |
+| SECT_6103 | 32 | 283 |
+| SURF_6103 | 8 | 284 |
+| CYL_6103 | 192 | 285 |
+| SIZE_6103 | (SECT_6103 * SURF_6103 * CYL_610... | 286 |
+| NFMT_6103 | TRUE | 287 |
+| TYPE_4231 | 11 | 289 |
+| SECT_4231 | 23 | 290 |
+| SURF_4231 | 19 | 291 |
+| CYL_4231 | 411 | 292 |
+| SIZE_4231 | (SECT_4231 * SURF_4231 * CYL_423... | 293 |
+| NFMT_4231 | TRUE | 294 |
+| DKP_TRACE(x) | (dkp_trace & (1<<(x))) | 320 |
+| DKP_TRACE_FP | stderr | 321 |
+| BOOT_START | 02000 | 1025 |
+| BOOT_UNIT | 02021 | 1026 |
+| BOOT_SEEK | 02022 | 1027 |
+| BOOT_LEN | (sizeof(boot_rom) / sizeof(int32)) | 1028 |
+| BOOT_START | 0375 | 1074 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 1075 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dkp | 505-513 |  |
+| if | 514-523 |  |
+| switch | 524-583 |  |
+| if | 584-590 |  |
+| switch | 591-659 |  |
+| dkp_go | 660-667 |  |
+| if | 668-672 |  |
+| if | 673-685 |  |
+| if | 686-720 |  |
+| switch | 721-794 |  |
+| dkp_svc | 795-808 |  |
+| if | 809-840 |  |
+| if | 841-848 |  |
+| if | 849-854 |  |
+| if | 855-968 |  |
+| dkp_reset | 969-979 |  |
+| for | 980-989 |  |
+| dkp_attach | 990-1000 |  |
+| for | 1001-1012 |  |
+| dkp_set_size | 1013-1054 |  |
+| dkp_boot | 1055-1083 |  |
+| dkp_boot | 1084-1093 |  |

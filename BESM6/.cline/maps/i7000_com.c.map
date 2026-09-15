@@ -1,0 +1,113 @@
+=== i7000_com.c — 1321 строк ===
+Источник: i7000_com.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7000_com.c -nt .cline/maps/i7000_com.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| OLIST | 172-176 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| in_buff | 165 | |
+| in_head | 166 | |
+| in_tail | 167 | |
+| in_delay | 169 | |
+| com_out_inesc | 189 | |
+| com_out_head | 190 | |
+| com_out_tail | 191 | |
+| com_comp_cnt | 192 | |
+| com_buf | 195 | |
+| com_data | 199 | |
+| com_dflg | 200 | |
+| SCPE_OK | 1293 | |
+| SCPE_OK | 1316 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| COM_MLINES | 32      /* mux lines */ | 92 |
+| COM_TLINES | (COM_MLINES) | 93 |
+| COM_BUFSIZ | 120     /* max chan transfer */ | 94 |
+| COM_PKTSIZ | 16384   /* character buffer */ | 95 |
+| UNIT_V_2741 | (UNIT_V_UF + 0) /* 2741 - ni */ | 97 |
+| UNIT_V_K35 | (UNIT_V_UF + 1) /* KSR-35 */ | 98 |
+| UNIT_2741 | (1 << UNIT_V_2741) | 99 |
+| UNIT_K35 | (1 << UNIT_V_K35) | 100 |
+| TMR_COM | 2 | 102 |
+| CONN | u3      /* line is connected */ | 104 |
+| NEEDID | u4      /* need to send ID */ | 105 |
+| ECHO | u5      /* echoing output */ | 106 |
+| COM_INIT_POLL | 8000    /* polling interval */ | 108 |
+| COMC_WAIT | 2       /* channel delay time */ | 109 |
+| COML_WAIT | 500     /* char delay time */ | 110 |
+| COM_LBASE | 4       /* start of lines */ | 111 |
+| COM_PLU | 0       /* multiplexor poll */ | 115 |
+| COM_CIU | 1       /* console input */ | 116 |
+| COM_CHU | 2       /* console output */ | 117 |
+| COMI_LCOMP | 002000  /* line complete */ | 121 |
+| COMI_DIALUP | 002001  /* dialup */ | 122 |
+| COMI_ENDID | 002002  /* end ID */ | 123 |
+| COMI_INTR | 002003  /* interrupt */ | 124 |
+| COMI_QUIT | 002004  /* quit */ | 125 |
+| COMI_HANGUP | 002005  /* hangup */ | 126 |
+| COMI_EOM | 013777  /* end of medium */ | 127 |
+| COMI_COMP(x) | ((uint16) (03000 + ((x) & COMI_C... | 128 |
+| COMI_K35 | 6       /* KSR-35 ID */ | 129 |
+| COMI_K37 | 7       /* KSR-37 ID */ | 130 |
+| COMI_2741 | 8       /* 2741 ID */ | 131 |
+| COMI_CMAX | 31      /* max chars returned */ | 132 |
+| COMI_PARITY | 00200   /* parity bit */ | 133 |
+| COMI_BMAX | 50      /* buffer max, words */ | 134 |
+| COMI_12BMAX | ((3 * COMI_BMAX) - 1)   /* last ... | 135 |
+| COMO_LIN12B | 02000   /* line is 12b */ | 139 |
+| COMO_LINCTL | 01000   /* control msg */ | 140 |
+| COMO_GETLN(x) | ((x) & 0777) | 141 |
+| COMO_CTLRST | 07777   /* control reset */ | 142 |
+| COMO_BITRPT | 03777   /* bit repeat */ | 143 |
+| COMO_EOM12B | 07777   /* end of medium */ | 144 |
+| COMO_EOM6B | 077     /* end of medium */ | 145 |
+| COMO_BMAX | 94      /* buffer max, words */ | 146 |
+| COMO_12BMAX | ((3 * COMO_BMAX) - 1) | 147 |
+| COMR_FQ | 1       /* free queue */ | 151 |
+| COMR_IQ | 2       /* input queue */ | 152 |
+| COMR_OQ | 4       /* output queue */ | 153 |
+| EXPT_SRVRDY | 0x1001  /* Service message avail... | 156 |
+| EXPT_INAVAIL | 0x1002  /* Input available */ | 157 |
+| EXPT_DATRDY | 0x1004  /* Data ready. */ | 158 |
+| DATA_TIMEOUT | 0x2010  /* Timeout */ | 159 |
+| PROG_FULL | 0x4100  /* No more space to send... | 160 |
+| PROG_HOLD | 0x4200  /* Channel hold */ | 161 |
+| PROG_MSGLEN | 0x4400  /* Invalid message lengt... | 162 |
+| COM_CHAN | 4 | 299 |
+| COM_CHAN | 5 | 301 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| com_cmd | 415-436 | COM: channel select |
+| com_svc | 437-671 | Unit service - channel program |
+| comti_svc | 672-701 |  |
+| comi_svc | 702-760 |  |
+| comto_svc | 761-780 |  |
+| como_svc | 781-806 |  |
+| com_send_id | 807-830 |  |
+| com_queue_in | 831-888 |  |
+| com_queue_out | 889-1015 |  |
+| com_send_ccmp | 1016-1033 |  |
+| com_skip_outc | 1034-1044 |  |
+| com_get | 1045-1064 |  |
+| com_put | 1065-1089 |  |
+| com_post_eom | 1090-1115 |  |
+| com_inp_msg | 1116-1147 |  |
+| com_reset | 1148-1196 |  |
+| com_attach | 1197-1211 |  |
+| com_detach | 1212-1226 |  |
+| com_summ | 1227-1243 |  |
+| com_show | 1244-1265 |  |
+| com_reset_ln | 1266-1278 |  |
+| coml_description | 1279-1284 |  |
+| coml_help | 1285-1296 |  |
+| com_description | 1297-1302 |  |
+| com_help | 1303-1321 |  |

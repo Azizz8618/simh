@@ -1,0 +1,53 @@
+=== sel32_con.c — 799 строк ===
+Источник: sel32_con.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_con.c -nt .cline/maps/sel32_con.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| con_data | 90 | |
+| con_chp | 108 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_CON | UNIT_IDLE \| UNIT_DISABLE | 37 |
+| CMD | u3 | 39 |
+| CON_INCH | 0x00    /* Initialize channel co... | 41 |
+| CON_INCH2 | 0xf0    /* Initialize channel co... | 42 |
+| CON_WR | 0x01    /* Write console */ | 43 |
+| CON_RD | 0x02    /* Read console */ | 44 |
+| CON_NOP | 0x03    /* No op command */ | 45 |
+| CON_SNS | 0x04    /* Sense command */ | 46 |
+| CON_ECHO | 0x0a    /* Read with Echo */ | 47 |
+| CON_RDBWD | 0x0c    /* Read backward */ | 48 |
+| CON_CON | 0x1f    /* connect line */ | 49 |
+| CON_DIS | 0x23    /* disconnect line */ | 50 |
+| CON_RWD | 0x37    /* TOF and write line */ | 51 |
+| CON_MSK | 0xff    /* Command mask */ | 53 |
+| CON_ATAT | 0x4000  /* working on @@A input */ | 57 |
+| CON_READ | 0x2000  /* Read mode selected */ | 58 |
+| CON_OUTPUT | 0x1000  /* Output ready for unit */ | 59 |
+| CON_EKO | 0x0800  /* Echo input character */ | 60 |
+| CON_REQ | 0x0400  /* Request key pressed */ | 61 |
+| CON_CR | 0x0200  /* Output at beginning o... | 62 |
+| CON_INPUT | 0x0100  /* Input ready for unit */ | 63 |
+| SNS | u5 | 67 |
+| SNS_CMDREJ | 0x80000000  /* Command reject */ | 70 |
+| SNS_INTVENT | 0x40000000  /* Unit intervention... | 71 |
+| SNS_RDY | 0x80        /* device ready */ | 73 |
+| SNS_ONLN | 0x40        /* device online */ | 74 |
+| SNS_DSR | 0x08        /* data set ready */ | 75 |
+| SNS_DCD | 0x04        /* data carrier dete... | 76 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| con_ini | 153-166 | initialize the console chan/unit |
+| con_preio | 167-180 | start a console operation |
+| con_startcmd | 181-242 | start an I/O operation |
+| con_srvo | 243-441 | Handle output transfers for console |
+| con_srvi | 442-744 | Handle input transfers for console |
+| con_reset | 745-750 |  |
+| con_rschnlio | 751-760 | Handle rschnlio cmds for console |
+| con_haltio | 761-799 | Handle haltio transfers for console |

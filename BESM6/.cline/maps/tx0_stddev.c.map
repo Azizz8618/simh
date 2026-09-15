@@ -1,0 +1,55 @@
+=== tx0_stddev.c — 638 строк ===
+Источник: tx0_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test tx0_stddev.c -nt .cline/maps/tx0_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| petr_state | 65 | |
+| petr_wait | 66 | |
+| petr_stopioe | 67 | |
+| ptp_stopioe | 71 | |
+| tto_sbs | 75 | |
+| ios | 77 | |
+| PF | 78 | |
+| temp | 350 | |
+| ios | 373 | |
+| SCPE_OK | 375 | |
+| cpu_unit | 402 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FLEXO_STOP | 061                             ... | 49 |
+| FLEXO_UC | 071 | 50 |
+| FLEXO_LC | 075 | 51 |
+| UC_V | 6                               ... | 52 |
+| UC | (1 << UC_V) | 53 |
+| BOTH | (1 << (UC_V + 1))               ... | 54 |
+| CW | (1 << (UC_V + 2))               ... | 55 |
+| TT_WIDTH | 077 | 56 |
+| UNIT_V_ASCII | (UNIT_V_UF + 0)                 ... | 57 |
+| UNIT_ASCII | (1 << UNIT_V_ASCII) | 58 |
+| PETR_LEADER | 20                              ... | 59 |
+| TRACE_PRINT(dev, | level, args)   if(dev.dctrl & le... | 61 |
+| ERROR_MSG | (1 << 0) | 164 |
+| TRACE_MSG | (1 << 1) | 165 |
+| VERBOSE_MSG | (1 << 2) | 166 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| petr | 308-347 |  |
+| petr_svc | 348-351 |  |
+| if | 352-379 |  |
+| petr_reset | 380-393 |  |
+| petr_attach | 394-406 |  |
+| petr_boot | 407-516 | Switches the CPU to READIN mode and starts execution. |
+| ptp | 517-527 |  |
+| ptp_svc | 528-543 |  |
+| ptp_reset | 544-553 |  |
+| tti | 554-559 |  |
+| tto | 560-570 |  |
+| tti_svc | 571-602 |  |
+| tto_svc | 603-627 |  |
+| tty_reset | 628-638 |  |

@@ -1,0 +1,147 @@
+=== kx10_rp.c — 1301 строк ===
+Источник: kx10_rp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_rp.c -nt .cline/maps/kx10_rp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rp_buf | 242 | |
+| rh_boot_dev | 244 | |
+| rh_boot_unit | 245 | |
+| SCPE_OK | 1292 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_RP | 0 | 28 |
+| BUF_EMPTY(u) | (u->hwmark == 0xFFFFFFFF) | 32 |
+| CLR_BUF(u) | u->hwmark = 0xFFFFFFFF | 33 |
+| RP_NUMWD | 128     /* 36bit words/sec */ | 35 |
+| NUM_UNITS_RP | 8 | 36 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 1)                 ... | 40 |
+| UNIT_M_DTYPE | 7 | 41 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 42 |
+| DTYPE(x) | (((x) & UNIT_M_DTYPE) << UNIT_V_... | 43 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 44 |
+| RPCS1 | 00 | 47 |
+| CS1_GO | 1               /* go */ | 50 |
+| CS1_V_FNC | 1               /* function pos */ | 51 |
+| CS1_M_FNC | 037             /* function mask */ | 52 |
+| CS1_FNC | (CS1_M_FNC << CS1_V_FNC) | 53 |
+| FNC_NOP | 000             /* no operation */ | 54 |
+| FNC_UNLOAD | 001             /* unload */ | 55 |
+| FNC_SEEK | 002             /* seek */ | 56 |
+| FNC_RECAL | 003             /* recalibrate */ | 57 |
+| FNC_DCLR | 004             /* drive clear */ | 58 |
+| FNC_RELEASE | 005             /* port release */ | 59 |
+| FNC_OFFSET | 006             /* offset */ | 60 |
+| FNC_RETURN | 007             /* return to cen... | 61 |
+| FNC_PRESET | 010             /* read-in prese... | 62 |
+| FNC_PACK | 011             /* pack acknowle... | 63 |
+| FNC_SEARCH | 014             /* search */ | 64 |
+| FNC_XFER | 024             /* >=? data xfr */ | 65 |
+| FNC_WCHK | 024             /* write check */ | 66 |
+| FNC_WCHKH | 025             /* write check h... | 67 |
+| FNC_WRITE | 030             /* write */ | 68 |
+| FNC_WRITEH | 031             /* write w/ head... | 69 |
+| FNC_READ | 034             /* read */ | 70 |
+| FNC_READH | 035             /* read w/ heade... | 71 |
+| CS1_RDY | 0000200         /* Drive ready */ | 72 |
+| CS1_DVA | 0004000         /* drive avail N... | 73 |
+| CS1_SC | 0100000         /* Set if TRE or... | 74 |
+| GET_FNC(x) | (((x) >> CS1_V_FNC) & CS1_M_FNC) | 75 |
+| RPDS | 01 | 77 |
+| DS_OFF | 0000001         /* offset mode */ | 80 |
+| DS_VV | 0000100         /* volume valid */ | 81 |
+| DS_DRY | 0000200         /* drive ready */ | 82 |
+| DS_DPR | 0000400         /* drive present */ | 83 |
+| DS_PGM | 0001000         /* programable N... | 84 |
+| DS_LST | 0002000         /* last sector */ | 85 |
+| DS_WRL | 0004000         /* write locked */ | 86 |
+| DS_MOL | 0010000         /* medium online */ | 87 |
+| DS_PIP | 0020000         /* pos in progre... | 88 |
+| DS_ERR | 0040000         /* error */ | 89 |
+| DS_ATA | 0100000         /* attention act... | 90 |
+| DS_MBZ | 0000076 | 91 |
+| RPER1 | 02 | 93 |
+| ER1_ILF | 0000001         /* illegal func */ | 96 |
+| ER1_ILR | 0000002         /* illegal regis... | 97 |
+| ER1_RMR | 0000004         /* reg mod refus... | 98 |
+| ER1_PAR | 0000010         /* parity err */ | 99 |
+| ER1_FER | 0000020         /* format err NI */ | 100 |
+| ER1_WCF | 0000040         /* write clk fai... | 101 |
+| ER1_ECH | 0000100         /* ECC hard err ... | 102 |
+| ER1_HCE | 0000200         /* hdr comp err ... | 103 |
+| ER1_HCR | 0000400         /* hdr CRC err N... | 104 |
+| ER1_AOE | 0001000         /* addr ovflo er... | 105 |
+| ER1_IAE | 0002000         /* invalid addr ... | 106 |
+| ER1_WLE | 0004000         /* write lock er... | 107 |
+| ER1_DTE | 0010000         /* drive time er... | 108 |
+| ER1_OPI | 0020000         /* op incomplete */ | 109 |
+| ER1_UNS | 0040000         /* drive unsafe */ | 110 |
+| ER1_DCK | 0100000         /* data check NI */ | 111 |
+| RPMR | 03 | 113 |
+| RPAS | 04 | 116 |
+| AS_U0 | 0000001         /* unit 0 flag */ | 119 |
+| RPDA | 05 | 121 |
+| DA_V_SC | 0               /* sector pos */ | 124 |
+| DA_M_SC | 077             /* sector mask */ | 125 |
+| DA_V_SF | 8               /* track pos */ | 126 |
+| DA_M_SF | 077             /* track mask */ | 127 |
+| DA_MBZ | 0140300 | 128 |
+| GET_SC(x) | (((x) >> DA_V_SC) & DA_M_SC) | 129 |
+| GET_SF(x) | (((x) >> DA_V_SF) & DA_M_SF) | 130 |
+| RPDT | 06 | 132 |
+| RPLA | 07 | 135 |
+| LA_V_SC | 6                               ... | 137 |
+| RPER2 | 010 | 139 |
+| RPOF | 011 | 141 |
+| RPDC | 012 | 143 |
+| DC_V_CY | 0                               ... | 145 |
+| DC_M_CY | 01777                           ... | 146 |
+| DC_MBZ | 0176000 | 147 |
+| GET_CY | (((regs[RPDC]) >> DC_V_CY) & DC_... | 148 |
+| GET_DA(d) | ((((GET_CY * rp_drv_tab[d].surf)... | 149 |
+| CCYL | u4 | 151 |
+| RPSN | 014 | 154 |
+| RPER3 | 015 | 156 |
+| OF_HCI | 0002000                         ... | 159 |
+| OF_ECI | 0004000                         ... | 160 |
+| OF_F22 | 0010000                         ... | 161 |
+| OF_MBZ | 0161400 | 162 |
+| DATAPTR | u6 | 164 |
+| RPEC1 | 016 | 166 |
+| RPEC2 | 017 | 168 |
+| RP04_DTYPE | 0 | 190 |
+| RP04_SECT | 20 | 191 |
+| RP04_SURF | 19 | 192 |
+| RP04_CYL | 411 | 193 |
+| RP04_DEV | 020020 | 194 |
+| RP04_SIZE | (RP04_SECT * RP04_SURF * RP04_CY... | 195 |
+| RP06_DTYPE | 1 | 197 |
+| RP06_SECT | 20 | 198 |
+| RP06_SURF | 19 | 199 |
+| RP06_CYL | 815 | 200 |
+| RP06_DEV | 020022 | 201 |
+| RP06_SIZE | (RP06_SECT * RP06_SURF * RP06_CY... | 202 |
+| RP07_DTYPE | 2 | 204 |
+| RP07_SECT | 43 | 205 |
+| RP07_SURF | 32 | 206 |
+| RP07_CYL | 630 | 207 |
+| RP07_DEV | 020042 | 208 |
+| RP07_SIZE | (RP07_SECT * RP07_SURF * RP07_CY... | 209 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rp_rst | 509-533 |  |
+| rp_write | 534-698 |  |
+| rp_read | 699-789 |  |
+| rp_svc | 790-1049 |  |
+| rp_set_type | 1050-1063 |  |
+| rp_reset | 1064-1092 |  |
+| rp_boot | 1093-1222 |  |
+| rp_attach | 1223-1255 |  |
+| rp_detach | 1256-1267 |  |
+| rp_help | 1268-1294 |  |
+| rp_description | 1295-1301 |  |

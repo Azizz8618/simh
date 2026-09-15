@@ -1,0 +1,71 @@
+=== pdp11_rc.c — 587 строк ===
+Источник: pdp11_rc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_rc.c -nt .cline/maps/pdp11_rc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rc_unit | 202 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_GETP(u) | ((u)->capac / (RC_NUMWD * RC_NUM... | 79 |
+| RC_NUMWD | 32                              ... | 83 |
+| RC_NUMSC | 64                              ... | 84 |
+| RC_NUMCY | 32                              ... | 85 |
+| RC_DKSIZE | (RC_NUMCY * RC_NUMSC)           ... | 86 |
+| RC_NUMDK | 4                               ... | 87 |
+| RC_WMASK | (RC_NUMWD * RC_NUMSC - 1)       ... | 88 |
+| RC_DRV(d) |  | 90 |
+| FUNC | u4                              ... | 107 |
+| RCCS_ERR | (CSR_ERR)                       ... | 111 |
+| RCCS_DATA | 0040000                         ... | 112 |
+| RCCS_ADDR | 0020000                         ... | 113 |
+| RCCS_WLK | 0010000                         ... | 114 |
+| RCCS_NED | 0004000                         ... | 115 |
+| RCCS_WCHK | 0002000                         ... | 116 |
+| RCCS_INH | 0001000                         ... | 117 |
+| RCCS_ABO | 0000400                         ... | 118 |
+| RCCS_DONE | (CSR_DONE) | 119 |
+| RCCS_IE | (CSR_IE) | 120 |
+| RCCS_M_MEX | 0000003                         ... | 121 |
+| RCCS_V_MEX | 4 | 122 |
+| RCCS_MEX | (RCCS_M_MEX << RCCS_V_MEX) | 123 |
+| RCCS_MAINT | 0000010                         ... | 124 |
+| RCCS_M_FUNC | 0000003                         ... | 125 |
+| RFNC_LAH | 0 | 126 |
+| RFNC_WRITE | 1 | 127 |
+| RFNC_READ | 2 | 128 |
+| RFNC_WCHK | 3 | 129 |
+| RCCS_V_FUNC | 1 | 130 |
+| RCCS_FUNC | (RCCS_M_FUNC << RCCS_V_FUNC) | 131 |
+| RCCS_GO | 0000001 | 132 |
+| RCCS_ALLERR | (RCCS_DATA\|RCCS_ADDR\|RCCS_WLK\|RC... | 134 |
+| RCCS_W | (RCCS_INH \| RCCS_ABO \|RCCS_IE \| ... | 135 |
+| RCER_DLT | 0100000                         ... | 140 |
+| RCER_CHK | 0040000                         ... | 141 |
+| RCER_SYNC | 0020000                         ... | 142 |
+| RCER_NXM | 0010000                         ... | 143 |
+| RCER_TRK | 0001000                         ... | 144 |
+| RCER_APAR | 0000200                         ... | 145 |
+| RCER_SADDR | 0000100                         ... | 146 |
+| RCER_OVFL | 0000040                         ... | 147 |
+| RCER_MIS | 0000020                         ... | 148 |
+| RCLA_BADD | 0100000                         ... | 152 |
+| GET_FUNC(x) | (((x) >> RCCS_V_FUNC) & RCCS_M_F... | 155 |
+| GET_MEX(x) | (((x) & RCCS_MEX) << (16 - RCCS_... | 157 |
+| GET_POS(x) | ((int) fmod (sim_gtime() / ((dou... | 158 |
+| IOLN_RC | 020 | 192 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rc_rd | 258-323 |  |
+| rc_wr | 324-427 |  |
+| sectorCRC | 428-450 |  |
+| rc_svc | 451-535 |  |
+| update_rccs | 536-553 |  |
+| rc_reset | 554-577 |  |
+| rc_attach | 578-583 |  |
+| rc_description | 584-587 |  |

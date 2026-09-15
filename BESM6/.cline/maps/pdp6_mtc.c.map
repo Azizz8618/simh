@@ -1,0 +1,128 @@
+=== pdp6_mtc.c — 944 строк ===
+Источник: pdp6_mtc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp6_mtc.c -nt .cline/maps/pdp6_mtc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mtc_pia | 165 | |
+| mtc_sel_unit | 166 | |
+| mtc_hold_cmd | 167 | |
+| mtc_status | 168 | |
+| mtc_buffer | 185 | |
+| mtc_dib | 205 | |
+| SCPE_OK | 935 | |
+| controller" | 941 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_MTC | 0 | 41 |
+| BUF_EMPTY(u) | (u->hwmark == 0xFFFFFFFF) | 46 |
+| CLR_BUF(u) | u->hwmark = 0xFFFFFFFF | 47 |
+| MTUF_7TRK | (1 << MTUF_V_UF) | 49 |
+| BUFFSIZE | (32 * 1024) | 51 |
+| UNIT_MT | UNIT_FIX+UNIT_ATTABLE+UNIT_DISAB... | 52 |
+| LT | 66      /* Time per char low den... | 53 |
+| HT | 16      /* Time per char high de... | 54 |
+| FLAG_PIA | 0000007       /* 0 */ | 57 |
+| DIS_EOR | 0000010       /* 3 */ | 58 |
+| UNIT_NUM | 0000160       /* 4 */ | 59 |
+| HOLD_SEL | 0000200       /* 7 */ | 60 |
+| FUNCTION | 0007400       /* 8 */ | 61 |
+| NOP | 000     /* Nop */ | 62 |
+| NOP_1 | 010     /* Nop */ | 63 |
+| REWIND | 001     /* Rewind */ | 64 |
+| UNLOAD | 011     /* Unload */ | 65 |
+| WRITE | 002     /* Write */ | 66 |
+| WRITE_1 | 012     /* Write */ | 67 |
+| WTM | 003     /* Write End of File */ | 68 |
+| ERG | 013     /* Write blank tape */ | 69 |
+| CMP | 004     /* Compare */ | 70 |
+| CMP_1 | 014     /* Compare */ | 71 |
+| READ | 005     /* Read  */ | 72 |
+| READ_BK | 015     /* Read Backward */ | 73 |
+| SPC_FWD | 006     /* Space forward */ | 74 |
+| SPC_EOF | 016     /* Space to end of file */ | 75 |
+| SPC_REV | 007     /* Space reverse */ | 76 |
+| SPC_REV_EOF | 017     /* Space reverse to EOF. */ | 77 |
+| DENS_200 | 0000000 | 78 |
+| DENS_556 | 0010000 | 79 |
+| DENS_800 | 0020000 | 80 |
+| DENS_MSK | 0030000       /* 6 */ | 81 |
+| ODD_PARITY | 0040000       /*14 */ | 82 |
+| SLICE | 0100000 | 83 |
+| WRCLK | 0200000 | 84 |
+| FALS_EOR | 0400000 | 85 |
+| CMD_FULL | 0x8000000 | 86 |
+| CMD_MASK | 0777760 | 87 |
+| TAPE_FREE | 0000001 | 90 |
+| TAPE_RDY | 0000002 | 91 |
+| EOR_FLAG | 0000004   /* End of record */ | 92 |
+| PARITY_ERR | 0000010 | 93 |
+| PARITY_ERRL | 0000020 | 94 |
+| READ_CMP | 0000040 | 95 |
+| MIS_CHR | 0000100  /* Charaters missed on ... | 96 |
+| WRITE_LOCK | 0000200 | 97 |
+| EOF_FLAG | 0000400 | 98 |
+| LD_PT | 0001000  /* Tape near load point */ | 99 |
+| END_PT | 0002000  /* Tape near end point */ | 100 |
+| BOT_FLAG | 0004000 | 101 |
+| EOT_FLAG | 0010000 | 102 |
+| REW | 0020000 | 103 |
+| TRF_CMD | 0040000 | 104 |
+| CONT_MOT | 0100000 | 105 |
+| MOT_STOP | 0200000 | 106 |
+| ILL_OPR | 0400000 | 107 |
+| ENB_ICE | 0000001  /* Control Ready */ | 110 |
+| ENB_JNU | 0000002  /* Set monitor unit */ | 111 |
+| ENB_ERF | 0000004  /* End of Record */ | 112 |
+| ENB_XNE | 0040000  /* New command rdy */ | 113 |
+| ENB_LIE | 0100000  /* Load point */ | 114 |
+| IRQ_ICE | 001000000 | 117 |
+| IRQ_JNU | 002000000 | 118 |
+| IRQ_ERF | 004000000 | 119 |
+| IRQ_XNE | 010000000 | 120 |
+| IRQ_LIE | 020000000 | 121 |
+| IRQ_MASK | 037000000 | 122 |
+| EOR_RD_DLY | 0000001 | 125 |
+| EOR_WR_DLY | 0000002 | 126 |
+| MIS_CHR_DLY | 0000004 | 127 |
+| FR_CHR_INH | 0000010 | 128 |
+| UNIT_BUF_FIN | 0000160 | 129 |
+| MOT_DLY | 0000200 | 130 |
+| FUNC_FIN | 0007400 | 131 |
+| UNIT_SEL_NEW | 0010000 | 132 |
+| CMD_HOLD | 0020000 | 133 |
+| MOT_STOP_DLY | 0040000 | 134 |
+| EOR_MOT_DLY | 0100000 | 135 |
+| REC_IN_PROG | 0200000 | 136 |
+| TRP_SPD_DLY | 0400000 | 137 |
+| MTC_DEVCTL | 0220 | 140 |
+| MTC_DEVSTA | 0224 | 141 |
+| MTC_DEVSTM | 0230 | 142 |
+| MTC_MOTION | 000000001       /* Mag tape unit... | 143 |
+| MTC_BUSY | 000000002       /* Mag tape unit... | 144 |
+| MTC_START | 000000004       /* Start a comma... | 145 |
+| CNTRL | u3 | 147 |
+| STATUS | u4        /* Per drive status bi... | 148 |
+| CPOS | u5        /* Character position */ | 149 |
+| BPOS | u6        /* Position in buffer */ | 150 |
+| D | DEV_DIS | 188 |
+| D | 0 | 190 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mtc_devio | 235-355 |  |
+| mtc_checkirq | 356-389 |  |
+| mtc_srv | 390-798 |  |
+| mtc_read_word | 799-816 |  |
+| mtc_boot | 817-866 |  |
+| mtc_reset | 867-885 |  |
+| mtc_set_dct | 886-900 |  |
+| mtc_show_dct | 901-910 |  |
+| mtc_attach | 911-918 |  |
+| mtc_detach | 919-925 |  |
+| mtc_help | 926-938 |  |
+| mtc_description | 939-944 |  |

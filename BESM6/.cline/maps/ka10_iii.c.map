@@ -1,0 +1,86 @@
+=== ka10_iii.c — 686 строк ===
+Источник: ka10_iii.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ka10_iii.c -nt .cline/maps/ka10_iii.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| iii_dib | 312 | |
+| SCPE_OK | 679 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_III | 0 | 30 |
+| III_DEVNUM | 0430 | 36 |
+| STATUS | u3 | 38 |
+| MAR | u4 | 39 |
+| PIA | u5 | 40 |
+| POS | u6 | 41 |
+| CYCLE | us9 | 42 |
+| SET_PIA | 000000010    /* Set if this bit ... | 45 |
+| STOP | 000000020    /* Stop processor a... | 46 |
+| CONT | 000000040    /* Start execution ... | 47 |
+| F | 000000100    /* Clear flags */ | 48 |
+| SET_MSK | 000360000    /* Set mask */ | 49 |
+| RST_MSK | 007400000    /* Reset mask */ | 50 |
+| PIA_MSK | 000000007 | 53 |
+| INST_HLT | 000000010    /* 32 - Halt instru... | 54 |
+| WRAP_ENB | 000000020    /* 31 - Wrap around... | 55 |
+| EDGE_ENB | 000000040    /* 30 - Edge interr... | 56 |
+| LIGH_ENB | 000000100    /* 29 - Light pen e... | 57 |
+| CLK_STOP | 000000200    /* 28 - Clock stop */ | 58 |
+| CLK_BIT | 000001000    /* 26 - Clock */ | 60 |
+| NXM_BIT | 000002000    /* 25 - Non-existen... | 61 |
+| IRQ_BIT | 000004000    /* 24 - Interrupt p... | 62 |
+| DATAO_LK | 000010000    /* 23 - PDP10 gave ... | 63 |
+| CONT_BIT | 000020000    /* 22 - Control bit */ | 64 |
+| LIGHT_FLG | 000040000    /* 21 - Light pen f... | 65 |
+| WRAP_FLG | 000100000    /* 20 - Wrap around... | 66 |
+| EDGE_FLG | 000200000    /* 19 - Edge overfl... | 67 |
+| HLT_FLG | 000400000    /* 18 - Not running */ | 68 |
+| WRAP_MSK | 00001 | 70 |
+| EDGE_MSK | 00002 | 71 |
+| LIGH_MSK | 00004 | 72 |
+| HLT_MSK | 00010 | 73 |
+| WRP_FBIT | 00020 | 74 |
+| EDG_FBIT | 00040 | 75 |
+| LIT_FBIT | 00100 | 76 |
+| CTL_FBIT | 00200 | 77 |
+| HLT_FBIT | 00400 | 78 |
+| NXM_FLG | 01000 | 79 |
+| DATA_FLG | 02000 | 80 |
+| RUN_FLG | 04000 | 81 |
+| TSS_INST | 012          /* Test  */ | 83 |
+| LVW_INST | 006          /* Long Vector */ | 84 |
+| SVW_INST | 002          /* Short vector */ | 85 |
+| JMP_INST | 000          /* Jump or Halt */ | 86 |
+| JSR_INST | 004          /* JSR(1) or JMS(0)... | 87 |
+| RES_INST | 014          /* Restore */ | 88 |
+| SEL_INST | 010          /* Select instructi... | 89 |
+| POS_X | 01777400000 | 91 |
+| POS_Y | 00000377700 | 92 |
+| CBRT | 00000000070       /* Current bri... | 93 |
+| CSIZE | 00000000007       /* Current cha... | 94 |
+| POS_X_V | 17 | 95 |
+| POS_Y_V | 6 | 96 |
+| CBRT_V | 3 | 97 |
+| CSIZE_V | 0 | 98 |
+| MIN_X | -512 | 100 |
+| MAX_X | 512 | 101 |
+| MIN_Y | -501 | 102 |
+| MAX_Y | 522 | 103 |
+| M(x,y) | (x << 4)\|y\|0000 | 113 |
+| V(x,y) | (x << 4)\|y\|0200 | 114 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| iii_devio | 332-396 |  |
+| iii_svc | 397-637 |  |
+| iii_keyboard_line | 638-643 |  |
+| iii_reset | 644-658 |  |
+| draw_point | 659-667 |  |
+| draw_line | 668-676 |  |
+| iii_help | 677-681 |  |
+| iii_description | 682-686 |  |

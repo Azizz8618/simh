@@ -1,0 +1,153 @@
+=== ibm1130_cr.c — 2704 строк ===
+Источник: ibm1130_cr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_cr.c -nt .cline/maps/ibm1130_cr.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CPCODE | 509-512 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 367 | |
+| cp_count | 387 | |
+| ascii_to_card | 724 | |
+| cardcode | 726 | |
+| ncardcode | 727 | |
+| deckfile | 728 | |
+| tempfile | 729 | |
+| any_punched | 730 | |
+| list_save | 734 | |
+| list_nargs | 735 | |
+| tab_width | 737 | |
+| punchstation | 739 | |
+| readstation | 740 | |
+| {STATION_EMPTY | 741 | |
+| boot_drive | 754 | |
+| program_is_loaded | 755 | |
+| pcr_done | 2163 | |
+| hpcr | 2164 | |
+| hPickEvent | 2165 | |
+| hResetEvent | 2166 | |
+| lastcmd | 2170 | |
+| pcr_critsect | 2684 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| READ_DELAY | 35         /* see how small a nu... | 358 |
+| PUNCH_DELAY | 35 | 359 |
+| FEED_DELAY | 25 | 360 |
+| READ_2501_DELAY | 500 | 361 |
+| ENABLE_PHYSICAL_CARD_READER_SUPPORT |  | 365 |
+| UNIT_V_OPERATION | (UNIT_V_UF + 0)                 ... | 391 |
+| UNIT_V_CODE | (UNIT_V_UF + 2)                 ... | 392 |
+| UNIT_V_CR_EMPTY | (UNIT_V_UF + 5)          /* NOTE... | 393 |
+| UNIT_V_SCRATCH | (UNIT_V_UF + 6) | 394 |
+| UNIT_V_QUIET | (UNIT_V_UF + 7) | 395 |
+| UNIT_V_DEBUG | (UNIT_V_UF + 8) | 396 |
+| UNIT_V_PHYSICAL | (UNIT_V_UF + 9)          /* NOTE... | 397 |
+| UNIT_V_LASTPUNCH | (UNIT_V_UF + 10)                ... | 398 |
+| UNIT_V_LOWERCASE | (UNIT_V_UF + 10)                ... | 399 |
+| UNIT_V_ACTCODE | (UNIT_V_UF + 11)                ... | 400 |
+| UNIT_V_2501 | (UNIT_V_UF + 14) | 401 |
+| UNIT_OP | (3u << UNIT_V_OPERATION)        ... | 403 |
+| UNIT_CODE | (7u << UNIT_V_CODE)             ... | 404 |
+| UNIT_CR_EMPTY | (1u << UNIT_V_CR_EMPTY) | 405 |
+| UNIT_SCRATCH | (1u << UNIT_V_SCRATCH)          ... | 406 |
+| UNIT_QUIET | (1u << UNIT_V_QUIET) | 407 |
+| UNIT_DEBUG | (1u << UNIT_V_DEBUG) | 408 |
+| UNIT_PHYSICAL | (1u << UNIT_V_PHYSICAL) | 409 |
+| UNIT_LASTPUNCH | (1u << UNIT_V_LASTPUNCH) | 410 |
+| UNIT_LOWERCASE | (1u << UNIT_V_LOWERCASE)        ... | 411 |
+| UNIT_ACTCODE | (7u << UNIT_V_ACTCODE) | 412 |
+| UNIT_2501 | (1u << UNIT_V_2501) | 413 |
+| OP_IDLE | (0u << UNIT_V_OPERATION) | 415 |
+| OP_READING | (1u << UNIT_V_OPERATION) | 416 |
+| OP_PUNCHING | (2u << UNIT_V_OPERATION) | 417 |
+| OP_FEEDING | (3u << UNIT_V_OPERATION) | 418 |
+| SET_OP(op) | {cr_unit.flags &= ~UNIT_OP; cr_u... | 420 |
+| CURRENT_OP | (cr_unit.flags & UNIT_OP) | 421 |
+| CODE_AUTO | (0u << UNIT_V_CODE) | 423 |
+| CODE_029 | (1u << UNIT_V_CODE) | 424 |
+| CODE_026F | (2u << UNIT_V_CODE) | 425 |
+| CODE_026C | (3u << UNIT_V_CODE) | 426 |
+| CODE_BINARY | (4u << UNIT_V_CODE) | 427 |
+| GET_CODE(un) | (un.flags & UNIT_CODE) | 429 |
+| SET_CODE(un,cd) | {un.flags &= ~UNIT_CODE; un.flag... | 430 |
+| ACTCODE_029 | (CODE_029    << (UNIT_V_ACTCODE-... | 432 |
+| ACTCODE_026F | (CODE_026F   << (UNIT_V_ACTCODE-... | 433 |
+| ACTCODE_026C | (CODE_026C   << (UNIT_V_ACTCODE-... | 434 |
+| ACTCODE_BINARY | (CODE_BINARY << (UNIT_V_ACTCODE-... | 435 |
+| GET_ACTCODE(un) | ((un.flags & UNIT_ACTCODE) >> (U... | 438 |
+| SET_ACTCODE(un,cd) | {un.flags &= ~UNIT_ACTCODE; un.f... | 439 |
+| COLUMN | u4                              ... | 441 |
+| CR_DSW_1442_READ_RESPONSE | 0x8000      /* device status wor... | 494 |
+| CR_DSW_1442_PUNCH_RESPONSE | 0x4000 | 495 |
+| CR_DSW_1442_ERROR_CHECK | 0x2000 | 496 |
+| CR_DSW_1442_LAST_CARD | 0x1000 | 497 |
+| CR_DSW_1442_OP_COMPLETE | 0x0800 | 498 |
+| CR_DSW_1442_FEED_CHECK | 0x0100 | 499 |
+| CR_DSW_1442_BUSY | 0x0002 | 500 |
+| CR_DSW_1442_NOT_READY | 0x0001 | 501 |
+| CR_DSW_2501_ERROR_CHECK | 0x2000      /* DSW for 2501 read... | 503 |
+| CR_DSW_2501_LAST_CARD | 0x1000 | 504 |
+| CR_DSW_2501_OP_COMPLETE | 0x0800 | 505 |
+| CR_DSW_2501_BUSY | 0x0002 | 506 |
+| CR_DSW_2501_NOT_READY | 0x0001 | 507 |
+| MAXARGLEN | 80                    /* max len... | 732 |
+| MAXARGS | 10                    /* max num... | 733 |
+| PCR_STATUS_READY | 1                  /* bits in in... | 2132 |
+| PCR_STATUS_ERROR | 2 | 2133 |
+| PCR_STATUS_HEMPTY | 4 | 2134 |
+| PCR_STATUS_EOF | 8 | 2135 |
+| PCR_STATUS_PICKING | 16 | 2136 |
+| PCR_STATUS_MSEC | 150                 /* when idle... | 2138 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lookup_codetable | 759-788 |  |
+| set_active_cr_code | 789-810 |  |
+| cr_set_code | 811-818 |  |
+| guess_cr_code | 819-878 |  |
+| cp_set_code | 879-892 |  |
+| load_cr_boot | 893-977 |  |
+| cr_boot | 978-1018 |  |
+| card_to_ascii | 1019-1031 |  |
+| hollerith_to_ascii | 1032-1044 |  |
+| feedcycle | 1045-1192 |  |
+| npro | 1193-1214 |  |
+| skipbl | 1215-1225 |  |
+| trim | 1226-1241 | deems it significant. */ |
+| alltrim | 1242-1259 |  |
+| checkdeck | 1260-1286 |  |
+| nextdeck | 1287-1504 |  |
+| cr_reset | 1505-1529 |  |
+| cp_reset | 1530-1541 |  |
+| cr_rewind | 1542-1565 |  |
+| cr_attach | 1566-1685 |  |
+| cr_detach | 1686-1719 |  |
+| cp_attach | 1720-1728 |  |
+| cp_detach | 1729-1740 |  |
+| op_done | 1741-1765 |  |
+| cr_svc | 1766-1835 |  |
+| xio_2501_card | 1836-1923 |  |
+| xio_1442_card | 1924-2173 |  |
+| pcr_attach | 2174-2215 |  |
+| pcr_open_controller | 2216-2285 |  |
+| pcr_detach | 2286-2302 |  |
+| pcr_xio_sense | 2303-2322 |  |
+| report_error | 2323-2344 |  |
+| pcr_thread | 2345-2516 |  |
+| pcr_cmd | 2517-2550 |  |
+| pcr_handle_status_byte | 2551-2574 |  |
+| pcr_set_dsw_from_status | 2575-2595 |  |
+| pcr_xio_feedcycle | 2596-2603 |  |
+| pcr_xio_startread | 2604-2613 |  |
+| pcr_reset | 2614-2626 |  |
+| pcr_trigger_interrupt_0 | 2627-2642 |  |
+| pcr_svc | 2643-2685 |  |
+| begin_pcr_critical_section | 2686-2697 |  |
+| end_pcr_critical_section | 2698-2704 |  |

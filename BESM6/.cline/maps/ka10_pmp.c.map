@@ -1,0 +1,209 @@
+=== ka10_pmp.c — 2420 строк ===
+Источник: ka10_pmp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ka10_pmp.c -nt .cline/maps/ka10_pmp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| pmp_statusb | 348 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_PMP | 0 | 63 |
+| UNIT_V_TYPE | (UNIT_V_UF + 0) | 67 |
+| UNIT_TYPE | (0xf << UNIT_V_TYPE) | 68 |
+| GET_TYPE(x) | ((UNIT_TYPE & (x)) >> UNIT_V_TYPE) | 70 |
+| SET_TYPE(x) | (UNIT_TYPE & ((x) << UNIT_V_TYPE)) | 71 |
+| UNIT_DASD | UNIT_ATTABLE \| UNIT_DISABLE \| UN... | 72 |
+| UNIT_V_ADDR | (UNIT_V_TYPE + 4) | 75 |
+| UNIT_ADDR_MASK | (0xff << UNIT_V_ADDR) | 76 |
+| GET_UADDR(x) | ((UNIT_ADDR_MASK & x) >> UNIT_V_... | 77 |
+| UNIT_ADDR(x) | ((x) << UNIT_V_ADDR) | 78 |
+| NUM_UNITS_PMP | 8 | 80 |
+| PMP_DEV | 0500 | 82 |
+| CMD | u3 | 85 |
+| DK_NOP | 0x03       /* Nop operation */ | 88 |
+| DK_RELEASE | 0x17       /* Release from chann... | 89 |
+| DK_RESTORE | 0x13       /* Restore */ | 90 |
+| DK_SEEK | 0x07       /* Seek */ | 91 |
+| DK_SEEKCYL | 0x0B       /* Seek Cylinder */ | 92 |
+| DK_SEEKHD | 0x1B       /* Seek Head */ | 93 |
+| DK_SETMSK | 0x1f       /* Set file mask */ | 94 |
+| DK_SPACE | 0x0f       /* Space record */ | 95 |
+| DK_SRCH_HAEQ | 0x39       /* Search HA equal */ | 96 |
+| DK_SRCH_IDEQ | 0x31       /* Search ID equal */ | 97 |
+| DK_SRCH_IDGT | 0x51       /* Search ID greater */ | 98 |
+| DK_SRCH_IDGE | 0x71       /* Search ID greater ... | 99 |
+| DK_SRCH_KYEQ | 0x29       /* Search Key equal */ | 100 |
+| DK_SRCH_KYGT | 0x49       /* Search Key greater */ | 101 |
+| DK_SRCH_KYGE | 0x69       /* Search Key greater... | 102 |
+| DK_RD_IPL | 0x02       /* Read IPL record */ | 103 |
+| DK_RD_HA | 0x1A       /* Read home address */ | 104 |
+| DK_RD_CNT | 0x12       /* Read count */ | 105 |
+| DK_RD_R0 | 0x16       /* Read R0 */ | 106 |
+| DK_RD_D | 0x06       /* Read Data */ | 107 |
+| DK_RD_KD | 0x0e       /* Read key and data */ | 108 |
+| DK_RD_CKD | 0x1e       /* Read count, key an... | 109 |
+| DK_WR_HA | 0x19       /* Write home address */ | 110 |
+| DK_WR_R0 | 0x15       /* Write R0 */ | 111 |
+| DK_WR_D | 0x05       /* Write Data */ | 112 |
+| DK_WR_KD | 0x0d       /* Write key and data */ | 113 |
+| DK_WR_CKD | 0x1d       /* Write count, key a... | 114 |
+| DK_WR_SCKD | 0x01       /* Write special coun... | 115 |
+| DK_ERASE | 0x11       /* Erase to end of tr... | 116 |
+| DK_RD_SECT | 0x22       /* Read sector counte... | 117 |
+| DK_SETSECT | 0x23       /* Set sector */ | 118 |
+| DK_MT | 0x80       /* Multi track flag */ | 119 |
+| DK_INDEX | 0x00100    /* Index seen in comm... | 121 |
+| DK_NOEQ | 0x00200    /* Not equal compare */ | 122 |
+| DK_HIGH | 0x00400    /* High compare */ | 123 |
+| DK_PARAM | 0x00800    /* Parameter in u4 */ | 124 |
+| DK_MSET | 0x01000    /* Mode set command a... | 125 |
+| DK_SHORTSRC | 0x02000    /* Last search was sh... | 126 |
+| DK_SRCOK | 0x04000    /* Last search good */ | 127 |
+| DK_CYL_DIRTY | 0x08000    /* Current cylinder d... | 128 |
+| DK_DONE | 0x10000    /* Write command done... | 129 |
+| DK_INDEX2 | 0x20000    /* Second index seen */ | 130 |
+| DK_ATTN | 0x40000    /* Device has attenti... | 131 |
+| DK_MSK_INHWR0 | 0x00       /* Inhbit writing of ... | 133 |
+| DK_MSK_INHWRT | 0x40       /* Inhbit all writes */ | 134 |
+| DK_MSK_ALLWRU | 0x80       /* Allow all updates */ | 135 |
+| DK_MSK_ALLWRT | 0xc0       /* Allow all writes */ | 136 |
+| DK_MSK_WRT | 0xc0       /* Write mask */ | 137 |
+| DK_MSK_SKALLSKR | 0x00       /* Allow all seek/rec... | 139 |
+| DK_MSK_SKALLCLY | 0x08       /* Allow cyl/head onl... | 140 |
+| DK_MSK_SKALLHD | 0x10       /* Allow head only */ | 141 |
+| DK_MSK_SKNONE | 0x18       /* Allow no seeks */ | 142 |
+| DK_MSK_SK | 0x18       /* Seek mask */ | 143 |
+| POS | u4 | 145 |
+| DK_V_TRACK | 8 | 148 |
+| DK_M_TRACK | 0x3ff00    /* Max 1024 cylinders */ | 149 |
+| DK_V_HEAD | 0 | 150 |
+| DK_M_HEAD | 0xff       /* Max 256 heads */ | 151 |
+| SENSE | u5 | 153 |
+| SNS_CMDREJ | 0x80       /* Command reject */ | 156 |
+| SNS_INTVENT | 0x40       /* Unit intervention ... | 157 |
+| SNS_BUSCHK | 0x20       /* Parity error on bu... | 158 |
+| SNS_EQUCHK | 0x10       /* Equipment check */ | 159 |
+| SNS_DATCHK | 0x08       /* Data Check */ | 160 |
+| SNS_OVRRUN | 0x04       /* Data overrun */ | 161 |
+| SNS_TRKCND | 0x02       /* Track Condition */ | 162 |
+| SNS_SEEKCK | 0x01       /* Seek Check */ | 163 |
+| SNS_DCCNT | 0x80       /* Data Check Count */ | 166 |
+| SNS_TRKOVR | 0x40       /* Track Overrun */ | 167 |
+| SNS_ENDCYL | 0x20       /* End of Cylinder */ | 168 |
+| SNS_INVSEQ | 0x10       /* Invalid Sequence */ | 169 |
+| SNS_NOREC | 0x08       /* No record found */ | 170 |
+| SNS_WRP | 0x04       /* Write Protect */ | 171 |
+| SNS_ADDR | 0x02       /* Missing Address Ma... | 172 |
+| SNS_OVRINC | 0x01       /* Overflow Incomplet... | 173 |
+| SNS_BYTE2 | 0x00       /* Diags Use */ | 176 |
+| SNS_BYTE3 | 0x00       /* Diags Use */ | 178 |
+| DK_POS_INDEX | 0x0        /* At Index Mark */ | 182 |
+| DK_POS_HA | 0x1        /* In home address (c... | 183 |
+| DK_POS_CNT | 0x2        /* In count (c) */ | 184 |
+| DK_POS_KEY | 0x3        /* In Key area */ | 185 |
+| DK_POS_DATA | 0x4        /* In Data area */ | 186 |
+| DK_POS_AM | 0x5        /* Address mark befor... | 187 |
+| DK_POS_END | 0x8        /* Past end of data */ | 188 |
+| DK_POS_SEEK | 0xF        /* In seek */ | 189 |
+| LASTCMD | u6 | 191 |
+| DATAPTR | up7 | 195 |
+| NXM_ERR | 00200000000000LL /* Non-existent... | 219 |
+| CHA_ERR | 00100000000000LL /* Data chainin... | 220 |
+| SEL_ERR | 00040000000000LL /* Selection er... | 221 |
+| LST_ADDR | 00037700000000LL /* Last address... | 222 |
+| PAR1_ERR | 00000040000000LL /* Parity error... | 223 |
+| PAR2_ERR | 00000020000000LL /* Parity error... | 224 |
+| IDLE | 00000010100000LL /* Channel idle */ | 225 |
+| INT_SEL | 00000004000000LL /* Initial sele... | 226 |
+| REQ_SEL | 00000002000000LL /* Device reque... | 227 |
+| TRANS | 00000001000000LL /* Transfer in ... | 228 |
+| PAR_ERR | 00000000400000LL /* Parity error */ | 229 |
+| HOLD_EMPTY | 00000000200000LL /* Command hold... | 230 |
+| UNU_END | 00000000040000LL /* Unusual end */ | 231 |
+| NEW_STS | 00000000020000LL /* New status */ | 232 |
+| ATTN | 00000000010000LL /* Attention */ | 233 |
+| ST_MOD | 00000000004000LL /* Status modif... | 234 |
+| CTL_END | 00000000002000LL /* Control unit... | 235 |
+| BSY | 00000000001000LL /* Device is bu... | 236 |
+| CHN_END | 00000000000400LL /* Channel end */ | 237 |
+| DEV_END | 00000000000200LL /* Device end */ | 238 |
+| UNIT_CHK | 00000000000100LL /* Unit check */ | 239 |
+| UNIT_EXP | 00000000000040LL /* Unit excepti... | 240 |
+| PI_ACT | 00000000000020LL /* PI channel a... | 241 |
+| PIA | 00000000000007LL /* PI channel */ | 242 |
+| STS_MASK | 00000000017740LL /* Status bits ... | 243 |
+| IRQ_ERROR | 00000000400000LL /* Disk or Core... | 246 |
+| IRQ_EMPTY | 00000000200000LL /* Command hold... | 247 |
+| IRQ_IDLE | 00000000100000LL /* Channel is i... | 248 |
+| IRQ_UEND | 00000000040000LL /* Unusual end */ | 249 |
+| IRQ_NSTS | 00000000020000LL /* New Status */ | 250 |
+| IRQ_STS | 00000000017740LL /* Status bits ... | 251 |
+| OP1 | 000000010000LL  /* Channel in op... | 257 |
+| DAT_CHAIN | 000000004000LL  /* Data Chaining... | 258 |
+| WCMA_LD | 000000002000LL  /* WCMA hold reg... | 259 |
+| CMD_LD | 000000001000LL  /* Command hold ... | 260 |
+| IDLE_CH | 000000000400LL  /* Channel is id... | 261 |
+| REQ_CH | 000000000200LL  /* Request for c... | 262 |
+| IS_CH | 000000000100LL  /* Initial selec... | 263 |
+| TRANS_CH | 000000000040LL  /* Tranfer in pr... | 264 |
+| CMD_EMP | 000000000020LL  /* Command hold ... | 265 |
+| CMD_FUL | 000000000010LL  /* Command hold ... | 266 |
+| OPL | 000000000004LL  /* Operation out */ | 267 |
+| CLR_UEND | 00000004000LL  /* Clear Unusual ... | 270 |
+| CLR_MUX | 00000002000LL  /* Clear memory m... | 271 |
+| CLR_DATCH | 00000001000LL  /* Clear data cha... | 272 |
+| CLR_IRQ | 00000000400LL  /* Clear IRQs */ | 273 |
+| NSTS_CLR | 00000000200LL  /* Clear New stat... | 274 |
+| PWR_CLR | 00000000100LL  /* Power on clear */ | 275 |
+| STS_CLR | 00000000040LL  /* Clear device s... | 276 |
+| CMD_CLR | 00000000020LL  /* Clear command ... | 277 |
+| CMD_HOLD | 00000000010LL  /* Set command ho... | 278 |
+| DEV_RESET | 00000000004LL  /* Reset current ... | 279 |
+| OPL_RESET | 00000000002LL  /* Reset all devi... | 280 |
+| CHN_RESET | 00000000001LL  /* Reset the chan... | 281 |
+| CMD_MASK | 0000000000377LL   /* Command */ | 284 |
+| SKP_MOD_OFF | 0000000000400LL   /* Skip mod of... | 285 |
+| SKP_MOD_ON | 0000000001000LL   /* Skip mod on */ | 286 |
+| CMDCH_ON | 0000000002000LL   /* Command cha... | 287 |
+| CNT_BYT | 0000000004000LL   /* Count in by... | 288 |
+| BYTE_MODE | 0000000010000LL   /* Transfer by... | 289 |
+| SET_HOLD | 0000000020000LL   /* Set command... | 290 |
+| DEV_ADDR | 0000017740000LL   /* Device addr... | 291 |
+| DATCH_ON | 0000020000000LL   /* Data chaini... | 292 |
+| HOLD_MASK | 0000037777777LL   /* Bits in com... | 293 |
+| SNS_ATTN | 0x80                /* Unit atte... | 296 |
+| SNS_SMS | 0x40                /* Status mo... | 297 |
+| SNS_CTLEND | 0x20                /* Control u... | 298 |
+| SNS_BSY | 0x10                /* Unit Busy */ | 299 |
+| SNS_CHNEND | 0x08                /* Channel e... | 300 |
+| SNS_DEVEND | 0x04                /* Device en... | 301 |
+| SNS_UNITCHK | 0x02                /* Unit chec... | 302 |
+| SNS_UNITEXP | 0x01                /* Unit exce... | 303 |
+| BUFF_EMPTY | 0x10               /* Buffer is ... | 306 |
+| BUFF_DIRTY | 0x20               /* Buffer is ... | 307 |
+| BUFF_CHNEND | 0x40               /* Channel en... | 308 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pmp_devio | 419-544 |  |
+| pmp_checkirq | 545-578 |  |
+| pmp_posterror | 579-588 |  |
+| chan_read_byte | 589-651 |  |
+| chan_write_byte | 652-751 |  |
+| chan_end | 752-799 |  |
+| pmp_startcmd | 800-968 |  |
+| pmp_adjpos | 969-1044 |  |
+| pmp_srv | 1045-2118 | Handle processing of disk requests. |
+| pmp_reset | 2119-2136 |  |
+| pmp_format | 2137-2222 |  |
+| pmp_attach | 2223-2291 |  |
+| pmp_detach | 2292-2317 |  |
+| pmp_set_type | 2318-2339 |  |
+| pmp_get_type | 2340-2350 |  |
+| pmp_set_dev_addr | 2351-2374 |  |
+| pmp_get_dev_addr | 2375-2413 |  |
+| pmp_description | 2414-2420 |  |

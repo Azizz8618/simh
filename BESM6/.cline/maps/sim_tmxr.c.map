@@ -1,0 +1,569 @@
+=== sim_tmxr.c — 5847 строк ===
+Источник: sim_tmxr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_tmxr.c -nt .cline/maps/sim_tmxr.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| FRAMER | 453-460 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lp->txdrp | 510 | |
+| unwritten | 554 | |
+| cmsg | 555 | |
+| dmsg | 556 | |
+| lmsg | 557 | |
+| msgbuf | 558 | |
+| written | 628 | |
+| loopfree | 629 | |
+| written | 657 | |
+| bytesread | 667 | |
+| bytesread | 690 | |
+| written | 746 | |
+| written | 792 | |
+| ln | 864 | |
+| lp | 865 | |
+| code | 866 | |
+| tptr | 912 | |
+| lp | 914 | |
+| tptr | 964 | |
+| tptr | 987 | |
+| tptr | 1048 | |
+| mp->poll_interval | 1060 | |
+| SCPE_OK | 1061 | |
+| newsock | 1081 | |
+| lp | 1082 | |
+| op | 1083 | |
+| ringing | 1085 | |
+| address | 1086 | |
+| msg | 1087 | |
+| mp->last_poll_time | 1126 | |
+| msg | 1429 | |
+| lp->ipad | 1471 | |
+| SCPE_OK | 1485 | |
+| mp->modem_control | 1536 | |
+| SCPE_OK | 1539 | |
+| mp->notelnet | 1597 | |
+| SCPE_OK | 1600 | |
+| mp->nomessage | 1656 | |
+| SCPE_OK | 1659 | |
+| mp->port_speed_control | 1706 | |
+| SCPE_OK | 1710 | |
+| mp->port_speed_control | 1725 | |
+| SCPE_OK | 1729 | |
+| mp->backlog | 1738 | |
+| SCPE_OK | 1739 | |
+| mp->ldsc | 1756 | |
+| SCPE_OK | 1758 | |
+| mp->ldsc | 1773 | |
+| SCPE_OK | 1775 | |
+| before_modem_bits | 1803 | |
+| dptr | 1804 | |
+| before_modem_bits | 1843 | |
+| SCPE_INCOMP | 1960 | |
+| SCPE_OK | 2000 | |
+| SCPE_OK | 2030 | |
+| val | 2085 | |
+| tmp | 2086 | |
+| val | 2120 | |
+| pktsize | 2150 | |
+| SCPE_LOST | 2187 | |
+| lp | 2200 | |
+| lp->txpb | 2572 | |
+| lp->txppsize | 2578 | |
+| lp->txppoffset | 2579 | |
+| lp | 2600 | |
+| nbytes | 2629 | |
+| uptr | 2761 | |
+| SCPE_OK | 2778 | |
+| nspeed | 2813 | |
+| speed | 2814 | |
+| nfactor | 2815 | |
+| spd | 2827 | |
+| -1 | 2835 | |
+| lp->modem_control | 2840 | |
+| SCPE_OK | 2841 | |
+| uptr | 2846 | |
+| cptr | 2847 | |
+| rxbps | 2849 | |
+| lp->rxnexttime | 2877 | |
+| uptr | 2878 | |
+| lp->txbps | 2883 | |
+| lp->txdeltausecs | 2884 | |
+| SCPE_OK | 2887 | |
+| framer | 2925 | |
+| num | 2926 | |
+| fr_mode | 2927 | |
+| fr_speed | 2928 | |
+| framer_s | 2929 | |
+| eth | 2930 | |
+| sock | 2931 | |
+| serport | 2932 | |
+| tptr | 2933 | |
+| nolog | 2934 | |
+| listenbacklog | 2935 | |
+| lp | 2936 | |
+| console | 2949 | |
+| notelnet | 2950 | |
+| nomessage | 2951 | |
+| listenbacklog | 2952 | |
+| mp->ring_sock | 2953 | |
+| mp->ring_ipad | 2955 | |
+| mp->ring_start_time | 2956 | |
+| mp->ldsc | 3701 | |
+| SCPE_OK | 3704 | |
+| mp->ldsc | 3736 | |
+| SCPE_OK | 3739 | |
+| sim_con_tmxr | 3762 | |
+| rxuptr->tmxr | 3770 | |
+| txuptr->tmxr | 3771 | |
+| SCPE_OK | 3774 | |
+| tmxr_open_devices | 3777 | |
+| tmxr_open_device_count | 3778 | |
+| found | 3783 | |
+| gbuf | 3818 | |
+| dptr | 3819 | |
+| SCPE_ARG | 3845 | |
+| line_name | 3865 | |
+| line_name | 3879 | |
+| SCPE_OK | 3963 | |
+| SCPE_OK | 3969 | |
+| SCPE_OK | 3976 | |
+| lp | 3983 | |
+| o_uptr | 3984 | |
+| uptr | 3985 | |
+| attach | 3986 | |
+| SCPE_OK | 4089 | |
+| gbuf | 4096 | |
+| SCPE_OK | 4119 | |
+| SCPE_OK | 4133 | |
+| lp | 4146 | |
+| mp->master | 4197 | |
+| mp->port | 4199 | |
+| mp->ring_sock | 4200 | |
+| mp->ring_ipad | 4202 | |
+| mp->ring_start_time | 4203 | |
+| SCPE_OK | 4205 | |
+| portname | 4219 | |
+| uptr->filename | 4234 | |
+| uptr->tmxr | 4235 | |
+| mp->last_poll_time | 4236 | |
+| SCPE_OK | 4239 | |
+| sooner | 4286 | |
+| sooner | 4291 | |
+| sooner | 4315 | |
+| sooner | 4357 | |
+| port_speed_control | 4384 | |
+| modem_control | 4385 | |
+| SCPE_OK | 4643 | |
+| SCPE_NOFNC | 4650 | |
+| SCPE_NOFNC | 4655 | |
+| arglist | 4685 | |
+| stackbuf | 4694 | |
+| buf | 4696 | |
+| buf | 4699 | |
+| hr | 4745 | |
+| ctime | 4746 | |
+| enab | 4818 | |
+| dsab | 4819 | |
+| lp | 4890 | |
+| status | 4891 | |
+| SCPE_OK | 4914 | |
+| lp | 4923 | |
+| nbytes | 4925 | |
+| SCPE_OK | 4975 | |
+| lp | 4984 | |
+| SCPE_OK | 4999 | |
+| lp | 5008 | |
+| SCPE_OK | 5016 | |
+| tbuf | 5069 | |
+| tptr | 5070 | |
+| low | 5071 | |
+| list | 5072 | |
+| set | 5073 | |
+| line | 5074 | |
+| result | 5076 | |
+| cptr | 5118 | |
+| iptr | 5195 | |
+| first | 5196 | |
+| SCPE_OK | 5238 | |
+| SCPE_OK | 5257 | |
+| SCPE_OK | 5283 | |
+| SCPE_OK | 5324 | |
+| tmxr_debug_buf | 5389 | |
+| tmxr_debug_buf_used | 5390 | |
+| tmxr_debug_buf_size | 5391 | |
+| tmxr_debug_buf | 5399 | |
+| tmxr_debug_buf | 5400 | |
+| optsize | 5444 | |
+| optsize | 5461 | |
+| msg | 5594 | |
+| SCPE_OK | 5607 | |
+| saved_lnorder | 5613 | |
+| saved_lines | 5614 | |
+| tmxr->lnorder | 5623 | |
+| tmxr->lines | 5624 | |
+| SCPE_OK | 5625 | |
+| cmd | 5631 | |
+| line | 5632 | |
+| tmxr | 5633 | |
+| ln | 5634 | |
+| tmp1 | 5635 | |
+| stat | 5636 | |
+| sock_mux | 5637 | |
+| sock_line | 5638 | |
+| SIM_TEST_INIT | 5639 | |
+| dptr->dctrl | 5657 | |
+| ln | 5662 | |
+| ln | 5667 | |
+| stat | 5690 | |
+| framer_rpkt | 5696 | |
+| attempt | 5699 | |
+| packet->msg | 5730 | |
+| packet->msg | 5732 | |
+| packet->msg | 5733 | |
+| packet->msg | 5735 | |
+| packet->msg | 5736 | |
+| packet->len | 5741 | |
+| packet->crc_len | 5742 | |
+| ret | 5747 | |
+| cnt | 5748 | |
+| framer_start | 5749 | |
+| framer_start.msg | 5756 | |
+| framer_start.msg | 5764 | |
+| framer_start.msg | 5765 | |
+| framer_start.msg | 5767 | |
+| framer_start.msg | 5770 | |
+| cnt | 5772 | |
+| ret | 5779 | |
+| cnt | 5780 | |
+| framer_stop | 5781 | |
+| framer_stop.msg | 5788 | |
+| cnt | 5791 | |
+| line->framer->status.on | 5794 | |
+| stat | 5800 | |
+| framer_rpkt | 5801 | |
+| ret | 5837 | |
+| framer_tx | 5838 | |
+| length | 5845 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NOT_MUX_USING_CODE | /* sim_tmxr library define */ | 333 |
+| MIN(a,b) | (((a) < (b)) ? (a) : (b)) | 344 |
+| TN_IAC | 0xFFu /* -1 */                  ... | 349 |
+| TN_DONT | 0xFEu /* -2 */                  ... | 350 |
+| TN_DO | 0xFDu /* -3 */                  ... | 351 |
+| TN_WONT | 0xFCu /* -4 */                  ... | 352 |
+| TN_WILL | 0xFBu /* -5 */                  ... | 353 |
+| TN_SB | 0xFAu /* -6 */                  ... | 354 |
+| TN_GA | 0xF9u /* -7 */                  ... | 355 |
+| TN_EL | 0xF8u /* -8 */                  ... | 356 |
+| TN_EC | 0xF7u /* -9 */                  ... | 357 |
+| TN_AYT | 0xF6u /* -10 */                 ... | 358 |
+| TN_AO | 0xF5u /* -11 */                 ... | 359 |
+| TN_IP | 0xF4u /* -12 */                 ... | 360 |
+| TN_BRK | 0xF3u /* -13 */                 ... | 361 |
+| TN_DATAMK | 0xF2u /* -14 */                 ... | 362 |
+| TN_NOP | 0xF1u /* -15 */                 ... | 363 |
+| TN_SE | 0xF0u /* -16 */                 ... | 364 |
+| TN_BIN | 0                             /*... | 368 |
+| TN_ECHO | 1                             /*... | 369 |
+| TN_SGA | 3                             /*... | 370 |
+| TN_STATUS | 5                             /*... | 371 |
+| TN_TIMING | 6                             /*... | 372 |
+| TN_NAOCRD | 10                             /... | 373 |
+| TN_NAOHTS | 11                             /... | 374 |
+| TN_NAOHTD | 12                             /... | 375 |
+| TN_NAOFFD | 13                             /... | 376 |
+| TN_NAOVTS | 14                             /... | 377 |
+| TN_NAOVTD | 15                             /... | 378 |
+| TN_NAOLFD | 16                             /... | 379 |
+| TN_EXTEND | 17                             /... | 380 |
+| TN_LOGOUT | 18                             /... | 381 |
+| TN_BM | 19                             /... | 382 |
+| TN_DET | 20                             /... | 383 |
+| TN_SENDLO | 23                             /... | 384 |
+| TN_TERMTY | 24                             /... | 385 |
+| TN_ENDREC | 25                             /... | 386 |
+| TN_TUID | 26                             /... | 387 |
+| TN_OUTMRK | 27                             /... | 388 |
+| TN_TTYLOC | 28                             /... | 389 |
+| TN_3270 | 29                             /... | 390 |
+| TN_X3PAD | 30                             /... | 391 |
+| TN_NAWS | 31                             /... | 392 |
+| TN_TERMSP | 32                             /... | 393 |
+| TN_TOGFLO | 33                             /... | 394 |
+| TN_LINE | 34                             /... | 395 |
+| TN_XDISPL | 35                             /... | 396 |
+| TN_ENVIRO | 36                             /... | 397 |
+| TN_AUTH | 37                             /... | 398 |
+| TN_ENCRYP | 38                             /... | 399 |
+| TN_NEWENV | 39                             /... | 400 |
+| TN_TN3270 | 40                             /... | 401 |
+| TN_CHARST | 42                             /... | 402 |
+| TN_COMPRT | 44                             /... | 403 |
+| TN_KERMIT | 47                             /... | 404 |
+| TN_CR | 015                             ... | 406 |
+| TN_LF | 012                             ... | 407 |
+| TN_NUL | 000                             ... | 408 |
+| TNS_NORM | 000                             ... | 412 |
+| TNS_IAC | 001                             ... | 413 |
+| TNS_WILL | 002                             ... | 414 |
+| TNS_WONT | 003                             ... | 415 |
+| TNS_SKIP | 004                             ... | 416 |
+| TNS_CRPAD | 005                             ... | 417 |
+| TNS_DO | 006                             ... | 418 |
+| TNOS_DONT | 001                             ... | 422 |
+| TNOS_WONT | 002                             ... | 423 |
+| ON_ACT | 1 | 445 |
+| ON_SYN | 2 | 446 |
+| ON_CLKOK | 4 | 447 |
+| TMXR_GUARD | ((int32)(lp->serport ? 1 : sizeo... | 480 |
+| TMXR_LINE_DISABLED | (-1) | 482 |
+| TXBUF_AVAIL(lp) | ((lp->serport ? 2: lp->txbsz) - ... | 2493 |
+| TXBUF_CHAR(lp, | c) {                                | 2494 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tmxr_init_line | 502-511 |  |
+| if | 512-519 |  |
+| if | 520-524 |  |
+| if | 525-529 |  |
+| if | 530-551 |  |
+| tmxr_report_connection | 552-559 |  |
+| if | 560-573 |  |
+| if | 574-587 |  |
+| if | 588-597 |  |
+| if | 598-618 |  |
+| tmxr_report_disconnection | 619-625 |  |
+| loop_write_ex | 626-630 |  |
+| if | 631-635 |  |
+| while | 636-659 |  |
+| loop_write | 660-664 |  |
+| loop_read_ex | 665-668 |  |
+| while | 669-692 |  |
+| loop_read | 693-694 |  |
+| if | 695-719 |  |
+| tmxr_read | 720-743 |  |
+| tmxr_write | 744-754 |  |
+| if | 755-786 |  |
+| if | 787-802 |  |
+| tmxr_rmvrc | 803-804 |  |
+| for | 805-829 |  |
+| tmxr_find_ldsc | 830-833 |  |
+| if | 834-861 |  |
+| tmxr_get_ldsc | 862-870 |  |
+| if | 871-903 |  |
+| growstring | 904-909 |  |
+| tmxr_mux_attach_string | 910-921 |  |
+| if | 922-946 |  |
+| for | 947-959 |  |
+| if | 960-984 |  |
+| tmxr_line_attach_string | 985-993 |  |
+| if | 994-1043 |  |
+| if | 1044-1055 |  |
+| tmxr_connection_poll_interval | 1056-1078 |  |
+| tmxr_poll_conn | 1079-1090 |  |
+| if | 1091-1129 |  |
+| if | 1130-1254 |  |
+| for | 1255-1426 | Look for per line listeners or outbound connecting sockets |
+| tmxr_reset_ln_ex | 1427-1440 |  |
+| if | 1441-1471 |  |
+| if | 1472-1487 |  |
+| tmxr_close_ln | 1488-1494 |  |
+| tmxr_reset_ln | 1495-1517 |  |
+| tmxr_clear_modem_control_passthru_state | 1518-1525 |  |
+| for | 1526-1541 |  |
+| tmxr_set_modem_control_passthru | 1542-1567 |  |
+| tmxr_clear_modem_control_passthru | 1568-1580 |  |
+| tmxr_set_notelnet_state | 1581-1586 |  |
+| for | 1587-1611 |  |
+| tmxr_set_notelnet | 1612-1625 |  |
+| tmxr_clear_notelnet | 1626-1639 |  |
+| tmxr_set_nomessage_state | 1640-1645 |  |
+| for | 1646-1671 |  |
+| tmxr_set_nomessage | 1672-1686 |  |
+| tmxr_clear_nomessage | 1687-1699 |  |
+| tmxr_set_port_speed_control | 1700-1718 |  |
+| tmxr_clear_port_speed_control | 1719-1735 |  |
+| tmxr_set_backlog | 1736-1749 |  |
+| tmxr_set_line_port_speed_control | 1750-1766 |  |
+| tmxr_clear_line_port_speed_control | 1767-1800 |  |
+| tmxr_set_get_modem_bits | 1801-1811 |  |
+| if | 1812-1845 |  |
+| if | 1846-1907 |  |
+| if | 1908-1913 |  |
+| if | 1914-1950 |  |
+| if | 1951-1979 |  |
+| tmxr_set_line_loopback | 1980-1986 |  |
+| if | 1987-2002 |  |
+| tmxr_get_line_loopback | 2003-2021 |  |
+| tmxr_set_line_halfduplex | 2022-2032 |  |
+| tmxr_get_line_halfduplex | 2033-2037 |  |
+| tmxr_set_config_line | 2038-2044 |  |
+| if | 2045-2081 |  |
+| tmxr_getc_ln | 2082-2107 |  |
+| if | 2108-2141 |  |
+| tmxr_get_packet_ln | 2142-2146 |  |
+| tmxr_get_packet_ln_ex | 2147-2152 |  |
+| while | 2153-2196 |  |
+| tmxr_poll_rx | 2197-2202 |  |
+| for | 2203-2430 |  |
+| for | 2431-2438 |  |
+| tmxr_rqln_bare | 2439-2440 |  |
+| if | 2441-2460 |  |
+| tmxr_rqln | 2461-2465 |  |
+| tmxr_input_pending_ln | 2466-2484 |  |
+| tmxr_putc_ln | 2485-2550 |  |
+| tmxr_put_packet_ln | 2551-2555 |  |
+| tmxr_put_packet_ln_ex | 2556-2563 |  |
+| if | 2564-2567 |  |
+| if | 2568-2572 |  |
+| if | 2573-2596 |  |
+| tmxr_poll_tx | 2597-2603 |  |
+| for | 2604-2626 |  |
+| tmxr_send_buffered_data | 2627-2633 |  |
+| if | 2634-2678 |  |
+| tmxr_tqln | 2679-2685 |  |
+| tmxr_tpqln | 2686-2692 |  |
+| tmxr_tpbusyln | 2693-2700 |  |
+| tmxr_txdone_ln | 2701-2713 |  |
+| _mux_detach_line | 2714-2715 |  |
+| if | 2716-2726 |  |
+| if | 2727-2732 |  |
+| if | 2733-2736 |  |
+| if | 2737-2745 |  |
+| if | 2746-2758 |  |
+| tmxr_detach_ln | 2759-2764 |  |
+| if | 2765-2770 |  |
+| if | 2771-2780 |  |
+| _tmln_speed_delta | 2781-2819 |  |
+| if | 2820-2827 |  |
+| while | 2828-2837 |  |
+| tmxr_set_line_modem_control | 2838-2843 |  |
+| tmxr_set_line_speed | 2844-2855 |  |
+| if | 2856-2889 |  |
+| _tmxr_getname | 2890-2917 |  |
+| tmxr_open_master | 2918-2941 |  |
+| for | 2942-2957 |  |
+| while | 2958-3694 |  |
+| tmxr_set_line_unit | 3695-3729 |  |
+| tmxr_set_line_output_unit | 3730-3759 |  |
+| tmxr_set_console_units | 3760-3779 |  |
+| tmxr_add_to_open_list | 3780-3789 |  |
+| if | 3790-3802 |  |
+| _tmxr_remove_from_open_list | 3803-3815 |  |
+| _tmxr_locate_line_send_expect | 3816-3847 |  |
+| tmxr_locate_line_send | 3848-3852 |  |
+| tmxr_locate_line_expect | 3853-3857 |  |
+| tmxr_locate_line | 3858-3862 |  |
+| _tmxr_send_expect_line_name | 3863-3881 |  |
+| tmxr_send_line_name | 3882-3889 |  |
+| tmxr_expect_line_name | 3890-3911 |  |
+| tmxr_add_debug | 3912-3920 |  |
+| tmxr_attach | 3921-3945 |  |
+| if | 3946-3966 |  |
+| tmxr_startup | 3967-3971 |  |
+| tmxr_shutdown | 3972-3979 |  |
+| tmxr_show_open_device | 3980-3988 |  |
+| if | 3989-4014 |  |
+| if | 4015-4029 |  |
+| if | 4030-4038 |  |
+| if | 4039-4041 |  |
+| for | 4042-4092 |  |
+| tmxr_show_open_devices | 4093-4121 |  |
+| tmxr_flush_log_files | 4122-4125 |  |
+| for | 4126-4142 |  |
+| tmxr_close_master | 4143-4147 |  |
+| for | 4148-4191 |  |
+| if | 4192-4215 |  |
+| tmxr_detach | 4216-4222 |  |
+| for | 4223-4241 |  |
+| _tmxr_activate_delay | 4242-4247 |  |
+| for | 4248-4288 |  |
+| tmxr_activate | 4289-4297 |  |
+| if | 4298-4305 |  |
+| tmxr_activate_abs | 4306-4312 |  |
+| tmxr_activate_after | 4313-4321 |  |
+| if | 4322-4333 |  |
+| tmxr_activate_after_abs | 4334-4339 |  |
+| tmxr_clock_coschedule | 4340-4347 |  |
+| tmxr_clock_coschedule_abs | 4348-4353 |  |
+| tmxr_clock_coschedule_tmr | 4354-4363 |  |
+| if | 4364-4371 |  |
+| tmxr_clock_coschedule_tmr_abs | 4372-4379 |  |
+| tmxr_attach_help | 4380-4386 |  |
+| if | 4387-4394 |  |
+| if | 4395-4473 |  |
+| if | 4474-4485 |  |
+| if | 4486-4510 |  |
+| if | 4511-4525 |  |
+| if | 4526-4547 |  |
+| if | 4548-4595 |  |
+| if | 4596-4606 |  |
+| if | 4607-4624 |  |
+| if | 4625-4647 |  |
+| tmxr_ex | 4648-4652 |  |
+| tmxr_dep | 4653-4660 |  |
+| tmxr_msg | 4661-4669 |  |
+| tmxr_linemsg | 4670-4671 |  |
+| while | 4672-4682 |  |
+| tmxr_linemsgf | 4683-4691 |  |
+| tmxr_linemsgvf | 4692-4699 |  |
+| while | 4700-4725 |  |
+| for | 4726-4742 |  |
+| tmxr_fconns | 4743-4750 |  |
+| if | 4751-4762 |  |
+| if | 4763-4771 |  |
+| if | 4772-4780 |  |
+| if | 4781-4791 |  |
+| if | 4792-4815 |  |
+| tmxr_fstats | 4816-4886 |  |
+| tmxr_dscln | 4887-4902 |  |
+| if | 4903-4919 |  |
+| tmxr_set_log | 4920-4938 |  |
+| if | 4939-4944 |  |
+| if | 4945-4980 |  |
+| tmxr_set_nolog | 4981-4990 |  |
+| if | 4991-5004 |  |
+| tmxr_show_log | 5005-5065 |  |
+| tmxr_set_lnorder | 5066-5101 |  |
+| if | 5102-5107 |  |
+| if | 5108-5121 |  |
+| while | 5122-5159 |  |
+| if | 5160-5190 |  |
+| tmxr_show_lnorder | 5191-5242 |  |
+| tmxr_show_summ | 5243-5261 |  |
+| tmxr_show_cstat | 5262-5268 |  |
+| for | 5269-5287 |  |
+| tmxr_show_sync_devices | 5288-5292 |  |
+| tmxr_show_sync | 5293-5316 |  |
+| tmxr_show_lines | 5317-5392 |  |
+| tmxr_buf_debug_char | 5393-5394 |  |
+| if | 5395-5402 |  |
+| tmxr_buf_debug_string | 5403-5408 |  |
+| tmxr_buf_debug_telnet_option | 5409-5412 |  |
+| for | 5413-5441 |  |
+| tmxr_buf_debug_telnet_options | 5442-5447 |  |
+| switch | 5448-5463 |  |
+| _tmxr_debug | 5464-5467 |  |
+| if | 5468-5597 |  |
+| if | 5598-5601 |  |
+| if | 5602-5609 |  |
+| sim_tmxr_test_lnorder | 5610-5616 |  |
+| if | 5617-5628 |  |
+| tmxr_sock_test | 5629-5668 |  |
+| if | 5669-5692 |  |
+| framer_await_status | 5693-5699 |  |
+| while | 5700-5721 |  |
+| tmxr_setup_framer | 5722-5744 |  |
+| tmxr_start_framer | 5745-5776 |  |
+| tmxr_stop_framer | 5777-5797 |  |
+| tmxr_framer_read | 5798-5802 |  |
+| while | 5803-5834 |  |
+| tmxr_framer_write | 5835-5847 |  |

@@ -1,0 +1,73 @@
+=== hp2100_di_da.c — 2224 строк ===
+Источник: hp2100_di_da.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_di_da.c -nt .cline/maps/hp2100_di_da.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| da_dev | 537 | |
+| data | 764 | |
+| command_class | 765 | |
+| result | 768 | |
+| release_interface | 769 | |
+| unit | 1037 | |
+| status | 1038 | |
+| status | 1058 | |
+| result | 1115 | |
+| offset | 1116 | |
+| zero | 1117 | |
+| result | 1149 | |
+| result | 1159 | |
+| status | 1300 | |
+| result | 1357 | |
+| result | 1368 | |
+| message_address | 1527 | |
+| accepted | 1528 | |
+| initiated | 1529 | |
+| addressed | 1530 | |
+| stopped_listening | 1531 | |
+| stopped_talking | 1532 | |
+| action | 1533 | |
+| my_address | 1534 | |
+| return | 2025 | |
+| return | 2080 | |
+| return | 2128 | |
+| return | 2158 | |
+| return | 2203 | |
+| result | 2215 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DA_UNITS | 4                       /* numbe... | 362 |
+| UNIT_FLAGS | (UNIT_FIX \| UNIT_ATTABLE \| UNIT_... | 547 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| da_service | 762-770 |  |
+| switch | 771-1001 |  |
+| if | 1002-1034 |  |
+| da_reset | 1035-1112 |  |
+| da_attach | 1113-1121 |  |
+| if | 1122-1146 |  |
+| da_detach | 1147-1153 |  |
+| if | 1154-1295 |  |
+| da_boot | 1296-1352 |  |
+| da_load_unload | 1353-1360 |  |
+| if | 1361-1524 |  |
+| da_bus_accept | 1525-1535 |  |
+| if | 1536-1802 |  |
+| data | 1803-1910 |  |
+| da_bus_respond | 1911-1912 |  |
+| if | 1913-1980 |  |
+| start_command | 1981-1982 |  |
+| if | 1983-2018 |  |
+| abort_command | 2019-2064 |  |
+| complete_read | 2065-2115 |  |
+| complete_write | 2116-2150 |  |
+| complete_abort | 2151-2152 |  |
+| if | 2153-2172 |  |
+| get_buffer_byte | 2173-2194 |  |
+| put_buffer_byte | 2195-2212 |  |
+| activate_unit | 2213-2224 |  |

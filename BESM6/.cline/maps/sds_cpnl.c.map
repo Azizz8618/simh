@@ -1,0 +1,75 @@
+=== sds_cpnl.c — 846 строк ===
+Источник: sds_cpnl.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sds_cpnl.c -nt .cline/maps/sds_cpnl.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| image_file | 100-105 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sdsname_dev | 107 | |
+| cpnl_imgW | 122 | |
+| cpnl_sclW | 123 | |
+| cpnl_mousedown | 124 | |
+| cpnl_mouseup | 125 | |
+| cpnl_power | 127 | |
+| cpnl_run | 128 | |
+| cpnl_abx | 129 | |
+| cpnl_hold | 130 | |
+| cpnl_regselect | 131 | |
+| cpnl_regchg | 132 | |
+| cpnl_chanselect | 133 | |
+| cpnl_starting | 134 | |
+| cpnl_halt | 135 | |
+| cpnl_bootunit | 136 | |
+| cpnl_previous | 137 | |
+| cpnl_registers | 138 | |
+| cpnl_regnm | 139 | |
+| sim_config | 140 | |
+| sim_path | 141 | |
+| panel | 142 | |
+| debug | 143 | |
+| throttle | 144 | |
+| simulation_time | 145 | |
+| cpnl_quit | 146 | |
+| cpnl_window | 147 | |
+| cpnl_work_surface | 148 | |
+| cpnl_surfaces | 149 | |
+| sim_end | 150 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BKGNDFILE | BOOT_CODE_ARRAY_1 | 71 |
+| BKGNDFILE_SIZE | BOOT_CODE_SIZE_1 | 72 |
+| BKGNDFILE_NAME | BOOT_CODE_FILENAME_1 | 73 |
+| ACTIVEFILE0 | BOOT_CODE_ARRAY_2 | 74 |
+| ACTIVEFILE0_SIZE | BOOT_CODE_SIZE_2 | 75 |
+| ACTIVEFILE0_NAME | BOOT_CODE_FILENAME_2 | 76 |
+| ACTIVEFILE1 | BOOT_CODE_ARRAY_3 | 77 |
+| ACTIVEFILE1_SIZE | BOOT_CODE_SIZE_3 | 78 |
+| ACTIVEFILE1_NAME | BOOT_CODE_FILENAME_3 | 79 |
+| ACTIVEFILE2 | BOOT_CODE_ARRAY_4 | 80 |
+| ACTIVEFILE2_SIZE | BOOT_CODE_SIZE_4 | 81 |
+| ACTIVEFILE2_NAME | BOOT_CODE_FILENAME_4 | 82 |
+| MOMENTARY | 3 | 83 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| displaycallback | 152-157 |  |
+| distance | 158-161 |  |
+| cpnl_decodepress | 162-330 |  |
+| cpnl_paint | 331-375 |  |
+| cpnl_drawToggle | 376-383 |  |
+| cpnl_drawlamp | 384-389 |  |
+| cpnl_drawlampavg | 390-394 |  |
+| cpnl_drawctl | 395-427 |  |
+| main | 428-690 |  |
+| surface_rgb_color | 691-707 | compose a surface uint32_t from rr,gg,bb values |
+| read_png_image | 708-721 |  |
+| read_png_file | 722-842 |  |
+| main | 843-846 |  |

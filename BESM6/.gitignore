@@ -1,0 +1,39 @@
+dtran
+
+# Binary disk/tape/drum images (emulator runtime data — stay on disk, not in git)
+MD/
+ML/
+MB/
+
+# Boot images (change during emulation)
+*.bin
+
+# Object files and build artifacts
+*.o
+*.rez
+*.so
+*.dylib
+
+# Editor/temp files
+*~
+*.swp
+*.swo
+*.save
+*.bak
+
+# Emulator logs (runtime, grow unbounded)
+debug.txt
+log.txt
+logs/
+OSZAGR/debug.txt
+OSZAGR/log.txt
+OSZAGR/logs/
+OSZAGR/1[0-9]
+
+# Test output (changes every run)
+ACPU/output*.txt
+ACPU/.output*.txt.swp
+VVOD/.vvod_dubna.txt.swp
+
+# OSZAGR dump files
+OSZAGR/20

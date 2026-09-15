@@ -1,0 +1,60 @@
+=== hp3000_iop.c — 944 строк ===
+Источник: hp3000_iop.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_iop.c -nt .cline/maps/hp3000_iop.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dptr | 384 | |
+| dibptr | 385 | |
+| IOA | 421 | |
+| dibptr | 522 | |
+| outbound | 523 | |
+| ipn | 524 | |
+| irq | 633 | |
+| no_response | 634 | |
+| dibptr | 635 | |
+| outbound | 636 | |
+| irq | 712 | |
+| return | 725 | |
+| devno | 740 | |
+| dibptr | 741 | |
+| outbound | 742 | |
+| return | 756 | |
+| SCPE_OK | 795 | |
+| tptr | 831 | |
+| mptr | 832 | |
+| dev | 833 | |
+| result | 834 | |
+| new_filter | 835 | |
+| group | 893 | |
+| test_filter | 894 | |
+| first | 895 | |
+| SCPE_OK | 943 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TRACE_ALL | D32_UMAX            /* enable tr... | 185 |
+| DEB_DIO | (1u << 0)           /* trace dir... | 196 |
+| DEB_IRQ | (1u << 1)           /* trace int... | 197 |
+| FILTER(d) | (1u << (d) % 32 & filter [(d) / ... | 199 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| iop_initialize | 382-393 |  |
+| for | 394-519 |  |
+| iop_poll | 520-608 |  |
+| iop_direct_io | 609-637 |  |
+| if | 638-709 |  |
+| iop_assert_INTREQ | 710-717 |  |
+| if | 718-737 |  |
+| iop_assert_PFWARN | 738-743 |  |
+| for | 744-789 |  |
+| iop_reset | 790-828 |  |
+| iop_set_filter | 829-836 |  |
+| if | 837-867 |  |
+| if | 868-890 |  |
+| iop_show_filter | 891-898 |  |
+| for | 899-944 |  |

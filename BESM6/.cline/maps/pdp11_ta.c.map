@@ -1,0 +1,118 @@
+=== pdp11_ta.c — 701 строк ===
+Источник: pdp11_ta.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_ta.c -nt .cline/maps/pdp11_ta.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| SCPE_OK | 230 | |
+| SCPE_OK | 257 | |
+| flg | 266 | |
+| old_ust | 267 | |
+| ta_blnt | 274 | |
+| uptr->UST | 313 | |
+| return | 315 | |
+| flg | 323 | |
+| tbc | 324 | |
+| st | 325 | |
+| ta_cs | 476 | |
+| return | 488 | |
+| uptr | 496 | |
+| NULL | 503 | |
+| crc | 510 | |
+| crc | 512 | |
+| crc | 521 | |
+| SCPE_OK | 565 | |
+| uptr | 573 | |
+| ta_idb | 576 | |
+| ta_odb | 577 | |
+| ta_write | 578 | |
+| ta_bptr | 579 | |
+| ta_blnt | 580 | |
+| uptr->UST | 604 | |
+| uptr->UST | 618 | |
+| SCPE_OK | 668 | |
+| SCPE_OK | 695 | |
+| Tape" | 700 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TA_NUMDR | 2                               ... | 60 |
+| FNC | u3                              ... | 61 |
+| UST | u4                              ... | 62 |
+| TA_SIZE | 93000                           ... | 63 |
+| TA_MAXFR | (TA_SIZE)                       ... | 64 |
+| TACS_ERR | (1 << CSR_V_ERR)                ... | 68 |
+| TACS_CRC | 0040000                         ... | 69 |
+| TACS_BEOT | 0020000                         ... | 70 |
+| TACS_WLK | 0010000                         ... | 71 |
+| TACS_EOF | 0004000                         ... | 72 |
+| TACS_TIM | 0002000                         ... | 73 |
+| TACS_EMP | 0001000                         ... | 74 |
+| TACS_V_UNIT | 8                               ... | 75 |
+| TACS_M_UNIT | (TA_NUMDR - 1) | 76 |
+| TACS_UNIT | (TACS_M_UNIT << TACS_V_UNIT) | 77 |
+| TACS_TR | (1 << CSR_V_DONE)               ... | 78 |
+| TACS_IE | (1 << CSR_V_IE)                 ... | 79 |
+| TACS_RDY | 0000040                         ... | 80 |
+| TACS_ILBS | 0000020                         ... | 81 |
+| TACS_V_FNC | 1                               ... | 82 |
+| TACS_M_FNC | 07 | 83 |
+| TACS_WFG | 00 | 84 |
+| TACS_WRITE | 01 | 85 |
+| TACS_READ | 02 | 86 |
+| TACS_SRF | 03 | 87 |
+| TACS_SRB | 04 | 88 |
+| TACS_SFF | 05 | 89 |
+| TACS_SFB | 06 | 90 |
+| TACS_REW | 07 | 91 |
+| TACS_2ND | 010 | 92 |
+| TACS_3RD | 030 | 93 |
+| TACS_FNC | (TACS_M_FNC << TACS_V_FNC) | 94 |
+| TACS_GO | (1 << CSR_V_GO)                 ... | 95 |
+| TACS_W | (TACS_UNIT\|TACS_IE\|TACS_ILBS\|TAC... | 96 |
+| TACS_XFRERR | (TACS_ERR\|TACS_CRC\|TACS_WLK\|TACS... | 97 |
+| GET_UNIT(x) | (((x) >> TACS_V_UNIT) & TACS_M_U... | 98 |
+| GET_FNC(x) | (((x) >> TACS_V_FNC) & TACS_M_FNC) | 99 |
+| OP_WRI | 01                              ... | 103 |
+| OP_REV | 02                              ... | 104 |
+| OP_FWD | 04                              ... | 105 |
+| UST_REV | (OP_REV)                        ... | 109 |
+| UST_GAP | 01                              ... | 110 |
+| IOLN_TA | 004 | 150 |
+| BOOT_START | 01000                           ... | 624 |
+| BOOT_ENTRY | (BOOT_START) | 625 |
+| BOOT_CSR | (BOOT_START + 002)              ... | 626 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (uin... | 627 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ta_rd | 215-216 |  |
+| switch | 217-232 |  |
+| ta_wr | 233-234 |  |
+| switch | 235-261 |  |
+| ta_go | 262-274 |  |
+| if | 275-278 |  |
+| if | 279-292 |  |
+| if | 293-319 |  |
+| ta_svc | 320-326 |  |
+| if | 327-339 |  |
+| switch | 340-460 |  |
+| ta_updsta | 461-462 |  |
+| if | 463-480 |  |
+| ta_set_tr | 481-492 |  |
+| ta_busy | 493-497 |  |
+| for | 498-507 |  |
+| ta_crc | 508-512 |  |
+| for | 513-525 |  |
+| ta_map_err | 526-527 |  |
+| switch | 528-569 |  |
+| ta_reset | 570-581 |  |
+| for | 582-595 |  |
+| ta_attach | 596-609 |  |
+| ta_detach | 610-659 |  |
+| ta_boot | 660-670 |  |
+| ta_help | 671-697 |  |
+| ta_description | 698-701 |  |

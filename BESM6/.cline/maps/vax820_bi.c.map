@@ -1,0 +1,112 @@
+=== vax820_bi.c — 824 строк ===
+Источник: vax820_bi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax820_bi.c -nt .cline/maps/vax820_bi.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| wcs_addr | 58 | |
+| wcs_data | 59 | |
+| ipr_int | 61 | |
+| rxcd_int | 62 | |
+| ipir | 63 | |
+| accs | 64 | |
+| sys_model | 65 | |
+| mchk_flag | 66 | |
+| tmr_int | 83 | |
+| cur_cpu | 84 | |
+| vec | 219 | |
+| val | 283 | |
+| val | 396 | |
+| return | 477 | |
+| nexus | 505 | |
+| nexus | 538 | |
+| return | 555 | |
+| acc | 569 | |
+| mchk_flag | 573 | |
+| in_ie | 578 | |
+| in_ie | 589 | |
+| cc | 590 | |
+| cc | 603 | |
+| gbuf | 626 | |
+| slptr | 627 | |
+| regptr | 628 | |
+| dptr | 630 | |
+| uptr | 631 | |
+| dibp | 632 | |
+| r5v | 651 | |
+| SP | 688 | |
+| SCPE_OK | 689 | |
+| wcs_addr | 697 | |
+| wcs_data | 698 | |
+| ipr_int | 699 | |
+| rxcd_int | 700 | |
+| ipir | 701 | |
+| sim_vm_cmd | 702 | |
+| SCPE_OK | 703 | |
+| SCPE_OK | 711 | |
+| return | 724 | |
+| idx | 738 | |
+| idx | 742 | |
+| SCPE_OK | 756 | |
+| dptr | 764 | |
+| dibp | 765 | |
+| SCPE_OK | 783 | |
+| SCPE_OK | 800 | |
+| SCPE_OK | 806 | |
+| SCPE_OK | 823 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| WCSA_RW | 0x3FFFFF                        ... | 40 |
+| WCSD_RD_VAL | 0xFF                            ... | 41 |
+| WCSD_WR | 0xFFFFFFFF                      ... | 42 |
+| MBRK_RW | 0x1FFF                          ... | 43 |
+| ACCS_ON | 0x1                             ... | 47 |
+| ACCS_RW | (ACCS_ON) | 48 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eval_int | 167-186 |  |
+| for | 187-206 |  |
+| for | 207-215 |  |
+| get_vector | 216-221 |  |
+| if | 222-225 |  |
+| if | 226-229 |  |
+| if | 230-232 |  |
+| if | 233-247 |  |
+| if | 248-253 |  |
+| if | 254-259 |  |
+| if | 260-265 |  |
+| if | 266-280 |  |
+| ReadIPR | 281-284 |  |
+| switch | 285-400 |  |
+| WriteIPR | 401-402 |  |
+| switch | 403-502 |  |
+| ReadReg | 503-507 |  |
+| if | 508-517 |  |
+| for | 518-535 |  |
+| WriteReg | 536-540 |  |
+| if | 541-548 |  |
+| for | 549-566 |  |
+| machine_check | 567-594 |  |
+| con_halt | 595-612 |  |
+| vax820_boot | 613-623 |  |
+| vax820_boot_parse | 624-639 |  |
+| if | 640-664 |  |
+| for | 665-680 |  |
+| cpu_boot | 681-693 |  |
+| bi_reset | 694-707 |  |
+| show_nexus | 708-715 |  |
+| init_nexus_tab | 716-719 |  |
+| for | 720-735 |  |
+| build_nexus_tab | 736-760 |  |
+| build_dib_tab | 761-769 |  |
+| for | 770-785 |  |
+| cpu_set_model | 786-789 |  |
+| if | 790-793 |  |
+| if | 794-802 |  |
+| cpu_print_model | 803-808 |  |
+| cpu_model_help | 809-824 |  |

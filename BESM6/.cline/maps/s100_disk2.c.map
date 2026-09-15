@@ -1,0 +1,42 @@
+=== s100_disk2.c — 653 строк ===
+Источник: s100_disk2.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_disk2.c -nt .cline/maps/s100_disk2.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sdata | 63 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ERROR_MSG | (1 << 0) | 44 |
+| SEEK_MSG | (1 << 1) | 45 |
+| CMD_MSG | (1 << 2) | 46 |
+| RD_DATA_MSG | (1 << 3) | 47 |
+| WR_DATA_MSG | (1 << 4) | 48 |
+| STATUS_MSG | (1 << 5) | 49 |
+| IRQ_MSG | (1 << 6) | 50 |
+| VERBOSE_MSG | (1 << 7) | 51 |
+| DISK2_MAX_DRIVES | 4 | 53 |
+| C20MB_NTRACKS | 243 | 101 |
+| C20MB_NHEADS | 8 | 102 |
+| C20MB_NSECTORS | 11 | 103 |
+| C20MB_SECTSIZE | 1024 | 104 |
+| UNIT_V_DISK2_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 120 |
+| UNIT_DISK2_VERBOSE | (1 << UNIT_V_DISK2_VERBOSE) | 121 |
+| DISK2_CAPACITY | (C20MB_NTRACKS*C20MB_NHEADS*C20M... | 122 |
+| DISK2_NAME | "Compupro Hard Disk Controller" | 164 |
+| DISK2_CSR | 0   /* R=DISK2 Status / W=DISK2 ... | 327 |
+| DISK2_DATA | 1   /* R=Step Pulse / W=Write Da... | 328 |
+| DISK2_OP_DRIVE | 0x00 | 374 |
+| DISK2_OP_CYL | 0x01 | 375 |
+| DISK2_OP_HEAD | 0x02 | 376 |
+| DISK2_OP_SECTOR | 0x03 | 377 |
+| DISK2_CMD_NULL | 0x00 | 379 |
+| DISK2_CMD_READ_DATA | 0x01 | 380 |
+| DISK2_CMD_WRITE_DATA | 0x02 | 381 |
+| DISK2_CMD_WRITE_HEADER | 0x03 | 382 |
+| DISK2_CMD_READ_HEADER | 0x04 | 383 |
+| SS1_VI1_INT | 1   /* DISK2/DISK3 interrupts ti... | 644 |
+

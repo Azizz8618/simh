@@ -1,0 +1,50 @@
+=== s100_hdc1001.c — 753 строк ===
+Источник: s100_hdc1001.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_hdc1001.c -nt .cline/maps/s100_hdc1001.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ERROR_MSG | (1 << 0) | 45 |
+| SEEK_MSG | (1 << 1) | 46 |
+| CMD_MSG | (1 << 2) | 47 |
+| RD_DATA_MSG | (1 << 3) | 48 |
+| WR_DATA_MSG | (1 << 4) | 49 |
+| VERBOSE_MSG | (1 << 5) | 50 |
+| HDC1001_MAX_DRIVES | 4       /* Maximum number of dri... | 52 |
+| HDC1001_MAX_SECLEN | 512     /* Maximum of 512 bytes ... | 53 |
+| HDC1001_FORMAT_FILL_BYTE | 0xe5    /* Real controller uses ... | 54 |
+| HDC1001_MAX_CYLS | 1024 | 57 |
+| HDC1001_MAX_HEADS | 8 | 58 |
+| HDC1001_MAX_SPT | 256 | 59 |
+| DEV_NAME | "ADCHD" | 61 |
+| TF_DATA | 0 | 64 |
+| TF_ERROR | 1   /* Read */ | 65 |
+| TF_PRECOMP | 1   /* Write */ | 66 |
+| TF_SECNT | 2 | 67 |
+| TF_SECNO | 3 | 68 |
+| TF_CYLLO | 4 | 69 |
+| TF_CYLHI | 5 | 70 |
+| TF_SDH | 6 | 71 |
+| TF_STATUS | 7   /* Read */ | 72 |
+| TF_CMD | 7   /* Write */ | 73 |
+| HDC1001_STATUS_BUSY | (1 << 7) | 75 |
+| HDC1001_STATUS_READY | (1 << 6) | 76 |
+| HDC1001_STATUS_WRITE_FAULT | (1 << 5) | 77 |
+| HDC1001_STATUS_SEEK_COMPL | (1 << 4) | 78 |
+| HDC1001_STATUS_DRQ | (1 << 3) | 79 |
+| HDC1001_STATUS_ERROR | (1 << 0) | 80 |
+| HDC1001_ERROR_ID_NOT_FOUND | (1 << 4) | 82 |
+| HDC1001_CMD_RESTORE | 0x10 | 84 |
+| HDC1001_CMD_READ_SECT | 0x20 | 85 |
+| HDC1001_CMD_WRITE_SECT | 0x30 | 86 |
+| HDC1001_CMD_FORMAT_TRK | 0x50 | 87 |
+| HDC1001_CMD_SEEK | 0x70 | 88 |
+| HDC1001_RWOPT_DMA | (1 << 3) | 90 |
+| HDC1001_RWOPT_MULTI | (1 << 2) | 91 |
+| HDC1001_RWOPT_LONG | (1 << 3) | 92 |
+| UNIT_V_HDC1001_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 154 |
+| UNIT_HDC1001_VERBOSE | (1 << UNIT_V_HDC1001_VERBOSE) | 155 |
+| HDC1001_CAPACITY | (512*4*16*512)   /* Default Disk... | 156 |
+| HDC1001_NAME | "ADC HDC-1001 Hard Disk Controller" | 191 |
+

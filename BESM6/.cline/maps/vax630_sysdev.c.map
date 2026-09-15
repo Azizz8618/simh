@@ -1,0 +1,174 @@
+=== vax630_sysdev.c — 1112 строк ===
+Источник: vax630_sysdev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax630_sysdev.c -nt .cline/maps/vax630_sysdev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| boot_code_filename | 44 | |
+| clk_unit | 116 | |
+| tmr_poll | 117 | |
+| va_dev | 118 | |
+| ka_diag_full | 127 | |
+| val | 287 | |
+| return | 301 | |
+| SCPE_OK | 315 | |
+| SCPE_OK | 329 | |
+| SCPE_OK | 340 | |
+| SCPE_OK | 370 | |
+| memory" | 375 | |
+| result | 383 | |
+| result | 398 | |
+| SCPE_OK | 441 | |
+| SCPE_OK | 456 | |
+| SCPE_OK | 469 | |
+| SCPE_OK | 480 | |
+| saved_sim_quiet | 500 | |
+| sim_quiet | 503 | |
+| sim_quiet | 505 | |
+| memory" | 533 | |
+| val | 540 | |
+| val | 612 | |
+| return | 677 | |
+| val | 735 | |
+| return | 836 | |
+| BDR_BRKENB | 841 | |
+| st | 848 | |
+| st | 857 | |
+| in_ie | 864 | |
+| in_ie | 870 | |
+| cc | 871 | |
+| temp | 878 | |
+| gbuf | 905 | |
+| PC | 922 | |
+| PSL | 923 | |
+| conisp | 924 | |
+| conpc | 925 | |
+| conpsl | 926 | |
+| SCPE_OK | 934 | |
+| SCPE_OK | 940 | |
+| SCPE_OK | 946 | |
+| ka_hltenab | 951 | |
+| SCPE_OK | 952 | |
+| SCPE_OK | 958 | |
+| SCPE_OK | 967 | |
+| ka_mser | 981 | |
+| ka_cear | 982 | |
+| ka_dear | 983 | |
+| sim_vm_cmd | 985 | |
+| SCPE_OK | 987 | |
+| devices" | 992 | |
+| ka_diag_full | 999 | |
+| SCPE_OK | 1000 | |
+| gbuf | 1005 | |
+| SCPE_OK | 1049 | |
+| SCPE_OK | 1069 | |
+| SCPE_OK | 1082 | |
+| baseaddr | 1088 | |
+| SCPE_OK | 1111 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_NODELAY | (UNIT_V_UF + 0)                 ... | 46 |
+| UNIT_NODELAY | (1u << UNIT_V_NODELAY) | 47 |
+| BDR_DISP | 0x0000000F                      ... | 62 |
+| BDR_V_BDC | 8                               ... | 63 |
+| BDR_M_BDC | 0x3 | 64 |
+| BDR_BDC | (BDR_M_BDC << BDR_V_BDC) | 65 |
+| BDR_V_CPUC | 11                              ... | 66 |
+| BDR_M_CPUC | 0x3 | 67 |
+| BDR_CPUC | (BDR_M_CPUC << BDR_V_CPUC) | 68 |
+| BDR_BRKENB | 0x00004000                      ... | 69 |
+| BDR_POK | 0x00008000                      ... | 70 |
+| BDR_RD | (BDR_DISP \| BDR_BDC \| BDR_CPUC \|... | 71 |
+| BDR_WR | (BDR_DISP) | 72 |
+| BDC_NORM | 0x0                             ... | 76 |
+| BDC_LNGI | 0x1                             ... | 77 |
+| BDC_TSTL | 0x2                             ... | 78 |
+| BDC_SKPM | 0x3                             ... | 79 |
+| CPUC_ARB | 0x0                             ... | 83 |
+| CPUC_AUX1 | 0x1                             ... | 84 |
+| CPUC_AUX2 | 0x2                             ... | 85 |
+| CPUC_AUX3 | 0x3                             ... | 86 |
+| MSER_PE | 0x00000001                      ... | 90 |
+| MSER_WWP | 0x00000002                      ... | 91 |
+| MSER_LEB | 0x00000008                      ... | 92 |
+| MSER_DQPE | 0x00000010                      ... | 93 |
+| MSER_CQPE | 0x00000020                      ... | 94 |
+| MSER_CLPE | 0x00000040                      ... | 95 |
+| MSER_NXM | 0x00000080                      ... | 96 |
+| MSER_MCD0 | 0x00000100                      ... | 97 |
+| MSER_MCD1 | 0x00000200                      ... | 98 |
+| MSER_MBZ | 0xFFFFFC04 | 99 |
+| MSER_RD | (MSER_PE \| MSER_WWP \| MSER_LEB \|  | 100 |
+| MSER_WR | (MSER_PE \| MSER_WWP) | 103 |
+| MSER_RS | (MSER_LEB \| MSER_DQPE \| MSER_CQP... | 104 |
+| CEAR_LMADD | 0x00007FFF                      ... | 108 |
+| CEAR_RD | (CEAR_LMADD) | 109 |
+| DEAR_LMADD | 0x00007FFF                      ... | 113 |
+| DEAR_RD | (DEAR_LMADD) | 114 |
+| DBG_REG | 0x0001                          ... | 171 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rom_rd | 284-294 |  |
+| rom_wr_B | 295-305 |  |
+| rom_ex | 306-319 |  |
+| rom_dep | 320-333 |  |
+| rom_reset | 334-342 |  |
+| rom_help | 343-372 |  |
+| rom_description | 373-379 |  |
+| nvr_rd | 380-384 |  |
+| if | 385-400 |  |
+| nvr_wr | 401-431 |  |
+| nvr_ex | 432-445 |  |
+| nvr_dep | 446-460 |  |
+| nvr_reset | 461-462 |  |
+| if | 463-471 |  |
+| nvr_help | 472-496 |  |
+| nvr_attach | 497-518 |  |
+| nvr_detach | 519-523 |  |
+| if | 524-530 |  |
+| nvr_description | 531-537 |  |
+| ReadIPR | 538-541 |  |
+| switch | 542-616 |  |
+| WriteIPR | 617-618 |  |
+| switch | 619-710 |  |
+| ReadReg | 711-714 |  |
+| for | 715-731 |  |
+| ReadRegU | 732-736 |  |
+| for | 737-759 |  |
+| WriteReg | 760-763 |  |
+| for | 764-783 |  |
+| WriteRegU | 784-794 |  |
+| ka_rd | 795-798 |  |
+| switch | 799-816 |  |
+| ka_wr | 817-820 |  |
+| switch | 821-838 |  |
+| sysd_hlt_enb | 839-845 |  |
+| machine_check | 846-849 |  |
+| if | 850-858 |  |
+| if | 859-875 |  |
+| con_halt | 876-902 |  |
+| vax630_boot | 903-917 |  |
+| cpu_boot | 918-928 |  |
+| if | 929-936 |  |
+| sysd_set_diag | 937-942 |  |
+| sysd_show_diag | 943-948 |  |
+| sysd_set_halt | 949-954 |  |
+| sysd_show_halt | 955-960 |  |
+| sysd_show_leds | 961-972 |  |
+| sysd_reset | 973-989 |  |
+| sysd_description | 990-996 |  |
+| sysd_powerup | 997-1002 |  |
+| cpu_set_model | 1003-1009 |  |
+| if | 1010-1020 |  |
+| if | 1021-1033 |  |
+| if | 1034-1051 |  |
+| cpu_print_model | 1052-1056 |  |
+| switch | 1057-1071 |  |
+| cpu_model_help | 1072-1084 |  |
+| cpu_show_memory | 1085-1099 |  |
+| while | 1100-1112 |  |

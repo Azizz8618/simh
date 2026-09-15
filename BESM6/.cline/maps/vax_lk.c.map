@@ -1,0 +1,163 @@
+=== vax_lk.c — 867 строк ===
+Источник: vax_lk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_lk.c -nt .cline/maps/vax_lk.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| LK_FIFO | 60-65 |
+| LK_KEYDATA | 69-72 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lk_modes | 56 | |
+| lk_states | 58 | |
+| LK_KEY_UNKNOWN | 74 | |
+| LK_KEY_TR_0 | 75 | |
+| LK_KEY_TR_1 | 76 | |
+| LK_KEY_TR_2 | 77 | |
+| LK_KEY_TR_3 | 78 | |
+| LK_KEY_TR_4 | 79 | |
+| LK_KEY_TR_5 | 80 | |
+| LK_KEY_TR_6 | 81 | |
+| LK_KEY_TR_7 | 82 | |
+| LK_KEY_TR_8 | 83 | |
+| LK_KEY_TR_9 | 84 | |
+| LK_KEY_A | 85 | |
+| LK_KEY_B | 86 | |
+| LK_KEY_C | 87 | |
+| LK_KEY_D | 88 | |
+| LK_KEY_E | 89 | |
+| LK_KEY_F | 90 | |
+| LK_KEY_G | 91 | |
+| LK_KEY_H | 92 | |
+| LK_KEY_I | 93 | |
+| LK_KEY_J | 94 | |
+| LK_KEY_K | 95 | |
+| LK_KEY_L | 96 | |
+| LK_KEY_M | 97 | |
+| LK_KEY_N | 98 | |
+| LK_KEY_O | 99 | |
+| LK_KEY_P | 100 | |
+| LK_KEY_Q | 101 | |
+| LK_KEY_R | 102 | |
+| LK_KEY_S | 103 | |
+| LK_KEY_T | 104 | |
+| LK_KEY_U | 105 | |
+| LK_KEY_V | 106 | |
+| LK_KEY_W | 107 | |
+| LK_KEY_X | 108 | |
+| LK_KEY_Y | 109 | |
+| LK_KEY_Z | 110 | |
+| LK_KEY_SPACE | 111 | |
+| LK_KEY_SEMICOLON | 112 | |
+| LK_KEY_PLUS | 113 | |
+| LK_KEY_COMMA | 114 | |
+| LK_KEY_UBAR | 115 | |
+| LK_KEY_PERIOD | 116 | |
+| LK_KEY_QMARK | 117 | |
+| LK_KEY_QUOTE | 118 | |
+| LK_KEY_LBRACE | 119 | |
+| LK_KEY_RBRACE | 120 | |
+| LK_KEY_VBAR | 121 | |
+| LK_KEY_TILDE | 122 | |
+| LK_KEY_KP_0 | 123 | |
+| LK_KEY_KP_1 | 124 | |
+| LK_KEY_KP_2 | 125 | |
+| LK_KEY_KP_3 | 126 | |
+| LK_KEY_KP_4 | 127 | |
+| LK_KEY_KP_5 | 128 | |
+| LK_KEY_KP_6 | 129 | |
+| LK_KEY_KP_7 | 130 | |
+| LK_KEY_KP_8 | 131 | |
+| LK_KEY_KP_9 | 132 | |
+| LK_KEY_KP_PF1 | 133 | |
+| LK_KEY_KP_PF2 | 134 | |
+| LK_KEY_KP_PF3 | 135 | |
+| LK_KEY_KP_PF4 | 136 | |
+| LK_KEY_KP_HYPHEN | 137 | |
+| LK_KEY_KP_COMMA | 138 | |
+| LK_KEY_KP_PERIOD | 139 | |
+| LK_KEY_KP_ENTER | 140 | |
+| LK_KEY_DELETE | 141 | |
+| LK_KEY_TAB | 142 | |
+| LK_KEY_RETURN | 143 | |
+| LK_KEY_META | 144 | |
+| LK_KEY_LOCK | 145 | |
+| LK_KEY_SHIFT | 146 | |
+| LK_KEY_CTRL | 147 | |
+| LK_KEY_LEFT | 148 | |
+| LK_KEY_RIGHT | 149 | |
+| LK_KEY_UP | 150 | |
+| LK_KEY_DOWN | 151 | |
+| LK_KEY_REMOVE | 152 | |
+| LK_KEY_NEXT_SCREEN | 153 | |
+| LK_KEY_PREV_SCREEN | 154 | |
+| LK_KEY_INSERT_HERE | 155 | |
+| LK_KEY_FIND | 156 | |
+| LK_KEY_SELECT | 157 | |
+| LK_KEY_F1 | 158 | |
+| LK_KEY_F2 | 159 | |
+| LK_KEY_F3 | 160 | |
+| LK_KEY_F4 | 161 | |
+| LK_KEY_F5 | 162 | |
+| LK_KEY_F6 | 163 | |
+| LK_KEY_F7 | 164 | |
+| LK_KEY_F8 | 165 | |
+| LK_KEY_F9 | 166 | |
+| LK_KEY_F10 | 167 | |
+| LK_KEY_F11 | 168 | |
+| LK_KEY_F12 | 169 | |
+| SCPE_OK | 242 | |
+| fifo->head | 288 | |
+| fifo->tail | 289 | |
+| fifo->count | 290 | |
+| data | 296 | |
+| lk_key | 423 | |
+| lk_key | 780 | |
+| lk_keysdown | 805 | |
+| lk_repeat | 806 | |
+| lk_trpti | 807 | |
+| SCPE_OK | 809 | |
+| lk_key | 814 | |
+| mode | 815 | |
+| mode | 818 | |
+| interface" | 862 | |
+| dummy_declaration | 866 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| LK_IDLE | 0 | 41 |
+| LK_RECV | 1 | 42 |
+| LK_SEND | 2 | 43 |
+| LK_MODE_DOWN | 0 | 47 |
+| LK_MODE_AUTODOWN | 1 | 48 |
+| LK_MODE_NONE | 2 | 49 |
+| LK_MODE_DOWNUP | 3 | 50 |
+| LK_BUF_LEN | 100 | 52 |
+| LK_SEND_CHAR(c) | lk_put_fifo (&lk_sndf, c) | 54 |
+| DBG_SERIAL | 0x0001                          ... | 173 |
+| DBG_CMD | 0x0002                          ... | 174 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lk_wr | 230-234 |  |
+| if | 235-246 |  |
+| lk_rd | 247-257 |  |
+| lk_put_fifo | 258-259 |  |
+| if | 260-270 |  |
+| lk_get_fifo | 271-272 |  |
+| if | 273-285 |  |
+| lk_clear_fifo | 286-292 |  |
+| lk_cmd | 293-299 |  |
+| if | 300-420 |  |
+| lk_map_key | 421-424 |  |
+| switch | 425-782 |  |
+| lk_reset_mode | 783-800 |  |
+| lk_reset | 801-811 |  |
+| lk_event | 812-824 |  |
+| switch | 825-859 |  |
+| lk_description | 860-867 |  |

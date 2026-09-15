@@ -1,0 +1,143 @@
+=== altairz80_sio.c — 2040 строк ===
+Источник: altairz80_sio.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test altairz80_sio.c -nt .cline/maps/altairz80_sio.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| NameNode_t | 231-234 |
+| SIO_PORT_INFO | 637-647 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 155 | |
+| SR | 156 | |
+| DS_S | 157 | |
+| cpu_unit | 158 | |
+| newClockFrequency | 213 | |
+| cpmCommandLine | 236 | |
+| nameListHead | 237 | |
+| currentName | 238 | |
+| currentNameIndex | 239 | |
+| lastPathSeparatorIndex | 240 | |
+| firstPathCharacterIndex | 241 | |
+| currentTime | 1316 | |
+| currentTimeValid | 1317 | |
+| version | 1318 | |
+| urlPointer | 1321 | |
+| urlStore | 1322 | |
+| urlResult | 1323 | |
+| resultLength | 1324 | |
+| resultPointer | 1325 | |
+| showAvailability | 1326 | |
+| isInReadPhase | 1327 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IN_MSG | (1 << 0) | 64 |
+| OUT_MSG | (1 << 1) | 65 |
+| CMD_MSG | (1 << 2) | 66 |
+| VERBOSE_MSG | (1 << 3) | 67 |
+| BUFFER_EMPTY_MSG | (1 << 4) | 68 |
+| UNIT_V_SIO_ANSI | (UNIT_V_UF + 0)     /* ANSI mode... | 70 |
+| UNIT_SIO_ANSI | (1 << UNIT_V_SIO_ANSI) | 71 |
+| UNIT_V_SIO_UPPER | (UNIT_V_UF + 1)     /* upper cas... | 72 |
+| UNIT_SIO_UPPER | (1 << UNIT_V_SIO_UPPER) | 73 |
+| UNIT_V_SIO_BS | (UNIT_V_UF + 2)     /* map delet... | 74 |
+| UNIT_SIO_BS | (1 << UNIT_V_SIO_BS) | 75 |
+| UNIT_V_SIO_VERBOSE | (UNIT_V_UF + 3)     /* verbose m... | 76 |
+| UNIT_SIO_VERBOSE | (1 << UNIT_V_SIO_VERBOSE) | 77 |
+| UNIT_V_SIO_MAP | (UNIT_V_UF + 4)     /* mapping m... | 78 |
+| UNIT_SIO_MAP | (1 << UNIT_V_SIO_MAP) | 79 |
+| UNIT_V_SIO_BELL | (UNIT_V_UF + 5)     /* ^G (bell ... | 80 |
+| UNIT_SIO_BELL | (1 << UNIT_V_SIO_BELL) | 81 |
+| UNIT_V_SIO_INTERRUPT | (UNIT_V_UF + 6)     /* create ke... | 82 |
+| UNIT_SIO_INTERRUPT | (1 << UNIT_V_SIO_INTERRUPT) | 83 |
+| UNIT_V_SIO_SLEEP | (UNIT_V_UF + 7)     /* sleep aft... | 84 |
+| UNIT_SIO_SLEEP | (1 << UNIT_V_SIO_SLEEP) | 85 |
+| UNIT_V_SIMH_TIMERON | (UNIT_V_UF + 1)     /* SIMH pseu... | 87 |
+| UNIT_SIMH_TIMERON | (1 << UNIT_V_SIMH_TIMERON) | 88 |
+| TERMINALS | 33                  /* lines per... | 90 |
+| SIO_CAN_READ | 0x01                /* bit 0 is ... | 91 |
+| SIO_CAN_WRITE | 0x02                /* bit 1 is ... | 92 |
+| SIO_RESET | 0x03                /* Command t... | 93 |
+| VGSIO_CAN_READ | 0x02                /* bit 1 is ... | 94 |
+| VGSIO_CAN_WRITE | 0x01                /* bit 0 is ... | 95 |
+| KBD_HAS_CHAR | 0x40                /* bit 6 is ... | 96 |
+| KBD_HAS_NO_CHAR | 0x01                /* bit 0 is ... | 97 |
+| BACKSPACE_CHAR | 0x08                /* backspace... | 99 |
+| DELETE_CHAR | 0x7f                /* delete ch... | 100 |
+| CONTROLC_CHAR | 0x03                /* control C... | 101 |
+| CONTROLG_CHAR | 0x07                /* control G... | 102 |
+| CONTROLZ_CHAR | 0x1a                /* control Z... | 103 |
+| PORT_TABLE_SIZE | 256                 /* size of p... | 105 |
+| SLEEP_ALLOWED_START_DEFAULT | 100         /* default initial v... | 106 |
+| DEFAULT_TIMER_DELTA | 100         /* default value for... | 107 |
+| CPM_COMMAND_LINE_LENGTH | 128 | 108 |
+| CPM_FCB_ADDRESS | 0x0080      /* Default FCB addre... | 109 |
+| TIMER_STACK_LIMIT | 10       /* stack depth of timer... | 1314 |
+| URL_MAX_LENGTH | 1024 | 1320 |
+| SECONDS_PER_MINUTE | 60 | 1441 |
+| SECONDS_PER_HOUR | (60 * SECONDS_PER_MINUTE) | 1442 |
+| SECONDS_PER_DAY | (24 * SECONDS_PER_HOUR) | 1443 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| URLContents | 57-242 |  |
+| deleteNameList | 243-376 |  |
+| sio_description | 377-407 |  |
+| ptr_description | 408-430 |  |
+| ptp_description | 431-521 |  |
+| simh_description | 522-534 |  |
+| resetSIOWarningFlags | 535-538 |  |
+| sio_attach | 539-550 |  |
+| sio_detach | 551-559 |  |
+| pollConnection | 560-570 |  |
+| sio_reset | 571-588 | reset routines |
+| ptr_reset | 589-600 |  |
+| ptp_reset | 601-608 |  |
+| mapCharacter | 609-739 |  |
+| lookupPortInfo | 740-749 |  |
+| checkSleep | 750-759 |  |
+| voidSleep | 760-764 | void sleep for next 'sleepAllowedStart' tests |
+| sio0sCore | 765-821 | generic status port for keyboard input / terminal output |
+| sio0s | 822-834 |  |
+| sio0dCore | 835-863 | generic data port for keyboard input / terminal output |
+| printable | 864-871 |  |
+| sio0d | 872-885 |  |
+| sio1sCore | 886-910 | PTR/PTP status port |
+| sio1s | 911-927 |  |
+| sio1dCore | 928-963 | PTR/PTP data port |
+| sio1d | 964-979 |  |
+| toBool | 980-991 |  |
+| show_sio_port_info | 992-1007 |  |
+| equalSIP | 1008-1015 |  |
+| ptpptr_dev_set_port | 1016-1037 |  |
+| ptpptr_dev_show_port | 1038-1042 |  |
+| sio_dev_set_port | 1043-1108 |  |
+| sio_dev_show_port | 1109-1123 |  |
+| sio_dev_set_interrupton | 1124-1128 |  |
+| sio_dev_set_interruptoff | 1129-1134 |  |
+| sio_svc | 1135-1145 |  |
+| mapAltairPorts | 1146-1156 |  |
+| nulldev | 1157-1171 |  |
+| sr_dev | 1172-1185 |  |
+| toBCD | 1186-1189 |  |
+| fromBCD | 1190-1328 |  |
+| simh_dev_reset | 1329-1359 |  |
+| warnNoRealTimeClock | 1360-1364 |  |
+| simh_dev_set_timeron | 1365-1369 |  |
+| simh_dev_set_timeroff | 1370-1374 |  |
+| simh_svc | 1375-1401 |  |
+| createCPMCommandLine | 1402-1410 |  |
+| attachCPM | 1411-1427 | The CP/M command line is used as the name of a file and UNIT* uptr is attached to it. |
+| setClockZSDOS | 1428-1443 | setClockZSDOSAdr points to 6 byte block in M: YY MM DD HH MM SS in BCD notation |
+| mkCPM3Origin | 1444-1460 |  |
+| setClockCPM3 | 1461-1475 |  |
+| simh_in | 1476-1657 |  |
+| do_SIMH_sleep | 1658-1668 |  |
+| simh_out | 1669-2022 |  |
+| simh_dev | 2023-2040 | port 0xfe is a device for communication SIMH <--> Altair machine |

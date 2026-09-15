@@ -1,0 +1,95 @@
+=== altairz80_hdsk.c — 1177 строк ===
+Источник: altairz80_hdsk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test altairz80_hdsk.c -nt .cline/maps/altairz80_hdsk.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DPB | 128-146 |
+| HDSK_INFO | 148-150 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 73 | |
+| cpu_unit | 74 | |
+| bootrom_dsk | 80 | |
+| hdskLastCommand | 91 | |
+| hdskCommandPosition | 92 | |
+| parameterCount | 93 | |
+| selectedDisk | 94 | |
+| selectedSector | 95 | |
+| selectedTrack | 96 | |
+| selectedDMA | 97 | |
+| hdskStatus | 98 | |
+| hdsk_info_data | 157 | |
+| hdsk_imd | 420 | |
+| parameterBlock | 1066 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| READ_MSG | (1 << 0) | 33 |
+| WRITE_MSG | (1 << 1) | 34 |
+| VERBOSE_MSG | (1 << 2) | 35 |
+| UNIT_V_HDSK_WLK | (UNIT_V_UF + 0) /* write locked ... | 50 |
+| UNIT_HDSK_WLK | (1 << UNIT_V_HDSK_WLK) | 51 |
+| HDSK_MAX_SECTOR_SIZE | 1024            /* maximum size ... | 52 |
+| HDSK_SECTOR_SIZE | u5              /* size of secto... | 53 |
+| HDSK_SECTORS_PER_TRACK | u4              /* sectors per t... | 54 |
+| HDSK_NUMBER_OF_TRACKS | u3              /* number of tra... | 55 |
+| HDSK_FORMAT_TYPE | u6              /* Disk Format T... | 56 |
+| HDSK_CAPACITY | (2048*32*128)   /* Default Altai... | 57 |
+| HDSK_NUMBER | 16              /* number of har... | 58 |
+| CPM_OK | 0               /* indicates to ... | 59 |
+| CPM_ERROR | 1               /* indicates to ... | 60 |
+| CPM_EMPTY | 0xe5            /* default value... | 61 |
+| HDSK_NONE | 0 | 62 |
+| HDSK_RESET | 1 | 63 |
+| HDSK_READ | 2 | 64 |
+| HDSK_WRITE | 3 | 65 |
+| HDSK_PARAM | 4 | 66 |
+| HDSK_BOOT_ADDRESS | 0x5c00 | 67 |
+| HDSK_BOOT_ALTAIR_DISKS | 0x5c3a          /* position wher... | 68 |
+| SUB_INSTRUCTION | 0xd6            /* op-code for S... | 69 |
+| DPB_NAME_LENGTH | 15 | 70 |
+| BOOTROM_SIZE_HDSK | 256 | 71 |
+| SPT16 | 16 | 152 |
+| SPT32 | 32 | 153 |
+| SPT26 | 26 | 154 |
+| SPT52 | 52 | 155 |
+| HDSK_NAME | "Hard Disk" | 437 |
+| QUOTE1(text) | #text | 681 |
+| QUOTE2(text) | QUOTE1(text) | 682 |
+| PARAMETER_BLOCK_SIZE | 19 | 1065 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| hdsk_prepareRead | 100-103 |  |
+| hdsk_prepareWrite | 104-107 |  |
+| hdsk_setSelectedDisk | 108-111 |  |
+| hdsk_setSelectedSector | 112-115 |  |
+| hdsk_setSelectedTrack | 116-119 |  |
+| hdsk_setSelectedDMA | 120-123 |  |
+| hdsk_getStatus | 124-438 |  |
+| hdsk_description | 439-474 |  |
+| hdsk_reset | 475-489 | Reset routine |
+| is_imd | 490-494 |  |
+| assignFormat | 495-505 |  |
+| verifyDiskInfo | 506-531 |  |
+| hdsk_attach | 532-621 | Attach routine |
+| hdsk_detach | 622-646 |  |
+| set_geom | 647-672 | Set disk geometry routine |
+| show_geom | 673-683 | Show disk geometry routine |
+| set_format | 684-719 | Set disk format routine |
+| show_format | 720-761 | Show disk format routine |
+| hdsk_boot | 762-838 |  |
+| hdsk_checkParameters | 839-891 | check the parameters and return TRUE iff parameters are correct or have been repaired |
+| doSeek | 892-914 | pre-condition: hdsk_checkParameters has been executed to repair any faulty parameters |
+| hdsk_read | 915-978 | pre-condition: hdsk_checkParameters has been executed to repair any faulty parameters |
+| hdsk_write | 979-1047 | pre-condition: hdsk_checkParameters has been executed to repair any faulty parameters |
+| hdsk_flush | 1048-1067 | flush all attached drives. Returns CPM_OK if everything fine, otherwise CPM_ERROR |
+| hdsk_in | 1068-1085 |  |
+| hdsk_out | 1086-1174 |  |
+| hdsk_io | 1175-1177 |  |

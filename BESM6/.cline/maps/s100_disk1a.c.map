@@ -1,0 +1,25 @@
+=== s100_disk1a.c — 874 строк ===
+Источник: s100_disk1a.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_disk1a.c -nt .cline/maps/s100_disk1a.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 46 |
+| DBG_PRINT(args) |  | 48 |
+| CMD_MSG | (1 << 0) | 52 |
+| RD_DATA_MSG | (1 << 1) | 53 |
+| STATUS_MSG | (1 << 2) | 54 |
+| VERBOSE_MSG | (1 << 3) | 55 |
+| IRQ_MSG | (1 << 4) | 56 |
+| DISK1A_MAX_DRIVES | 4 | 58 |
+| UNIT_V_DISK1A_ROM | (UNIT_V_UF + 2) /* boot ROM enab... | 80 |
+| UNIT_DISK1A_ROM | (1 << UNIT_V_DISK1A_ROM) | 81 |
+| DISK1A_CAPACITY | (77*2*16*256)   /* Default Micro... | 82 |
+| DISK1A_NAME | "Compupro Floppy Controller" | 117 |
+| DISK1A_DRIVE_STATUS | 2   /* R=Drive Status Register /... | 799 |
+| DISK1A_MOTOR | 3   /* R=Unused / W=Motor Contro... | 800 |
+| BOOT_PROM_DISABLE | 0x01 | 801 |
+| FLOPPY_MOTORS | 0xF0 | 802 |
+| SS1_VI4_INT | 4   /* IF3 Tx interrupts tied to... | 866 |
+

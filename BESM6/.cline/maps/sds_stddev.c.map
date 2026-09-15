@@ -1,0 +1,85 @@
+=== sds_stddev.c — 648 строк ===
+Источник: sds_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sds_stddev.c -nt .cline/maps/sds_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| xfr_req | 44 | |
+| stop_invins | 45 | |
+| ptp_stopioe | 49 | |
+| ptr_dib | 81 | |
+| ptp_dib | 119 | |
+| tti_dib | 156 | |
+| tto_dib | 189 | |
+| new_ch | 234 | |
+| SCPE_OK | 268 | |
+| temp | 275 | |
+| SCPE_OK | 301 | |
+| return | 312 | |
+| ptr_unit.buf | 321 | |
+| SCPE_OK | 324 | |
+| SCPE_OK | 340 | |
+| new_ch | 359 | |
+| SCPE_OK | 392 | |
+| SCPE_OK | 428 | |
+| return | 439 | |
+| ptp_unit.buf | 448 | |
+| SCPE_OK | 451 | |
+| new_ch | 470 | |
+| SCPE_OK | 498 | |
+| temp | 505 | |
+| temp | 512 | |
+| tti_unit.pos | 513 | |
+| SCPE_OK | 522 | |
+| SCPE_OK | 532 | |
+| new_ch | 554 | |
+| SCPE_OK | 589 | |
+| SCPE_OK | 604 | |
+| asc | 609 | |
+| SCPE_OK | 634 | |
+| tto_ldr | 643 | |
+| tto_retry | 644 | |
+| SCPE_OK | 647 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TT_CR | 052                             ... | 40 |
+| TT_TB | 072 | 41 |
+| TT_BS | 032 | 42 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ptr | 232-235 |  |
+| switch | 236-272 |  |
+| ptr_svc | 273-276 |  |
+| if | 277-280 |  |
+| if | 281-292 |  |
+| if | 293-305 |  |
+| ptr_set_err | 306-316 |  |
+| ptr_reset | 317-328 |  |
+| ptr_boot | 329-356 |  |
+| ptp | 357-360 |  |
+| switch | 361-396 |  |
+| ptp_svc | 397-401 |  |
+| if | 402-414 |  |
+| ptp_out | 415-416 |  |
+| if | 417-420 |  |
+| if | 421-432 |  |
+| ptp_set_err | 433-443 |  |
+| ptp_reset | 444-467 |  |
+| tti | 468-471 |  |
+| switch | 472-502 |  |
+| tti_svc | 503-513 |  |
+| if | 514-524 |  |
+| tti_reset | 525-551 |  |
+| tto | 552-555 |  |
+| switch | 556-593 |  |
+| tto_svc | 594-595 |  |
+| if | 596-606 |  |
+| tto_out | 607-620 |  |
+| if | 621-629 |  |
+| if | 630-638 |  |
+| tto_reset | 639-648 |  |

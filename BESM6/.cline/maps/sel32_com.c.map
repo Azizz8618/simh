@@ -1,0 +1,174 @@
+=== sel32_com.c — 1333 строк ===
+Источник: sel32_com.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_com.c -nt .cline/maps/sel32_com.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| com_data | 58 | |
+| com_chp | 254 | |
+| coml_chp | 322 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| COM_LINES | 8                   /* lines def... | 33 |
+| COML_WAIT | 4000 | 37 |
+| COM_WAIT | 5000 | 41 |
+| COM_NUMLIN | com_desc.lines      /* curr # li... | 42 |
+| COMC | 0                   /* channel t... | 44 |
+| COMI | 1                   /* input thr... | 45 |
+| COML_XIA | 0x01                /* xmt intr ... | 48 |
+| COML_XIR | 0x02                /* xmt intr ... | 49 |
+| COML_REP | 0x04                /* rcv enabl... | 50 |
+| COML_RBP | 0x10                /* rcv break... | 51 |
+| CMD | u3 | 67 |
+| COM_INCH | 0x00                    /* Initi... | 69 |
+| COM_WR | 0x01                    /* Write... | 70 |
+| COM_RD | 0x02                    /* Read ... | 71 |
+| COM_NOP | 0x03                    /* No op... | 72 |
+| COM_SNS | 0x04                    /* Sense... | 73 |
+| COM_WRSCM | 0x05                    /* Write... | 74 |
+| COM_RDECHO | 0x06                    /* Read ... | 75 |
+| COM_RDFC | 0x0A                    /* Read ... | 76 |
+| COM_DEFSC | 0x0B                    /* Defin... | 77 |
+| COM_WRHFC | 0x0D                    /* Write... | 78 |
+| COM_RRDFLOW | 0x0E                    /* Read ... | 79 |
+| COM_RDTR | 0x13                    /* Reset... | 80 |
+| COM_SDTR | 0x17                    /* Set D... | 81 |
+| COM_RRTS | 0x1B                    /* Reset... | 82 |
+| COM_SRTS | 0x1F                    /* Set R... | 83 |
+| COM_RBRK | 0x33                    /* Reset... | 84 |
+| COM_SBRK | 0x37                    /* Set B... | 85 |
+| COM_SETFLOW | 0x53                    /* Set t... | 86 |
+| COM_RDHFC | 0x8E                    /* Read ... | 87 |
+| COM_SACE | 0xFF                    /* Set A... | 88 |
+| COM_MSK | 0xFF                    /* Comma... | 90 |
+| COM_INPUT | 0x0100                  /* Input... | 94 |
+| COM_SCD | 0x0400                  /* Speci... | 96 |
+| COM_EKO | 0x0800                  /* Echo ... | 97 |
+| COM_OUTPUT | 0x1000                  /* Outpu... | 98 |
+| COM_READ | 0x2000                  /* Read ... | 99 |
+| COM_ACC | 0x4000                  /* ASCII... | 100 |
+| COM_CONN | 0x8000  /* TMXR ATT */  /* Termi... | 101 |
+| ACE | u4 | 105 |
+| SNS_HALFD | 0x80000000  /* Half-duplix opera... | 109 |
+| SNS_MRINGE | 0x40000000  /* Modem ring enable... | 110 |
+| SNS_ACEFP | 0x20000000  /* Forced parity 0=o... | 111 |
+| SNS_ACEP | 0x10000000  /* Parity 0=odd, 1=e... | 112 |
+| SNS_ACEPE | 0x08000000  /* Parity enable 0=d... | 113 |
+| SNS_ACESTOP | 0x04000000  /* Stop bit 0=1, 1=1... | 114 |
+| SNS_ACECLEN | 0x02000000  /* Character length ... | 115 |
+| SNS_ACECL2 | 0x01000000  /* 2nd bit for above */ | 116 |
+| SNS_NODCDA | 0x00800000  /* Enable Delta DCD ... | 119 |
+| SNS_WAITOLB | 0x00400000  /* Wait on last byte... | 120 |
+| SNS_RINGCR | 0x00200000  /* Ring or wakeup ch... | 121 |
+| SNS_DIAGL | 0x00100000  /* Set diagnostic lo... | 122 |
+| SNS_BAUD | 0x000F0000  /* Baud rate bits 4-... | 123 |
+| BAUD50 | 0x00000000  /* 50 baud */ | 124 |
+| BAUD75 | 0x00010000  /* 75 baud */ | 125 |
+| BAUD110 | 0x00020000  /* 110 baud */ | 126 |
+| BAUD114 | 0x00030000  /* 134 baud */ | 127 |
+| BAUD150 | 0x00040000  /* 150 baud */ | 128 |
+| BAUD300 | 0x00050000  /* 300 baud */ | 129 |
+| BAUD600 | 0x00060000  /* 600 baud */ | 130 |
+| BAUD1200 | 0x00070000  /* 1200 baud */ | 131 |
+| BAUD1800 | 0x00080000  /* 1800 baud */ | 132 |
+| BAUD2000 | 0x00090000  /* 2000 baud */ | 133 |
+| BAUD2400 | 0x000A0000  /* 2400 baud */ | 134 |
+| BAUD3600 | 0x000B0000  /* 3600 baud */ | 135 |
+| BAUD4800 | 0x000C0000  /* 4800 baud */ | 136 |
+| BAUD7200 | 0x000D0000  /* 7200 baud */ | 137 |
+| BAUD9600 | 0x000E0000  /* 9600 baud */ | 138 |
+| BAUD19200 | 0x000F0000  /* 19200 baud */ | 139 |
+| ACE_WAKE | 0x0000FF00              /* 8 bit... | 142 |
+| ACE_WAKE | 0x0000FF00              /* 8 bit... | 144 |
+| SNS | u5 | 146 |
+| SNS_CMDREJ | 0x80000000              /* Comma... | 149 |
+| SNS_INTVENT | 0x40000000              /* Unit ... | 150 |
+| SNS_BOCHK | 0x20000000              /* Bus o... | 151 |
+| SNS_EQUIPCK | 0x10000000              /* Equip... | 152 |
+| SNS_DATACK | 0x08000000              /* Data ... | 153 |
+| SNS_OVERRN | 0x04000000              /* Overr... | 154 |
+| SNS_NUB01 | 0x02000000              /* Zero ... | 155 |
+| SNS_RDY | SNS_NUB01               /* SNS_R... | 156 |
+| SNS_NUB02 | 0x01000000              /* Zero ... | 157 |
+| SNS_CONN | SNS_NUB02               /* SNS_C... | 158 |
+| SNS_ASCIICD | 0x00800000              /* ASCII... | 160 |
+| SNS_SPCLCD | 0x00400000              /* Speci... | 161 |
+| SNS_ETX | 0x00200000              /* ETX i... | 162 |
+| SNS_BREAK | 0x00100000              /* BREAK... | 163 |
+| SNS_ACEFE | 0x00080000              /* ACE f... | 164 |
+| SNS_ACEPEI | 0x00040000              /* ACE p... | 165 |
+| SNS_ACEOVR | 0x00020000              /* ACE o... | 166 |
+| SNS_RING | 0x00010000              /* Ring ... | 167 |
+| SNS_RLSDS | 0x00008000              /* Recei... | 169 |
+| SNS_RINGST | 0x00004000              /* Ring ... | 170 |
+| SNS_DSRS | 0x00002000              /* DSR D... | 171 |
+| SNS_CTSS | 0x00001000              /* CTS C... | 172 |
+| SNS_DELTA | 0x00000800              /* Delta... | 173 |
+| SNS_MRING | 0x00000400              /* RI Mo... | 174 |
+| SNS_DELDSR | 0x00000200              /* DSR f... | 175 |
+| SNS_DELCTS | 0x00000100              /* CLS f... | 176 |
+| SNS_HALFD | 0x00000080              /* Half-... | 178 |
+| SNS_MRINGE | 0x00000040              /* Modem... | 179 |
+| SNS_ACEDEF | 0x00000020              /* ACE p... | 180 |
+| SNS_DIAGM | 0x00000010              /* Diagn... | 181 |
+| SNS_AUXOL2 | 0x00000008              /* Auxil... | 182 |
+| SNS_AUXOL1 | 0x00000004              /* Auxil... | 183 |
+| SNS_RTS | 0x00000002              /* RTS R... | 184 |
+| SNS_DTR | 0x00000001              /* DTR D... | 185 |
+| SNS_ACEDLE | 0x80000000              /* Divis... | 187 |
+| SNS_ACEBS | 0x40000000              /* Break... | 188 |
+| SNS_ACEFP | 0x20000000              /* Force... | 189 |
+| SNS_ACEP | 0x10000000              /* Parit... | 190 |
+| SNS_ACEPE | 0x08000000              /* Parit... | 191 |
+| SNS_ACESTOP | 0x04000000              /* Stop ... | 192 |
+| SNS_ACECLEN | 0x02000000              /* Chara... | 193 |
+| SNS_ACECL2 | 0x01000000              /* 2nd b... | 194 |
+| SNS_NODCDA | 0x00800000              /* Enabl... | 196 |
+| SNS_WAITOLB | 0x00400000              /* Wait ... | 197 |
+| SNS_RINGCR | 0x00200000              /* Ring ... | 198 |
+| SNS_DIAGL | 0x00100000              /* Set d... | 199 |
+| SNS_BAUD | 0x000F0000              /* Baud ... | 200 |
+| BAUD50 | 0x00000000              /* 50 ba... | 201 |
+| BAUD75 | 0x00010000              /* 75 ba... | 202 |
+| BAUD110 | 0x00020000              /* 110 b... | 203 |
+| BAUD114 | 0x00030000              /* 134 b... | 204 |
+| BAUD150 | 0x00040000              /* 150 b... | 205 |
+| BAUD300 | 0x00050000              /* 300 b... | 206 |
+| BAUD600 | 0x00060000              /* 600 b... | 207 |
+| BAUD1200 | 0x00070000              /* 1200 ... | 208 |
+| BAUD1800 | 0x00080000              /* 1800 ... | 209 |
+| BAUD2000 | 0x00090000              /* 2000 ... | 210 |
+| BAUD2400 | 0x000A0000              /* 2400 ... | 211 |
+| BAUD3600 | 0x000B0000              /* 3600 ... | 212 |
+| BAUD4800 | 0x000C0000              /* 4800 ... | 213 |
+| BAUD7200 | 0x000D0000              /* 7200 ... | 214 |
+| BAUD9600 | 0x000E0000              /* 9600 ... | 215 |
+| BAUD19200 | 0x000F0000              /* 19200... | 216 |
+| SNS_FID | 0x00006200              /* ID pa... | 218 |
+| SNS_REV | 0x0000004f              /* ID pa... | 220 |
+| CNT | u6 | 223 |
+| COM_UNITS | 1 | 251 |
+| UNIT_COML | UNIT_IDLE\|UNIT_DISABLE\|TT_MODE_7B | 319 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| coml_ini | 396-404 | 8-line serial routines |
+| coml_rschnlio | 405-416 | handle rschnlio cmds for coml |
+| com_ini | 417-427 | 8-line serial routines |
+| com_rschnlio | 428-439 | handle rschnlio cmds for com |
+| coml_preio | 440-466 | start a com operation |
+| coml_startcmd | 467-815 | called from sel32_chan to start an I/O operation |
+| comc_srv | 816-961 |  |
+| comi_srv | 962-1094 | Unit service - input transfers |
+| como_srv | 1095-1192 | Unit service - output transfers |
+| coml_haltio | 1193-1228 | haltxio routine |
+| com_reset | 1229-1245 | Reset routine |
+| com_attach | 1246-1259 | attach master unit |
+| com_detach | 1260-1272 | detach master unit |
+| com_reset_ln | 1273-1286 | Reset an individual line |
+| com_help | 1287-1327 |  |
+| com_description | 1328-1333 | description of controller |

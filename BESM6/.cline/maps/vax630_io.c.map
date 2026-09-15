@@ -1,0 +1,136 @@
+=== vax630_io.c — 841 строк ===
+Источник: vax630_io.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax630_io.c -nt .cline/maps/vax630_io.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sys_model | 77 | |
+| qba_dib | 109 | |
+| iodibp | 163 | |
+| idx | 181 | |
+| idx | 198 | |
+| return | 210 | |
+| iod | 224 | |
+| SET_IRQL | 230 | |
+| iod | 231 | |
+| iod | 266 | |
+| SET_IRQL | 272 | |
+| iod | 273 | |
+| SET_IRQL | 296 | |
+| return | 297 | |
+| SET_IRQL | 344 | |
+| return | 345 | |
+| SCPE_OK | 417 | |
+| nval | 423 | |
+| old_val | 424 | |
+| qb_ipc | 426 | |
+| SCPE_OK | 436 | |
+| qb_map | 449 | |
+| return | 467 | |
+| ma | 485 | |
+| ma | 515 | |
+| mem_err | 548 | |
+| SCPE_OK | 549 | |
+| FALSE | 571 | |
+| FALSE | 587 | |
+| return | 595 | |
+| SCPE_OK | 606 | |
+| ma | 620 | |
+| ma | 652 | |
+| ba | 654 | |
+| bc | 655 | |
+| ma | 684 | |
+| ma | 716 | |
+| ba | 718 | |
+| bc | 719 | |
+| SCPE_NXM | 757 | |
+| SCPE_NXM | 772 | |
+| dptr | 780 | |
+| dibp | 781 | |
+| SCPE_OK | 793 | |
+| qa | 802 | |
+| SCPE_OK | 814 | |
+| SCPE_OK | 835 | |
+| adapter" | 840 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| QBIPC_QPE | 0x00008000                      ... | 36 |
+| QBIPC_AHLT | 0x00000100                      ... | 37 |
+| QBIPC_DBIE | 0x00000040                      ... | 38 |
+| QBIPC_LME | 0x00000020                      ... | 39 |
+| QBIPC_DB | 0x00000001                      ... | 40 |
+| QBIPC_RW | (QBIPC_AHLT \| QBIPC_DBIE \| QBIPC... | 41 |
+| QBIPC_MASK | (QBIPC_RW \| QBIPC_QPE ) | 42 |
+| QBNMAPR | 8192                            ... | 58 |
+| QBMAP_VLD | 0x80000000                      ... | 59 |
+| QBMAP_PAG | 0x00007FFF                      ... | 60 |
+| QBMAP_RD | (QBMAP_VLD \| QBMAP_PAG) | 61 |
+| QBMAP_WR | (QBMAP_VLD \| QBMAP_PAG) | 62 |
+| QB_VEC_MASK | 0x1FC                           ... | 64 |
+| MSER_NXM | 0x00000080                      ... | 68 |
+| IOLN_DBL | 002 | 107 |
+| DBG_REG | 0x0001                          ... | 139 |
+| DBG_IPL | 0x0002                          ... | 140 |
+| DBG_MAP | 0x0004                          ... | 141 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ReadQb | 179-182 |  |
+| if | 183-187 |  |
+| if | 188-195 |  |
+| WriteQb | 196-199 |  |
+| if | 200-204 |  |
+| if | 205-221 |  |
+| ReadIO | 222-263 |  |
+| ReadIOU | 264-285 |  |
+| WriteIO | 286-317 |  |
+| WriteIOU | 318-319 |  |
+| switch | 320-349 |  |
+| eval_int | 350-363 |  |
+| for | 364-373 |  |
+| for | 374-382 |  |
+| get_vector | 383-387 |  |
+| if | 388-390 |  |
+| for | 391-409 |  |
+| dbl_rd | 410-419 |  |
+| dbl_wr | 420-444 |  |
+| qbmap_rd | 445-451 |  |
+| qbmap_wr | 452-455 |  |
+| if | 456-481 |  |
+| qbmem_rd | 482-486 |  |
+| if | 487-494 |  |
+| if | 495-500 |  |
+| if | 501-511 |  |
+| qbmem_wr | 512-516 |  |
+| if | 517-534 |  |
+| if | 535-540 |  |
+| if | 541-553 |  |
+| qba_map_addr | 554-557 |  |
+| if | 558-575 |  |
+| qba_map_addr_c | 576-579 |  |
+| if | 580-591 |  |
+| ioreset_wr | 592-599 |  |
+| qba_reset | 600-616 |  |
+| Map_ReadB | 617-621 |  |
+| if | 622-648 |  |
+| Map_ReadW | 649-655 |  |
+| if | 656-680 |  |
+| Map_WriteB | 681-685 |  |
+| if | 686-712 |  |
+| Map_WriteW | 713-719 |  |
+| if | 720-746 |  |
+| qba_ex | 747-752 |  |
+| if | 753-761 |  |
+| qba_dep | 762-767 |  |
+| if | 768-776 |  |
+| build_dib_tab | 777-784 |  |
+| for | 785-797 |  |
+| qba_show_virt | 798-803 |  |
+| if | 804-818 |  |
+| qba_show_map | 819-823 |  |
+| qba_help | 824-837 |  |
+| qba_description | 838-841 |  |

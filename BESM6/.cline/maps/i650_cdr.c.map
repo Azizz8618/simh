@@ -1,0 +1,38 @@
+=== i650_cdr.c — 1348 строк ===
+Источник: i650_cdr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i650_cdr.c -nt .cline/maps/i650_cdr.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ReadStaker | 79 | |
+| ReadStakerLast | 80 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_CDR | UNIT_ATTABLE \| UNIT_RO \| MODE_02... | 35 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| decode_8word_wiring | 84-144 | return the first column where HiPunch set (first column is 1; 0 is no HiPunch set) |
+| decode_soap_symb_info | 145-188 | does not exist in real hw |
+| decode_num_word | 189-211 |  |
+| decode_alpha_word | 212-224 |  |
+| decode_soap_wiring | 225-304 |  |
+| decode_supersoap_wiring | 305-383 |  |
+| sformat | 384-400 |  |
+| decode_is_wiring | 401-534 |  |
+| decode_it_wiring | 535-611 |  |
+| decode_regional_addr | 612-632 | any other char assumed to be zero |
+| decode_ra_wiring | 633-812 |  |
+| decode_fds_wiring | 813-979 |  |
+| decode_fortransit_wiring | 980-1107 |  |
+| cdr_cmd | 1108-1258 | Device entry points for card reader. |
+| cdr_srv | 1259-1265 |  |
+| cdr_set_wiring | 1266-1281 | Set card read/punch control panel wiring |
+| cdr_show_wiring | 1282-1297 | Show card read/punch control panel wiring |
+| cdr_attach | 1298-1329 |  |
+| cdr_help | 1330-1342 |  |
+| cdr_description | 1343-1348 |  |

@@ -1,0 +1,116 @@
+=== kx10_mt.c — 1085 строк ===
+Источник: kx10_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_mt.c -nt .cline/maps/kx10_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mt_df10 | 148 | |
+| mt_pia | 149 | |
+| mt_sel_unit | 150 | |
+| mt_next_unit | 151 | |
+| wr_eor | 152 | |
+| mt_status | 153 | |
+| mt_hold_reg | 154 | |
+| mt_mpx_lvl | 155 | |
+| mt_buffer | 172 | |
+| mt_dib | 186 | |
+| SCPE_OK | 1077 | |
+| controller" | 1082 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_MT | 0 | 41 |
+| MT_DIS | DEV_DIS | 47 |
+| MT_DIS | 0 | 51 |
+| BUF_EMPTY(u) | (u->hwmark == 0xFFFFFFFF) | 54 |
+| CLR_BUF(u) | u->hwmark = 0xFFFFFFFF | 55 |
+| MTDF_TYPEB | (1 << DEV_V_UF) | 57 |
+| MTUF_7TRK | (1 << MTUF_V_UF) | 58 |
+| BUFFSIZE | (32 * 1024) | 60 |
+| UNIT_MT | UNIT_FIX+UNIT_ATTABLE+UNIT_DISAB... | 61 |
+| LT | 66      /* Time per char low den... | 62 |
+| HT | 16      /* Time per char high de... | 63 |
+| NOP_CLR | 000     /* Nop clear, interrupt */ | 65 |
+| NOP_IDLE | 010     /* Nop interrupt when id... | 66 |
+| REWIND | 001     /* Rewind */ | 67 |
+| UNLOAD | 011     /* Unload */ | 68 |
+| READ | 002     /* Read  */ | 69 |
+| READ_NOEOR | 012     /* Read no end of record... | 70 |
+| CMP | 003     /* Compare */ | 71 |
+| CMP_NOEOR | 013     /* Compare no end of rec... | 72 |
+| WRITE | 004     /* Write */ | 73 |
+| WRITE_LONG | 014     /* Write with long recor... | 74 |
+| WTM | 005     /* Write End of File */ | 75 |
+| ERG | 015     /* Write blank tape */ | 76 |
+| SPC_FWD | 006     /* Space forward */ | 77 |
+| SPC_EOF | 016     /* Space to end of file */ | 78 |
+| SPC_REV | 007     /* Space reverse */ | 79 |
+| SPC_REV_EOF | 017     /* Space reverse to EOF. */ | 80 |
+| DATA_REQUEST | 00000000001 | 82 |
+| NEXT_UNIT | 00000000002 | 83 |
+| SEVEN_CHAN | 00000000004 | 84 |
+| WRITE_LOCK | 00000000010 | 85 |
+| CHAN_ERR | 00000000020 | 86 |
+| IDLE_UNIT | 00000000040 | 87 |
+| JOB_DONE | 00000000100 | 88 |
+| BAD_TAPE | 00000000200 | 89 |
+| DATA_LATE | 00000000400 | 90 |
+| RLC_ERR | 00000001000 | 91 |
+| READ_CMP | 00000002000 | 92 |
+| EOT_FLAG | 00000004000 | 93 |
+| EOF_FLAG | 00000010000 | 94 |
+| PARITY_ERR | 00000020000 | 95 |
+| ILL_OPR | 00000040000 | 96 |
+| BOT_FLAG | 00000100000 | 97 |
+| REW_FLAG | 00000200000 | 98 |
+| TRAN_HUNG | 00000400000 | 99 |
+| CHAR_COUNT | 00007000000 | 100 |
+| WT_CW_DONE | 00010000000 | 101 |
+| DATA_PARITY | 00020000000 | 102 |
+| NXM_ERR | 00040000000 | 103 |
+| CW_PAR_ERR | 00100000000 | 104 |
+| B22_FLAG | 00400000000 | 105 |
+| DATA_PIA | 000000007       /* 0 */ | 107 |
+| FLAG_PIA | 000000070       /* 3 */ | 108 |
+| DENS_200 | 000000000 | 109 |
+| DENS_556 | 000000100 | 110 |
+| DENS_800 | 000000200 | 111 |
+| DENS_MSK | 000000300       /* 6 */ | 112 |
+| NEXT_UNIT_ENAB | 000000400       /* 8 */ | 113 |
+| FUNCTION | 000017000       /* 9 */ | 114 |
+| CORE_DUMP | 000020000       /*13 */ | 115 |
+| ODD_PARITY | 000040000       /*14 */ | 116 |
+| UNIT_NUM | 000700000       /*15 */ | 117 |
+| NEXT_UNIT_NUM | 007000000       /*18 */ | 118 |
+| MT_DEVNUM | 0340 | 120 |
+| MT_MOTION | 000000001       /* Mag tape unit... | 121 |
+| MT_BUSY | 000000002       /* Mag tape unit... | 122 |
+| MT_BUFFUL | 000000004       /* Buffer full o... | 123 |
+| MT_BRFUL | 000000010       /* BR register f... | 124 |
+| MT_STOP | 000000020       /* DF10 End of C... | 125 |
+| MT_LASTWD | 000000040       /* Last data wor... | 126 |
+| CNTRL | u3 | 128 |
+| CPOS | u5        /* Character position */ | 129 |
+| BPOS | u6        /* Position in buffer */ | 130 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt_devio | 236-441 |  |
+| mt_df10_read | 442-468 | Wrapper to handle reading of hold register or via DF10 |
+| mt_df10_write | 469-496 | Wrapper to handle writing of hold register or via DF10 |
+| mt_error | 497-548 | Map simH errors into machine errors |
+| mt_srv | 549-888 | Handle processing of tape requests. |
+| mt_read_word | 889-911 |  |
+| mt_boot | 912-971 |  |
+| mt_set_mta | 972-985 |  |
+| mt_show_mta | 986-1005 |  |
+| mt_set_mpx | 1006-1019 | set MPX level number |
+| mt_show_mpx | 1020-1030 |  |
+| mt_reset | 1031-1051 |  |
+| mt_attach | 1052-1057 |  |
+| mt_detach | 1058-1063 |  |
+| mt_help | 1064-1079 |  |
+| mt_description | 1080-1085 |  |

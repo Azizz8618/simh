@@ -1,0 +1,55 @@
+=== cdc1700_drm.c — 967 строк ===
+Источник: cdc1700_drm.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_drm.c -nt .cline/maps/cdc1700_drm.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 87 | |
+| Instructions | 114 | |
+| IOFWinitialized | 116 | |
+| cpu_unit | 118 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SASTATUS | iod_readR[2] | 83 |
+| CASTATUS | iod_readR[3] | 84 |
+| DATASTATUS | iod_readR[4] | 85 |
+| DRM_NUMWD | (96)            /* words/sector */ | 124 |
+| DRM_NUMBY | (DRM_NUMWD * sizeof(uint16)) | 125 |
+| DRM_NUMSC | (32)            /* sectors/track */ | 126 |
+| DRM_SIZE | (512 * DRM_NUMSC * DRM_NUMBY) | 127 |
+| DRM_MINTRACKS | (64)            /* Min # of trac... | 128 |
+| DRM_MAXTRACKS | (1024)          /* Max # of trac... | 129 |
+| DRM_AUTOLOAD | (16)            /* Sectors to au... | 131 |
+| DRM_TRK_MASK | 0x7FE0          /* Track address */ | 136 |
+| DRM_TRK_SHIFT | 5               /*    and shift */ | 137 |
+| DRM_SEC_MASK | 0x001F          /* Sector mask */ | 138 |
+| DRM_COMPARE | 0x8000          /* Core address ... | 140 |
+| DRM_IDLE | 0x00            /* Idle */ | 329 |
+| DRM_WRITE | 0x01            /* Write data */ | 330 |
+| DRM_READ | 0x02            /* Read data */ | 331 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| DRMstate | 429-448 |  |
+| LoadDrumAddress | 449-467 | Load and validate drum address in the Initial Sector Address Register |
+| StartDrumIO | 468-500 | Set up a drum I/O operation using the currently set parameters |
+| DrumIOIncSector | 501-510 | Increment the drum sector address. |
+| DrumIORead | 511-553 | Initiate a read operation on the drum. |
+| DrumIOWrite | 554-595 | Initiate a write operation on the drum. |
+| DrumIO | 596-662 | Perform read/write sector operations from within the unit service routine. |
+| drm_svc | 663-693 |  |
+| drm_reset | 694-713 |  |
+| drm_attach | 714-754 |  |
+| drm_detach | 755-764 |  |
+| drm_set_size | 765-776 | Change drum capacity |
+| DRMreject | 777-787 |  |
+| DRMin | 788-831 |  |
+| DRMout | 832-893 |  |
+| DRMclear | 894-911 | function - same as device reset but don't clear CASTATUS and DATASTATUS |
+| DRMdecode | 912-921 | clear bits 1 - 7 since they are ignored. |
+| DRMautoload | 922-941 | Autoload support |
+| drm_help | 942-967 |  |

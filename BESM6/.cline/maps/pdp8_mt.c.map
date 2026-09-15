@@ -1,0 +1,112 @@
+=== pdp8_mt.c — 674 строк ===
+Источник: pdp8_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp8_mt.c -nt .cline/maps/pdp8_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 136 | |
+| cpu_unit | 137 | |
+| mt_dib | 173 | |
+| uptr | 234 | |
+| uptr | 309 | |
+| uptr | 343 | |
+| tbc | 383 | |
+| passed_eot | 384 | |
+| st | 386 | |
+| int_req | 512 | |
+| mt_sta | 513 | |
+| uptr | 521 | |
+| NULL | 528 | |
+| return | 552 | |
+| SCPE_OK | 598 | |
+| uptr | 606 | |
+| mt_cu | 608 | |
+| SCPE_OK | 623 | |
+| uptr->USTAT | 665 | |
+| SCPE_OK | 668 | |
+| magtape" | 673 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MT_NUMDR | 8                               ... | 70 |
+| USTAT | u3                              ... | 71 |
+| MT_MAXFR | (1 << 16)                       ... | 72 |
+| WC_SIZE | (1 << 12)                       ... | 73 |
+| WC_MASK | (WC_SIZE - 1) | 74 |
+| CU_V_UNIT | 9                               ... | 78 |
+| CU_M_UNIT | 07 | 79 |
+| CU_PARITY | 00400                           ... | 80 |
+| CU_IEE | 00200                           ... | 81 |
+| CU_IED | 00100                           ... | 82 |
+| CU_V_EMA | 3                               ... | 83 |
+| CU_M_EMA | 07 | 84 |
+| CU_EMA | (CU_M_EMA << CU_V_EMA) | 85 |
+| CU_DTY | 00002                           ... | 86 |
+| CU_UNPAK | 00001                           ... | 87 |
+| GET_UNIT(x) | (((x) >> CU_V_UNIT) & CU_M_UNIT) | 88 |
+| GET_EMA(x) | (((x) & CU_EMA) << (12 - CU_V_EMA)) | 89 |
+| FN_V_FNC | 9                               ... | 93 |
+| FN_M_FNC | 07 | 94 |
+| FN_UNLOAD | 00 | 95 |
+| FN_REWIND | 01 | 96 |
+| FN_READ | 02 | 97 |
+| FN_CMPARE | 03 | 98 |
+| FN_WRITE | 04 | 99 |
+| FN_WREOF | 05 | 100 |
+| FN_SPACEF | 06 | 101 |
+| FN_SPACER | 07 | 102 |
+| FN_ERASE | 00400                           ... | 103 |
+| FN_CRC | 00200                           ... | 104 |
+| FN_GO | 00100                           ... | 105 |
+| FN_INC | 00040                           ... | 106 |
+| FN_RMASK | 07700                           ... | 107 |
+| GET_FNC(x) | (((x) >> FN_V_FNC) & FN_M_FNC) | 108 |
+| STA_ERR | (04000 << 12)                   ... | 112 |
+| STA_REW | (02000 << 12)                   ... | 113 |
+| STA_BOT | (01000 << 12)                   ... | 114 |
+| STA_REM | (00400 << 12)                   ... | 115 |
+| STA_PAR | (00200 << 12)                   ... | 116 |
+| STA_EOF | (00100 << 12)                   ... | 117 |
+| STA_RLE | (00040 << 12)                   ... | 118 |
+| STA_DLT | (00020 << 12)                   ... | 119 |
+| STA_EOT | (00010 << 12)                   ... | 120 |
+| STA_WLK | (00004 << 12)                   ... | 121 |
+| STA_CPE | (00002 << 12)                   ... | 122 |
+| STA_ILL | (00001 << 12)                   ... | 123 |
+| STA_9TK | 00040                           ... | 124 |
+| STA_INC | 00010                           ... | 126 |
+| STA_LAT | 00004                           ... | 127 |
+| STA_CRC | 00002                           ... | 128 |
+| STA_LON | 00001                           ... | 129 |
+| STA_CLR | (FN_RMASK \| 00020)              ... | 131 |
+| STA_DYN | (STA_REW \| STA_BOT \| STA_REM \| S... | 132 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt70 | 231-236 |  |
+| switch | 237-306 |  |
+| mt71 | 307-311 |  |
+| switch | 312-340 |  |
+| mt72 | 341-345 |  |
+| switch | 346-379 |  |
+| mt_svc | 380-392 |  |
+| if | 393-404 |  |
+| if | 405-413 |  |
+| switch | 414-505 |  |
+| mt_updcsta | 506-517 |  |
+| mt_busy | 518-522 |  |
+| for | 523-532 |  |
+| mt_ixma | 533-537 |  |
+| if | 538-547 |  |
+| mt_set_done | 548-556 |  |
+| mt_map_err | 557-558 |  |
+| switch | 559-602 |  |
+| mt_reset | 603-609 |  |
+| for | 610-627 |  |
+| mt_attach | 628-643 |  |
+| mt_detach | 644-658 |  |
+| mt_vlock | 659-670 |  |
+| mt_description | 671-674 |  |

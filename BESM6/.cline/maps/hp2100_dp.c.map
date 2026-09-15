@@ -1,0 +1,146 @@
+=== hp2100_dp.c — 1766 строк ===
+Источник: hp2100_dp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_dp.c -nt .cline/maps/hp2100_dp.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 349-354 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dpd_interface | 392 | |
+| dpc_interface | 393 | |
+| signal | 633 | |
+| working_set | 634 | |
+| outbound | 635 | |
+| irq_enabled | 636 | |
+| signal | 818 | |
+| working_set | 819 | |
+| outbound | 820 | |
+| irq_enabled | 821 | |
+| return | 1007 | |
+| return | 1030 | |
+| SCPE_OK | 1169 | |
+| da | 1191 | |
+| dpd_xfer | 1327 | |
+| SCPE_OK | 1336 | |
+| drv | 1344 | |
+| dpc_poll | 1358 | |
+| dpd_xfer | 1359 | |
+| dpd_wval | 1360 | |
+| dpc_eoc | 1361 | |
+| dp_ptr | 1362 | |
+| SCPE_OK | 1375 | |
+| result | 1396 | |
+| offset | 1397 | |
+| zero | 1398 | |
+| drv | 1433 | |
+| SCPE_OK | 1448 | |
+| SCPE_OK | 1470 | |
+| SCPE_OK | 1483 | |
+| start | 1743 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_UNLOAD | (UNIT_V_UF + 0)                 ... | 238 |
+| UNIT_UNLOAD | (1 << UNIT_V_UNLOAD) | 239 |
+| FNC | u3                              ... | 240 |
+| DRV | u4                              ... | 241 |
+| DP_N_NUMWD | 7 | 243 |
+| DP_NUMWD | (1 << DP_N_NUMWD)               ... | 244 |
+| DP_NUMSC2 | 12                              ... | 245 |
+| DP_NUMSC3 | 24                              ... | 246 |
+| DP_NUMSC | (dp_ctype ? DP_NUMSC3 : DP_NUMSC2) | 247 |
+| DP_NUMSF | 4                               ... | 248 |
+| DP_NUMCY | 203                             ... | 249 |
+| DP_SIZE2 | (DP_NUMSF * DP_NUMCY * DP_NUMSC2... | 250 |
+| DP_SIZE3 | (DP_NUMSF * DP_NUMCY * DP_NUMSC3... | 251 |
+| DP_NUMDRV | 4                               ... | 252 |
+| CW_V_FNC | 12                              ... | 262 |
+| CW_M_FNC | 017 | 263 |
+| CW_GETFNC(x) | (((x) >> CW_V_FNC) & CW_M_FNC) | 264 |
+| FNC_STA | 000                             ... | 265 |
+| FNC_WD | 001                             ... | 266 |
+| FNC_RD | 002                             ... | 267 |
+| FNC_SEEK | 003                             ... | 268 |
+| FNC_REF | 005                             ... | 269 |
+| FNC_CHK | 006                             ... | 270 |
+| FNC_INIT | 011                             ... | 271 |
+| FNC_AR | 013                             ... | 272 |
+| FNC_SEEK1 | 020                             ... | 273 |
+| FNC_SEEK2 | 021                             ... | 274 |
+| FNC_SEEK3 | 022                             ... | 275 |
+| FNC_CHK1 | 023                             ... | 276 |
+| FNC_AR1 | 024                             ... | 277 |
+| CW_V_DRV | 0                               ... | 278 |
+| CW_M_DRV | 03 | 279 |
+| CW_GETDRV(x) | (((x) >> CW_V_DRV) & CW_M_DRV) | 280 |
+| DA_V_CYL | 0                               ... | 284 |
+| DA_M_CYL | 0377 | 285 |
+| DA_GETCYL(x) | (((x) >> DA_V_CYL) & DA_M_CYL) | 286 |
+| DA_V_HD | 8                               ... | 287 |
+| DA_M_HD | 03 | 288 |
+| DA_GETHD(x) | (((x) >> DA_V_HD) & DA_M_HD) | 289 |
+| DA_V_SC | 0                               ... | 290 |
+| DA_M_SC2 | 017 | 291 |
+| DA_M_SC3 | 037 | 292 |
+| DA_M_SC | (dp_ctype ? DA_M_SC3 : DA_M_SC2) | 293 |
+| DA_GETSC(x) | (((x) >> DA_V_SC) & DA_M_SC) | 294 |
+| DA_CKMASK2 | 037                             ... | 295 |
+| DA_CKMASK3 | 077 | 296 |
+| DA_CKMASK | (dp_ctype ? DA_CKMASK3 : DA_CKMA... | 297 |
+| STA_ATN | 0100000                         ... | 315 |
+| STA_1ST | 0040000                         ... | 316 |
+| STA_OVR | 0020000                         ... | 317 |
+| STA_RWU | 0010000                         ... | 318 |
+| STA_ACU | 0004000                         ... | 319 |
+| STA_PROT | 0002000                         ... | 320 |
+| STA_HUNT | 0002000                         ... | 321 |
+| STA_SKI | 0001000                         ... | 322 |
+| STA_SKE | 0000400                         ... | 323 |
+| STA_NRDY | 0000100                         ... | 325 |
+| STA_EOC | 0000040                         ... | 326 |
+| STA_AER | 0000020                         ... | 327 |
+| STA_FLG | 0000010                         ... | 328 |
+| STA_BSY | 0000004                         ... | 329 |
+| STA_DTE | 0000002                         ... | 330 |
+| STA_ERR | 0000001                         ... | 331 |
+| STA_ERSET2 | (STA_1ST \| STA_OVR \| STA_RWU \| S... | 333 |
+| STA_ERSET3 | (STA_ATN \| STA_1ST \| STA_OVR \| S... | 337 |
+| STA_ANYERR | (dp_ctype ? STA_ERSET3 : STA_ERS... | 341 |
+| STA_UNLOADED | (dp_ctype ? (STA_NRDY \| STA_BSY)... | 342 |
+| STA_MBZ13 | (STA_ATN \| STA_RWU \| STA_SKI)   ... | 344 |
+| UNIT_FLAGS | (UNIT_FIX \| UNIT_ATTABLE \| UNIT_... | 511 |
+| GETDA(x,y,z) |  | 1186 |
+| BMDL_SUBCHANNEL_0 | 031000              /* BMDL cont... | 1534 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dpd_interface | 631-637 |  |
+| while | 638-814 |  |
+| dpc_interface | 815-822 |  |
+| while | 823-1001 |  |
+| dp_god | 1002-1012 |  |
+| dp_goc | 1013-1017 |  |
+| if | 1018-1054 |  |
+| dpd_svc | 1055-1059 |  |
+| switch | 1060-1188 |  |
+| dpc_svc | 1189-1194 |  |
+| if | 1195-1207 |  |
+| switch | 1208-1328 |  |
+| if | 1329-1341 |  |
+| dpc_reset | 1342-1348 |  |
+| if | 1349-1365 |  |
+| for | 1366-1393 |  |
+| dpc_attach | 1394-1401 |  |
+| if | 1402-1421 |  |
+| dpc_detach | 1422-1430 |  |
+| dpc_load_unload | 1431-1453 |  |
+| dp_settype | 1454-1460 |  |
+| for | 1461-1475 |  |
+| dp_showtype | 1476-1738 |  |
+| dpc_boot | 1739-1766 |  |

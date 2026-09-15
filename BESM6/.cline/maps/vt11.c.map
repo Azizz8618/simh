@@ -1,0 +1,82 @@
+=== vt11.c — 3843 строк ===
+Источник: vt11.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vt11.c -nt .cline/maps/vt11.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| vt11_dptr | 131 | |
+| vt11_dbit | 132 | |
+| vt11_debug | 144 | |
+| bdb | 238 | |
+| SOLID | 270 | |
+| GREEN | 398 | |
+| save_x0 | 564 | |
+| line_counter | 1283 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BITMASK(n) | (1<<(n))             /* PDP-11 b... | 120 |
+| FIELDMASK(START,END) | ((1<<((START)-(END)+1))-1) | 123 |
+| GETFIELD(W,START,END) | (((W)>>(END)) & FIELDMASK(START,... | 126 |
+| TESTBIT(W,B) | (((W) & BITMASK(B)) != 0) | 129 |
+| DEVICE | void | 141 |
+| DBG_CALL | 1 | 143 |
+| DEBUGF(...) | _sim_debug_device (vt11_dbit, vt... | 149 |
+| DEBUGF(...) | do {if (vt11_debug & DBG_CALL) {... | 151 |
+| DEBUGF(...) |  | 158 |
+| PSCALEF | 4       /* position scale factor... | 201 |
+| PSCALEF | 1       /* position scale factor... | 203 |
+| PSCALE(x) | ((x) * PSCALEF) | 207 |
+| PNORM(x) | ((x) / PSCALEF) | 208 |
+| VSCALE(x) | ((PSCALE(vector_scale * (int32)(... | 212 |
+| CSCALE(x) | ((PSCALE(char_scale * (int32)(x)... | 213 |
+| ABS(x) | ((x) >= 0 ? (x) : -(x)) | 216 |
+| TWOSCOMP(x) | ((x) >= 0 ? (x) : ~(-(x)-1)) | 217 |
+| INIT | { if (!vt11_init) { display_init... | 222 |
+| DPC | stack[8]._dpc               /* D... | 237 |
+| CONTROL_MODE() | (word_number == -1)     /* true ... | 520 |
+| DATA_MODE() | (word_number >= 0)      /* true ... | 521 |
+| STACK_EMPTY | (sp == &stack[8])   /* "TOS" */ | 523 |
+| STACK_FULL | (sp == &stack[0])   /* "BOS" */ | 524 |
+| BLINK_COUNT | 266                 /* 266 milli... | 580 |
+| BLINK_COUNT | 67                  /* 67 millis... | 582 |
+| MENU_OFFSET | (1024 + VR48_GUTTER)        /* l... | 590 |
+| VR48_WIDTH | (MENU_OFFSET + 128)  /* X beyond... | 591 |
+| ONCRT(x,y) | ((x) >= 0 && (x) <= x_edge && (y... | 596 |
+| CLIPYMAX | y_edge | 621 |
+| CLIPXMAX | 1023 | 623 |
+| ONSCREEN(x,y) | (menu \|\| ((x) >= 0 && (x) <= CLI... | 624 |
+| CLIPXMAX | (menu ? 127 : 1023) | 627 |
+| ONSCREEN(x,y) | ((x) >= 0 && (x) <= CLIPXMAX  | 628 |
+| CLIPXMAX | 1023 | 631 |
+| ONSCREEN(x,y) | ((x) >= 0 && (x) <= CLIPXMAX  | 632 |
+| LC1 | 02 | 1284 |
+| LC2 | 04 | 1285 |
+| LC3 | 010 | 1286 |
+| LC4 | 020 | 1287 |
+| TPOINT | do { znum += dz; /* 2 * original... | 1387 |
+| MORE_DATA | { ++word_number; goto check; } | 3470 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| vt11_get_mpr | 720-744 |  |
+| vt11_get_xpr | 745-759 |  |
+| vt11_get_ypr | 760-807 |  |
+| vt11_get_xor | 808-826 |  |
+| vt11_get_yor | 827-927 |  |
+| vt11_get_sdr | 928-976 |  |
+| vt11_get_sar | 977-1026 |  |
+| vt11_get_zpr | 1027-1041 |  |
+| vt11_get_zor | 1042-1066 |  |
+| vt11_reset | 1067-1127 |  |
+| push | 1128-1141 |  |
+| pop | 1142-1156 |  |
+| dintens | 1157-1576 |  |
+| clip3 | 1577-2019 |  |
+| vector3 | 2020-2187 |  |
+| basic_vector | 2188-2746 |  |
+| character | 2747-3056 |  |
+| vt11_cycle | 3057-3843 |  |

@@ -1,0 +1,60 @@
+=== 3b2_ports.c — 838 строк ===
+Источник: 3b2_ports.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_ports.c -nt .cline/maps/3b2_ports.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ports_ln_slot | 120 | |
+| ports_slot_ln | 126 | |
+| ports_state | 129 | |
+| ports_ldsc | 140 | |
+| ports_desc | 141 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IO_SCHED | 1000 | 54 |
+| MAX_LINES | 32 | 79 |
+| PPQESIZE | 12 | 81 |
+| DELAY_ASYNC | 25 | 82 |
+| DELAY_DLM | 100 | 83 |
+| DELAY_ULM | 100 | 84 |
+| DELAY_FCF | 100 | 85 |
+| DELAY_DOS | 100 | 86 |
+| DELAY_DSD | 100 | 87 |
+| DELAY_OPTIONS | 100 | 88 |
+| DELAY_VERS | 100 | 89 |
+| DELAY_CONN | 100 | 90 |
+| DELAY_XMIT | 50 | 91 |
+| DELAY_RECV | 25 | 92 |
+| DELAY_DEVICE | 25 | 93 |
+| DELAY_STD | 100 | 94 |
+| PORTS_DIAG_CRC1 | 0x7ceec900 | 96 |
+| PORTS_DIAG_CRC2 | 0x77a1ea56 | 97 |
+| PORTS_DIAG_CRC3 | 0x84cf938b | 98 |
+| PORTS_DIAG_CRC4 | 0x31b32383  /* Used by SVR 2.0.5 */ | 99 |
+| PORTS_DIAG_CRC5 | 0x4be7bccc  /* Used by SVR 2.0.5 */ | 100 |
+| PORTS_DIAG_CRC6 | 0x3197f6dd  /* Used by SVR 2.0.5 */ | 101 |
+| PORTS_DFLT_LINES | 4 | 103 |
+| PORTS_DFLT_CARDS | 1 | 104 |
+| LN(slot,port) | (ports_slot_ln[(slot)] + (port)) | 106 |
+| LSLOT(ln) | (ports_ln_slot[ln]) | 107 |
+| LPORT(ln) | ((ln) % PORTS_LINES) | 110 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cio_irq | 203-213 |  |
+| ports_setnl | 214-271 | cards as necessary. The number of lines must be a multiple of 4. |
+| ports_cmd | 272-492 |  |
+| ports_update_conn | 493-526 | Update the connection status of the given port. |
+| ports_sysgen | 527-544 |  |
+| ports_express | 545-552 |  |
+| ports_full | 553-565 |  |
+| ports_reset | 566-632 |  |
+| ports_cio_svc | 633-656 |  |
+| ports_rcv_svc | 657-721 |  |
+| ports_xmt_svc | 722-789 |  |
+| ports_attach | 790-824 |  |
+| ports_detach | 825-838 |  |

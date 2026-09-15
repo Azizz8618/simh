@@ -1,0 +1,60 @@
+=== mfdc.c — 690 строк ===
+Источник: mfdc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test mfdc.c -nt .cline/maps/mfdc.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| MFDC_DRIVE_INFO | 91-99 |
+| MFDC_INFO | 101-113 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 61 | |
+| mfdc_info_data | 115 | |
+| mfdc_info | 116 | |
+| sdata | 118 | |
+| cy | 315 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| USE_VGI | /* Use 275-byte VGI-format secto... | 42 |
+| DBG_PRINT(args) | sim_printf args | 48 |
+| DBG_PRINT(args) |  | 50 |
+| STATUS_MSG | (1 << 0) | 54 |
+| SEEK_MSG | (1 << 1) | 55 |
+| CMD_MSG | (1 << 2) | 56 |
+| RD_DATA_MSG | (1 << 3) | 57 |
+| WR_DATA_MSG | (1 << 4) | 58 |
+| VERBOSE_MSG | (1 << 5) | 59 |
+| MFDC_MAX_DRIVES | 4 | 71 |
+| JUMPER_W9 | 1   /* Not Installed (0) = 2MHz,... | 72 |
+| JUMPER_W10 | 0 | 73 |
+| MFDC_SECTOR_LEN | 275 | 75 |
+| UNIT_V_MFDC_WLK | (UNIT_V_UF + 0) /* write locked ... | 120 |
+| UNIT_MFDC_WLK | (1 << UNIT_V_MFDC_WLK) | 121 |
+| UNIT_V_MFDC_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 122 |
+| UNIT_MFDC_VERBOSE | (1 << UNIT_V_MFDC_VERBOSE) | 123 |
+| MFDC_CAPACITY | (77*16*MFDC_SECTOR_LEN) /* Defau... | 124 |
+| MDSK_NAME | "Micropolis FD Control" | 145 |
+| MFDC_CMD_NOP | 0 | 622 |
+| MFDC_CMD_SELECT | 1 | 623 |
+| MFDC_CMD_INTR | 2 | 624 |
+| MFDC_CMD_STEP | 3 | 625 |
+| MFDC_CMD_SET_WRITE | 4 | 626 |
+| MFDC_CMD_RESET | 5 | 627 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mfdc_description | 147-210 |  |
+| mfdc_reset | 211-232 | Reset routine |
+| mfdc_attach | 233-291 | Attach routine |
+| mfdc_detach | 292-315 | Detach routine |
+| adc | 316-343 |  |
+| mdskdev | 344-371 | boot ROM code is runtime relocatable, it moves with the controller registers. |
+| MFDC_Read | 372-524 |  |
+| MFDC_Write | 525-628 |  |
+| MFDC_Command | 629-690 |  |

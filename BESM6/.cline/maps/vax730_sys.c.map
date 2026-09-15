@@ -1,0 +1,81 @@
+=== vax730_sys.c — 671 строк ===
+Источник: vax730_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax730_sys.c -nt .cline/maps/vax730_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sys_model | 40 | |
+| tmr_int | 65 | |
+| val | 217 | |
+| val | 287 | |
+| return | 353 | |
+| nexus | 367 | |
+| nexus | 393 | |
+| return | 404 | |
+| acc | 418 | |
+| in_ie | 428 | |
+| in_ie | 437 | |
+| cc | 438 | |
+| cc | 451 | |
+| gbuf | 478 | |
+| slptr | 479 | |
+| regptr | 480 | |
+| dptr | 482 | |
+| uptr | 483 | |
+| dibp | 484 | |
+| ba | 485 | |
+| r5v | 504 | |
+| SP | 552 | |
+| SCPE_OK | 553 | |
+| sim_vm_cmd | 560 | |
+| SCPE_OK | 561 | |
+| controller" | 566 | |
+| SCPE_OK | 574 | |
+| return | 587 | |
+| idx | 602 | |
+| idx | 606 | |
+| SCPE_OK | 620 | |
+| dptr | 628 | |
+| dibp | 629 | |
+| SCPE_OK | 647 | |
+| SCPE_OK | 653 | |
+| SCPE_OK | 670 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eval_int | 135-150 |  |
+| for | 151-164 |  |
+| for | 165-173 |  |
+| get_vector | 174-177 |  |
+| if | 178-181 |  |
+| if | 182-184 |  |
+| if | 185-189 |  |
+| if | 190-199 |  |
+| if | 200-214 |  |
+| ReadIPR | 215-218 |  |
+| switch | 219-291 |  |
+| WriteIPR | 292-293 |  |
+| switch | 294-364 |  |
+| ReadReg | 365-368 |  |
+| if | 369-390 |  |
+| WriteReg | 391-394 |  |
+| if | 395-415 |  |
+| machine_check | 416-442 |  |
+| con_halt | 443-460 |  |
+| vax730_boot | 461-475 |  |
+| vax730_boot_parse | 476-490 |  |
+| if | 491-523 |  |
+| for | 524-543 |  |
+| cpu_boot | 544-557 |  |
+| sysb_reset | 558-563 |  |
+| sysb_description | 564-570 |  |
+| show_nexus | 571-578 |  |
+| init_nexus_tab | 579-582 |  |
+| for | 583-599 |  |
+| build_nexus_tab | 600-624 |  |
+| build_dib_tab | 625-633 |  |
+| for | 634-649 |  |
+| cpu_print_model | 650-655 |  |
+| cpu_model_help | 656-671 |  |

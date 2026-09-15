@@ -1,0 +1,151 @@
+=== hp_tapelib.c — 3209 строк ===
+Источник: hp_tapelib.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp_tapelib.c -nt .cline/maps/hp_tapelib.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DRIVE_PROPS | 447-453 |
+| COMMAND_PROPERTIES | 510-515 |
+| TAPELIB_PROPERTIES | 771-775 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| outbound | 879 | |
+| outbound | 905 | |
+| status | 927 | |
+| status | 946 | |
+| status | 1003 | |
+| unit | 1046 | |
+| uptr | 1047 | |
+| drive | 1048 | |
+| SCPE_OK | 1075 | |
+| unit | 1132 | |
+| remaining_time | 1133 | |
+| uptr | 1134 | |
+| reset_position | 1135 | |
+| marker | 1136 | |
+| return | 1228 | |
+| result | 1303 | |
+| SCPE_OK | 1375 | |
+| new_bpi | 1409 | |
+| status | 1410 | |
+| reel | 1453 | |
+| status | 1454 | |
+| SCPE_OK | 1533 | |
+| SCPE_OK | 1548 | |
+| status | 1580 | |
+| status | 1591 | |
+| outbound | 1691 | |
+| unit | 2057 | |
+| data_byte | 2058 | |
+| error_flag | 2059 | |
+| selector | 2060 | |
+| pptr | 2061 | |
+| outbound | 2062 | |
+| complete | 2063 | |
+| outbound | 2647 | |
+| unit | 2682 | |
+| do_gap | 2792 | |
+| unit | 2793 | |
+| gap_inches | 2794 | |
+| cvptr->state | 3044 | |
+| return | 3055 | |
+| index | 3096 | |
+| byte | 3097 | |
+| return | 3139 | |
+| return | 3163 | |
+| entry | 3186 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NO_EVENT | -1                  /* do not sc... | 339 |
+| NO_ACTION | (CNTLR_IFN_IBUS) (NO_FUNCTIONS \|... | 341 |
+| SCP_STATUS(w) | (CNTLR_IFN_IBUS) (SCPE \| (w)) | 342 |
+| CNTLR_UPTR | (cvptr->device->units + TL_CNTLR... | 347 |
+| GET_MODEL(f) | (DRIVE_TYPE) ((f) >> UNIT_MODEL_... | 352 |
+| PROP_INDEX_WIDTH | 8                   /* tape driv... | 382 |
+| PROP_REEL_WIDTH | 2                   /* mounted t... | 383 |
+| PROP_UNIT_WIDTH | 3                   /* tape driv... | 384 |
+| PROP_MODEL_WIDTH | 3                   /* tape driv... | 385 |
+| PROP_INDEX_SHIFT | 0                   /* bits 7-0 */ | 387 |
+| PROP_REEL_SHIFT | 8                   /* bits 9-8 */ | 388 |
+| PROP_UNIT_SHIFT | 10                  /* bits 12-1... | 389 |
+| PROP_MODEL_SHIFT | 13                  /* bits 15-1... | 390 |
+| PROP_INDEX_MASK | ((1u << PROP_INDEX_WIDTH) - 1 <<... | 392 |
+| PROP_REEL_MASK | ((1u << PROP_REEL_WIDTH)  - 1 <<... | 393 |
+| PROP_UNIT_MASK | ((1u << PROP_UNIT_WIDTH)  - 1 <<... | 394 |
+| PROP_MODEL_MASK | ((1u << PROP_MODEL_WIDTH) - 1 <<... | 395 |
+| PROP_INDEX(u) | (((u)->PROP & PROP_INDEX_MASK) >... | 397 |
+| PROP_REEL(u) | (((u)->PROP & PROP_REEL_MASK)  >... | 398 |
+| PROP_UNIT(u) | (((u)->PROP & PROP_UNIT_MASK)  >... | 399 |
+| PROP_MODEL(u) | (((u)->PROP & PROP_MODEL_MASK) >... | 400 |
+| PROP_REEL_UNLIM | (Reel_Unlimited << PROP_REEL_SHIFT) | 402 |
+| PROP_REEL_600 | (Reel_600_Foot  << PROP_REEL_SHIFT) | 403 |
+| PROP_REEL_1200 | (Reel_1200_Foot << PROP_REEL_SHIFT) | 404 |
+| PROP_REEL_2400 | (Reel_2400_Foot << PROP_REEL_SHIFT) | 405 |
+| PROPS_COUNT | (sizeof drive_props / sizeof dri... | 467 |
+| T | TRUE | 517 |
+| F | FALSE | 518 |
+| CST_UNITSEL | (status_bits [cvptr->unit_select... | 638 |
+| CST_REJECT | (status_bits [Command_Rejected] ... | 639 |
+| CST_RUNAWAY | (status_bits [Tape_Runaway]     ... | 640 |
+| CST_DATAERR | (status_bits [Data_Error]       ... | 641 |
+| CST_EOF | (status_bits [End_of_File]      ... | 642 |
+| CST_TIMERR | (status_bits [Timing_Error]     ... | 643 |
+| CST_IFBUSY | (status_bits [Interface_Busy]   ... | 644 |
+| CST_ODDLEN | (status_bits [Odd_Length]       ... | 645 |
+| UST_WRPROT | (status_bits [Protected]        ... | 649 |
+| UST_WRSTAT | (status_bits [Write_Status]     ... | 650 |
+| UST_DEN1600 | (status_bits [Density_1600]     ... | 651 |
+| DST_EOT | (status_bits [End_of_Tape]      ... | 655 |
+| DST_UNITBUSY | (status_bits [Unit_Busy]        ... | 656 |
+| DST_UNITRDY | (status_bits [Unit_Ready]       ... | 657 |
+| DST_LOADPT | (status_bits [Load_Point]       ... | 658 |
+| DST_REWIND | (status_bits [Rewinding]        ... | 659 |
+| DST_UNITLOCL | (status_bits [Unit_Offline]     ... | 660 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tl_controller | 877-923 |  |
+| tl_onoffline | 924-928 |  |
+| if | 929-999 |  |
+| tl_status | 1000-1043 |  |
+| tl_reset | 1044-1060 |  |
+| for | 1061-1129 |  |
+| tl_clear | 1130-1137 |  |
+| for | 1138-1241 |  |
+| tl_opcode_name | 1242-1256 |  |
+| tl_unit_name | 1257-1299 |  |
+| tl_attach | 1300-1342 |  |
+| tl_detach | 1343-1365 |  |
+| tl_set_timing | 1366-1386 |  |
+| tl_set_model | 1387-1404 |  |
+| tl_set_density | 1405-1449 |  |
+| tl_set_reelsize | 1450-1455 |  |
+| if | 1456-1523 |  |
+| tl_show_timing | 1524-1543 |  |
+| tl_show_density | 1544-1577 |  |
+| tl_show_reelsize | 1578-1687 |  |
+| start_command | 1688-1712 |  |
+| is | 1713-2051 |  |
+| continue_command | 2052-2071 |  |
+| switch | 2072-2615 |  |
+| if | 2616-2638 |  |
+| end_command | 2639-2679 |  |
+| poll_drives | 2680-2789 |  |
+| call_tapelib | 2790-2796 |  |
+| switch | 2797-2843 |  |
+| switch | 2844-2942 |  |
+| if | 2943-3010 |  |
+| abort_command | 3011-3032 |  |
+| reject_command | 3033-3045 |  |
+| if | 3046-3093 |  |
+| add_crcc_lrcc | 3094-3101 |  |
+| for | 3102-3126 |  |
+| if | 3127-3152 |  |
+| activate_unit | 3153-3182 |  |
+| validate_drive | 3183-3209 |  |

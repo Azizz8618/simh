@@ -1,0 +1,18 @@
+=== m68kops.c — 2103 строк ===
+Источник: m68kops.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test m68kops.c -nt .cline/maps/m68kops.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| opcode_handler_struct | 13-19 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_CPU_TYPES | 3 | 7 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| m68ki_build_opcode_table | 1993-2103 | Build the opcode handler jump table |

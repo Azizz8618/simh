@@ -1,0 +1,117 @@
+=== vax4xx_vc.c — 576 строк ===
+Источник: vax4xx_vc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax4xx_vc.c -nt .cline/maps/vax4xx_vc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 74 | |
+| ka_cfgtst | 75 | |
+| vc_updated | 90 | |
+| vc_active | 103 | |
+| return | 255 | |
+| vc_buf | 265 | |
+| nval | 270 | |
+| scrln | 272 | |
+| nval | 283 | |
+| return | 288 | |
+| data | 293 | |
+| mask | 294 | |
+| ln | 295 | |
+| plna | 296 | |
+| bita | 297 | |
+| ln | 357 | |
+| mev | 365 | |
+| kev | 366 | |
+| lines | 368 | |
+| ln | 369 | |
+| plna | 370 | |
+| bita | 371 | |
+| vc_cur_y | 396 | |
+| vc_cur_v | 398 | |
+| vc_cur_f | 399 | |
+| vc_cur_new_data | 400 | |
+| lines | 412 | |
+| SCPE_OK | 460 | |
+| vc_cmd | 471 | |
+| vc_xpos | 472 | |
+| vc_ypos | 473 | |
+| vc_xmin1 | 474 | |
+| vc_xmax1 | 475 | |
+| vc_ymin1 | 476 | |
+| vc_ymax1 | 477 | |
+| vc_xmin2 | 478 | |
+| vc_xmax2 | 479 | |
+| vc_ymin2 | 480 | |
+| vc_ymax2 | 481 | |
+| vc_cur_p | 482 | |
+| SCPE_OK | 526 | |
+| SCPE_OK | 535 | |
+| vc_input_captured | 547 | |
+| SCPE_OK | 548 | |
+| SCPE_OK | 559 | |
+| SCPE_OK | 570 | |
+| Adapter" | 575 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VC_XSIZE | 1024                            ... | 34 |
+| VC_YSIZE | 864                             ... | 35 |
+| VC_BXSIZE | 1024                            ... | 37 |
+| VC_BUFMASK | (VC_BUFSIZE - 1) | 38 |
+| CUR_X_OF | 216 | 40 |
+| CUR_Y_OF | 33 | 41 |
+| CMD_TEST | 0x8000 | 43 |
+| CMD_HSHI | 0x4000 | 44 |
+| CMD_VBHI | 0x2000 | 45 |
+| CMD_LODSA | 0x1000 | 46 |
+| CMD_FORG2 | 0x0800 | 47 |
+| CMD_ENRG2 | 0x0400 | 48 |
+| CMD_FORG1 | 0x0200 | 49 |
+| CMD_ENRG1 | 0x0100 | 50 |
+| CMD_XHWID | 0x0080 | 51 |
+| CMD_XHCL1 | 0x0040 | 52 |
+| CMD_XHCLP | 0x0020 | 53 |
+| CMD_XHAIR | 0x0010 | 54 |
+| CMD_FOPB | 0x0008 | 55 |
+| CMD_ENPB | 0x0004 | 56 |
+| CMD_FOPA | 0x0002 | 57 |
+| CMD_ENPA | 0x0001 | 58 |
+| CUR_X | ((vc_xpos < CUR_X_OF) ? 0 : (vc_... | 60 |
+| CUR_Y | ((vc_ypos < CUR_Y_OF) ? 0 : (vc_... | 61 |
+| CUR_V | ((vc_cmd & CMD_LODSA) == 0) | 62 |
+| CUR_F | (0) | 63 |
+| CUR_PLNA | 0 | 65 |
+| CUR_PLNB | 16 | 66 |
+| DBG_REG | 0x0001                          ... | 70 |
+| DBG_CURSOR | 0x0002                          ... | 71 |
+| DBG_TCURSOR | 0x0800                          ... | 72 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| vc_wr | 183-189 |  |
+| switch | 190-257 |  |
+| vc_mem_rd | 258-267 |  |
+| vc_mem_wr | 268-276 |  |
+| if | 277-290 |  |
+| vc_set_vid_cursor | 291-302 |  |
+| for | 303-338 |  |
+| if | 339-354 |  |
+| vc_invalidate | 355-362 |  |
+| vc_svc | 363-373 |  |
+| if | 374-379 |  |
+| if | 380-412 |  |
+| for | 413-462 |  |
+| vc_reset | 463-486 |  |
+| if | 487-499 |  |
+| if | 500-528 |  |
+| vc_detach | 529-530 |  |
+| if | 531-537 |  |
+| vc_set_enable | 538-542 |  |
+| vc_set_capture | 543-550 |  |
+| vc_show_capture | 551-552 |  |
+| if | 553-561 |  |
+| vc_help | 562-572 |  |
+| vc_description | 573-576 |  |

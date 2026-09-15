@@ -1,0 +1,37 @@
+=== tt2500_key.c — 549 строк ===
+Источник: tt2500_key.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test tt2500_key.c -nt .cline/maps/tt2500_key.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| KBUF | 43 | |
+| suffix | 44 | |
+| modifiers | 45 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG | 0001 | 31 |
+| KEY_DISPLAY | (1 << UNIT_V_UF) | 33 |
+| KEY_CONSOLE | (2 << UNIT_V_UF) | 34 |
+| KEY_TYPE | (3 << UNIT_V_UF) | 35 |
+| SHFT | 01000 | 37 |
+| CTRL | 02000 | 38 |
+| META | 04000 | 39 |
+| NOKEY | 0177777 | 41 |
+| KBD_FLAGS | KEY_DISPLAY | 54 |
+| KBD_FLAGS | KEY_CONSOLE | 56 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| key_svc | 96-114 |  |
+| key_modifiers | 115-143 |  |
+| key_both | 144-174 |  |
+| key_shift | 175-322 |  |
+| key_noshift | 323-476 |  |
+| key_event | 477-509 |  |
+| key_reset | 510-531 |  |
+| key_read | 532-546 |  |
+| key_write | 547-549 |  |

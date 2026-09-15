@@ -1,0 +1,47 @@
+=== hp2100_tbg.c — 624 строк ===
+Источник: hp2100_tbg.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_tbg.c -nt .cline/maps/hp2100_tbg.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 220-226 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tbg_interface | 240 | |
+| signal | 380 | |
+| working_set | 381 | |
+| outbound | 382 | |
+| irq_enabled | 383 | |
+| tick_count | 384 | |
+| tick_count | 543 | |
+| SCPE_OK | 601 | |
+| rate_index | 613 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_CALTIME_SHIFT | (UNIT_V_UF + 0)     /* calibrate... | 164 |
+| UNIT_W1B_SHIFT | (UNIT_V_UF + 1)     /* jumper W1... | 165 |
+| UNIT_W2B_SHIFT | (UNIT_V_UF + 2)     /* jumper W2... | 166 |
+| UNIT_CALTIME | (1u << UNIT_CALTIME_SHIFT) | 168 |
+| UNIT_W1B | (1u << UNIT_W1B_SHIFT) | 169 |
+| UNIT_W2B | (1u << UNIT_W2B_SHIFT) | 170 |
+| CN_RATE_MASK | 0000007u            /* clock rat... | 181 |
+| CN_RATE_SHIFT | 0                   /* clock rat... | 183 |
+| CN_RATE(c) | (((c) & CN_RATE_MASK) >> CN_RATE... | 185 |
+| ST_ERROR | 0000020u            /* lost tick... | 207 |
+| ST_ERROR_W1B | 0000040u            /* lost tick... | 208 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tbg_interface | 378-385 |  |
+| while | 386-540 |  |
+| tbg_service | 541-562 |  |
+| if | 563-587 |  |
+| tbg_reset | 588-589 |  |
+| if | 590-610 |  |
+| get_delay | 611-624 |  |

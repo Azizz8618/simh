@@ -1,0 +1,68 @@
+=== hp_disclib.h — 563 строк ===
+Источник: hp_disclib.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp_disclib.h -nt .cline/maps/hp_disclib.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DIAG_ENTRY | 365-372 |
+| DELAY_PROPS | 379-388 |
+| CNTLR_VARS | 397-419 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DL_MAXDRIVE | 7                   /* last vali... | 58 |
+| DL_AUXUNITS | 1                   /* number of... | 59 |
+| DL_BUFSIZE | 138                 /* required ... | 60 |
+| WORDS_7905 | (411 * 3 * 48 * 128)        /* 7... | 65 |
+| WORDS_7906 | (411 * 4 * 48 * 128)        /* 7... | 66 |
+| WORDS_7920 | (823 * 5 * 48 * 128)        /* 7... | 67 |
+| WORDS_7925 | (823 * 9 * 64 * 128)        /* 7... | 68 |
+| DL_DEB_CMD | (1u << 0)           /* trace con... | 73 |
+| DL_DEB_INCO | (1u << 1)           /* trace com... | 74 |
+| DL_DEB_STATE | (1u << 2)           /* trace com... | 75 |
+| DL_DEB_SERV | (1u << 3)           /* trace uni... | 76 |
+| DL_DEB_XFER | (1u << 4)           /* trace dat... | 77 |
+| DL_DEB_IOB | (1u << 5)           /* trace I/O... | 78 |
+| DL_DEB_V_UF | 6                   /* first fre... | 79 |
+| CYL | u3                  /* drive cyl... | 84 |
+| STATUS | u4                  /* drive sta... | 85 |
+| OPCODE | u5                  /* drive cur... | 86 |
+| PHASE | u6                  /* drive cur... | 87 |
+| DEV_REALTIME_SHIFT | (DEV_V_UF + 0)              /* b... | 92 |
+| DEV_REALTIME | (1u << DEV_REALTIME_SHIFT)  /* r... | 94 |
+| UNIT_MODEL_SHIFT | (UNIT_V_UF + 0)             /* b... | 99 |
+| UNIT_PROT_SHIFT | (UNIT_V_UF + 2)             /* b... | 100 |
+| UNIT_UNLOAD_SHIFT | (UNIT_V_UF + 4)             /* b... | 101 |
+| UNIT_FMT_SHIFT | (UNIT_V_UF + 5)             /* b... | 102 |
+| DL_V_UF | (UNIT_V_UF + 6)             /* f... | 103 |
+| UNIT_MODEL_MASK | 0000003u                    /* m... | 105 |
+| UNIT_PROT_MASK | 0000003u                    /* h... | 106 |
+| UNIT_MODEL | (UNIT_MODEL_MASK << UNIT_MODEL_S... | 108 |
+| UNIT_PROT | (UNIT_PROT_MASK  << UNIT_PROT_SH... | 109 |
+| UNIT_PROT_L | (1u << UNIT_PROT_SHIFT + 0) | 110 |
+| UNIT_PROT_U | (1u << UNIT_PROT_SHIFT + 1) | 111 |
+| UNIT_UNLOAD | (1u << UNIT_UNLOAD_SHIFT) | 112 |
+| UNIT_FMT | (1u << UNIT_FMT_SHIFT) | 113 |
+| UNIT_7905 | (HP_7905 << UNIT_MODEL_SHIFT) | 115 |
+| UNIT_7906 | (HP_7906 << UNIT_MODEL_SHIFT) | 116 |
+| UNIT_7920 | (HP_7920 << UNIT_MODEL_SHIFT) | 117 |
+| UNIT_7925 | (HP_7925 << UNIT_MODEL_SHIFT) | 118 |
+| DLIFN(C) | ((CNTLR_IFN_SET) ((C) & ~D16_MASK)) | 123 |
+| DLIBUS(C) | ((CNTLR_IBUS) ((C) & D16_MASK)) | 124 |
+| DLNEXTIFN(S) | ((CNTLR_IFN) IOPRIORITY (S)) | 126 |
+| LAST_CNTLR | CS80 | 148 |
+| CNTLR_COUNT | (LAST_CNTLR + 1) | 149 |
+| NO_FLAGS | ((CNTLR_FLAG) 0)    /* no flags ... | 208 |
+| NO_FUNCTIONS | ((CNTLR_IFN) 0)         /* no fu... | 230 |
+| NO_DATA | ((CNTLR_IBUS) 0)        /* no da... | 238 |
+| LAST_OPCODE | Wakeup | 271 |
+| LAST_STATUS | Drive_Attention | 331 |
+| LAST_PHASE | End_Phase | 355 |
+| DL_OVEND | D32_UMAX            /* marker fo... | 374 |
+| DELAY_INIT(sk1,skf,scf,dxfr,isg,ovhd) |  | 390 |
+| CNTLR_INIT(ctype,dev,bufptr,doa,fast) |  | 436 |
+| DL_REGS(cntlr,units,numunits,buffer,times) |  | 469 |
+| DL_MODS(cntlr,loadvalid,ovcount) |  | 513 |
+

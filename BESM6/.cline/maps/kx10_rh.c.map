@@ -1,0 +1,157 @@
+=== kx10_rh.c — 1190 строк ===
+Источник: kx10_rh.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_rh.c -nt .cline/maps/kx10_rh.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rh_boot_dev | 195 | |
+| rh_boot_unit | 196 | |
+| eb_ptr | 434 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CS1_GO | 1               /* go */ | 28 |
+| CS1_V_FNC | 1               /* function pos */ | 29 |
+| CS1_M_FNC | 037             /* function mask */ | 30 |
+| GET_FNC(x) | (((x) >> CS1_V_FNC) & CS1_M_FNC) | 31 |
+| CS1_IE | 0000100         /* Enable interr... | 32 |
+| CS1_RDY | 0000200         /* Drive ready */ | 33 |
+| CS1_UBA | 0001400         /* High order UB... | 34 |
+| CS1_PSEL | 0002000         /* */ | 35 |
+| CS1_DVA | 0004000         /* drive avail */ | 36 |
+| CS1_MCPE | 0020000         /* */ | 37 |
+| CS1_TRE | 0040000         /* Set if CS2 01... | 38 |
+| CS1_SC | 0100000         /* Set if TRE or... | 39 |
+| CS2_V_UNIT | 0               /* unit pos */ | 41 |
+| CS2_M_UNIT | 07              /* unit mask */ | 42 |
+| CS2_UNIT | (CS2_M_UNIT << CS2_V_UNIT) | 43 |
+| CS2_UAI | 0000010         /* addr inhibit */ | 44 |
+| CS2_PAT | 0000020         /* parity test N... | 45 |
+| CS2_CLR | 0000040         /* controller cl... | 46 |
+| CS2_IR | 0000100         /* input ready */ | 47 |
+| CS2_OR | 0000200         /* output ready */ | 48 |
+| CS2_MDPE | 0000400         /* Mbus par err ... | 49 |
+| CS2_MXF | 0001000         /* missed xfer N... | 50 |
+| CS2_PGE | 0002000         /* program err */ | 51 |
+| CS2_NEM | 0004000         /* nx mem err */ | 52 |
+| CS2_NED | 0010000         /* nx drive err */ | 53 |
+| CS2_PE | 0020000         /* parity err NI */ | 54 |
+| CS2_WCE | 0040000         /* write check e... | 55 |
+| CS2_DLT | 0100000         /* data late NI */ | 56 |
+| ER1_ILF | 0000001         /* illegal func */ | 59 |
+| ER1_ILR | 0000002         /* illegal regis... | 60 |
+| ER1_RMR | 0000004         /* reg mod refus... | 61 |
+| ER1_PAR | 0000010         /* parity err */ | 62 |
+| IADR_ATTN | 0000000000040LL   /* Interrupt o... | 88 |
+| IARD_RAE | 0000000000100LL   /* Interrupt o... | 89 |
+| DIB_CBOV | 0000000000200LL   /* Control bus... | 90 |
+| CXR_PS_FAIL | 0000000002000LL   /* Power suppl... | 91 |
+| CXR_ILC | 0000000004000LL   /* Illegal fun... | 92 |
+| CR_DRE | 0000000010000LL   /* Or Data and... | 93 |
+| DTC_OVER | 0000000020000LL   /* DF10 did no... | 94 |
+| CCW_COMP_1 | 0000000040000LL   /* Control wor... | 95 |
+| CXR_CHAN_ER | 0000000100000LL   /* Channel Err... | 96 |
+| CXR_EXC | 0000000200000LL   /* Error in dr... | 97 |
+| CXR_DBPE | 0000000400000LL   /* Device Pari... | 98 |
+| CXR_NXM | 0000001000000LL   /* Channel non... | 99 |
+| CXR_CWPE | 0000002000000LL   /* Channel Con... | 100 |
+| CXR_CDPE | 0000004000000LL   /* Channel Dat... | 101 |
+| CXR_SD_RAE | 0000200000000LL   /* Register ac... | 102 |
+| CXR_ILFC | 0000400000000LL   /* Illegal CXR... | 103 |
+| B22_FLAG | 0004000000000LL   /* 22 bit chan... | 104 |
+| CC_CHAN_PLS | 0010000000000LL   /* Channel tra... | 105 |
+| CC_CHAN_ACT | 0020000000000LL   /* Channel in ... | 106 |
+| CC_INH | 0040000000000LL   /* Disconnect ... | 107 |
+| CB_FULL | 0200000000000LL   /* Set when ch... | 108 |
+| AR_FULL | 0400000000000LL   /* Set when AR... | 109 |
+| RH20_PCR_FULL | 0000000000020LL   /* Primary com... | 112 |
+| RH20_ATTN_ENA | 0000000000040LL   /* Attention e... | 113 |
+| RH20_SCR_FULL | 0000000000100LL   /* Secondary c... | 114 |
+| RH20_ATTN | 0000000000200LL   /* Attention */ | 115 |
+| RH20_MASS_ENA | 0000000000400LL   /* Mass bus en... | 116 |
+| RH20_DATA_OVR | 0000000001000LL   /* Data overru... | 117 |
+| RH20_CHAN_RDY | 0000000002000LL   /* Channel rea... | 118 |
+| RH20_RAE | 0000000004000LL   /* Register ac... | 119 |
+| RH20_DR_RESP | 0000000010000LL   /* Drive no re... | 120 |
+| RH20_CHAN_ERR | 0000000020000LL   /* Channel err... | 121 |
+| RH20_SHRT_WC | 0000000040000LL   /* Short word ... | 122 |
+| RH20_LONG_WC | 0000000100000LL   /* Long word c... | 123 |
+| RH20_DR_EXC | 0000000200000LL   /* Exception */ | 124 |
+| RH20_DATA_PRI | 0000000400000LL   /* Data parity... | 125 |
+| RH20_SBAR | 0000001000000LL   /* SBAR set */ | 126 |
+| RH20_XEND | 0000002000000LL   /* Transfer en... | 127 |
+| ATTN_EN | 0000000000040LL   /* enable atte... | 130 |
+| REA_EN | 0000000000100LL   /* enable regi... | 131 |
+| CBOV_CLR | 0000000000200LL   /* Clear CBOV */ | 132 |
+| CONT_RESET | 0000000002000LL   /* Clear All e... | 133 |
+| ILC_CLR | 0000000004000LL   /* Clear ILC a... | 134 |
+| DRE_CLR | 0000000010000LL   /* Clear CR_CB... | 135 |
+| OVER_CLR | 0000000020000LL   /* Clear DTC o... | 136 |
+| WRT_CW | 0000000040000LL   /* Write contr... | 137 |
+| CHN_CLR | 0000000100000LL   /* Clear Chann... | 138 |
+| DR_EXC_CLR | 0000000200000LL   /* Clear DR_EX... | 139 |
+| DBPE_CLR | 0000000400000LL   /* Clear CXR_D... | 140 |
+| RH20_DELETE_SCR | 0000000000100LL   /* Clear SCR */ | 143 |
+| RH20_RCLP | 0000000000200LL   /* Reset comma... | 144 |
+| RH20_MASS_EN | 0000000000400LL   /* Mass bus en... | 145 |
+| RH20_XFER_CLR | 0000000001000LL   /* Clear XFER ... | 146 |
+| RH20_CLR_MBC | 0000000002000LL   /* Clear MBC */ | 147 |
+| RH20_CLR_RAE | 0000000004000LL   /* Clear RAE e... | 148 |
+| CR_REG | 0770000000000LL   /* Register nu... | 151 |
+| LOAD_REG | 0004000000000LL   /* Load regist... | 152 |
+| CR_MAINT_MODE | 0000100000000LL   /* Maint mode.... | 153 |
+| CR_DRIVE | 0000007000000LL | 154 |
+| CR_GEN_EVD | 0000000400000LL   /* Enable Pari... | 155 |
+| CR_DXES | 0000000200000LL   /* Disable DXE... | 156 |
+| CR_INAD | 0000000077600LL | 157 |
+| CR_WTEVM | 0000000000100LL   /* Verify Pari... | 158 |
+| CR_FUNC | 0000000000076LL | 159 |
+| CR_GO | 0000000000001LL | 160 |
+| IRQ_VECT | 0000000000777LL   /* Interupt ve... | 162 |
+| IRQ_KI10 | 0000002000000LL | 163 |
+| IRQ_KA10 | 0000001000000LL | 164 |
+| RH20_MEM_PAR | 00200000000000LL  /* Memory pari... | 167 |
+| RH20_NADR_PAR | 00100000000000LL  /* Address par... | 168 |
+| RH20_NOT_WC0 | 00040000000000LL  /* Word count ... | 169 |
+| RH20_NXM_ERR | 00020000000000LL  /* Non existen... | 170 |
+| RH20_LAST_ERR | 00000400000000LL  /* Last transf... | 171 |
+| RH20_ERROR | 00000200000000LL  /* RH20 error */ | 172 |
+| RH20_LONG_STS | 00000100000000LL  /* Did not rea... | 173 |
+| RH20_SHRT_STS | 00000040000000LL  /* WC reached ... | 174 |
+| RH20_OVER | 00000020000000LL  /* Overrun err... | 175 |
+| FNC_XFER | 024             /* >=? data xfr */ | 178 |
+| DS_OFF | 0000001         /* offset mode */ | 181 |
+| DS_VV | 0000100         /* volume valid */ | 182 |
+| DS_DRY | 0000200         /* drive ready */ | 183 |
+| DS_DPR | 0000400         /* drive present */ | 184 |
+| DS_PGM | 0001000         /* programable N... | 185 |
+| DS_LST | 0002000         /* last sector */ | 186 |
+| DS_WRL | 0004000         /* write locked */ | 187 |
+| DS_MOL | 0010000         /* medium online */ | 188 |
+| DS_PIP | 0020000         /* pos in progre... | 189 |
+| DS_ERR | 0040000         /* error */ | 190 |
+| DS_ATA | 0100000         /* attention act... | 191 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| uba_rh_write | 200-341 |  |
+| uba_rh_read | 342-436 |  |
+| rh_set_type | 437-451 |  |
+| rh_show_type | 452-466 |  |
+| rh_devio | 467-773 |  |
+| rh_devirq | 774-796 |  |
+| rh_reset | 797-816 | Reset the RH to a known clear condiguration |
+| rh_setattn | 817-828 | Set the attention flag for a unit |
+| rh_error | 829-837 |  |
+| rh_blkend | 838-852 | Decrement block count for RH20, nop for RH10 |
+| rh_setirq | 853-863 | Set an IRQ for a DF10 device |
+| rh_writecw | 864-918 | Generate the DF10 complete word |
+| rh_finish_op | 919-936 | Finish off a DF10 transfer |
+| rh20_setup | 937-991 | Set up for a RH20 transfer |
+| rh_setup | 992-1003 | Setup for a DF10 transfer |
+| rh_fetch | 1004-1066 | Fetch the next IO control word |
+| rh_read | 1067-1131 | Read next word |
+| rh_write | 1132-1190 | Write next word |

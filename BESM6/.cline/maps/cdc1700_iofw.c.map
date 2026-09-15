@@ -1,0 +1,33 @@
+=== cdc1700_iofw.c — 500 строк ===
+Источник: cdc1700_iofw.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_iofw.c -nt .cline/maps/cdc1700_iofw.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 32 | |
+| Areg | 39 | |
+| sim_devices | 40 | |
+| IOdev | 41 | |
+| CMap | 43 | |
+| IOFWinitialized | 45 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| fw_init | 165-200 | Once-only initialization routine |
+| fw_doIO | 201-261 | processing. |
+| fw_doBDCIO | 262-329 | Perform I/O operation - called from the buffered data channel controller. |
+| fw_IOintr | 330-387 | interrupts. |
+| fw_IOunderwayData | 388-395 | 1. Devices which use IO_ST_DATA to signal end of processing. |
+| fw_IOcompleteData | 396-403 |  |
+| fw_IOunderwayEOP | 404-411 | 2. Devices which use IO_ST_EOP to signal end of processing. |
+| fw_IOcompleteEOP | 412-420 |  |
+| fw_IOunderwayEOP2 | 421-428 | drop IO_ST_READY while I/O is in progress. |
+| fw_IOcompleteEOP2 | 429-433 |  |
+| fw_IOalarm | 434-444 |  |
+| fw_setForced | 445-450 | IO_ST_READY for the Paper Tape Reader. |
+| fw_clearForced | 451-460 |  |
+| fw_reject | 461-472 | unless it is to the director function register (register 1). |
+| fw_state | 473-484 | register. |
+| fw_findChanDevice | 485-500 | perform a simple range check. |

@@ -1,0 +1,151 @@
+=== id_idc.c — 803 строк ===
+Источник: id_idc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test id_idc.c -nt .cline/maps/id_idc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 197 | |
+| idc_dib | 240 | |
+| uptr | 353 | |
+| dat | 410 | |
+| return | 429 | |
+| uptr | 437 | |
+| diff | 501 | |
+| SCPE_OK | 647 | |
+| SCPE_OK | 665 | |
+| SCPE_OK | 681 | |
+| cy | 688 | |
+| hd | 689 | |
+| FALSE | 721 | |
+| return | 735 | |
+| uptr | 743 | |
+| idc_wdptr | 746 | |
+| idd_wdptr | 747 | |
+| idc_hcyl | 751 | |
+| idd_sirq | 755 | |
+| SCPE_OK | 766 | |
+| uptr->CYL | 780 | |
+| SCPE_OK | 792 | |
+| SCPE_OK | 802 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IDC_NUMBY | 256                             ... | 39 |
+| IDC_NUMSC | 64                              ... | 40 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 0)                 ... | 42 |
+| UNIT_M_DTYPE | 0x7 | 43 |
+| UNIT_V_AUTO | (UNIT_V_UF + 4)                 ... | 44 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 45 |
+| UNIT_AUTO | (1 << UNIT_V_AUTO) | 46 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 47 |
+| CYL | u3                              ... | 49 |
+| HD | u4                              ... | 50 |
+| STD | buf                             ... | 51 |
+| FNC | wait                            ... | 52 |
+| IDC_DRVMASK | ((1 << ID_NUMDR) - 1)           ... | 54 |
+| IDC_DIRMASK | (IDC_DRVMASK << (i_IDC + 1))    ... | 55 |
+| STC_WRP | 0x80                            ... | 59 |
+| STC_ACF | 0x40                            ... | 60 |
+| STC_DEF | 0x20                            ... | 61 |
+| STC_CYO | 0x10                            ... | 62 |
+| STC_IDL | 0x02                            ... | 63 |
+| STC_DTE | 0x01                            ... | 64 |
+| SETC_EX | (STC_WRP\|STC_ACF\|STC_DEF\|STC_CYO) | 65 |
+| STC_MASK | (STC_WRP\|STC_ACF\|STC_DEF\|STC_CYO... | 66 |
+| CMC_MASK | 0x3F | 70 |
+| CMC_CLR | 0x08                            ... | 71 |
+| CMC_RD | 0x01                            ... | 72 |
+| CMC_WR | 0x02                            ... | 73 |
+| CMC_RCHK | 0x03                            ... | 74 |
+| CMC_FCHK | 0x04                            ... | 75 |
+| CMC_RFMT | 0x05                            ... | 76 |
+| CMC_WFMT | 0x06                            ... | 77 |
+| CMC_WFTK | 0x07                            ... | 78 |
+| CMC_RRAM | 0x10                            ... | 82 |
+| CMC_WRAM | 0x11                            ... | 83 |
+| CMC_EXP0 | 0x12                            ... | 84 |
+| CMC_RUNC | 0x21                            ... | 85 |
+| CMC_STST | 0x30                            ... | 86 |
+| CMC_WLNG | 0x32                            ... | 87 |
+| CMC_LAMP | 0x37                            ... | 88 |
+| CMC_DRV | 0x100                           ... | 90 |
+| CMC_DRV1 | 0x200                           ... | 91 |
+| STD_WRP | 0x80                            ... | 95 |
+| STD_ACH | 0x20                            ... | 97 |
+| STD_UNS | 0x10                            ... | 98 |
+| STD_NRDY | 0x08                            ... | 99 |
+| STD_SKI | 0x02                            ... | 100 |
+| STD_OFFL | 0x01                            ... | 101 |
+| STD_UST | (STD_UNS \| STD_SKI)             ... | 102 |
+| SETD_EX | (STD_WRP \| STD_UNS)             ... | 103 |
+| CMDF_SHD | 0x20                            ... | 107 |
+| CMDF_SCY | 0x10                            ... | 108 |
+| CMD_SK | 0x02                            ... | 109 |
+| CMD_RST | 0x01                            ... | 110 |
+| CMDX_MASK | 0x30                            ... | 112 |
+| CMDX_RLS | 0x80                            ... | 113 |
+| CMDX_CLF | 0x40                            ... | 114 |
+| CMDX_SVP | 0x08                            ... | 115 |
+| CMDX_SVM | 0x04                            ... | 116 |
+| CMDX_DSP | 0x02                            ... | 117 |
+| CMDX_DSM | 0x01                            ... | 118 |
+| CY_MASK | 0xFFF                           ... | 122 |
+| HD_MASK | 0x1F                            ... | 123 |
+| SC_MASK | 0x3F                            ... | 124 |
+| HCYL_V_HD | 10                              ... | 125 |
+| HCYL_V_CYL | 0 | 126 |
+| GET_SA(cy,sf,sc,t) |  | 128 |
+| TYPE_MCCDD16 | 0 | 149 |
+| SURF_MCCDD16 | 1 | 150 |
+| CYL_MCCDD16 | 823 | 151 |
+| SIZE_MCCDD16 | (IDC_NUMSC * SURF_MCCDD16 * CYL_... | 152 |
+| TYPE_MCCDD48 | 1 | 154 |
+| SURF_MCCDD48 | 3 | 155 |
+| CYL_MCCDD48 | 823 | 156 |
+| SIZE_MCCDD48 | (IDC_NUMSC * SURF_MCCDD48 * CYL_... | 157 |
+| TYPE_MCCDD80 | 2 | 159 |
+| SURF_MCCDD80 | 5 | 160 |
+| CYL_MCCDD80 | 823 | 161 |
+| SIZE_MCCDD80 | (IDC_NUMSC * SURF_MCCDD80 * CYL_... | 162 |
+| TYPE_MSM80 | 3 | 164 |
+| SURF_MSM80 | 5 | 165 |
+| CYL_MSM80 | 823 | 166 |
+| SIZE_MSM80 | (IDC_NUMSC * SURF_MSM80 * CYL_MS... | 167 |
+| TYPE_MSM300 | 4 | 169 |
+| SURF_MSM300 | 19 | 170 |
+| CYL_MSM300 | 823 | 171 |
+| SIZE_MSM300 | (IDC_NUMSC * SURF_MSM300 * CYL_M... | 172 |
+| TYPE_MSM330F | 5 | 174 |
+| SURF_MSM330F | 16 | 175 |
+| CYL_MSM330F | 1024 | 176 |
+| SIZE_MSM330F | (IDC_NUMSC * SURF_MSM330F * CYL_... | 177 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| idc | 350-354 |  |
+| switch | 355-407 |  |
+| idc_wd_byte | 408-410 |  |
+| switch | 411-433 |  |
+| id | 434-442 |  |
+| switch | 443-498 |  |
+| idc_svc | 499-505 |  |
+| if | 506-562 |  |
+| switch | 563-651 |  |
+| idc_rds | 652-656 |  |
+| if | 657-669 |  |
+| idc_wds | 670-674 |  |
+| if | 675-685 |  |
+| idc_dter | 686-691 |  |
+| if | 692-695 |  |
+| if | 696-702 |  |
+| if | 703-707 |  |
+| if | 708-725 |  |
+| idc_done | 726-739 |  |
+| idc_reset | 740-755 |  |
+| for | 756-770 |  |
+| idc_attach | 771-784 |  |
+| for | 785-796 |  |
+| idc_set_size | 797-803 |  |

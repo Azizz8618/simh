@@ -1,0 +1,60 @@
+=== cromemco_dazzler.c — 646 строк ===
+Источник: cromemco_dazzler.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cromemco_dazzler.c -nt .cline/maps/cromemco_dazzler.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| daz_vptr | 49 | |
+| daz_0e | 51 | |
+| daz_0f | 52 | |
+| daz_addr | 53 | |
+| daz_frame | 54 | |
+| daz_resolution | 55 | |
+| daz_pages | 56 | |
+| daz_window_width | 57 | |
+| daz_window_height | 58 | |
+| daz_screen_width | 59 | |
+| daz_screen_height | 60 | |
+| daz_screen_pixels | 61 | |
+| daz_color | 62 | |
+| daz_surface | 63 | |
+| daz_cpalette | 64 | |
+| daz_gpalette | 65 | |
+| daz_res | 109 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DAZ_SHOW_VIDEO(b) | (b & DAZ_ON) ? "ON" : "OFF" | 67 |
+| DAZ_SHOW_RES(b) | (b & DAZ_RESX4) ? "X4" : "NORMAL" | 68 |
+| DAZ_SHOW_MEMSIZE(b) | (b & DAZ_2K) ? "2K" : "512" | 69 |
+| DAZ_SHOW_COLOR(b) | (b & DAZ_COLOR) ? "COLOR" : "B/W" | 70 |
+| VERBOSE_MSG | (1 << 0) | 99 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| daz_description | 157-161 |  |
+| daz_svc | 162-170 |  |
+| daz_reset | 171-195 |  |
+| daz_boot | 196-242 |  |
+| daz_io | 243-304 |  |
+| daz_open_video | 305-364 |  |
+| daz_close_video | 365-379 |  |
+| daz_resize_video | 380-392 |  |
+| daz_refresh | 393-404 | Draw and refresh the screen in the video window |
+| daz_render_normal | 405-430 |  |
+| daz_render_x4 | 431-461 |  |
+| daz_quad_surfacex | 462-470 |  |
+| daz_quad_surfacey | 471-479 |  |
+| daz_set_0f | 480-513 |  |
+| daz_set_video | 514-534 |  |
+| daz_show_video | 535-542 |  |
+| daz_set_resolution | 543-563 |  |
+| daz_show_resolution | 564-571 |  |
+| daz_set_memsize | 572-592 |  |
+| daz_show_memsize | 593-600 |  |
+| daz_set_color | 601-621 |  |
+| daz_show_color | 622-629 |  |
+| daz_show_help | 630-646 |  |

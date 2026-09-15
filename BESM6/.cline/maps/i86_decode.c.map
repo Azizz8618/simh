@@ -1,0 +1,40 @@
+=== i86_decode.c — 955 строк ===
+Источник: i86_decode.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i86_decode.c -nt .cline/maps/i86_decode.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| intr | 28 | |
+| cpu_unit | 48 | |
+| cpu8086 | 121 | |
+| switch_cpu_now | 192 | |
+| mod | 300 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| i86_intr_raise | 115-122 |  |
+| cpu8086_intr | 123-127 |  |
+| setViewRegisters | 128-144 |  |
+| setCPURegisters | 145-161 |  |
+| cpu8086reset | 162-187 |  |
+| getFullPC | 188-193 |  |
+| sim_instr_8086 | 194-271 |  |
+| halt_sys | 272-395 |  |
+| decode_rm_byte_register | 396-433 |  |
+| decode_rm_word_register | 434-472 |  |
+| decode_rm_seg_register | 473-502 |  |
+| fetch_byte_imm | 503-514 |  |
+| fetch_word_imm | 515-531 |  |
+| decode_rm00_address | 532-580 |  |
+| decode_rm01_address | 581-623 |  |
+| decode_rm10_address | 624-666 |  |
+| fetch_data_byte | 667-740 |  |
+| fetch_data_byte_abs | 741-755 |  |
+| fetch_data_word | 756-820 |  |
+| fetch_data_word_abs | 821-834 |  |
+| store_data_byte | 835-884 |  |
+| store_data_byte_abs | 885-896 |  |
+| store_data_word | 897-947 |  |
+| store_data_word_abs | 948-955 |  |

@@ -1,0 +1,46 @@
+=== i7010_chan.c — 735 строк ===
+Источник: i7010_chan.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7010_chan.c -nt .cline/maps/i7010_chan.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 40 | |
+| chan_io_status | 69 | |
+| inquiry | 70 | |
+| urec_irq | 71 | |
+| chan_char | 213 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CHAN_DEF | UNIT_DISABLE\|CHAN_SET | 43 |
+| CHAN_LOAD | 0001            /* Channel in lo... | 73 |
+| CHAN_NOREC | 0002            /* Don't stop at... | 74 |
+| CHAN_WM | 0004            /* Sent word mar... | 75 |
+| CHAN_6BIT | 0010            /* Send 6-8 bit ... | 76 |
+| CHAN_DSK_SEEK | 0020            /* Seek Command */ | 77 |
+| CHAN_DSK_DATA | 0040            /* Command needs... | 78 |
+| CHAN_DSK_RD | 0100            /* Command is re... | 79 |
+| CHAN_OVLP | 0200            /* Channel ran o... | 80 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| set_urec | 152-173 |  |
+| get_urec | 174-196 |  |
+| chan_reset | 197-216 |  |
+| chan_boot | 217-235 |  |
+| chan_issue_cmd | 236-284 |  |
+| chan_proc | 285-430 |  |
+| chan_set_attn_urec | 431-435 |  |
+| chan_set_attn_inq | 436-439 |  |
+| chan_clear_attn_inq | 440-446 |  |
+| chan_cmd | 447-543 |  |
+| chan_write | 544-553 |  |
+| chan_read | 554-563 |  |
+| chan_write_char | 564-633 |  |
+| chan_read_char | 634-709 |  |
+| chan9_set_error | 710-717 |  |
+| chan_help | 718-730 |  |
+| chan_description | 731-735 |  |

@@ -1,0 +1,238 @@
+=== m68k_cpu.c — 3343 строк ===
+Источник: m68k_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test m68k_cpu.c -nt .cline/maps/m68k_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| addrmask | 80 | |
+| cputype | 90 | |
+| DR | 105 | |
+| AR | 114 | |
+| USP | 123 | |
+| cur_sp | 124 | |
+| SR | 126 | |
+| SFC | 160 | |
+| DFC | 161 | |
+| VBR | 162 | |
+| saved_PC | 163 | |
+| intpending | 164 | |
+| m68k_sublevel | 165 | |
+| cpudev_self | 234 | |
+| cache_pc | 255 | |
+| cache_line | 256 | |
+| intvectors | 332 | |
+| quickarg | 453 | |
+| shmask8 | 454 | |
+| saved_ea | 480 | |
+| reg | 1454 | |
+| reg | 1490 | |
+| reg | 1526 | |
+| reg | 2668 | |
+| reg | 2726 | |
+| reg | 2750 | |
+| reg | 2808 | |
+| reg | 2833 | |
+| reg | 2887 | |
+| reg | 2911 | |
+| reg | 2967 | |
+| reg | 2993 | |
+| reg | 3041 | |
+| reg | 3061 | |
+| reg | 3109 | |
+| reg | 3129 | |
+| reg | 3175 | |
+| reg | 3197 | |
+| reg | 3243 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FLAG_C | 0x0001 | 41 |
+| FLAG_V | 0x0002 | 42 |
+| FLAG_Z | 0x0004 | 43 |
+| FLAG_N | 0x0008 | 44 |
+| FLAG_X | 0x0010 | 45 |
+| FLAG_I0 | 0x0100 | 46 |
+| FLAG_I1 | 0x0200 | 47 |
+| FLAG_I2 | 0x0400 | 48 |
+| FLAG_IPL_MASK | (FLAG_I0\|FLAG_I1\|FLAG_I2) | 49 |
+| FLAG_S | 0x2000 | 50 |
+| FLAG_T | 0x8000 | 51 |
+| FLAG_T1 | FLAG_T | 52 |
+| FLAG_T0 | 0x4000 | 53 |
+| BIT7 | 0x80 | 55 |
+| BIT8 | 0x100 | 56 |
+| BIT15 | 0x8000 | 57 |
+| BIT16 | 0x10000 | 58 |
+| BIT31 | 0x80000000 | 59 |
+| BIT32 | 0x100000000LL | 60 |
+| MASK_0(x) | ((x) & 1) | 62 |
+| MASK_8U(x) | ((x) & 0xffffff00) | 63 |
+| MASK_8L(x) | ((x) & 0x000000ff) | 64 |
+| MASK_8SGN(x) | ((x) & BIT7) | 65 |
+| MASK_9(x) | ((x) & BIT8) | 66 |
+| MASK_16U(x) | ((x) & 0xffff0000) | 67 |
+| MASK_16L(x) | ((x) & 0x0000ffff) | 68 |
+| MASK_16SGN(x) | ((x) & BIT15) | 69 |
+| MASK_17(x) | ((x) & BIT16) | 70 |
+| MASK_32U(x) | (0) | 71 |
+| MASK_32L(x) | ((x) & 0xffffffff) | 72 |
+| MASK_32SGN(x) | ((x) & BIT31) | 73 |
+| MASK_33(x64) | ((x64) & BIT32) | 74 |
+| COMBINE8(tgt,src) | (MASK_8U(tgt) \| MASK_8L(src)) | 76 |
+| COMBINE16(tgt,src) | (MASK_16U(tgt) \| MASK_16L(src)) | 77 |
+| COMBINE32(tgt,src) | MASK_32L(src) | 78 |
+| D0 | DR[0] | 106 |
+| D1 | DR[1] | 107 |
+| D2 | DR[2] | 108 |
+| D3 | DR[3] | 109 |
+| D4 | DR[4] | 110 |
+| D5 | DR[5] | 111 |
+| D6 | DR[6] | 112 |
+| D7 | DR[7] | 113 |
+| A0 | AR[0] | 115 |
+| A1 | AR[1] | 116 |
+| A2 | AR[2] | 117 |
+| A3 | AR[3] | 118 |
+| A4 | AR[4] | 119 |
+| A5 | AR[5] | 120 |
+| A6 | AR[6] | 121 |
+| A7 | AR[7] | 122 |
+| CCR_C | (SR & FLAG_C) | 127 |
+| CCR_V | (SR & FLAG_V) | 128 |
+| CCR_Z | (SR & FLAG_Z) | 129 |
+| CCR_N | (SR & FLAG_N) | 130 |
+| CCR_X | (SR & FLAG_X) | 131 |
+| SR_IPL | ((SR & FLAG_IPL_MASK)>>8) | 132 |
+| SR_S | (SR & FLAG_S) | 133 |
+| SR_T | (SR & FLAG_T) | 134 |
+| SR_T0 | (SR & FLAG_T0) | 135 |
+| SR_T1 | (SR & FLAG_T1) | 136 |
+| ONEF(flag) | SR \|= (flag) | 138 |
+| CLRF(flag) | SR &= ~(flag) | 139 |
+| SETF(cond,flag) | if (cond) SR \|= (flag); else SR ... | 140 |
+| SETZ8(cond) | if (MASK_8L(cond)) SR &= ~FLAG_Z... | 141 |
+| SETZ16(cond) | if (MASK_16L(cond)) SR &= ~FLAG_... | 142 |
+| SETZ32(cond) | if (MASK_32L(cond)) SR &= ~FLAG_... | 143 |
+| SETNZ8(cond) | SETZ8(cond); if (MASK_8SGN(cond)... | 144 |
+| SETNZ16(cond) | SETZ16(cond); if (MASK_16SGN(con... | 145 |
+| SETNZ32(cond) | SETZ32(cond); if (MASK_32SGN(con... | 146 |
+| SETV_ADD8(a1,a2,r) | SETF(MASK_8SGN(((a1)^(r))&((a2)^... | 147 |
+| SETV_ADD16(a1,a2,r) | SETF(MASK_16SGN(((a1)^(r))&((a2)... | 148 |
+| SETV_ADD32(a1,a2,r) | SETF(MASK_32SGN(((a1)^(r))&((a2)... | 149 |
+| SETV_SUB8(s,d,r) | SETF(MASK_8SGN(((s)^(d))&((r)^(d... | 150 |
+| SETV_SUB16(s,d,r) | SETF(MASK_16SGN(((s)^(d))&((r)^(... | 151 |
+| SETV_SUB32(s,d,r) | SETF(MASK_32SGN(((s)^(d))&((r)^(... | 152 |
+| ASSERT_PRIV() | if (!SR_S) { rc = STOP_PRVIO; br... | 154 |
+| ASSERT_OK(func) | if ((rc=(func)) != SCPE_OK) break | 155 |
+| ASSERT_OKRET(func) | if ((rc=(func)) != SCPE_OK) retu... | 156 |
+| AREG(r) | (r==7 ? cur_sp : &AR[r]) | 158 |
+| CACHE_SIZE | 16 | 252 |
+| CACHE_MASK | 0x0f | 253 |
+| IR_1512 | (IR&0170000) | 399 |
+| IR_1109 | (IR&0007000) | 400 |
+| IR_1108 | (IR&0007400) | 401 |
+| IR_1106 | (IR&0007700) | 402 |
+| IR_1103 | (IR&0007770) | 403 |
+| IR_08 | (IR&0000400) | 404 |
+| IR_0806 | (IR&0000700) | 405 |
+| IR_0803 | (IR&0000770) | 406 |
+| IR_0706 | (IR&0000300) | 407 |
+| IR_0703 | (IR&0000370) | 408 |
+| IR_0503 | (IR&0000070) | 409 |
+| IR_080403 | (IR&0000430) | 410 |
+| IR_08060403 | (IR&0000730) | 411 |
+| IR_0200 | (IR&0000007) | 412 |
+| IR_EAMOD | (IR&0000070) | 413 |
+| IR_0503 | (IR&0000070) | 414 |
+| IR_COND | (IR&0007400) | 415 |
+| IR_EA | (IR&0000077) | 416 |
+| IR_EAM12 | (IR&0000060) | 417 |
+| IR_EAREG | (IR&0000007) | 418 |
+| IR_DISP | (IR&0000377) | 419 |
+| IR_EATGT | ((IR&0000700)>>3) | 420 |
+| IR_REGX | ((IR&0007000)>>9) | 421 |
+| IR_REGY | (IR&0000007) | 422 |
+| IR_TRAP | (IR&0000017) | 423 |
+| IR_SIZE | ((IR&0000300)>>6) | 424 |
+| IR_DATA | (IR&0000377) | 425 |
+| IRE_DA | (IRE&0100000) | 426 |
+| IRE_REG | ((IRE&0070000)>>12) | 427 |
+| IRE_WL | (IRE&0004000) | 428 |
+| IRE_DISP | (IRE&0000377) | 429 |
+| EA_DDIR | 0000 | 432 |
+| EA_ADIR | 0010 | 433 |
+| EA_AIND | 0020 | 434 |
+| EA_API | 0030 | 435 |
+| EA_APD | 0040 | 436 |
+| EA_AIDX | 0050 | 437 |
+| EA_AXIDX | 0060 | 438 |
+| EA_EXT | 0070 | 439 |
+| EA_IMM | 0074 | 440 |
+| EAX_AW | 000 | 441 |
+| EAX_AL | 001 | 442 |
+| EAX_PCIDX | 002 | 443 |
+| EAX_PCXIDX | 003 | 444 |
+| EAX_IMM | 004 | 445 |
+| EXTB(x) | ((int32)((int8)((x)&0xff))) | 447 |
+| EXTW(x) | ((int32)((int16)((x)&0xffff))) | 448 |
+| DRX | DR[IR_REGX] | 450 |
+| DRY | DR[IR_REGY] | 451 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| m68kcpu_peripheral_reset | 236-257 |  |
+| ReadICache | 258-275 |  |
+| ReadInstr | 276-291 |  |
+| ReadInstrInc | 292-299 |  |
+| ReadInstrLongInc | 300-312 |  |
+| m68k_set_s | 313-323 |  |
+| m68k_setipl | 324-333 |  |
+| m68k_irqinit | 334-341 |  |
+| m68k_raise_vectorint | 342-353 |  |
+| m68k_raise_autoint | 354-358 |  |
+| m68k_nocallback | 359-364 |  |
+| m68kcpu_reset | 365-392 | reset and boot |
+| m68kcpu_boot | 393-481 |  |
+| ea_src_b | 482-546 |  |
+| ea_src_bs | 547-555 |  |
+| ea_src_w | 556-616 |  |
+| ea_src_ws | 617-626 |  |
+| ea_src_l_nd | 627-675 | non dereferencing version of ea_src_l, only accepts ea category control |
+| ea_src_l | 676-738 |  |
+| ea_src_l64 | 739-746 |  |
+| ea_src | 747-760 |  |
+| ea_dst_b | 761-810 |  |
+| ea_dst_b_rmw | 811-838 |  |
+| ea_dst_w | 839-889 |  |
+| ea_dst_w_rmw | 890-921 |  |
+| ea_dst_l | 922-971 |  |
+| ea_dst_l_rmw | 972-1000 |  |
+| ea_dst | 1001-1014 |  |
+| testcond | 1015-1061 |  |
+| m68k_push16 | 1062-1067 | push/pop on supervisor sp |
+| m68k_push32 | 1068-1073 |  |
+| m68k_pop16 | 1074-1079 |  |
+| m68k_pop32 | 1080-1086 |  |
+| m68k_cpush16 | 1087-1092 | push/pop on current sp |
+| m68k_cpush32 | 1093-1098 |  |
+| m68k_cpop16 | 1099-1104 |  |
+| m68k_cpop32 | 1105-1110 |  |
+| m68k_gen_exception | 1111-1134 |  |
+| m68k_add8 | 1135-1143 |  |
+| m68k_add16 | 1144-1154 |  |
+| m68k_add32 | 1155-1165 |  |
+| m68k_sub8 | 1166-1174 |  |
+| m68k_sub16 | 1175-1185 |  |
+| m68k_sub32 | 1186-1201 |  |
+| m68k_movem_r_pd | 1202-1222 |  |
+| m68k_movem_r_ea | 1223-1241 |  |
+| m68k_movem_pi_r | 1242-1264 |  |
+| m68k_movem_ea_r | 1265-1285 |  |
+| m68k_divu_w | 1286-1304 |  |
+| m68k_divs_w | 1305-1326 |  |
+| m68k_checkints | 1327-1347 |  |
+| m68k_stop | 1348-1364 | handle stop instruction |
+| sim_instr | 1365-3343 |  |

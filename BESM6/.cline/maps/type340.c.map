@@ -1,0 +1,52 @@
+=== type340.c — 1034 строк ===
+Источник: type340.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test type340.c -nt .cline/maps/type340.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PARAM | 98 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TYPE342 | 1                       /* defau... | 78 |
+| BITMASK(N) | (1<<(17-(N))) | 81 |
+| FIELDMASK(START,END) | ((1<<((END)-(START)+1))-1) | 84 |
+| GETFIELD(W,START,END) | (((W)>>(17-(END)))&FIELDMASK(STA... | 87 |
+| TESTBIT(W,B) | (((W) & BITMASK(B)) != 0) | 90 |
+| DEBUGF(X) | printf X | 94 |
+| DEBUGF(X) |  | 96 |
+| TY340_UNITS | 1 | 100 |
+| CH_LF | 0001   /* Line feed. */ | 105 |
+| CH_CR | 0002   /* Carriage return. */ | 106 |
+| CH_UC | 0003   /* Shift in. */ | 107 |
+| CH_LC | 0004   /* Shift out. */ | 108 |
+| CH_ESC | 0005   /* Escape to parameter mo... | 109 |
+| CH_NSPC | 0006   /* Non spacing. */ | 110 |
+| CH_D | 0007   /* Descender. */ | 111 |
+| CH_BS | 0010   /* Backspace. */ | 112 |
+| CH_SUB | 0011   /* Subscript. */ | 113 |
+| CH_SUP | 0012   /* Superscript. */ | 114 |
+| UNIT(N) | u340 | 139 |
+| UNIT(N) | (u340+(N)) | 141 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ty340_set_dac | 146-158 |  |
+| ty340_cycle | 159-170 |  |
+| ty340_get_dac | 171-177 |  |
+| ty340_get_asr | 178-188 |  |
+| ty340_sense | 189-195 |  |
+| ty340_clear | 196-202 |  |
+| ty340_reset | 203-228 |  |
+| point | 229-267 |  |
+| lpoint | 268-291 |  |
+| lineTwoStep | 292-509 |  |
+| vector | 510-570 |  |
+| ipoint | 571-765 |  |
+| ty342_set_grid | 766-777 |  |
+| character | 778-855 |  |
+| ty340_instruction | 856-1029 |  |
+| ty340_status | 1030-1034 |  |

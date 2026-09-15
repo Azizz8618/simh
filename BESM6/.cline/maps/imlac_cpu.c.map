@@ -1,0 +1,73 @@
+=== imlac_cpu.c — 709 строк ===
+Источник: imlac_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test imlac_cpu.c -nt .cline/maps/imlac_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| HISTORY | 66-73 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PC | 46 | |
+| AC | 47 | |
+| DS | 49 | |
+| IR | 50 | |
+| MA | 51 | |
+| MB | 52 | |
+| ion_delay | 53 | |
+| ARM | 56 | |
+| FLAGS | 57 | |
+| ION | 58 | |
+| rom_type | 61 | |
+| stop_reason | 63 | |
+| memmask | 64 | |
+| history | 74 | |
+| history_i | 75 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_CPU | 0001 | 32 |
+| DBG_IRQ | 0002 | 33 |
+| DBG_ROM | 0004 | 34 |
+| ROM_NONE | 0 | 37 |
+| ROM_TTY | 1 | 38 |
+| ROM_STTY | 2 | 39 |
+| ROM_PTR | 3 | 40 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 0) | 42 |
+| UNIT_MSIZE | (07 << UNIT_V_MSIZE) | 43 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pcinc | 171-176 |  |
+| memaddr | 177-181 |  |
+| memrd | 182-188 |  |
+| memwr | 189-197 |  |
+| cpu_class1 | 198-218 |  |
+| cpu_ral | 219-229 |  |
+| cpu_rar | 230-241 |  |
+| cpu_class2 | 242-269 |  |
+| cpu_class3 | 270-298 |  |
+| cpu_iot | 299-308 |  |
+| cpu_opr | 309-332 |  |
+| cpu_insn | 333-454 |  |
+| sim_instr | 455-501 |  |
+| cpu_set_hist | 502-524 |  |
+| cpu_show_hist | 525-557 |  |
+| cpu_ex | 558-567 |  |
+| cpu_dep | 568-575 |  |
+| cpu_is_pc_a_subroutine_call | 576-589 |  |
+| cpu_reset | 590-598 |  |
+| flag_on | 599-605 |  |
+| flag_off | 606-612 |  |
+| flag_check | 613-618 |  |
+| irq_iot | 619-638 |  |
+| rom_data | 639-646 |  |
+| rom_set_type | 647-666 |  |
+| rom_show_type | 667-690 |  |
+| cpu_get_switches | 691-698 |  |
+| cpu_set_switches | 699-703 |  |
+| cpu_set_size | 704-709 |  |

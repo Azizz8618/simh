@@ -1,0 +1,158 @@
+=== s100_dj2d.c — 2521 строк ===
+Источник: s100_dj2d.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_dj2d.c -nt .cline/maps/s100_dj2d.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PCX | 54 | |
+| FMT_SD | 76 | |
+| dj2d_image_size | 78 | |
+| dj2d_2s_image_size | 79 | |
+| dj2d_sector_len | 80 | |
+| dj2d_spt | 81 | |
+| dj2d_track_len | 82 | |
+| dj2d_mem | 94 | |
+| dj2d_prom | 623 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 49 |
+| DBG_PRINT(args) |  | 51 |
+| DJ2D_MAX_ADAPTERS | 1 | 63 |
+| DJ2D_MAX_DRIVES | 4 | 64 |
+| DJ2D_UNITS | DJ2D_MAX_DRIVES+1 | 65 |
+| DJ2D_SIO_UNIT | DJ2D_UNITS-1 | 66 |
+| DJ2D_TRACKS | 77 | 67 |
+| DJ2D_TIMER | 1             /* 1ms timer */ | 68 |
+| DJ2D_ROTATION_MS | 166           /* 166 millisecond... | 69 |
+| DJ2D_HEAD_TIMEOUT | (DJ2D_ROTATION_MS / DJ2D_TIMER *... | 70 |
+| DJ2D_INDEX_TIMEOUT | (DJ2D_ROTATION_MS / DJ2D_TIMER) ... | 71 |
+| DJ2D_BUSY_TIMEOUT | 2                               ... | 72 |
+| DJ2D_BAUD | 19200         /* Default baud ra... | 74 |
+| DJ2D_MEM_READ | FALSE | 84 |
+| DJ2D_MEM_WRITE | TRUE | 85 |
+| DJ2D_PROM_BASE | 0xe000 | 87 |
+| DJ2D_PROM_SIZE | 1024 | 88 |
+| DJ2D_PROM_MASK | (DJ2D_PROM_SIZE-1) | 89 |
+| DJ2D_MEM_BASE | DJ2D_PROM_BASE + DJ2D_PROM_SIZE | 90 |
+| DJ2D_MEM_SIZE | 1024                /* Must be o... | 91 |
+| DJ2D_MEM_MASK | (DJ2D_MEM_SIZE-1) | 92 |
+| WD1791_STAT_NOTREADY | 0x80 | 664 |
+| WD1791_STAT_WRITEPROT | 0x40 | 665 |
+| WD1791_STAT_RTYPEMSB | 0x40 | 666 |
+| WD1791_STAT_HEADLOAD | 0x20 | 667 |
+| WD1791_STAT_RTYPELSB | 0x20 | 668 |
+| WD1791_STAT_WRITEFAULT | 0x20 | 669 |
+| WD1791_STAT_SEEKERROR | 0x10 | 670 |
+| WD1791_STAT_NOTFOUND | 0x10 | 671 |
+| WD1791_STAT_CRCERROR | 0x08 | 672 |
+| WD1791_STAT_TRACK0 | 0x04 | 673 |
+| WD1791_STAT_LOSTDATA | 0x04 | 674 |
+| WD1791_STAT_INDEX | 0x02 | 675 |
+| WD1791_STAT_DRQ | 0x02 | 676 |
+| WD1791_STAT_BUSY | 0x01 | 677 |
+| DJ2D_REG_BASE | (DJ2D_PROM_BASE + 0x03f8) | 738 |
+| DJ2D_REG_UART_DATA | 0x00  /* Register 0 */ | 739 |
+| DJ2D_REG_UART_STATUS | 0x01  /* Register 1 */ | 740 |
+| DJ2D_REG_2D_CONTROL | 0x01  /* Register 1 */ | 741 |
+| DJ2D_REG_2D_FUNCTION | 0x02  /* Register 2 */ | 742 |
+| DJ2D_REG_2D_STATUS | 0x02  /* Register 2 */ | 743 |
+| DJ2D_REG_1791_STATUS | 0x04  /* Register 4 */ | 744 |
+| DJ2D_REG_1791_COMMAND | 0x04  /* Register 4 */ | 745 |
+| DJ2D_REG_1791_TRACK | 0x05  /* Register 5 */ | 746 |
+| DJ2D_REG_1791_SECTOR | 0x06  /* Register 6 */ | 747 |
+| DJ2D_REG_1791_DATA | 0x07  /* Register 7 */ | 748 |
+| DJ2D_STAT_PE | 0x01  /* Parity Error  */ | 751 |
+| DJ2D_STAT_OE | 0x02  /* Overrun Error */ | 752 |
+| DJ2D_STAT_DR | 0x04  /* Data Ready    */ | 753 |
+| DJ2D_STAT_TBRE | 0x08  /* TBRE          */ | 754 |
+| DJ2D_STAT_FE | 0x10  /* Framing Error */ | 755 |
+| DJ2D_STAT_HEAD | 0x01  /* HEAD        */ | 758 |
+| DJ2D_STAT_DATARQ | 0x02  /* DATARQ      */ | 759 |
+| DJ2D_STAT_INTRQ | 0x04  /* INTRQ       */ | 760 |
+| DJ2D_STAT_N2SIDED | 0x08  /* NOT 2 SIDED */ | 761 |
+| DJ2D_STAT_INDEX | 0x10  /* INDEX       */ | 762 |
+| DJ2D_STAT_READY | 0x80  /* READY       */ | 763 |
+| DJ2D_CTRL_DSEL | 0x0f  /* Drive Select Mask */ | 765 |
+| DJ2D_CTRL_SIDE0 | 0x10  /* Side 0 Select     */ | 766 |
+| DJ2D_CTRL_INTDSBL | 0x20  /* Interrupt Disable */ | 767 |
+| DJ2D_CTRL_AENBL | 0x40  /* AENBL             */ | 768 |
+| DJ2D_CTRL_RESET | 0x80  /* Reset 1791        */ | 769 |
+| DJ2D_FUNC_SINGLE | 0x01  /* Single Density */ | 771 |
+| DJ2D_FUNC_HDMASK | 0x06  /* Head Mask      */ | 772 |
+| DJ2D_FUNC_HDLOAD | 0x00  /* Head Loaded    */ | 773 |
+| DJ2D_FUNC_HDUNLD | 0x06  /* Head Unloaded  */ | 774 |
+| DJ2D_FUNC_LEDOFF | 0x08  /* LED Off        */ | 775 |
+| DJ2DA_STAT_INTRQ | 0x01  /* INTRQ       */ | 778 |
+| DJ2DA_STAT_DATARQ | 0x02  /* DATARQ      */ | 779 |
+| DJ2DA_STAT_HEAD | 0x04  /* HEAD        */ | 780 |
+| DJ2DA_STAT_N2SIDED | 0x08  /* NOT 2 SIDED */ | 781 |
+| DJ2DA_STAT_NINDEX | 0x10  /* NOT INDEX   */ | 782 |
+| DJ2DA_STAT_NREADY | 0x20  /* NOT READY   */ | 783 |
+| DJ2DA_CTRL_DSEL | 0x0f  /* Drive Select Mask */ | 785 |
+| DJ2DA_CTRL_SIDE0 | 0x10  /* Side 0 Select     */ | 786 |
+| DJ2DA_CTRL_LEDOFF | 0x20  /* LED Off           */ | 787 |
+| DJ2DA_FUNC_SINGLE | 0x01  /* Single Density */ | 789 |
+| DJ2DA_FUNC_AENBL | 0x02  /* AENBL          */ | 790 |
+| DJ2DA_FUNC_CLRFDC | 0x04  /* Reset 1791     */ | 791 |
+| DJ2DA_FUNC_HDMASK | 0x18  /* Head Mask      */ | 792 |
+| DJ2DA_FUNC_HDLOAD | 0x00  /* Head Loaded    */ | 793 |
+| DJ2DA_FUNC_HDUNLD | 0x18  /* Head Unloaded  */ | 794 |
+| DJ2DA_FUNC_VCOFF | 0x20  /* VCOFF          */ | 795 |
+| WD1791_CMD_RESTORE | 0x00 | 798 |
+| WD1791_CMD_SEEK | 0x10 | 799 |
+| WD1791_CMD_STEP | 0x20 | 800 |
+| WD1791_CMD_STEPU | (WD1791_CMD_STEP \| WD1791_FLAG_U) | 801 |
+| WD1791_CMD_STEPIN | 0x40 | 802 |
+| WD1791_CMD_STEPINU | (WD1791_CMD_STEPIN \| WD1791_FLAG_U) | 803 |
+| WD1791_CMD_STEPOUT | 0x60 | 804 |
+| WD1791_CMD_STEPOUTU | (WD1791_CMD_STEPOUT \| WD1791_FLA... | 805 |
+| WD1791_CMD_READ | 0x80 | 806 |
+| WD1791_CMD_READM | (WD1791_CMD_READ \| WD1791_FLAG_M) | 807 |
+| WD1791_CMD_WRITE | 0xA0 | 808 |
+| WD1791_CMD_WRITEM | (WD1791_CMD_WRITE \| WD1791_FLAG_M) | 809 |
+| WD1791_CMD_READ_ADDRESS | 0xC0 | 810 |
+| WD1791_CMD_READ_TRACK | 0xE0 | 811 |
+| WD1791_CMD_WRITE_TRACK | 0xF0 | 812 |
+| WD1791_CMD_FORCE_INTR | 0xD0 | 813 |
+| WD1791_FLAG_V | 0x04 | 815 |
+| WD1791_FLAG_H | 0x08 | 816 |
+| WD1791_FLAG_U | 0x10 | 817 |
+| WD1791_FLAG_M | 0x10 | 818 |
+| WD1791_FLAG_B | 0x08 | 819 |
+| WD1791_FLAG_S | 0x01 | 820 |
+| WD1791_FLAG_E | 0x04 | 821 |
+| WD1791_FLAG_A1A0_FB | 0x00 | 823 |
+| WD1791_FLAG_A1A0_FA | 0x01 | 824 |
+| WD1791_FLAG_A1A0_F9 | 0x02 | 825 |
+| WD1791_FLAG_A1A0_F8 | 0x03 | 826 |
+| WD1791_FLAG_I0 | 0x01 | 828 |
+| WD1791_FLAG_I1 | 0x02 | 829 |
+| WD1791_FLAG_I2 | 0x04 | 830 |
+| WD1791_FLAG_I3 | 0x08 | 831 |
+| WD1791_FLAG_R1R0_6MS | 0x00 | 833 |
+| WD1791_FLAG_R1R0_10ms | 0x02 | 834 |
+| WD1791_FLAG_R1R0_20ms | 0x03 | 835 |
+| WD1791_ADDR_TRACK | 0x00 | 837 |
+| WD1791_ADDR_ZEROS | 0x01 | 838 |
+| WD1791_ADDR_SECTOR | 0x02 | 839 |
+| WD1791_ADDR_LENGTH | 0x03 | 840 |
+| WD1791_ADDR_CRC1 | 0x04 | 841 |
+| WD1791_ADDR_CRC2 | 0x05 | 842 |
+| DJ2D_NAME | "DISK JOCKEY 2D/B Floppy Disk Co... | 925 |
+| DJ2D_SNAME | "DJ2D" | 926 |
+| UNIT_V_DJ2D_WPROTECT | (UNIT_V_UF + 0)                 ... | 932 |
+| UNIT_DJ2D_WPROTECT | (1 << UNIT_V_DJ2D_WPROTECT) | 933 |
+| ERROR_MSG | (1 << 0) | 956 |
+| SEEK_MSG | (1 << 1) | 957 |
+| CMD_MSG | (1 << 2) | 958 |
+| RD_DATA_MSG | (1 << 3) | 959 |
+| WR_DATA_MSG | (1 << 4) | 960 |
+| STATUS_MSG | (1 << 5) | 961 |
+| RD_DATA_DETAIL_MSG | (1 << 6) | 962 |
+| WR_DATA_DETAIL_MSG | (1 << 7) | 963 |
+| VERBOSE_MSG | (1 << 8) | 964 |
+| DEBUG_MSG | (1 << 9) | 965 |
+

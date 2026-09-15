@@ -1,0 +1,236 @@
+=== hp2100_cpu.c — 5244 строк ===
+Источник: hp2100_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_cpu.c -nt .cline/maps/hp2100_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| FEATURE_TABLE | 1176-1180 |
+| STOPTAB | 1536-1540 |
+| IO_TABLE | 1733-1737 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_interface | 1226 | |
+| ovf_interface | 1227 | |
+| pwr_interface | 1228 | |
+| abort_reason | 1994 | |
+| return | 2240 | |
+| micro_op | 2280 | |
+| inbound_value | 2281 | |
+| inbound_signals | 2282 | |
+| outbound | 2283 | |
+| level | 2428 | |
+| pending | 2429 | |
+| SCPE_OK | 2457 | |
+| index | 2570 | |
+| loader | 2571 | |
+| word | 2572 | |
+| ptr_dptr | 2573 | |
+| result | 2771 | |
+| outbound | 2772 | |
+| sc_rank | 2773 | |
+| result | 2861 | |
+| dibptr | 2892 | |
+| select_code | 2893 | |
+| return | 2905 | |
+| sc | 3028 | |
+| signal | 3121 | |
+| working_set | 3122 | |
+| outbound | 3123 | |
+| sc | 3124 | |
+| signal | 3244 | |
+| working_set | 3245 | |
+| outbound | 3246 | |
+| signal | 3332 | |
+| working_set | 3333 | |
+| outbound | 3334 | |
+| index | 3408 | |
+| index | 3452 | |
+| status | 3504 | |
+| SCPE_OK | 3550 | |
+| gbuf | 3647 | |
+| status | 3648 | |
+| stop | 3649 | |
+| confirm | 3740 | |
+| SCPE_OK | 3764 | |
+| new_memsize | 3813 | |
+| result | 3814 | |
+| result | 3852 | |
+| SCPE_OK | 3911 | |
+| SCPE_OK | 3949 | |
+| SCPE_OK | 4009 | |
+| dptr | 4055 | |
+| gbuf | 4056 | |
+| socket | 4057 | |
+| rom | 4058 | |
+| gbuf | 4126 | |
+| match | 4127 | |
+| status | 4128 | |
+| stop | 4209 | |
+| need_spacer | 4210 | |
+| SCPE_OK | 4253 | |
+| cname | 4293 | |
+| dibptr | 4294 | |
+| socket | 4295 | |
+| cname | 4375 | |
+| sc | 4376 | |
+| radix | 4425 | |
+| ab_selector | 4573 | |
+| data | 4574 | |
+| rss | 4575 | |
+| status | 4576 | |
+| extend | 4975 | |
+| next_instruction | 5062 | |
+| dptr | 5143 | |
+| dibptr | 5144 | |
+| tptr | 5145 | |
+| dev | 5146 | |
+| device_length | 5147 | |
+| is_conflict | 5148 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IR_CMx | 0001000u            /* CMA/B */ | 960 |
+| IR_CLx | 0000400u            /* CLA/B */ | 961 |
+| IR_CME | 0000200u            /* CME */ | 962 |
+| IR_CLE | 0000100u            /* CLE */ | 963 |
+| IR_SEZ | 0000040u            /* SEZ */ | 964 |
+| IR_SSx | 0000020u            /* SSA/B */ | 965 |
+| IR_SLx | 0000010u            /* SLA/B */ | 966 |
+| IR_INx | 0000004u            /* INA/B */ | 967 |
+| IR_SZx | 0000002u            /* SZA/B */ | 968 |
+| IR_RSS | 0000001u            /* RSS */ | 969 |
+| IR_SSx_SLx_RSS | (IR_SSx \| IR_SLx \| IR_RSS)      ... | 971 |
+| IR_ALL_SKIPS | (IR_SEZ \| IR_SZx \| IR_SSx_SLx_RS... | 972 |
+| IR_xLS | 0000000u            /* ALS/BLS */ | 976 |
+| IR_xRS | 0000001u            /* ARS/BRS */ | 977 |
+| IR_RxL | 0000002u            /* RAL/RBL */ | 978 |
+| IR_RxR | 0000003u            /* RAR/RBR */ | 979 |
+| IR_xLR | 0000004u            /* ALR/BLR */ | 980 |
+| IR_ERx | 0000005u            /* ERA/ERB */ | 981 |
+| IR_ELx | 0000006u            /* ELA/ELB */ | 982 |
+| IR_xLF | 0000007u            /* ALF/BLF */ | 983 |
+| SRG_DIS | 0000000u            /* micro-op ... | 985 |
+| SRG1_EN | 0000010u            /* micro-op ... | 986 |
+| SRG2_EN | 0000020u            /* micro-op ... | 987 |
+| IR_MRG | (MRG \| AB_MASK)     /* MRG instr... | 991 |
+| IR_MRG_I | (IR_MRG \| IR_IND)   /* MRG indir... | 992 |
+| IR_JSB | 0014000u            /* JSB instr... | 994 |
+| IR_JSB_I | (IR_JSB \| IR_IND)   /* JSB,I ins... | 995 |
+| IR_JMP | 0024000u            /* JMP instr... | 996 |
+| IR_HLT_MASK | 0172700u            /* I/O group... | 998 |
+| IR_CLC_MASK | 0176700u            /* I/O group... | 999 |
+| IR_HLT | 0102000u            /* HLT instr... | 1001 |
+| IR_CLC | 0106700u            /* CLC instr... | 1002 |
+| UNIT_MODEL_SHIFT | (UNIT_V_UF + 0)     /* bits 0- 3... | 1027 |
+| UNIT_OPTION_SHIFT | (UNIT_V_UF + 4)     /* bits 4-15... | 1028 |
+| UNIT_MODEL_MASK | 0000017u            /* model ID ... | 1030 |
+| UNIT_OPTION_MASK | 0003777u            /* option ID... | 1031 |
+| UNIT_MODEL_FIELD | (UNIT_MODEL_MASK  << UNIT_MODEL_... | 1033 |
+| UNIT_OPTION_FIELD | (UNIT_OPTION_MASK << UNIT_OPTION... | 1034 |
+| UNIT_MODEL(f) | ((f) >> UNIT_MODEL_SHIFT & UNIT_... | 1036 |
+| UNIT_OPTION(f) | ((f) >> UNIT_OPTION_SHIFT & UNIT... | 1037 |
+| TO_UNIT_OPTION(id) | (1u << UNIT_OPTION_SHIFT + (id) ... | 1039 |
+| UNIT_2116 | (Option_2116   << UNIT_MODEL_SHIFT) | 1043 |
+| UNIT_2115 | (Option_2115   << UNIT_MODEL_SHIFT) | 1044 |
+| UNIT_2114 | (Option_2114   << UNIT_MODEL_SHIFT) | 1045 |
+| UNIT_2100 | (Option_2100   << UNIT_MODEL_SHIFT) | 1046 |
+| UNIT_1000_M | (Option_1000_M << UNIT_MODEL_SHIFT) | 1047 |
+| UNIT_1000_E | (Option_1000_E << UNIT_MODEL_SHIFT) | 1048 |
+| UNIT_1000_F | (Option_1000_F << UNIT_MODEL_SHIFT) | 1049 |
+| UNIT_EAU | TO_UNIT_OPTION (Option_EAU) | 1053 |
+| UNIT_FP | TO_UNIT_OPTION (Option_FP) | 1054 |
+| UNIT_IOP | TO_UNIT_OPTION (Option_IOP) | 1055 |
+| UNIT_DMS | TO_UNIT_OPTION (Option_DMS) | 1056 |
+| UNIT_FFP | TO_UNIT_OPTION (Option_FFP) | 1057 |
+| UNIT_DBI | TO_UNIT_OPTION (Option_DBI) | 1058 |
+| UNIT_EMA | TO_UNIT_OPTION (Option_EMA) | 1059 |
+| UNIT_VMAOS | TO_UNIT_OPTION (Option_VMAOS) | 1060 |
+| UNIT_VIS | TO_UNIT_OPTION (Option_VIS) | 1061 |
+| UNIT_SIGNAL | TO_UNIT_OPTION (Option_SIGNAL) | 1062 |
+| UNIT_DS | TO_UNIT_OPTION (Option_DS) | 1063 |
+| UNIT_EMA_VMA | (UNIT_EMA \| UNIT_VMAOS) | 1065 |
+| TO_CPU_MODEL(f) | (CPU_OPTION) (1u << UNIT_MODEL (f)) | 1069 |
+| TO_CPU_OPTION(f) | (CPU_OPTION) (UNIT_OPTION (f) <<... | 1070 |
+| UNIT_V_PFAIL | (UNIT_V_UF - 1)                 ... | 1074 |
+| UNIT_V_DMA | (UNIT_V_UF - 2)                 ... | 1075 |
+| UNIT_V_MP | (UNIT_V_UF - 3)                 ... | 1076 |
+| UNIT_PFAIL | (1 << UNIT_V_PFAIL) | 1078 |
+| UNIT_DMA | (1 << UNIT_V_DMA) | 1079 |
+| UNIT_MP | (1 << UNIT_V_MP) | 1080 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| queue | 1123-1265 |  |
+| CPU | 1266-1273 |  |
+| Overflow | 1274-1281 |  |
+| Fail | 1282-1989 |  |
+| sim_instr | 1990-2023 |  |
+| switch | 2024-2051 |  |
+| while | 2052-2183 |  |
+| if | 2184-2232 |  |
+| cpu_post_cmd | 2233-2234 |  |
+| if | 2235-2275 |  |
+| cpu_iog | 2276-2315 |  |
+| if | 2316-2425 |  |
+| cpu_resolve_indirects | 2426-2430 |  |
+| if | 2431-2472 |  |
+| cpu_microcode_abort | 2473-2567 |  |
+| cpu_copy_loader | 2568-2577 |  |
+| if | 2578-2594 |  |
+| for | 2595-2649 |  |
+| cpu_io_stop | 2650-2651 |  |
+| if | 2652-2768 |  |
+| io_dispatch | 2769-2774 |  |
+| if | 2775-2858 |  |
+| io_control | 2859-2889 |  |
+| io_assert | 2890-2894 |  |
+| if | 2895-3024 |  |
+| io_poll_interrupts | 3025-3029 |  |
+| if | 3030-3117 |  |
+| cpu_interface | 3118-3125 |  |
+| while | 3126-3241 |  |
+| ovf_interface | 3242-3247 |  |
+| while | 3248-3329 |  |
+| pwr_interface | 3330-3335 |  |
+| while | 3336-3405 |  |
+| cpu_examine | 3406-3449 |  |
+| cpu_deposit | 3450-3501 |  |
+| cpu_reset | 3502-3505 |  |
+| if | 3506-3594 |  |
+| cpu_boot | 3595-3644 |  |
+| set_stops | 3645-3665 |  |
+| if | 3666-3737 |  |
+| set_size | 3738-3809 |  |
+| set_model | 3810-3822 |  |
+| if | 3823-3881 |  |
+| set_option | 3882-3891 |  |
+| if | 3892-3929 |  |
+| clear_option | 3930-3990 |  |
+| set_loader | 3991-3998 |  |
+| if | 3999-4003 |  |
+| if | 4004-4052 |  |
+| set_roms | 4053-4065 |  |
+| if | 4066-4123 |  |
+| set_exec | 4124-4206 |  |
+| show_stops | 4207-4242 |  |
+| show_model | 4243-4290 |  |
+| show_roms | 4291-4296 |  |
+| if | 4297-4372 |  |
+| show_cage | 4373-4422 |  |
+| show_exec | 4423-4462 |  |
+| show_speed | 4463-4570 |  |
+| machine_instruction | 4571-4577 |  |
+| switch | 4578-4931 |  |
+| mrg_address | 4932-4972 |  |
+| srg_uop | 4973-4976 |  |
+| switch | 4977-5059 |  |
+| reenable_interrupts | 5060-5063 |  |
+| if | 5064-5140 |  |
+| initialize_io | 5141-5157 |  |
+| for | 5158-5193 |  |
+| if | 5194-5244 |  |

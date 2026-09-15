@@ -1,0 +1,79 @@
+=== vax4xx_ve.c — 1525 строк ===
+Источник: vax4xx_ve.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax4xx_ve.c -nt .cline/maps/vax4xx_ve.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 116 | |
+| ka_cfgtst | 117 | |
+| vc_org | 118 | |
+| vc_last_org | 119 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VE_XSIZE | 1280                            ... | 36 |
+| VE_YSIZE | 1024                            ... | 37 |
+| VE_BXSIZE | 1280                            ... | 39 |
+| VE_BYSIZE | 2048                            ... | 40 |
+| VE_BUFSIZE | 0x280000                        ... | 41 |
+| VE_ORSC | 3                               ... | 42 |
+| PUTL(b,x,v) | b[x+3] = (v >> 24) & 0xFF;  | 44 |
+| PUTW(b,x,v) | b[x+1] = (v >> 8) & 0xFF;  | 48 |
+| GETL(b,x) | ((b[x+3] << 24) \|  | 50 |
+| GETW(b,x) | ((b[x+1] << 8)\|b[x]) | 54 |
+| CURSOR_X_OFFSET | 216 | 56 |
+| CURSOR_Y_OFFSET | 33 | 57 |
+| CMD_TEST | 0x8000 | 59 |
+| CMD_HSHI | 0x4000 | 60 |
+| CMD_VBHI | 0x2000 | 61 |
+| CMD_LODSA | 0x1000 | 62 |
+| CMD_FORG2 | 0x0800 | 63 |
+| CMD_ENRG2 | 0x0400 | 64 |
+| CMD_FORG1 | 0x0200 | 65 |
+| CMD_ENRG1 | 0x0100 | 66 |
+| CMD_XHWID | 0x0080 | 67 |
+| CMD_XHCL1 | 0x0040 | 68 |
+| CMD_XHCLP | 0x0020 | 69 |
+| CMD_XHAIR | 0x0010 | 70 |
+| CMD_FOPB | 0x0008 | 71 |
+| CMD_ENPB | 0x0004 | 72 |
+| CMD_FOPA | 0x0002 | 73 |
+| CMD_ENPA | 0x0001 | 74 |
+| TBC_CMD_F0EN | 0x00000001 | 76 |
+| TBC_CMD_F0DS | 0x00000002 | 77 |
+| TBC_CMD_F0OP | 0x00000004 | 78 |
+| TBC_CMD_F0IN | 0x00000008 | 79 |
+| TBC_CMD_FIFOEN(x) | (TBC_CMD_F0EN << ((x * 5) + ((x ... | 81 |
+| TBC_CMD_FIFODIS(x) | (TBC_CMD_F0DS << ((x * 5) + ((x ... | 82 |
+| TBC_CMD_FIFOOUT(x) | (TBC_CMD_F0OP << ((x * 5) + ((x ... | 83 |
+| TBC_CMD_FIFOIN(x) | (TBC_CMD_F0IN << ((x * 5) + ((x ... | 84 |
+| TBC_CMD_F1EN | 0x00000020 | 86 |
+| TBC_CMD_F1DS | 0x00000040 | 87 |
+| TBC_CMD_F2EN | 0x00000400 | 88 |
+| TBC_CMD_F2DS | 0x00000800 | 89 |
+| TBC_CMD_F3EN | 0x00010000 | 90 |
+| TBC_CMD_F3DS | 0x00020000 | 91 |
+| TBC_CMD_F3IN | 0x00080000 | 92 |
+| TBC_CMD_STRW | 0x40000000 | 93 |
+| TBC_CMD_STRR | 0x80000000 | 94 |
+| TBC_CSR_F0DR | 0x00100000 | 96 |
+| TBC_CSR_F1DR | 0x00200000 | 97 |
+| TBC_CSR_F2DR | 0x00400000 | 98 |
+| TBC_CSR_F3DR | 0x00800000 | 99 |
+| TBC_CSR_F0EN | 0x00010000 | 100 |
+| TBC_CSR_F1EN | 0x00020000 | 101 |
+| TBC_CSR_F2EN | 0x00040000 | 102 |
+| TBC_CSR_F3EN | 0x00080000 | 103 |
+| TBC_CSR_FIFODIR(x) | (TBC_CSR_F0DR << x) | 105 |
+| TBC_CSR_FIFOEN(x) | (TBC_CSR_F0EN << x) | 106 |
+| TBC_CSR_STRDIR | 0x00000400 | 107 |
+| TBC_CSR_STRSTAT | 0x00000800 | 108 |
+| INTSTS_F0_GE_THRSH | 0x00000100 | 110 |
+| INTSTS_F0_LT_THRSH | 0x00000200 | 111 |
+| GET_FIFO(x) | ((x >> 3) - 2) | 113 |
+| FIFO_LEN | 0x4000 | 114 |
+| DBG_REG | 0x0100                          ... | 207 |
+| DBG_ROP | 0x0200                          ... | 208 |
+

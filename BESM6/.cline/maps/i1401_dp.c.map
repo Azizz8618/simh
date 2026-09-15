@@ -1,0 +1,98 @@
+=== i1401_dp.c — 644 строк ===
+Источник: i1401_dp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i1401_dp.c -nt .cline/maps/i1401_dp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ind | 95 | |
+| AS | 96 | |
+| bcd_to_bin | 97 | |
+| bin_to_bcd | 98 | |
+| cpu_unit | 99 | |
+| dcf | 179 | |
+| uptr | 180 | |
+| ind | 186 | |
+| ac | 365 | |
+| SCPE_OK | 398 | |
+| SCPE_OK | 430 | |
+| SCPE_OK | 458 | |
+| SCPE_OK | 487 | |
+| -1 | 514 | |
+| STOP_INVDAD | 532 | |
+| return | 603 | |
+| cnt | 615 | |
+| return | 628 | |
+| ind | 641 | |
+| SCPE_OK | 643 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DP_NUMDR | 5                               ... | 51 |
+| UNIT_V_WAE | (UNIT_V_UF + 0)                 ... | 52 |
+| UNIT_WAE | (1 << UNIT_V_WAE) | 53 |
+| DP_ADDR | 6                               ... | 57 |
+| DP_DATA | 100                             ... | 58 |
+| DP_NUMCH | (DP_ADDR + DP_DATA) | 59 |
+| DP_NUMSC | 20                              ... | 61 |
+| DP_NUMSF | 10                              ... | 62 |
+| DP_NUMCY | 100                             ... | 63 |
+| DP_TOTSC | (DP_NUMCY*DP_NUMSF*DP_NUMSC) | 64 |
+| DP_SIZE | (DP_TOTSC*DP_NUMCH) | 65 |
+| DCF_DRV | 0                               ... | 69 |
+| DCF_SEC | 1                               ... | 70 |
+| DCF_SEC_LEN | 6 | 71 |
+| DCF_CNT | (DCF_SEC + DCF_SEC_LEN)         ... | 72 |
+| DCF_CNT_LEN | 3 | 73 |
+| DCF_LEN | (DCF_CNT + DCF_CNT_LEN) | 74 |
+| DCF_DIR | 1                               ... | 75 |
+| DCF_DIR_LEN | 4 | 76 |
+| DCF_DIR_FL | (DCF_DIR + DCF_DIR_LEN)         ... | 77 |
+| DCF_DSEEK | 0xB | 78 |
+| FNC_SEEK | 0                               ... | 82 |
+| FNC_CHECK | 3                               ... | 83 |
+| FNC_READ | 1                               ... | 84 |
+| FNC_RSCO | 5                               ... | 85 |
+| FNC_RTRK | 6                               ... | 86 |
+| FNC_WOFF | 10                              ... | 87 |
+| FNC_WRITE | 11                              ... | 88 |
+| FNC_WRSCO | 15                              ... | 89 |
+| FNC_WRTRK | 16                              ... | 90 |
+| CYL | u3                              ... | 92 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dp_io | 177-186 |  |
+| if | 187-202 |  |
+| if | 203-229 |  |
+| if | 230-245 |  |
+| if | 246-259 |  |
+| switch | 260-347 |  |
+| if | 348-361 |  |
+| dp_rdadr | 362-372 |  |
+| for | 373-402 |  |
+| dp_rdsec | 403-409 |  |
+| for | 410-434 |  |
+| dp_wradr | 435-440 |  |
+| for | 441-462 |  |
+| dp_wrsec | 463-469 |  |
+| for | 470-491 |  |
+| dp_fndsec | 492-504 |  |
+| for | 505-518 |  |
+| dp_nexsec | 519-524 |  |
+| if | 525-536 |  |
+| dp_zeroad | 537-540 |  |
+| for | 541-549 |  |
+| dp_cmp_ad | 550-554 |  |
+| for | 555-564 |  |
+| dp_trkop | 565-574 |  |
+| dp_cvt_bcd | 575-579 |  |
+| for | 580-591 |  |
+| dp_cvt_bin | 592-595 |  |
+| for | 596-607 |  |
+| dp_get_cnt | 608-619 |  |
+| dp_fill | 620-621 |  |
+| while | 622-632 |  |
+| dp_reset | 633-644 |  |

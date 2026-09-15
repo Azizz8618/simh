@@ -1,0 +1,160 @@
+=== i7094_cpu.c — 2481 строк ===
+Источник: i7094_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7094_cpu.c -nt .cline/maps/i7094_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ch_sta | 211 | |
+| ch_flags | 212 | |
+| mt_dev | 213 | |
+| ch_dev | 214 | |
+| reason | 621 | |
+| IR | 622 | |
+| op | 623 | |
+| ch | 624 | |
+| tracing | 626 | |
+| data_base | 634 | |
+| ind_start | 636 | |
+| reason | 1992 | |
+| tag | 1999 | |
+| tag | 2025 | |
+| tag | 2048 | |
+| dat | 2049 | |
+| return | 2062 | |
+| FALSE | 2081 | |
+| FALSE | 2094 | |
+| mem | 2101 | |
+| mode_ctrap | 2111 | |
+| mode_strap | 2112 | |
+| mode_storn | 2113 | |
+| mode_user | 2114 | |
+| mode_reloc | 2115 | |
+| inst_base | 2116 | |
+| data_base | 2117 | |
+| return | 2118 | |
+| FALSE | 2131 | |
+| FALSE | 2144 | |
+| mem | 2151 | |
+| return | 2156 | |
+| PC | 2163 | |
+| mode_ctrap | 2164 | |
+| mode_strap | 2165 | |
+| mode_storn | 2166 | |
+| mode_user | 2167 | |
+| mode_reloc | 2168 | |
+| inst_base | 2169 | |
+| data_base | 2170 | |
+| return | 2171 | |
+| TRUE | 2185 | |
+| TRUE | 2199 | |
+| TRUE | 2213 | |
+| ind_ovf | 2220 | |
+| ind_mqo | 2221 | |
+| ind_dvc | 2222 | |
+| ind_ioc | 2223 | |
+| ind_reloc | 2224 | |
+| ind_start | 2225 | |
+| ind_limit | 2226 | |
+| mode_ttrap | 2227 | |
+| mode_ctrap | 2228 | |
+| mode_strap | 2229 | |
+| mode_ftrap | 2230 | |
+| mode_storn | 2231 | |
+| mode_multi | 2234 | |
+| mode_user | 2235 | |
+| mode_reloc | 2236 | |
+| inst_base | 2237 | |
+| data_base | 2238 | |
+| ch_req | 2239 | |
+| chtr_pend | 2240 | |
+| chtr_inht | 2241 | |
+| ht_pend | 2242 | |
+| SLT | 2243 | |
+| XR | 2244 | |
+| SCPE_IERR | 2252 | |
+| SCPE_OK | 2254 | |
+| SCPE_OK | 2268 | |
+| SCPE_OK | 2280 | |
+| chuptr | 2287 | |
+| clk_dev | 2288 | |
+| cpu_model | 2290 | |
+| SCPE_OK | 2303 | |
+| SCPE_OK | 2315 | |
+| prv_p | 2329 | |
+| hst | 2351 | |
+| hst | 2352 | |
+| hst | 2353 | |
+| hst | 2354 | |
+| hst | 2355 | |
+| hst | 2356 | |
+| hst | 2357 | |
+| hst | 2358 | |
+| return | 2359 | |
+| hst_p | 2380 | |
+| SCPE_OK | 2397 | |
+| ch | 2405 | |
+| sim_eval | 2407 | |
+| SCPE_OK | 2448 | |
+| lnt | 2467 | |
+| SCPE_OK | 2480 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 149 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 150 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 151 |
+| HIST_MIN | 64 | 153 |
+| HIST_MAX | (2 << 18) | 154 |
+| HIST_CH_C | 1                               ... | 155 |
+| HIST_CH_I | 2                               ... | 156 |
+| HALT_IO_LIMIT | ((2 << 18) + 1)                 ... | 158 |
+| EAMASK | (mode_storn? A704_MASK: AMASK)  ... | 160 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 619-640 |  |
+| if | 641-653 |  |
+| while | 654-1996 |  |
+| get_xri | 1997-2000 |  |
+| if | 2001-2022 |  |
+| get_xrx | 2023-2026 |  |
+| if | 2027-2045 |  |
+| put_xr | 2046-2050 |  |
+| if | 2051-2066 |  |
+| fp_trap | 2067-2068 |  |
+| if | 2069-2085 |  |
+| prot_trap | 2086-2087 |  |
+| if | 2088-2098 |  |
+| WriteTAD | 2099-2122 |  |
+| cpy_trap | 2123-2124 |  |
+| if | 2125-2135 |  |
+| sel_trap | 2136-2137 |  |
+| if | 2138-2148 |  |
+| WriteTA | 2149-2160 |  |
+| TrapXfr | 2161-2175 |  |
+| ReadI | 2176-2179 |  |
+| if | 2180-2189 |  |
+| Read | 2190-2193 |  |
+| if | 2194-2203 |  |
+| Write | 2204-2207 |  |
+| if | 2208-2217 |  |
+| cpu_reset | 2218-2258 |  |
+| cpu_ex | 2259-2272 |  |
+| cpu_dep | 2273-2284 |  |
+| cpu_set_model | 2285-2290 |  |
+| if | 2291-2307 |  |
+| cpu_show_model | 2308-2326 |  |
+| cpu_ent_hist | 2327-2330 |  |
+| if | 2331-2363 |  |
+| cpu_set_hist | 2364-2368 |  |
+| if | 2369-2380 |  |
+| if | 2381-2385 |  |
+| if | 2386-2407 |  |
+| if | 2408-2435 |  |
+| if | 2436-2452 |  |
+| cpu_show_hist | 2453-2461 |  |
+| if | 2462-2471 |  |
+| for | 2472-2481 |  |

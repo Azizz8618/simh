@@ -1,0 +1,114 @@
+=== pdp8_rx.c — 761 строк ===
+Источник: pdp8_rx.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp8_rx.c -nt .cline/maps/pdp8_rx.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 118 | |
+| rx_dib | 157 | |
+| AC | 309 | |
+| return | 349 | |
+| da | 373 | |
+| wps | 379 | |
+| SCPE_OK | 540 | |
+| return | 568 | |
+| int_req | 582 | |
+| int_enable | 583 | |
+| SCPE_OK | 592 | |
+| sz | 599 | |
+| uptr->capac | 618 | |
+| SCPE_OK | 619 | |
+| rx_28 | 642 | |
+| SCPE_OK | 643 | |
+| SCPE_OK | 652 | |
+| SCPE_OK | 755 | |
+| "RX8E/RX01 | 760 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RX_NUMTR | 77                              ... | 61 |
+| RX_M_TRACK | 0377 | 62 |
+| RX_NUMSC | 26                              ... | 63 |
+| RX_M_SECTOR | 0177                            ... | 64 |
+| RX_NUMBY | 128                             ... | 65 |
+| RX2_NUMBY | 256 | 66 |
+| RX_NUMWD | (RX_NUMBY / 2)                  ... | 67 |
+| RX2_NUMWD | (RX2_NUMBY / 2) | 68 |
+| RX_SIZE | (RX_NUMTR * RX_NUMSC * RX_NUMBY)... | 69 |
+| RX2_SIZE | (RX_NUMTR * RX_NUMSC * RX2_NUMBY) | 70 |
+| RX_NUMDR | 2                               ... | 71 |
+| RX_M_NUMDR | 01 | 72 |
+| UNIT_V_DEN | (UNIT_V_UF + 0)                 ... | 73 |
+| UNIT_V_AUTO | (UNIT_V_UF + 1)                 ... | 74 |
+| UNIT_DEN | (1u << UNIT_V_DEN) | 75 |
+| UNIT_AUTO | (1u << UNIT_V_AUTO) | 76 |
+| IDLE | 0                               ... | 78 |
+| CMD8 | 1                               ... | 79 |
+| RWDS | 2                               ... | 80 |
+| RWDT | 3                               ... | 81 |
+| RWXFR | 4                               ... | 82 |
+| FILL | 5                               ... | 83 |
+| EMPTY | 6                               ... | 84 |
+| SDCNF | 7                               ... | 85 |
+| SDXFR | 8                               ... | 86 |
+| CMD_COMPLETE | 9                               ... | 87 |
+| INIT_COMPLETE | 10                              ... | 88 |
+| RXCS_V_FUNC | 1                               ... | 90 |
+| RXCS_M_FUNC | 7 | 91 |
+| RXCS_FILL | 0                               ... | 92 |
+| RXCS_EMPTY | 1                               ... | 93 |
+| RXCS_WRITE | 2                               ... | 94 |
+| RXCS_READ | 3                               ... | 95 |
+| RXCS_SDEN | 4                               ... | 96 |
+| RXCS_RXES | 5                               ... | 97 |
+| RXCS_WRDEL | 6                               ... | 98 |
+| RXCS_ECODE | 7                               ... | 99 |
+| RXCS_DRV | 0020                            ... | 100 |
+| RXCS_MODE | 0100                            ... | 101 |
+| RXCS_MAINT | 0200                            ... | 102 |
+| RXCS_DEN | 0400                            ... | 103 |
+| RXCS_GETFNC(x) | (((x) >> RXCS_V_FUNC) & RXCS_M_F... | 104 |
+| RXES_CRC | 0001                            ... | 106 |
+| RXES_ID | 0004                            ... | 107 |
+| RXES_RX02 | 0010                            ... | 108 |
+| RXES_DERR | 0020                            ... | 109 |
+| RXES_DEN | 0040                            ... | 110 |
+| RXES_DD | 0100                            ... | 111 |
+| RXES_DRDY | 0200                            ... | 112 |
+| TRACK | u3                              ... | 114 |
+| READ_RXDBR | ((rx_csr & RXCS_MODE)? AC \| (rx_... | 115 |
+| CALC_DA(t,s,b) | (((t) * RX_NUMSC) + ((s) - 1)) * b | 116 |
+| PTR12(x) | (((x) + (x) + (x)) >> 1) | 374 |
+| BOOT_START | 022 | 657 |
+| BOOT_ENTRY | 022 | 658 |
+| BOOT_INST | 060 | 659 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 660 |
+| BOOT2_START | 020 | 661 |
+| BOOT2_ENTRY | 033 | 662 |
+| BOOT2_LEN | (sizeof (boot2_rom) / sizeof (in... | 663 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rx | 225-228 |  |
+| switch | 229-311 |  |
+| rx_cmd | 312-315 |  |
+| switch | 316-368 |  |
+| rx_svc | 369-380 |  |
+| switch | 381-546 |  |
+| rx_done | 547-556 |  |
+| if | 557-573 |  |
+| rx_reset | 574-586 |  |
+| if | 587-596 |  |
+| rx_attach | 597-600 |  |
+| if | 601-611 |  |
+| rx_set_size | 612-623 |  |
+| rx_settype | 624-631 |  |
+| for | 632-635 |  |
+| for | 636-647 |  |
+| rx_showtype | 648-736 |  |
+| rx_boot | 737-743 |  |
+| if | 744-757 |  |
+| rx_description | 758-761 |  |

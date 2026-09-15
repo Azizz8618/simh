@@ -1,0 +1,166 @@
+=== pdp11_cr.c — 2004 строк ===
+Источник: pdp11_cr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_cr.c -nt .cline/maps/pdp11_cr.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cardFormat | 404 | |
+| translation_help | 525 | |
+| crtypes | 1813 | |
+| devtype | 1815 | |
+| devtype | 1844 | |
+| crtypes | 1845 | |
+| SCPE_OK | 1991 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IPL_CD | (IPL_CR)                        ... | 208 |
+| INT_V_CD | (INT_V_CR) | 209 |
+| INT_CD | (INT_CR) | 210 |
+| DFLT_QB | (0) | 211 |
+| DFLT_TYPE | (UNIT_CD20)                     ... | 212 |
+| DFLT_IVCL | (IVCL(CD)) | 213 |
+| DFLT_CPM | 1200 | 214 |
+| CD20_ONLY | (1) | 215 |
+| AIECO_REQ | (1)                             ... | 216 |
+| IPL_CD | (IPL_CR)                        ... | 219 |
+| INT_V_CD | (INT_V_CR) | 220 |
+| INT_CD | (INT_CR) | 221 |
+| DFLT_QB | (DEV_QBUS)                      ... | 222 |
+| DFLT_TYPE | (UNIT_CR11)                     ... | 223 |
+| DFLT_IVCL | (IVCL(CR)) | 224 |
+| DFLT_CPM | 285 | 225 |
+| CR11_ONLY | (1) | 226 |
+| DFLT_QB | (DEV_QBUS)                      ... | 229 |
+| DFLT_TYPE | (UNIT_CR11)                     ... | 230 |
+| DFLT_IVCL | (IVCL(CR)) | 231 |
+| DFLT_CPM | 285 | 232 |
+| CR11_ONLY | (1) | 234 |
+| CR11_OK | (1)                             ... | 236 |
+| CD11_OK | (1) | 237 |
+| CD20_OK | (1) | 238 |
+| AIECO_OK | (1)                             ... | 239 |
+| I4C(a,b,c,d) | (((a) << 24) \| ((b) << 16) \| ((c... | 246 |
+| I4C_CBN | I4C ('C','B','N',' ') | 247 |
+| I4C_H80 | I4C ('H','8','0',' ') | 248 |
+| I4C_H82 | I4C ('H','8','2',' ') | 249 |
+| I4C_H40 | I4C ('H','4','0',' ') | 250 |
+| UNIT_V_TYPE | (UNIT_V_UF + 0)             /* B... | 252 |
+| UNIT_TYPE | (3u << UNIT_V_TYPE) | 253 |
+| UNIT_CR11 | (1u << UNIT_V_TYPE) | 254 |
+| UNIT_CD20 | (2u << UNIT_V_TYPE) | 255 |
+| UNIT_V_AUTOEOF | (UNIT_V_UF + 2) | 257 |
+| UNIT_AUTOEOF | (1u << UNIT_V_AUTOEOF) | 258 |
+| UNIT_V_RDCHECK | (UNIT_V_UF + 3) | 259 |
+| UNIT_RDCHECK | (1u << UNIT_V_RDCHECK) | 260 |
+| UNIT_V_AIECO | (UNIT_V_UF + 4) | 261 |
+| UNIT_AIECO | (1u << UNIT_V_AIECO) | 262 |
+| CR11_CTL(up) | (0) | 268 |
+| CD11_CTL(up) | (1) | 269 |
+| CR11_CTL(up) | (1) | 271 |
+| CD11_CTL(up) | (0) | 272 |
+| CR11_CTL(up) | ((up)->flags & UNIT_CR11) | 274 |
+| CD11_CTL(up) | (!CR11_CTL(up)) | 275 |
+| CD20_CTL(up) | (1) | 279 |
+| CD20_CTL(up) | ((up)->flags & UNIT_CD20) | 281 |
+| CD20_CTL(up) | (0) | 283 |
+| DFLT_AIECO | (UNIT_AIECO) | 288 |
+| DFLT_AIECO | (0) | 290 |
+| CR_ER | (00404) | 293 |
+| PUNCH_EOD | (07417) | 295 |
+| PUNCH_SPACE | (0)                          /* ... | 296 |
+| CRCSR_V_CRDDONE | 14                          /* c... | 300 |
+| CRCSR_V_SUPPLY | 13                          /* s... | 301 |
+| CRCSR_V_RDCHK | 12                          /* r... | 302 |
+| CRCSR_V_TIMERR | 11                          /* t... | 303 |
+| CRCSR_V_ONLINE | 10                          /* o... | 304 |
+| CRCSR_V_BUSY | 9                           /* b... | 305 |
+| CRCSR_V_OFFLINE | 8                           /* o... | 306 |
+| CRCSR_V_COLRDY | 7                           /* c... | 307 |
+| CRCSR_V_EJECT | 1                           /* i... | 308 |
+| CRCSR_CRDDONE | (1u << CRCSR_V_CRDDONE) | 310 |
+| CRCSR_SUPPLY | (1u << CRCSR_V_SUPPLY) | 311 |
+| CRCSR_RDCHK | (1u << CRCSR_V_RDCHK) | 312 |
+| CRCSR_TIMERR | (1u << CRCSR_V_TIMERR) | 313 |
+| CRCSR_ONLINE | (1u << CRCSR_V_ONLINE) | 314 |
+| CRCSR_BUSY | (1u << CRCSR_V_BUSY) | 315 |
+| CRCSR_OFFLINE | (1u << CRCSR_V_OFFLINE) | 316 |
+| CRCSR_COLRDY | (1u << CRCSR_V_COLRDY) | 317 |
+| CRCSR_EJECT | (1u << CRCSR_V_EJECT) | 318 |
+| CRCSR_IMP | (CSR_ERR \| CRCSR_CRDDONE \| CRCSR... | 320 |
+| CRCSR_RW | (CSR_IE \| CRCSR_EJECT \| CSR_GO) ... | 324 |
+| CRM_V_MAINT | 15                          /* e... | 326 |
+| CRM_V_BUSY | 14 | 327 |
+| CRM_V_READY | 13 | 328 |
+| CRM_V_HOPPER | 12 | 329 |
+| CRM_MAINT | (1u << CRM_V_MAINT) | 331 |
+| CRM_BUSY | (1u << CRM_V_BUSY) | 332 |
+| CRM_READY | (1u << CRM_V_READY) | 333 |
+| CRM_HOPPER | (1u << CRM_V_HOPPER) | 334 |
+| CDCSR_V_RDRCHK | 14                          /* r... | 339 |
+| CDCSR_V_EOF | 13                          /* C... | 340 |
+| CDCSR_V_OFFLINE | 12                          /* o... | 341 |
+| CDCSR_V_DATAERR | 11                          /* d... | 342 |
+| CDCSR_V_LATE | 10                          /* d... | 343 |
+| CDCSR_V_NXM | 9                           /* n... | 344 |
+| CDCSR_V_PWRCLR | 8                           /* p... | 345 |
+| CDCSR_V_RDY | 7                           /* r... | 346 |
+| CDCSR_V_XBA17 | 5                           /* N... | 348 |
+| CDCSR_V_XBA16 | 4 | 349 |
+| CDCSR_V_ONLINE | 3                           /* o... | 350 |
+| CDCSR_V_HOPPER | 2                           /* h... | 351 |
+| CDCSR_V_PACK | 1                           /* d... | 352 |
+| CDCSR_RDRCHK | (1u << CDCSR_V_RDRCHK) | 355 |
+| CDCSR_EOF | (1u << CDCSR_V_EOF) | 356 |
+| CDCSR_OFFLINE | (1u << CDCSR_V_OFFLINE) | 357 |
+| CDCSR_DATAERR | (1u << CDCSR_V_DATAERR) | 358 |
+| CDCSR_LATE | (1u << CDCSR_V_LATE) | 359 |
+| CDCSR_NXM | (1u << CDCSR_V_NXM) | 360 |
+| CDCSR_PWRCLR | (1u << CDCSR_V_PWRCLR) | 361 |
+| CDCSR_RDY | (1u << CDCSR_V_RDY) | 362 |
+| CDCSR_XBA17 | (1u << CDCSR_V_XBA17) | 363 |
+| CDCSR_XBA16 | (1u << CDCSR_V_XBA16) | 364 |
+| CDCSR_ONLINE | (1u << CDCSR_V_ONLINE) | 365 |
+| CDCSR_HOPPER | (1u << CDCSR_V_HOPPER) | 366 |
+| CDCSR_PACK | (1u << CDCSR_V_PACK) | 367 |
+| CDCSR_ANYERR | (CDCSR_RDRCHK \| CDCSR_EOF \| CDCS... | 369 |
+| CDCSR_IMP | (CSR_ERR \| CDCSR_RDRCHK \| CDCSR_... | 371 |
+| CDCSR_RW | (CDCSR_PWRCLR \| CSR_IE \| CDCSR_X... | 377 |
+| CDDB_V_READ | 14 /* Read check (extra punches,... | 384 |
+| CDDB_V_PICK | 13 /* Pick check (card present, ... | 385 |
+| CDDB_V_STACK | 12 /* Card did not arrive in sta... | 386 |
+| CDDB_READ | (1U << CDDB_V_READ) | 392 |
+| CDDB_PICK | (1u << CDDB_V_PICK) | 393 |
+| CDDB_STACK | (1u << CDDB_V_STACK) | 394 |
+| BLOW_OFF | (0)                         /* s... | 398 |
+| BLOW_START | (1)                         /* s... | 399 |
+| BLOW_ON | (2)                         /* s... | 400 |
+| BLOW_STOP | (3)                         /* s... | 401 |
+| NTRANS | (sizeof transcodes /sizeof trans... | 429 |
+| IOLN_CR | 010 | 488 |
+| MASK | (SWMASK('A')\|SWMASK('B')\|SWMASK(... | 1514 |
+| MAXDESCRIP | sizeof ("CR11/CD11/CD20/") /* si... | 1814 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| initTranslation | 875-1189 |  |
+| cr_intac | 1190-1204 |  |
+| cr_svc | 1205-1436 |  |
+| cr_reset | 1437-1537 |  |
+| cr_detach | 1538-1551 | Detach unit: assert SUPPLY and OFFLINE bits (and ERR) |
+| cr_set_int | 1552-1553 |  |
+| if | 1554-1561 |  |
+| cr_clr_int | 1562-1563 |  |
+| if | 1564-1810 |  |
+| cr_supported | 1811-1826 |  |
+| if | 1827-1841 |  |
+| cr_help | 1842-1865 |  |
+| if | 1866-1895 |  |
+| if | 1896-1906 |  |
+| if | 1907-1950 |  |
+| if | 1951-1964 |  |
+| if | 1965-1993 |  |
+| cr_description | 1994-2004 |  |

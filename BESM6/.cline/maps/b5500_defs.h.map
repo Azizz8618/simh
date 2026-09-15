@@ -1,0 +1,411 @@
+=== b5500_defs.h — 549 строк ===
+Источник: b5500_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test b5500_defs.h -nt .cline/maps/b5500_defs.h.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dev_debug | 60 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| _B5500_H_ |  | 25 |
+| NUM_DEVS_CDR | 2 | 31 |
+| NUM_DEVS_CDP | 1 | 32 |
+| NUM_DEVS_LPR | 2 | 33 |
+| NUM_DEVS_CON | 1 | 34 |
+| NUM_DEVS_DR | 2 | 35 |
+| NUM_DEVS_MT | 16 | 36 |
+| NUM_DEVS_DSK | 2 | 37 |
+| NUM_DEVS_DTC | 1 | 38 |
+| NUM_CHAN | 4 | 39 |
+| MAXMEMSIZE | 32768 | 40 |
+| CHARSPERWORD | 8 | 41 |
+| MEMSIZE | (cpu_unit[0].capac)             ... | 49 |
+| MEMMASK | (MEMSIZE - 1)                   ... | 50 |
+| DEBUG_CHAN | 0x0000001       /* Show channel ... | 54 |
+| DEBUG_CMD | 0x0000004       /* Show device c... | 55 |
+| DEBUG_DATA | 0x0000008       /* Show data tra... | 56 |
+| DEBUG_DETAIL | 0x0000010       /* Show details */ | 57 |
+| DEBUG_EXP | 0x0000020       /* Show error co... | 58 |
+| SCPE_BUSY | (1)     /* Device is active */ | 63 |
+| SCPE_NODEV | (2)     /* No device exists */ | 64 |
+| CHR_ABLANK | 000 | 156 |
+| CHR_MARK | CHR_ABLANK | 157 |
+| CHR_1 | 001 | 158 |
+| CHR_2 | 002 | 159 |
+| CHR_3 | 003 | 160 |
+| CHR_4 | 004 | 161 |
+| CHR_5 | 005 | 162 |
+| CHR_6 | 006 | 163 |
+| CHR_7 | 007 | 164 |
+| CHR_8 | 010 | 165 |
+| CHR_9 | 011 | 166 |
+| CHR_0 | 012 | 167 |
+| CHR_EQ | 013 | 168 |
+| CHR_QUOT | 014     /* Also @ */ | 169 |
+| CHR_COL | 015 | 170 |
+| CHR_GT | 016 | 171 |
+| CHR_TRM | 017 | 172 |
+| CHR_BLANK | 020 | 173 |
+| CHR_SLSH | 021 | 174 |
+| CHR_S | 022 | 175 |
+| CHR_T | 023 | 176 |
+| CHR_U | 024 | 177 |
+| CHR_V | 025 | 178 |
+| CHR_W | 026 | 179 |
+| CHR_X | 027 | 180 |
+| CHR_Y | 030 | 181 |
+| CHR_Z | 031 | 182 |
+| CHR_RM | 032 | 183 |
+| CHR_COM | 033 | 184 |
+| CHR_RPARN | 034     /* Also % */ | 185 |
+| CHR_WM | 035 | 186 |
+| CHR_BSLSH | 036 | 187 |
+| CHR_UND | 037 | 188 |
+| CHR_MINUS | 040 | 189 |
+| CHR_J | 041 | 190 |
+| CHR_K | 042 | 191 |
+| CHR_L | 043 | 192 |
+| CHR_M | 044 | 193 |
+| CHR_N | 045 | 194 |
+| CHR_O | 046 | 195 |
+| CHR_P | 047 | 196 |
+| CHR_Q | 050 | 197 |
+| CHR_R | 051 | 198 |
+| CHR_EXPL | 052 | 199 |
+| CHR_DOL | 053 | 200 |
+| CHR_STAR | 054 | 201 |
+| CHR_LBRK | 055 | 202 |
+| CHR_SEMI | 056 | 203 |
+| CHR_CART | 057 | 204 |
+| CHR_PLUS | 060 | 205 |
+| CHR_A | 061 | 206 |
+| CHR_B | 062 | 207 |
+| CHR_C | 063 | 208 |
+| CHR_D | 064 | 209 |
+| CHR_E | 065 | 210 |
+| CHR_F | 066 | 211 |
+| CHR_G | 067 | 212 |
+| CHR_H | 070 | 213 |
+| CHR_I | 071 | 214 |
+| CHR_QUEST | 072 | 215 |
+| CHR_DOT | 073 | 216 |
+| CHR_LPARN | 074     /* Also Square */ | 217 |
+| CHR_RBRAK | 075 | 218 |
+| CHR_LESS | 076 | 219 |
+| CHR_GM | 077 | 220 |
+| WMOP_LITC | 00000   /* Load literal */ | 223 |
+| WMOP_OPDC | 00002   /* Load operand */ | 224 |
+| WMOP_DESC | 00003   /* Load Descriptor */ | 225 |
+| WMOP_OPR | 00001   /* Operator */ | 226 |
+| WMOP_DEL | 00065   /* Delete top of stack */ | 227 |
+| WMOP_NOP | 00055   /* Nop operation */ | 228 |
+| WMOP_XRT | 00061   /* Set Variant */ | 229 |
+| WMOP_ADD | 00101   /* Add */ | 230 |
+| WMOP_DLA | 00105   /* Double Precision Add */ | 231 |
+| WMOP_PRL | 00111   /* Program Release */ | 232 |
+| WMOP_LNG | 00115   /* Logical Negate */ | 233 |
+| WMOP_CID | 00121   /* Conditional Integer S... | 234 |
+| WMOP_GEQ | 00125   /* WMOP_B greater than o... | 235 |
+| WMOP_BBC | 00131   /* Branch Backward Condi... | 236 |
+| WMOP_BRT | 00135   /* Branch Return */ | 237 |
+| WMOP_INX | 00141   /* Index */ | 238 |
+| WMOP_ITI | 00211   /* Interrogate interrupt */ | 239 |
+| WMOP_LOR | 00215   /* Logical Or */ | 240 |
+| WMOP_CIN | 00221   /* Conditional Integer S... | 241 |
+| WMOP_GTR | 00225   /* B Greater than A */ | 242 |
+| WMOP_BFC | 00231   /* Branch Forward Condit... | 243 |
+| WMOP_RTN | 00235   /* Return normal */ | 244 |
+| WMOP_COC | 00241   /* Construct Operand Cal... | 245 |
+| WMOP_SUB | 00301   /* Subtract */ | 246 |
+| WMOP_DLS | 00305   /* WMOP_Double Precision... | 247 |
+| WMOP_MUL | 00401   /* Multiply */ | 248 |
+| WMOP_DLM | 00405   /* Double Precision Mult... | 249 |
+| WMOP_RTR | 00411   /* Read Timer */ | 250 |
+| WMOP_LND | 00415   /* Logical And */ | 251 |
+| WMOP_STD | 00421   /* B Store Destructive */ | 252 |
+| WMOP_NEQ | 00425   /* B Not equal to A */ | 253 |
+| WMOP_SSN | 00431   /* Set Sign Bit */ | 254 |
+| WMOP_XIT | 00435   /* Exit */ | 255 |
+| WMOP_MKS | 00441   /* Mark Stack */ | 256 |
+| WMOP_DIV | 01001   /* Divide */ | 257 |
+| WMOP_DLD | 01005   /* Double Precision Divi... | 258 |
+| WMOP_COM | 01011   /* Communication operato... | 259 |
+| WMOP_LQV | 01015   /* Logical Equivalence */ | 260 |
+| WMOP_SND | 01021   /* B Store Non-destructi... | 261 |
+| WMOP_XCH | 01025   /* Exchange */ | 262 |
+| WMOP_CHS | 01031   /* Change sign bit */ | 263 |
+| WMOP_RTS | 01235   /* Return Special */ | 264 |
+| WMOP_CDC | 01241   /* Construct descriptor ... | 265 |
+| WMOP_FTC | 01425   /* Transfer F Field to C... | 266 |
+| WMOP_MOP | 02015   /* Reset Flag bit */ | 267 |
+| WMOP_LOD | 02021   /* Load */ | 268 |
+| WMOP_DUP | 02025   /* Duplicate */ | 269 |
+| WMOP_TOP | 02031   /* Test Flag Bit */ | 270 |
+| WMOP_IOR | 02111   /* I/O Release */ | 271 |
+| WMOP_LBC | 02131   /* Word Branch Backward ... | 272 |
+| WMOP_SSF | 02141   /* Set or Store S or F r... | 273 |
+| WMOP_HP2 | 02211   /* Halt P2 */ | 274 |
+| WMOP_LFC | 02231   /* Word Branch Forward C... | 275 |
+| WMOP_ZP1 | 02411   /* Conditional Halt */ | 276 |
+| WMOP_TUS | 02431   /* Interrogate Periphera... | 277 |
+| WMOP_LLL | 02541   /* Link List Look-up */ | 278 |
+| WMOP_IDV | 03001   /* Integer Divide Intege... | 279 |
+| WMOP_SFI | 03011   /* Store for Interrupt */ | 280 |
+| WMOP_SFT | 03411   /* Store for Test */ | 281 |
+| WMOP_FTF | 03425   /* Transfer F Field to F... | 282 |
+| WMOP_MDS | 04015   /* Set Flag Bit */ | 283 |
+| WMOP_IP1 | 04111   /* Initiate P1 */ | 284 |
+| WMOP_ISD | 04121   /* Interger Store Destru... | 285 |
+| WMOP_LEQ | 04125   /* B Less Than or Equal ... | 286 |
+| WMOP_BBW | 04131   /* Banch Backward Condit... | 287 |
+| WMOP_IP2 | 04211   /* Initiate P2 */ | 288 |
+| WMOP_ISN | 04221   /* Integer Store Non-Des... | 289 |
+| WMOP_LSS | 04225   /* B Less Than A */ | 290 |
+| WMOP_BFW | 04231   /* Branch Forward Uncond... | 291 |
+| WMOP_IIO | 04411   /* Initiate I/O */ | 292 |
+| WMOP_EQL | 04425   /* B Equal A */ | 293 |
+| WMOP_SSP | 04431   /* Reset Sign Bit */ | 294 |
+| WMOP_CMN | 04441   /* Enter Character Mode ... | 295 |
+| WMOP_IFT | 05111   /* Test Initiate */ | 296 |
+| WMOP_CTC | 05425   /* Transfer Core Field t... | 297 |
+| WMOP_LBU | 06131   /* Word Branch Backward ... | 298 |
+| WMOP_LFU | 06231   /* Word Branch Forward U... | 299 |
+| WMOP_TIO | 06431   /* Interrogate I/O Chann... | 300 |
+| WMOP_RDV | 07001   /* Remainder Divide */ | 301 |
+| WMOP_FBS | 07031   /* Flag Bit Search */ | 302 |
+| WMOP_CTF | 07425   /* Transfer Core Field t... | 303 |
+| WMOP_ISO | 00045   /* Variable Field Isolat... | 304 |
+| WMOP_CBD | 00351   /* Non-Zero Field Branch... | 305 |
+| WMOP_CBN | 00151   /* Non-Zero Field Branch... | 306 |
+| WMOP_CFD | 00251   /* Non-Zero Field Branch... | 307 |
+| WMOP_CFN | 00051   /* Non-Zero Field Branch... | 308 |
+| WMOP_DIA | 00055   /* Dial A XX */ | 309 |
+| WMOP_DIB | 00061   /* Dial B XX Upper 6 not... | 310 |
+| WMOP_TRB | 00065   /* Transfer Bits XX */ | 311 |
+| WMOP_FCL | 00071   /* Compare Field Low XX */ | 312 |
+| WMOP_FCE | 00075   /* Compare Field Equal X... | 313 |
+| CMOP_EXC | 00000   /* CMOP_Exit Character M... | 316 |
+| CMOP_CMX | 00100   /* Exit Character Mode I... | 317 |
+| CMOP_BSD | 00002   /* Skip Bit Destiniation */ | 318 |
+| CMOP_BSS | 00003   /* SKip Bit Source */ | 319 |
+| CMOP_RDA | 00004   /* Recall Destination Ad... | 320 |
+| CMOP_TRW | 00005   /* Transfer Words */ | 321 |
+| CMOP_SED | 00006   /* Set Destination Addre... | 322 |
+| CMOP_TDA | 00007   /* Transfer Destination ... | 323 |
+| CMOP_TBN | 00012   /* Transfer Blanks for N... | 324 |
+| CMOP_SDA | 00014   /* Store Destination Add... | 325 |
+| CMOP_SSA | 00015   /* Store Source Address */ | 326 |
+| CMOP_SFD | 00016   /* Skip Forward Destinat... | 327 |
+| CMOP_SRD | 00017   /* Skip Reverse Destinat... | 328 |
+| CMOP_SES | 00022   /* Set Source Address */ | 329 |
+| CMOP_TEQ | 00024   /* Test for Equal */ | 330 |
+| CMOP_TNE | 00025   /* Test for Not-Equal */ | 331 |
+| CMOP_TEG | 00026   /* Test for Greater Or E... | 332 |
+| CMOP_TGR | 00027   /* Test For Greater */ | 333 |
+| CMOP_SRS | 00030   /* Skip Reverse Source */ | 334 |
+| CMOP_SFS | 00031   /* Skip Forward Source */ | 335 |
+| CMOP_TEL | 00034   /* Test For Equal or Les... | 336 |
+| CMOP_TLS | 00035   /* Test For Less */ | 337 |
+| CMOP_TAN | 00036   /* Test for Alphanumeric */ | 338 |
+| CMOP_BIT | 00037   /* Test Bit */ | 339 |
+| CMOP_INC | 00040   /* Increase Tally */ | 340 |
+| CMOP_STC | 00041   /* Store Tally */ | 341 |
+| CMOP_SEC | 00042   /* Set Tally */ | 342 |
+| CMOP_CRF | 00043   /* Call repeat Field */ | 343 |
+| CMOP_JNC | 00044   /* Jump Out Of Loop Cond... | 344 |
+| CMOP_JFC | 00045   /* Jump Forward Conditio... | 345 |
+| CMOP_JNS | 00046   /* Jump out of loop unco... | 346 |
+| CMOP_JFW | 00047   /* Jump Forward Uncondit... | 347 |
+| CMOP_RCA | 00050   /* Recall Control Addres... | 348 |
+| CMOP_ENS | 00051   /* End Loop */ | 349 |
+| CMOP_BNS | 00052   /* Begin Loop */ | 350 |
+| CMOP_RSA | 00053   /* Recall Source Address */ | 351 |
+| CMOP_SCA | 00054   /* Store Control Address */ | 352 |
+| CMOP_JRC | 00055   /* Jump Reverse Conditio... | 353 |
+| CMOP_TSA | 00056   /* Transfer Source Addre... | 354 |
+| CMOP_JRV | 00057   /* Jump Reverse Uncondit... | 355 |
+| CMOP_CEQ | 00060   /* Compare Equal */ | 356 |
+| CMOP_CNE | 00061   /* COmpare for Not Equal */ | 357 |
+| CMOP_CEG | 00062   /* Compare For Greater O... | 358 |
+| CMOP_CGR | 00063   /* Compare For Greater */ | 359 |
+| CMOP_BIS | 00064   /* Set Bit */ | 360 |
+| CMOP_BIR | 00065   /* Reet Bit */ | 361 |
+| CMOP_OCV | 00066   /* Output Convert */ | 362 |
+| CMOP_ICV | 00067   /* Input Convert */ | 363 |
+| CMOP_CEL | 00070   /* Compare For Equal or ... | 364 |
+| CMOP_CLS | 00071   /* Compare for Less */ | 365 |
+| CMOP_FSU | 00072   /* Field Subtract */ | 366 |
+| CMOP_FAD | 00073   /* Field Add */ | 367 |
+| CMOP_TRP | 00074   /* Transfer Program Char... | 368 |
+| CMOP_TRN | 00075   /* Transfer Numeric */ | 369 |
+| CMOP_TRZ | 00076   /* Transfer Zones */ | 370 |
+| CMOP_TRS | 00077   /* Transfer Source Chara... | 371 |
+| MEM_PARITY | 00001   /* 060          040 */ | 374 |
+| INVALID_ADDR | 00002   /* 061          041 */ | 375 |
+| STK_OVERFL | 00004   /* 062          042 */ | 376 |
+| COM_OPR | 00040   /* 064 +00      044 */ | 377 |
+| PROG_REL | 00050   /* 065 +01      045 */ | 378 |
+| CONT_BIT | 00060   /* 066 +02      046 */ | 379 |
+| PRES_BIT | 00070   /* 067 +03      047 */ | 380 |
+| FLAG_BIT | 00100   /* 070 +04      050 */ | 381 |
+| INDEX_ERROR | 00110   /* 071 +05      051 */ | 382 |
+| EXPO_UNDER | 00120   /* 072 +06      052 */ | 383 |
+| EXPO_OVER | 00130   /* 073 +07      053 */ | 384 |
+| INT_OVER | 00140   /* 074 +10      054 */ | 385 |
+| DIV_ZERO | 00150   /* 075 +11      055 */ | 386 |
+| INTER_TIME | 022 | 389 |
+| IO_BUSY | 023 | 390 |
+| KEY_REQ | 024 | 391 |
+| PRT1_FINISH | 025 | 392 |
+| PRT2_FINISH | 026 | 393 |
+| IO1_FINISH | 027 | 394 |
+| IO2_FINISH | 030 | 395 |
+| IO3_FINISH | 031 | 396 |
+| IO4_FINISH | 032 | 397 |
+| INQ_REQ | 033 | 398 |
+| SPEC_IRQ1 | 035 | 399 |
+| DSK1_RDCHK | 036 | 400 |
+| DSK2_RDCHK | 037 | 401 |
+| PARITY_ERR | 060 | 402 |
+| INVADR_ERR | 061 | 403 |
+| STK_OVR_LOC | 062 | 404 |
+| COM_OPR_LOC | 064 | 405 |
+| PROG_REL_LOC | 065 | 406 |
+| CONT_BIT_LOC | 066 | 407 |
+| PRES_BIT_LOC | 067 | 408 |
+| FLAG_BIT_LOC | 070 | 409 |
+| INDEX_BIT_LOC | 071 | 410 |
+| EXP_UND_LOC | 072 | 411 |
+| EXP_OVR_LOC | 073 | 412 |
+| INT_OVR_LOC | 074 | 413 |
+| DIV_ZER_LOC | 075 | 414 |
+| PARITY_ERR2 | 040 | 415 |
+| INVADR_ERR2 | 041 | 416 |
+| STK_OVR_LOC2 | 042 | 417 |
+| COM_OPR_LOC2 | 044 | 418 |
+| PROG_REL_LOC2 | 045 | 419 |
+| CONT_BIT_LOC2 | 046 | 420 |
+| PRES_BIT_LOC2 | 047 | 421 |
+| FLAG_BIT_LOC2 | 050 | 422 |
+| INDEX_BIT_LOC2 | 051 | 423 |
+| EXP_UND_LOC2 | 052 | 424 |
+| EXP_OVR_LOC2 | 053 | 425 |
+| INT_OVR_LOC2 | 054 | 426 |
+| DIV_ZER_LOC2 | 055 | 427 |
+| IAR6 | 040     /* Set if IRQ from Q */ | 430 |
+| IAR5 | 020     /* Set if IRQ from P1 */ | 431 |
+| IAR4 | 010     /* Q bit 3 */ | 432 |
+| IAR3 | 004     /* Q bit 4 */ | 433 |
+| IAR2 | 002     /* Q bit 5 */ | 434 |
+| IAR1 | 001     /* Q bit 6 or Q bit 2 */ | 435 |
+| IAR0 | 000     /* Q bit 7 or Q bit 1 */ | 436 |
+| IRQ_0 | 000001  /* Interval Timer */ | 438 |
+| IRQ_1 | 000002  /* I/O Busy */ | 439 |
+| IRQ_2 | 000004  /* Keyboard Request */ | 440 |
+| IRQ_3 | 000010  /* Printer 1 Finished */ | 441 |
+| IRQ_4 | 000020  /* Printer 2 Finished */ | 442 |
+| IRQ_5 | 000040  /* I/O Finish 1 */ | 443 |
+| IRQ_6 | 000100  /* I/O Finish 2 */ | 444 |
+| IRQ_7 | 000200  /* I/O Finish 3 */ | 445 |
+| IRQ_10 | 000400  /* I/O Finish 4 */ | 446 |
+| IRQ_11 | 001000  /* P2 Busy */ | 447 |
+| IRQ_12 | 002000  /* Inquiry Request */ | 448 |
+| IRQ_13 | 004000  /* Special IRQ 1 */ | 449 |
+| IRQ_14 | 010000  /* Disk Read Check 1 */ | 450 |
+| IRQ_15 | 020000  /* Disk Read Check 2 */ | 451 |
+| FLAG | 04000000000000000LL     /* Opera... | 454 |
+| FWORD | 03777777777777777LL     /* Full ... | 455 |
+| MSIGN | 02000000000000000LL     /* Opera... | 456 |
+| ESIGN | 01000000000000000LL | 457 |
+| EXPO | 00770000000000000LL | 458 |
+| EXPO_V | 39 | 459 |
+| MANT | 00007777777777777LL | 460 |
+| NORM | 00007000000000000LL | 461 |
+| ROUND | 00004000000000000LL | 462 |
+| PRESENT | 01000000000000000LL     /* Opran... | 463 |
+| DFLAG | 02000000000000000LL     /* Descr... | 464 |
+| WCOUNT | 00017770000000000LL | 465 |
+| WCOUNT_V | 30 | 466 |
+| INTEGR | 00000002000000000LL | 467 |
+| CONTIN | 00000001000000000LL | 468 |
+| CORE | 00000000000077777LL | 469 |
+| RFIELD | 00077700000000000LL     /* Mark ... | 470 |
+| RFIELD_V | 27                      /* Shift... | 471 |
+| SMSFF | 00000020000000000LL | 472 |
+| SSALF | 00000010000000000LL | 473 |
+| SVARF | 00000000100000000LL | 474 |
+| SCWMF | 00000000000100000LL | 475 |
+| FFIELD | 00000007777700000LL | 476 |
+| FFIELD_V | 15 | 477 |
+| REPFLD | 00000770000000000LL | 478 |
+| REPFLD_V | 30 | 479 |
+| MODEF | 00200000000000000LL     /* Progr... | 480 |
+| ARGF | 00100000000000000LL | 481 |
+| PROGF | 00400000000000000LL | 482 |
+| RGH | 00340700000000000LL     /* Retur... | 483 |
+| RGH_V | 33 | 484 |
+| RKV | 00034070000000000LL | 485 |
+| RKV_V | 30 | 486 |
+| RL | 00003000000000000LL     /* Save ... | 487 |
+| RL_V | 36 | 488 |
+| LMASK | 00000000007777777LL | 489 |
+| HMASK | 00007777770000000LL | 490 |
+| DEV_DRUM_RD | 01000000000000000LL | 491 |
+| DEVMASK | 00760000000000000LL | 492 |
+| D_MASK | 00777777777777777LL | 493 |
+| DEV_V | 40 | 494 |
+| DEV_WC | 00017770000000000LL | 495 |
+| DEV_WC_V | 30 | 496 |
+| DEV_CMD | 00000007777700000LL | 497 |
+| DEV_CMD_V | 15 | 498 |
+| DEV_INHTRF | 00000004000000000LL | 499 |
+| DEV_XXX | 00000002000000000LL | 500 |
+| DEV_XXY | 00000001000000000LL | 501 |
+| DEV_BIN | 00000000400000000LL | 502 |
+| DEV_BACK | 00000000200000000LL | 503 |
+| DEV_WCFLG | 00000000100000000LL | 504 |
+| DEV_IORD | 00000000040000000LL | 505 |
+| DEV_OPT | 00000000007700000LL     /* Print... | 506 |
+| CORE | 00000000000077777LL | 507 |
+| DEV_BUSY | 00000000000100000LL     /* D16 */ | 509 |
+| DEV_MEMPAR | 00000000000200000LL     /* D17 */ | 510 |
+| DEV_NOTRDY | 00000000000400000LL     /* D18 */ | 511 |
+| DEV_PARITY | 00000000001000000LL     /* D19 */ | 512 |
+| DEV_ERROR | 00000000002000000LL     /* D20 */ | 513 |
+| DEV_EOF | 00000000004000000LL     /* D21 */ | 514 |
+| DEV_MEMERR | 00000000010000000LL     /* D22 */ | 515 |
+| DEV_RESULT | 00000000037700000LL | 516 |
+| DEV_EOT | 01000100001000000LL | 517 |
+| DEV_BOT | 01000200001000000LL | 518 |
+| DEV_BLANK | 01000400001000000LL | 519 |
+| DRUM1_DEV | 004                     /* 00100... | 521 |
+| DSK1_DEV | 006                     /* 00110... | 522 |
+| DRUM2_DEV | 010                     /* 01000... | 523 |
+| CARD1_DEV | 012                     /* 01010... | 524 |
+| DSK2_DEV | 014                     /* 01100... | 525 |
+| CARD2_DEV | 016                     /* 01110... | 526 |
+| DTC_DEV | 020                     /* 10000... | 527 |
+| PT1_DEV | 022                     /* 10010... | 528 |
+| PT2_DEV | 024                     /* 10100... | 529 |
+| PRT1_DEV | 026                     /* 10110... | 530 |
+| PRT2_DEV | 032                     /* 11010... | 531 |
+| SPO_DEV | 036                     /* 11110... | 532 |
+| DRUM1_FLAG | 00000000000200000LL | 533 |
+| DRUM2_FLAG | 00000000000400000LL | 534 |
+| DSK1_FLAG | 00000000001000000LL | 535 |
+| DSK2_FLAG | 00000000002000000LL | 536 |
+| PRT1_FLAG | 00000000004000000LL | 537 |
+| PRT2_FLAG | 00000000010000000LL | 538 |
+| PUNCH_FLAG | 00000000020000000LL | 539 |
+| CARD1_FLAG | 00000000040000000LL | 540 |
+| CARD2_FLAG | 00000000100000000LL | 541 |
+| SPO_FLAG | 00000000200000000LL | 542 |
+| PTP1_FLAG | 00000000400000000LL | 543 |
+| PTR1_FLAG | 00000001000000000LL | 544 |
+| PTR2_FLAG | 00000002000000000LL | 545 |
+| PTP2_FLAG | 00000004000000000LL | 546 |
+| DTC_FLAG | 00000010000000000LL | 547 |
+

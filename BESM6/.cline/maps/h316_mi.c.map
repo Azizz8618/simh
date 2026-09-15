@@ -1,0 +1,61 @@
+=== h316_mi.c — 771 строк ===
+Источник: h316_mi.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test h316_mi.c -nt .cline/maps/h316_mi.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mi_devices | 295 | |
+| mi_units | 296 | |
+| mi_dibs | 297 | |
+| mi_midbs | 298 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MI_MIDB(N) | {FALSE, FALSE, 0, 0, 0, FALSE, F... | 210 |
+| MI_DIB(N) | {MI##N, 1, MI##N##_RX_DMC, MI##N... | 219 |
+| MI_UNIT(N) | {UDATA (&mi_rx_service, UNIT_ATT... | 228 |
+| MI_REG(N) | {                               ... | 236 |
+| MI_MOD(N) | {                               ... | 259 |
+| MI_DEV(MI,N,F) | {                               ... | 283 |
+| PDEVICE(l) | mi_devices[(l)-1] | 307 |
+| PUNIT(l) | mi_units[(l)-1] | 308 |
+| PDIB(l) | mi_dibs[(l)-1] | 309 |
+| PMIDB(l) | mi_midbs[(l)-1] | 310 |
+| SET_RX_IRQ(l) | SET_EXT_INT((1u << (PDIB(l)->rxi... | 313 |
+| SET_TX_IRQ(l) | SET_EXT_INT((1u << (PDIB(l)->txi... | 314 |
+| CLR_RX_IRQ(l) | CLR_EXT_INT((1u << (PDIB(l)->rxi... | 315 |
+| CLR_TX_IRQ(l) | CLR_EXT_INT((1u << (PDIB(l)->txi... | 316 |
+| CLR_RX_IEN(l) | CLR_EXT_ENB((1u << (PDIB(l)->rxi... | 317 |
+| CLR_TX_IEN(l) | CLR_EXT_ENB((1u << (PDIB(l)->txi... | 318 |
+| ISLDBG(l,f) | ((PDEVICE(l)->dctrl & (f)) != 0) | 321 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mi_reset_rx | 324-333 | Reset receiver (clear flags AND initialize all data) ... |
+| mi_reset_tx | 334-342 | Reset transmitter (clear flags AND initialize all data) ... |
+| mi_get_dmc | 343-354 | Get the DMC control words (starting address, end and length) for the channel. |
+| mi_update_dmc | 355-364 | Update the DMC words to show "count" words transferred. |
+| mi_link_error | 365-382 | Link error recovery ... |
+| mi_debug_mio | 383-393 | Log a modem input or output including DMC words ... |
+| mi_debug_msg | 394-413 | Log the contents of a message sent or received ... |
+| mi_start_tx | 414-450 | Start the transmitter ... |
+| mi_poll_tx | 451-463 | Poll for transmitter done interrupts ... |
+| mi_start_rx | 464-479 | Start the receiver ... |
+| mi_poll_rx | 480-525 | Poll for receiver data ... |
+| mi_rx_local | 526-564 | Receive cross patched data ... |
+| mi1_io | 565-565 | parameter - problem solved! |
+| mi2_io | 566-566 |  |
+| mi3_io | 567-567 |  |
+| mi4_io | 568-568 |  |
+| mi5_io | 569-571 |  |
+| mi_io | 572-640 | Common I/O simulation routine ... |
+| mi_rx_service | 641-652 | Receiver service ... |
+| mi_tx_service | 653-670 | Transmitter service ... |
+| mi_reset | 671-687 | Reset device ... |
+| mi_attach | 688-722 | Attach device ... |
+| mi_detach | 723-737 | Detach device ... |
+| mi_set_loopback | 738-759 |  |
+| mi_show_loopback | 760-771 |  |

@@ -1,0 +1,2002 @@
+=== scp.c — 18149 строк ===
+Источник: scp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test scp.c -nt .cline/maps/scp.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DIR_CTX | 8224-8233 |
+| TYPE_CTX | 8332-8334 |
+| DEL_CTX | 8425-8427 |
+| COPY_CTX | 8460-8464 |
+| TOPIC | 15667-15679 |
+| Operator | 16581-16590 |
+| Stack_Element | 16592-16595 |
+| Stack | 16597-16602 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| Testing" | 345 | |
+| scp_test_units | 348 | |
+| sim_asynch_event_count | 358 | |
+| sim_processed_event_count | 359 | |
+| sim_asynch_lock | 363 | |
+| sim_asynch_wake | 364 | |
+| sim_timer_lock | 366 | |
+| sim_timer_wake | 367 | |
+| sim_asynch_main_threadid | 368 | |
+| sim_asynch_queue | 369 | |
+| sim_asynch_enabled | 370 | |
+| sim_asynch_check | 372 | |
+| migrated | 378 | |
+| AIO_ILOCK | 380 | |
+| AIO_IUNLOCK | 409 | |
+| migrated | 410 | |
+| AIO_ILOCK | 415 | |
+| AIO_IUNLOCK | 436 | |
+| sim_asynch_enabled | 459 | |
+| sim_vm_cmd | 475 | |
+| sim_vm_release | 483 | |
+| sim_vm_release_message | 484 | |
+| sim_clock_precalibrate_commands | 485 | |
+| sim_clock_precalibrate_cleanup_commands | 486 | |
+| stdnul | 538 | |
+| sim_dflt_dev | 616 | |
+| sim_clock_queue | 617 | |
+| sim_interval | 618 | |
+| sim_switches | 621 | |
+| sim_switch_number | 622 | |
+| sim_ofile | 623 | |
+| sim_oline | 624 | |
+| sim_mfile | 625 | |
+| sim_schrptr | 626 | |
+| sim_schaptr | 627 | |
+| sim_dfdev | 628 | |
+| sim_dfunit | 629 | |
+| sim_internal_devices | 630 | |
+| sim_internal_device_count | 631 | |
+| sim_opt_out | 632 | |
+| sim_is_running | 633 | |
+| sim_processing_event | 634 | |
+| sim_brk_summ | 635 | |
+| sim_brk_types | 636 | |
+| sim_brk_dflt | 638 | |
+| sim_brk_match_type | 639 | |
+| sim_brk_match_addr | 640 | |
+| sim_brk_act | 641 | |
+| sim_brk_act_buf | 642 | |
+| sim_brk_tab | 643 | |
+| sim_brk_ent | 644 | |
+| sim_brk_lnt | 645 | |
+| sim_brk_ins | 646 | |
+| sim_quiet | 647 | |
+| sim_step | 649 | |
+| sim_runlimit | 650 | |
+| sim_runlimit_initial | 651 | |
+| sim_runlimit_d | 652 | |
+| sim_runlimit_d_initial | 653 | |
+| sim_runlimit_switches | 654 | |
+| sim_runlimit_enabled | 655 | |
+| sim_time | 660 | |
+| sim_rtime | 661 | |
+| noqueue_time | 662 | |
+| stop_cpu | 663 | |
+| sigterm_received | 664 | |
+| sim_stop_sleep_ms | 665 | |
+| sim_argv | 666 | |
+| sim_eval | 668 | |
+| sim_last_val | 669 | |
+| sim_last_addr | 670 | |
+| sim_do_depth | 685 | |
+| sim_exp_argv | 687 | |
+| sim_on_check | 688 | |
+| sim_on_actions | 689 | |
+| sim_do_filename | 691 | |
+| sim_do_ocptr | 692 | |
+| sim_do_label | 693 | |
+| sim_if_cmd | 694 | |
+| sim_if_cmd_last | 695 | |
+| sim_if_result | 696 | |
+| sim_if_result_last | 697 | |
+| sim_cptr_is_action | 698 | |
+| sim_failed_reset_dptr | 699 | |
+| sim_external_env_count | 704 | |
+| sim_tmpnam | 705 | |
+| sim_tmpfile | 706 | |
+| sim_editline_version | 707 | |
+| sim_editline_dlopened | 708 | |
+| sim_pcre_regex_available | 709 | |
+| sim_pcre_regex_dlopened | 710 | |
+| facility" | 729 | |
+| facility" | 743 | |
+| SCPE_OK | 754 | |
+| facility" | 768 | |
+| facility" | 782 | |
+| sim_si64 | 801 | |
+| sim_si64 | 803 | |
+| sim_sa64 | 806 | |
+| sim_sa64 | 808 | |
+| save_vercur | 814 | |
+| save_ver40 | 815 | |
+| save_ver35 | 816 | |
+| save_ver32 | 817 | |
+| save_ver30 | 818 | |
+| tmp | 2942 | |
+| tmp | 2963 | |
+| reason | 2979 | |
+| mbuf | 2980 | |
+| sim_mfile | 2985 | |
+| sim_mfile | 2990 | |
+| reason | 2994 | |
+| buf | 2999 | |
+| cbuf | 3013 | |
+| nbuf | 3014 | |
+| targv | 3015 | |
+| lookswitch | 3017 | |
+| register_check | 3018 | |
+| device_unit_tests | 3019 | |
+| stat | 3020 | |
+| docmdp | 3021 | |
+| argv | 3027 | |
+| lookswitch | 3031 | |
+| stop_cpu | 3177 | |
+| sim_clock_queue | 3179 | |
+| sim_is_running | 3180 | |
+| sim_log | 3181 | |
+| sim_argv | 3293 | |
+| sim_exit_status | 3399 | |
+| cbuf | 3404 | |
+| cptr | 3405 | |
+| stat_nomessage | 3406 | |
+| cmdp | 3407 | |
+| stat | 3496 | |
+| gbuf | 3503 | |
+| SCPE_OK | 3518 | |
+| cmdp | 3525 | |
+| cmdp | 3531 | |
+| cmdp | 3561 | |
+| hlp_cmdp | 3562 | |
+| cmd_cnt | 3563 | |
+| cmd_size | 3564 | |
+| max_cmdname_size | 3565 | |
+| line_offset | 3600 | |
+| end | 3625 | |
+| rptr | 3701 | |
+| found | 3702 | |
+| all_unique | 3703 | |
+| max_namelen | 3704 | |
+| tdptr | 3705 | |
+| tptr | 3706 | |
+| namebuf | 3707 | |
+| rangebuf | 3708 | |
+| side_effects | 3709 | |
+| mptr | 3826 | |
+| dep | 3827 | |
+| found | 3828 | |
+| deb_desc_available | 3829 | |
+| buf | 3830 | |
+| enabled_units | 3831 | |
+| unit_spec | 3832 | |
+| unit | 3833 | |
+| gap | 3834 | |
+| mptr | 4008 | |
+| found | 4009 | |
+| buf | 4010 | |
+| enabled_units | 4011 | |
+| unit_spec | 4012 | |
+| unit | 4013 | |
+| gap | 4014 | |
+| brkt | 4077 | |
+| gbuf | 4078 | |
+| gbuf | 4119 | |
+| cmdp | 4120 | |
+| SCPE_OK | 4174 | |
+| SCPE_OK | 4191 | |
+| gbuf | 4196 | |
+| cmdp | 4197 | |
+| dptr | 4198 | |
+| uptr | 4199 | |
+| help_initialized | 4201 | |
+| explicit_device | 4202 | |
+| SCPE_OK | 4344 | |
+| status | 4351 | |
+| status | 4377 | |
+| SCPE_OK | 4394 | |
+| gbuf | 4401 | |
+| tptr | 4402 | |
+| lp | 4403 | |
+| dbuf | 4404 | |
+| dsize | 4405 | |
+| SCPE_OK | 4432 | |
+| cbuf | 4468 | |
+| cbuf | 4471 | |
+| cbuf | 4476 | |
+| cptr | 4477 | |
+| fpin | 4478 | |
+| cmdp | 4479 | |
+| echo | 4480 | |
+| staying | 4485 | |
+| stat | 4486 | |
+| stat | 4488 | |
+| staying | 4489 | |
+| sim_goto_line | 4566 | |
+| sim_gotofile | 4701 | |
+| argc | 4748 | |
+| arg_size | 4750 | |
+| argline | 4751 | |
+| cp | 4752 | |
+| result | 4753 | |
+| result | 4798 | |
+| ap | 4847 | |
+| tbuf | 4848 | |
+| ap | 4860 | |
+| ap | 4976 | |
+| tgbuf | 4978 | |
+| ap | 5191 | |
+| gbuf | 5212 | |
+| ip | 5213 | |
+| ap | 5214 | |
+| rbuf | 5215 | |
+| outstr_off | 5217 | |
+| sim_exp_argv | 5219 | |
+| op | 5222 | |
+| oend | 5223 | |
+| sim_sub_instr_buf | 5229 | |
+| istart | 5255 | |
+| sim_sub_instr_off | 5359 | |
+| SCPE_OK | 5370 | |
+| v1 | 5375 | |
+| ep1 | 5376 | |
+| ap | 5568 | |
+| tptr | 5569 | |
+| rptr | 5570 | |
+| tptr | 5585 | |
+| gbuf | 5590 | |
+| tptr | 5591 | |
+| rptr | 5592 | |
+| idx | 5593 | |
+| Not | 5595 | |
+| Exist | 5596 | |
+| Device | 5597 | |
+| result | 5598 | |
+| addr | 5599 | |
+| reason | 5600 | |
+| SCPE_OK | 5804 | |
+| varname | 5848 | |
+| val | 5849 | |
+| endptr | 5850 | |
+| val | 5864 | |
+| varname | 5869 | |
+| valbuf | 5870 | |
+| gbuf | 5884 | |
+| tptr | 5885 | |
+| dbuf | 5886 | |
+| dsize | 5887 | |
+| dev_name | 5888 | |
+| delay | 5889 | |
+| delay_set | 5890 | |
+| after | 5891 | |
+| after_set | 5892 | |
+| snd | 5894 | |
+| gbuf | 5957 | |
+| tptr | 5958 | |
+| snd | 5960 | |
+| gbuf | 5978 | |
+| tptr | 5979 | |
+| exp | 5981 | |
+| gbuf | 6001 | |
+| tptr | 6002 | |
+| exp | 6004 | |
+| tptr | 6030 | |
+| wait | 6031 | |
+| SCPE_OK | 6077 | |
+| cbuf | 6084 | |
+| cptr | 6085 | |
+| fpos | 6086 | |
+| saved_do_echo | 6087 | |
+| saved_goto_line | 6088 | |
+| cbuf | 6165 | |
+| cptr | 6166 | |
+| gbuf | 6183 | |
+| cond | 6184 | |
+| SCPE_OK | 6209 | |
+| sim_on_check | 6242 | |
+| SCPE_OK | 6255 | |
+| sim_do_echo | 6266 | |
+| SCPE_OK | 6267 | |
+| sim_show_message | 6278 | |
+| SCPE_OK | 6279 | |
+| sim_quiet | 6290 | |
+| SCPE_OK | 6291 | |
+| sim_asynch_enabled | 6313 | |
+| SCPE_OK | 6350 | |
+| varname | 6357 | |
+| SCPE_OK | 6442 | |
+| lvl | 6449 | |
+| gbuf | 6451 | |
+| svptr | 6452 | |
+| dptr | 6453 | |
+| uptr | 6454 | |
+| mptr | 6455 | |
+| gcmdp | 6456 | |
+| ctbr | 6457 | |
+| NULL | 6599 | |
+| NULL | 6610 | |
+| dptr->dradix | 6619 | |
+| SCPE_OK | 6620 | |
+| up | 6627 | |
+| SCPE_OK | 6655 | |
+| SCPE_OK | 6674 | |
+| flag | 6681 | |
+| gbuf | 6683 | |
+| dep | 6684 | |
+| lvl | 6773 | |
+| gbuf | 6774 | |
+| svptr | 6775 | |
+| dptr | 6776 | |
+| uptr | 6777 | |
+| mptr | 6778 | |
+| shtb | 6779 | |
+| SCPE_OK | 6879 | |
+| NULL | 6890 | |
+| dev_name_len | 6895 | |
+| unit_name_len | 6896 | |
+| nambuf | 6900 | |
+| string_len | 6903 | |
+| nambuf | 6909 | |
+| uptr | 6960 | |
+| toks | 6961 | |
+| did_set_dname_len | 6962 | |
+| SCPE_OK | 7027 | |
+| toks | 7040 | |
+| SCPE_OK | 7068 | |
+| capac_buf | 7073 | |
+| mval | 7075 | |
+| remfrac | 7076 | |
+| scale | 7078 | |
+| mval | 7082 | |
+| capac_buf | 7114 | |
+| findcmd | 7124 | |
+| notfound | 7125 | |
+| toolpath | 7126 | |
+| toolpath | 7172 | |
+| toolpath | 7177 | |
+| versioncmd | 7178 | |
+| toolversion | 7179 | |
+| toolversion | 7195 | |
+| vmaj | 7202 | |
+| vmaj_s | 7203 | |
+| cpp | 7204 | |
+| build | 7205 | |
+| arch | 7206 | |
+| tarversion | 7207 | |
+| curlversion | 7208 | |
+| saved_st | 7209 | |
+| SCPE_OK | 7807 | |
+| dptr | 7813 | |
+| dev_name_len | 7834 | |
+| SCPE_OK | 7835 | |
+| dptr | 7841 | |
+| SCPE_OK | 7847 | |
+| found | 7853 | |
+| SCPE_OK | 7866 | |
+| dptr | 7871 | |
+| uptr | 7872 | |
+| buf | 7873 | |
+| sim_mfile | 7919 | |
+| sim_mfile | 7937 | |
+| SCPE_OK | 7941 | |
+| SCPE_OK | 7949 | |
+| SCPE_OK | 7966 | |
+| dep | 7971 | |
+| unit | 7972 | |
+| any | 7973 | |
+| SCPE_NOFNC | 8025 | |
+| lvl | 8032 | |
+| SCPE_OK | 8066 | |
+| lvl | 8071 | |
+| SCPE_OK | 8105 | |
+| dptr | 8113 | |
+| SCPE_OK | 8121 | |
+| SCPE_OK | 8127 | |
+| mptr | 8132 | |
+| SCPE_OK | 8152 | |
+| dptr | 8174 | |
+| SCPE_OK | 8182 | |
+| SCPE_OK | 8188 | |
+| buffer | 8195 | |
+| SCPE_OK | 8199 | |
+| gbuf | 8204 | |
+| SCPE_OK | 8216 | |
+| local | 8242 | |
+| dir_state | 8297 | |
+| WildName | 8299 | |
+| filestat | 8300 | |
+| cptr | 8305 | |
+| sim_type_file_offset | 8329 | |
+| sim_type_line_count | 8330 | |
+| FullPath | 8342 | |
+| file | 8343 | |
+| lines | 8344 | |
+| lbuf | 8345 | |
+| file | 8370 | |
+| lines | 8371 | |
+| lbuf | 8372 | |
+| SCPE_OK | 8422 | |
+| FullPath | 8436 | |
+| del_state | 8447 | |
+| stat | 8448 | |
+| deststat | 8473 | |
+| FullPath | 8474 | |
+| st | 8476 | |
+| sname | 8499 | |
+| copy_state | 8500 | |
+| stat | 8501 | |
+| copy_state.stat | 8514 | |
+| sname | 8519 | |
+| path | 8535 | |
+| filestat | 8537 | |
+| SCPE_OK | 8569 | |
+| SCPE_OK | 8579 | |
+| gbuf | 8586 | |
+| svptr | 8587 | |
+| dptr | 8588 | |
+| cptr | 8594 | |
+| gbuf | 8611 | |
+| tptr | 8612 | |
+| dptr | 8613 | |
+| uptr | 8614 | |
+| lo | 8616 | |
+| cnt | 8617 | |
+| uptr | 8623 | |
+| max | 8626 | |
+| cptr | 8637 | |
+| SCPE_OK | 8675 | |
+| run_cmd_did_reset | 8708 | |
+| gbuf | 8712 | |
+| dptr | 8713 | |
+| run_cmd_did_reset | 8715 | |
+| SCPE_OK | 8729 | |
+| gbuf | 8734 | |
+| num | 8735 | |
+| usec_factor | 8737 | |
+| units | 8738 | |
+| runlimit | 8739 | |
+| rptr | 8740 | |
+| sim_runlimit_enabled | 8791 | |
+| sim_runlimit_switches | 8793 | |
+| msg | 8821 | |
+| msgend | 8822 | |
+| msg | 8851 | |
+| SCPE_OK | 8857 | |
+| dptr | 8870 | |
+| reason | 8872 | |
+| saved_sim_switches | 8873 | |
+| SCPE_OK | 8902 | |
+| SCPE_OK | 8946 | |
+| old_sw | 8960 | |
+| sim_switches | 8964 | |
+| SCPE_OK | 8985 | |
+| SCPE_OK | 8993 | |
+| mtab | 8998 | |
+| mem_data | 9025 | |
+| mem_data_size | 9026 | |
+| mem_filepath | 9027 | |
+| mem_checksum | 9028 | |
+| mem_data | 9032 | |
+| mem_data_size | 9033 | |
+| mem_filepath | 9034 | |
+| mem_checksum | 9035 | |
+| SCPE_OK | 9036 | |
+| gbuf | 9059 | |
+| loadfile | 9060 | |
+| reason | 9061 | |
+| reason | 9080 | |
+| filestat | 9087 | |
+| fetched | 9090 | |
+| byte | 9091 | |
+| thissum | 9092 | |
+| bytes | 9093 | |
+| thissum | 9115 | |
+| SCPE_OK | 9122 | |
+| gbuf | 9132 | |
+| dptr | 9133 | |
+| uptr | 9134 | |
+| dptr | 9182 | |
+| open_rw | 9183 | |
+| uptr->flags | 9268 | |
+| uptr->pos | 9269 | |
+| SCPE_OK | 9276 | |
+| uptr->filename | 9282 | |
+| stat | 9283 | |
+| gbuf | 9294 | |
+| dptr | 9295 | |
+| uptr | 9296 | |
+| dptr | 9330 | |
+| uptr | 9331 | |
+| SCPE_OK | 9353 | |
+| dptr | 9370 | |
+| uptr->filename | 9409 | |
+| SCPE_OK | 9418 | |
+| gbuf | 9428 | |
+| dptr | 9429 | |
+| uptr | 9430 | |
+| SCPE_OK | 9459 | |
+| SCPE_OK | 9468 | |
+| gbuf | 9478 | |
+| dptr | 9479 | |
+| uptr | 9480 | |
+| dptr->lname | 9500 | |
+| SCPE_OK | 9501 | |
+| uptr->lname | 9507 | |
+| SCPE_OK | 9508 | |
+| uname | 9523 | |
+| sfile | 9570 | |
+| gbuf | 9572 | |
+| mbuf | 9591 | |
+| val | 9595 | |
+| zeroflg | 9597 | |
+| sz | 9598 | |
+| dptr | 9599 | |
+| uptr | 9600 | |
+| rptr | 9601 | |
+| rfile | 9751 | |
+| gbuf | 9753 | |
+| buf | 9770 | |
+| attnames | 9771 | |
+| attunits | 9772 | |
+| attswitches | 9773 | |
+| attcnt | 9774 | |
+| att_r | 9775 | |
+| mbuf | 9776 | |
+| us | 9778 | |
+| val | 9780 | |
+| sz | 9782 | |
+| v40 | 9783 | |
+| dptr | 9784 | |
+| uptr | 9785 | |
+| rptr | 9786 | |
+| rstat | 9787 | |
+| warned | 9791 | |
+| v40 | 9810 | |
+| SCPE_OK | 10135 | |
+| dptr | 10141 | |
+| uptr | 10142 | |
+| SCPE_OK | 10175 | |
+| gbuf | 10197 | |
+| tptr | 10198 | |
+| sim_next | 10200 | |
+| unitno | 10201 | |
+| new_pcv | 10202 | |
+| dptr | 10204 | |
+| uptr | 10205 | |
+| sim_step | 10213 | |
+| stop_cpu | 10379 | |
+| AIO_UPDATE_QUEUE | 10458 | |
+| pcval | 10518 | |
+| SCPE_STEP | 10567 | |
+| SCPE_RUNTIME | 10575 | |
+| stop_cpu | 10607 | |
+| gbuf | 10641 | |
+| gptr | 10642 | |
+| tptr | 10643 | |
+| ap | 10644 | |
+| opt | 10645 | |
+| low | 10646 | |
+| reason | 10647 | |
+| tdptr | 10648 | |
+| tstat | 10649 | |
+| lowr | 10650 | |
+| ofile | 10651 | |
+| reason | 10752 | |
+| reason | 10764 | |
+| idx | 10765 | |
+| val | 10766 | |
+| rptr | 10767 | |
+| saved_switches | 10768 | |
+| SCPE_OK | 10827 | |
+| reason | 10834 | |
+| saved_switches | 10835 | |
+| stop_cpu | 10873 | |
+| SCPE_OK | 10874 | |
+| rdx | 10891 | |
+| sim_eval | 10901 | |
+| SCPE_OK | 10921 | |
+| val | 10950 | |
+| ptr | 10951 | |
+| val | 10972 | |
+| val | 10989 | |
+| rdx | 10990 | |
+| tptr | 10991 | |
+| gbuf | 10992 | |
+| SCPE_OK | 11030 | |
+| mask | 11055 | |
+| ptr | 11056 | |
+| prev_val | 11057 | |
+| reason | 11119 | |
+| rdx | 11120 | |
+| same | 11122 | |
+| same_done | 11123 | |
+| same_start_addr | 11124 | |
+| same_start_addr | 11176 | |
+| reason | 11190 | |
+| mask | 11207 | |
+| sz | 11209 | |
+| reason | 11210 | |
+| mask | 11214 | |
+| SCPE_OK | 11263 | |
+| mask | 11286 | |
+| sz | 11287 | |
+| gbuf | 11288 | |
+| mask | 11306 | |
+| reason | 11354 | |
+| dptr | 11361 | |
+| lim | 11376 | |
+| SCPE_OK | 11388 | |
+| initialized | 11432 | |
+| p_readline | 11434 | |
+| p_add_history | 11436 | |
+| p_free_line | 11438 | |
+| tptr | 11439 | |
+| cptr | 11519 | |
+| quoting | 11544 | |
+| escaping | 11545 | |
+| got_quoted | 11546 | |
+| quote_char | 11547 | |
+| iptr | 11589 | |
+| cbuf | 11633 | |
+| cptr | 11634 | |
+| FALSE | 11649 | |
+| val | 11665 | |
+| factor | 11666 | |
+| tptr | 11667 | |
+| val | 11689 | |
+| tptr | 11710 | |
+| sim_last_addr | 11767 | |
+| tptr | 11770 | |
+| quote_char | 11811 | |
+| ostart | 11812 | |
+| SCPE_OK | 11896 | |
+| double_quote_found | 11935 | |
+| single_quote_found | 11936 | |
+| quote | 11937 | |
+| tptr | 11938 | |
+| tptr | 11943 | |
+| optr | 11990 | |
+| string | 11995 | |
+| dptr | 12014 | |
+| NULL | 12030 | |
+| nptr | 12047 | |
+| tptr | 12048 | |
+| dptr | 12050 | |
+| NULL | 12096 | |
+| sim_internal_devices | 12117 | |
+| sim_internal_devices | 12118 | |
+| SCPE_OK | 12119 | |
+| dptr | 12132 | |
+| NULL | 12156 | |
+| dptr | 12182 | |
+| rptr | 12183 | |
+| srptr | 12216 | |
+| tptr | 12237 | |
+| rptr | 12238 | |
+| slnt | 12239 | |
+| tptr | 12243 | |
+| slnt | 12247 | |
+| NULL | 12256 | |
+| SW_BITMASK | 12292 | |
+| lsw | 12306 | |
+| gbuf | 12307 | |
+| cptr | 12322 | |
+| gbuf | 12338 | |
+| svptr | 12339 | |
+| tdptr | 12340 | |
+| tuptr | 12341 | |
+| sim_stabr.boolop | 12349 | |
+| sim_stabr.count | 12350 | |
+| sim_staba.count | 12355 | |
+| sim_dfdev | 12360 | |
+| sim_dfunit | 12361 | |
+| cptr | 12412 | |
+| optr | 12427 | |
+| bit | 12428 | |
+| buf | 12439 | |
+| pptr | 12454 | |
+| eptr | 12455 | |
+| pptr | 12479 | |
+| logval | 12496 | |
+| sptr | 12497 | |
+| tptr | 12498 | |
+| logstr | 12499 | |
+| logval | 12501 | |
+| schptr->count | 12539 | |
+| schptr | 12540 | |
+| logval | 12557 | |
+| reason | 12558 | |
+| ocptr | 12559 | |
+| sptr | 12560 | |
+| gbuf | 12561 | |
+| logstr | 12562 | |
+| schptr | 12622 | |
+| val | 12636 | |
+| ret | 12638 | |
+| ret | 12663 | |
+| ret | 12707 | |
+| nodigits | 12748 | |
+| val | 12749 | |
+| val | 12772 | |
+| nodigits | 12773 | |
+| val | 12793 | |
+| nodigits | 12798 | |
+| val | 12799 | |
+| negate | 12800 | |
+| val | 12829 | |
+| nodigits | 12830 | |
+| negate | 12850 | |
+| owtest | 12870 | |
+| negative | 12871 | |
+| dbuf | 12873 | |
+| dbuf | 12899 | |
+| SCPE_OK | 12957 | |
+| dbuf | 12963 | |
+| SCPE_OK | 12972 | |
+| dbuf | 12978 | |
+| stat | 12979 | |
+| stat | 12997 | |
+| buf | 13002 | |
+| frac | 13003 | |
+| sign | 13004 | |
+| val | 13005 | |
+| days | 13006 | |
+| buf | 13060 | |
+| buf | 13065 | |
+| tmpbuf | 13066 | |
+| factor | 13067 | |
+| len | 13068 | |
+| buf | 13094 | |
+| uptr | 13134 | |
+| reason | 13135 | |
+| sim_interval_catchup | 13136 | |
+| AIO_UPDATE_QUEUE | 13142 | |
+| sim_processing_event | 13153 | |
+| sim_processing_event | 13235 | |
+| reason | 13236 | |
+| cptr | 13257 | |
+| accum | 13258 | |
+| prvptr | 13276 | |
+| accum | 13277 | |
+| uptr->time | 13292 | |
+| sim_interval | 13295 | |
+| SCPE_OK | 13296 | |
+| cptr | 13394 | |
+| AIO_UPDATE_QUEUE | 13401 | |
+| nptr | 13408 | |
+| uptr->usecs_remaining | 13427 | |
+| SCPE_OK | 13437 | |
+| AIO_UPDATE_QUEUE | 13451 | |
+| cptr | 13465 | |
+| accum | 13466 | |
+| accum | 13468 | |
+| accum | 13493 | |
+| cptr | 13504 | |
+| accum | 13505 | |
+| result | 13506 | |
+| accum | 13512 | |
+| sim_time | 13539 | |
+| UPDATE_SIM_TIME | 13544 | |
+| sim_rtime | 13545 | |
+| sim_interval | 13550 | |
+| sim_time | 13551 | |
+| noqueue_time | 13552 | |
+| cnt | 13564 | |
+| uptr | 13565 | |
+| cnt | 13567 | |
+| cnt | 13570 | |
+| sim_brk_lnt | 13624 | |
+| sim_brk_ent | 13629 | |
+| SCPE_OK | 13632 | |
+| lo | 13639 | |
+| bp | 13640 | |
+| hi | 13647 | |
+| NULL | 13665 | |
+| bp | 13678 | |
+| bp | 13686 | |
+| bp->next | 13709 | |
+| sim_brk_tab | 13710 | |
+| bp->addr | 13713 | |
+| bp->typ | 13714 | |
+| bp->cnt | 13715 | |
+| bp->act | 13716 | |
+| bp | 13719 | |
+| bp | 13726 | |
+| SCPE_OK | 13762 | |
+| bpl | 13769 | |
+| SCPE_OK | 13806 | |
+| SCPE_OK | 13824 | |
+| dptr | 13832 | |
+| dptr | 13839 | |
+| SCPE_OK | 13873 | |
+| bit | 13880 | |
+| bpt | 13881 | |
+| SCPE_OK | 13935 | |
+| bp | 13942 | |
+| ep | 13971 | |
+| lnt | 13972 | |
+| buf | 14005 | |
+| sim_brk_act | 14015 | |
+| old_action | 14050 | |
+| sim_brk_act_buf | 14052 | |
+| old_action | 14053 | |
+| spc | 14060 | |
+| bpt | 14061 | |
+| bpt | 14077 | |
+| msg | 14091 | |
+| addr | 14092 | |
+| buf | 14093 | |
+| msg | 14095 | |
+| msg | 14114 | |
+| sim_pcre_regex_available | 14183 | |
+| SCPE_OK | 14195 | |
+| gbuf | 14202 | |
+| tptr | 14203 | |
+| c1ptr | 14204 | |
+| dev_name | 14205 | |
+| after | 14206 | |
+| after_set | 14207 | |
+| cnt | 14208 | |
+| gbuf | 14249 | |
+| NULL | 14272 | |
+| SCPE_OK | 14295 | |
+| SCPE_OK | 14306 | |
+| exp->rules | 14323 | |
+| exp->size | 14324 | |
+| exp->buf | 14326 | |
+| exp->buf_size | 14327 | |
+| exp->buf_data | 14328 | |
+| SCPE_OK | 14329 | |
+| ep | 14336 | |
+| match_buf | 14337 | |
+| match_size | 14338 | |
+| ep | 14390 | |
+| SCPE_OK | 14448 | |
+| SCPE_OK | 14477 | |
+| SCPE_OK | 14509 | |
+| SCPE_OK | 14520 | |
+| ep | 14528 | |
+| regex_checks | 14529 | |
+| tstr | 14530 | |
+| SCPE_OK | 14699 | |
+| SCPE_OK | 14727 | |
+| snd->insoff | 14733 | |
+| snd->extoff | 14734 | |
+| SCPE_OK | 14735 | |
+| SCPE_OK | 14771 | |
+| FALSE | 14794 | |
+| msgbuf | 14802 | |
+| msgbuf | 14810 | |
+| gbuf | 14815 | |
+| cond | 14816 | |
+| SCPE_OK | 14836 | |
+| debug_bstates | 14852 | |
+| debug_line_prefix | 14853 | |
+| debug_unterm | 14854 | |
+| debug_line_buf_last | 14855 | |
+| debug_line_buf_last_endprefix_offset | 14856 | |
+| debug_line_last_prefix | 14857 | |
+| debug_line_buf | 14858 | |
+| debug_line_bufsize | 14859 | |
+| debug_line_offset | 14860 | |
+| debug_line_count | 14861 | |
+| len_written | 14865 | |
+| move_size | 14879 | |
+| eol | 14909 | |
+| AIO_LOCK | 14911 | |
+| debug_line_buf | 14924 | |
+| AIO_UNLOCK | 14985 | |
+| saved_quiet | 14995 | |
+| saved_sim_switches | 14996 | |
+| saved_deb_switches | 14997 | |
+| saved_deb_basetime | 14998 | |
+| AIO_LOCK | 15003 | |
+| AIO_UNLOCK | 15027 | |
+| SCPE_OK | 15028 | |
+| debtab_none | 15036 | |
+| debtab_nomatch | 15037 | |
+| some_match | 15038 | |
+| offset | 15039 | |
+| debtab_nomatch | 15055 | |
+| tim_t | 15063 | |
+| tim_a | 15064 | |
+| pc_s | 15065 | |
+| time_now | 15066 | |
+| debug_line_prefix | 15099 | |
+| value | 15105 | |
+| stackbuf | 15177 | |
+| buf | 15179 | |
+| len | 15180 | |
+| arglist | 15181 | |
+| saved_errno | 15234 | |
+| stackbuf | 15243 | |
+| buf | 15245 | |
+| len | 15246 | |
+| arglist | 15247 | |
+| msg_prefix | 15249 | |
+| prefix_len | 15250 | |
+| ret | 15549 | |
+| args | 15550 | |
+| ret | 15615 | |
+| gbuf | 15626 | |
+| help_env | 15687 | |
+| newt | 15696 | |
+| topic->text | 15705 | |
+| newt | 15708 | |
+| child | 15715 | |
+| end | 15735 | |
+| vstrings | 15738 | |
+| vsnum | 15739 | |
+| astrings | 15740 | |
+| asnum | 15741 | |
+| hblock | 15742 | |
+| ep | 15743 | |
+| excluded | 15744 | |
+| exptext | 15745 | |
+| topic | 16025 | |
+| prefix | 16033 | |
+| newp | 16034 | |
+| newp | 16073 | |
+| tbuf | 16078 | |
+| tmpnam | 16080 | |
+| SCPE_OK | 16149 | |
+| cbuf | 16158 | |
+| match | 16163 | |
+| match | 16186 | |
+| top | 16198 | |
+| topic | 16199 | |
+| failed | 16200 | |
+| match | 16201 | |
+| flat_help | 16204 | |
+| cbuf | 16205 | |
+| attach_help | 16207 | |
+| brief_help | 16208 | |
+| onecmd_help | 16209 | |
+| top.parent | 16221 | |
+| top.title | 16249 | |
+| cptr | 16299 | |
+| SCPE_OK | 16429 | |
+| ap | 16440 | |
+| fp | 16462 | |
+| help | 16463 | |
+| size | 16464 | |
+| ap | 16560 | |
+| stack_counter-- | 16623 | |
+| this_Stack->id | 16642 | |
+| this_Stack->elements | 16687 | |
+| addend | 16726 | |
+| subtrahend | 16731 | |
+| factory | 16736 | |
+| T_SVALUE_MAX | 16743 | |
+| ~data | 16755 | |
+| !data | 16760 | |
+| data1 | 16765 | |
+| data1 | 16770 | |
+| data1 | 16775 | |
+| shift | 16780 | |
+| shift | 16785 | |
+| data1 | 16790 | |
+| data1 | 16795 | |
+| data2 | 16800 | |
+| data1 | 16815 | |
+| data1 | 16825 | |
+| HexDigits | 16902 | |
+| OctalDigits | 16903 | |
+| BinaryDigits | 16904 | |
+| cptr | 17018 | |
+| last_cptr | 17027 | |
+| parens | 17028 | |
+| op | 17029 | |
+| gbuf | 17031 | |
+| gptr | 17116 | |
+| string | 17166 | |
+| temp_op | 17190 | |
+| temp_val | 17191 | |
+| temp_string | 17192 | |
+| iptr | 17261 | |
+| cptr | 17275 | |
+| sim_rand_seed | 17285 | |
+| lo | 17298 | |
+| hi | 17300 | |
+| lo | 17301 | |
+| sim_rand_seed | 17302 | |
+| response | 17311 | |
+| f->pos | 17373 | |
+| ret | 17382 | |
+| Data | 17395 | |
+| Data | 17404 | |
+| stat | 17416 | |
+| dptr | 17418 | |
+| stat | 17600 | |
+| dptr | 17606 | |
+| stat | 17607 | |
+| stat | 17615 | |
+| treg8 | 17619 | |
+| treg16 | 17620 | |
+| treg32 | 17621 | |
+| tregval | 17622 | |
+| treg16array | 17623 | |
+| treg16arrayx2 | 17624 | |
+| validate_units | 17627 | |
+| tstat | 17733 | |
+| stat | 17745 | |
+| result | 17820 | |
+| result | 17872 | |
+| arg_test_index | 17895 | |
+| result | 17934 | |
+| result | 17943 | |
+| SCPE_OK | 17949 | |
+| dptr | 17954 | |
+| active | 17956 | |
+| sim_scp_dev.dctrl | 17961 | |
+| dptr | 18055 | |
+| stat | 18057 | |
+| gbuf | 18058 | |
+| sim_switches | 18064 | |
+| sim_switches | 18066 | |
+| stat | 18148 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NOT_MUX_USING_CODE | /* sim_tmxr library provider or ... | 221 |
+| IN_SCP_C | 1          /* Include from scp.c */ | 223 |
+| MAX(a,b) | (((a) >= (b)) ? (a) : (b)) | 243 |
+| MIN(a,b) | (((a) <= (b)) ? (a) : (b)) | 246 |
+| MAX_WIDTH | ((int) ((CHAR_BIT * sizeof (t_va... | 249 |
+| SCH_OR | 0                               ... | 254 |
+| SCH_AND | 1 | 255 |
+| SCH_XOR | 2 | 256 |
+| SCH_E | 0                               ... | 257 |
+| SCH_N | 1 | 258 |
+| SCH_G | 2 | 259 |
+| SCH_L | 3 | 260 |
+| SCH_EE | 4 | 261 |
+| SCH_NE | 5 | 262 |
+| SCH_GE | 6 | 263 |
+| SCH_LE | 7 | 264 |
+| MAX_DO_NEST_LVL | 20                              ... | 266 |
+| SRBSIZ | 1024                            ... | 267 |
+| SIM_BRK_INILNT | 4096                            ... | 268 |
+| SIM_BRK_ALLTYP | 0xFFFFFFFB | 269 |
+| UPDATE_SIM_TIME |  | 270 |
+| SZ_D(dp) | (size_map[((dp)->dwidth + CHAR_B... | 290 |
+| SZ_R(rp) |  | 292 |
+| SZ_LOAD(sz,v,mb,j) |  | 295 |
+| SZ_STORE(sz,v,mb,j) |  | 300 |
+| SZ_LOAD(sz,v,mb,j) |  | 306 |
+| SZ_STORE(sz,v,mb,j) |  | 310 |
+| SIM_DBG_EVENT_NEG | 0x80000000      /* negative even... | 316 |
+| SIM_DBG_EVENT | 0x40000000      /* event dispatc... | 317 |
+| SIM_DBG_ACTIVATE | 0x20000000      /* queue inserti... | 318 |
+| SIM_DBG_AIO_QUEUE | 0x10000000      /* asynch event ... | 319 |
+| SIM_DBG_EXP_STACK | 0x08000000      /* expression st... | 320 |
+| SIM_DBG_EXP_EVAL | 0x04000000      /* expression ev... | 321 |
+| SIM_DBG_BRK_ACTION | 0x02000000      /* action activi... | 322 |
+| SIM_DBG_DO | 0x01000000      /* do activities */ | 323 |
+| SIM_DBG_SAVE | 0x00800000      /* save activiti... | 324 |
+| SIM_DBG_RESTORE | 0x00400000      /* restore activ... | 325 |
+| ON_SIGINT_ACTION | (SCPE_MAX_ERR+1) | 690 |
+| HLP_RESET | "*Commands Resetting Devices" | 913 |
+| HLP_EXAMINE | "*Commands Examining_and_Changin... | 926 |
+| HLP_IEXAMINE | "*Commands Examining_and_Changin... | 927 |
+| HLP_DEPOSIT | "*Commands Examining_and_Changin... | 928 |
+| HLP_IDEPOSIT | "*Commands Examining_and_Changin... | 929 |
+| HLP_EVALUATE | "*Commands Evaluating_Instructions" | 1025 |
+| HLP_LOAD | "*Commands Loading_and_Saving_Pr... | 1051 |
+| HLP_DUMP | "*Commands Loading_and_Saving_Pr... | 1057 |
+| HLP_SAVE | "*Commands Saving_and_Restoring_... | 1065 |
+| HLP_RESTORE | "*Commands Saving_and_Restoring_... | 1071 |
+| HLP_RUN | "*Commands Running_A_Simulated_P... | 1089 |
+| HLP_GO | "*Commands Running_A_Simulated_P... | 1099 |
+| HLP_CONTINUE | "*Commands Running_A_Simulated_P... | 1109 |
+| HLP_STEP | "*Commands Running_A_Simulated_P... | 1113 |
+| HLP_NEXT | "*Commands Running_A_Simulated_P... | 1121 |
+| HLP_BOOT | "*Commands Running_A_Simulated_P... | 1127 |
+| HLP_BREAK | "*Commands Stopping_The_Simulato... | 1150 |
+| HLP_NOBREAK | "*Commands Stopping_The_Simulato... | 1151 |
+| HLP_DEBUG | "*Commands Stopping_The_Simulato... | 1189 |
+| HLP_NODEBUG | "*Commands Stopping_The_Simulato... | 1190 |
+| HLP_RUNLIMIT | "*Commands Stopping_The_Simulato... | 1196 |
+| HLP_ATTACH | "*Commands Connecting_and_Discon... | 1222 |
+| HLP_DETACH | "*Commands Connecting_and_Discon... | 1286 |
+| HLP_CD | "*Commands Controlling_Simulator... | 1295 |
+| HLP_PWD | "*Commands Controlling_Simulator... | 1302 |
+| HLP_DIR | "*Commands Listing_Files DIR" | 1307 |
+| HLP_LS | "*Commands Listing_Files LS" | 1310 |
+| HLP_TYPE | "*Commands Displaying_Files TYPE" | 1314 |
+| HLP_CAT | "*Commands Displaying_Files CAT" | 1323 |
+| HLP_DELETE | "*Commands Removing_Files DEL" | 1333 |
+| HLP_RM | "*Commands Removing_Files RM" | 1338 |
+| HLP_COPY | "*Commands Copying_Files COPY" | 1344 |
+| HLP_CP | "*Commands Copying_Files CP" | 1347 |
+| HLP_RENAME | "*Commands Renaming_Files RENAME" | 1351 |
+| HLP_MOVE | "*Commands Renaming_Files MOVE" | 1354 |
+| HLP_MKDIR | "*Commands Creating_Directories ... | 1360 |
+| HLP_RMDIR | "*Commands Deleting_Directories ... | 1364 |
+| HLP_SET | "*Commands SET" | 1367 |
+| HLP_SET_CONSOLE | "*Commands SET CONSOLE" | 1370 |
+| HLP_SET_REMOTE | "*Commands SET REMOTE" | 1406 |
+| HLP_SET_DEFAULT | "*Commands SET Working_Directory" | 1419 |
+| HLP_SET_LOG | "*Commands SET Log" | 1423 |
+| HLP_SET_DEBUG | "*Commands SET Debug" | 1435 |
+| HLP_SET_BREAK | "*Commands SET Breakpoints" | 1481 |
+| HLP_SET_THROTTLE | "*Commands SET Throttle" | 1486 |
+| HLP_SET_CLOCK | "*Commands SET Clock" | 1513 |
+| HLP_SET_ASYNCH | "*Commands SET Asynch" | 1559 |
+| HLP_SET_ENVIRON | "*Commands SET Environment" | 1563 |
+| HLP_SET_ON | "*Commands SET Command_Status_Tr... | 1609 |
+| HLP_SET_VERIFY | "*Commands SET Command_Execution... | 1619 |
+| HLP_SET_VERIFY | "*Commands SET Command_Execution... | 1620 |
+| HLP_SET_MESSAGE | "*Commands SET Command_Error_Sta... | 1630 |
+| HLP_SET_QUIET | "*Commands SET Command_Output_Di... | 1636 |
+| HLP_SET_PROMPT | "*Commands SET Command_Prompt" | 1642 |
+| HLP_NOAUTOSIZE | "*Commands SET NoAutosize" | 1657 |
+| HLP_AUTOZAP | "*Commands SET Autozap" | 1671 |
+| HLP_SHOW | "*Commands SHOW" | 1682 |
+| HLP_SHOW_CONFIG | "*Commands SHOW" | 1718 |
+| HLP_SHOW_DEVICES | "*Commands SHOW" | 1719 |
+| HLP_SHOW_FEATURES | "*Commands SHOW" | 1720 |
+| HLP_SHOW_QUEUE | "*Commands SHOW" | 1721 |
+| HLP_SHOW_TIME | "*Commands SHOW" | 1722 |
+| HLP_SHOW_MODIFIERS | "*Commands SHOW" | 1723 |
+| HLP_SHOW_NAMES | "*Commands SHOW" | 1724 |
+| HLP_SHOW_SHOW | "*Commands SHOW" | 1725 |
+| HLP_SHOW_VERSION | "*Commands SHOW" | 1726 |
+| HLP_SHOW_DEFAULT | "*Commands SHOW" | 1727 |
+| HLP_SHOW_CONSOLE | "*Commands SHOW" | 1728 |
+| HLP_SHOW_REMOTE | "*Commands SHOW" | 1729 |
+| HLP_SHOW_BREAK | "*Commands SHOW" | 1730 |
+| HLP_SHOW_LOG | "*Commands SHOW" | 1731 |
+| HLP_SHOW_DEBUG | "*Commands SHOW" | 1732 |
+| HLP_SHOW_THROTTLE | "*Commands SHOW" | 1733 |
+| HLP_SHOW_ASYNCH | "*Commands SHOW" | 1734 |
+| HLP_SHOW_ETHERNET | "*Commands SHOW" | 1735 |
+| HLP_SHOW_SERIAL | "*Commands SHOW" | 1736 |
+| HLP_SHOW_SYNC | "*Commands SHOW" | 1737 |
+| HLP_SHOW_MULTIPLEXER | "*Commands SHOW" | 1738 |
+| HLP_SHOW_VIDEO | "*Commands SHOW" | 1739 |
+| HLP_SHOW_CLOCKS | "*Commands SHOW" | 1740 |
+| HLP_SHOW_ON | "*Commands SHOW" | 1741 |
+| HLP_SHOW_DO | "*Commands SHOW" | 1742 |
+| HLP_SHOW_RUNLIMIT | "*Commands SHOW" | 1743 |
+| HLP_SHOW_SEND | "*Commands SHOW" | 1744 |
+| HLP_SHOW_EXPECT | "*Commands SHOW" | 1745 |
+| HLP_HELP | "*Commands HELP" | 1746 |
+| HLP_ASSIGN | "*Commands Logical_Names" | 1770 |
+| HLP_DEASSIGN | "*Commands Logical_Names" | 1771 |
+| HLP_DO | "*Commands Executing_Command_Files" | 1785 |
+| HLP_GOTO | "*Commands Executing_Command_Fil... | 1960 |
+| HLP_RETURN | "*Commands Executing_Command_Fil... | 1982 |
+| HLP_SHIFT | "*Commands Executing_Command_Fil... | 2088 |
+| HLP_CALL | "*Commands Executing_Command_Fil... | 2091 |
+| HLP_ON | "*Commands Executing_Command_Fil... | 2096 |
+| HLP_PROCEED | "*Commands Executing_Command_Fil... | 2166 |
+| HLP_IGNORE | "*Commands Executing_Command_Fil... | 2167 |
+| HLP_ECHO | "*Commands Executing_Command_Fil... | 2189 |
+| HLP_ECHOF | "*Commands Executing_Command_Fil... | 2200 |
+| HLP_SEND | "*Commands Executing_Command_Fil... | 2243 |
+| HLP_EXPECT | "*Commands Executing_Command_Fil... | 2309 |
+| HLP_SLEEP | "*Commands Executing_Command_Fil... | 2421 |
+| HLP_ASSERT | "*Commands Executing_Command_Fil... | 2436 |
+| HLP_IF | "*Commands Executing_Command_Fil... | 2437 |
+| HLP_EXIT | "*Commands Exiting_The_Simulator" | 2627 |
+| HLP_SCREENSHOT | "*Commands Screenshot_Video_Window" | 2635 |
+| HLP_SPAWN | "*Commands Executing_System_Comm... | 2646 |
+| HLP_TESTLIB | "*Commands Testing_Device_Librar... | 2657 |
+| HLP_TAR | "*Commands File_Tools Tar_Tool" | 2685 |
+| HLP_CURL | "*Commands File_Tools Curl_Tool" | 2690 |
+| HLP_DISKINFO | "*Commands Disk_Container_Inform... | 2695 |
+| HLP_ZAPTYPE | "*Commands Removing_Disk_Metadata" | 2706 |
+| FIND_CMD | "where" | 7130 |
+| FIND_CMD2 | "2>NUL" | 7131 |
+| FIND_CMD | "command -v" | 7135 |
+| FIND_CMD2 | "2>/dev/null" | 7136 |
+| FIND_CMD_EXTRA | "which" | 7137 |
+| FIND_CMD2_EXTRA | "2>/dev/null" | 7138 |
+| SIM_REPO_PATH | "https://github.com/simh/simh/ra... | 9083 |
+| WRITE_I(xx) | sim_fwrite (&(xx), sizeof (xx), ... | 9603 |
+| READ_S(xx) | if (read_line ((xx), sizeof(xx),... | 9795 |
+| READ_I(xx) | if (sim_fread (&xx, sizeof (xx),... | 9799 |
+| EDIT_DEFAULT_LIB | "edit." | 11425 |
+| EDIT_DEFAULT_LIB | "libedit." | 11427 |
+| _load_function(function) | *((_func **)&function) = (_func ... | 14168 |
+| HLP_MAGIC_TOPIC | 1 | 15678 |
+| FAIL(why,text,here) | { help_where.error = #text; help... | 15688 |
+| VSMAX | 100 | 15737 |
+| HLP_MATCH_AMBIGUOUS | (~0u) | 16152 |
+| HLP_MATCH_WILDCARD | (~1U) | 16153 |
+| HLP_MATCH_NONE | 0 | 16154 |
+| XPANDQ | 512 | 16532 |
+| STACK_GROW_AMOUNT | 5             /* Number of eleme... | 16604 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_scp_description | 343-375 |  |
+| sim_aio_update_queue | 376-380 |  |
+| if | 381-412 |  |
+| sim_aio_activate | 413-415 |  |
+| if | 416-422 |  |
+| if | 423-437 |  |
+| if | 438-443 |  |
+| sim_aio_check_event | 444-445 |  |
+| if | 446-451 |  |
+| sim_aio_set_interrupt_latency | 452-726 |  |
+| sim_int_step_description | 727-740 |  |
+| sim_int_runlimit_description | 741-745 |  |
+| sim_int_runlimit_reset | 746-747 |  |
+| if | 748-765 |  |
+| sim_int_expect_description | 766-779 |  |
+| sim_int_flush_description | 780-877 |  |
+| sizeof | 878-2914 |  |
+| setenv | 2915-2930 |  |
+| unsetenv | 2931-2938 |  |
+| fopen_tempfile | 2939-2958 |  |
+| if | 2959-2965 |  |
+| fclose_tempfile | 2966-2976 |  |
+| sim_snprint_sym | 2977-2985 |  |
+| if | 2986-2996 |  |
+| sim_fprint_sym | 2997-3010 |  |
+| main | 3011-3033 |  |
+| if | 3034-3042 |  |
+| if | 3043-3051 |  |
+| if | 3052-3063 |  |
+| for | 3064-3094 |  |
+| if | 3095-3119 |  |
+| if | 3120-3126 |  |
+| if | 3127-3145 |  |
+| for | 3146-3171 |  |
+| if | 3172-3183 |  |
+| if | 3184-3199 |  |
+| if | 3200-3207 |  |
+| if | 3208-3216 |  |
+| if | 3217-3224 |  |
+| if | 3225-3241 |  |
+| if | 3242-3253 |  |
+| if | 3254-3284 |  |
+| if | 3285-3298 |  |
+| if | 3299-3305 |  |
+| if | 3306-3385 |  |
+| if | 3386-3401 |  |
+| process_stdin_commands | 3402-3409 |  |
+| while | 3410-3500 |  |
+| set_prompt | 3501-3508 |  |
+| if | 3509-3522 |  |
+| find_cmd | 3523-3535 |  |
+| exit_cmd | 3536-3539 |  |
+| if | 3540-3550 |  |
+| _cmd_name_compare | 3551-3558 | Used when sorting a list of command names |
+| fprint_help | 3559-3567 |  |
+| for | 3568-3579 |  |
+| for | 3580-3600 |  |
+| for | 3601-3614 |  |
+| fprint_header | 3615-3621 |  |
+| fprint_wrapped | 3622-3658 |  |
+| if | 3659-3668 |  |
+| if | 3669-3698 |  |
+| fprint_reg_help_ex | 3699-3728 |  |
+| if | 3729-3777 |  |
+| fprint_reg_help | 3778-3782 |  |
+| fprint_attach_help_ex | 3783-3784 |  |
+| if | 3785-3789 |  |
+| if | 3790-3794 |  |
+| if | 3795-3799 |  |
+| if | 3800-3804 |  |
+| if | 3805-3810 |  |
+| if | 3811-3816 |  |
+| if | 3817-3823 |  |
+| fprint_set_help_ex | 3824-3841 |  |
+| if | 3842-3849 |  |
+| if | 3850-3879 |  |
+| if | 3880-3888 |  |
+| if | 3889-3914 |  |
+| if | 3915-3980 |  |
+| if | 3981-3991 |  |
+| if | 3992-4000 |  |
+| fprint_set_help | 4001-4005 |  |
+| fprint_show_help_ex | 4006-4025 |  |
+| if | 4026-4038 |  |
+| if | 4039-4052 |  |
+| if | 4053-4069 |  |
+| fprint_show_help | 4070-4074 |  |
+| fprint_brk_help_ex | 4075-4080 |  |
+| if | 4081-4088 |  |
+| if | 4089-4104 |  |
+| while | 4105-4111 |  |
+| fprint_brk_help | 4112-4116 |  |
+| help_dev_help | 4117-4121 |  |
+| if | 4122-4161 |  |
+| if | 4162-4176 |  |
+| help_cmd_output | 4177-4178 |  |
+| switch | 4179-4193 |  |
+| help_cmd | 4194-4203 |  |
+| if | 4204-4212 |  |
+| if | 4213-4348 |  |
+| spawn_cmd | 4349-4381 |  |
+| screenshot_cmd | 4382-4390 |  |
+| echo_cmd | 4391-4398 |  |
+| echof_cmd | 4399-4409 |  |
+| if | 4410-4416 |  |
+| if | 4417-4425 |  |
+| if | 4426-4460 |  |
+| do_cmd | 4461-4465 |  |
+| do_position | 4466-4473 |  |
+| do_cmd_label | 4474-4501 |  |
+| for | 4502-4532 |  |
+| if | 4533-4557 |  |
+| if | 4558-4566 |  |
+| if | 4567-4580 |  |
+| if | 4581-4701 |  |
+| if | 4702-4707 |  |
+| if | 4708-4715 |  |
+| if | 4716-4719 |  |
+| if | 4720-4745 |  |
+| sim_call_argv | 4746-4754 |  |
+| if | 4755-4761 |  |
+| if | 4762-4771 |  |
+| while | 4772-4844 |  |
+| _sim_gen_env_uplowcase | 4845-4850 |  |
+| if | 4851-4855 |  |
+| if | 4856-4895 |  |
+| _sim_subststr_substr | 4896-4902 |  |
+| if | 4903-4972 |  |
+| _sim_get_env_special | 4973-4980 |  |
+| if | 4981-4986 |  |
+| if | 4987-4994 |  |
+| if | 4995-5184 |  |
+| if | 5185-5209 |  |
+| sim_sub_args | 5210-5223 |  |
+| if | 5224-5230 |  |
+| while | 5231-5235 |  |
+| if | 5236-5255 | If entire string is within quotes, strip the quotes |
+| for | 5256-5363 |  |
+| shift_args | 5364-5372 |  |
+| sim_cmp_string | 5373-5377 |  |
+| if | 5378-5456 |  |
+| if | 5457-5565 |  |
+| _get_string | 5566-5572 |  |
+| if | 5573-5587 |  |
+| assert_cmd | 5588-5608 |  |
+| if | 5609-5618 |  |
+| if | 5619-5623 |  |
+| if | 5624-5627 |  |
+| if | 5628-5632 |  |
+| if | 5633-5792 |  |
+| if | 5793-5845 |  |
+| get_default_env_parameter | 5846-5866 |  |
+| set_default_env_parameter | 5867-5881 |  |
+| send_cmd | 5882-5897 |  |
+| if | 5898-5911 |  |
+| while | 5912-5936 |  |
+| if | 5937-5954 |  |
+| sim_show_send | 5955-5962 |  |
+| if | 5963-5975 |  |
+| expect_cmd | 5976-5984 |  |
+| if | 5985-5998 |  |
+| sim_show_expect | 5999-6006 |  |
+| if | 6007-6027 |  |
+| sleep_cmd | 6028-6033 |  |
+| while | 6034-6081 |  |
+| goto_cmd | 6082-6099 |  |
+| if | 6100-6109 |  |
+| while | 6110-6139 |  |
+| return_cmd | 6140-6151 |  |
+| shift_cmd | 6152-6162 |  |
+| call_cmd | 6163-6180 |  |
+| on_cmd | 6181-6198 |  |
+| if | 6199-6214 |  |
+| noop_cmd | 6215-6223 |  |
+| set_on | 6224-6225 |  |
+| if | 6226-6259 |  |
+| set_verify | 6260-6271 |  |
+| set_message | 6272-6283 |  |
+| set_quiet | 6284-6295 |  |
+| sim_set_asynch | 6296-6302 |  |
+| if | 6303-6314 |  |
+| if | 6315-6337 |  |
+| sim_show_asynch | 6338-6354 |  |
+| sim_set_environment | 6355-6361 |  |
+| if | 6362-6430 |  |
+| for | 6431-6446 | remove the newly set name from the collection of alias conflicting external names |
+| set_cmd | 6447-6463 |  |
+| if | 6464-6512 |  |
+| while | 6513-6590 |  |
+| find_ctab | 6591-6594 |  |
+| for | 6595-6601 |  |
+| find_c1tab | 6602-6605 |  |
+| for | 6606-6614 |  |
+| set_dev_radix | 6615-6624 |  |
+| set_dev_enbdis | 6625-6633 |  |
+| if | 6634-6659 |  |
+| set_unit_enbdis | 6660-6678 |  |
+| set_dev_debug | 6679-6688 |  |
+| if | 6689-6704 |  |
+| while | 6705-6729 |  |
+| set_unit_append | 6730-6738 |  |
+| if | 6739-6748 |  |
+| show_cmd | 6749-6756 |  |
+| if | 6757-6770 |  |
+| show_cmd_fi | 6771-6785 |  |
+| if | 6786-6836 |  |
+| if | 6837-6843 |  |
+| while | 6844-6881 |  |
+| find_shtab | 6882-6885 |  |
+| for | 6886-6897 |  |
+| _sim_name_prefix | 6898-6911 |  |
+| _sim_dname_prefix | 6912-6916 |  |
+| _sim_uname_prefix | 6917-6921 |  |
+| _sim_dname | 6922-6926 |  |
+| _sim_uname | 6927-6931 |  |
+| _sim_dname_space | 6932-6936 |  |
+| _sim_uname_space | 6937-6941 |  |
+| _set_dname_len | 6942-6947 |  |
+| for | 6948-6956 |  |
+| show_device | 6957-6963 |  |
+| if | 6964-6968 |  |
+| if | 6969-6978 |  |
+| if | 6979-6982 |  |
+| for | 6983-6991 |  |
+| if | 6992-7018 |  |
+| for | 7019-7029 |  |
+| fprint_sep | 7030-7037 |  |
+| show_unit | 7038-7048 |  |
+| if | 7049-7052 |  |
+| if | 7053-7070 |  |
+| sprint_capac | 7071-7105 |  |
+| if | 7106-7116 |  |
+| fprint_capac | 7117-7121 |  |
+| sim_get_tool_path | 7122-7141 |  |
+| if | 7142-7152 |  |
+| if | 7153-7174 |  |
+| _get_tool_version | 7175-7183 |  |
+| if | 7184-7199 |  |
+| show_version | 7200-7227 |  |
+| if | 7228-7232 |  |
+| if | 7233-7241 |  |
+| if | 7242-7254 |  |
+| if | 7255-7323 |  |
+| if | 7324-7716 |  |
+| if | 7717-7731 |  |
+| if | 7732-7740 |  |
+| if | 7741-7750 |  |
+| if | 7751-7771 |  |
+| if | 7772-7809 |  |
+| show_config | 7810-7824 |  |
+| if | 7825-7837 |  |
+| show_log_names | 7838-7849 |  |
+| show_dev_logicals | 7850-7854 |  |
+| for | 7855-7868 |  |
+| show_queue | 7869-7943 |  |
+| show_time | 7944-7951 |  |
+| show_break | 7952-7962 |  |
+| show_dev_radix | 7963-7968 |  |
+| show_dev_debug | 7969-7974 |  |
+| if | 7975-8000 |  |
+| if | 8001-8029 |  |
+| show_on | 8030-8041 |  |
+| if | 8042-8050 |  |
+| for | 8051-8053 |  |
+| for | 8054-8058 |  |
+| if | 8059-8068 |  |
+| show_do | 8069-8073 |  |
+| for | 8074-8109 |  |
+| show_mod_names | 8110-8123 |  |
+| show_dev_modifiers | 8124-8129 |  |
+| show_all_mods | 8130-8136 |  |
+| for | 8137-8170 |  |
+| show_show_commands | 8171-8184 |  |
+| show_dev_show_commands | 8185-8192 |  |
+| show_default | 8193-8201 |  |
+| set_default_cmd | 8202-8218 |  |
+| pwd_cmd | 8219-8243 |  |
+| if | 8244-8254 |  |
+| if | 8255-8274 |  |
+| if | 8275-8294 |  |
+| dir_cmd | 8295-8317 |  |
+| if | 8318-8367 |  |
+| type_cmd | 8368-8378 |  |
+| if | 8379-8389 |  |
+| if | 8390-8404 |  |
+| if | 8405-8444 |  |
+| delete_cmd | 8445-8483 |  |
+| if | 8484-8496 |  |
+| copy_cmd | 8497-8516 |  |
+| rename_cmd | 8517-8532 |  |
+| mkdir_cmd | 8533-8551 |  |
+| while | 8552-8571 |  |
+| rmdir_cmd | 8572-8583 |  |
+| debug_cmd | 8584-8602 |  |
+| brk_cmd | 8603-8608 |  |
+| ssh_break | 8609-8628 |  |
+| if | 8629-8637 |  |
+| if | 8638-8641 |  |
+| while | 8642-8677 |  |
+| ssh_break_one | 8678-8681 |  |
+| switch | 8682-8709 |  |
+| reset_cmd | 8710-8731 |  |
+| runlimit_cmd | 8732-8742 |  |
+| if | 8743-8793 |  |
+| if | 8794-8813 |  |
+| set_runlimit | 8814-8818 |  |
+| _get_runlimit | 8819-8823 |  |
+| if | 8824-8853 |  |
+| show_runlimit | 8854-8867 |  |
+| reset_all | 8868-8874 |  |
+| for | 8875-8878 |  |
+| for | 8879-8893 |  |
+| for | 8894-8904 |  |
+| sim_add_debug_flags | 8905-8956 |  |
+| reset_all_p | 8957-8969 |  |
+| set_writelock | 8970-8973 |  |
+| if | 8974-8989 |  |
+| show_writelock | 8990-8995 |  |
+| fix_writelock_mtab | 8996-8999 |  |
+| for | 9000-9029 |  |
+| sim_set_memory_load_file_ex | 9030-9038 |  |
+| sim_set_memory_load_file | 9039-9043 |  |
+| Fgetc | 9044-9045 |  |
+| if | 9046-9056 |  |
+| load_cmd | 9057-9066 |  |
+| if | 9067-9084 |  |
+| sim_fetch_binary_file | 9085-9094 |  |
+| if | 9095-9109 |  |
+| while | 9110-9129 |  |
+| attach_cmd | 9130-9148 |  |
+| if | 9149-9168 |  |
+| scp_attach_unit | 9169-9179 |  |
+| attach_unit | 9180-9247 |  |
+| if | 9248-9278 |  |
+| attach_err | 9279-9291 |  |
+| detach_cmd | 9292-9326 |  |
+| detach_all | 9327-9337 |  |
+| for | 9338-9358 |  |
+| scp_detach_unit | 9359-9367 |  |
+| detach_unit | 9368-9375 |  |
+| if | 9376-9387 |  |
+| if | 9388-9409 |  |
+| if | 9410-9425 |  |
+| assign_cmd | 9426-9452 |  |
+| assign_device | 9453-9461 |  |
+| assign_unit | 9462-9475 |  |
+| deassign_cmd | 9476-9496 |  |
+| deassign_device | 9497-9503 |  |
+| deassign_unit | 9504-9512 |  |
+| sim_dname | 9513-9519 |  |
+| sim_uname | 9520-9540 |  |
+| sim_set_uname | 9541-9548 |  |
+| sim_attach_name | 9549-9567 |  |
+| save_cmd | 9568-9579 |  |
+| if | 9580-9588 |  |
+| sim_save | 9589-9621 |  |
+| for | 9622-9733 |  |
+| if | 9734-9748 |  |
+| restore_cmd | 9749-9767 |  |
+| sim_rest | 9768-9803 |  |
+| if | 9804-9816 |  |
+| if | 9817-9820 |  |
+| if | 9821-9826 |  |
+| if | 9827-9830 |  |
+| if | 9831-9843 |  |
+| if | 9844-9849 |  |
+| if | 9850-9876 |  |
+| for | 9877-10069 |  |
+| for | 10070-10137 |  |
+| sim_flush_buffered_files | 10138-10147 |  |
+| for | 10148-10170 |  |
+| flush_svc | 10171-10194 |  |
+| run_cmd | 10195-10213 |  |
+| if | 10214-10288 |  |
+| if | 10289-10309 |  |
+| if | 10310-10344 |  |
+| for | 10345-10353 |  |
+| if | 10354-10358 |  |
+| if | 10359-10364 |  |
+| if | 10365-10370 |  |
+| if | 10371-10434 |  |
+| if | 10435-10465 |  |
+| run_cmd_message | 10466-10475 |  |
+| if | 10476-10486 |  |
+| sim_run_boot_prep | 10487-10495 |  |
+| if | 10496-10512 |  |
+| fprint_stopped_gen | 10513-10540 |  |
+| if | 10541-10556 |  |
+| fprint_stopped | 10557-10564 |  |
+| step_svc | 10565-10572 |  |
+| runlimit_svc | 10573-10580 |  |
+| expect_svc | 10581-10587 |  |
+| sim_cancel_step | 10588-10594 |  |
+| sim_sched_step | 10595-10604 |  |
+| int_handler | 10605-10638 |  |
+| exdep_cmd | 10639-10773 |  |
+| for | 10774-10888 |  |
+| ex_reg | 10889-10912 |  |
+| if | 10913-10947 |  |
+| get_rval | 10948-10985 |  |
+| dep_reg | 10986-10997 |  |
+| if | 10998-11013 |  |
+| if | 11014-11052 |  |
+| put_rval_pcchk | 11053-11096 |  |
+| put_rval | 11097-11116 |  |
+| ex_addr | 11117-11125 |  |
+| if | 11126-11146 |  |
+| if | 11147-11152 |  |
+| if | 11153-11158 |  |
+| if | 11159-11203 |  |
+| get_aval | 11204-11216 |  |
+| for | 11217-11291 |  |
+| if | 11292-11310 |  |
+| if | 11311-11318 |  |
+| for | 11319-11358 |  |
+| eval_cmd | 11359-11370 |  |
+| if | 11371-11376 |  |
+| for | 11377-11403 |  |
+| read_line | 11404-11429 |  |
+| read_line_p | 11430-11440 |  |
+| if | 11441-11474 |  |
+| if | 11475-11493 |  |
+| if | 11494-11497 |  |
+| for | 11498-11509 |  |
+| if | 11510-11541 |  |
+| get_glyph_gen | 11542-11591 |  |
+| get_glyph | 11592-11596 |  |
+| get_glyph_sp | 11597-11601 |  |
+| get_glyph_nc | 11602-11606 |  |
+| get_glyph_quoted | 11607-11611 |  |
+| get_glyph_cmd | 11612-11614 |  |
+| if | 11615-11630 | Tolerate "!subprocess" vs. requiring "! subprocess" |
+| get_yn | 11631-11662 |  |
+| get_uint | 11663-11711 |  |
+| if | 11712-11808 |  |
+| sim_decode_quoted_string | 11809-11819 |  |
+| while | 11820-11931 |  |
+| sim_encode_quoted_string | 11932-11955 |  |
+| while | 11956-11992 |  |
+| fprint_buffer_string | 11993-12010 |  |
+| find_dev | 12011-12017 |  |
+| for | 12018-12023 |  |
+| for | 12024-12043 |  |
+| find_unit | 12044-12054 |  |
+| if | 12055-12061 |  |
+| for | 12062-12104 |  |
+| sim_register_internal_device | 12105-12129 |  |
+| find_dev_from_unit | 12130-12138 |  |
+| for | 12139-12146 |  |
+| for | 12147-12160 |  |
+| qdisable | 12161-12178 |  |
+| find_reg_glob_reason | 12179-12187 |  |
+| for | 12188-12210 |  |
+| if | 12211-12218 |  |
+| find_reg_glob | 12219-12234 |  |
+| find_reg | 12235-12247 |  |
+| for | 12248-12270 |  |
+| get_switches | 12271-12277 |  |
+| if | 12278-12286 |  |
+| for | 12287-12303 |  |
+| get_sim_sw | 12304-12308 |  |
+| while | 12309-12334 |  |
+| get_sim_opt | 12335-12363 |  |
+| while | 12364-12424 |  |
+| put_switches | 12425-12451 |  |
+| match_ext | 12452-12460 |  |
+| if | 12461-12492 |  |
+| get_rsearch | 12493-12503 |  |
+| for | 12504-12524 |  |
+| if | 12525-12530 |  |
+| if | 12531-12534 |  |
+| if | 12535-12553 |  |
+| get_asearch | 12554-12567 |  |
+| for | 12568-12598 |  |
+| if | 12599-12605 |  |
+| if | 12606-12613 |  |
+| if | 12614-12633 |  |
+| test_search | 12634-12644 |  |
+| for | 12645-12663 |  |
+| if | 12664-12671 |  |
+| for | 12672-12745 |  |
+| strtotv | 12746-12773 |  |
+| for | 12774-12795 |  |
+| strtotsv | 12796-12830 |  |
+| for | 12831-12874 |  |
+| if | 12875-12909 |  |
+| switch | 12910-12988 |  |
+| if | 12989-12999 |  |
+| sim_fmt_secs | 13000-13009 |  |
+| if | 13010-13026 |  |
+| if | 13027-13030 |  |
+| if | 13031-13062 |  |
+| sim_fmt_numeric | 13063-13071 |  |
+| if | 13072-13084 |  |
+| for | 13085-13131 |  |
+| sim_process_event | 13132-13137 |  |
+| if | 13138-13143 |  |
+| if | 13144-13147 |  |
+| if | 13148-13158 |  |
+| if | 13159-13223 | have caught up. |
+| if | 13224-13230 |  |
+| if | 13231-13247 |  |
+| sim_activate | 13248-13254 |  |
+| _sim_activate | 13255-13268 |  |
+| if | 13269-13277 | specified unit at the head of the event queue to run immediately |
+| for | 13278-13283 |  |
+| if | 13284-13307 |  |
+| sim_activate_abs | 13308-13324 |  |
+| sim_activate_notbefore | 13325-13347 |  |
+| sim_activate_after_abs | 13348-13352 |  |
+| sim_activate_after_abs_d | 13353-13357 |  |
+| _sim_activate_after_abs | 13358-13364 |  |
+| sim_activate_after | 13365-13369 |  |
+| sim_activate_after_d | 13370-13374 |  |
+| _sim_activate_after | 13375-13391 |  |
+| sim_cancel | 13392-13409 |  |
+| if | 13410-13431 |  |
+| if | 13432-13447 |  |
+| sim_is_active | 13448-13462 |  |
+| _sim_activate_queue_time | 13463-13468 |  |
+| for | 13469-13481 |  |
+| _sim_activate_time | 13482-13490 |  |
+| sim_activate_time | 13491-13501 |  |
+| sim_activate_time_usecs | 13502-13512 |  |
+| for | 13513-13533 |  |
+| sim_gtime | 13534-13535 |  |
+| if | 13536-13541 |  |
+| sim_grtime | 13542-13547 |  |
+| sim_reset_time | 13548-13561 |  |
+| sim_qcount | 13562-13607 |  |
+| sim_brk_init | 13608-13612 |  |
+| for | 13613-13636 |  |
+| sim_brk_fnd | 13637-13641 |  |
+| if | 13642-13667 |  |
+| sim_brk_fnd_ex | 13668-13671 |  |
+| while | 13672-13682 |  |
+| sim_brk_new | 13683-13689 |  |
+| if | 13690-13723 |  |
+| sim_brk_set | 13724-13729 |  |
+| if | 13730-13753 |  |
+| if | 13754-13766 |  |
+| sim_brk_clr | 13767-13777 |  |
+| while | 13778-13792 |  |
+| if | 13793-13798 |  |
+| for | 13799-13810 |  |
+| sim_brk_clrall | 13811-13816 |  |
+| for | 13817-13828 |  |
+| sim_brk_show | 13829-13849 |  |
+| for | 13850-13861 |  |
+| if | 13862-13877 |  |
+| sim_brk_showall | 13878-13887 |  |
+| if | 13888-13894 |  |
+| if | 13895-13902 |  |
+| for | 13903-13939 |  |
+| sim_brk_test | 13940-13947 |  |
+| if | 13948-13968 |  |
+| sim_brk_getact | 13969-13977 |  |
+| if | 13978-13981 |  |
+| if | 13982-13991 |  |
+| if | 13992-14009 |  |
+| sim_brk_clract | 14010-14019 |  |
+| sim_brk_setact | 14020-14021 |  |
+| if | 14022-14047 |  |
+| sim_brk_replace_act | 14048-14057 |  |
+| sim_brk_npc | 14058-14064 |  |
+| for | 14065-14074 |  |
+| sim_brk_clrspc | 14075-14078 |  |
+| if | 14079-14088 |  |
+| sim_brk_message | 14089-14099 |  |
+| if | 14100-14154 |  |
+| sim_exp_initialize | 14155-14176 |  |
+| if | 14177-14191 |  |
+| sim_exp_init | 14192-14199 |  |
+| sim_set_expect | 14200-14214 |  |
+| if | 14215-14224 |  |
+| if | 14225-14236 |  |
+| if | 14237-14246 | Handle a bare HALTAFTER=nnn command |
+| sim_set_noexpect | 14247-14262 |  |
+| sim_exp_fnd | 14263-14276 |  |
+| sim_exp_clr_tab | 14277-14290 |  |
+| if | 14291-14297 |  |
+| sim_exp_clr | 14298-14301 |  |
+| while | 14302-14310 |  |
+| sim_exp_clrall | 14311-14314 |  |
+| for | 14315-14333 |  |
+| sim_exp_set | 14334-14344 |  |
+| if | 14345-14352 |  |
+| if | 14353-14381 |  |
+| for | 14382-14399 |  |
+| if | 14400-14404 |  |
+| if | 14405-14422 |  |
+| if | 14423-14428 |  |
+| if | 14429-14440 |  |
+| for | 14441-14452 | Make sure that the production buffer is large enough to detect a match for all rules including a NUL termination byte |
+| sim_exp_show_tab | 14453-14479 |  |
+| sim_exp_show | 14480-14485 |  |
+| if | 14486-14500 |  |
+| if | 14501-14513 |  |
+| sim_exp_showall | 14514-14524 |  |
+| sim_exp_check | 14525-14539 |  |
+| for | 14540-14647 |  |
+| if | 14648-14664 |  |
+| if | 14665-14703 |  |
+| sim_send_input | 14704-14705 |  |
+| if | 14706-14711 |  |
+| if | 14712-14730 |  |
+| sim_send_clear | 14731-14739 | Cancel Queued input data |
+| sim_show_send_input | 14740-14746 |  |
+| if | 14747-14753 |  |
+| if | 14754-14775 |  |
+| sim_send_poll_data | 14776-14777 |  |
+| if | 14778-14799 |  |
+| sim_error_text | 14800-14812 |  |
+| sim_string_to_stat | 14813-14828 |  |
+| if | 14829-14840 |  |
+| _sim_scp_abort | 14841-14862 | This routine should ONLY be called from SCP modules |
+| _debug_fwrite_all | 14863-14866 |  |
+| while | 14867-14876 |  |
+| _debug_fwrite | 14877-14880 |  |
+| if | 14881-14886 |  |
+| while | 14887-14906 |  |
+| _sim_debug_write_flush | 14907-14911 | Optionally filter debug output to summarize duplicate debug lines |
+| if | 14912-14917 |  |
+| if | 14918-14925 |  |
+| while | 14926-14987 |  |
+| _sim_debug_write | 14988-14992 |  |
+| _sim_debug_flush | 14993-15007 |  |
+| if | 15008-15013 |  |
+| if | 15014-15033 |  |
+| _get_dbg_verb | 15034-15047 |  |
+| while | 15048-15059 |  |
+| sim_debug_prefix | 15060-15067 |  |
+| if | 15068-15081 |  |
+| if | 15082-15101 |  |
+| fprint_fields | 15102-15106 |  |
+| for | 15107-15113 |  |
+| for | 15114-15151 |  |
+| if | 15152-15174 |  |
+| sim_printf | 15175-15182 | Print message to stdout, sim_log (if enabled) and sim_deb (if enabled) |
+| while | 15183-15208 |  |
+| if | 15209-15231 |  |
+| sim_perror | 15232-15240 |  |
+| sim_messagef | 15241-15258 | Print command result message to stdout, sim_log (if enabled) and sim_deb (if enabled) |
+| while | 15259-15285 |  |
+| if | 15286-15300 |  |
+| if | 15301-15319 |  |
+| if | 15320-15340 | Always display messages in debug output |
+| _sim_vdebug | 15341-15342 |  |
+| if | 15343-15416 |  |
+| _sim_debug_unit | 15417-15420 |  |
+| if | 15421-15428 |  |
+| _sim_debug_device | 15429-15430 |  |
+| if | 15431-15438 |  |
+| sim_data_trace | 15439-15441 |  |
+| if | 15442-15546 |  |
+| Fprintf | 15547-15551 |  |
+| if | 15552-15623 |  |
+| _process_cmd | 15624-15627 |  |
+| if | 15628-15635 |  |
+| tar_cmd | 15636-15640 |  |
+| curl_cmd | 15641-15693 |  |
+| appendText | 15694-15701 |  |
+| if | 15702-15712 |  |
+| cleanHelp | 15713-15720 |  |
+| for | 15721-15746 |  |
+| if | 15747-15808 |  |
+| for | 15809-16030 |  |
+| helpPrompt | 16031-16035 | Add prompt at end. |
+| if | 16036-16047 |  |
+| if | 16048-16052 |  |
+| if | 16053-16075 |  |
+| displayMagicTopic | 16076-16082 |  |
+| if | 16083-16087 |  |
+| if | 16088-16115 |  |
+| while | 16116-16131 |  |
+| if | 16132-16154 |  |
+| matchHelpTopicName | 16155-16163 |  |
+| for | 16164-16221 |  |
+| if | 16222-16239 |  |
+| if | 16240-16257 |  |
+| if | 16258-16273 |  |
+| while | 16274-16300 |  |
+| if | 16301-16308 |  |
+| while | 16309-16468 |  |
+| if | 16469-16514 |  |
+| if | 16515-16522 |  |
+| if | 16523-16529 |  |
+| while | 16530-16612 |  |
+| delete_Stack | 16613-16628 |  |
+| isempty_Stack | 16629-16636 |  |
+| new_Stack | 16637-16650 |  |
+| pop_Stack | 16651-16675 |  |
+| push_Stack | 16676-16680 |  |
+| if | 16681-16703 |  |
+| top_Stack | 16704-16723 |  |
+| _op_add | 16724-16728 |  |
+| _op_sub | 16729-16733 |  |
+| _op_mult | 16734-16738 |  |
+| _op_div | 16739-16745 |  |
+| _op_mod | 16746-16752 |  |
+| _op_comp | 16753-16757 |  |
+| _op_log_not | 16758-16762 |  |
+| _op_log_and | 16763-16767 |  |
+| _op_log_or | 16768-16772 |  |
+| _op_bit_and | 16773-16777 |  |
+| _op_bit_rsh | 16778-16782 |  |
+| _op_bit_lsh | 16783-16787 |  |
+| _op_bit_or | 16788-16792 |  |
+| _op_bit_xor | 16793-16797 |  |
+| _op_eq | 16798-16802 |  |
+| _op_ne | 16803-16807 |  |
+| _op_le | 16808-16812 |  |
+| _op_lt | 16813-16817 |  |
+| _op_ge | 16818-16822 |  |
+| _op_gt | 16823-16827 |  |
+| _i_strcmp | 16828-16834 |  |
+| _op_str_eq | 16835-16839 |  |
+| _op_str_ne | 16840-16844 |  |
+| _op_str_le | 16845-16849 |  |
+| _op_str_lt | 16850-16854 |  |
+| _op_str_ge | 16855-16859 |  |
+| _op_str_gt | 16860-16899 |  |
+| get_glyph_exp | 16900-16910 |  |
+| if | 16911-17024 |  |
+| sim_into_postfix | 17025-17032 | into a stack containing that expression in postfix order |
+| if | 17033-17039 |  |
+| if | 17040-17044 |  |
+| while | 17045-17104 |  |
+| while | 17105-17113 | migrate the rest of stack2 onto stack1 |
+| _value_of | 17114-17118 |  |
+| if | 17119-17170 |  |
+| if | 17171-17185 |  |
+| sim_eval_postfix | 17186-17195 | Evaluate a given stack1 containing a postfix expression |
+| while | 17196-17207 | Reverse stack1 onto stack2 leaving stack1 empty |
+| while | 17208-17246 | Loop through the postfix expression in stack2 evaluating until stack2 is empty |
+| if | 17247-17258 |  |
+| sim_eval_expression | 17259-17266 |  |
+| if | 17267-17286 |  |
+| sim_srand | 17287-17292 |  |
+| sim_rand | 17293-17307 |  |
+| _sim_running_as_root | 17308-17312 |  |
+| if | 17313-17330 |  |
+| Mprintf | 17331-17364 |  |
+| MOpen | 17365-17370 |  |
+| MFlush | 17371-17376 |  |
+| FMwrite | 17377-17385 |  |
+| MClose | 17386-17392 |  |
+| MFileData | 17393-17396 |  |
+| if | 17397-17413 |  |
+| sim_sanity_check_register_declarations | 17414-17423 |  |
+| for | 17424-17593 |  |
+| if | 17594-17602 |  |
+| sim_device_unit_tests | 17603-17608 |  |
+| for | 17609-17727 |  |
+| test_register_validation | 17728-17736 |  |
+| for | 17737-17816 |  |
+| test_scp_parsing | 17817-17823 |  |
+| while | 17824-17896 |  |
+| arg_check | 17897-17903 |  |
+| if | 17904-17907 |  |
+| if | 17908-17911 |  |
+| for | 17912-17931 |  |
+| test_arg_parsing | 17932-17937 |  |
+| for | 17938-17945 |  |
+| sim_scp_svc | 17946-17951 |  |
+| test_scp_event_sequencing | 17952-17968 |  |
+| for | 17969-17975 | queue test unit events |
+| for | 17976-17985 | check test unit events |
+| for | 17986-17996 |  |
+| for | 17997-18003 | check to make sure that all units have fired |
+| for | 18004-18012 | queue test unit events again with an offset of 1 |
+| for | 18013-18023 |  |
+| for | 18024-18036 |  |
+| for | 18037-18051 |  |
+| test_lib_cmd | 18052-18070 |  |
+| if | 18071-18076 |  |
+| if | 18077-18081 |  |
+| if | 18082-18093 |  |
+| for | 18094-18149 |  |

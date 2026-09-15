@@ -1,0 +1,119 @@
+=== pdp8_ct.c — 740 строк ===
+Источник: pdp8_ct.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp8_ct.c -nt .cline/maps/pdp8_ct.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 140 | |
+| cpu_unit | 141 | |
+| ct_dib | 183 | |
+| srb | 240 | |
+| uptr | 241 | |
+| AC | 287 | |
+| flg | 296 | |
+| old_ust | 297 | |
+| AC | 347 | |
+| AC | 376 | |
+| flgs | 384 | |
+| tbc | 385 | |
+| st | 386 | |
+| srb | 499 | |
+| srb | 525 | |
+| return | 537 | |
+| ct_db | 548 | |
+| FALSE | 550 | |
+| uptr | 558 | |
+| NULL | 565 | |
+| crc | 572 | |
+| crc | 574 | |
+| crc | 583 | |
+| SCPE_OK | 626 | |
+| uptr | 634 | |
+| ct_sra | 636 | |
+| ct_srb | 637 | |
+| ct_df | 638 | |
+| ct_db | 639 | |
+| ct_write | 640 | |
+| ct_bptr | 641 | |
+| ct_blnt | 642 | |
+| SCPE_OK | 653 | |
+| uptr->UST | 666 | |
+| uptr->UST | 680 | |
+| SCPE_OK | 734 | |
+| tape" | 739 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CT_NUMDR | 2                               ... | 89 |
+| FNC | u3                              ... | 90 |
+| UST | u4                              ... | 91 |
+| CT_MAXFR | (CT_SIZE)                       ... | 92 |
+| CT_SIZE | 93000                           ... | 93 |
+| SRA_ENAB | 0200                            ... | 97 |
+| SRA_V_UNIT | 6                               ... | 98 |
+| SRA_M_UNIT | (CT_NUMDR - 1) | 99 |
+| SRA_V_FNC | 3                               ... | 100 |
+| SRA_M_FNC | 07 | 101 |
+| SRA_READ | 00 | 102 |
+| SRA_REW | 01 | 103 |
+| SRA_WRITE | 02 | 104 |
+| SRA_SRF | 03 | 105 |
+| SRA_WFG | 04 | 106 |
+| SRA_SRB | 05 | 107 |
+| SRA_CRC | 06 | 108 |
+| SRA_SFF | 07 | 109 |
+| SRA_2ND | 010 | 110 |
+| SRA_IE | 0001                            ... | 111 |
+| GET_UNIT(x) | (((x) >> SRA_V_UNIT) & SRA_M_UNIT) | 112 |
+| GET_FNC(x) | (((x) >> SRA_V_FNC) & SRA_M_FNC) | 113 |
+| OP_WRI | 01                              ... | 117 |
+| OP_REV | 02                              ... | 118 |
+| OP_FWD | 04                              ... | 119 |
+| UST_REV | (OP_REV)                        ... | 123 |
+| UST_GAP | 01                              ... | 124 |
+| SRB_WLE | 0400                            ... | 128 |
+| SRB_CRC | 0200                            ... | 129 |
+| SRB_TIM | 0100                            ... | 130 |
+| SRB_BEOT | 0040                            ... | 131 |
+| SRB_EOF | 0020                            ... | 132 |
+| SRB_EMP | 0010                            ... | 133 |
+| SRB_REW | 0004                            ... | 134 |
+| SRB_WLK | 0002                            ... | 135 |
+| SRB_RDY | 0001                            ... | 136 |
+| SRB_ALLERR | (SRB_WLE\|SRB_CRC\|SRB_TIM\|SRB_BEO... | 137 |
+| SRB_XFRERR | (SRB_WLE\|SRB_CRC\|SRB_TIM\|SRB_EOF) | 138 |
+| BOOT_START | 04000 | 686 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 687 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ct70 | 238-243 |  |
+| switch | 244-291 |  |
+| ct_go_start | 292-301 |  |
+| if | 302-351 |  |
+| ct_go_cont | 352-355 |  |
+| switch | 356-380 |  |
+| ct_svc | 381-387 |  |
+| if | 388-399 |  |
+| switch | 400-496 |  |
+| ct_updsta | 497-500 |  |
+| if | 501-507 |  |
+| if | 508-529 |  |
+| ct_set_df | 530-541 |  |
+| ct_read_char | 542-543 |  |
+| if | 544-554 |  |
+| ct_busy | 555-559 |  |
+| for | 560-569 |  |
+| ct_crc | 570-574 |  |
+| for | 575-587 |  |
+| ct_map_err | 588-589 |  |
+| switch | 590-630 |  |
+| ct_reset | 631-643 |  |
+| for | 644-657 |  |
+| ct_attach | 658-671 |  |
+| ct_detach | 672-723 |  |
+| ct_boot | 724-736 |  |
+| ct_description | 737-740 |  |

@@ -1,0 +1,110 @@
+=== id_dp.c — 627 строк ===
+Источник: id_dp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test id_dp.c -nt .cline/maps/id_dp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 138 | |
+| dp_dib | 178 | |
+| uptr | 258 | |
+| good_cmd | 259 | |
+| diff | 323 | |
+| uptr | 325 | |
+| SCPE_OK | 451 | |
+| SCPE_OK | 469 | |
+| SCPE_OK | 485 | |
+| hd | 492 | |
+| FALSE | 523 | |
+| return | 534 | |
+| uptr | 542 | |
+| dp_plat | 548 | |
+| SCPE_OK | 560 | |
+| uptr->CYL | 574 | |
+| SCPE_OK | 586 | |
+| SCPE_OK | 609 | |
+| return | 626 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DP_NUMBY | 256                             ... | 37 |
+| DP_NUMSC | 24                              ... | 38 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 0)                 ... | 40 |
+| UNIT_M_DTYPE | 0x1 | 41 |
+| UNIT_V_AUTO | (UNIT_V_UF + 2)                 ... | 42 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 43 |
+| UNIT_AUTO | (1 << UNIT_V_AUTO) | 44 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 45 |
+| CYL | u3                              ... | 47 |
+| STD | u4                              ... | 48 |
+| STC_OVR | 0x80                            ... | 52 |
+| STC_ACF | 0x40                            ... | 53 |
+| STC_DEF | 0x20                            ... | 54 |
+| STC_CYO | 0x10                            ... | 55 |
+| STC_IDL | 0x02                            ... | 56 |
+| STC_DTE | 0x01                            ... | 57 |
+| SETC_EX | (STC_OVR\|STC_ACF\|STC_DEF\|STC_CYO) | 58 |
+| STC_MASK | (STC_OVR\|STC_ACF\|STC_DEF\|STC_CYO... | 59 |
+| CMC_MASK | 0xF | 63 |
+| CMC_CLR | 0x8                             ... | 64 |
+| CMC_RD | 0x1                             ... | 65 |
+| CMC_WR | 0x2                             ... | 66 |
+| CMC_RCHK | 0x3                             ... | 67 |
+| CMC_RFMT | 0x5                             ... | 68 |
+| CMC_WFMT | 0x6                             ... | 69 |
+| STD_WRP | 0x80                            ... | 73 |
+| STD_WCK | 0x40                            ... | 74 |
+| STD_ILA | 0x20                            ... | 75 |
+| STD_ILK | 0x10                            ... | 76 |
+| STD_MOV | 0x08                            ... | 77 |
+| STD_INC | 0x02                            ... | 78 |
+| STD_NRDY | 0x01                            ... | 79 |
+| STD_UST | (STD_ILA \| STD_MOV)             ... | 80 |
+| SETD_EX | (STD_WCK \| STD_ILA \| STD_ILK)   ... | 81 |
+| CMD_SK | 0x02                            ... | 85 |
+| CMD_RST | 0x01                            ... | 86 |
+| HS_SMASK | 0x1F                            ... | 90 |
+| HS_V_SRF | 5                               ... | 91 |
+| HS_HMASK | 0x20                            ... | 92 |
+| HS_MASK | (HS_HMASK \| HS_SMASK) | 93 |
+| GET_SEC(x) | ((x) & HS_SMASK) | 94 |
+| GET_SRF(x) | (((x) & HS_HMASK) >> HS_V_SRF) | 95 |
+| GET_SA(p,cy,sf,sc,t) | (((((((p)*drv_tab[t].cyl)+(cy))*... | 97 |
+| GET_ROTATE(x) | ((int) fmod (sim_gtime() / ((dou... | 99 |
+| TYPE_2315 | 0 | 116 |
+| CYL_2315 | 203 | 117 |
+| SURF_2315 | 2 | 118 |
+| SIZE_2315 | (DP_NUMSC * SURF_2315 * CYL_2315... | 119 |
+| TYPE_5440 | 1 | 121 |
+| CYL_5440 | 408 | 122 |
+| SURF_5440 | 2 | 123 |
+| SIZE_5440 | (2 * DP_NUMSC * SURF_5440 * CYL_... | 124 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dpc | 255-260 |  |
+| switch | 261-320 |  |
+| dp | 321-330 |  |
+| switch | 331-387 |  |
+| dp_svc | 388-394 |  |
+| if | 395-407 |  |
+| switch | 408-455 |  |
+| dp_rds | 456-462 |  |
+| if | 463-473 |  |
+| dp_wds | 474-478 |  |
+| if | 479-489 |  |
+| dp_dter | 490-501 |  |
+| if | 502-509 |  |
+| if | 510-513 |  |
+| if | 514-527 |  |
+| dp_done | 528-538 |  |
+| dp_reset | 539-551 |  |
+| for | 552-564 |  |
+| dp_attach | 565-578 |  |
+| for | 579-590 |  |
+| dp_detach | 591-603 |  |
+| dp_set_size | 604-613 |  |
+| dp_ini | 614-618 |  |
+| for | 619-627 |  |

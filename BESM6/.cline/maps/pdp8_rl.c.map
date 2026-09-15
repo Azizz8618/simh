@@ -1,0 +1,146 @@
+=== pdp8_rl.c — 710 строк ===
+Источник: pdp8_rl.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp8_rl.c -nt .cline/maps/pdp8_rl.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 156 | |
+| cpu_unit | 157 | |
+| rl_dib | 193 | |
+| curr | 263 | |
+| uptr | 264 | |
+| dat | 343 | |
+| uptr | 344 | |
+| dat | 394 | |
+| err | 408 | |
+| ma | 410 | |
+| SCPE_OK | 529 | |
+| rl_done | 536 | |
+| rler | 537 | |
+| int_req | 542 | |
+| return | 543 | |
+| uptr | 554 | |
+| rlcsa | 556 | |
+| rlma | 557 | |
+| rlsi | 558 | |
+| rl_lft | 559 | |
+| rl_done | 560 | |
+| rl_erf | 561 | |
+| int_req | 562 | |
+| SCPE_OK | 572 | |
+| SCPE_OK | 603 | |
+| SCPE_OK | 613 | |
+| rlxb | 644 | |
+| SCPE_OK | 650 | |
+| rl_unit | 700 | |
+| SCPE_OK | 704 | |
+| disk" | 709 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RL_NUMBY | 256                             ... | 54 |
+| RL_NUMSC | 40                              ... | 55 |
+| RL_NUMSF | 2                               ... | 56 |
+| RL_NUMCY | 256                             ... | 57 |
+| RL_NUMDR | 4                               ... | 58 |
+| RL_MAXFR | (1 << 12)                       ... | 59 |
+| RL01_SIZE | (RL_NUMCY*RL_NUMSF*RL_NUMSC*RL_N... | 60 |
+| RL02_SIZE | (RL01_SIZE * 2)                 ... | 61 |
+| RL_BBMAP | 014                             ... | 62 |
+| RL_BBID | 0123                            ... | 63 |
+| UNIT_V_RL02 | (UNIT_V_UF + 0)                 ... | 67 |
+| UNIT_V_AUTO | (UNIT_V_UF + 1)                 ... | 68 |
+| UNIT_V_DUMMY | (UNIT_V_UF + 2)                 ... | 69 |
+| UNIT_DUMMY | (1u << UNIT_V_DUMMY) | 70 |
+| UNIT_RL02 | (1u << UNIT_V_RL02) | 71 |
+| UNIT_AUTO | (1u << UNIT_V_AUTO) | 72 |
+| TRK | u3                              ... | 76 |
+| STAT | u4                              ... | 77 |
+| RLDS_LOAD | 0                               ... | 81 |
+| RLDS_LOCK | 5                               ... | 82 |
+| RLDS_BHO | 0000010                         ... | 83 |
+| RLDS_HDO | 0000020                         ... | 84 |
+| RLDS_CVO | 0000040                         ... | 85 |
+| RLDS_HD | 0000100                         ... | 86 |
+| RLDS_RL02 | 0000200                         ... | 87 |
+| RLDS_DSE | 0000400                         ... | 88 |
+| RLDS_VCK | 0001000                         ... | 89 |
+| RLDS_WGE | 0002000                         ... | 90 |
+| RLDS_SPE | 0004000                         ... | 91 |
+| RLDS_STO | 0010000                         ... | 92 |
+| RLDS_WLK | 0020000                         ... | 93 |
+| RLDS_HCE | 0040000                         ... | 94 |
+| RLDS_WDE | 0100000                         ... | 95 |
+| RLDS_ATT | (RLDS_HDO+RLDS_BHO+RLDS_LOCK)   ... | 96 |
+| RLDS_UNATT | (RLDS_CVO+RLDS_LOAD)            ... | 97 |
+| RLDS_ERR | (RLDS_WDE+RLDS_HCE+RLDS_STO+RLDS... | 98 |
+| RLCSA_DIR | 04000                           ... | 103 |
+| RLCSA_HD | 02000                           ... | 104 |
+| RLCSA_CYL | 00777                           ... | 105 |
+| GET_CYL(x) | ((x) & RLCSA_CYL) | 106 |
+| GET_TRK(x) | ((((x) & RLCSA_CYL) * RL_NUMSF) +  | 107 |
+| GET_DA(x) | ((GET_TRK(x) * RL_NUMSC) + rlsa) | 109 |
+| RLCSB_V_FUNC | 0                               ... | 113 |
+| RLCSB_M_FUNC | 07 | 114 |
+| RLCSB_MNT | 0 | 115 |
+| RLCSB_CLRD | 1 | 116 |
+| RLCSB_GSTA | 2 | 117 |
+| RLCSB_SEEK | 3 | 118 |
+| RLCSB_RHDR | 4 | 119 |
+| RLCSB_WRITE | 5 | 120 |
+| RLCSB_READ | 6 | 121 |
+| RLCSB_RNOHDR | 7 | 122 |
+| RLCSB_V_MEX | 3                               ... | 123 |
+| RLCSB_M_MEX | 07 | 124 |
+| RLCSB_V_DRIVE | 6                               ... | 125 |
+| RLCSB_M_DRIVE | 03 | 126 |
+| RLCSB_V_IE | 8                               ... | 127 |
+| RLCSB_IE | (1u << RLCSB_V_IE) | 128 |
+| RLCSB_8B | 01000                           ... | 129 |
+| RCLS_MNT | 02000                           ... | 130 |
+| RLCSB_RW | 0001777                         ... | 131 |
+| GET_FUNC(x) | (((x) >> RLCSB_V_FUNC) & RLCSB_M... | 132 |
+| GET_MEX(x) | (((x) >> RLCSB_V_MEX) & RLCSB_M_... | 133 |
+| GET_DRIVE(x) | (((x) >> RLCSB_V_DRIVE) & RLCSB_... | 134 |
+| RLSA_V_SECT | 6                               ... | 138 |
+| RLSA_M_SECT | 077 | 139 |
+| GET_SECT(x) | (((x) >> RLSA_V_SECT) & RLSA_M_S... | 140 |
+| RLER_DRDY | 00001                           ... | 144 |
+| RLER_DRE | 00002                           ... | 145 |
+| RLER_HDE | 01000                           ... | 146 |
+| RLER_INCMP | 02000                           ... | 147 |
+| RLER_ICRC | 04000                           ... | 148 |
+| RLER_MASK | 07003 | 149 |
+| RLSI_V_TRK | 6                               ... | 153 |
+| BOOT_START | 1                               ... | 655 |
+| BOOT_UNIT | 02006                           ... | 656 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 657 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rl60 | 261-265 |  |
+| switch | 266-340 |  |
+| rl61 | 341-345 |  |
+| switch | 346-405 |  |
+| rl_svc | 406-412 |  |
+| if | 413-425 |  |
+| if | 426-431 |  |
+| if | 432-437 |  |
+| if | 438-442 |  |
+| if | 443-458 |  |
+| if | 459-494 |  |
+| if | 495-523 |  |
+| if | 524-533 |  |
+| rl_set_done | 534-550 |  |
+| rl_reset | 551-562 |  |
+| for | 563-576 |  |
+| rl_attach | 577-587 |  |
+| if | 588-594 |  |
+| if | 595-607 |  |
+| rl_set_size | 608-631 |  |
+| rl_set_bad | 632-691 |  |
+| rl_boot | 692-706 |  |
+| rl_description | 707-710 |  |

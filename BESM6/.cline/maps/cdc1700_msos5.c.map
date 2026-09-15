@@ -1,0 +1,62 @@
+=== cdc1700_msos5.c — 630 строк ===
+Источник: cdc1700_msos5.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_msos5.c -nt .cline/maps/cdc1700_msos5.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 35 | |
+| mode | 96 | |
+| luchr | 97 | |
+| rel | 98 | |
+| part1 | 99 | |
+| exitind | 100 | |
+| seqno | 116 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RQ_SYSDIRREAD | 0      /* System directory read ... | 42 |
+| RQ_READ | 1      /* Normal read */ | 43 |
+| RQ_WRITE | 2      /* Normal write */ | 44 |
+| RQ_STATUS | 3      /* I/O request status */ | 45 |
+| RQ_FREAD | 4      /* Formatted read */ | 46 |
+| RQ_EXIT | 5      /* Unprotected exit */ | 47 |
+| RQ_FWRITE | 6      /* Formatted write */ | 48 |
+| RQ_LOADER | 7      /* Relocatable binary loa... | 49 |
+| RQ_TIMER | 8      /* Schedule program with ... | 50 |
+| RQ_SCHDLE | 9      /* Schedule program */ | 51 |
+| RQ_SPACE | 10      /* Allocate core */ | 52 |
+| RQ_CORE | 11      /* Unprotected core boun... | 53 |
+| RQ_RELEAS | 12      /* Release core */ | 54 |
+| RQ_GTFILE | 13      /* Access permanent file... | 55 |
+| RQ_MOTION | 14      /* Tape motion */ | 56 |
+| RQ_TIMPT1 | 15      /* Schedule directory pr... | 57 |
+| RQ_INDIR | 16      /* Indirect (use another... | 58 |
+| RQ_PTNCOR | 17      /* Allocate partitioned ... | 59 |
+| RQ_SYSCHD | 18      /* Schedule directory pr... | 60 |
+| RQ_DIRCHD | 19      /* Enable/Disable system... | 61 |
+| D | 0x4000  /* Part 1 request indica... | 66 |
+| RQ | 0x3E00  /* Request code */ | 67 |
+| X | 0x0100  /* Relative/indirect ind... | 68 |
+| RP | 0x00F0  /* Request priority */ | 69 |
+| CP | 0x000F  /* Completion priority */ | 70 |
+| TELETYPE | 0x04    /* Console TTY LU */ | 72 |
+| LIBLU | 0x00C2  /* Library LU */ | 77 |
+| CREXTB | 0x00E9  /* Extended communicatio... | 78 |
+| LOG1A | 28      /* Offset to LOG1A table... | 80 |
+| END(s) | &s[strlen(s)] | 118 |
+| MAXTEXT | 50 | 336 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| isMassStorage | 145-165 | Check if a logical unit is a mass storage device. |
+| getMSA | 166-196 | request. |
+| luabs | 197-224 | Convert Logical Unit parameter to absolute value |
+| spabs | 225-248 | Convert Starting Address parameter to absolute value |
+| npabs | 249-272 | Convert Number of words to absolute value |
+| cpabs | 273-308 | Convert completion address to absolute value |
+| motion | 309-337 | Describe motion parameters |
+| textRep | 338-362 |  |
+| MSOS5request | 363-630 | Dump MSOS5 request information.  |

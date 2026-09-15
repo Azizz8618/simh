@@ -1,0 +1,160 @@
+=== ibm1130_gui.c — 1845 строк ===
+Источник: ibm1130_gui.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_gui.c -nt .cline/maps/ibm1130_gui.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| prt_unit | 94 | |
+| dsk_unit | 96 | |
+| boot_drive | 97 | |
+| program_is_loaded | 98 | |
+| hConsoleWindow | 117 | |
+| class_defined | 182 | |
+| hConsoleWnd | 183 | |
+| hBitmap | 184 | |
+| hFont | 185 | |
+| hBtnFont | 186 | |
+| hTinyFont | 187 | |
+| hbLampOut | 188 | |
+| hbWhite | 189 | |
+| hbBlack | 190 | |
+| hbGray | 191 | |
+| hSwitchPen | 192 | |
+| hWhitePen | 193 | |
+| hBlackPen | 194 | |
+| hLtGreyPen | 195 | |
+| hGreyPen | 196 | |
+| hDkGreyPen | 197 | |
+| hUpdateTimer | 198 | |
+| hFlashTimer | 199 | |
+| hcArrow | 201 | |
+| hcHand | 202 | |
+| hInstance | 203 | |
+| hCDC | 204 | |
+| szConsoleClassName | 205 | |
+| PumpID | 206 | |
+| hPump | 207 | |
+| hPumpReadyEvent | 208 | |
+| bmwid | 210 | |
+| hbm1442_full | 211 | |
+| hbm1132_full | 212 | |
+| shown_iar | 368 | |
+| shown_op | 369 | |
+| shown_ces | 370 | |
+| CND | 371 | |
+| oldButtonProc | 584 | |
+| {PRINTER_OK | 1417 | |
+| critsect | 1636 | |
+| hCmdThread | 1662 | |
+| iCmdThreadID | 1663 | |
+| hCmdReadEvent | 1664 | |
+| hCmdReadyEvent | 1665 | |
+| scp_reading | 1666 | |
+| scp_command | 1667 | |
+| cmdbuffer | 1668 | |
+| read_exiting | 1669 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UPDATE_BY_TIMER |  | 34 |
+| UPDATE_INTERVAL | 20              /* set to desire... | 37 |
+| UPDATE_INTERVAL | 5000            /* GUI: set to 1... | 39 |
+| UNIT_V_CR_EMPTY | (UNIT_V_UF + 5)          /* NOTE... | 42 |
+| UNIT_CR_EMPTY | (1u << UNIT_V_CR_EMPTY) | 43 |
+| UNIT_V_PHYSICAL | (UNIT_V_UF + 9) | 44 |
+| UNIT_PHYSICAL | (1u << UNIT_V_PHYSICAL) | 45 |
+| UNIT_V_PHYSICAL_PTR | (UNIT_V_UF + 10)        /* NOTE:... | 47 |
+| UNIT_PHYSICAL_PTR | (1u << UNIT_V_PHYSICAL_PTR) | 48 |
+| PROGRAM_LOAD_STARTS_CPU |  | 54 |
+| UNIT_V_DISPLAY | (UNIT_V_UF + 0) | 73 |
+| UNIT_DISPLAY | (1u << UNIT_V_DISPLAY) | 74 |
+| BUTTON_WIDTH | 90 | 145 |
+| BUTTON_HEIGHT | 50 | 146 |
+| IDC_UNUSED | 0 | 148 |
+| IDC_DISK_UNLOCK | 1 | 149 |
+| IDC_RUN | 2 | 150 |
+| IDC_KEYBOARD_SELECT | 3 | 151 |
+| IDC_POWER_ON | 4 | 152 |
+| IDC_FILE_READY | 5 | 153 |
+| IDC_PARITY_CHECK | 6 | 154 |
+| IDC_FORMS_CHECK | 7 | 155 |
+| IDC_POWER | 8 | 156 |
+| IDC_PROGRAM_START | 9 | 157 |
+| IDC_PROGRAM_STOP | 10 | 158 |
+| IDC_LOAD_IAR | 11 | 159 |
+| IDC_KEYBOARD | 12 | 160 |
+| IDC_IMM_STOP | 13 | 161 |
+| IDC_RESET | 14 | 162 |
+| IDC_PROGRAM_LOAD | 15 | 163 |
+| IDC_TEAR | 16  /* standard button */ | 165 |
+| IDC_1442 | 17  /* device images */ | 166 |
+| IDC_1132 | 18 | 167 |
+| LAMPTIME | 500         /* 500 msec delay on... | 169 |
+| FLASH_TIMER_ID | 1 | 170 |
+| UPDATE_TIMER_ID | 2 | 171 |
+| RUNSWITCH_X | 689             /* center of the... | 173 |
+| RUNSWITCH_Y | 107 | 174 |
+| TOGGLES_X | 122             /* left edge of ... | 175 |
+| TXTBOX_X | 200             /* text labels s... | 177 |
+| TXTBOX_Y | 300 | 178 |
+| TXTBOX_WIDTH | 195 | 179 |
+| TXTBOX_HEIGHT | 12 | 180 |
+| NBUTTONS | (sizeof(btn) / sizeof(btn[0])) | 248 |
+| STATE_1442_EMPTY | 0       /* no cards (no file att... | 250 |
+| STATE_1442_FULL | 1       /* cards in hopper (file... | 251 |
+| STATE_1442_MIDDLE | 2       /* cards in hopper and s... | 252 |
+| STATE_1442_EOF | 3       /* cards in stacker (fil... | 253 |
+| STATE_1442_HIDDEN | 4       /* simulator is attached... | 254 |
+| STATE_1132_EMPTY | 0       /* no paper hanging out ... | 256 |
+| STATE_1132_FULL | 1       /* paper hanging out of ... | 257 |
+| STATE_1132_HIDDEN | 2       /* printer is attached t... | 258 |
+| NTXTBOXES | (sizeof(txtbox) / sizeof(txtbox[... | 274 |
+| TXTBOX_BOTTOM | (TXTBOX_Y+150) | 276 |
+| NIXOBJECT(hObj) | if (hObj != NULL) {DeleteObject(... | 285 |
+| MIN(a,b) | (((a) <= (b)) ? (a) : (b)) | 1656 |
+| SCP_COMMAND | InterlockedExchangeAdd(&scp_comm... | 1671 |
+| NEXT_SCP_COMMAND | InterlockedIncrement(&scp_command) | 1672 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| console_reset | 119-133 |  |
+| scp_panic | 134-291 |  |
+| init_console_window | 292-316 |  |
+| destroy_console_window | 317-376 |  |
+| RedrawRegion | 377-392 |  |
+| RepaintRegion | 393-413 |  |
+| update_gui | 414-588 |  |
+| ButtonProc | 589-609 |  |
+| occurs | 610-626 |  |
+| PaintButton | 627-726 |  |
+| CreateSubclassedButton | 727-765 |  |
+| Pump | 766-939 |  |
+| DrawBits | 940-969 |  |
+| DrawToggles | 970-995 |  |
+| DrawRunmode | 996-1024 |  |
+| HandleClick | 1025-1068 |  |
+| DrawConsole | 1069-1156 |  |
+| flash_run | 1157-1166 |  |
+| gui_run | 1167-1178 |  |
+| HandleCommand | 1179-1333 |  |
+| ConsoleWndProc | 1334-1418 |  |
+| forms_check | 1419-1439 |  |
+| print_check | 1440-1460 |  |
+| keyboard_selected | 1461-1474 |  |
+| disk_ready | 1475-1482 |  |
+| disk_unlocked | 1483-1490 |  |
+| is_scp_file | 1491-1540 |  |
+| accept_dropped_file | 1541-1601 |  |
+| tear_printer | 1602-1637 |  |
+| begin_critical_section | 1638-1649 |  |
+| end_critical_section | 1650-1675 |  |
+| CmdThread | 1676-1702 |  |
+| read_atexit | 1703-1722 |  |
+| read_cmdline | 1723-1752 |  |
+| stuff_cmd | 1753-1787 |  |
+| my_yield | 1788-1801 | stuff_and_wait is waiting. |
+| stuff_and_wait | 1802-1832 |  |
+| remark_cmd | 1833-1845 |  |

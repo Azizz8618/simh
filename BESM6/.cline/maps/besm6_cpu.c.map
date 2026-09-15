@@ -1,61 +1,60 @@
-=== besm6_cpu.c — 2260 строк ===
+=== besm6_cpu.c — 2082 строк ===
 Источник: besm6_cpu.c | Автогенерация: scripts/gen_code_map.sh
 Регенерировать: test besm6_cpu.c -nt .cline/maps/besm6_cpu.c.map
 
 === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
 | Имя | Стр | Назначение |
 |-----|-----|------------|
-| memory | 58 | |
-| PC | 59 | |
-| ACC | 60 | |
-| PRP | 61 | |
-| trace_counter | 64 | |
-| corr_stack | 82 | |
-| redraw_panel | 83 | |
-| autotime | 84 | |
-| cpu_halt | 85 | |
-| sim_name | 287 | |
-| sim_PC | 289 | |
-| tableau | 690 | |
-| totreads | 691 | |
-| readmap | 692 | |
-| kadopam_mem | 1054 | |
+| memory | 56 | |
+| PC | 57 | |
+| ACC | 58 | |
+| PRP | 59 | |
+| trace_counter | 62 | |
+| corr_stack | 80 | |
+| redraw_panel | 81 | |
+| autotime | 82 | |
+| cpu_halt | 84 | |
+| sim_name | 282 | |
+| sim_PC | 284 | |
+| tableau | 608 | |
+| totreads | 609 | |
+| readmap | 610 | |
+| extmem | 988 | |
+| last | 989 | |
 
 === КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
 | Имя | Значение | Стр |
 |-----|----------|-----|
-| GRP_WIRED_BITS | (GRP_DRUM1_FREE \| GRP_DRUM2_FREE \| | 71 |
-| PRP_WIRED_BITS | (PRP_VU1_END \| PRP_VU2_END \| | 78 |
-| ORDATAVM(nm,loc,wd) | REGDATA(nm,(loc),8,wd,0,1,NULL,N... | 112 |
+| GRP_WIRED_BITS | (GRP_DRUM1_FREE \| GRP_DRUM2_FREE \| | 69 |
+| PRP_WIRED_BITS | (PRP_VU1_END \| PRP_VU2_END \| | 76 |
+| ORDATAVM(nm,loc,wd) | REGDATA(nm,(loc),8,wd,0,1,NULL,N... | 110 |
 
 === ФУНКЦИИ ===
 | Имя | Строки | Назначение |
 |-----|--------|------------|
-| cpu_examine | 338-359 | Memory examine |
-| cpu_deposit | 360-373 | Memory deposit |
-| dump_touched | 374-401 |  |
-| cpu_reset | 402-440 | Reset routine |
-| cpu_req | 441-449 | Request routine |
-| cpu_set_pult | 450-468 | Hardwired program selector validation |
-| cpu_show_pult | 469-478 |  |
-| cpu_set_log | 479-509 | In INI file: set cpu log=on  or  set cpu log=off |
-| cpu_show_log | 510-520 | show cpu log |
-| cpu_set_log_dir | 521-534 | Can be used in INI file. |
-| cpu_set_log_max | 535-557 | Can be used in INI file. |
-| utf8_putc | 558-577 |  |
-| besm6_okno | 578-605 | системе "Дубна", которая печатала полное состояние всех регистров. |
-| cmd_002 | 606-675 | Команда "рег" |
-| dump | 676-687 |  |
-| cmd_033 | 688-961 | Команда "увв" |
-| check_initial_setup | 962-1030 |  |
-| cpu_set_autotime | 1031-1043 | Automatic time setup.  |
-| cpu_show_autotime | 1044-1076 |  |
-| rks_count_interrupt | 1077-1101 | (dks_register - ПРП12, dks_poll - ПРП7). |
-| write_032 | 1102-1158 |  |
-| read_032 | 1159-1199 |  |
-| cpu_one_inst | 1200-1936 | sending a stop code. |
-| op_int_1 | 1937-1958 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
-| op_int_2 | 1959-1979 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
-| sim_instr | 1980-2196 | Main instruction fetch/decode loop |
-| fast_clk | 2197-2239 | for a better user time/system time ratio. |
-| clk_reset | 2240-2260 |  |
+| cpu_examine | 333-354 | Memory examine |
+| cpu_deposit | 355-368 | Memory deposit |
+| dump_touched | 369-396 |  |
+| cpu_reset | 397-433 | Reset routine |
+| cpu_req | 434-442 | Request routine |
+| cpu_set_pult | 443-461 | Hardwired program selector validation |
+| cpu_show_pult | 462-475 |  |
+| utf8_putc | 476-495 |  |
+| besm6_okno | 496-523 | системе "Дубна", которая печатала полное состояние всех регистров. |
+| cmd_002 | 524-593 | Команда "рег" |
+| dump | 594-605 |  |
+| cmd_033 | 606-881 | Команда "увв" |
+| check_initial_setup | 882-950 |  |
+| cpu_set_autotime | 951-963 | Automatic time setup.  |
+| cpu_show_autotime | 964-969 |  |
+| cpu_set_latin | 970-975 |  |
+| cpu_clr_latin | 976-981 |  |
+| cpu_show_latin | 982-990 |  |
+| write_032 | 991-1016 |  |
+| read_032 | 1017-1032 |  |
+| cpu_one_inst | 1033-1758 | sending a stop code. |
+| op_int_1 | 1759-1780 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
+| op_int_2 | 1781-1801 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
+| sim_instr | 1802-2018 | Main instruction fetch/decode loop |
+| fast_clk | 2019-2061 | for a better user time/system time ratio. |
+| clk_reset | 2062-2082 |  |

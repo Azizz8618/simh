@@ -1,0 +1,143 @@
+=== pdp10_pag.c — 895 строк ===
+Источник: pdp10_pag.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp10_pag.c -nt .cline/maps/pdp10_pag.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| acs | 97 | |
+| ac_prv | 98 | |
+| epta | 99 | |
+| ebr | 100 | |
+| spt | 101 | |
+| dbr1 | 102 | |
+| pcst | 103 | |
+| ptbl_cur | 110 | |
+| save_ea | 111 | |
+| pa | 158 | |
+| pa | 174 | |
+| pa | 190 | |
+| pa | 217 | |
+| return | 234 | |
+| pa | 239 | |
+| return | 255 | |
+| return | 267 | |
+| vpn | 272 | |
+| return | 293 | |
+| epta | 590 | |
+| return | 597 | |
+| xpte | 609 | |
+| val | 622 | |
+| xpte | 629 | |
+| tbl | 638 | |
+| MAXMEMSIZE | 642 | |
+| FALSE | 661 | |
+| FALSE | 669 | |
+| FALSE | 675 | |
+| FALSE | 693 | |
+| FALSE | 700 | |
+| FALSE | 706 | |
+| FALSE | 712 | |
+| FALSE | 720 | |
+| FALSE | 726 | |
+| FALSE | 732 | |
+| FALSE | 738 | |
+| FALSE | 744 | |
+| FALSE | 750 | |
+| FALSE | 758 | |
+| FALSE | 764 | |
+| FALSE | 773 | |
+| dbr1 | 778 | |
+| FALSE | 780 | |
+| FALSE | 786 | |
+| dbr2 | 791 | |
+| FALSE | 793 | |
+| FALSE | 799 | |
+| dbr3 | 804 | |
+| FALSE | 806 | |
+| FALSE | 812 | |
+| dbr4 | 817 | |
+| FALSE | 819 | |
+| FALSE | 825 | |
+| FALSE | 831 | |
+| FALSE | 837 | |
+| val | 842 | |
+| quant | 847 | |
+| FALSE | 849 | |
+| FALSE | 859 | |
+| tbln | 866 | |
+| SCPE_OK | 871 | |
+| tbln | 876 | |
+| SCPE_OK | 883 | |
+| SCPE_OK | 894 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PTBL_ASIZE | PAG_N_VPN | 83 |
+| PTBL_MEMSIZE | (1 << PTBL_ASIZE)               ... | 84 |
+| PTBL_AMASK | (PTBL_MEMSIZE - 1) | 85 |
+| PTBL_M | (1u << 31)                      ... | 86 |
+| PTBL_V | (1u << 30) | 87 |
+| PTBL_MASK | (PAG_PPN \| PTBL_M \| PTBL_V) | 88 |
+| REF_V | 0                               ... | 92 |
+| REF_P | 1                               ... | 93 |
+| PF_OK | 0                               ... | 94 |
+| PF_TR | 1                               ... | 95 |
+| PAGE_FAIL_TRAP | if (mode & (PTF_CON \| PTF_MAP))  | 310 |
+| READPT(x,y) | if (MEM_ADDR_NXM (y)) {  | 313 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| Read | 156-171 |  |
+| ReadM | 172-187 |  |
+| ReadE | 188-205 |  |
+| ReadP | 206-214 |  |
+| Write | 215-218 |  |
+| if | 219-236 |  |
+| WriteE | 237-257 |  |
+| WriteP | 258-269 |  |
+| AccViol | 270-284 |  |
+| pag_nxm | 285-318 |  |
+| ptbl_fill | 319-331 |  |
+| if | 332-369 |  |
+| if | 370-570 |  |
+| set_dyn_ptrs | 571-574 |  |
+| if | 575-606 |  |
+| map | 607-626 |  |
+| conmap | 627-646 |  |
+| clrpt | 647-650 |  |
+| if | 651-663 |  |
+| wrebr | 664-671 |  |
+| rdebr | 672-677 |  |
+| wrubr | 678-685 |  |
+| if | 686-695 |  |
+| rdubr | 696-702 |  |
+| wrhsb | 703-708 |  |
+| rdhsb | 709-716 |  |
+| wrspb | 717-722 |  |
+| rdspb | 723-728 |  |
+| wrcsb | 729-734 |  |
+| rdcsb | 735-740 |  |
+| wrpur | 741-746 |  |
+| rdpur | 747-752 |  |
+| wrcstm | 753-760 |  |
+| rdcstm | 761-770 |  |
+| clrcsh | 771-775 |  |
+| ldbr1 | 776-782 |  |
+| sdbr1 | 783-788 |  |
+| ldbr2 | 789-795 |  |
+| sdbr2 | 796-801 |  |
+| ldbr3 | 802-808 |  |
+| sdbr3 | 809-814 |  |
+| ldbr4 | 815-821 |  |
+| sdbr4 | 822-827 |  |
+| wrpcst | 828-833 |  |
+| rdpcst | 834-839 |  |
+| lpmr | 840-851 |  |
+| spm | 852-863 |  |
+| pag_ex | 864-873 |  |
+| pag_dep | 874-885 |  |
+| pag_reset | 886-889 |  |
+| for | 890-895 |  |

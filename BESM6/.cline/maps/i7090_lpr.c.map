@@ -1,0 +1,37 @@
+=== i7090_lpr.c — 708 строк ===
+Источник: i7090_lpr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7090_lpr.c -nt .cline/maps/i7090_lpr.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lpr_data | 74 | |
+| six_to_ascii | 88 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_LPR | UNIT_ATTABLE \| UNIT_DISABLE \| UN... | 43 |
+| ECHO | (1 << UNIT_V_LOCAL) | 44 |
+| LPRSTA_RCMD | 002000          /* Read command */ | 59 |
+| LPRSTA_WCMD | 004000          /* Write command */ | 60 |
+| LPRSTA_EOR | 010000          /* Hit end of re... | 62 |
+| LPRSTA_BINMODE | 020000          /* Line printer ... | 63 |
+| LPRSTA_CHANGE | 040000          /* Turn DEV_WRIT... | 64 |
+| LPRSTA_COL72 | 0100000         /* Mask to last ... | 65 |
+| LPRSTA_IMAGE | 0200000         /* Image to prin... | 66 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lpr_setlpp | 131-151 |  |
+| lpr_getlpp | 152-160 |  |
+| print_line | 161-324 |  |
+| lpr_cmd | 325-378 |  |
+| lpr_srv | 379-640 |  |
+| lpr_ini | 641-651 |  |
+| lpr_reset | 652-657 |  |
+| lpr_attach | 658-669 |  |
+| lpr_detach | 670-675 |  |
+| lpr_help | 676-701 |  |
+| lpr_description | 702-708 |  |

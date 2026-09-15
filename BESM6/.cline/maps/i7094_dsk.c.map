@@ -1,0 +1,219 @@
+=== i7094_dsk.c — 1224 строк ===
+Источник: i7094_dsk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7094_dsk.c -nt .cline/maps/i7094_dsk.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DISK_TYPE | 224-232 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dsk_rptr | 300 | |
+| dsk_rlim | 301 | |
+| dsk_stop | 302 | |
+| ch_req | 311 | |
+| dsk_dib | 338 | |
+| dsk_ch | 436 | |
+| SCPE_OK | 472 | |
+| SCPE_OK | 505 | |
+| dat | 628 | |
+| SCPE_OK | 661 | |
+| fc | 669 | |
+| rdat | 670 | |
+| udptr | 671 | |
+| SCPE_OK | 865 | |
+| ERR_NRCF | 932 | |
+| rlnt | 948 | |
+| ERR_ENDRC | 979 | |
+| SCPE_OK | 997 | |
+| cc | 1015 | |
+| TRUE | 1030 | |
+| dsk_sta | 1047 | |
+| SCPE_OK | 1048 | |
+| FALSE | 1059 | |
+| uptr | 1067 | |
+| dsk_acc | 1069 | |
+| dsk_mod | 1070 | |
+| dsk_rec | 1071 | |
+| dsk_mode | 1072 | |
+| dsk_wchk | 1073 | |
+| dsk_sns | 1074 | |
+| dsk_cmd | 1075 | |
+| dsk_sta | 1076 | |
+| dsk_rbase | 1077 | |
+| dsk_rptr | 1078 | |
+| dsk_rlim | 1079 | |
+| dsk_stop | 1080 | |
+| dsk_fmt_cntr | 1081 | |
+| dsk_chob | 1082 | |
+| dsk_chob_v | 1083 | |
+| SCPE_OK | 1092 | |
+| uptr->capac | 1102 | |
+| uptr->TRK | 1106 | |
+| uptr->SKF | 1107 | |
+| u1 | 1118 | |
+| u1 | 1122 | |
+| uptr->capac | 1131 | |
+| SCPE_OK | 1132 | |
+| rptr | 1140 | |
+| minrsz | 1141 | |
+| maxrsz | 1142 | |
+| minrno | 1143 | |
+| maxrno | 1144 | |
+| ctss | 1145 | |
+| dbuf | 1146 | |
+| dptr | 1147 | |
+| format | 1161 | |
+| SCPE_OK | 1223 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DSK_NUMDR | 10                              ... | 87 |
+| DSK_SNS | (2 * DSK_NUMDR)                 ... | 88 |
+| DSK_WDSPT_7320 | 500                             ... | 92 |
+| DSK_WDSPT_1301 | 500 | 93 |
+| DSK_WDSPT_1302 | 1000 | 94 |
+| DSK_WDSPT_2302 | 1000 | 95 |
+| DSK_TRKPC_7320 | 400                             ... | 96 |
+| DSK_TRKPC_1301 | 40 | 97 |
+| DSK_TRKPC_1302 | 40 | 98 |
+| DSK_TRKPC_2302 | 40 | 99 |
+| DSK_CYLPA_7320 | 1                               ... | 100 |
+| DSK_CYLPA_1301 | 250 | 101 |
+| DSK_CYLPA_1302 | 250 | 102 |
+| DSK_CYLPA_2302 | 250 | 103 |
+| DSK_TRKPA_7320 | (DSK_TRKPC_7320*DSK_CYLPA_7320) ... | 104 |
+| DSK_TRKPA_1301 | (DSK_TRKPC_1301*DSK_CYLPA_1301) | 105 |
+| DSK_TRKPA_1302 | (DSK_TRKPC_1302*DSK_CYLPA_1302) | 106 |
+| DSK_TRKPA_2302 | (DSK_TRKPC_2302*DSK_CYLPA_2302) | 107 |
+| DSK_ACCPM_7320 | 1                               ... | 108 |
+| DSK_ACCPM_1301 | 1 | 109 |
+| DSK_ACCPM_1302 | 2 | 110 |
+| DSK_ACCPM_2302 | 2 | 111 |
+| DSK_FMCPT_7320 | 2868                            ... | 112 |
+| DSK_FMCPT_1301 | 2868 | 113 |
+| DSK_FMCPT_1302 | 5942 | 114 |
+| DSK_FMCPT_2302 | 5942 | 115 |
+| SIZE_7320 | (DSK_WDSPT_7320*DSK_TRKPA_7320*D... | 116 |
+| SIZE_1301 | (DSK_WDSPT_1301*DSK_TRKPA_1301*D... | 117 |
+| SIZE_1302 | (DSK_WDSPT_1302*DSK_TRKPA_1302*D... | 118 |
+| SIZE_2302 | (DSK_WDSPT_2302*DSK_TRKPA_2302*D... | 119 |
+| DSK_BUFSIZ | (DSK_WDSPT_2302) | 120 |
+| DSK_DA(a,t,d) | (((((a) * dsk_tab[d].trkpa) + (t... | 121 |
+| UNIT_V_INOP0 | (UNIT_V_UF + 0)                 ... | 126 |
+| UNIT_V_INOP1 | (UNIT_V_UF + 1)                 ... | 127 |
+| UNIT_V_FMTE | (UNIT_V_UF + 2)                 ... | 128 |
+| UNIT_V_TYPE | (UNIT_V_UF + 3)                 ... | 129 |
+| UNIT_M_TYPE | 03 | 130 |
+| UNIT_INOP0 | (1 << UNIT_V_INOP0) | 131 |
+| UNIT_INOP1 | (1 << UNIT_V_INOP1) | 132 |
+| UNIT_FMTE | (1 << UNIT_V_FMTE) | 133 |
+| UNIT_TYPE | (UNIT_M_TYPE << UNIT_V_TYPE) | 134 |
+| TYPE_7320 | (0 << UNIT_V_TYPE) | 135 |
+| TYPE_1301 | (1 << UNIT_V_TYPE) | 136 |
+| TYPE_1302 | (2 << UNIT_V_TYPE) | 137 |
+| TYPE_2302 | (3 << UNIT_V_TYPE) | 138 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_TYPE) & UNIT_M_T... | 139 |
+| TRK | u3                              ... | 140 |
+| SKF | u4                              ... | 141 |
+| THA2 | 0                               ... | 145 |
+| HA2_MASK | INT64_C(0777700000000)          ... | 146 |
+| T1STREC | 1                               ... | 147 |
+| RLNT | 0                               ... | 148 |
+| RADDR | 1                               ... | 149 |
+| RDATA | 2                               ... | 150 |
+| REC_MASK | INT64_C(0171717177777)          ... | 151 |
+| OP1 | 0                               ... | 155 |
+| OP2 | 1 | 156 |
+| ACC | 2                               ... | 157 |
+| MOD | 3                               ... | 158 |
+| T1 | 4                               ... | 159 |
+| T2 | 5 | 160 |
+| T3 | 6 | 161 |
+| T4 | 7 | 162 |
+| DSK_IDLE | 0 | 166 |
+| DSKS_PCHK | INT64_C(004000000000000000000)  ... | 170 |
+| DSKS_DCHK | INT64_C(002000000000000000000)  ... | 171 |
+| DSKS_EXCC | INT64_C(001000000000000000000)  ... | 172 |
+| DSKS_INVS | INT64_C(000200000000000000000)  ... | 173 |
+| DSKS_INVC | INT64_C(000040000000000000000)  ... | 174 |
+| DSKS_FMTC | INT64_C(000020000000000000000)  ... | 175 |
+| DSKS_NRCF | INT64_C(000010000000000000000)  ... | 176 |
+| DSKS_INVA | INT64_C(000002000000000000000)  ... | 177 |
+| DSKS_RSPC | INT64_C(000000400000000000000)  ... | 178 |
+| DSKS_CMPC | INT64_C(000000200000000000000)  ... | 179 |
+| DSKS_PARC | INT64_C(000000100000000000000)  ... | 180 |
+| DSKS_ACCI | INT64_C(000000020000000000000)  ... | 181 |
+| DSKS_ACCN | INT64_C(000000004000000000000)  ... | 182 |
+| DSKS_DSKE | INT64_C(000000002000000000000)  ... | 183 |
+| DSKS_FILE | INT64_C(000000001000000000000)  ... | 184 |
+| DSKS_6B | INT64_C(000000000040000000000)  ... | 185 |
+| DSKS_ATN0 | INT64_C(000000000002000000000)  ... | 186 |
+| DSKS_PALL | INT64_C(000777000000000000000) | 187 |
+| DSKS_DALL | INT64_C(000000740000000000000) | 188 |
+| DSKS_EALL | INT64_C(000000037000000000000) | 189 |
+| DSKS_ALLERR | INT64_C(007777777000000000000) | 190 |
+| DSKC_NOP | 0x00 | 194 |
+| DSKC_RLS | 0x04 | 195 |
+| DSKC_8B | 0x08 | 196 |
+| DSKC_6B | 0x09 | 197 |
+| DSKC_SEEK | 0x0                             ... | 201 |
+| DSKC_SREC | 0x2                             ... | 202 |
+| DSKC_WFMT | 0x3                             ... | 203 |
+| DSKC_TNOA | 0x4                             ... | 204 |
+| DSKC_CYL | 0x5                             ... | 205 |
+| DSKC_WCHK | 0x6                             ... | 206 |
+| DSKC_ACCI | 0x7                             ... | 207 |
+| DSKC_TWIA | 0x8                             ... | 208 |
+| DSKC_THA | 0x9                             ... | 209 |
+| CTSS_HA2 | INT64_C(0676767676767)          ... | 213 |
+| CTSS_RLNT | 435                             ... | 214 |
+| CTSS_D1LNT | 31                              ... | 215 |
+| CTSS_D2LNT | 14 | 216 |
+| CTSS_D3LNT | 16 | 217 |
+| CTSS_DLLNT | 1 | 218 |
+| CTSS_RA1 | 2 | 219 |
+| CTSS_RA2 | 8 | 220 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dsk_chsel | 432-439 |  |
+| switch | 440-476 |  |
+| dsk_chwr | 477-509 |  |
+| dsk_new_cmd | 510-517 |  |
+| for | 518-526 |  |
+| if | 527-548 |  |
+| if | 549-625 |  |
+| dsk_svc_sns | 626-629 |  |
+| switch | 630-665 |  |
+| dsk_svc | 666-673 |  |
+| if | 674-684 |  |
+| if | 685-692 |  |
+| switch | 693-881 |  |
+| dsk_init_trk | 882-889 |  |
+| if | 890-900 |  |
+| if | 901-904 |  |
+| if | 905-918 |  |
+| while | 919-945 |  |
+| dsk_xfer_done | 946-965 |  |
+| if | 966-971 |  |
+| if | 972-983 |  |
+| dsk_wr_trk | 984-990 |  |
+| if | 991-1001 |  |
+| dsk_acc_atn | 1002-1012 |  |
+| dsk_get_fmtc | 1013-1016 |  |
+| if | 1017-1025 |  |
+| if | 1026-1034 |  |
+| dsk_uend | 1035-1052 |  |
+| dsk_qdone | 1053-1054 |  |
+| if | 1055-1063 |  |
+| dsk_reset | 1064-1085 |  |
+| for | 1086-1096 |  |
+| dsk_attach | 1097-1113 |  |
+| dsk_set_size | 1114-1136 |  |
+| dsk_show_format | 1137-1161 |  |
+| for | 1162-1224 |  |

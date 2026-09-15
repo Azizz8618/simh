@@ -1,0 +1,139 @@
+=== hp2100_di.c — 1880 строк ===
+Источник: hp2100_di.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_di.c -nt .cline/maps/hp2100_di.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| da_dev | 312 | |
+| dptrs | 314 | |
+| bus_accept | 315 | |
+| bus_respond | 316 | |
+| output_state | 453 | |
+| input_state | 454 | |
+| di_card | 458 | |
+| signal | 463 | |
+| working_set | 464 | |
+| outbound | 465 | |
+| irq_enabled | 466 | |
+| SCPE_OK | 810 | |
+| status | 848 | |
+| index | 849 | |
+| SCPE_OK | 899 | |
+| SCPE_OK | 936 | |
+| SCPE_OK | 955 | |
+| other | 1052 | |
+| acceptors | 1053 | |
+| accepted | 1054 | |
+| accepted | 1088 | |
+| other | 1135 | |
+| acceptors | 1136 | |
+| responded | 1137 | |
+| new_state | 1138 | |
+| return | 1198 | |
+| previous_response | 1212 | |
+| return | 1227 | |
+| other | 1260 | |
+| response | 1261 | |
+| return | 1289 | |
+| return | 1324 | |
+| return | 1370 | |
+| di_card | 1434 | |
+| assert | 1435 | |
+| deny | 1436 | |
+| data | 1437 | |
+| previous_state | 1438 | |
+| return | 1521 | |
+| tag | 1615 | |
+| add_word | 1616 | |
+| di_card | 1617 | |
+| return | 1692 | |
+| data | 1798 | |
+| remove_word | 1799 | |
+| di_card | 1800 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SW8_SYSCTL | 1                       /* card ... | 115 |
+| IFC_TIMEOUT | 157                     /* 157 i... | 117 |
+| CONTROLLER | 31                      /* dummy... | 119 |
+| LF | '\012' | 124 |
+| CNTL_SRQ | 0100000                 /* enabl... | 129 |
+| CNTL_IFC | 0040000                 /* asser... | 130 |
+| CNTL_REN | 0020000                 /* asser... | 131 |
+| CNTL_IRL | 0010000                 /* enabl... | 132 |
+| CNTL_LBO | 0004000                 /* enabl... | 133 |
+| CNTL_LF | 0002000                 /* enabl... | 134 |
+| CNTL_EOI | 0001000                 /* asser... | 135 |
+| CNTL_ATN | 0000400                 /* asser... | 136 |
+| CNTL_DIAG | 0000200                 /* diagn... | 137 |
+| CNTL_NRFD | 0000100                 /* asser... | 138 |
+| CNTL_PPE | 0000040                 /* paral... | 139 |
+| CNTL_ODD | 0000020                 /* odd n... | 140 |
+| CNTL_PACK | 0000010                 /* packe... | 141 |
+| CNTL_LSTN | 0000004                 /* liste... | 142 |
+| CNTL_TALK | 0000002                 /* talk */ | 143 |
+| CNTL_CIC | 0000001                 /* contr... | 144 |
+| STAT_SRQBUS | 0100000                 /* servi... | 149 |
+| STAT_IFCBUS | 0040000                 /* inter... | 150 |
+| STAT_RENBUS | 0020000                 /* remot... | 151 |
+| STAT_IRL | 0010000                 /* input... | 152 |
+| STAT_LBO | 0004000                 /* last ... | 153 |
+| STAT_LBI | 0002000                 /* last ... | 154 |
+| STAT_EOIBUS | 0001000                 /* end o... | 155 |
+| STAT_ATNBUS | 0000400                 /* atten... | 156 |
+| STAT_IFC | 0000200                 /* inter... | 157 |
+| STAT_ODD | 0000020                 /* odd n... | 158 |
+| STAT_SYSCTL | 0000010                 /* syste... | 159 |
+| STAT_LSTN | 0000004                 /* liste... | 160 |
+| STAT_TALK | 0000002                 /* talke... | 161 |
+| STAT_CIC | 0000001                 /* contr... | 162 |
+| DATA_LBO | 0100000                 /* last ... | 167 |
+| DATA_EOI | 0001000                 /* end o... | 168 |
+| DATA_ATN | 0000400                 /* atten... | 169 |
+| BUS_SHIFT | 16                      /* left ... | 174 |
+| DATA_SHIFT | 8                      /* left s... | 175 |
+| TAG_ATN | 0000200000              /* bit 1... | 177 |
+| TAG_EOI | 0000400000              /* bit 1... | 178 |
+| TAG_EDT | 0001000000              /* bit 1... | 179 |
+| TAG_LBR | 0002000000              /* bit 1... | 180 |
+| TAG_MASK | (TAG_ATN \| TAG_EOI \| TAG_EDT \| T... | 182 |
+| FIFO_EMPTY | (di_card->fifo_count == 0)      ... | 214 |
+| FIFO_FULL | (di_card->fifo_count == FIFO_SIZ... | 215 |
+| ASSERT_SET | (BUS_IFC) | 1130 |
+| DENY_SET | (BUS_ATN \| BUS_NRFD) | 1131 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| di_interface | 451-467 |  |
+| while | 468-783 |  |
+| di_reset | 784-788 |  |
+| if | 789-845 |  |
+| di_set_address | 846-857 |  |
+| if | 858-889 |  |
+| di_show_address | 890-920 |  |
+| di_set_cable | 921-924 |  |
+| if | 925-945 |  |
+| di_show_cable | 946-1049 |  |
+| di_bus_source | 1050-1066 |  |
+| if | 1067-1132 |  |
+| di_bus_control | 1133-1208 |  |
+| di_poll_response | 1209-1213 |  |
+| if | 1214-1257 |  |
+| di_bus_poll | 1258-1278 |  |
+| if | 1279-1301 |  |
+| di_bus_accept | 1302-1319 |  |
+| di_bus_respond | 1320-1351 |  |
+| master_reset | 1352-1431 |  |
+| update_state | 1432-1439 |  |
+| if | 1440-1612 |  |
+| fifo_load | 1613-1618 |  |
+| if | 1619-1625 |  |
+| if | 1626-1650 |  |
+| if | 1651-1795 |  |
+| fifo_unload | 1796-1801 |  |
+| if | 1802-1817 |  |
+| if | 1818-1846 |  |
+| if | 1847-1880 |  |

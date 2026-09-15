@@ -1,0 +1,150 @@
+=== pdp11_rs.c — 724 строк ===
+Источник: pdp11_rs.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_rs.c -nt .cline/maps/pdp11_rs.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rs_dib | 201 | |
+| val | 273 | |
+| uptr | 274 | |
+| SCPE_OK | 329 | |
+| uptr | 336 | |
+| SCPE_OK | 379 | |
+| fnc | 386 | |
+| uptr | 387 | |
+| MBE_GOE | 435 | |
+| wc | 455 | |
+| SCPE_OK | 528 | |
+| rser | 535 | |
+| rsds | 536 | |
+| return | 538 | |
+| return | 554 | |
+| rsds | 576 | |
+| return | 577 | |
+| uptr | 585 | |
+| SCPE_OK | 598 | |
+| drv | 605 | |
+| rser | 614 | |
+| SCPE_OK | 628 | |
+| drv | 635 | |
+| rsds | 640 | |
+| SCPE_OK | 655 | |
+| SCPE_OK | 698 | |
+| SCPE_OK | 718 | |
+| controller" | 723 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEV_RADIX | 8 | 37 |
+| RS_NUMDR | 8                               ... | 45 |
+| RS03_NUMWD | 64                              ... | 46 |
+| RS04_NUMWD | 128                             ... | 47 |
+| RS_NUMSC | 64                              ... | 48 |
+| RS_NUMTK | 64                              ... | 49 |
+| RS_MAXFR | (1 << 16)                       ... | 50 |
+| GET_POS(x) | ((int) fmod (sim_gtime() / ((dou... | 51 |
+| RS03_ID | 0 | 53 |
+| RS04_ID | 2 | 54 |
+| RS03_SIZE | (RS_NUMTK * RS_NUMSC * RS03_NUMWD) | 55 |
+| RS04_SIZE | (RS_NUMTK * RS_NUMSC * RS04_NUMWD) | 56 |
+| RS_NUMWD(d) | ((d)? RS04_NUMWD: RS03_NUMWD) | 57 |
+| RS_SIZE(d) | ((d)? RS04_SIZE: RS03_SIZE) | 58 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 0)                 ... | 62 |
+| RS03_DTYPE | (0) | 63 |
+| RS04_DTYPE | (1) | 64 |
+| UNIT_V_AUTO | (UNIT_V_UF + 1)                 ... | 65 |
+| UNIT_DTYPE | (1 << UNIT_V_DTYPE) | 66 |
+| UNIT_AUTO | (1 << UNIT_V_AUTO) | 67 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & 1) | 68 |
+| RS_CS1_OF | 0 | 72 |
+| CS1_GO | CSR_GO                          ... | 73 |
+| CS1_V_FNC | 1                               ... | 74 |
+| CS1_M_FNC | 037                             ... | 75 |
+| CS1_N_FNC | (CS1_M_FNC + 1) | 76 |
+| FNC_NOP | 000                             ... | 77 |
+| FNC_DCLR | 004                             ... | 78 |
+| FNC_SEARCH | 014                             ... | 79 |
+| FNC_XFR | 020                             ... | 80 |
+| FNC_WCHK | 024                             ... | 81 |
+| FNC_WRITE | 030                             ... | 82 |
+| FNC_READ | 034                             ... | 83 |
+| CS1_RW | 076 | 84 |
+| CS1_DVA | 04000                           ... | 85 |
+| GET_FNC(x) | (((x) >> CS1_V_FNC) & CS1_M_FNC) | 86 |
+| RS_DS_OF | 1 | 90 |
+| DS_RDY | 0000200                         ... | 91 |
+| DS_DPR | 0000400                         ... | 92 |
+| DS_LST | 0002000                         ... | 93 |
+| DS_WLK | 0004000                         ... | 94 |
+| DS_MOL | 0010000                         ... | 95 |
+| DS_PIP | 0020000                         ... | 96 |
+| DS_ERR | 0040000                         ... | 97 |
+| DS_ATA | 0100000                         ... | 98 |
+| DS_MBZ | 0001177 | 99 |
+| RS_ER_OF | 2 | 103 |
+| ER_ILF | 0000001                         ... | 104 |
+| ER_ILR | 0000002                         ... | 105 |
+| ER_RMR | 0000004                         ... | 106 |
+| ER_PAR | 0000010                         ... | 107 |
+| ER_AOE | 0001000                         ... | 108 |
+| ER_IAE | 0002000                         ... | 109 |
+| ER_WLE | 0004000                         ... | 110 |
+| ER_DTE | 0010000                         ... | 111 |
+| ER_OPI | 0020000                         ... | 112 |
+| ER_UNS | 0040000                         ... | 113 |
+| ER_DCK | 0100000                         ... | 114 |
+| ER_MBZ | 0000760 | 115 |
+| RS_MR_OF | 3 | 119 |
+| RS_AS_OF | 4 | 123 |
+| AS_U0 | 0000001                         ... | 124 |
+| RS_DA_OF | 5 | 129 |
+| DA_V_SC | 0                               ... | 130 |
+| DA_M_SC | 077                             ... | 131 |
+| DA_V_TK | 6                               ... | 132 |
+| DA_M_TK | 077                             ... | 133 |
+| GET_SC(x) | (((x) >> DA_V_SC) & DA_M_SC) | 134 |
+| GET_TK(x) | (((x) >> DA_V_TK) & DA_M_TK) | 135 |
+| DA_INV | 0070000                         ... | 136 |
+| DA_IGN | 0100000                         ... | 137 |
+| RS_DT_OF | 6 | 141 |
+| RS_LA_OF | 7 | 145 |
+| IOLN_RS | 034 | 199 |
+| BOOT_START | 02000                           ... | 662 |
+| BOOT_ENTRY | (BOOT_START + 002)              ... | 663 |
+| BOOT_UNIT | (BOOT_START + 010)              ... | 664 |
+| BOOT_CSR | (BOOT_START + 014)              ... | 665 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (uin... | 666 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rs_mbrd | 271-277 |  |
+| if | 278-284 |  |
+| switch | 285-333 |  |
+| rs_mbwr | 334-340 |  |
+| if | 341-347 |  |
+| switch | 348-383 |  |
+| rs_go | 384-394 |  |
+| if | 395-400 |  |
+| switch | 401-439 |  |
+| rs_abort | 440-451 |  |
+| rs_svc | 452-462 |  |
+| if | 463-471 |  |
+| switch | 472-532 |  |
+| rs_set_er | 533-542 |  |
+| rs_clr_as | 543-546 |  |
+| for | 547-558 |  |
+| rs_update_ds | 559-562 |  |
+| if | 563-567 |  |
+| if | 568-581 |  |
+| rs_reset | 582-587 |  |
+| for | 588-602 |  |
+| rs_attach | 603-619 |  |
+| if | 620-632 |  |
+| rs_detach | 633-647 |  |
+| rs_set_size | 648-688 |  |
+| rs_boot | 689-700 |  |
+| rs_help | 701-720 |  |
+| rs_description | 721-724 |  |

@@ -1,0 +1,32 @@
+=== 3b2_timer.c — 508 строк ===
+Источник: 3b2_timer.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_timer.c -nt .cline/maps/3b2_timer.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| TIMERS | 125 | |
+| tmr_int_unit | 134 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MIN_DIVIDER | 50 | 87 |
+| QUICK_DELAY | 10 | 90 |
+| QUICK_DELAY | 100 | 92 |
+| MIN_US | 100 | 95 |
+| CALC_US(C,N) | ((TIMER_MODE(C) == 3) ?       | 97 |
+| DELAY_US(C,N) | (MAX(MIN_US, CALC_US((C),(N)))) | 101 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| timer_reset | 178-193 |  |
+| timer_gate | 194-209 | Inhibit or allow a timer externally. |
+| timer_activate | 210-228 |  |
+| tmr_svc | 229-290 | Sanity, Non-calibrated Interval, and Bus Timeout Timer service routine |
+| timer_read | 291-362 |  |
+| handle_timer_write | 363-402 |  |
+| timer_write | 403-479 |  |
+| tmr_description | 480-488 |  |
+| tmr_help | 489-508 |  |

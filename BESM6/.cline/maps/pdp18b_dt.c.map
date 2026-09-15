@@ -1,0 +1,277 @@
+=== pdp18b_dt.c — 1576 строк ===
+Источник: pdp18b_dt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp18b_dt.c -nt .cline/maps/pdp18b_dt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_hwre | 339 | |
+| api_vec | 340 | |
+| cpu_unit | 341 | |
+| dt_substate | 348 | |
+| dt_logblk | 349 | |
+| dt_dib | 378 | |
+| old_dtsa | 468 | |
+| uptr | 469 | |
+| dat | 504 | |
+| dat | 511 | |
+| DT_UPDINT | 529 | |
+| dat | 530 | |
+| fnc | 535 | |
+| uptr | 536 | |
+| DT_UPDINT | 572 | |
+| dat | 573 | |
+| old_unit | 581 | |
+| uptr | 582 | |
+| return | 593 | |
+| new_unit | 619 | |
+| prev_mving | 620 | |
+| uptr | 621 | |
+| uptr | 626 | |
+| return | 691 | |
+| fnc | 708 | |
+| relpos | 710 | |
+| oldpos | 712 | |
+| return | 812 | |
+| new_time | 835 | |
+| unum | 837 | |
+| uptr->pos | 869 | |
+| FALSE | 879 | |
+| dir | 890 | |
+| unum | 893 | |
+| blk | 894 | |
+| ba | 895 | |
+| SCPE_OK | 1273 | |
+| DT_UPDINT | 1295 | |
+| return | 1296 | |
+| newpos | 1303 | |
+| return | 1309 | |
+| dat | 1320 | |
+| csum | 1339 | |
+| wrd | 1354 | |
+| uptr | 1379 | |
+| SCPE_OK | 1401 | |
+| pdp8b | 1426 | |
+| pdp11b | 1427 | |
+| ba | 1428 | |
+| uptr->io_flush | 1463 | |
+| SCPE_OK | 1498 | |
+| pdp8b | 1512 | |
+| pdp11b | 1513 | |
+| ba | 1515 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DT_NUMDR | 8                               ... | 122 |
+| UNIT_V_8FMT | (UNIT_V_UF + 0)                 ... | 123 |
+| UNIT_V_11FMT | (UNIT_V_UF + 1)                 ... | 124 |
+| UNIT_8FMT | (1 << UNIT_V_8FMT) | 125 |
+| UNIT_11FMT | (1 << UNIT_V_11FMT) | 126 |
+| STATE | u3                              ... | 127 |
+| LASTT | u4                              ... | 128 |
+| WRITTEN | u5                              ... | 129 |
+| DT_WC | 030                             ... | 130 |
+| DT_CA | 031                             ... | 131 |
+| DT_LPERMC | 6                               ... | 135 |
+| DT_BLKWD | 1                               ... | 136 |
+| DT_CSMWD | 4                               ... | 137 |
+| DT_HTWRD | 5                               ... | 138 |
+| DT_EZLIN | (8192 * DT_LPERMC)              ... | 139 |
+| DT_BFLIN | (200 * DT_LPERMC)               ... | 140 |
+| DT_BLKLN | (DT_BLKWD * DT_LPERMC)          ... | 141 |
+| DT_CSMLN | (DT_CSMWD * DT_LPERMC)          ... | 142 |
+| DT_HTLIN | (DT_HTWRD * DT_LPERMC)          ... | 143 |
+| D18_WSIZE | 6                               ... | 147 |
+| D18_BSIZE | 256                             ... | 148 |
+| D18_TSIZE | 578                             ... | 149 |
+| D18_LPERB | (DT_HTLIN + (D18_BSIZE * DT_WSIZ... | 150 |
+| D18_FWDEZ | (DT_EZLIN + (D18_LPERB * D18_TSI... | 151 |
+| D18_CAPAC | (D18_TSIZE * D18_BSIZE)         ... | 152 |
+| D11_FILSIZ | (D18_CAPAC * sizeof (int16)) | 153 |
+| D8_WSIZE | 4                               ... | 157 |
+| D8_BSIZE | 86                              ... | 158 |
+| D8_TSIZE | 1474                            ... | 159 |
+| D8_LPERB | (DT_HTLIN + (D8_BSIZE * DT_WSIZE... | 160 |
+| D8_FWDEZ | (DT_EZLIN + (D8_LPERB * D8_TSIZE)) | 161 |
+| D8_CAPAC | (D8_TSIZE * D8_BSIZE)           ... | 162 |
+| D8_NBSIZE | ((D8_BSIZE * D18_WSIZE) / D8_WSIZE) | 164 |
+| D8_FILSIZ | (D8_NBSIZE * D8_TSIZE * sizeof (... | 165 |
+| DT_CAPAC | D18_CAPAC                       ... | 169 |
+| DT_WSIZE | D18_WSIZE | 170 |
+| DTU_BSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_BS... | 174 |
+| DTU_TSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_TS... | 175 |
+| DTU_LPERB(u) | (((u)->flags & UNIT_8FMT)? D8_LP... | 176 |
+| DTU_FWDEZ(u) | (((u)->flags & UNIT_8FMT)? D8_FW... | 177 |
+| DTU_CAPAC(u) | (((u)->flags & UNIT_8FMT)? D8_CA... | 178 |
+| DT_LIN2BL(p,u) | (((p) - DT_EZLIN) / DTU_LPERB (u)) | 180 |
+| DT_LIN2OF(p,u) | (((p) - DT_EZLIN) % DTU_LPERB (u)) | 181 |
+| DT_LIN2WD(p,u) | ((DT_LIN2OF (p,u) - DT_HTLIN) / ... | 182 |
+| DT_BLK2LN(p,u) | (((p) * DTU_LPERB (u)) + DT_EZLIN) | 183 |
+| DT_QREZ(u) | (((u)->pos) < DT_EZLIN) | 184 |
+| DT_QFEZ(u) | (((u)->pos) >= ((uint32) DTU_FWD... | 185 |
+| DT_QEZ(u) | (DT_QREZ (u) \|\| DT_QFEZ (u)) | 186 |
+| DTA_V_UNIT | 15                              ... | 191 |
+| DTA_M_UNIT | 07 | 192 |
+| DTA_UNIT | (DTA_M_UNIT << DTA_V_UNIT) | 193 |
+| DTA_V_MOT | 13                              ... | 194 |
+| DTA_M_MOT | 03 | 195 |
+| DTA_V_MODE | 12                              ... | 196 |
+| DTA_V_FNC | 9                               ... | 197 |
+| DTA_M_FNC | 07 | 198 |
+| FNC_MOVE | 00                             /... | 199 |
+| FNC_SRCH | 01                             /... | 200 |
+| FNC_READ | 02                             /... | 201 |
+| FNC_RALL | 03                             /... | 202 |
+| FNC_WRIT | 04                             /... | 203 |
+| FNC_WALL | 05                             /... | 204 |
+| FNC_WMRK | 06                             /... | 205 |
+| DTA_V_ENB | 8                               ... | 206 |
+| DTA_V_CERF | 7                               ... | 207 |
+| DTA_V_CDTF | 6                               ... | 208 |
+| DTA_FWDRV | (1u << (DTA_V_MOT + 1)) | 209 |
+| DTA_STSTP | (1u << DTA_V_MOT) | 210 |
+| DTA_MODE | (1u << DTA_V_MODE) | 211 |
+| DTA_ENB | (1u << DTA_V_ENB) | 212 |
+| DTA_CERF | (1u << DTA_V_CERF) | 213 |
+| DTA_CDTF | (1u << DTA_V_CDTF) | 214 |
+| DTA_RW | (0777700 & ~(DTA_CERF \| DTA_CDTF)) | 215 |
+| DTA_GETUNIT(x) | (((x) >> DTA_V_UNIT) & DTA_M_UNIT) | 216 |
+| DT_UPDINT | if ((dtsa & DTA_ENB) && (dtsb & ... | 217 |
+| DTA_V_UNIT | 12                              ... | 228 |
+| DTA_M_UNIT | 017 | 229 |
+| DTA_UNIT | (DTA_M_UNIT << DTA_V_UNIT) | 230 |
+| DTA_V_MOT | 4                               ... | 231 |
+| DTA_M_MOT | 03 | 232 |
+| DTA_V_FNC | 0                               ... | 233 |
+| DTA_M_FNC | 07 | 234 |
+| FNC_MOVE | 00                             /... | 235 |
+| FNC_SRCH | 01                             /... | 236 |
+| FNC_READ | 02                             /... | 237 |
+| FNC_WRIT | 03                             /... | 238 |
+| FNC_RALL | 05                             /... | 239 |
+| FNC_WALL | 06                             /... | 240 |
+| FNC_WMRK | 07                             /... | 241 |
+| DTA_STSTP | (1u << (DTA_V_MOT + 1)) | 242 |
+| DTA_FWDRV | (1u << DTA_V_MOT) | 243 |
+| DTA_MODE | 0                               ... | 244 |
+| DTA_RW | 077 | 245 |
+| DTA_GETUNIT(x) | map_unit[(((x) >> DTA_V_UNIT) & ... | 246 |
+| DT_UPDINT | if (dtsb & (DTB_DTF \| DTB_BEF \| ... | 247 |
+| DTA_GETMOT(x) | (((x) >> DTA_V_MOT) & DTA_M_MOT) | 252 |
+| DTA_GETFNC(x) | (((x) >> DTA_V_FNC) & DTA_M_FNC) | 253 |
+| DTB_V_ERF | 17                              ... | 258 |
+| DTB_V_MRK | 16                              ... | 259 |
+| DTB_V_END | 15                              ... | 260 |
+| DTB_V_SEL | 14                              ... | 261 |
+| DTB_V_PAR | 13                              ... | 262 |
+| DTB_V_TIM | 12                              ... | 263 |
+| DTB_V_DTF | 6                               ... | 264 |
+| DTB_ERF | (1u << DTB_V_ERF) | 265 |
+| DTB_MRK | (1u << DTB_V_MRK) | 266 |
+| DTB_END | (1u << DTB_V_END) | 267 |
+| DTB_SEL | (1u << DTB_V_SEL) | 268 |
+| DTB_PAR | (1u << DTB_V_PAR) | 269 |
+| DTB_TIM | (1u << DTB_V_TIM) | 270 |
+| DTB_DTF | (1u << DTB_V_DTF) | 271 |
+| DTB_ALLERR | (DTB_ERF \| DTB_MRK \| DTB_END \| D... | 272 |
+| DTB_V_DTF | 17                              ... | 276 |
+| DTB_V_BEF | 16                              ... | 277 |
+| DTB_V_ERF | 15                              ... | 278 |
+| DTB_V_END | 14                              ... | 279 |
+| DTB_V_TIM | 13                              ... | 280 |
+| DTB_V_REV | 12                              ... | 281 |
+| DTB_V_GO | 11                              ... | 282 |
+| DTB_V_MRK | 10                              ... | 283 |
+| DTB_V_SEL | 9                               ... | 284 |
+| DTB_DTF | (1u << DTB_V_DTF) | 285 |
+| DTB_BEF | (1u << DTB_V_BEF) | 286 |
+| DTB_ERF | (1u << DTB_V_ERF) | 287 |
+| DTB_END | (1u << DTB_V_END) | 288 |
+| DTB_TIM | (1u << DTB_V_TIM) | 289 |
+| DTB_REV | (1u << DTB_V_REV) | 290 |
+| DTB_GO | (1u << DTB_V_GO) | 291 |
+| DTB_MRK | (1u << DTB_V_MRK) | 292 |
+| DTB_SEL | (1u << DTB_V_SEL) | 293 |
+| DTB_ALLERR | (DTB_END \| DTB_TIM \| DTB_MRK \| D... | 294 |
+| DTS_V_MOT | 3                               ... | 299 |
+| DTS_M_MOT | 07 | 300 |
+| DTS_STOP | 0                              /... | 301 |
+| DTS_DECF | 2                              /... | 302 |
+| DTS_DECR | 3                              /... | 303 |
+| DTS_ACCF | 4                              /... | 304 |
+| DTS_ACCR | 5                              /... | 305 |
+| DTS_ATSF | 6                              /... | 306 |
+| DTS_ATSR | 7                              /... | 307 |
+| DTS_DIR | 01                              ... | 308 |
+| DTS_V_FNC | 0                               ... | 309 |
+| DTS_M_FNC | 07 | 310 |
+| DTS_OFR | 7                               ... | 311 |
+| DTS_GETMOT(x) | (((x) >> DTS_V_MOT) & DTS_M_MOT) | 312 |
+| DTS_GETFNC(x) | (((x) >> DTS_V_FNC) & DTS_M_FNC) | 313 |
+| DTS_V_2ND | 6                               ... | 314 |
+| DTS_V_3RD | (DTS_V_2ND + DTS_V_2ND)         ... | 315 |
+| DTS_STA(y,z) | (((y) << DTS_V_MOT) \| ((z) << DT... | 316 |
+| DTS_SETSTA(y,z) | uptr->STATE = DTS_STA (y, z) | 317 |
+| DTS_SET2ND(y,z) | uptr->STATE = (uptr->STATE & 077... | 318 |
+| DTS_SET3RD(y,z) | uptr->STATE = (uptr->STATE & 077... | 320 |
+| DTS_NXTSTA(x) | (x >> DTS_V_2ND) | 322 |
+| DTO_WCO | 1                               ... | 326 |
+| DTO_SOB | 2                               ... | 327 |
+| LOG_MS | 001                             ... | 331 |
+| LOG_RW | 002                             ... | 332 |
+| LOG_RA | 004                             ... | 333 |
+| LOG_BL | 010                             ... | 334 |
+| ABS(x) | (((x) < 0)? (-(x)): (x)) | 336 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dt75 | 466-470 |  |
+| if | 471-506 |  |
+| dt76 | 507-514 |  |
+| dt75 | 515-520 |  |
+| if | 521-524 |  |
+| if | 525-532 |  |
+| dt76 | 533-542 |  |
+| if | 543-553 |  |
+| if | 554-559 |  |
+| if | 560-578 |  |
+| dt_deselect | 579-616 |  |
+| dt_newsa | 617-626 |  |
+| if | 627-640 |  |
+| if | 641-650 |  |
+| if | 651-661 |  |
+| if | 662-674 |  |
+| if | 675-684 |  |
+| if | 685-705 |  |
+| dt_newfnc | 706-724 |  |
+| if | 725-730 |  |
+| switch | 731-804 |  |
+| if | 805-832 |  |
+| dt_setpos | 833-843 |  |
+| switch | 844-886 |  |
+| dt_svc | 887-903 |  |
+| switch | 904-934 |  |
+| if | 935-940 |  |
+| switch | 941-1279 |  |
+| dt_seterr | 1280-1283 |  |
+| if | 1284-1300 |  |
+| dt_schedez | 1301-1313 |  |
+| dt_comobv | 1314-1324 |  |
+| dt_csum | 1325-1332 |  |
+| for | 1333-1339 |  |
+| for | 1340-1351 |  |
+| dt_gethdr | 1352-1375 |  |
+| dt_reset | 1376-1380 |  |
+| for | 1381-1405 |  |
+| dt_iors | 1406-1423 |  |
+| dt_attach | 1424-1434 |  |
+| if | 1435-1450 |  |
+| if | 1451-1463 |  |
+| if | 1464-1480 |  |
+| if | 1481-1509 |  |
+| dt_flush | 1510-1516 |  |
+| if | 1517-1553 |  |
+| dt_detach | 1554-1559 |  |
+| if | 1560-1576 |  |

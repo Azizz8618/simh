@@ -1,0 +1,257 @@
+=== vax860_defs.h — 505 строк ===
+Источник: vax860_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax860_defs.h -nt .cline/maps/vax860_defs.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DIB | 326-346 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FULL_VAX | 1           /* Full Instruction ... | 77 |
+| CMPM_VAX | 1           /* Compatibility Mod... | 81 |
+| VAX_860_DEFS_H_ | 1 | 85 |
+| VAX860_SID | (4 << 24)                       ... | 89 |
+| VAX860_TYP | (0 << 23)                       ... | 90 |
+| VAX865_TYP | (1 << 23)                       ... | 91 |
+| VAX860_ECO | (7 << 16)                       ... | 92 |
+| VAX860_PLANT | (0 << 12)                       ... | 93 |
+| VAX860_SN | (1234) | 94 |
+| CON_HLTPIN | 0x0200                          ... | 95 |
+| CON_HLTINS | 0x0600                          ... | 96 |
+| MCHK_RD_F | 0x00                            ... | 97 |
+| MCHK_RD_A | 0xF4                            ... | 98 |
+| MCHK_IBUF | 0x0D                            ... | 99 |
+| VER_UCODE | 0x1                             ... | 100 |
+| IPL_HMAX | 0x17                            ... | 104 |
+| IPL_HMIN | 0x14                            ... | 105 |
+| IPL_HLVL | (IPL_HMAX - IPL_HMIN + 1)       ... | 106 |
+| IPL_SMAX | 0xF                             ... | 107 |
+| NEXUS_NUM | 16                              ... | 111 |
+| MCTL_NUM | 2                               ... | 112 |
+| MBA_NUM | 3                               ... | 113 |
+| TR_MCTL0 | 1                               ... | 114 |
+| TR_MCTL1 | 2 | 115 |
+| TR_UBA | 3 | 116 |
+| TR_MBA0 | 8 | 117 |
+| TR_MBA1 | 9 | 118 |
+| TR_MBA2 | 10 | 119 |
+| TR_CI | 14 | 120 |
+| NEXUS_HLVL | (IPL_HMAX - IPL_HMIN + 1) | 121 |
+| SCB_NEXUS | 0x100                           ... | 122 |
+| SBI_FAULTS | 0xFC000000                      ... | 123 |
+| IPL_CLKINT | 0x18                            ... | 127 |
+| IPL_TTINT | 0x14                            ... | 128 |
+| IPL_MCTL0 | (0x15 - IPL_HMIN) | 130 |
+| IPL_MCTL1 | (0x15 - IPL_HMIN) | 131 |
+| IPL_UBA | (0x15 - IPL_HMIN) | 132 |
+| IPL_MBA0 | (0x15 - IPL_HMIN) | 133 |
+| IPL_MBA1 | (0x15 - IPL_HMIN) | 134 |
+| IPL_MBA2 | (0x15 - IPL_HMIN) | 135 |
+| IPL_CI | (0x15 - IPL_HMIN) | 136 |
+| SET_NEXUS_INT(dv) | nexus_req[IPL_##dv] \|= (1 << TR_... | 140 |
+| CLR_NEXUS_INT(dv) | nexus_req[IPL_##dv] &= ~(1 << TR... | 141 |
+| MT_ACCS | 40                              ... | 145 |
+| MT_PAMACC | 64 | 146 |
+| MT_PAMLOC | 65 | 147 |
+| MT_CSWP | 66 | 148 |
+| MT_MDECC | 67 | 149 |
+| MT_MENA | 68 | 150 |
+| MT_MDCTL | 69 | 151 |
+| MT_MCCTL | 70 | 152 |
+| MT_MERG | 71 | 153 |
+| MT_CRBT | 72                              ... | 154 |
+| MT_DFI | 73 | 155 |
+| MT_EHSR | 74 | 156 |
+| MT_STXCS | 76 | 157 |
+| MT_STXDB | 77 | 158 |
+| MT_ESPA | 78 | 159 |
+| MT_ESPD | 79 | 160 |
+| MT_MAX | MT_ESPD                         ... | 161 |
+| ML_LR_TEST(r) | if (((uint32)((r) & 0xFFFFFF)) >... | 167 |
+| ML_PXBR_TEST(r) | if (((((uint32)(r)) & 0x80000000... | 171 |
+| ML_SBR_TEST(r) | if ((((uint32)(r)) & 0x00000003)... | 173 |
+| ML_PA_TEST(r) | if ((((uint32)(r)) & 0x00000003)... | 177 |
+| LP_AST_TEST(r) | if ((r) > AST_MAX) RSVD_OPND_FAU... | 179 |
+| LP_MBZ84_TEST(r) | if ((((uint32)(r)) & 0xF8C00000)... | 180 |
+| LP_MBZ92_TEST(r) | if ((((uint32)(r)) & 0x7FC00000)... | 181 |
+| MT_AST_TEST(r) | r = (r) & 07;  | 183 |
+| IDX_IMM_TEST |  | 185 |
+| MAXMEMWIDTH | 25                              ... | 189 |
+| MAXMEMSIZE | (1 << MAXMEMWIDTH) | 190 |
+| MAXMEMWIDTH_X | 29                              ... | 191 |
+| MAXMEMSIZE_X | (1 << MAXMEMWIDTH_X) | 192 |
+| INITMEMSIZE | (1 << MAXMEMWIDTH)              ... | 193 |
+| MEMSIZE | (cpu_unit.capac) | 194 |
+| ADDR_IS_MEM(x) | (((uint32) (x)) < MEMSIZE) | 195 |
+| MEM_MODIFIERS | { UNIT_MSIZE, (1u << 23), NULL, ... | 196 |
+| CPU_MODEL_MODIFIERS |  | 209 |
+| UBADDRWIDTH | 18                              ... | 215 |
+| UBADDRSIZE | (1u << UBADDRWIDTH)             ... | 216 |
+| UBADDRMASK | (UBADDRSIZE - 1)                ... | 217 |
+| IOPAGEAWIDTH | 13                              ... | 218 |
+| IOPAGESIZE | (1u << IOPAGEAWIDTH)            ... | 219 |
+| IOPAGEMASK | (IOPAGESIZE - 1)                ... | 220 |
+| UBADDRBASE | 0x20100000                      ... | 221 |
+| IOPAGEBASE | 0x2013E000                      ... | 222 |
+| ADDR_IS_IO(x) | ((((uint32) (x)) >= UBADDRBASE) &&  | 223 |
+| ADDR_IS_IOP(x) | (((uint32) (x)) >= IOPAGEBASE) | 225 |
+| REGAWIDTH | 17                              ... | 229 |
+| REG_V_NEXUS | 13                              ... | 230 |
+| REG_M_NEXUS | 0xF | 231 |
+| REG_V_OFS | 2                               ... | 232 |
+| REG_M_OFS | 0x7FF | 233 |
+| REGSIZE | (1u << REGAWIDTH)               ... | 234 |
+| REGBASE | 0x20000000                      ... | 235 |
+| NEXUSBASE | REGBASE                         ... | 236 |
+| ADDR_IS_REG(x) | ((((uint32) (x)) >= REGBASE) &&  | 237 |
+| NEXUS_GETNEX(x) | (((x) >> REG_V_NEXUS) & REG_M_NE... | 239 |
+| NEXUS_GETOFS(x) | (((x) >> REG_V_OFS) & REG_M_OFS) | 240 |
+| SBIAWIDTH | 19 | 244 |
+| SBIABASE | 0x20080000 | 245 |
+| SBIASIZE | (1u << SBIAWIDTH) | 246 |
+| ADDR_IS_SBIA(x) | ((((uint32) (x)) >= SBIABASE) &&  | 247 |
+| ROMAWIDTH | 12                              ... | 252 |
+| ROMSIZE | (1u << ROMAWIDTH)               ... | 253 |
+| ROM0BASE | (REGBASE + (TR_MCTL0 << REG_V_NE... | 254 |
+| ROM1BASE | (REGBASE + (TR_MCTL1 << REG_V_NE... | 255 |
+| ADDR_IS_ROM0(x) | ((((uint32) (x)) >= ROM0BASE) &&  | 256 |
+| ADDR_IS_ROM1(x) | ((((uint32) (x)) >= ROM1BASE) &&  | 258 |
+| ADDR_IS_ROM(x) | (ADDR_IS_ROM0 (x) \|\| ADDR_IS_ROM... | 260 |
+| ADDR_IS_CDG(x) | (0) | 264 |
+| ADDR_IS_NVR(x) | (0) | 265 |
+| READ | 0                               ... | 269 |
+| WRITE | (L_WORD) | 270 |
+| WRITEB | (L_BYTE) | 271 |
+| CSR_V_GO | 0                               ... | 275 |
+| CSR_V_IE | 6                               ... | 276 |
+| CSR_V_DONE | 7                               ... | 277 |
+| CSR_V_BUSY | 11                              ... | 278 |
+| CSR_V_ERR | 15                              ... | 279 |
+| CSR_GO | (1u << CSR_V_GO) | 280 |
+| CSR_IE | (1u << CSR_V_IE) | 281 |
+| CSR_DONE | (1u << CSR_V_DONE) | 282 |
+| CSR_BUSY | (1u << CSR_V_BUSY) | 283 |
+| CSR_ERR | (1u << CSR_V_ERR) | 284 |
+| TMR_CLK | 0                               ... | 288 |
+| DZ_MUXES | 4                               ... | 292 |
+| VH_MUXES | 4                               ... | 293 |
+| DLX_LINES | 16                              ... | 294 |
+| DCX_LINES | 16                              ... | 295 |
+| MT_MAXFR | (1 << 16)                       ... | 296 |
+| DEV_V_UBUS | (DEV_V_UF + 0)                  ... | 298 |
+| DEV_V_MBUS | (DEV_V_UF + 1)                  ... | 299 |
+| DEV_V_NEXUS | (DEV_V_UF + 2)                  ... | 300 |
+| DEV_V_FFUF | (DEV_V_UF + 3)                  ... | 301 |
+| DEV_UBUS | (1u << DEV_V_UBUS) | 302 |
+| DEV_MBUS | (1u << DEV_V_MBUS) | 303 |
+| DEV_NEXUS | (1u << DEV_V_NEXUS) | 304 |
+| DEV_QBUS | (0) | 305 |
+| DEV_Q18 | (0) | 306 |
+| DEV_NOAUTOCON | (0) | 307 |
+| UNIBUS | TRUE                            ... | 309 |
+| DEV_RDX | 16                              ... | 311 |
+| VEC_DEVMAX | 4                               ... | 324 |
+| IOBA_AUTO | (0)                             ... | 351 |
+| INT_V_DTA | 0                               ... | 356 |
+| INT_V_CR | 1 | 357 |
+| INT_V_DZRX | 0                               ... | 359 |
+| INT_V_DZTX | 1 | 360 |
+| INT_V_HK | 2 | 361 |
+| INT_V_RL | 3 | 362 |
+| INT_V_RQ | 4 | 363 |
+| INT_V_TQ | 5 | 364 |
+| INT_V_TS | 6 | 365 |
+| INT_V_RY | 7 | 366 |
+| INT_V_XU | 8 | 367 |
+| INT_V_DMCRX | 9 | 368 |
+| INT_V_DMCTX | 10 | 369 |
+| INT_V_DUPRX | 11 | 370 |
+| INT_V_DUPTX | 12 | 371 |
+| INT_V_RK | 13 | 372 |
+| INT_V_CH | 14 | 373 |
+| INT_V_UW | 15 | 374 |
+| INT_V_LPT | 0                               ... | 376 |
+| INT_V_PTR | 1 | 377 |
+| INT_V_PTP | 2 | 378 |
+| INT_V_VHRX | 4 | 380 |
+| INT_V_VHTX | 5 | 381 |
+| INT_V_TDRX | 6 | 382 |
+| INT_V_TDTX | 7 | 383 |
+| INT_DTA | (1u << INT_V_DTA) | 385 |
+| INT_CR | (1u << INT_V_CR) | 386 |
+| INT_DZRX | (1u << INT_V_DZRX) | 387 |
+| INT_DZTX | (1u << INT_V_DZTX) | 388 |
+| INT_HK | (1u << INT_V_HK) | 389 |
+| INT_RL | (1u << INT_V_RL) | 390 |
+| INT_RQ | (1u << INT_V_RQ) | 391 |
+| INT_TQ | (1u << INT_V_TQ) | 392 |
+| INT_TS | (1u << INT_V_TS) | 393 |
+| INT_RY | (1u << INT_V_RY) | 394 |
+| INT_XU | (1u << INT_V_XU) | 395 |
+| INT_LPT | (1u << INT_V_LPT) | 396 |
+| INT_VHRX | (1u << INT_V_VHRX) | 397 |
+| INT_VHTX | (1u << INT_V_VHTX) | 398 |
+| INT_PTR | (1u << INT_V_PTR) | 399 |
+| INT_PTP | (1u << INT_V_PTP) | 400 |
+| INT_DMCRX | (1u << INT_V_DMCRX) | 401 |
+| INT_DMCTX | (1u << INT_V_DMCTX) | 402 |
+| INT_DUPRX | (1u << INT_V_DUPRX) | 403 |
+| INT_DUPTX | (1u << INT_V_DUPTX) | 404 |
+| INT_RK | (1u << INT_V_RK) | 405 |
+| INT_TDRX | (1u << INT_V_TDRX) | 406 |
+| INT_TDTX | (1u << INT_V_TDTX) | 407 |
+| INT_CH | (1u << INT_V_CH) | 408 |
+| INT_UW | (1u << INT_V_UW) | 409 |
+| IPL_DTA | (0x16 - IPL_HMIN) | 411 |
+| IPL_CR | (0x16 - IPL_HMIN) | 412 |
+| IPL_DZRX | (0x15 - IPL_HMIN) | 413 |
+| IPL_DZTX | (0x15 - IPL_HMIN) | 414 |
+| IPL_HK | (0x15 - IPL_HMIN) | 415 |
+| IPL_RL | (0x15 - IPL_HMIN) | 416 |
+| IPL_RQ | (0x15 - IPL_HMIN) | 417 |
+| IPL_TQ | (0x15 - IPL_HMIN) | 418 |
+| IPL_TS | (0x15 - IPL_HMIN) | 419 |
+| IPL_RY | (0x15 - IPL_HMIN) | 420 |
+| IPL_XU | (0x15 - IPL_HMIN) | 421 |
+| IPL_CH | (0x15 - IPL_HMIN) | 422 |
+| IPL_LPT | (0x14 - IPL_HMIN) | 423 |
+| IPL_PTR | (0x14 - IPL_HMIN) | 424 |
+| IPL_PTP | (0x14 - IPL_HMIN) | 425 |
+| IPL_VHRX | (0x14 - IPL_HMIN) | 426 |
+| IPL_VHTX | (0x14 - IPL_HMIN) | 427 |
+| IPL_DMCRX | (0x15 - IPL_HMIN) | 428 |
+| IPL_DMCTX | (0x15 - IPL_HMIN) | 429 |
+| IPL_DUPRX | (0x15 - IPL_HMIN) | 430 |
+| IPL_DUPTX | (0x15 - IPL_HMIN) | 431 |
+| IPL_RK | (0x15 - IPL_HMIN) | 432 |
+| IPL_TDRX | (0x14 - IPL_HMIN) | 433 |
+| IPL_TDTX | (0x14 - IPL_HMIN) | 434 |
+| IPL_UW | (0x15 - IPL_HMIN) | 435 |
+| VEC_AUTO | (0)                             ... | 439 |
+| VEC_FLOAT | (0)                             ... | 440 |
+| VEC_QBUS | 0                               ... | 442 |
+| VEC_SET | 0x000                           ... | 443 |
+| IVCL(dv) | ((IPL_##dv * 32) + INT_V_##dv) | 447 |
+| NVCL(dv) | ((IPL_##dv * 32) + TR_##dv) | 448 |
+| IREQ(dv) | int_req[IPL_##dv] | 449 |
+| SET_INT(dv) | int_req[IPL_##dv] = int_req[IPL_... | 450 |
+| CLR_INT(dv) | int_req[IPL_##dv] = int_req[IPL_... | 451 |
+| IORETURN(f,v) | ((f)? (v): SCPE_OK)             ... | 452 |
+| MBA_RMASK | 0x1F                            ... | 456 |
+| MBA_AUTO | (uint32)0xFFFFFFFF              ... | 457 |
+| MBE_NXD | 1                               ... | 458 |
+| MBE_NXR | 2                               ... | 459 |
+| MBE_GOE | 3                               ... | 460 |
+| BOOT_MB | 0                               ... | 464 |
+| BOOT_HK | 1                               ... | 465 |
+| BOOT_RL | 2 | 466 |
+| BOOT_UDA | 17 | 467 |
+| BOOT_CS | 64 | 468 |
+| ReadIOU(p,l) | ReadIO (p,l) | 494 |
+| ReadRegU(p,l) | ReadReg (p,l) | 495 |
+| WriteIOU(p,v,l) | WriteIO (p, v, l) | 496 |
+| WriteRegU(p,v,l) | WriteReg (p, v, l) | 497 |
+

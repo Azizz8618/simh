@@ -1,0 +1,131 @@
+=== sim_ether.c — 5505 строк ===
+Источник: sim_ether.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_ether.c -nt .cline/maps/sim_ether.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| pcap_if_t | 1154-1160 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| framer_oui | 404 | |
+| sysid | 807 | |
+| eth_open_devices | 941 | |
+| eth_open_device_count | 942 | |
+| eth_open_devices | 949 | |
+| used | 1356 | |
+| eth_vde_network_available | 1385 | |
+| used | 1441 | |
+| errbuf | 1442 | |
+| alldevs | 1444 | |
+| dev | 1445 | |
+| edev | 1446 | |
+| errbuf | 1449 | |
+| used | 1578 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MAX(a,b) | (((a) > (b)) ? (a) : (b)) | 398 |
+| PCAP_ERRBUF_SIZE | 256 | 1149 |
+| DLT_EN10MB | 1            /* Dummy Value to a... | 1151 |
+| PCAP_IF_LOOPBACK | 0x00000001      /* interface is ... | 1161 |
+| BPF_CONST_STRING | 1 | 1167 |
+| _load_function(function) | *((_func **)&p_##function) = (_f... | 1888 |
+| HAS_PCAP_SENDPACKET | 1 | 1906 |
+| HAS_PCAP_SENDPACKET | 1 | 1910 |
+| OID_802_3_CURRENT_ADDRESS | 0x01010102 /* Extracted from ntd... | 1939 |
+| KEY_WOW64_64KEY | (0x0100) | 2458 |
+| IP_HLEN(IP) | (((IP)->verhlen&0xF)<<2) /* Head... | 4213 |
+| IP_VERSION(IP) | ((((IP)->verhlen)>>4)&0xF) /* IP... | 4214 |
+| IP_DF_FLAG | (0x4000) | 4219 |
+| IP_MF_FLAG | (0x2000) | 4220 |
+| IP_OFFSET_MASK | (0x1FFF) | 4221 |
+| IP_FRAG_DF(IP) | (ntohs(((IP)->flags))&IP_DF_FLAG) | 4222 |
+| IP_FRAG_MF(IP) | (ntohs(((IP)->flags))&IP_MF_FLAG) | 4223 |
+| IP_FRAG_OFFSET(IP) | (ntohs(((IP)->flags))&IP_OFFSET_... | 4224 |
+| TCP_DATA_OFFSET(TCP) | ((ntohs((TCP)->data_offset_and_f... | 4253 |
+| TCP_CWR_FLAG | (0x80) | 4254 |
+| TCP_ECR_FLAG | (0x40) | 4255 |
+| TCP_URG_FLAG | (0x20) | 4256 |
+| TCP_ACK_FLAG | (0x10) | 4257 |
+| TCP_PSH_FLAG | (0x08) | 4258 |
+| TCP_RST_FLAG | (0x04) | 4259 |
+| TCP_SYN_FLAG | (0x02) | 4260 |
+| TCP_FIN_FLAG | (0x01) | 4261 |
+| TCP_FLAGS_MASK | (0xFFF) | 4262 |
+| IPPROTO_TCP | 6               /* tcp */ | 4270 |
+| IPPROTO_UDP | 17              /* user datagram... | 4273 |
+| IPPROTO_ICMP | 1               /* control messa... | 4276 |
+| SIM_PRINT_BPF_ARGUMENTS |  | 5383 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eth_mac_scan | 410-414 |  |
+| eth_mac_scan_ex | 415-518 |  |
+| eth_mac_fmt | 519-571 |  |
+| eth_crc32 | 572-593 |  |
+| eth_get_packet_crc32_data | 594-609 |  |
+| eth_add_packet_crc32 | 610-621 |  |
+| eth_setcrc | 622-626 |  |
+| eth_packet_trace_ex | 627-672 |  |
+| eth_packet_trace | 673-677 |  |
+| eth_packet_trace_detail | 678-682 |  |
+| eth_zero | 683-689 |  |
+| ethq_init | 690-705 |  |
+| ethq_destroy | 706-717 |  |
+| ethq_clear | 718-733 |  |
+| ethq_remove | 734-747 |  |
+| ethq_insert_data | 748-790 |  |
+| ethq_insert | 791-795 |  |
+| eth_show_devices | 796-804 |  |
+| _eth_tap_uuid | 805-824 | on the same host will get the same pseudo uuid for the same tap: connection |
+| _vmnet_status_string | 825-850 | The string form of status code returned by vmnet operations. |
+| _eth_getname | 851-872 |  |
+| _eth_getname_bydesc | 873-899 |  |
+| _eth_getname_byname | 900-920 |  |
+| _eth_getdesc_byname | 921-945 |  |
+| _eth_add_to_open_list | 946-951 |  |
+| _eth_remove_from_open_list | 952-964 |  |
+| eth_show | 965-1076 |  |
+| eth_attach_help | 1077-1082 |  |
+| eth_attach_scp_help_string | 1083-1115 |  |
+| eth_show | 1116-1210 |  |
+| eth_host_pcap_devices | 1211-1214 |  |
+| for | 1215-1236 |  |
+| for | 1237-1273 | replace device description with user-defined adapter name (if defined) |
+| if | 1274-1399 |  |
+| eth_capabilities | 1400-1438 |  |
+| eth_devices | 1439-1450 |  |
+| if | 1451-1499 | retrieve the device list |
+| if | 1500-1541 |  |
+| if | 1542-1553 |  |
+| if | 1554-1561 |  |
+| if | 1562-1569 |  |
+| if | 1570-1637 |  |
+| load_function | 1638-1650 |  |
+| load_pcap | 1651-1717 | load wpcap.dll or libpcap as required |
+| pcap_close | 1718-1725 | define functions with dynamic revectoring |
+| pcap_compile | 1726-1727 |  |
+| pcap_compile | 1728-1736 |  |
+| pcap_lib_version | 1737-1753 |  |
+| pcap_datalink | 1754-1761 |  |
+| pcap_dispatch | 1762-1769 |  |
+| pcap_findalldevs | 1770-1780 |  |
+| pcap_freealldevs | 1781-1786 |  |
+| pcap_freecode | 1787-1792 |  |
+| pcap_geterr | 1793-1800 |  |
+| pcap_lookupnet | 1801-1808 |  |
+| pcap_open_live | 1809-1817 |  |
+| pcap_setmintocopy | 1818-1825 |  |
+| pcap_getevent | 1826-1835 |  |
+| pcap_get_selectable_fd | 1836-1844 |  |
+| pcap_fileno | 1845-1853 |  |
+| pcap_sendpacket | 1854-1861 |  |
+| pcap_setfilter | 1862-1869 |  |
+| pcap_setnonblock | 1870-1879 |  |
+| load_vde | 1880-1917 | Dynamic VDE loading |
+| pcap_sendpacket | 1918-5505 |  |

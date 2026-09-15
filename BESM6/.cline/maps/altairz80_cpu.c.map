@@ -1,0 +1,156 @@
+=== altairz80_cpu.c — 7707 строк ===
+Источник: altairz80_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test altairz80_cpu.c -nt .cline/maps/altairz80_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| insthist_t | 281-296 |
+| MDEV | 1849-1862 |
+| CPUFLAG | 6703-6706 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| MOPT | 152 | |
+| m68kvariant | 305 | |
+| switcherPort | 313 | |
+| oldSwitcherDevice | 314 | |
+| ramtype | 739 | |
+| chiptype | 741 | |
+| mmu_table | 1867 | |
+| switch_cpu_now | 2138 | |
+| clockHasChanged | 2159 | |
+| ramTypeToString | 6763 | |
+| disp_addr | 7603 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SWITCHCPU_DEFAULT | 0xfd | 37 |
+| IN_MSG | (1 << 0) | 40 |
+| OUT_MSG | (1 << 1) | 41 |
+| INT_MSG | (1 << 2) | 42 |
+| PCQ_SIZE | 64                      /* must ... | 44 |
+| PCQ_SIZE_LOG2 | 6                       /* log2 ... | 45 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 46 |
+| PCQ_ENTRY(PC) | if (pcq[pcq_p] != (PC)) { pcq[pc... | 47 |
+| INST_MAX_BYTES | 4                       /* instr... | 49 |
+| IFF1 | 1                               ... | 51 |
+| IFF2 | 2                               ... | 52 |
+| FLAG_C | 1 | 54 |
+| FLAG_N | 2 | 55 |
+| FLAG_P | 4 | 56 |
+| FLAG_H | 16 | 57 |
+| FLAG_Z | 64 | 58 |
+| FLAG_S | 128 | 59 |
+| SETFLAG(f,c) | AF = (c) ? AF \| FLAG_ ## f : AF ... | 61 |
+| TSTFLAG(f) | ((AF & FLAG_ ## f) != 0) | 62 |
+| TSTFLAG2(a, | f)          ((a & FLAG_ ## f) != 0) | 63 |
+| LOW_DIGIT(x) | ((x) & 0xf) | 65 |
+| HIGH_DIGIT(x) | (((x) >> 4) & 0xf) | 66 |
+| LOW_REGISTER(x) | ((x) & 0xff) | 67 |
+| HIGH_REGISTER(x) | (((x) >> 8) & 0xff) | 68 |
+| SET_LOW_REGISTER(x, | v)  x = (((x) & 0xff00) \| ((v) &... | 70 |
+| SET_HIGH_REGISTER(x, | v) x = (((x) & 0xff) \| (((v) & 0... | 71 |
+| PARITY(x) | parityTable[(x) & 0xff] | 73 |
+| SET_PVS(s) | ((chiptype == CHIP_TYPE_Z80) ? (... | 78 |
+| SET_PV | (SET_PVS(sum)) | 79 |
+| SET_PV2(x) | ((chiptype == CHIP_TYPE_Z80) ? (... | 80 |
+| CHECK_CPU_8080 |  | 88 |
+| CHECK_CPU_Z80 |  | 95 |
+| POP(x) | {                               ... | 101 |
+| JPC(cond) | {                               ... | 106 |
+| CALLC(cond) | {                               ... | 116 |
+| INCR(val) | IR_S = (IR_S & ~0x7f) \| ((IR_S +... | 131 |
+| HIST_MIN | 16 | 278 |
+| HIST_MAX | 8192 | 279 |
+| CPU_INDEX_8086 | 27 | 317 |
+| CPU_INDEX_M68K | 54 | 318 |
+| RAM_TYPE_AZ80 | 0       /* Altair-Z80 RAM card */ | 732 |
+| RAM_TYPE_HRAM | 1       /* North Start Horizon R... | 733 |
+| RAM_TYPE_VRAM | 2       /* Vector Graphic RAM ca... | 734 |
+| RAM_TYPE_CRAM | 3       /* Cromemco RAM card */ | 735 |
+| RAM_TYPE_B810 | 4       /* AB Digital Design B81... | 736 |
+| MAX_RAM_TYPE | RAM_TYPE_B810 | 737 |
+| LOG2PAGESIZE | 8 | 1844 |
+| PAGESIZE | (1 << LOG2PAGESIZE) | 1845 |
+| RAM_PP(Addr) | GetBYTE(Addr++) | 2066 |
+| RAM_MM(Addr) | GetBYTE(Addr--) | 2067 |
+| GET_WORD(Addr) | (GetBYTE(Addr) \| (GetBYTE(Addr +... | 2068 |
+| PUT_BYTE_PP(a,v) | PutBYTE(a++, v) | 2069 |
+| PUT_BYTE_MM(a,v) | PutBYTE(a--, v) | 2070 |
+| MM_PUT_BYTE(a,v) | PutBYTE(--a, v) | 2071 |
+| PUSH(x) | {                               ... | 2073 |
+| CHECK_BREAK_BYTE(a) |  | 2078 |
+| CHECK_BREAK_TWO_BYTES_EXTENDED(a1, | a2, iCode)                | 2087 |
+| CHECK_BREAK_TWO_BYTES(a1, | a2) CHECK_BREAK_TWO_BYTES_EXTEND... | 2103 |
+| CHECK_BREAK_WORD(a) | CHECK_BREAK_TWO_BYTES(a, (a + 1)) | 2105 |
+| HALTINSTRUCTION | 0x76 | 2107 |
+| INOUTFLAGS_ZERO(x) |  | 2125 |
+| INOUTFLAGS_NONZERO(x) |  | 2131 |
+| PLURAL(x) | (x), (x) == 1 ? "" : "s" | 7415 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_description | 514-726 |  |
+| handlerNameForPort | 727-742 |  |
+| out | 743-756 |  |
+| in | 757-1574 |  |
+| altairz80_print_tables | 1575-1919 |  |
+| PutBYTE | 1920-1940 |  |
+| PutBYTEasROMorRAM | 1941-1949 |  |
+| PutBYTEExtended | 1950-1967 |  |
+| PutWORD | 1968-1972 |  |
+| GetBYTE | 1973-1992 |  |
+| GetBYTEExtended | 1993-2010 |  |
+| getBankSelect | 2011-2014 |  |
+| setBankSelect | 2015-2018 |  |
+| getCommon | 2019-2023 |  |
+| GetBYTEWrapper | 2024-2035 | memory access during a simulation |
+| PutBYTEWrapper | 2036-2047 | memory access during a simulation |
+| GetByteDMA | 2048-2056 | DMA memory access during a simulation, suggested by Tony Nicholson |
+| PutByteDMA | 2057-2139 |  |
+| sim_instr | 2140-2160 |  |
+| getClockFrequency | 2161-2164 |  |
+| setClockFrequency | 2165-2169 |  |
+| sim_instr_mmu | 2170-6549 |  |
+| cpu_reset | 6550-6578 |  |
+| cpu_is_pc_a_subroutine_call | 6579-6634 |  |
+| install_bootrom | 6635-6647 |  |
+| cpu_ex | 6648-6675 | memory examine |
+| cpu_dep | 6676-6756 | memory deposit |
+| { | 6757-6773 | needs to be set for each chiptype < NUM_CHIP_TYPE |
+| chip_show | 6774-6788 |  |
+| cpu_show | 6789-6843 |  |
+| cpu_clear | 6844-6862 |  |
+| cpu_clear_command | 6863-6867 |  |
+| cpu_set_altairrom | 6868-6872 |  |
+| cpu_set_noaltairrom | 6873-6878 |  |
+| cpu_set_nommu | 6879-6896 |  |
+| cpu_set_banked | 6897-6910 |  |
+| cpu_set_nonbanked | 6911-6919 |  |
+| bankseldev | 6920-7012 |  |
+| cpu_set_chiptype_short | 7013-7050 |  |
+| cpu_set_chiptype | 7051-7056 |  |
+| switchcpu_io | 7057-7088 |  |
+| cpu_show_switcher | 7089-7096 |  |
+| cpu_set_switcher | 7097-7108 |  |
+| cpu_reset_switcher | 7109-7116 |  |
+| cpu_set_ramtype | 7117-7185 |  |
+| set_size | 7186-7211 | set memory to 'size' kilo byte |
+| cpu_set_size | 7212-7215 |  |
+| cpu_set_memory | 7216-7229 |  |
+| cpu_resize_memory | 7230-7243 |  |
+| m68k_set_chiptype | 7244-7255 |  |
+| cpu_set_hist | 7256-7318 |  |
+| cpu_show_hist | 7319-7396 |  |
+| altairz80_pc_value | 7397-7401 |  |
+| altairz80_init | 7402-7416 | AltairZ80 Simulator initialization |
+| sim_load_m68k | 7417-7451 |  |
+| sim_load | 7452-7522 |  |
+| cpu_hex_load | 7523-7590 |  |
+| cpu_raise_interrupt | 7591-7604 |  |
+| cpu_cmd_memory | 7605-7657 |  |
+| cpu_cmd_reg | 7658-7707 |  |

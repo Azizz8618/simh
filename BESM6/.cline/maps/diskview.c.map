@@ -1,0 +1,105 @@
+=== diskview.c — 612 строк ===
+Источник: diskview.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test diskview.c -nt .cline/maps/diskview.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| WORD | 42 | |
+| fp | 44 | |
+| buf | 45 | |
+| dcom | 46 | |
+| dcyl | 58 | |
+| verbose | 59 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BETWEEN(v,a,b) | (((v) >= (a)) && ((v) <= (b))) | 24 |
+| MIN(a,b) | (((a) <= (b)) ? (a) : (b)) | 25 |
+| MAX(a,b) | (((a) >= (b)) ? (a) : (b)) | 26 |
+| TRUE | 1 | 29 |
+| FALSE | 0 | 30 |
+| BOOL | int | 31 |
+| NOT_DEF | 0x0658              // defective... | 34 |
+| DSK_NUMWD | 321             /* words/sector */ | 36 |
+| DSK_NUMCY | 203             /* cylinders/dri... | 37 |
+| DSK_SECCYL | 8             /* sectors per cyl... | 38 |
+| SECLEN | 320             /* data words pe... | 39 |
+| SLETLEN | ((3*SECLEN)/4)  /* length of sle... | 40 |
+| NAME | 4   // NAME OF PROGRAM/CORE LOAD | 265 |
+| DBCT | 6   // BLOCK CT OF PROGRAM/CORE ... | 266 |
+| FCNT | 7   // FILES SWITCH | 267 |
+| SYSC | 8   // SYSTEM/NON-SYSTEM CARTRID... | 268 |
+| JBSW | 9   // JOBT SWITCH | 269 |
+| CBSW | 10   // CLB-RETURN SWITCH | 270 |
+| LCNT | 11   // NO. OF LOCALS | 271 |
+| MPSW | 12   // CORE MAP SWITCH | 272 |
+| MDF1 | 13   // NO. DUP CTRL RECORDS (MO... | 273 |
+| MDF2 | 14   // ADDR OF MODIF BUFFER | 274 |
+| NCNT | 15   // NO. OF NOCALS | 275 |
+| ENTY | 16   // RLTV ENTRY ADDR OF PROGRAM | 276 |
+| RP67 | 17   // 1442-5 SWITCH | 277 |
+| TODR | 18   // OBJECT WORK STORAGE DRIV... | 278 |
+| FHOL | 20   // ADDR LARGEST HOLE IN FIX... | 279 |
+| FSZE | 21   // BLK CNT LARGEST HOLE IN FXA | 280 |
+| UHOL | 22   // ADDR LAST HOLE IN USER A... | 281 |
+| USZE | 23   // BLK CNT LAST HOLE IN UA ... | 282 |
+| DCSW | 24   // DUP CALL SWITCH | 283 |
+| PIOD | 25   // PRINCIPAL I/O DEVICE IND... | 284 |
+| PPTR | 26   // PRINCIPAL PRINT DEVICE I... | 285 |
+| CIAD | 27   // RLTV ADDR IN @STRT OF CI... | 286 |
+| ACIN | 28   // AVAILABLE CARTRIDGE INDI... | 287 |
+| GRPH | 29   // 2250 INDICATOR          ... | 288 |
+| GCNT | 30   // NO. G2250 RECORDS       ... | 289 |
+| LOSW | 31   // LOCAL-CALLS-LOCAL SWITCH... | 290 |
+| X3SW | 32   // SPECIAL ILS SWITCH      ... | 291 |
+| ECNT | 33   // NO. OF *EQUAT RCDS      ... | 292 |
+| ANDU | 35   // 1+BLK ADDR END OF UA (AD... | 293 |
+| BNDU | 40   // 1+BLK ADDR END OF UA (BASE) | 294 |
+| FPAD | 45   // FILE PROTECT ADDR | 295 |
+| PCID | 50   // CARTRIDGE ID, PHYSICAL D... | 296 |
+| CIDN | 55   // CARTRIDGE ID, LOGICAL DRIVE | 297 |
+| CIBA | 60   // SCTR ADDR OF CIB | 298 |
+| SCRA | 65   // SCTR ADDR OF SCRA | 299 |
+| FMAT | 70   // FORMAT OF PROG IN WORKIN... | 300 |
+| FLET | 75   // SCTR ADDR 1ST SCTR OF FLET | 301 |
+| ULET | 80   // SCTR ADDR 1ST SCTR OF LET | 302 |
+| WSCT | 85   // BLK CNT OF PROG IN WORKI... | 303 |
+| CSHN | 90   // NO. SCTRS IN CUSHION AREA | 304 |
+| HDR_LEN | 120 | 499 |
+| LFHD | 5    // WORD COUNT OF LET/FLET H... | 560 |
+| LFEN | 3    // NO OF WDS PER LET/FLET E... | 561 |
+| SCTN | 0    // RLTY ADDR OF LET/FLET SC... | 562 |
+| UAFX | 1    // RLTV ADDR OF SCTR ADDR O... | 563 |
+| WDSA | 3    // RLTV ADDR OF WDS AVAIL I... | 564 |
+| NEXT | 4    // RLTV ADDR OF ADDR NEXT S... | 565 |
+| LFNM | 0    // RLTV ADDR OF LET/FLET EN... | 566 |
+| BLCT | 2    // RLTV ADDR OF LET/FLET EN... | 567 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| main | 78-134 |  |
+| checksectors | 135-151 |  |
+| getdcyl | 152-160 |  |
+| getsector | 161-184 |  |
+| dump | 185-200 |  |
+| showmajor | 201-213 |  |
+| name | 214-218 |  |
+| pbf | 219-236 |  |
+| prt | 237-250 |  |
+| dump_id | 251-353 |  |
+| dump_dcom | 354-367 |  |
+| dump_resmon | 368-409 |  |
+| dump_slet | 410-487 |  |
+| ebcdic_to_ascii | 488-500 |  |
+| dump_hdng | 501-518 |  |
+| mget | 519-531 |  |
+| dump_scra | 532-539 |  |
+| dump_let | 540-545 |  |
+| dump_flet | 546-551 |  |
+| dump_cib | 552-568 |  |
+| bail | 569-584 |  |
+| trim | 585-600 |  |
+| lowcase | 601-612 |  |

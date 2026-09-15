@@ -1,0 +1,42 @@
+=== 3b2_if.c — 645 строк ===
+Источник: 3b2_if.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_if.c -nt .cline/maps/3b2_if.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| if_state | 94 | |
+| if_buf | 95 | |
+| if_sec_ptr | 96 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IF_STEP_DELAY | 300     /* us */ | 54 |
+| IF_R_DELAY | 6500    /* us */ | 55 |
+| IF_W_DELAY | 7000    /* us */ | 56 |
+| IF_VERIFY_DELAY | 2000    /* us */ | 57 |
+| IF_HLD_DELAY | 6000    /* us */ | 58 |
+| IF_HSW_DELAY | 4000    /* us */ | 59 |
+| SET_INT | CPU_SET_INT(INT_FLOPPY) | 62 |
+| CLR_INT | CPU_CLR_INT(INT_FLOPPY) | 63 |
+| SET_INT | do {              | 65 |
+| CLR_INT | do {              | 69 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| if_activate | 100-104 |  |
+| if_svc | 105-149 |  |
+| if_reset | 150-159 |  |
+| if_attach | 160-164 |  |
+| if_detach | 165-169 |  |
+| if_read | 170-252 |  |
+| if_handle_command | 253-509 | Handle the most recently received command |
+| if_write | 510-594 |  |
+| if_csr_read | 595-599 |  |
+| if_csr_write | 600-605 |  |
+| if_description | 606-610 |  |
+| if_help | 611-631 |  |
+| if_lba | 632-640 | Compute the offset of the currently selected C/H/S (in # of sectors) |
+| if_after_dma | 641-645 |  |

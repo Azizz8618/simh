@@ -1,0 +1,73 @@
+=== b5500_urec.c — 1125 строк ===
+Источник: b5500_urec.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test b5500_urec.c -nt .cline/maps/b5500_urec.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cdr_buffer | 94 | |
+| cdp_buffer | 104 | |
+| con_data | 126 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_CDR | UNIT_ATTABLE \| UNIT_RO \| UNIT_DI... | 34 |
+| UNIT_CDP | UNIT_ATTABLE \| UNIT_SEQ \| UNIT_D... | 35 |
+| UNIT_LPR | UNIT_ATTABLE \| UNIT_SEQ \| UNIT_D... | 36 |
+| TMR_RTC | 0 | 38 |
+| LINENUM | u3 | 40 |
+| POS | u4 | 41 |
+| CMD | u5 | 42 |
+| LPP | u6 | 43 |
+| URCSTA_CHMASK | 0003    /* Mask of I/O channel t... | 55 |
+| URCSTA_CARD | 0004    /* Unit has card in buff... | 56 |
+| URCSTA_FULL | 0004    /* Unit has full buffer */ | 57 |
+| URCSTA_BUSY | 0010    /* Device is busy */ | 58 |
+| URCSTA_BIN | 0020    /* Card reader in binary... | 59 |
+| URCSTA_ACTIVE | 0040    /* Unit is active */ | 60 |
+| URCSTA_EOF | 0100    /* Flag the end of file */ | 61 |
+| URCSTA_INPUT | 0200    /* Console fill buffer f... | 62 |
+| URCSTA_FILL | 010000  /* Fill unit buffer */ | 63 |
+| URCSTA_CMD_V | 16 | 64 |
+| URCSTA_SKIP | 000017  /* Skip mask */ | 66 |
+| URCSTA_DOUBLE | 000020  /* Double space skip */ | 67 |
+| URCSTA_SINGLE | 000040  /* Single space skip. */ | 68 |
+| URCSTA_READ | 000400  /* Read flag */ | 69 |
+| URCSTA_WC | 001000  /* Use word count */ | 70 |
+| URCSTA_DIRECT | 002000  /* Direction, Long line */ | 71 |
+| URCSTA_BINARY | 004000  /* Binary transfer */ | 72 |
+| URCSTA_INHIBIT | 040000  /* Inhibit transfer to m... | 73 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cdr_ini | 250-263 |  |
+| card_cmd | 264-334 | And Card punch. |
+| cdr_srv | 335-468 |  |
+| cdr_boot | 469-484 |  |
+| cdr_attach | 485-496 |  |
+| cdr_detach | 497-505 |  |
+| cdr_help | 506-517 |  |
+| cdr_description | 518-530 |  |
+| cdp_ini | 531-541 |  |
+| cdp_srv | 542-614 |  |
+| cdp_attach | 615-625 |  |
+| cdp_detach | 626-637 |  |
+| cdp_help | 638-648 |  |
+| cdp_description | 649-659 |  |
+| lpr_ini | 660-674 |  |
+| lpr_setlpp | 675-695 |  |
+| lpr_getlpp | 696-704 |  |
+| print_line | 705-833 |  |
+| lpr_cmd | 834-870 |  |
+| lpr_srv | 871-903 |  |
+| lpr_attach | 904-921 |  |
+| lpr_detach | 922-931 |  |
+| lpr_help | 932-958 |  |
+| lpr_description | 959-973 |  |
+| con_ini | 974-983 |  |
+| con_cmd | 984-1016 |  |
+| con_srv | 1017-1104 |  |
+| con_help | 1105-1118 |  |
+| con_description | 1119-1125 |  |

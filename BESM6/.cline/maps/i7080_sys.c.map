@@ -1,0 +1,35 @@
+=== i7080_sys.c — 727 строк ===
+Источник: i7080_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7080_sys.c -nt .cline/maps/i7080_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_name | 38 | |
+| sim_PC | 40 | |
+| sim_emax | 42 | |
+| stack_dev | 45 | |
+| cdp_dib | 102 | |
+| cdr_dib | 105 | |
+| lpr_dib | 108 | |
+| con_dib | 111 | |
+| drm_dib | 114 | |
+| mt_dib | 117 | |
+| chron_dib | 120 | |
+| ht_dib | 123 | |
+| dsk_dib | 126 | |
+| com_dib | 129 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TYPE_A | 1       /* Standard memory opera... | 310 |
+| TYPE_B | 2       /* ASU encoded operation */ | 311 |
+| TYPE_C | 3       /* MA encoded operation ... | 312 |
+| TYPE_D | 4       /* MA + ASU fixed  MA < ... | 313 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| load_rec | 201-239 |  |
+| sim_load | 240-727 |  |

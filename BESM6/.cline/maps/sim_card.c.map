@@ -1,0 +1,49 @@
+=== sim_card.c — 1554 строк ===
+Источник: sim_card.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_card.c -nt .cline/maps/sim_card.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| hol_to_ebcdic | 405 | |
+| SCPE_OK | 1480 | |
+| stat | 1485 | |
+| cmd | 1487 | |
+| saved_filename | 1488 | |
+| card_image | 1489 | |
+| SIM_TEST_INIT | 1490 | |
+| stat | 1539 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CARD_EOF | 0x1000         /* This card is e... | 91 |
+| CARD_ERR | 0x2000         /* Return error f... | 92 |
+| DECK_SIZE | 1000           /* Number of card... | 93 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_bcd_to_hol | 440-484 |  |
+| sim_hol_to_bcd | 485-534 |  |
+| sim_ebcdic_to_hol | 535-542 |  |
+| sim_hol_to_ebcdic | 543-549 |  |
+| sim_hopper_size | 550-557 |  |
+| sim_punch_count | 558-565 |  |
+| sim_card_input_hopper_count | 566-581 |  |
+| sim_card_output_hopper_count | 582-592 |  |
+| sim_read_card | 593-647 |  |
+| sim_card_eof | 648-673 |  |
+| _cmpcard | 674-685 |  |
+| _sim_parse_card | 686-971 |  |
+| _sim_read_deck | 972-1057 |  |
+| sim_punch_card | 1058-1213 |  |
+| sim_card_set_fmt | 1214-1230 | Set card format |
+| sim_card_show_fmt | 1231-1246 |  |
+| sim_card_attach | 1247-1407 |  |
+| sim_card_detach | 1408-1427 |  |
+| sim_card_attach_help | 1428-1468 |  |
+| create_card_file | 1469-1482 |  |
+| sim_card_test | 1483-1543 |  |
+| sim_card_attach_help | 1544-1548 |  |
+| sim_card_test | 1549-1554 |  |

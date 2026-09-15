@@ -1,0 +1,30 @@
+=== tcp_subr.c — 926 строк ===
+Источник: tcp_subr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test tcp_subr.c -nt .cline/maps/tcp_subr.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tcpemu | 500 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TCP_DO_RFC1323 | 0 | 45 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| tcp_init | 51-57 |  |
+| tcp_cleanup | 58-71 |  |
+| tcp_template | 72-181 |  |
+| tcp_newtcpcb | 182-223 |  |
+| tcp_drop | 224-243 | then send a RST to peer. |
+| tcp_close | 244-288 |  |
+| tcp_sockclosed | 289-326 |  |
+| tcp_fconnect | 327-385 | not wait for ACK+SYN. |
+| tcp_connect | 386-470 | here and SYN the local-host. |
+| tcp_attach | 471-505 |  |
+| tcp_tos | 506-556 |  |
+| tcp_emu | 557-894 |  |
+| tcp_ctl | 895-926 | return 2 if this is a command-line connection |

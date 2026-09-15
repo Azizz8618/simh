@@ -1,0 +1,123 @@
+=== pdp11_dl.c — 979 строк ===
+Источник: pdp11_dl.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_dl.c -nt .cline/maps/pdp11_dl.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DL | 84-98 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 82 | |
+| dl_state | 103 | |
+| dlcj_state | 104 | |
+| dli_ireq | 106 | |
+| dlcji_ireq | 107 | |
+| dlo_ireq | 108 | |
+| dlcjo_ireq | 109 | |
+| dli_unit | 157 | |
+| dlcji_unit | 159 | |
+| dlo_unit | 266 | |
+| dlcjo_unit | 268 | |
+| ln | 338 | |
+| ln | 351 | |
+| uptr | 359 | |
+| SCPE_OK | 398 | |
+| uptr | 403 | |
+| SCPE_NXM | 477 | |
+| ln | 486 | |
+| SCPE_OK | 565 | |
+| ln | 627 | |
+| ln | 680 | |
+| ln | 706 | |
+| dl->o_csr | 758 | |
+| SCPE_OK | 779 | |
+| newln | 858 | |
+| tmxr->lines | 890 | |
+| SCPE_OK | 901 | |
+| modes | 908 | |
+| SCPE_OK | 911 | |
+| SCPE_OK | 970 | |
+| desc | 975 | |
+| desc | 978 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DLX_MAXMUX | (dlx_desc.lines - 1) | 48 |
+| DLI_RCI | 0                               ... | 49 |
+| DLI_DSI | 1                               ... | 50 |
+| DLX_V_MDM | (TTUF_V_UF + 0) | 54 |
+| DLX_MDM | (1u << DLX_V_MDM) | 55 |
+| DLICSR_DSI | 0100000                         ... | 59 |
+| DLICSR_RNG | 0040000                         ... | 60 |
+| DLICSR_CTS | 0020000                         ... | 61 |
+| DLICSR_CDT | 0010000                         ... | 62 |
+| DLICSR_SEC | 0002000                         ... | 63 |
+| DLICSR_DSIE | 0000040                         ... | 64 |
+| DLICSR_SECX | 0000010                         ... | 65 |
+| DLICSR_RTS | 0000004                         ... | 66 |
+| DLICSR_DTR | 0000002                         ... | 67 |
+| DLICSR_RD | (CSR_DONE\|CSR_IE)               ... | 68 |
+| DLICSR_WR | (CSR_IE) | 69 |
+| DLICSR_RD_M | (DLICSR_DSI\|DLICSR_RNG\|DLICSR_CT... | 70 |
+| DLICSR_WR_M | (CSR_IE\|DLICSR_DSIE\|DLICSR_SECX\|... | 72 |
+| DLIBUF_ERR | 0100000 | 73 |
+| DLIBUF_OVR | 0040000 | 74 |
+| DLIBUF_RBRK | 0020000 | 75 |
+| DLIBUF_RD | (DLIBUF_ERR\|DLIBUF_OVR\|DLIBUF_RB... | 76 |
+| DLOCSR_MNT | 0000004                         ... | 77 |
+| DLOCSR_XBR | 0000001                         ... | 78 |
+| DLOCSR_RD | (CSR_DONE\|CSR_IE\|DLOCSR_MNT\|DLOC... | 79 |
+| DLOCSR_WR | (CSR_IE\|DLOCSR_MNT\|DLOCSR_XBR) | 80 |
+| IOLN_DL | 010 | 145 |
+| DBG_REG | 0x0001                          ... | 224 |
+| DBG_INT | 0x0002                          ... | 225 |
+| DBG_TRC | TMXR_DBG_TRC                    ... | 226 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dlx_unit_from_pa | 336-340 |  |
+| if | 341-345 |  |
+| if | 346-356 |  |
+| dlx_rd | 357-365 |  |
+| switch | 366-400 |  |
+| dlx_wr | 401-411 |  |
+| switch | 412-481 |  |
+| dli_svc | 482-492 |  |
+| if | 493-504 |  |
+| for | 505-541 |  |
+| dlo_svc | 542-548 |  |
+| if | 549-569 |  |
+| dlx_SET_INT | 570-585 |  |
+| dlx_CLR_INT | 586-601 |  |
+| dli_clr_int | 602-614 |  |
+| dli_set_int | 615-624 |  |
+| dlxi_iack | 625-630 |  |
+| for | 631-641 |  |
+| dli_iack | 642-646 |  |
+| dlcji_iack | 647-652 |  |
+| dlo_clr_int | 653-665 |  |
+| dlo_set_int | 666-675 |  |
+| dlxo_iack | 676-681 |  |
+| for | 682-691 |  |
+| dlo_iack | 692-696 |  |
+| dlcjo_iack | 697-703 |  |
+| dlx_reset | 704-713 |  |
+| if | 714-745 |  |
+| dlx_reset_ln | 746-766 |  |
+| dlx_attach | 767-783 |  |
+| dlx_detach | 784-801 |  |
+| dlx_tu58_count | 802-814 |  |
+| dlx_enbdis | 815-816 |  |
+| if | 817-855 |  |
+| dlx_set_lines | 856-869 |  |
+| if | 870-896 |  |
+| dl_set_mode | 897-905 |  |
+| dl_show_mode | 906-913 |  |
+| dlx_devices | 914-924 |  |
+| dlx_help | 925-972 |  |
+| dlx_description | 973-979 |  |

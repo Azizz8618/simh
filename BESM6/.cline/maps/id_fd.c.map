@@ -1,0 +1,106 @@
+=== id_fd.c — 525 строк ===
+Источник: id_fd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test id_fd.c -nt .cline/maps/id_fd.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 109 | |
+| fd_dib | 150 | |
+| uptr | 208 | |
+| uptr | 212 | |
+| SCPE_OK | 406 | |
+| return | 420 | |
+| fd_es | 431 | |
+| return | 432 | |
+| FALSE | 453 | |
+| crc | 469 | |
+| uptr | 477 | |
+| fd_db | 481 | |
+| fd_bptr | 482 | |
+| fd_lrn | 483 | |
+| fd_wdv | 484 | |
+| SCPE_OK | 494 | |
+| PC | 523 | |
+| SCPE_OK | 524 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FD_NUMTR | 77                              ... | 42 |
+| FD_NUMSC | 26                              ... | 43 |
+| FD_NUMBY | 128                             ... | 44 |
+| FD_NUMLRN | (FD_NUMTR * FD_NUMSC)           ... | 45 |
+| FD_SIZE | (FD_NUMLRN * FD_NUMBY)          ... | 46 |
+| FD_NUMDR | 4                               ... | 47 |
+| LRN | u3                              ... | 48 |
+| FNC | u4                              ... | 49 |
+| GET_DA(x) | (((x) - 1) * FD_NUMBY) | 50 |
+| GET_TRK(x) | (((x) - 1) / FD_NUMSC) | 51 |
+| GET_SEC(x) | ((((x) - 1) % FD_NUMSC) + 1) | 52 |
+| LRN_BOOT | 5                               ... | 53 |
+| CMD_V_UNIT | 4                               ... | 57 |
+| CMD_M_UNIT | 0x3 | 58 |
+| GET_UNIT(x) | (((x) >> CMD_V_UNIT) & CMD_M_UNIT) | 59 |
+| CMD_V_FNC | 0                               ... | 60 |
+| CMD_M_FNC | 0xF | 61 |
+| GET_FNC(x) | (((x) >> CMD_V_FNC) & CMD_M_FNC) | 62 |
+| FNC_RD | 0x1                             ... | 63 |
+| FNC_WR | 0x2                             ... | 64 |
+| FNC_RDID | 0x3                             ... | 65 |
+| FNC_RSTA | 0x4                             ... | 66 |
+| FNC_DEL | 0x5                             ... | 67 |
+| FNC_BOOT | 0x6                             ... | 68 |
+| FNC_STOP | 0x7                             ... | 69 |
+| FNC_RESET | 0x8                             ... | 70 |
+| FNC_FMT | 0x9                             ... | 71 |
+| FNC_STOPPING | 0x10                            ... | 72 |
+| STA_WRP | 0x80                            ... | 76 |
+| STA_DEF | 0x40                            ... | 77 |
+| STA_DLR | 0x20                            ... | 78 |
+| STA_ERR | 0x10                            ... | 79 |
+| STA_IDL | 0x02                            ... | 80 |
+| STA_OFL | 0x01                            ... | 81 |
+| STA_MASK | (STA_DEF\|STA_DLR\|STA_ERR\|STA_BSY... | 82 |
+| SET_EX | (STA_ERR)                       ... | 83 |
+| ES_SIZE | 6 | 87 |
+| ES0_HCRC | 0x80                            ... | 88 |
+| ES0_DCRC | 0x40                            ... | 89 |
+| ES0_LRN | 0x20                            ... | 90 |
+| ES0_WRP | 0x10                            ... | 91 |
+| ES0_ERR | 0x08                            ... | 92 |
+| ES0_DEF | 0x04                            ... | 93 |
+| ES0_DEL | 0x02                            ... | 94 |
+| ES0_FLT | 0x01                            ... | 95 |
+| ES1_TK0 | 0x80                            ... | 96 |
+| ES1_NRDY | 0x40                            ... | 97 |
+| ES1_NOAM | 0x20                            ... | 98 |
+| ES1_CMD | 0x10                            ... | 99 |
+| ES1_SKE | 0x08                            ... | 100 |
+| ES1_UNS | 0x04                            ... | 101 |
+| ES1_UNIT | 0x03                            ... | 102 |
+| C_RD | 0x1                             ... | 106 |
+| C_WD | 0x2                             ... | 107 |
+| BOOT_START | 0x50 | 507 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (uin... | 508 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| fd | 205-212 |  |
+| switch | 213-304 |  |
+| fd_svc | 305-311 |  |
+| switch | 312-398 |  |
+| if | 399-410 |  |
+| sched_seek | 411-424 |  |
+| fd_done | 425-436 |  |
+| fd_dte | 437-440 |  |
+| if | 441-444 |  |
+| if | 445-448 |  |
+| if | 449-457 |  |
+| fd_crc | 458-461 |  |
+| for | 462-473 |  |
+| fd_clr | 474-485 |  |
+| for | 486-496 |  |
+| fd_reset | 497-514 |  |
+| fd_boot | 515-525 |  |

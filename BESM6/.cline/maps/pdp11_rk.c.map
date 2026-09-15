@@ -1,0 +1,181 @@
+=== pdp11_rk.c — 1016 строк ===
+Источник: pdp11_rk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_rk.c -nt .cline/maps/pdp11_rk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_req | 304 | |
+| rk_unit | 380 | |
+| uptr | 443 | |
+| SCPE_OK | 496 | |
+| SCPE_OK | 555 | |
+| uptr | 563 | |
+| return | 632 | |
+| sectsread | 647 | |
+| da | 648 | |
+| ma | 649 | |
+| comp | 650 | |
+| err | 693 | |
+| uptr->CYL | 789 | |
+| SCPE_OK | 797 | |
+| return | 827 | |
+| return | 836 | |
+| uptr | 865 | |
+| inited | 866 | |
+| rkcs | 878 | |
+| rkda | 879 | |
+| rkintq | 880 | |
+| SCPE_NOFNC | 914 | |
+| SCPE_OK | 960 | |
+| SCPE_OK | 1010 | |
+| controller" | 1015 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DMASK | 0xFFFF | 72 |
+| RK_DIS | DEV_DIS | 73 |
+| RK_DIS | 0 | 77 |
+| RKCONTR | uint32                          ... | 86 |
+| RKWRDSZ | 18                              ... | 87 |
+| MAP_RDW(a,b,c) | Map_Read18 (a, b, c) | 88 |
+| MAP_WRW(a,b,c) | Map_Write18 (a, b, c) | 89 |
+| RKCONTR | uint16 | 93 |
+| RKWRDSZ | 16 | 94 |
+| MAP_RDW(a,b,c) | Map_ReadW (a, b, c) | 95 |
+| MAP_WRW(a,b,c) | Map_WriteW (a, b, c) | 96 |
+| RK_NUMWD | 256                             ... | 100 |
+| RK_NUMSC | 12                              ... | 101 |
+| RK_NUMSF | 2                               ... | 102 |
+| RK_NUMCY | 203                             ... | 103 |
+| RK_NUMTR | (RK_NUMCY * RK_NUMSF)           ... | 104 |
+| RK_NUMDR | 8                               ... | 105 |
+| RK_M_NUMDR | 07 | 106 |
+| RK_SIZE | (RK_NUMCY * RK_NUMSF * RK_NUMSC)... | 107 |
+| RK_RSRVSEC | (3 * RK_NUMSF * RK_NUMSC)       ... | 108 |
+| RK_CTLI | 1                               ... | 109 |
+| RK_SCPI(x) | (2u << (x))                     ... | 110 |
+| RK_MAXFR | (1 << 16)                       ... | 111 |
+| RK_DRV(d) |  | 113 |
+| UNIT_V_SWLK | (DKUF_V_UF + 0)                 ... | 125 |
+| UNIT_HWLK | UNIT_WPRT | 126 |
+| UNIT_SWLK | (1u << UNIT_V_SWLK) | 127 |
+| CYL | u3                              ... | 131 |
+| FUNC | u4                              ... | 132 |
+| RKDS_SC | 0000017                         ... | 137 |
+| RKDS_ON_SC | 0000020                         ... | 139 |
+| RKDS_WLK | 0000040                         ... | 141 |
+| RKDS_RWS | 0000100                         ... | 143 |
+| RKDS_RDY | 0000200                         ... | 145 |
+| RKDS_SC_OK | 0000400                         ... | 147 |
+| RKDS_INC | 0001000                         ... | 149 |
+| RKDS_UNSAFE | 0002000                         ... | 151 |
+| RKDS_RK05 | 0004000                         ... | 153 |
+| RKDS_PWR | 0010000                         ... | 155 |
+| RKDS_ID | 0160000                         ... | 157 |
+| RKDS_V_ID | 13 | 158 |
+| RKER_WCE | 0000001                         ... | 166 |
+| RKER_CSE | 0000002                         ... | 168 |
+| RKER_NXS | 0000040                         ... | 170 |
+| RKER_NXC | 0000100                         ... | 172 |
+| RKER_NXD | 0000200                         ... | 174 |
+| RKER_TE | 0000400                         ... | 176 |
+| RKER_DLT | 0001000                         ... | 178 |
+| RKER_NXM | 0002000                         ... | 180 |
+| RKER_PGE | 0004000                         ... | 182 |
+| RKER_SKE | 0010000                         ... | 184 |
+| RKER_WLK | 0020000                         ... | 186 |
+| RKER_OVR | 0040000                         ... | 188 |
+| RKER_DRE | 0100000                         ... | 190 |
+| RKER_IMP | 0177743                         ... | 192 |
+| RKER_SOFT | (RKER_WCE+RKER_CSE)             ... | 193 |
+| RKER_HARD | 0177740                         ... | 194 |
+| RKCS_M_FUNC | 0000007                         ... | 205 |
+| RKCS_CTLRESET | 0 | 206 |
+| RKCS_WRITE | 1 | 207 |
+| RKCS_READ | 2 | 208 |
+| RKCS_WCHK | 3 | 209 |
+| RKCS_SEEK | 4 | 210 |
+| RKCS_RCHK | 5 | 211 |
+| RKCS_DRVRESET | 6 | 212 |
+| RKCS_WLK | 7 | 213 |
+| RKCS_V_FUNC | 1 | 214 |
+| RKCS_MEX | 0000060                         ... | 216 |
+| RKCS_V_MEX | 4 | 217 |
+| RKCS_SSE | 0000400                         ... | 221 |
+| RKCS_FMT | 0002000                         ... | 224 |
+| RKCS_INH | 0004000                         ... | 226 |
+| RKCS_SCP | 0020000                         ... | 229 |
+| RKCS_HERR | 0040000                         ... | 231 |
+| RKCS_ERR | 0100000                         ... | 233 |
+| RKCS_REAL | 0026776                         ... | 235 |
+| RKCS_RW | 0006576                         ... | 236 |
+| GET_FUNC(x) | (((x) >> RKCS_V_FUNC) & RKCS_M_F... | 237 |
+| RKDA_V_SECT | 0                               ... | 244 |
+| RKDA_M_SECT | 017 | 245 |
+| RKDA_V_TRACK | 4                               ... | 247 |
+| RKDA_M_TRACK | 0777 | 248 |
+| RKDA_V_CYL | 5                               ... | 250 |
+| RKDA_M_CYL | 0377 | 251 |
+| RKDA_V_DRIVE | 13                              ... | 253 |
+| RKDA_M_DRIVE | 07 | 254 |
+| RKDA_DRIVE | (RKDA_M_DRIVE << RKDA_V_DRIVE) | 255 |
+| GET_SECT(x) | (((x) >> RKDA_V_SECT) & RKDA_M_S... | 257 |
+| GET_CYL(x) | (((x) >> RKDA_V_CYL) & RKDA_M_CYL) | 258 |
+| GET_TRACK(x) | (((x) >> RKDA_V_TRACK) & RKDA_M_... | 259 |
+| GET_DRIVE(x) | (((x) >> RKDA_V_DRIVE) & RKDA_M_... | 260 |
+| GET_DA(x) | ((GET_TRACK (x) * RK_NUMSC) + GE... | 261 |
+| RKBA_IMP | 0177776                         ... | 275 |
+| RKDEB_OPS | 001                             ... | 293 |
+| RKDEB_RRD | 002                             ... | 294 |
+| RKDEB_RWR | 004                             ... | 295 |
+| RKDEB_TRC | 010                             ... | 296 |
+| RKDEB_INT | 020                             ... | 297 |
+| RKDEB_DAT | 0100                            ... | 298 |
+| RK_MIN | 10 | 301 |
+| MAX(x,y) | (((x) > (y))? (x): (y)) | 302 |
+| IOLN_RK | 020 | 373 |
+| BOOT_START | 02000                           ... | 919 |
+| BOOT_ENTRY | (BOOT_START + 002)              ... | 920 |
+| BOOT_UNIT | (BOOT_START + 010)              ... | 921 |
+| BOOT_CSR | (BOOT_START + 032)              ... | 922 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 923 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rk_rd | 441-444 |  |
+| switch | 445-498 |  |
+| rk_wr | 499-502 |  |
+| switch | 503-559 |  |
+| rk_go | 560-565 |  |
+| if | 566-582 |  |
+| if | 583-601 |  |
+| if | 602-606 |  |
+| if | 607-615 |  |
+| if | 616-619 |  |
+| if | 620-624 |  |
+| if | 625-643 |  |
+| rk_svc | 644-653 |  |
+| if | 654-670 |  |
+| if | 671-676 |  |
+| if | 677-680 |  |
+| if | 681-687 |  |
+| if | 688-693 |  |
+| if | 694-792 |  |
+| if | 793-806 |  |
+| rk_set_done | 807-809 |  |
+| if | 810-816 |  |
+| if | 817-829 |  |
+| rk_clr_done | 830-838 |  |
+| rk_inta | 839-842 |  |
+| for | 843-861 |  |
+| rk_reset | 862-867 |  |
+| if | 868-882 |  |
+| for | 883-898 |  |
+| rk_attach | 899-911 |  |
+| rk_boot | 912-950 |  |
+| rk_boot | 951-964 |  |
+| rk_help | 965-1012 |  |
+| rk_description | 1013-1016 |  |

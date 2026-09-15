@@ -1,0 +1,44 @@
+=== wd_17xx.c — 867 строк ===
+Источник: wd_17xx.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test wd_17xx.c -nt .cline/maps/wd_17xx.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sbuf | 40 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| WD17XX_NAME | "WD17XX" | 38 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| wd17xx_init | 50-65 |  |
+| wd17xx_release | 66-74 |  |
+| wd17xx_reset | 75-91 |  |
+| wd17xx_set_intena | 92-97 |  |
+| wd17xx_set_intvec | 98-103 |  |
+| wd17xx_set_verbose_flag | 104-110 |  |
+| wd17xx_set_error_flag | 111-117 |  |
+| wd17xx_set_command_flag | 118-124 |  |
+| wd17xx_set_read_flag | 125-131 |  |
+| wd17xx_set_write_flag | 132-138 |  |
+| wd17xx_set_format_flag | 139-145 |  |
+| wd17xx_sel_dden | 146-152 |  |
+| wd17xx_sel_side | 153-160 |  |
+| wd17xx_sel_drive_type | 161-167 |  |
+| wd17xx_intrq | 168-176 |  |
+| wd17xx_set_fdctype | 177-183 |  |
+| wd17xx_set_dsk | 184-190 |  |
+| wd17xx_inp | 191-275 |  |
+| wd17xx_outp | 276-450 |  |
+| wd17xx_command | 451-770 |  |
+| wd17xx_read_sector | 771-797 |  |
+| wd17xx_write_sector | 798-810 |  |
+| wd17xx_valid | 811-816 |  |
+| wd17xx_sec_len | 817-837 | Convert sector size to sector length field |
+| wd17xx_set_intrq | 838-843 |  |
+| wd17xx_set_drq | 844-849 |  |
+| wd17xx_show | 850-867 |  |

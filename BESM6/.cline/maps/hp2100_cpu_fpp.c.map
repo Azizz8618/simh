@@ -1,0 +1,175 @@
+=== hp2100_cpu_fpp.c — 1471 строк ===
+Источник: hp2100_cpu_fpp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_cpu_fpp.c -nt .cline/maps/hp2100_cpu_fpp.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| FPU | 352-356 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mask | 370 | |
+| bits_lost | 371 | |
+| bits_lost | 381 | |
+| mask | 393 | |
+| bits_lost | 394 | |
+| bits_lost | 405 | |
+| unpacked | 418 | |
+| unpacked | 450 | |
+| unpacked | 480 | |
+| packed | 489 | |
+| packed | 507 | |
+| packed | 520 | |
+| exp | 521 | |
+| packed | 550 | |
+| return | 571 | |
+| overflow | 604 | |
+| sign | 605 | |
+| overflow | 651 | |
+| overflow | 659 | |
+| overflow | 665 | |
+| return | 683 | |
+| magn | 700 | |
+| bits_lost | 701 | |
+| return | 737 | |
+| ah | 832 | |
+| hh | 833 | |
+| ch | 834 | |
+| firmware | 835 | |
+| return | 894 | |
+| sign | 936 | |
+| bh | 937 | |
+| firmware | 939 | |
+| ah | 940 | |
+| dh | 941 | |
+| return | 1033 | |
+| overflow | 1050 | |
+| bits_lost | 1051 | |
+| overflow | 1084 | |
+| return | 1103 | |
+| fp_size | 1128 | |
+| return | 1167 | |
+| accumulator | 1222 | |
+| uoperand_l | 1223 | |
+| op_l_prec | 1224 | |
+| overflow | 1225 | |
+| overflow | 1306 | |
+| result | 1325 | |
+| result | 1332 | |
+| unpacked | 1346 | |
+| unpacked | 1366 | |
+| unpacked | 1386 | |
+| unpacked | 1409 | |
+| unpacked | 1424 | |
+| bits_lost | 1436 | |
+| unpacked | 1437 | |
+| mask | 1440 | |
+| unpacked | 1463 | |
+| unpacked.precision | 1466 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IN_W_SIGN | 1 | 214 |
+| IN_W_SMAGN | 15 | 215 |
+| IN_W_DMAGN | 31 | 216 |
+| FP_W_MSIGN | 1 | 218 |
+| FP_W_FMANT | 23 | 219 |
+| FP_W_XMANT | 39 | 220 |
+| FP_W_TMANT | 55 | 221 |
+| FP_W_EMANT | 55 | 222 |
+| FP_W_EXPANDEXP | 9 | 223 |
+| FP_W_EXP | 7 | 224 |
+| FP_W_ESIGN | 1 | 225 |
+| IN_V_SIGN | (64 - IN_W_SIGN) | 229 |
+| IN_V_SNUM | (64 - IN_W_SIGN - IN_W_SMAGN) | 230 |
+| IN_V_DNUM | (64 - IN_W_SIGN - IN_W_DMAGN) | 231 |
+| FP_V_FNUM | (64 - FP_W_MSIGN - FP_W_FMANT - ... | 233 |
+| FP_V_XNUM | (64 - FP_W_MSIGN - FP_W_XMANT - ... | 234 |
+| FP_V_TNUM | (64 - FP_W_MSIGN - FP_W_TMANT - ... | 235 |
+| FP_V_ENUM | (64 - FP_W_MSIGN - FP_W_EMANT - ... | 236 |
+| FP_V_MSIGN | (64 - FP_W_MSIGN) | 238 |
+| FP_V_FMANT | (64 - FP_W_MSIGN - FP_W_FMANT) | 239 |
+| FP_V_XMANT | (64 - FP_W_MSIGN - FP_W_XMANT) | 240 |
+| FP_V_TMANT | (64 - FP_W_MSIGN - FP_W_TMANT) | 241 |
+| FP_V_EMANT | (64 - FP_W_MSIGN - FP_W_EMANT) | 242 |
+| FP_V_EXP | 1 | 243 |
+| FP_V_ESIGN | 0 | 244 |
+| IN_M_SIGN | (((t_uint64) 1 << IN_W_SIGN)  - 1) | 248 |
+| IN_M_SMAGN | (((t_uint64) 1 << IN_W_SMAGN) - 1) | 249 |
+| IN_M_DMAGN | (((t_uint64) 1 << IN_W_DMAGN) - 1) | 250 |
+| FP_M_MSIGN | (((t_uint64) 1 << FP_W_MSIGN) - 1) | 252 |
+| FP_M_FMANT | (((t_uint64) 1 << FP_W_FMANT) - 1) | 253 |
+| FP_M_XMANT | (((t_uint64) 1 << FP_W_XMANT) - 1) | 254 |
+| FP_M_TMANT | (((t_uint64) 1 << FP_W_TMANT) - 1) | 255 |
+| FP_M_EMANT | (((t_uint64) 1 << FP_W_EMANT) - 1) | 256 |
+| FP_M_EXPANDEXP | ((1 << FP_W_EXPANDEXP) - 1) | 258 |
+| FP_M_EXP | ((1 << FP_W_EXP) - 1) | 259 |
+| FP_M_ESIGN | ((1 << FP_W_ESIGN) - 1) | 260 |
+| IN_SIGN | (IN_M_SIGN << IN_V_SIGN) | 264 |
+| IN_SMAGN | (IN_M_SMAGN << IN_V_SNUM) | 265 |
+| IN_DMAGN | (IN_M_DMAGN << IN_V_DNUM) | 266 |
+| FP_MSIGN | (FP_M_MSIGN << FP_V_MSIGN) | 268 |
+| FP_FMANT | (FP_M_FMANT << FP_V_FMANT) | 269 |
+| FP_XMANT | (FP_M_XMANT << FP_V_XMANT) | 270 |
+| FP_TMANT | (FP_M_TMANT << FP_V_TMANT) | 271 |
+| FP_EMANT | (FP_M_EMANT << FP_V_EMANT) | 272 |
+| FP_EXP | (FP_M_EXP   << FP_V_EXP) | 273 |
+| FP_ESIGN | (FP_M_ESIGN << FP_V_ESIGN) | 274 |
+| IN_SSMAGN | (IN_SIGN \| IN_SMAGN) | 278 |
+| IN_SDMAGN | (IN_SIGN \| IN_DMAGN) | 279 |
+| FP_SFMANT | (FP_MSIGN \| FP_FMANT) | 281 |
+| FP_SXMANT | (FP_MSIGN \| FP_XMANT) | 282 |
+| FP_STMANT | (FP_MSIGN \| FP_TMANT) | 283 |
+| FP_SEMANT | (FP_MSIGN \| FP_EMANT) | 284 |
+| FP_SEXP | (FP_ESIGN \| FP_EXP) | 285 |
+| FP_ONEHALF | ((t_int64) 1 << (FP_V_MSIGN - 1)... | 289 |
+| FP_MAXPMANT | ((t_int64) FP_EMANT)            ... | 290 |
+| FP_MAXNMANT | ((t_int64) FP_MSIGN)            ... | 291 |
+| FP_MAXPEXP | (FP_M_EXPANDEXP)                ... | 292 |
+| FP_MAXNEXP | (-(FP_MAXPEXP + 1))             ... | 293 |
+| DENORM(x) | ((((x) ^ (x) << 1) & FP_MSIGN) =... | 297 |
+| TO_EXP(e) | (int8) ((e >> FP_V_EXP & FP_M_EX... | 299 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| { | 304-338 |  |
+| ~ | 339-367 |  |
+| asr | 368-372 |  |
+| if | 373-390 |  |
+| lsrx | 391-395 |  |
+| if | 396-414 |  |
+| unpack_int | 415-447 |  |
+| unpack | 448-456 |  |
+| switch | 457-485 |  |
+| pack_int | 486-517 |  |
+| pack | 518-527 |  |
+| switch | 528-560 |  |
+| normalize | 561-601 |  |
+| roundovf | 602-622 |  |
+| if | 623-656 |  |
+| nrpack | 657-674 |  |
+| complement | 675-676 |  |
+| if | 677-697 |  |
+| add | 698-829 |  |
+| multiply | 830-933 |  |
+| divide | 934-944 |  |
+| if | 945-1047 |  |
+| fix | 1048-1052 |  |
+| if | 1053-1097 |  |
+| ffloat | 1098-1125 |  |
+| fp_prec | 1126-1132 |  |
+| if | 1133-1219 |  |
+| fp_exec | 1220-1226 |  |
+| if | 1227-1254 |  |
+| switch | 1255-1322 |  |
+| fp_accum | 1323-1343 |  |
+| fp_pack | 1344-1363 |  |
+| fp_nrpack | 1364-1406 |  |
+| fp_ucom | 1407-1421 |  |
+| fp_pcom | 1422-1433 |  |
+| fp_trun | 1434-1460 |  |
+| fp_cvt | 1461-1471 |  |

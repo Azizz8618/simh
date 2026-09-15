@@ -1,0 +1,44 @@
+=== vax_ka420_rdrz_bin.h — 8261 строк ===
+Источник: vax_ka420_rdrz_bin.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_ka420_rdrz_bin.h -nt .cline/maps/vax_ka420_rdrz_bin.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ROM_vax_ka420_rdrz_bin_H | 0 | 2 |
+| BOOT_CODE_SIZE | 0x20000 | 10 |
+| BOOT_CODE_CHECKSUM | 0xFF747E93 | 11 |
+| BOOT_CODE_FILENAME | "ka420_rdrz.bin" | 12 |
+| BOOT_CODE_FILEPATH | "VAX/ka420_rdrz.bin" | 13 |
+| BOOT_CODE_ARRAY | NULL | 15 |
+| BOOT_CODE_ARRAY | vax_ka420_rdrz_bin | 17 |
+| BOOT_CODE_URL | NULL | 19 |
+| BOOT_CODE_SIZE_1 | 0x20000 | 22 |
+| BOOT_CODE_CHECKSUM_1 | 0xFF747E93 | 23 |
+| BOOT_CODE_FILENAME_1 | "ka420_rdrz.bin" | 24 |
+| BOOT_CODE_FILEPATH_1 | "VAX/ka420_rdrz.bin" | 25 |
+| BOOT_CODE_ARRAY_1 | NULL | 27 |
+| BOOT_CODE_ARRAY_1 | vax_ka420_rdrz_bin | 29 |
+| BOOT_CODE_URL_1 | NULL | 31 |
+| BOOT_CODE_SIZE_2 | 0x20000 | 33 |
+| BOOT_CODE_CHECKSUM_2 | 0xFF747E93 | 34 |
+| BOOT_CODE_FILENAME_2 | "ka420_rdrz.bin" | 35 |
+| BOOT_CODE_FILEPATH_2 | "VAX/ka420_rdrz.bin" | 36 |
+| BOOT_CODE_ARRAY_2 | NULL | 38 |
+| BOOT_CODE_ARRAY_2 | vax_ka420_rdrz_bin | 40 |
+| BOOT_CODE_URL_2 | NULL | 42 |
+| BOOT_CODE_SIZE_3 | 0x20000 | 44 |
+| BOOT_CODE_CHECKSUM_3 | 0xFF747E93 | 45 |
+| BOOT_CODE_FILENAME_3 | "ka420_rdrz.bin" | 46 |
+| BOOT_CODE_FILEPATH_3 | "VAX/ka420_rdrz.bin" | 47 |
+| BOOT_CODE_ARRAY_3 | NULL | 49 |
+| BOOT_CODE_ARRAY_3 | vax_ka420_rdrz_bin | 51 |
+| BOOT_CODE_URL_3 | NULL | 53 |
+| BOOT_CODE_SIZE_4 | 0x20000 | 55 |
+| BOOT_CODE_CHECKSUM_4 | 0xFF747E93 | 56 |
+| BOOT_CODE_FILENAME_4 | "ka420_rdrz.bin" | 57 |
+| BOOT_CODE_FILEPATH_4 | "VAX/ka420_rdrz.bin" | 58 |
+| BOOT_CODE_ARRAY_4 | NULL | 60 |
+| BOOT_CODE_ARRAY_4 | vax_ka420_rdrz_bin | 62 |
+| BOOT_CODE_URL_4 | NULL | 64 |
+

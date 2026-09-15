@@ -1,0 +1,92 @@
+=== pdp11_dc.c — 686 строк ===
+Источник: pdp11_dc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_dc.c -nt .cline/maps/pdp11_dc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 80 | |
+| dci_buf | 83 | |
+| dci_ireq | 84 | |
+| dco_buf | 86 | |
+| dco_ireq | 87 | |
+| SCPE_NXM | 305 | |
+| lp | 311 | |
+| SCPE_NXM | 379 | |
+| ln | 386 | |
+| SCPE_OK | 461 | |
+| return | 472 | |
+| return | 479 | |
+| ln | 484 | |
+| return | 501 | |
+| return | 508 | |
+| ln | 513 | |
+| ln | 528 | |
+| dci_csr | 548 | |
+| dco_csr | 550 | |
+| return | 554 | |
+| SCPE_OK | 566 | |
+| return | 595 | |
+| newln | 602 | |
+| dcx_desc.lines | 632 | |
+| SCPE_OK | 679 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DCX_MAXMUX | (dcx_desc.lines - 1) | 50 |
+| DCX_V_OPAR | (TTUF_V_UF + 0) | 54 |
+| DCX_V_EPAR | (TTUF_V_UF + 1) | 55 |
+| DCX_V_MDM | (TTUF_V_UF + 2) | 56 |
+| DCX_OPAR | (1u << DCX_V_OPAR) | 57 |
+| DCX_EPAR | (1u << DCX_V_EPAR) | 58 |
+| DCX_MDM | (1u << DCX_V_MDM) | 59 |
+| DCICSR_RD | 0173777 | 63 |
+| DCICSR_WR | 0003533 | 64 |
+| DCICSR_DTR | 0000001                         ... | 65 |
+| DCICSR_XBR | 0000002                         ... | 66 |
+| DCICSR_CDT | 0000004                         ... | 67 |
+| DCICSR_PAR | 0000040                         ... | 68 |
+| DCICSR_OVR | 0010000                         ... | 69 |
+| DCICSR_RNG | 0020000                         ... | 70 |
+| DCICSR_CCH | 0040000                         ... | 71 |
+| DCICSR_ALLERR | (DCICSR_OVR\|DCICSR_RNG\|DCICSR_CCH) | 72 |
+| DCICSR_ERR | 0100000                         ... | 73 |
+| DCOCSR_RD | 0100737 | 74 |
+| DCOCSR_WR | 0000535 | 75 |
+| DCOCSR_RTS | 0000001                         ... | 76 |
+| DCOCSR_CTS | 0000002                         ... | 77 |
+| DCOCSR_MNT | 0000004                         ... | 78 |
+| IOLN_DC | 010 | 152 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dcx_rd | 271-277 |  |
+| switch | 278-307 |  |
+| dcx_wr | 308-315 |  |
+| switch | 316-383 |  |
+| dci_svc | 384-390 |  |
+| if | 391-402 |  |
+| for | 403-438 |  |
+| dco_svc | 439-443 |  |
+| if | 444-465 |  |
+| dci_clr_int | 466-474 |  |
+| dci_set_int | 475-481 |  |
+| dci_iack | 482-485 |  |
+| for | 486-494 |  |
+| dco_clr_int | 495-503 |  |
+| dco_set_int | 504-510 |  |
+| dco_iack | 511-514 |  |
+| for | 515-525 |  |
+| dcx_reset | 526-529 |  |
+| for | 530-544 |  |
+| dcx_reset_ln | 545-558 |  |
+| dcx_attach | 559-570 |  |
+| dcx_detach | 571-584 |  |
+| dcx_enbdis | 585-586 |  |
+| if | 587-599 |  |
+| dcx_set_lines | 600-611 |  |
+| if | 612-636 |  |
+| dcx_help | 637-681 |  |
+| dcx_description | 682-686 |  |

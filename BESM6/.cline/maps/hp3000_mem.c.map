@@ -1,0 +1,73 @@
+=== hp3000_mem.c — 1053 строк ===
+Источник: hp3000_mem.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_mem.c -nt .cline/maps/hp3000_mem.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| ACCESS_PROPERTIES | 173-177 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| address | 298 | |
+| address | 318 | |
+| return | 323 | |
+| bank | 377 | |
+| bank | 508 | |
+| return | 628 | |
+| bank | 661 | |
+| return | 701 | |
+| byte_offset | 721 | |
+| byte | 760 | |
+| byte | 786 | |
+| return | 829 | |
+| return | 856 | |
+| return | 885 | |
+| target_word | 904 | |
+| return | 914 | |
+| buffer | 940 | |
+| cptr | 941 | |
+| address | 942 | |
+| bptr | 984 | |
+| index | 985 | |
+| hex | 1027 | |
+| buffer | 1028 | |
+| byte_count | 1029 | |
+| bptr | 1030 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mem_examine | 224-252 |  |
+| mem_deposit | 253-277 |  |
+| mem_initialize | 278-295 |  |
+| mem_is_empty | 296-315 |  |
+| mem_fill | 316-374 |  |
+| mem_read | 375-378 |  |
+| if | 379-389 |  |
+| if | 390-505 |  |
+| mem_write | 506-509 |  |
+| if | 510-520 |  |
+| if | 521-610 |  |
+| mem_init_byte | 611-658 |  |
+| mem_set_byte | 659-664 |  |
+| if | 665-718 |  |
+| mem_lookup_byte | 719-727 |  |
+| if | 728-757 |  |
+| mem_read_byte | 758-761 |  |
+| if | 762-806 |  |
+| mem_write_byte | 807-808 |  |
+| if | 809-841 |  |
+| mem_modify_byte | 842-843 |  |
+| if | 844-876 |  |
+| mem_post_byte | 877-878 |  |
+| if | 879-901 |  |
+| mem_update_byte | 902-905 |  |
+| if | 906-937 |  |
+| fmt_byte_operand | 938-981 |  |
+| fmt_translated_byte_operand | 982-990 |  |
+| while | 991-1024 |  |
+| fmt_bcd_operand | 1025-1039 |  |
+| if | 1040-1044 |  |
+| while | 1045-1053 |  |

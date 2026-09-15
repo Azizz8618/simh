@@ -1,0 +1,30 @@
+=== vttest.c — 1465 строк ===
+Источник: vttest.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vttest.c -nt .cline/maps/vttest.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TEST_DIS | DIS_VR48 | 28 |
+| TEST_RES | RES_HALF | 32 |
+| USEC | 3                       /* simul... | 44 |
+| JMPA | 0160000                 /* first... | 47 |
+| SUPSCR | 021                     /* SUPER... | 49 |
+| SUBSCR | 022                     /* SUBSC... | 50 |
+| ENDSUP | 023                     /* END S... | 51 |
+| ENDSUB | 024                     /* END S... | 52 |
+| ENDSECT | LSRA(ST_STOP,SI_GENERATE,LI_SAME... | 61 |
+| ENDFILE | LSRA(ST_STOP,SI_GENERATE,LI_SAME... | 62 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| wf_update | 1226-1287 |  |
+| main | 1288-1383 |  |
+| cpu_get_switches | 1384-1388 |  |
+| cpu_set_switches | 1389-1396 |  |
+| vt_fetch | 1397-1402 |  |
+| vt_stop_intr | 1403-1431 |  |
+| vt_lpen_intr | 1432-1452 |  |
+| vt_char_intr | 1453-1459 |  |
+| vt_name_intr | 1460-1465 |  |

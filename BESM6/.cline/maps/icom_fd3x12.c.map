@@ -1,0 +1,123 @@
+=== icom_fd3x12.c — 1451 строк ===
+Источник: icom_fd3x12.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test icom_fd3x12.c -nt .cline/maps/icom_fd3x12.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| ICOM_REG | 492-503 |
+| ICOM_INFO | 546-553 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| poc | 215 | |
+| icom_res | 217 | |
+| mdev | 218 | |
+| dsk_info | 219 | |
+| icom_mem | 221 | |
+| prom_enabled | 543 | |
+| board_type | 544 | |
+| icom_info | 555 | |
+| rdata | 562 | |
+| wdata | 563 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 191 |
+| DBG_PRINT(args) |  | 193 |
+| ICOM_NUM_DRIVES | 4 | 196 |
+| ICOM_SD_SECTOR_LEN | 128 | 197 |
+| ICOM_DD_SECTOR_LEN | 256 | 198 |
+| ICOM_SPT | 26 | 199 |
+| ICOM_TRACKS | 77 | 200 |
+| ICOM_HEADS | 1 | 201 |
+| ICOM_SD_CAPACITY | (256256)      /* Default iCOM Si... | 202 |
+| ICOM_DD_CAPACITY | (509184)      /* Default iCOM Do... | 203 |
+| ICOM_IO_BASE | 0xc0 | 205 |
+| ICOM_IO_SIZE | 2 | 206 |
+| ICOM_PROM_BASE | 0xf000 | 208 |
+| ICOM_PROM_SIZE | 1024 | 209 |
+| ICOM_PROM_MASK | (ICOM_PROM_SIZE-1) | 210 |
+| ICOM_MEM_BASE | 0xf400             /* Must be on... | 211 |
+| ICOM_MEM_SIZE | 256                /* Must occup... | 212 |
+| ICOM_MEM_MASK | (ICOM_MEM_SIZE-1) | 213 |
+| ICOM_REG_COMMAND | 0x00 | 506 |
+| ICOM_REG_DATAI | 0x00 | 507 |
+| ICOM_REG_DATAO | 0x01 | 508 |
+| ICOM_CMD_STATUS | 0x00 | 511 |
+| ICOM_CMD_CMDMSK | 0x01 | 512 |
+| ICOM_CMD_READ | 0x03 | 513 |
+| ICOM_CMD_WRITE | 0x05 | 514 |
+| ICOM_CMD_READCRC | 0x07 | 515 |
+| ICOM_CMD_SEEK | 0x09 | 516 |
+| ICOM_CMD_CLRERRFLGS | 0x0b | 517 |
+| ICOM_CMD_TRACK0 | 0x0d | 518 |
+| ICOM_CMD_WRITEDDM | 0x0f | 519 |
+| ICOM_CMD_LDTRACK | 0x11 | 520 |
+| ICOM_CMD_LDUNITSEC | 0x21 | 521 |
+| ICOM_CMD_LDWRITEBUFOS | 0x30 /* 3812 One-Shot Write */ | 522 |
+| ICOM_CMD_LDWRITEBUF | 0x31 | 523 |
+| ICOM_CMD_EXREADBUF | 0x40 | 524 |
+| ICOM_CMD_SHREADBUF | 0x41 | 525 |
+| ICOM_CMD_CLEAR | 0x81 | 526 |
+| ICOM_CMD_LDCONF | 0x15 /* 3812 Load Configuration */ | 527 |
+| ICOM_STAT_BUSY | 0x01 | 529 |
+| ICOM_STAT_UNITMSK | 0x06 | 530 |
+| ICOM_STAT_CRC | 0x08 | 531 |
+| ICOM_STAT_WRITEPROT | 0x10 | 532 |
+| ICOM_STAT_DRVFAIL | 0x20 | 533 |
+| ICOM_STAT_MEDIASTAT | 0x40 | 534 |
+| ICOM_STAT_DDM | 0x80 | 535 |
+| ICOM_CONF_DD | 0x10 /* 3812 Double Density */ | 537 |
+| ICOM_CONF_FM | 0x20 /* 3812 Format Mode */ | 538 |
+| ICOM_TYPE_3712 | 0x00 | 540 |
+| ICOM_TYPE_3812 | 0x01 | 541 |
+| DATA_MASK | ICOM_DD_SECTOR_LEN-1 | 560 |
+| ICOM_NAME | "iCOM 3712/3812 Floppy Disk System" | 620 |
+| DEV_NAME | "ICOM" | 621 |
+| UNIT_V_ICOM_WPROTECT | (UNIT_V_UF + 1)                 ... | 627 |
+| UNIT_ICOM_WPROTECT | (1 << UNIT_V_ICOM_WPROTECT) | 628 |
+| VERBOSE_MSG | (1 << 0) | 645 |
+| ERROR_MSG | (1 << 1) | 646 |
+| RBUF_MSG | (1 << 2) | 647 |
+| WBUF_MSG | (1 << 3) | 648 |
+| CMD_MSG | (1 << 4) | 649 |
+| RD_DATA_MSG | (1 << 5) | 650 |
+| WR_DATA_MSG | (1 << 6) | 651 |
+| STATUS_MSG | (1 << 7) | 652 |
+| RD_DATA_DETAIL_MSG | (1 << 8) | 653 |
+| WR_DATA_DETAIL_MSG | (1 << 9) | 654 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| icom_description | 623-700 |  |
+| icom_reset | 701-765 | Reset routine |
+| icom_svc | 766-773 | Service routine |
+| icom_attach | 774-818 | Attach routine |
+| icom_detach | 819-846 | Detach routine |
+| icom_set_type | 847-866 |  |
+| icom_show_type | 867-873 |  |
+| icom_boot | 874-882 |  |
+| icom_set_busy | 883-890 |  |
+| icom_set_crc | 891-919 | Set CRC flag if trying to read/write wrong density |
+| icom_io | 920-928 |  |
+| icom_io_read | 929-962 |  |
+| icom_io_write | 963-994 |  |
+| showReadSec | 995-1014 |  |
+| showWriteSec | 1015-1034 |  |
+| ICOM_ReadSector | 1035-1056 |  |
+| ICOM_WriteSector | 1057-1078 |  |
+| ICOM_FormatTrack | 1079-1099 | 3812 Only |
+| ICOM_DriveNotReady | 1100-1111 |  |
+| ICOM_CommandString | 1112-1169 |  |
+| ICOM_Command | 1170-1361 |  |
+| icom_set_prom | 1362-1378 |  |
+| icom_show_prom | 1379-1385 |  |
+| icom_enable_prom | 1386-1398 |  |
+| icom_disable_prom | 1399-1413 |  |
+| icom_promio | 1414-1426 |  |
+| icom_memio | 1427-1440 |  |
+| icom_show_help | 1441-1451 |  |

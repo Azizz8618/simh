@@ -1,0 +1,212 @@
+=== sigma_cpu.c — 2861 строк ===
+Источник: sigma_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sigma_cpu.c -nt .cline/maps/sigma_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 149-158 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PSW2 | 165 | |
+| CC | 167 | |
+| PC | 168 | |
+| cons_pcf | 176 | |
+| ir | 419 | |
+| reason | 420 | |
+| reason | 426 | |
+| reason | 518 | |
+| op | 525 | |
+| res | 526 | |
+| sa | 527 | |
+| sop | 528 | |
+| mprot | 529 | |
+| IR | 1794 | |
+| IR | 1840 | |
+| TR_INVTRP | 1878 | |
+| ad | 1899 | |
+| tr | 1900 | |
+| pa | 1929 | |
+| ad | 1951 | |
+| opnd1 | 1978 | |
+| cc | 1979 | |
+| cc | 2154 | |
+| CC | 2167 | |
+| ah | 2177 | |
+| al | 2191 | |
+| bl | 2192 | |
+| rmid1 | 2194 | |
+| rmid2 | 2195 | |
+| rlo | 2196 | |
+| rhi | 2204 | |
+| rhi | 2214 | |
+| quos | 2221 | |
+| rems | 2222 | |
+| spc | 2260 | |
+| cc | 2261 | |
+| cc | 2263 | |
+| CC | 2276 | |
+| tr | 2289 | |
+| wa | 2308 | |
+| tr | 2309 | |
+| wd1 | 2316 | |
+| wd3 | 2317 | |
+| bva | 2320 | |
+| tr | 2340 | |
+| tr | 2373 | |
+| tr | 2418 | |
+| rp1 | 2447 | |
+| rp1 | 2469 | |
+| SCPE_OK | 2477 | |
+| npc | 2484 | |
+| BVAMASK | 2488 | |
+| return | 2509 | |
+| cpu_pdf | 2517 | |
+| cons_alarm | 2518 | |
+| cons_pcf | 2519 | |
+| wait_state | 2520 | |
+| SCPE_IERR | 2528 | |
+| lnt | 2538 | |
+| lnt | 2546 | |
+| SCPE_OK | 2553 | |
+| lnt | 2560 | |
+| lnt | 2568 | |
+| SCPE_OK | 2575 | |
+| cpu_model | 2595 | |
+| rf_bmax | 2597 | |
+| SCPE_OK | 2599 | |
+| mc | 2606 | |
+| MEMSIZE | 2617 | |
+| SCPE_OK | 2620 | |
+| SCPE_OK | 2630 | |
+| SCPE_OK | 2638 | |
+| invmask | 2645 | |
+| rf_bmax | 2659 | |
+| SCPE_OK | 2664 | |
+| SCPE_OK | 2670 | |
+| rptr | 2677 | |
+| return | 2684 | |
+| cons_alarm_enb | 2691 | |
+| SCPE_OK | 2692 | |
+| SCPE_OK | 2698 | |
+| SCPE_OK | 2705 | |
+| ad | 2716 | |
+| SCPE_OK | 2747 | |
+| hst | 2760 | |
+| hst | 2761 | |
+| hst | 2762 | |
+| return | 2763 | |
+| hst_p | 2784 | |
+| SCPE_OK | 2796 | |
+| sim_val | 2804 | |
+| return | 2828 | |
+| lnt | 2847 | |
+| SCPE_OK | 2860 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CPUF_V_MODEL | (UNIT_V_UF + 6)                 ... | 125 |
+| CPUF_M_MODEL | 0x7 | 126 |
+| CPUF_MODEL | (CPUF_M_MODEL << CPUF_V_MODEL) | 127 |
+| CPUF_S5 | (CPU_V_S5 << CPUF_V_MODEL) | 128 |
+| CPUF_S6 | (CPU_V_S6 << CPUF_V_MODEL) | 129 |
+| CPUF_S7 | (CPU_V_S7 << CPUF_V_MODEL) | 130 |
+| CPUF_S8 | (CPU_V_S8 << CPUF_V_MODEL) | 131 |
+| CPUF_S7B | (CPU_V_S7B << CPUF_V_MODEL) | 132 |
+| CPUF_S9 | (CPU_V_S9 << CPUF_V_MODEL) | 133 |
+| CPUF_550 | (CPU_V_550 << CPUF_V_MODEL) | 134 |
+| CPUF_560 | (CPU_V_560 << CPUF_V_MODEL) | 135 |
+| CPUF_GETMOD(x) | (((x) >> CPUF_V_MODEL) & CPUF_M_... | 136 |
+| PCQ_SIZE | 64                              ... | 138 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 139 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 140 |
+| HIST_MIN | 64 | 142 |
+| HIST_MAX | (1u << 20) | 143 |
+| H_INST | 0x00800000 | 144 |
+| H_CHAN | 0x00400000 | 145 |
+| H_ITRP | 0x00200000 | 146 |
+| H_ABRT | 0x00100000 | 147 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 417-432 |  |
+| while | 433-522 |  |
+| cpu_one_inst | 523-536 |  |
+| switch | 537-1791 |  |
+| cpu_int_mtx | 1792-1807 |  |
+| switch | 1808-1837 |  |
+| cpu_trap_or_int | 1838-1843 |  |
+| if | 1844-1848 |  |
+| if | 1849-1856 |  |
+| if | 1857-1871 |  |
+| if | 1872-1882 |  |
+| ImmOp | 1883-1896 |  |
+| Ea | 1897-1903 |  |
+| if | 1904-1917 |  |
+| if | 1918-1926 |  |
+| EaP20 | 1927-1931 |  |
+| if | 1932-1939 |  |
+| if | 1940-1948 |  |
+| EaSh | 1949-1954 |  |
+| if | 1955-1963 |  |
+| if | 1964-1972 |  |
+| Shift | 1973-1980 |  |
+| if | 1981-2158 |  |
+| Add32 | 2159-2174 |  |
+| SMul64 | 2175-2179 |  |
+| if | 2180-2216 |  |
+| SDiv64 | 2217-2222 |  |
+| if | 2223-2229 |  |
+| for | 2230-2245 |  |
+| Cmp32 | 2246-2257 |  |
+| TestSP1 | 2258-2265 |  |
+| if | 2266-2270 |  |
+| if | 2271-2276 |  |
+| if | 2277-2286 |  |
+| ModWrSP | 2287-2305 |  |
+| cpu_xpsd | 2306-2320 |  |
+| if | 2321-2336 |  |
+| cpu_pss | 2337-2346 |  |
+| for | 2347-2369 |  |
+| cpu_pls | 2370-2377 |  |
+| if | 2378-2415 |  |
+| cpu_new_PSD | 2416-2444 |  |
+| cpu_new_RP | 2445-2451 |  |
+| if | 2452-2466 |  |
+| cpu_bad_rblk | 2467-2471 |  |
+| if | 2472-2481 |  |
+| cpu_new_PC | 2482-2492 |  |
+| cpu_add_PC | 2493-2502 |  |
+| cpu_assemble_PSD | 2503-2513 |  |
+| cpu_reset | 2514-2535 |  |
+| cpu_ex | 2536-2546 |  |
+| if | 2547-2557 |  |
+| cpu_dep | 2558-2568 |  |
+| if | 2569-2585 |  |
+| cpu_set_type | 2586-2603 |  |
+| cpu_set_size | 2604-2610 |  |
+| if | 2611-2624 |  |
+| cpu_set_opt | 2625-2632 |  |
+| cpu_clr_opt | 2633-2642 |  |
+| cpu_set_rblks | 2643-2659 |  |
+| for | 2660-2666 |  |
+| cpu_show_rblks | 2667-2674 |  |
+| set_rf_display | 2675-2688 |  |
+| cpu_set_alarm | 2689-2694 |  |
+| cpu_show_alarm | 2695-2700 |  |
+| cpu_svc | 2701-2711 |  |
+| cpu_show_addr | 2712-2727 |  |
+| if | 2728-2751 |  |
+| inst_hist | 2752-2767 |  |
+| cpu_set_hist | 2768-2772 |  |
+| if | 2773-2784 |  |
+| if | 2785-2789 |  |
+| if | 2790-2805 |  |
+| if | 2806-2832 |  |
+| cpu_show_hist | 2833-2841 |  |
+| if | 2842-2850 |  |
+| for | 2851-2861 |  |

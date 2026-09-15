@@ -1,0 +1,39 @@
+=== cdc1700_lp.c — 696 строк ===
+Источник: cdc1700_lp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_lp.c -nt .cline/maps/cdc1700_lp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 64 | |
+| Areg | 91 | |
+| IOFWinitialized | 93 | |
+| LPbuf | 105 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| COLUMNS | 136 | 33 |
+| DEVTYPE_1740 | IOtype_dev1             /* Devic... | 35 |
+| DEVTYPE_1742 | IOtype_dev2             /* Devic... | 36 |
+| FUNCTION2 | iod_writeR[3]           /* 1740 ... | 38 |
+| IODP_LPNONE | 0x0000 | 204 |
+| IODP_LPCHARWAIT | 0x0001 | 205 |
+| IODP_LPPRINTWAIT | 0x0002 | 206 |
+| IODP_LPCCWAIT | 0x0003 | 207 |
+| DBG_V_CC | (DBG_SPECIFIC+0)/* Carriage cont... | 255 |
+| DBG_CC | (1 << DBG_V_CC) | 257 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lp_show_type | 280-296 |  |
+| lp_set_type | 297-325 |  |
+| LPstate | 326-341 |  |
+| lp_svc | 342-396 |  |
+| lp_puts | 397-406 | I/O routines |
+| lp_putc | 407-418 |  |
+| lp_reset | 419-460 |  |
+| LPin | 461-468 |  |
+| LPout | 469-668 |  |
+| lp_help | 669-696 |  |

@@ -1,0 +1,80 @@
+=== hp3000_ms.c — 1346 строк ===
+Источник: hp3000_ms.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_ms.c -nt .cline/maps/hp3000_ms.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ms_interface | 465 | |
+| opcode | 693 | |
+| signal | 694 | |
+| working_set | 695 | |
+| outbound_value | 696 | |
+| outbound_signals | 697 | |
+| result | 1005 | |
+| result | 1015 | |
+| result | 1101 | |
+| result | 1135 | |
+| return | 1176 | |
+| return | 1198 | |
+| result | 1266 | |
+| command_set | 1267 | |
+| command | 1268 | |
+| status | 1269 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DRIVE_COUNT | (TL_MAXDRIVE + 1)           /* t... | 264 |
+| UNIT_COUNT | (DRIVE_COUNT + TL_AUXUNITS) /* t... | 265 |
+| UNUSED_COMMANDS | (STCFL \| STDFL)             /* u... | 269 |
+| DEB_IOB | TL_DEB_IOB                  /* t... | 274 |
+| DEB_SERV | TL_DEB_SERV                 /* t... | 275 |
+| DEB_CSRW | (1u << TL_DEB_V_UF + 0)     /* t... | 276 |
+| CN_MR | 0100000u            /* (M) maste... | 291 |
+| CN_RIN | 0040000u            /* (R) reset... | 292 |
+| CN_UNIT_MASK | 0001400u            /* unit numb... | 293 |
+| CN_RSVD_MASK | 0000360u            /* reserved ... | 294 |
+| CN_CMD_MASK | 0000017u            /* command c... | 295 |
+| CN_CMD_RDR | 0000006u            /* Read Reco... | 297 |
+| CN_UNIT_SHIFT | 8                   /* unit numb... | 299 |
+| CN_CMD_SHIFT | 0                   /* command c... | 300 |
+| CN_UNIT(c) | (((c) & CN_UNIT_MASK) >> CN_UNIT... | 302 |
+| CN_CMD(c) | (((c) & CN_CMD_MASK)  >> CN_CMD_... | 303 |
+| ST_SIO_OK | 0100000u            /* (S) SIO O... | 331 |
+| ST_INTREQ | 0020000u            /* (I) inter... | 333 |
+| ST_UNIT_MASK | 0014000u            /* unit sele... | 334 |
+| ST_ERROR_MASK | 0000016u            /* encoded e... | 342 |
+| ST_UNIT_SHIFT | 11                  /* unit numb... | 345 |
+| ST_ERROR_SHIFT | 1                   /* encoded e... | 346 |
+| ST_UNIT(n) | ((n) << ST_UNIT_SHIFT & ST_UNIT_... | 348 |
+| ST_TO_UNIT(s) | (((s) & ST_UNIT_MASK)  >> ST_UNI... | 350 |
+| ST_TO_ERROR(s) | (((s) & ST_ERROR_MASK) >> ST_ERR... | 351 |
+| ST_UNITIRQ | 0000016u            /* unit inte... | 356 |
+| ST_XFER | 0000014u            /* transfer ... | 357 |
+| MS_REW_START | uS (10)             /* fast rewi... | 424 |
+| MS_REW_RATE | uS (1)              /* fast rewi... | 425 |
+| MS_REW_STOP | uS (10)             /* fast rewi... | 426 |
+| MS_START | uS (10)             /* fast BOT/... | 427 |
+| MS_DATA | uS (1)              /* fast per-... | 428 |
+| MS_OVERHEAD | uS (10)             /* fast cont... | 429 |
+| UNIT_FLAGS | (UNIT_ATTABLE \| UNIT_ROABLE \| UN... | 495 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| table | 402-690 |  |
+| ms_interface | 691-701 |  |
+| while | 702-1002 |  |
+| ms_service | 1003-1029 |  |
+| ms_reset | 1030-1031 |  |
+| if | 1032-1060 |  |
+| ms_boot | 1061-1098 |  |
+| ms_attach | 1099-1104 |  |
+| if | 1105-1131 |  |
+| ms_onoffline | 1132-1138 |  |
+| if | 1139-1161 |  |
+| master_reset | 1162-1188 |  |
+| clear_interface_logic | 1189-1263 |  |
+| call_controller | 1264-1275 |  |
+| while | 1276-1346 |  |

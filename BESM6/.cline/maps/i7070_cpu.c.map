@@ -1,0 +1,54 @@
+=== i7070_cpu.c — 3017 строк ===
+Источник: i7070_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7070_cpu.c -nt .cline/maps/i7070_cpu.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_MSIZE | (UNIT_V_UF + 0) | 66 |
+| UNIT_MSIZE | (7 << UNIT_V_MSIZE) | 67 |
+| UNIT_V_CPUMODEL | (UNIT_V_UF + 4) | 68 |
+| UNIT_MODEL | (0x01 << UNIT_V_CPUMODEL) | 69 |
+| CPU_MODEL | ((cpu_unit.flags >> UNIT_V_CPUMO... | 70 |
+| MODEL(x) | (x << UNIT_V_CPUMODEL) | 71 |
+| MEMAMOUNT(x) | (x << UNIT_V_MSIZE) | 72 |
+| OPTION_FLOAT | (1 << (UNIT_V_CPUMODEL + 1)) | 73 |
+| OPTION_TIMER | (1 << (UNIT_V_CPUMODEL + 2)) | 74 |
+| OPTION_EXTEND | (1 << (UNIT_V_CPUMODEL + 3)) | 75 |
+| TMR_RTC | 1 | 77 |
+| HIST_NOEA | 0x10000000 | 79 |
+| HIST_NOAFT | 0x20000000 | 80 |
+| HIST_NOBEF | 0x40000000 | 81 |
+| HIST_PC | 0x10000 | 82 |
+| HIST_MIN | 64 | 83 |
+| HIST_MAX | 65536 | 84 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ReadP | 225-250 |  |
+| WriteP | 251-275 |  |
+| sim_instr | 276-2439 |  |
+| dec_add | 2440-2460 | Add a to b result in a |
+| dec_add_noov | 2461-2474 | Don't detect overflow, and use 2 more guard digits |
+| dec_comp | 2475-2480 | tens compliment a |
+| dec_cmp | 2481-2501 | Compare to words, includeing sign |
+| mul_step | 2502-2517 | Do a multiply step |
+| div_step | 2518-2542 |  |
+| bin_dec | 2543-2555 | Convert a binary number to BCD |
+| dec_bin_idx | 2556-2565 | Convert index to binary |
+| dec_bin_lim | 2566-2578 |  |
+| get_rdw | 2579-2584 | Extract information from a RDW |
+| upd_idx | 2585-2589 |  |
+| scan_irq | 2590-2769 | Scan for interupt |
+| mem_init | 2770-2779 |  |
+| cpu_reset | 2780-2803 |  |
+| rtc_srv | 2804-2819 |  |
+| rtc_reset | 2820-2830 |  |
+| cpu_ex | 2831-2843 |  |
+| cpu_dep | 2844-2852 |  |
+| cpu_set_size | 2853-2882 |  |
+| cpu_set_hist | 2883-2917 |  |
+| cpu_show_hist | 2918-2984 |  |
+| cpu_help | 2985-3013 |  |
+| cpu_description | 3014-3017 |  |

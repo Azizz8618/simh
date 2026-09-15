@@ -1,0 +1,202 @@
+=== vax780_uba.c — 1012 строк ===
+Источник: vax780_uba.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax780_uba.c -nt .cline/maps/vax780_uba.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| nexus_req | 181 | |
+| iodibp | 210 | |
+| uba_dib | 227 | |
+| idx | 303 | |
+| SCPE_OK | 385 | |
+| idx | 392 | |
+| SCPE_OK | 473 | |
+| idx | 480 | |
+| idx | 495 | |
+| return | 505 | |
+| iod | 519 | |
+| SET_IRQL | 532 | |
+| iod | 533 | |
+| return | 557 | |
+| return | 577 | |
+| vec | 586 | |
+| vec | 602 | |
+| ma | 616 | |
+| ma | 649 | |
+| bc | 652 | |
+| ma | 690 | |
+| ma | 724 | |
+| bc | 727 | |
+| ublk | 767 | |
+| FALSE | 781 | |
+| ublk | 788 | |
+| FALSE | 801 | |
+| ublk | 809 | |
+| return | 819 | |
+| return | 838 | |
+| return | 851 | |
+| dptr | 859 | |
+| return | 869 | |
+| SCPE_OK | 885 | |
+| return | 899 | |
+| return | 908 | |
+| uba_int | 917 | |
+| uba_aiip | 918 | |
+| uba_sr | 930 | |
+| uba_cr | 931 | |
+| uba_dr | 932 | |
+| uba_cnf | 933 | |
+| SCPE_OK | 934 | |
+| SCPE_OK | 948 | |
+| adapter" | 953 | |
+| SCPE_NXM | 968 | |
+| SCPE_NXM | 983 | |
+| ua | 992 | |
+| SCPE_OK | 1004 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UBA_NDPATH | 16                              ... | 39 |
+| UBA_NMAPR | 496                             ... | 40 |
+| UBACNF_OF | 0x00 | 44 |
+| UBACNF_ADPDN | 0x00800000                      ... | 45 |
+| UBACNF_ADPUP | 0x00400000                      ... | 46 |
+| UBACNF_UBINIT | 0x00040000                      ... | 47 |
+| UBACNF_UBPDN | 0x00020000                      ... | 48 |
+| UBACNF_UBIC | 0x00010000                      ... | 49 |
+| UBACNF_CODE | 0x00000028                      ... | 50 |
+| UBACNF_RD | (SBI_FAULTS\|UBACNF_W1C) | 51 |
+| UBACNF_W1C | 0x00C70000 | 52 |
+| UBACR_OF | 0x01 | 56 |
+| UBACR_V_DSB | 26                              ... | 57 |
+| UBACR_M_DSB | 0x1F | 58 |
+| UBACR_GETDSB(x) | (((x) >> (UBACR_V_DSB - 4)) & (U... | 59 |
+| UBACR_IFS | 0x00000040                      ... | 60 |
+| UBACR_BRIE | 0x00000020                      ... | 61 |
+| UBACR_USEFIE | 0x00000010                      ... | 62 |
+| UBACR_SUEFIE | 0x00000008                      ... | 63 |
+| UBACR_CNFIE | 0x00000004                      ... | 64 |
+| UBACR_UPF | 0x00000002                      ... | 65 |
+| UBACR_ADINIT | 0x00000001                      ... | 66 |
+| UBACR_RD | ((UBACR_M_DSB << UBACR_V_DSB) \| ... | 67 |
+| UBACR_WR | (UBACR_RD) | 68 |
+| UBA_USEFIE_SR | (UBASR_RDTO\|UBASR_RDS\|UBASR_CRD\|... | 70 |
+| UBA_SUEFIE_SR | (UBASR_UBSTO\|UBASR_UBTMO) | 72 |
+| UBA_CNFIE_CR | (UBACNF_ADPDN\|UBACNF_ADPUP\|UBACN... | 73 |
+| UBASR_OF | 0x02 | 78 |
+| UBASR_V_BR4 | 24                              ... | 79 |
+| UBASR_RDTO | 0x00000400                      ... | 80 |
+| UBASR_RDS | 0x00000200                      ... | 81 |
+| UBASR_CRD | 0x00000100                      ... | 82 |
+| UBASR_CXTER | 0x00000080                      ... | 83 |
+| UBASR_CXTO | 0x00000040                      ... | 84 |
+| UBASR_DPPE | 0x00000020                      ... | 85 |
+| UBASR_IVMR | 0x00000010                      ... | 86 |
+| UBASR_MRPF | 0x00000008                      ... | 87 |
+| UBASR_LEB | 0x00000004                      ... | 88 |
+| UBASR_UBSTO | 0x00000002                      ... | 89 |
+| UBASR_UBTMO | 0x00000001                      ... | 90 |
+| UBASR_RD | 0x0F0007FF | 91 |
+| UBASR_W1C | 0x000007FF | 92 |
+| UBADR_OF | 0x03 | 96 |
+| UBADR_SPARE | 0x80000000                      ... | 97 |
+| UBADR_DINTR | 0x40000000                      ... | 98 |
+| UBADR_DMP | 0x20000000 | 99 |
+| UBADR_DDPP | 0x10000000 | 100 |
+| UBADR_MICOK | 0x08000000                      ... | 101 |
+| UBADR_RD | 0xF8000000 | 102 |
+| UBADR_WR | 0xF0000000 | 103 |
+| UBADR_CNF_RD | 0x07FFFFFF | 104 |
+| UBAFMER_OF | 0x04 | 108 |
+| UBAFMER_OF1 | 0x06 | 109 |
+| UBAFMER_RD | 0x1FF | 110 |
+| UBAFUBAR_OF | 0x05 | 114 |
+| UBAFUBAR_OF1 | 0x07 | 115 |
+| UBAFUBAR_RD | 0xFFFF | 116 |
+| UBABRSVR_OF | 0x08 | 120 |
+| UBABRRVR_OF | 0x0C | 124 |
+| UBA_UVEC | 0x80000000 | 125 |
+| UBA_VEC_MASK | 0x1FC                           ... | 126 |
+| UBADPR_OF | 0x010 | 130 |
+| UBADPR_BNE | 0x80000000                      ... | 131 |
+| UBADPR_BTE | 0x40000000                      ... | 132 |
+| UBADPR_DIR | 0x20000000                      ... | 133 |
+| UBADPR_STATE | 0x00FF0000                      ... | 134 |
+| UBADPR_UA | 0x0000FFFF                      ... | 135 |
+| UBADPR_UA | 0x0000FFFF                      ... | 136 |
+| UBADPR_RD | 0xC0FFFFFF | 137 |
+| UBADPR_W1C | 0xC0000000 | 138 |
+| UBAMAP_OF | 0x200 | 142 |
+| UBAMAP_VLD | 0x80000000                      ... | 143 |
+| UBAMAP_LWAE | 0x04000000                      ... | 144 |
+| UBAMAP_ODD | 0x02000000                      ... | 145 |
+| UBAMAP_V_DP | 21                              ... | 146 |
+| UBAMAP_M_DP | 0xF | 147 |
+| UBAMAP_DP | (UBAMAP_M_DP << UBAMAP_V_DP) | 148 |
+| UBAMAP_GETDP(x) | (((x) >> UBAMAP_V_DP) & UBAMAP_M... | 149 |
+| UBAMAP_PAG | 0x001FFFFF | 150 |
+| UBAMAP_RD | (0x86000000 \| UBAMAP_DP \| UBAMAP... | 151 |
+| UBAMAP_WR | (UBAMAP_RD) | 152 |
+| UBA_DEB_RRD | 0x01                            ... | 156 |
+| UBA_DEB_RWR | 0x02                            ... | 157 |
+| UBA_DEB_MRD | 0x04                            ... | 158 |
+| UBA_DEB_MWR | 0x08                            ... | 159 |
+| UBA_DEB_XFR | 0x10                            ... | 160 |
+| UBA_DEB_ERR | 0x20                            ... | 161 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| uba_rdreg | 301-304 |  |
+| if | 305-312 |  |
+| if | 313-322 |  |
+| switch | 323-389 |  |
+| uba_wrreg | 390-393 |  |
+| if | 394-402 |  |
+| if | 403-412 |  |
+| switch | 413-477 |  |
+| ReadUb | 478-481 |  |
+| if | 482-492 |  |
+| WriteUb | 493-496 |  |
+| if | 497-516 |  |
+| ReadIO | 517-545 |  |
+| WriteIO | 546-561 |  |
+| uba_eval_int | 562-581 |  |
+| uba_get_ubvector | 582-586 |  |
+| if | 587-612 |  |
+| Map_ReadB | 613-618 |  |
+| for | 619-645 |  |
+| Map_ReadW | 646-652 |  |
+| for | 653-686 |  |
+| Map_WriteB | 687-692 |  |
+| for | 693-720 |  |
+| Map_WriteW | 721-727 |  |
+| for | 728-764 |  |
+| uba_map_addr | 765-773 |  |
+| if | 774-785 |  |
+| uba_map_addr_c | 786-794 |  |
+| if | 795-806 |  |
+| uba_set_dpr | 807-827 |  |
+| uba_ub_nxm | 828-829 |  |
+| if | 830-840 |  |
+| uba_inv_map | 841-842 |  |
+| if | 843-855 |  |
+| uba_ubpdn | 856-863 |  |
+| for | 864-873 |  |
+| uba_svc | 874-875 |  |
+| if | 876-889 |  |
+| uba_adap_set_int | 890-901 |  |
+| uba_adap_clr_int | 902-912 |  |
+| uba_reset | 913-919 |  |
+| for | 920-936 |  |
+| uba_help | 937-950 |  |
+| uba_description | 951-957 |  |
+| uba_ex | 958-963 |  |
+| if | 964-972 |  |
+| uba_dep | 973-978 |  |
+| if | 979-987 |  |
+| uba_show_virt | 988-993 |  |
+| if | 994-1008 |  |
+| uba_show_map | 1009-1012 |  |

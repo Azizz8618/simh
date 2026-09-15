@@ -1,0 +1,116 @@
+=== b5500_cpu.c — 4056 строк ===
+Источник: b5500_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test b5500_cpu.c -nt .cline/maps/b5500_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| hst | 250 | |
+| hst_p | 251 | |
+| hst_lnt | 252 | |
+| rtc_tps | 279 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_MSIZE | (UNIT_V_UF + 0) | 99 |
+| UNIT_MSIZE | (7 << UNIT_V_MSIZE) | 100 |
+| MEMAMOUNT(x) | (x << UNIT_V_MSIZE) | 101 |
+| TMR_RTC | 0 | 103 |
+| HIST_MAX | 5000 | 105 |
+| HIST_MIN | 64 | 106 |
+| TFFF | MSFF                            ... | 217 |
+| F_AROF | 00001 | 254 |
+| F_BROF | 00002 | 255 |
+| F_CWMF | 00004 | 256 |
+| F_NCSF | 00010 | 257 |
+| F_SALF | 00020 | 258 |
+| F_MSFF | 00040 | 259 |
+| F_VARF | 00100 | 260 |
+| HIST_PC | 0100000 | 261 |
+| A | a_reg[cpu_index] | 357 |
+| B | b_reg[cpu_index] | 358 |
+| C | c_reg[cpu_index] | 359 |
+| L | l_reg[cpu_index] | 360 |
+| X | x_reg[cpu_index] | 361 |
+| Y | y_reg[cpu_index] | 362 |
+| Q | q_reg[cpu_index] | 363 |
+| GH | gh_reg[cpu_index] | 364 |
+| KV | kv_reg[cpu_index] | 365 |
+| Ma | ma_reg[cpu_index] | 366 |
+| S | s_reg[cpu_index] | 367 |
+| F | f_reg[cpu_index] | 368 |
+| R | r_reg[cpu_index] | 369 |
+| P | p_reg[cpu_index] | 370 |
+| T | t_reg[cpu_index] | 371 |
+| AROF | arof_reg[cpu_index] | 372 |
+| BROF | brof_reg[cpu_index] | 373 |
+| PROF | prof_reg[cpu_index] | 374 |
+| TROF | trof_reg[cpu_index] | 375 |
+| NCSF | ncsf_reg[cpu_index] | 376 |
+| SALF | salf_reg[cpu_index] | 377 |
+| CWMF | cwmf_reg[cpu_index] | 378 |
+| MSFF | msff_reg[cpu_index] | 379 |
+| VARF | varf_reg[cpu_index] | 380 |
+| HLTF | hltf[cpu_index] | 381 |
+| FF(x) | (uint16)(((x) & FFIELD) >> FFIEL... | 384 |
+| CF(x) | (uint16) ((x) & CORE) | 385 |
+| LF(x) | (uint16)(((x) & RL) >> RL_V) | 386 |
+| RF(x) | (uint16)(((x) & RFIELD) >> RFIEL... | 387 |
+| MSCW | (FLAG \| DFLAG \| toR(R) \| toF(F) \|  | 401 |
+| ICW | (FLAG \| DFLAG \| toR(R) \| ((VARF)... | 403 |
+| Pointer(x) | ((t_uint64)((((x) & 070) >> 3) \|... | 405 |
+| RCW(x) | (FLAG \| DFLAG \| toF(F) \| toC(C) ... | 406 |
+| LCW(f, | x)        toF(f) \| toC(C) \| toL(... | 409 |
+| VARIANT(x) | ((x) >> 6) | 411 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| memory_cycle | 432-476 |  |
+| set_via_MSCW | 477-487 | Set registers based on MSCW |
+| set_via_RCW | 488-505 |  |
+| set_via_INCW | 506-511 | Set the stack pointer from INCW |
+| set_via_ICW | 512-520 | Set registers from ICW |
+| B_empty | 521-533 | Make sure that B is empty |
+| A_empty | 534-543 | Make sure A is empty, push to B if not |
+| AB_empty | 544-557 | Make sure both A and B are empty |
+| A_valid | 558-575 | Make sure that A is valid, copy from B or memory |
+| AB_valid | 576-588 | Make sure both A and B are valid |
+| B_valid | 589-601 | Make sure A is empty and B is valid |
+| B_valid_and_A | 602-613 | Make sure B is valid, don't care about A |
+| save_tos | 614-628 | Saves the top word on the stack into MA |
+| enterSubr | 629-668 | Enter a subroutine, flag true for descriptor, false for opdc |
+| mkint | 669-711 | Make B register into an integer, return 1 if failed |
+| indexWord | 712-743 | Compute an index word return true if failed. |
+| adjust_source | 744-756 | Adjust source bit pointers to point to char |
+| adjust_dest | 757-771 | Adjust destination bit pointers to point to char |
+| next_dest | 772-790 | Advance to next destination bit/char |
+| prev_dest | 791-818 | Advance to previous destination bit/char |
+| fill_dest | 819-826 | Make sure destination have valid data |
+| next_src | 827-843 | Advance source to next bit/char |
+| prev_src | 844-867 | Advance source to previous bit/char |
+| fill_src | 868-878 | Make sure source has valid data |
+| next_prog | 879-891 | Fetch next program sylable |
+| initiate | 892-928 | Initiate a processor, A must contain the ICW |
+| storeInterrupt | 929-1025 | Save processor state in case of error or halt |
+| check_idle | 1026-1071 |  |
+| compare | 1072-1139 |  |
+| add | 1140-1268 |  |
+| mult_step | 1269-1296 | Perform a 40 bit multiply on A and B, result into B,X |
+| multiply | 1297-1383 | Do multiply instruction |
+| divide | 1384-1524 | Do divide instruction |
+| double_add | 1525-1674 |  |
+| double_mult | 1675-1791 |  |
+| double_divide | 1792-1932 |  |
+| relativeAddr | 1933-1976 |  |
+| sim_instr | 1977-3817 |  |
+| rtc_srv | 3818-3834 |  |
+| cpu_reset | 3835-3873 |  |
+| cpu_ex | 3874-3885 |  |
+| cpu_dep | 3886-3894 |  |
+| cpu_msize | 3895-3909 |  |
+| cpu_set_size | 3910-3937 |  |
+| cpu_set_hist | 3938-3972 |  |
+| cpu_show_hist | 3973-4043 |  |
+| cpu_help | 4044-4056 |  |

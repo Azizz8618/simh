@@ -1,0 +1,86 @@
+=== i7000_ht.c — 992 строк ===
+Источник: i7000_ht.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7000_ht.c -nt .cline/maps/i7000_ht.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ht_buffer | 146 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BUFFSIZE | (MAXMEMSIZE * CHARSPERWORD) | 53 |
+| UNIT_HT(x) | UNIT_ATTABLE\|UNIT_DISABLE\|UNIT_R... | 55 |
+| HTSIZE | 31731000 | 61 |
+| HT_CMDMSK | 00000077    /* Command being run */ | 66 |
+| HT_NOTRDY | 00000100    /* Devices is runnin... | 67 |
+| HT_IDLE | 00000200    /* Tape still in mot... | 68 |
+| HT_MARK | 00000400    /* Hit tape mark */ | 69 |
+| HT_EOR | 00001000    /* Hit end of record */ | 70 |
+| HT_ERR | 00002000    /* Device recieved e... | 71 |
+| HT_BOT | 00004000    /* Unit at begining ... | 72 |
+| HT_EOT | 00010000    /* Unit at end of ta... | 73 |
+| HT_ATTN | 00020000    /* Unit requests att... | 74 |
+| HT_MOVE | 00040000    /* Unit is moving to... | 75 |
+| HT_WRITE | 00100000    /* Were we writing */ | 76 |
+| HT_SNS | 00200000    /* We were doing sen... | 77 |
+| HT_CMD | 00400000    /* We are fetching a... | 78 |
+| HT_PEND | 01000000    /* Hold channel whil... | 79 |
+| HNOP | 0x00    /* Nop */ | 82 |
+| HEOS | 0x01    /* End of sequence */ | 83 |
+| HRLF | 0x02    /* Reserved Light Off */ | 84 |
+| HRLN | 0x03    /* Reserved Light On */ | 85 |
+| HCLF | 0x04    /* Check light off? Not ... | 86 |
+| HCLN | 0x05    /* Check light on */ | 88 |
+| HSEL | 0x06    /* Select */ | 89 |
+| HSBR | 0x07    /* Select for backwards ... | 90 |
+| HCCR | 0x28    /* Change cartridge and ... | 91 |
+| HRWD | 0x30    /* Rewind */ | 92 |
+| HRUN | 0x31    /* Rewind and unload */ | 93 |
+| HERG | 0x32    /* Erase long gap */ | 94 |
+| HWTM | 0x33    /* Write tape mark */ | 95 |
+| HBSR | 0x34    /* Backspace */ | 96 |
+| HBSF | 0x35    /* Backspace file */ | 97 |
+| HSKR | 0x36    /* Space */ | 98 |
+| HSKF | 0x37    /* Space file */ | 99 |
+| HCHC | 0x38    /* Change Cartridge */ | 100 |
+| HUNL | 0x39    /* Unload Cartridge */ | 101 |
+| HFPN | 0x42    /* File Protect On */ | 102 |
+| SEL_MASK | 0x0F000000      /* Selected unit... | 106 |
+| STAT_NOTRDY | 0x80800000      /* Drive not rea... | 107 |
+| PROG_NOTLOAD | 0x40400000      /* *Drive not lo... | 108 |
+| PROG_FILEPROT | 0x40200000      /* Drive write p... | 109 |
+| PROG_INVCODE | 0x40080000      /* Invalid code */ | 110 |
+| PROG_BUSY | 0x40040000      /* Drive Busy */ | 111 |
+| PROG_BOT | 0x40020000      /* Drive at BOT ... | 112 |
+| PROG_EOT | 0x40010000      /* Drive at EOT ... | 113 |
+| DATA_CHECK | 0x20008000      /* *Error correc... | 114 |
+| DATA_PARITY | 0x20004000      /* *Parity error */ | 115 |
+| DATA_CODECHK | 0x20002000      /* *Code check */ | 116 |
+| DATA_ENVCHK | 0x20001000      /* *Envelop erro... | 117 |
+| DATA_RESPONSE | 0x20000800      /* Response chec... | 118 |
+| DATA_EXECSKEW | 0x20000400      /* *Excessive sk... | 119 |
+| DATA_TRACKSKEW | 0x20000200      /* *Track skew c... | 120 |
+| EXP_MARK | 0x10000080      /* Drive read a ... | 121 |
+| EXP_EWA | 0x10000040      /* *Drive near E... | 122 |
+| EXP_NODATA | 0x10000020      /* *No data tran... | 123 |
+| READ_BSY | 0x00000008      /* *Controller r... | 124 |
+| WRITE_BSY | 0x00000004      /* *Controller w... | 125 |
+| BACK_MODE | 0x00000002      /* *Backwards mo... | 126 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ht_cmd | 220-232 |  |
+| htc_srv | 233-322 |  |
+| ht_srv | 323-498 |  |
+| ht_tape_posterr | 499-516 |  |
+| ht_error | 517-561 | Convert error codes to sense codes |
+| ht_tape_cmd | 562-887 |  |
+| ht_boot | 888-944 |  |
+| ht_reset | 945-957 |  |
+| ht_attach | 958-968 |  |
+| ht_detach | 969-976 |  |
+| ht_help | 977-986 |  |
+| ht_description | 987-992 |  |

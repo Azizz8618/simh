@@ -1,0 +1,196 @@
+=== vax440_sysdev.c — 1092 строк ===
+Источник: vax440_sysdev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax440_sysdev.c -nt .cline/maps/vax440_sysdev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| boot_code_filename | 43 | |
+| tmr_int | 122 | |
+| lk_dev | 123 | |
+| rom | 124 | |
+| mem_cnfg | 136 | |
+| int_unmask | 229 | |
+| FALSE | 260 | |
+| ma | 274 | |
+| ma | 306 | |
+| ba | 308 | |
+| bc | 309 | |
+| ma | 338 | |
+| ma | 370 | |
+| ba | 372 | |
+| bc | 373 | |
+| isdn | 402 | |
+| isdn | 413 | |
+| val | 418 | |
+| mem | 419 | |
+| sc | 420 | |
+| val | 443 | |
+| val | 455 | |
+| val | 515 | |
+| return | 572 | |
+| invfl | 578 | |
+| invfl | 589 | |
+| cache2ds | 595 | |
+| cache2ds | 606 | |
+| cache2ts | 612 | |
+| cache2ts | 623 | |
+| val | 630 | |
+| SCCR_RD | 641 | |
+| SCCR | 651 | |
+| return | 695 | |
+| return | 797 | |
+| return | 817 | |
+| return | 892 | |
+| p2 | 899 | |
+| in_ie | 910 | |
+| in_ie | 919 | |
+| cc | 920 | |
+| temp | 927 | |
+| gbuf | 954 | |
+| PC | 969 | |
+| PSL | 970 | |
+| conisp | 971 | |
+| conpc | 972 | |
+| conpsl | 973 | |
+| SCPE_OK | 981 | |
+| ka_mapbase | 988 | |
+| ka_cfgtst | 989 | |
+| ka_led | 990 | |
+| ka_parctl | 991 | |
+| tmr_tir | 992 | |
+| sim_vm_cmd | 1011 | |
+| SCPE_OK | 1013 | |
+| devices" | 1018 | |
+| SCPE_OK | 1023 | |
+| SCPE_OK | 1028 | |
+| gbuf | 1033 | |
+| SCPE_OK | 1066 | |
+| model | 1071 | |
+| SCPE_OK | 1083 | |
+| SCPE_OK | 1091 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CFGT_MEM | 0x003F                          ... | 57 |
+| CFGT_V_VID | 6 | 58 |
+| CFGT_M_VID | 0x3 | 59 |
+| CFGT_VID | (CFGT_M_VID << CFGT_V_VID)      ... | 60 |
+| CFGT_L3C | 0x0100                          ... | 61 |
+| CFGT_V_SIM | 9 | 62 |
+| CFGT_M_SIM | 0x3F | 63 |
+| CFGT_SIM | (CFGT_M_SIM << CFGT_V_SIM)      ... | 64 |
+| PARCTL_CPEN | 0x00000001                      ... | 68 |
+| PARCTL_REV | 0x000000F0 | 69 |
+| PARCTL_NPEN | 0x00000100                      ... | 70 |
+| PARCTL_NPERR | 0x00000200                      ... | 71 |
+| PARCTL_NMAP | 0x00000400 | 72 |
+| PARCTL_SPEN | 0x00010000                      ... | 73 |
+| PARCTL_SPERR | 0x00020000                      ... | 74 |
+| PARCTL_SMAP | 0x00040000 | 75 |
+| PARCTL_INVEN | 0x01000000 | 76 |
+| PARCTL_AGS | 0x02000000                      ... | 77 |
+| PARCTL_ADP | 0x80000000 | 78 |
+| PARCTL_RD | 0x830707F1 | 79 |
+| PARCTL_WR | 0x01010101 | 80 |
+| SCCR_CENA | 0x00000001 | 84 |
+| SCCR_TERR | 0x00000002 | 85 |
+| SCCR_WBMODE | 0x00000080 | 86 |
+| SCCR_SPECIO | 0x00000100                      ... | 87 |
+| SCCR_FONFUL | 0x00000200 | 88 |
+| SCCR_REV | 0x00000400 | 89 |
+| SCCR_RD | 0x00000783 | 90 |
+| SCCR_WR | 0x00000101 | 91 |
+| MSER_PE | 0x00000001                      ... | 95 |
+| MSER_WWP | 0x00000002                      ... | 96 |
+| MSER_PER | 0x00000040                      ... | 97 |
+| MSER_MCD0 | 0x00000100                      ... | 98 |
+| MSER_MBZ | 0xFFFFFEBC | 99 |
+| MSER_RD | (MSER_PE \| MSER_WWP \| MSER_PER \|  | 100 |
+| MSER_WR | (MSER_PE \| MSER_WWP) | 102 |
+| MSER_RS | (MSER_PER) | 103 |
+| MEAR_FAD | 0x00007FFF                      ... | 107 |
+| MEAR_RD | (MEAR_FAD) | 108 |
+| ROM_VEC | 0x8                             ... | 110 |
+| DMANMAPR | 32768                           ... | 114 |
+| DMAMAP_VLD | 0x80000000                      ... | 115 |
+| DMAMAP_PAG | 0x0003FFFF                      ... | 117 |
+| DMAMAP_PAG | 0x0000FFFF                      ... | 119 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| eval_int | 193-208 |  |
+| if | 209-216 |  |
+| for | 217-225 |  |
+| get_vector | 226-230 |  |
+| if | 231-234 |  |
+| if | 235-237 |  |
+| for | 238-248 |  |
+| dma_map_addr | 249-251 |  |
+| if | 252-270 |  |
+| Map_ReadB | 271-275 |  |
+| if | 276-302 |  |
+| Map_ReadW | 303-309 |  |
+| if | 310-334 |  |
+| Map_WriteB | 335-339 |  |
+| if | 340-366 |  |
+| Map_WriteW | 367-373 |  |
+| if | 374-398 |  |
+| isdn_rd | 399-404 |  |
+| isdn_wr | 405-407 |  |
+| if | 408-415 |  |
+| cfg_rd | 416-423 |  |
+| for | 424-437 |  |
+| for | 438-445 |  |
+| ioreset_wr | 446-452 |  |
+| ReadIPR | 453-456 |  |
+| switch | 457-519 |  |
+| WriteIPR | 520-521 |  |
+| switch | 522-574 |  |
+| invfl_rd | 575-580 |  |
+| invfl_wr | 581-583 |  |
+| if | 584-591 |  |
+| cache2ds_rd | 592-597 |  |
+| cache2ds_wr | 598-600 |  |
+| if | 601-608 |  |
+| cache2ts_rd | 609-614 |  |
+| cache2ts_wr | 615-617 |  |
+| if | 618-625 |  |
+| dma_map_rd | 626-632 |  |
+| dma_map_wr | 633-638 |  |
+| sccr_rd | 639-643 |  |
+| sccr_wr | 644-645 |  |
+| if | 646-653 |  |
+| memrg_rd | 654-657 |  |
+| switch | 658-675 |  |
+| memrg_wr | 676-679 |  |
+| switch | 680-697 |  |
+| null_rd | 698-702 |  |
+| null_wr | 703-751 |  |
+| ReadReg | 752-755 |  |
+| for | 756-771 |  |
+| ReadRegU | 772-786 |  |
+| WriteReg | 787-790 |  |
+| for | 791-809 |  |
+| WriteRegU | 810-821 |  |
+| ka_rd | 822-825 |  |
+| switch | 826-849 |  |
+| ka_wr | 850-853 |  |
+| switch | 854-896 |  |
+| machine_check | 897-900 |  |
+| if | 901-924 |  |
+| con_halt | 925-951 |  |
+| vax460_boot | 952-964 |  |
+| cpu_boot | 965-975 |  |
+| if | 976-985 |  |
+| sysd_reset | 986-1015 |  |
+| sysd_description | 1016-1020 |  |
+| auto_config | 1021-1025 |  |
+| build_dib_tab | 1026-1030 |  |
+| cpu_set_model | 1031-1037 |  |
+| if | 1038-1047 |  |
+| if | 1048-1068 |  |
+| cpu_print_model | 1069-1085 |  |
+| cpu_model_help | 1086-1092 |  |

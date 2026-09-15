@@ -1,0 +1,68 @@
+=== i8008.c — 1232 строк ===
+Источник: i8008.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i8008.c -nt .cline/maps/i8008.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dev_table | 131 | |
+| saved_PCreg | 853 | |
+| reason | 854 | |
+| Cflag | 1018 | |
+| Zflag | 1019 | |
+| saved_PCreg | 1020 | |
+| int_req | 1021 | |
+| SCPE_OK | 1023 | |
+| SCPE_OK | 1034 | |
+| mc | 1050 | |
+| MEMSIZE | 1059 | |
+| SCPE_OK | 1062 | |
+| cflag | 1079 | |
+| c2 | 1083 | |
+| inst | 1095 | |
+| cflag | 1133 | |
+| gbuf | 1134 | |
+| opcode_inp | 1135 | |
+| opcode_out | 1136 | |
+| gbuf | 1186 | |
+| gbuf | 1190 | |
+| val | 1228 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_OPSTOP | (UNIT_V_UF)             /* Stop ... | 87 |
+| UNIT_OPSTOP | (1 << UNIT_V_OPSTOP) | 88 |
+| UNIT_V_CHIP | (UNIT_V_UF+1)           /* 8008 */ | 89 |
+| UNIT_CHIP | (1 << UNIT_V_CHIP) | 90 |
+| UNIT_V_MSIZE | (UNIT_V_UF+2)           /* Memor... | 91 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 92 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 288-858 |  |
+| cond | 859-882 |  |
+| setarith | 883-903 |  |
+| setlogical | 904-920 |  |
+| parity | 921-941 |  |
+| setinc | 942-957 |  |
+| getreg | 958-982 |  |
+| putreg | 983-1015 |  |
+| cpu_reset | 1016-1027 |  |
+| cpu_ex | 1028-1038 |  |
+| cpu_dep | 1039-1047 |  |
+| cpu_set_size | 1048-1083 |  |
+| if | 1084-1087 |  |
+| if | 1088-1098 |  |
+| if | 1099-1102 | Handle INP/OUT op codes |
+| if | 1103-1108 |  |
+| if | 1109-1130 |  |
+| parse_sym | 1131-1141 |  |
+| if | 1142-1146 |  |
+| if | 1147-1154 |  |
+| while | 1155-1193 |  |
+| for | 1194-1207 | find opcode in table |
+| if | 1208-1215 |  |
+| if | 1216-1223 |  |
+| if | 1224-1232 |  |

@@ -1,0 +1,119 @@
+=== ibm1130_prt.c — 810 строк ===
+Источник: ibm1130_prt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_prt.c -nt .cline/maps/ibm1130_prt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| prtbuf | 171 | |
+| nprint | 172 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PRT1132_DSW_READ_EMITTER_RESPONSE | 0x8000 | 55 |
+| PRT1132_DSW_SKIP_RESPONSE | 0x4000 | 56 |
+| PRT1132_DSW_SPACE_RESPONSE | 0x2000 | 57 |
+| PRT1132_DSW_CARRIAGE_BUSY | 0x1000 | 58 |
+| PRT1132_DSW_PRINT_SCAN_CHECK | 0x0800 | 59 |
+| PRT1132_DSW_NOT_READY | 0x0400 | 60 |
+| PRT1132_DSW_PRINTER_BUSY | 0x0200 | 61 |
+| PRT1132_DSW_CHANNEL_MASK | 0x00FF          /* 1132 printer ... | 63 |
+| PRT1132_DSW_CHANNEL_1 | 0x0080 | 64 |
+| PRT1132_DSW_CHANNEL_2 | 0x0040 | 65 |
+| PRT1132_DSW_CHANNEL_3 | 0x0020 | 66 |
+| PRT1132_DSW_CHANNEL_4 | 0x0010 | 67 |
+| PRT1132_DSW_CHANNEL_5 | 0x0008 | 68 |
+| PRT1132_DSW_CHANNEL_6 | 0x0004 | 69 |
+| PRT1132_DSW_CHANNEL_9 | 0x0002 | 70 |
+| PRT1132_DSW_CHANNEL_12 | 0x0001 | 71 |
+| PRT1403_DSW_PARITY_CHECK | 0x8000          /* 1403 printer ... | 73 |
+| PRT1403_DSW_TRANSFER_COMPLETE | 0x4000 | 74 |
+| PRT1403_DSW_PRINT_COMPLETE | 0x2000 | 75 |
+| PRT1403_DSW_CARRIAGE_COMPLETE | 0x1000 | 76 |
+| PRT1403_DSW_RING_CHECK | 0x0400 | 77 |
+| PRT1403_DSW_SYNC_CHECK | 0x0200 | 78 |
+| PRT1403_DSW_CH9 | 0x0010 | 79 |
+| PRT1403_DSW_CH12 | 0x0008 | 80 |
+| PRT1403_DSW_CARRIAGE_BUSY | 0x0004 | 81 |
+| PRT1403_DSW_PRINTER_BUSY | 0x0002 | 82 |
+| PRT1403_DSW_NOT_READY | 0x0001 | 83 |
+| IS_ONLINE(u) | (((u)->flags & (UNIT_ATT\|UNIT_DI... | 85 |
+| SKIPTARGET | (uptr->u4)                      ... | 99 |
+| UNIT_V_FORMCHECK | (UNIT_V_UF + 0)                 ... | 103 |
+| UNIT_V_DATACHECK | (UNIT_V_UF + 1)                 ... | 104 |
+| UNIT_V_SKIPPING | (UNIT_V_UF + 2)                 ... | 105 |
+| UNIT_V_SPACING | (UNIT_V_UF + 3)                 ... | 106 |
+| UNIT_V_PRINTING | (UNIT_V_UF + 4)                 ... | 107 |
+| UNIT_V_TRANSFERRING | (UNIT_V_UF + 5)                 ... | 108 |
+| UNIT_V_1403 | (UNIT_V_UF + 6)                 ... | 109 |
+| UNIT_V_PARITYCHECK | (UNIT_V_UF + 7)                 ... | 110 |
+| UNIT_V_RINGCHECK | (UNIT_V_UF + 8) | 111 |
+| UNIT_V_SYNCCHECK | (UNIT_V_UF + 9) | 112 |
+| UNIT_V_PHYSICAL_PTR | (UNIT_V_UF + 10)                ... | 113 |
+| UNIT_V_TRACE | (UNIT_V_UF + 11) | 114 |
+| UNIT_FORMCHECK | (1u << UNIT_V_FORMCHECK) | 116 |
+| UNIT_DATACHECK | (1u << UNIT_V_DATACHECK) | 117 |
+| UNIT_SKIPPING | (1u << UNIT_V_SKIPPING) | 118 |
+| UNIT_SPACING | (1u << UNIT_V_SPACING) | 119 |
+| UNIT_PRINTING | (1u << UNIT_V_PRINTING) | 120 |
+| UNIT_TRANSFERRING | (1u << UNIT_V_TRANSFERRING) | 121 |
+| UNIT_1403 | (1u << UNIT_V_1403) | 122 |
+| UNIT_PARITYCHECK | (1u << UNIT_V_PARITYCHECK) | 123 |
+| UNIT_RINGCHECK | (1u << UNIT_V_RINGCHECK) | 124 |
+| UNIT_SYNCCHECK | (1u << UNIT_V_SYNCCHECK) | 125 |
+| UNIT_PHYSICAL_PTR | (1u << UNIT_V_PHYSICAL_PTR) | 126 |
+| UNIT_TRACE | (1u << UNIT_V_TRACE) | 127 |
+| IS_1403(uptr) | (uptr->flags & UNIT_1403)       ... | 133 |
+| IS_1132(uptr) | ((uptr->flags & UNIT_1403) == 0)... | 134 |
+| IS_PHYSICAL(uptr) | (uptr->flags & UNIT_PHYSICAL_PTR) | 135 |
+| DO_TRACE(uptr) | (uptr->flags & UNIT_TRACE) | 136 |
+| CMD_NONE | 0 | 140 |
+| CMD_SPACE | 1 | 141 |
+| CMD_SKIP | 2 | 142 |
+| CMD_PRINT | 3 | 143 |
+| MAX_COLUMNS | 120 | 166 |
+| MAX_OVPRINT | 20 | 167 |
+| PRT1132_COLUMNS | 120 | 168 |
+| PRT1403_COLUMNS | 120                             ... | 169 |
+| CC_CHANNEL_1 | 0x0800                      /* c... | 176 |
+| CC_CHANNEL_2 | 0x0400 | 177 |
+| CC_CHANNEL_3 | 0x0200 | 178 |
+| CC_CHANNEL_4 | 0x0100 | 179 |
+| CC_CHANNEL_5 | 0x0080 | 180 |
+| CC_CHANNEL_6 | 0x0040                      /* 7... | 181 |
+| CC_CHANNEL_7 | 0x0020 | 182 |
+| CC_CHANNEL_8 | 0x0010 | 183 |
+| CC_CHANNEL_9 | 0x0008 | 184 |
+| CC_CHANNEL_10 | 0x0004 | 185 |
+| CC_CHANNEL_11 | 0x0002 | 186 |
+| CC_CHANNEL_12 | 0x0001 | 187 |
+| CC_1403_BITS | 0x0FFF                      /* a... | 189 |
+| CC_1132_BITS | (CC_1403_BITS & ~(CC_CHANNEL_7\|C... | 190 |
+| PRT_PAGELENGTH | 66 | 192 |
+| PRT_CMD_START_PRINTER | 0x0080 | 340 |
+| PRT_CMD_STOP_PRINTER | 0x0040 | 341 |
+| PRT_CMD_START_CARRIAGE | 0x0004 | 342 |
+| PRT_CMD_STOP_CARRIAGE | 0x0002 | 343 |
+| PRT_CMD_SPACE | 0x0001 | 344 |
+| PRT_CMD_MASK | 0x00C7 | 346 |
+| SET_ACTION(u,a) | {(u)->flags &= ~(UNIT_SKIPPING\|U... | 433 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cc_format_1132 | 211-221 |  |
+| reset_prt_line | 222-230 |  |
+| save_1132_prt_line | 231-265 |  |
+| newpage | 266-278 |  |
+| flush_prt_line | 279-349 |  |
+| mytrace | 350-359 |  |
+| xio_1132_printer | 360-434 |  |
+| prt_svc | 435-441 |  |
+| prt1132_svc | 442-504 |  |
+| save_1403_prt_line | 505-546 |  |
+| xio_1403_printer | 547-594 |  |
+| prt1403_svc | 595-651 |  |
+| prt_reset | 652-700 |  |
+| prt_attach | 701-776 |  |
+| prt_detach | 777-810 |  |

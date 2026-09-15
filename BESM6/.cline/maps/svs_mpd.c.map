@@ -1,0 +1,83 @@
+=== svs_mpd.c — 1457 строк ===
+Источник: svs_mpd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test svs_mpd.c -nt .cline/maps/svs_mpd.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| reg | 73 | |
+| tty_active | 96 | |
+| tty_typed | 97 | |
+| tty_last_time | 98 | |
+| tty_idle_count | 99 | |
+| tty_rate | 102 | |
+| tty_turbo | 105 | |
+| vt_sending | 107 | |
+| tt_sending | 108 | |
+| tt_mask | 111 | |
+| TTY_OUT | 113 | |
+| vt_cbuf | 116 | |
+| vt_cptr | 117 | |
+| attached_console | 123 | |
+| tty_line | 170 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TTY_MAX | 24          /* Serial TTY lines */ | 57 |
+| LINES_MAX | TTY_MAX     /* Including paralle... | 58 |
+| TTY_UNICODE_CHARSET | 0 | 173 |
+| TTY_KOI7_JCUKEN_CHARSET | (1<<UNIT_V_UF) | 174 |
+| TTY_KOI7_QWERTY_CHARSET | (2<<UNIT_V_UF) | 175 |
+| TTY_RAW_CHARSET | (3<<UNIT_V_UF) | 176 |
+| TTY_CHARSET_MASK | (3<<UNIT_V_UF) | 177 |
+| TTY_OFFLINE_STATE | 0 | 178 |
+| TTY_TELETYPE_STATE | (1<<(UNIT_V_UF+2)) | 179 |
+| TTY_VT340_STATE | (2<<(UNIT_V_UF+2)) | 180 |
+| TTY_CONSUL_STATE | (3<<(UNIT_V_UF+2)) | 181 |
+| TTY_STATE_MASK | (3<<(UNIT_V_UF+2)) | 182 |
+| TTY_DESTRUCTIVE_BSPACE | 0 | 183 |
+| TTY_AUTHENTIC_BSPACE | (1<<(UNIT_V_UF+4)) | 184 |
+| TTY_BSPACE_MASK | (1<<(UNIT_V_UF+4)) | 185 |
+| TTY_CMDLINE_MASK | (1<<(UNIT_V_UF+5)) | 186 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| process | 75-187 |  |
+| reset_line | 188-193 |  |
+| tty_reset | 194-212 |  |
+| vt_clk | 213-307 | Bit 19 of GRVP, should be <tty_rate> Hz |
+| tty_setmode | 308-362 |  |
+| tty_attach | 363-411 | Where <port> is the port number for telnet, e.g. 4199. |
+| tty_detach | 412-416 |  |
+| tty_showrate | 417-421 |  |
+| tty_showturbo | 422-426 |  |
+| tty_setrate | 427-441 |  |
+| tty_setturbo | 442-519 |  |
+| tty_send | 520-525 |  |
+| tty_send | 526-571 |  |
+| vt_putc | 572-589 | Sending a character to a terminal with the given number. |
+| vt_puts | 590-613 | Sending a string to a terminal with the given number. |
+| vt_send | 614-687 | Videoton-340 employed single byte control codes rather than ESC sequences. |
+| vt_print | 688-733 | Handling output to all connected terminals. |
+| tt_print | 734-779 |  |
+| unicode_to_koi7 | 780-823 | Returns -1 if unsuccessful. |
+| cmd_set | 824-874 | Set command |
+| cmd_show | 875-919 | Show command |
+| cmd_exit | 920-959 | Exit command |
+| lookup_cmd | 960-975 | Find command routine |
+| cmd_help | 976-1006 | Help command |
+| vt_cmd_exec | 1007-1035 | Executing a command. |
+| vt_cmd_loop | 1036-1108 | Command line interface mode. |
+| vt_getc | 1109-1176 | Returns -1 if there is no char to input. |
+| vt_kbd_input_unicode | 1177-1211 | If no input, returns -1. |
+| vt_kbd_input_koi7 | 1212-1263 | Semicolon is }, quote is \|. |
+| odd_parity | 1264-1273 |  |
+| tty_strobe | 1274-1288 | TODO |
+| vt_receive | 1289-1377 | Handling input from all connected terminals. |
+| vt_is_idle | 1378-1382 | SIMH should not enter idle mode until they are. |
+| tty_query | 1383-1391 |  |
+| mpd_reset | 1392-1403 | Сброс МПД в исходное состояние. |
+| mpd_send_nibble | 1404-1447 | Отправка полубайта. |
+| mpd_receive_update | 1448-1457 | Подтверждение считывания принятого байта. |

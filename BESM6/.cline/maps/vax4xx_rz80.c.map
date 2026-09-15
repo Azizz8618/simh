@@ -1,0 +1,160 @@
+=== vax4xx_rz80.c — 767 строк ===
+Источник: vax4xx_rz80.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax4xx_rz80.c -nt .cline/maps/vax4xx_rz80.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CTLR | 117-135 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rz_ctx | 157 | |
+| rz_unit | 159 | |
+| rzb_ctx | 205 | |
+| rzb_unit | 211 | |
+| rz | 247 | |
+| dptr | 248 | |
+| data | 250 | |
+| len | 251 | |
+| data | 361 | |
+| rz | 367 | |
+| dptr | 368 | |
+| uptr | 369 | |
+| SET_IRQL | 510 | |
+| odd | 519 | |
+| len | 524 | |
+| old_phase | 525 | |
+| old_phase | 527 | |
+| dptr | 554 | |
+| rz | 577 | |
+| dptr | 578 | |
+| dma_len | 579 | |
+| old_phase | 580 | |
+| old_phase | 582 | |
+| rz->buf_len | 595 | |
+| SCPE_OK | 617 | |
+| rz | 622 | |
+| dptr | 623 | |
+| rz->status | 630 | |
+| uptr->iflgs | 631 | |
+| SCPE_OK | 632 | |
+| dptr | 637 | |
+| uptr | 638 | |
+| dptr | 647 | |
+| rz->status | 654 | |
+| dptr | 659 | |
+| uptr | 660 | |
+| dptr | 663 | |
+| rz->cdata | 670 | |
+| rz->mode | 671 | |
+| rz->icmd | 672 | |
+| rz->tcmd | 673 | |
+| rz->status | 674 | |
+| rz->cstat | 675 | |
+| rz->selen | 676 | |
+| rz->dcount | 677 | |
+| rz->daddr | 678 | |
+| rz->daddr_low | 679 | |
+| rz->ddir | 680 | |
+| rz->buf_ptr | 681 | |
+| ctlr | 687 | |
+| rz | 688 | |
+| uptr | 689 | |
+| inited | 691 | |
+| rz | 716 | |
+| SCPE_OK | 736 | |
+| SCPE_OK | 756 | |
+| controller" | 766 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BOOT_CODE_ARRAY | NULL | 36 |
+| BOOT_CODE_SIZE | 0 | 37 |
+| RZ_NUMCT | 2 | 40 |
+| RZ_NUMDR | 8 | 41 |
+| RZ_CTLR | (RZ_NUMDR) | 42 |
+| MODE_BLOCK | 0x80                            ... | 49 |
+| MODE_TARG | 0x40                            ... | 50 |
+| MODE_PARCK | 0x20                            ... | 51 |
+| MODE_INTPAR | 0x10                            ... | 52 |
+| MODE_INTEOP | 0x08                            ... | 53 |
+| MODE_MONBSY | 0x04                            ... | 54 |
+| MODE_DMA | 0x02                            ... | 55 |
+| MODE_ARB | 0x01                            ... | 56 |
+| ICMD_RST | 0x80                            ... | 60 |
+| ICMD_AIP | 0x40                            ... | 61 |
+| ICMD_TEST | 0x40                            ... | 62 |
+| ICMD_LA | 0x20                            ... | 63 |
+| ICMD_DIFF | 0x20                            ... | 64 |
+| ICMD_ACK | 0x10                            ... | 65 |
+| ICMD_BSY | 0x08                            ... | 66 |
+| ICMD_SEL | 0x04                            ... | 67 |
+| ICMD_ATN | 0x02                            ... | 68 |
+| ICMD_ENOUT | 0x01                            ... | 69 |
+| TCMD_REQ | 0x08                            ... | 73 |
+| TCMD_MSG | 0x04                            ... | 74 |
+| TCMD_CD | 0x02                            ... | 75 |
+| TCMD_IO | 0x01                            ... | 76 |
+| TCMD_PHASE | 0x07                            ... | 77 |
+| STS_DMAEND | 0x80                            ... | 81 |
+| STS_DMAREQ | 0x40                            ... | 82 |
+| STS_PARERR | 0x20                            ... | 83 |
+| STS_INTREQ | 0x10                            ... | 84 |
+| STS_MATCH | 0x08                            ... | 85 |
+| STS_BSYERR | 0x04                            ... | 86 |
+| STS_ATN | 0x02                            ... | 87 |
+| STS_ACK | 0x01                            ... | 88 |
+| CSTAT_RST | 0x80                            ... | 92 |
+| CSTAT_BSY | 0x40                            ... | 93 |
+| CSTAT_REQ | 0x20                            ... | 94 |
+| CSTAT_MSG | 0x10                            ... | 95 |
+| CSTAT_CD | 0x08                            ... | 96 |
+| CSTAT_IO | 0x04                            ... | 97 |
+| CSTAT_SEL | 0x02                            ... | 98 |
+| CSTAT_DBP | 0x01                            ... | 99 |
+| CSTAT_V_PHASE | 2 | 100 |
+| CSTAT_M_PHASE | 0x07                            ... | 101 |
+| DBG_REG | 0x0001                          ... | 103 |
+| DBG_CMD | 0x0002                          ... | 104 |
+| DBG_INT | 0x0004                          ... | 105 |
+| DBG_DSK | 0x0008                          ... | 106 |
+| PH_DATA_OUT | 0 | 108 |
+| PH_DATA_IN | 1 | 109 |
+| PH_COMMAND | 2 | 110 |
+| PH_STATUS | 3 | 111 |
+| PH_MSG_OUT | 6 | 112 |
+| PH_MSG_IN | 7 | 113 |
+| UA_SELECT | 0 | 115 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rz_rd | 244-255 |  |
+| switch | 256-363 |  |
+| rz_wr | 364-375 |  |
+| switch | 376-512 |  |
+| rz_parity | 513-514 |  |
+| for | 515-521 |  |
+| rz_ack | 522-527 |  |
+| switch | 528-551 |  |
+| rz_update_status | 552-568 |  |
+| if | 569-574 |  |
+| rz_svc | 575-586 |  |
+| if | 587-597 |  |
+| if | 598-607 |  |
+| if | 608-619 |  |
+| rz_isvc | 620-634 |  |
+| rz_setint | 635-644 |  |
+| rz_clrint | 645-656 |  |
+| rz_sw_reset | 657-663 |  |
+| for | 664-684 |  |
+| rz_reset | 685-692 |  |
+| if | 693-709 |  |
+| for | 710-724 |  |
+| for | 725-738 |  |
+| rz_help | 739-758 |  |
+| rz_attach | 759-763 |  |
+| rz_description | 764-767 |  |

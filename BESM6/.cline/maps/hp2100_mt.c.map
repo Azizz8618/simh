@@ -1,0 +1,75 @@
+=== hp2100_mt.c — 905 строк ===
+Источник: hp2100_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_mt.c -nt .cline/maps/hp2100_mt.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CARD_STATE | 140-144 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mtd_interface | 152 | |
+| mtc_interface | 153 | |
+| signal | 394 | |
+| working_set | 395 | |
+| outbound | 396 | |
+| valid | 508 | |
+| signal | 509 | |
+| working_set | 510 | |
+| outbound | 511 | |
+| irq_enabled | 512 | |
+| tbc | 679 | |
+| st | 680 | |
+| SCPE_OK | 835 | |
+| st | 843 | |
+| mtc_1st | 855 | |
+| mtc_sta | 856 | |
+| SCPE_OK | 858 | |
+| mtc_fnc | 871 | |
+| mtc_1st | 872 | |
+| SCPE_OK | 883 | |
+| mtc_sta | 895 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DB_V_SIZE | 16                      /* max d... | 111 |
+| DBSIZE | (1 << DB_V_SIZE)        /* max d... | 112 |
+| FNC_CLR | 0300                    /* clear */ | 116 |
+| FNC_WC | 0031                    /* write */ | 117 |
+| FNC_RC | 0023                    /* read */ | 118 |
+| FNC_GAP | 0011                    /* write... | 119 |
+| FNC_FSR | 0003                    /* forwa... | 120 |
+| FNC_BSR | 0041                    /* backw... | 121 |
+| FNC_REW | 0201                    /* rewin... | 122 |
+| FNC_RWS | 0101                    /* rewin... | 123 |
+| FNC_WFM | 0035                    /* write... | 124 |
+| STA_LOCAL | 0400                    /* local... | 128 |
+| STA_EOF | 0200                    /* end o... | 129 |
+| STA_BOT | 0100                    /* begin... | 130 |
+| STA_EOT | 0040                    /* end o... | 131 |
+| STA_TIM | 0020                    /* timin... | 132 |
+| STA_REJ | 0010                    /* progr... | 133 |
+| STA_WLK | 0004                    /* write... | 134 |
+| STA_PAR | 0002                    /* parit... | 135 |
+| STA_BUSY | 0001                    /* busy ... | 136 |
+| UNIT_FLAGS | (UNIT_ATTABLE \| UNIT_ROABLE) | 275 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mtd_interface | 392-397 |  |
+| while | 398-504 |  |
+| mtc_interface | 505-513 |  |
+| while | 514-676 |  |
+| mtc_svc | 677-681 |  |
+| if | 682-690 |  |
+| switch | 691-795 |  |
+| mt_map_err | 796-797 |  |
+| switch | 798-840 |  |
+| mt_clear | 841-863 |  |
+| mt_reset | 864-888 |  |
+| mtc_attach | 889-900 |  |
+| mtc_detach | 901-905 |  |

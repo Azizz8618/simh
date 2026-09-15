@@ -1,0 +1,191 @@
+=== i1620_cpu.c — 2473 строк ===
+Источник: i1620_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i1620_cpu.c -nt .cline/maps/i1620_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 140-144 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpuio_opc | 159 | |
+| cpuio_dev | 160 | |
+| cpuio_cnt | 161 | |
+| PC | 529 | |
+| reason | 531 | |
+| PC | 535 | |
+| reason | 541 | |
+| reason | 1130 | |
+| indir | 1174 | |
+| cnt | 1175 | |
+| indir | 1179 | |
+| SCPE_OK | 1203 | |
+| sign | 1219 | |
+| val | 1233 | |
+| SCPE_OK | 1234 | |
+| idx | 1258 | |
+| ind | 1266 | |
+| return | 1276 | |
+| cnt | 1285 | |
+| SCPE_OK | 1295 | |
+| cnt | 1302 | |
+| SCPE_OK | 1313 | |
+| SCPE_OK | 1330 | |
+| cnt | 1337 | |
+| SCPE_OK | 1347 | |
+| cnt | 1354 | |
+| SCPE_OK | 1372 | |
+| cnt | 1379 | |
+| SCPE_OK | 1395 | |
+| cry | 1421 | |
+| src_f | 1422 | |
+| src | 1432 | |
+| SCPE_OK | 1491 | |
+| cry | 1510 | |
+| src_f | 1511 | |
+| SCPE_OK | 1563 | |
+| res | 1570 | |
+| DIGIT | 1586 | |
+| ind | 1615 | |
+| SCPE_OK | 1637 | |
+| SCPE_OK | 1717 | |
+| SCPE_OK | 1897 | |
+| cnt | 1922 | |
+| cnt | 1957 | |
+| SCPE_OK | 1975 | |
+| cnt | 1992 | |
+| SCPE_OK | 2006 | |
+| cnt | 2011 | |
+| SCPE_OK | 2025 | |
+| cnt | 2030 | |
+| SCPE_OK | 2044 | |
+| cnt | 2049 | |
+| SCPE_OK | 2063 | |
+| cnt | 2083 | |
+| SCPE_OK | 2113 | |
+| sign | 2134 | |
+| first | 2135 | |
+| ctr | 2136 | |
+| SCPE_OK | 2176 | |
+| cpuio_inp | 2183 | |
+| cpuio_opc | 2184 | |
+| cpuio_dev | 2185 | |
+| cpuio_cnt | 2186 | |
+| SCPE_OK | 2189 | |
+| cpuio_inp | 2194 | |
+| cpuio_opc | 2195 | |
+| cpuio_dev | 2196 | |
+| cpuio_cnt | 2197 | |
+| SCPE_OK | 2200 | |
+| one_time | 2208 | |
+| ind | 2211 | |
+| iae | 2218 | |
+| SCPE_IERR | 2223 | |
+| one_time | 2230 | |
+| SCPE_OK | 2231 | |
+| dptr | 2239 | |
+| SCPE_OK | 2257 | |
+| dptr | 2265 | |
+| SCPE_OK | 2280 | |
+| dptr | 2288 | |
+| SCPE_OK | 2294 | |
+| SCPE_OK | 2305 | |
+| SCPE_OK | 2315 | |
+| mc | 2322 | |
+| MEMSIZE | 2331 | |
+| SCPE_OK | 2334 | |
+| SCPE_OK | 2345 | |
+| SCPE_OK | 2358 | |
+| SCPE_OK | 2369 | |
+| PR1 | 2378 | |
+| SCPE_OK | 2379 | |
+| SCPE_OK | 2394 | |
+| hst_p | 2415 | |
+| SCPE_OK | 2427 | |
+| sim_eval | 2436 | |
+| lnt | 2449 | |
+| SCPE_OK | 2472 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 132 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 133 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 134 |
+| HIST_PC | 0x40000000 | 136 |
+| HIST_MIN | 64 | 137 |
+| HIST_MAX | 65536 | 138 |
+| BRANCH(x) | PCQ_ENTRY; PC = (x) | 524 |
+| GET_IDXADDR(x) | ((idxb? IDX_B: IDX_A) + ((x) * A... | 525 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| t_stat | 416-526 |  |
+| sim_instr | 527-544 |  |
+| while | 545-1115 |  |
+| for | 1116-1122 |  |
+| if | 1123-1143 |  |
+| get_2d | 1144-1171 |  |
+| get_addr | 1172-1216 |  |
+| cvt_addr | 1217-1246 |  |
+| get_idx | 1247-1252 |  |
+| for | 1253-1262 |  |
+| upd_ind | 1263-1282 |  |
+| xmt_field | 1283-1299 |  |
+| xmt_record | 1300-1303 |  |
+| while | 1304-1317 |  |
+| xmt_index | 1318-1323 |  |
+| for | 1324-1334 |  |
+| xmt_divd | 1335-1351 |  |
+| xmt_tns | 1352-1376 |  |
+| xmt_tnf | 1377-1418 |  |
+| add_field | 1419-1473 |  |
+| if | 1474-1507 |  |
+| cmp_field | 1508-1556 |  |
+| if | 1557-1567 |  |
+| add_one_digit | 1568-1573 |  |
+| if | 1574-1600 |  |
+| mul_field | 1601-1660 |  |
+| mul_one_digit | 1661-1853 |  |
+| div_field | 1854-1923 |  |
+| for | 1924-1967 |  |
+| if | 1968-1989 |  |
+| or_field | 1990-2008 |  |
+| and_field | 2009-2027 |  |
+| xor_field | 2028-2046 |  |
+| com_field | 2047-2080 |  |
+| oct_to_dec | 2081-2131 |  |
+| dec_to_oct | 2132-2141 |  |
+| for | 2142-2180 |  |
+| cpuio_set_inp | 2181-2191 |  |
+| cpuio_clr_inp | 2192-2204 |  |
+| cpu_reset | 2205-2225 |  |
+| if | 2226-2235 |  |
+| cpu_set_release | 2236-2240 |  |
+| if | 2241-2251 |  |
+| if | 2252-2261 |  |
+| cpu_set_cps | 2262-2273 |  |
+| for | 2274-2284 |  |
+| cpu_show_cps | 2285-2289 |  |
+| for | 2290-2298 |  |
+| cpu_ex | 2299-2309 |  |
+| cpu_dep | 2310-2319 |  |
+| cpu_set_size | 2320-2338 |  |
+| cpu_set_model | 2339-2349 |  |
+| cpu_set_opt1 | 2350-2351 |  |
+| if | 2352-2362 |  |
+| cpu_set_opt2 | 2363-2364 |  |
+| if | 2365-2373 |  |
+| cpu_set_save | 2374-2383 |  |
+| cpu_set_table | 2384-2389 |  |
+| if | 2390-2398 |  |
+| cpu_set_hist | 2399-2403 |  |
+| if | 2404-2415 |  |
+| if | 2416-2420 |  |
+| if | 2421-2431 |  |
+| cpu_show_hist | 2432-2443 |  |
+| if | 2444-2453 |  |
+| for | 2454-2473 |  |

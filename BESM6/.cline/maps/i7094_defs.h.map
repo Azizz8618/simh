@@ -1,0 +1,327 @@
+=== i7094_defs.h — 504 строк ===
+Источник: i7094_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7094_defs.h -nt .cline/maps/i7094_defs.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 84-93 |
+| DIB | 230-233 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| col_masks | 489 | |
+| bit_masks | 490 | |
+| nine_to_ascii_a | 491 | |
+| nine_to_ascii_h | 492 | |
+| ascii_to_nine | 493 | |
+| ascii_to_bcd | 494 | |
+| bcd_to_ascii_a | 495 | |
+| bcd_to_ascii_h | 496 | |
+| bcd_to_pca | 497 | |
+| bcd_to_pch | 498 | |
+| bcd_to_colbin | 499 | |
+| PC | 501 | |
+| ind_ioc | 502 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| I7094_DEFS_H_ | 0 | 37 |
+| PC | PC_Global | 43 |
+| STOP_HALT | 1                               ... | 51 |
+| STOP_IBKPT | 2                               ... | 52 |
+| STOP_ILLEG | 3                               ... | 53 |
+| STOP_DIVCHK | 4                               ... | 54 |
+| STOP_XEC | 5                               ... | 55 |
+| STOP_ASTOP | 6                               ... | 56 |
+| STOP_NXCHN | 7                               ... | 57 |
+| STOP_7909 | 8                               ... | 58 |
+| STOP_NT7909 | 9                               ... | 59 |
+| STOP_NXDEV | 10                              ... | 60 |
+| STOP_ILLCHI | 11                              ... | 61 |
+| STOP_WRP | 12                              ... | 62 |
+| STOP_ILLIOP | 13                              ... | 63 |
+| STOP_INVFMT | 14                              ... | 64 |
+| STOP_NOIFREE | 15                              ... | 65 |
+| STOP_NOOFREE | 16                              ... | 66 |
+| STOP_INVLIN | 17                              ... | 67 |
+| STOP_INVMSG | 18                              ... | 68 |
+| STOP_CHBKPT | 19                              ... | 69 |
+| ERR_STALL | 40                              ... | 73 |
+| ERR_ENDRC | 41                              ... | 74 |
+| ERR_NRCF | 42                              ... | 75 |
+| HIST_PC | 0x04000000                      ... | 79 |
+| HIST_V_CH | 28                              ... | 80 |
+| HIST_M_CH | 0xF | 81 |
+| HIST_CH(x) | (((x) >> HIST_V_CH) & HIST_M_CH) | 82 |
+| A704_SIZE | 14                              ... | 97 |
+| ASIZE | 15                              ... | 98 |
+| PASIZE | 16                              ... | 99 |
+| STDMEMSIZE | (1u << ASIZE)                   ... | 100 |
+| MAXMEMSIZE | (1u << PASIZE)                  ... | 101 |
+| A704_MASK | ((1u << A704_SIZE) - 1) | 102 |
+| PAMASK | ((1u << PASIZE) - 1) | 103 |
+| MEMSIZE | (cpu_unit.capac) | 104 |
+| BCORE_V | (ASIZE)                         ... | 105 |
+| BCORE_BASE | (1u << BCORE_V)                 ... | 106 |
+| TRAP_STD_SAV | 000000                          ... | 110 |
+| TRAP_TRA_PC | 000001                          ... | 111 |
+| TRAP_STR_PC | 000002                          ... | 112 |
+| TRAP_FP_PC | 000010                          ... | 113 |
+| TRAP_PROT_SAV | 000032                          ... | 114 |
+| TRAP_PROT_PC | 000033                          ... | 115 |
+| TRAP_704_SAV | 040000                          ... | 116 |
+| TRAP_SEL_PC | 040001                          ... | 117 |
+| TRAP_CPY_PC | 040002                          ... | 118 |
+| TRAP_F_MQ | 000001                          ... | 120 |
+| TRAP_F_AC | 000002                          ... | 121 |
+| TRAP_F_OVF | 000004                          ... | 122 |
+| TRAP_F_SGL | 000010                          ... | 123 |
+| TRAP_F_DVC | 000020                          ... | 124 |
+| TRAP_F_ODD | 000040                          ... | 125 |
+| TRAP_F_BDATA | 020000                          ... | 126 |
+| TRAP_F_BINST | 040000                          ... | 127 |
+| DMASK | INT64_C(0777777777777)          ... | 131 |
+| SIGN | INT64_C(0400000000000)          ... | 132 |
+| MMASK | INT64_C(0377777777777)          ... | 133 |
+| LMASK | INT64_C(0777777000000)          ... | 134 |
+| RMASK | INT64_C(0000000777777)          ... | 135 |
+| PMASK | INT64_C(0700000000000)          ... | 136 |
+| XMASK | INT64_C(0077777000000)          ... | 137 |
+| TMASK | INT64_C(0000000700000)          ... | 138 |
+| AMASK | INT64_C(0000000077777)          ... | 139 |
+| SCMASK | INT64_C(0000000000377)          ... | 140 |
+| B1 | INT64_C(0200000000000)          ... | 141 |
+| B9 | INT64_C(0000400000000)          ... | 142 |
+| AC_S | INT64_C(02000000000000)         ... | 146 |
+| AC_Q | INT64_C(01000000000000)         ... | 147 |
+| AC_P | INT64_C(00400000000000)         ... | 148 |
+| AC_MMASK | INT64_C(01777777777777)         ... | 149 |
+| FP_N_FR | 27                              ... | 153 |
+| FP_FMASK | ((1u << FP_N_FR) - 1) | 154 |
+| FP_N_DFR | 54                              ... | 155 |
+| FP_DFMASK | ((((t_uint64) 1) << FP_N_DFR) - 1) | 156 |
+| FP_FNORM | (((t_uint64) 1u) << (FP_N_DFR - ... | 157 |
+| FP_FCRY | (((t_uint64) 1u) << FP_N_DFR)   ... | 158 |
+| FP_BIAS | 0200                            ... | 159 |
+| FP_V_CH | (FP_N_FR)                       ... | 160 |
+| FP_M_CH | 0377                            ... | 161 |
+| FP_M_ACCH | 01777                           ... | 162 |
+| INST_T_DEC | INT64_C(0300000000000)          ... | 166 |
+| INST_T_CXR1 | INT64_C(0000000100000)          ... | 167 |
+| INST_V_OPD | 33                              ... | 168 |
+| INST_M_OPD | 07 | 169 |
+| INST_V_DEC | 18                              ... | 170 |
+| INST_M_DEC | 077777 | 171 |
+| INST_V_OPC | 24                              ... | 172 |
+| INST_M_OPC | 0777 | 173 |
+| INST_V_IND | 22                              ... | 174 |
+| INST_IND | (3 << INST_V_IND) | 175 |
+| INST_V_CCNT | 18                              ... | 176 |
+| INST_M_CCNT | 0377 | 177 |
+| INST_V_VCNT | 18                              ... | 178 |
+| INST_M_VCNT | 077 | 179 |
+| INST_V_TAG | 15                              ... | 180 |
+| INST_M_TAG | 07 | 181 |
+| INST_V_ADDR | 0 | 182 |
+| INST_M_ADDR | 077777 | 183 |
+| INST_V_4B | 0 | 184 |
+| INST_M_4B | 017 | 185 |
+| GET_OPD(x) | ((uint32) (((x) >> INST_V_OPD) &... | 187 |
+| GET_DEC(x) | ((uint32) (((x) >> INST_V_DEC) &... | 188 |
+| GET_OPC(x) | (((uint32) (((x) >> INST_V_OPC) ... | 189 |
+| TST_IND(x) | (((x) & INST_IND) == INST_IND) | 191 |
+| GET_CCNT(x) | ((uint32) (((x) >> INST_V_CCNT) ... | 192 |
+| GET_VCNT(x) | ((uint32) (((x) >> INST_V_VCNT) ... | 193 |
+| GET_TAG(x) | ((uint32) (((x) >> INST_V_TAG) &... | 194 |
+| I_4X | 0x01                            ... | 198 |
+| I_9X | 0x02                            ... | 199 |
+| I_94 | 0x04                            ... | 200 |
+| I_CT | 0x08                            ... | 201 |
+| I_MODEL | 0x0F                            ... | 202 |
+| I_X | 0x10                            ... | 203 |
+| I_N | 0x20                            ... | 204 |
+| I_R | 0x40                            ... | 205 |
+| I_D | 0x80                            ... | 206 |
+| I_XN | (I_X\|I_N) | 208 |
+| I_XNR | (I_X\|I_N\|I_R) | 209 |
+| I_XND | (I_X\|I_N\|I_D) | 210 |
+| VA_V_OFF | 0                               ... | 214 |
+| VA_N_OFF | 8                               ... | 215 |
+| VA_M_OFF | ((1u << VA_N_OFF) - 1) | 216 |
+| VA_OFF | (VA_M_OFF << VA_V_OFF) | 217 |
+| VA_V_BLK | (VA_N_OFF)                      ... | 218 |
+| VA_N_BLK | (ASIZE - VA_N_OFF)              ... | 219 |
+| VA_M_BLK | ((1u << VA_N_BLK) - 1) | 220 |
+| VA_BLK | (VA_M_BLK << VA_V_BLK) | 221 |
+| NEG(x) | (~(x) + 1) | 225 |
+| BIT_TST(w,b) | (((w) >> (b)) & 1) | 226 |
+| BCD_MASK | 017 | 237 |
+| BCD_ZERO | 012 | 238 |
+| BCD_ONE | 001 | 239 |
+| BCD_TWO | 002 | 240 |
+| BCD_AT | 014 | 241 |
+| NUM_CHAN | 8                               ... | 245 |
+| CH_A | 0                               ... | 246 |
+| CH_B | 1 | 247 |
+| CH_C | 2 | 248 |
+| CH_D | 3 | 249 |
+| CH_E | 4 | 250 |
+| CH_F | 5 | 251 |
+| CH_G | 6 | 252 |
+| CH_H | 7 | 253 |
+| REQ_CH(x) | (1u << (x)) | 255 |
+| CHI_IND | 0000000400000                   ... | 259 |
+| CHSL_RDS | 0001                            ... | 263 |
+| CHSL_WRS | 0002 | 264 |
+| CHSL_SNS | 0003 | 265 |
+| CHSL_CTL | 0004 | 266 |
+| CHSL_FMT | 0005 | 267 |
+| CHSL_WEF | 0010                            ... | 268 |
+| CHSL_WBT | 0011                            ... | 269 |
+| CHSL_BSR | 0012 | 270 |
+| CHSL_BSF | 0013 | 271 |
+| CHSL_REW | 0014 | 272 |
+| CHSL_RUN | 0015 | 273 |
+| CHSL_SDN | 0016 | 274 |
+| CHSL_2ND | 0020                            ... | 275 |
+| CHSL_3RD | 0040                            ... | 276 |
+| CHSL_4TH | 0060 | 277 |
+| CHSL_5TH | 0100 | 278 |
+| CHSL_NDS | 0010                            ... | 279 |
+| CHSL_NUM | 16 | 280 |
+| CH6I_NST | 0000000200000                   ... | 284 |
+| CH6_IOCD | 000 | 286 |
+| CH6_TCH | 002 | 287 |
+| CH6_IORP | 004 | 288 |
+| CH6_IORT | 006 | 289 |
+| CH6_IOCP | 010 | 290 |
+| CH6_IOCT | 012 | 291 |
+| CH6_IOSP | 014 | 292 |
+| CH6_IOST | 016 | 293 |
+| CH6_OPMASK | 016                             ... | 294 |
+| TCH_LIMIT | 5                               ... | 295 |
+| CH6DF_EOR | 1                               ... | 299 |
+| CH6DF_VLD | 2                               ... | 300 |
+| CH9_WTR | 000 | 304 |
+| CH9_XMT | 001 | 305 |
+| CH9_TCH | 004 | 306 |
+| CH9_LIPT | 005 | 307 |
+| CH9_CTL | 010 | 308 |
+| CH9_CTLR | 011 | 309 |
+| CH9_CTLW | 012 | 310 |
+| CH9_SNS | 013 | 311 |
+| CH9_LAR | 014 | 312 |
+| CH9_SAR | 015 | 313 |
+| CH9_TWT | 016 | 314 |
+| CH9_CPYP | 020 | 315 |
+| CH9_CPYD | 024 | 316 |
+| CH9_TCM | 025 | 317 |
+| CH9_LIP | 031 | 318 |
+| CH9_TDC | 032 | 319 |
+| CH9_LCC | 033 | 320 |
+| CH9_SMS | 034 | 321 |
+| CH9_ICC | 035 | 322 |
+| CH9_ICCA | 037                             ... | 323 |
+| CH9_OPMASK | 037 | 324 |
+| CH9DF_STOP | 1                               ... | 328 |
+| CH9DF_VLD | 2                               ... | 329 |
+| CH9D_V_MASK | 0                               ... | 333 |
+| CH9D_M_MASK | 077 | 334 |
+| CH9D_V_COND | 12                              ... | 335 |
+| CH9D_M_COND | 07 | 336 |
+| CH9D_MASK(x) | (((x) >> CH9D_V_MASK) & CH9D_M_M... | 337 |
+| CH9D_COND(x) | (((x) >> CH9D_V_COND) & CH9D_M_C... | 338 |
+| CH9D_NST | 020000                          ... | 340 |
+| CH9D_B11 | 000100 | 341 |
+| CH9A_V_LCC | 0                               ... | 345 |
+| CH9A_M_LCC | 077 | 346 |
+| CH9A_V_SMS | 0                               ... | 347 |
+| CH9A_M_SMS | 0177 | 348 |
+| CH9A_LCC(x) | (((x) >> CH9A_V_LCC) & CH9A_M_LCC) | 349 |
+| CH9A_SMS(x) | (((x) >> CH9A_V_SMS) & CH9A_M_SMS) | 350 |
+| CHXS_IDLE | 0                               ... | 354 |
+| CHXS_DSX | 1                               ... | 355 |
+| CH6S_PNDS | 2                               ... | 359 |
+| CH6S_PDS | 3                               ... | 360 |
+| CH6S_NDS | 4                               ... | 361 |
+| CH6S_DSW | 5                               ... | 362 |
+| CHTR_V_CME | 0                               ... | 366 |
+| CHTR_V_CLK | 17                              ... | 367 |
+| CHTR_V_TRC | 18                              ... | 368 |
+| CHTR_V_TWT | (CHTR_V_CME) | 369 |
+| CHTR_CLK_SAV | 006                             ... | 370 |
+| CHTR_CHA_SAV | 012                             ... | 371 |
+| CHTR_F_CMD | 1                               ... | 372 |
+| CHTR_F_TRC | 2                               ... | 373 |
+| CHTR_F_EOF | 4                               ... | 374 |
+| CHINT_CHA_SAV | 042                             ... | 378 |
+| CHINT_ADPC | 001                             ... | 382 |
+| CHINT_ATN2 | 002                             ... | 383 |
+| CHINT_ATN1 | 004                             ... | 384 |
+| CHINT_UEND | 010                             ... | 385 |
+| CHINT_SEQC | 020                             ... | 386 |
+| CHINT_IOC | 040                             ... | 387 |
+| CHSMS_SEL2 | 0001                            ... | 391 |
+| CHSMS_IATN2 | 0002                            ... | 392 |
+| CHSMS_IATN1 | 0004                            ... | 393 |
+| CHSMS_IUEND | 0010                            ... | 394 |
+| CHSMS_BCD | 0020                            ... | 395 |
+| CHSMS_RBCK | 0040                            ... | 396 |
+| CHSMS_ENCI | 0100                            ... | 397 |
+| CHF_CMD | 00000000001                     ... | 401 |
+| CHF_TWT | (CHF_CMD) | 402 |
+| CHF_TRC | 00000000002                     ... | 403 |
+| CHF_EOF | 00000000004                     ... | 404 |
+| CHF_BOT | 00000000010                     ... | 405 |
+| CHF_EOT | 00000000020                     ... | 406 |
+| CHF_LDW | 00000000040                     ... | 407 |
+| CHF_EOR | 00000000100                     ... | 408 |
+| CHF_IRQ | 00001000000                     ... | 409 |
+| CHF_INT | 00002000000                     ... | 410 |
+| CHF_WRS | 00004000000                     ... | 411 |
+| CHF_RDS | 00010000000                     ... | 412 |
+| CHF_PWR | 00020000000                     ... | 413 |
+| CHF_PRD | 00040000000                     ... | 414 |
+| CHF_V_COND | 24                              ... | 415 |
+| CHF_M_COND | 077 | 416 |
+| CHF_ADPC | (CHINT_ADPC << CHF_V_COND)      ... | 417 |
+| CHF_ATN2 | (CHINT_ATN2 << CHF_V_COND)      ... | 418 |
+| CHF_ATN1 | (CHINT_ATN1 << CHF_V_COND)      ... | 419 |
+| CHF_UEND | (CHINT_UEND << CHF_V_COND)      ... | 420 |
+| CHF_SEQC | (CHINT_SEQC << CHF_V_COND)      ... | 421 |
+| CHF_IOC | (CHINT_IOC << CHF_V_COND)       ... | 422 |
+| CHF_V_LCC | 30                              ... | 423 |
+| CHF_M_LCC | 077 | 424 |
+| CHF_CLR_7909 | INT64_C(07775000177)            ... | 426 |
+| CHF_SDC_7909 | INT64_C(07777600000)            ... | 427 |
+| DEV_7909 | (1u << (DEV_V_UF + 0)) | 431 |
+| DEV_7289 | (1u << (DEV_V_UF + 1)) | 432 |
+| DEV_CDLP | (1u << (DEV_V_UF + 2)) | 433 |
+| DEV_7750 | (1u << (DEV_V_UF + 3)) | 434 |
+| DEV_7631 | (1u << (DEV_V_UF + 4)) | 435 |
+| U_V_CH | 9                               ... | 439 |
+| U_M_CH | 077 | 440 |
+| U_V_UNIT | 0 | 441 |
+| U_M_UNIT | 0777 | 442 |
+| GET_U_CH(x) | (((((uint32) (x)) >> U_V_CH) & U... | 443 |
+| GET_U_UNIT(x) | ((((uint32) (x)) >> U_V_UNIT) & ... | 444 |
+| U_MTBCD | 0201                            ... | 446 |
+| U_MTBIN | 0221                            ... | 447 |
+| U_CDR | 0321                            ... | 448 |
+| U_CDP | 0341                            ... | 449 |
+| U_LPBCD | 0361                            ... | 450 |
+| U_LPBIN | 0362                            ... | 451 |
+| U_DRM | 0330                            ... | 452 |
+| MT_NUMDR | 10 | 454 |
+| CHRONO_CH | (CH_A)                          ... | 458 |
+| CHRONO_UNIT | (7)                             ... | 459 |
+| CLK_CTR | 05                              ... | 463 |
+| CLK_TPS | 60                              ... | 464 |
+| TMR_CLK | 0                               ... | 465 |
+| TMR_COM | 1                               ... | 466 |
+| ReadP(p) | M[p] | 470 |
+| WriteP(p,d) | M[p] = d | 471 |
+

@@ -1,0 +1,27 @@
+=== svs_sys.c — 765 строк ===
+Источник: svs_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test svs_sys.c -nt .cline/maps/svs_sys.c.map
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| svs_opname | 78-93 | Код должен быть в диапазоне 000..077 или 0200..0370. |
+| svs_opcode | 94-113 | Выдача кода инструкции по мнемонике (UTF-8). |
+| svs_log | 114-139 | Добавляет перевод строки. |
+| svs_log_cont | 140-162 | Не добавляет перевод строки. |
+| svs_debug | 163-191 | Добавляет перевод строки. |
+| ieee_to_svs | 192-219 | порядок знак мантисса в доп. коде |
+| svs_to_ieee | 220-241 |  |
+| skip_spaces | 242-265 | Пропуск пробелов. |
+| utf8_to_unicode | 266-279 | Advance string pointer. |
+| svs_parse_octal | 280-289 |  |
+| get_alnum | 290-304 |  |
+| parse_instruction | 305-397 | Allow mnemonics or octal code. |
+| parse_instruction_word | 398-424 | Instruction parse: two commands per word. |
+| svs_fprint_cmd | 425-456 | Печать машинной инструкции с мнемоникой. |
+| svs_fprint_insn | 457-554 | Печать машинной инструкции в восьмеричном виде. |
+| parse_sym | 555-584 | status  = error status |
+| svs_read_line | 585-659 | к 00 22 00000 00 010 0000   - команды |
+| svs_load | 660-700 | Load memory from file. |
+| svs_dump | 701-749 | Dump memory to file. |
+| sim_load | 750-765 | Loader/dumper |

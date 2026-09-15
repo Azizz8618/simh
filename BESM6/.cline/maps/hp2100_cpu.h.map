@@ -1,0 +1,173 @@
+=== hp2100_cpu.h — 645 строк ===
+Источник: hp2100_cpu.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_cpu.h -nt .cline/maps/hp2100_cpu.h.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| FPK | 507 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ReadF(a) | mem_read (&cpu_dev, Fetch, a) | 112 |
+| ReadW(a) | mem_read (&cpu_dev, Data, a) | 113 |
+| ReadWA(a) | mem_read (&cpu_dev, Data_Alterna... | 114 |
+| ReadS(a) | mem_read (&cpu_dev, Data_System, a) | 115 |
+| ReadU(a) | mem_read (&cpu_dev, Data_User, a) | 116 |
+| ReadB(a) | mem_read_byte (&cpu_dev, Data, a) | 118 |
+| ReadBA(a) | mem_read_byte (&cpu_dev, Data_Al... | 119 |
+| WriteW(a,v) | mem_write (&cpu_dev, Data, a, v) | 121 |
+| WriteWA(a,v) | mem_write (&cpu_dev, Data_Altern... | 122 |
+| WriteS(a,v) | mem_write (&cpu_dev, Data_System... | 123 |
+| WriteU(a,v) | mem_write (&cpu_dev, Data_User, ... | 124 |
+| WriteB(a,v) | mem_write_byte (&cpu_dev, Data, ... | 126 |
+| WriteBA(a,v) | mem_write_byte (&cpu_dev, Data_A... | 127 |
+| DEBUG_NOOS | (1u << 31)          /* configure... | 136 |
+| TRACE_INSTR | (1u << 30)          /* trace ins... | 138 |
+| TRACE_DATA | (1u << 29)          /* trace mem... | 139 |
+| TRACE_FETCH | (1u << 28)          /* trace mem... | 140 |
+| TRACE_REG | (1u << 27)          /* trace reg... | 141 |
+| TRACE_OPND | (1u << 26)          /* trace ins... | 142 |
+| TRACE_EXEC | (1u << 25)          /* trace mat... | 143 |
+| TRACE_SR | (1u << 24)          /* trace DMA... | 144 |
+| TRACE_ALL | ~DEBUG_NOOS         /* trace eve... | 146 |
+| REGA_FORMAT | "%c **** %05o  %06o  "      /* p... | 148 |
+| REGB_FORMAT | "%c **** *****  ******  "   /* p... | 149 |
+| OPND_FORMAT | "* **** %05o  %06o  "       /* a... | 150 |
+| EXEC_FORMAT | "********************  "    /* n... | 151 |
+| DMS_FORMAT | "%c %04o %05o  %06o  "      /* m... | 152 |
+| SS_INHIBIT | (t_stat) (~0u)              /* i... | 157 |
+| STOP(s) | ((s) & ~cpu_ss_inhibit)     /* s... | 159 |
+| BP_EXEC | (SWMASK ('E'))      /* an execut... | 164 |
+| BP_ENONE | (SWMASK ('N'))      /* an execut... | 165 |
+| BP_ESYS | (SWMASK ('S'))      /* an execut... | 166 |
+| BP_EUSER | (SWMASK ('U'))      /* an execut... | 167 |
+| BP_SUPPORTED | (BP_EXEC \| BP_ENONE \| BP_ESYS \| ... | 169 |
+| PCQ_SIZE | 64                      /* must ... | 174 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 175 |
+| PCQ_ENTRY | pcq [pcq_p = (pcq_p - 1) & PCQ_M... | 176 |
+| MAX_INSTR_LENGTH | 10 | 190 |
+| GROUP_MASK | 0172000u            /* instructi... | 234 |
+| MRG | 0070000u            /* Memory Re... | 236 |
+| SRG | 0000000u            /* Shift-Rot... | 237 |
+| ASG | 0002000u            /* Alter-Ski... | 238 |
+| IOG | 0102000u            /* I/O Group... | 239 |
+| MRGOP(v) | (((v) & MRG) != 0)          /* M... | 241 |
+| SRGOP(v) | (((v) & GROUP_MASK) == SRG) /* S... | 242 |
+| ASGOP(v) | (((v) & GROUP_MASK) == ASG) /* A... | 243 |
+| IOGOP(v) | (((v) & GROUP_MASK) == IOG) /* I... | 244 |
+| SRG_CLE | 0000040u            /* SRG CLE o... | 246 |
+| SRG_SLx | 0000010u            /* SRG SLA/S... | 247 |
+| SRG_NOP | 0000000u            /* SRG no-op... | 248 |
+| SRG1_DE_MASK | 0001000u            /* SRG disab... | 250 |
+| SRG1_MASK | 0001700u | 251 |
+| SRG1_SHIFT | 6 | 252 |
+| SRG2_DE_MASK | 0000020u            /* SRG disab... | 254 |
+| SRG2_MASK | 0000027u | 255 |
+| SRG2_SHIFT | 0 | 256 |
+| SRG1(u) | (((u) & SRG1_MASK) >> SRG1_SHIFT) | 258 |
+| SRG2(u) | (((u) & SRG2_MASK) >> SRG2_SHIFT) | 259 |
+| IOG_MASK | 0001700u | 261 |
+| IOG_SHIFT | 6 | 262 |
+| IOG_OP(v) | ((IO_GROUP_OP) (((v) & IOG_MASK)... | 263 |
+| UIG_MASK | 0000360u            /* UIG featu... | 265 |
+| UIG_SHIFT | 4                   /* UIG featu... | 266 |
+| UIG(i) | (((i) & UIG_MASK) >> UIG_SHIFT) | 268 |
+| UIG_0_MASK | 0177400u            /* UIG-0 opc... | 270 |
+| UIG_0_RANGE | 0105000u            /* UIG-0 opc... | 271 |
+| UIG_1_MASK | 0173400u            /* UIG-1 opc... | 273 |
+| UIG_1_RANGE | 0101400u            /* UIG-1 opc... | 274 |
+| UIG_0_OP(i) | (((i) & UIG_0_MASK) == UIG_0_RAN... | 276 |
+| UIG_1_OP(i) | (((i) & UIG_1_MASK) == UIG_1_RAN... | 277 |
+| RTE_IRQ_RANGE | 0105354u            /* RTE-6/VM ... | 279 |
+| IR_IND | 0100000u            /* indirect ... | 284 |
+| IR_CP | 0002000u            /* current p... | 285 |
+| IR_OFFSET | 0001777u            /* page offs... | 286 |
+| MR_PAGE | 0076000u            /* page numb... | 288 |
+| IR_HCF | 0001000u            /* hold/clea... | 293 |
+| AB_MASK | 0004000u            /* A or B re... | 298 |
+| AB_SHIFT | 11 | 299 |
+| AB_SELECT(i) | (((i) & AB_MASK) >> AB_SHIFT) | 301 |
+| OP_NUL | 0                       /* no op... | 310 |
+| OP_IAR | 1                       /* 1-wor... | 311 |
+| OP_JAB | 2                       /* 2-wor... | 312 |
+| OP_FAB | 3                       /* 2-wor... | 313 |
+| OP_CON | 4                       /* inlin... | 314 |
+| OP_VAR | 5                       /* inlin... | 315 |
+| OP_ADR | 6                       /* inlin... | 317 |
+| OP_ADK | 7                       /* addr ... | 318 |
+| OP_ADD | 8                       /* addr ... | 319 |
+| OP_ADF | 9                       /* addr ... | 320 |
+| OP_ADX | 10                       /* addr... | 321 |
+| OP_ADT | 11                       /* addr... | 322 |
+| OP_ADE | 12                       /* addr... | 323 |
+| OP_N_FLAGS | 4                       /* numbe... | 325 |
+| OP_M_FLAGS | ((1 << OP_N_FLAGS) - 1) /* mask ... | 326 |
+| OP_N_F | (8 * sizeof (uint32) / OP_N_FLAG... | 328 |
+| OP_V_F1 | (0 * OP_N_FLAGS)        /* 1st o... | 330 |
+| OP_V_F2 | (1 * OP_N_FLAGS)        /* 2nd o... | 331 |
+| OP_V_F3 | (2 * OP_N_FLAGS)        /* 3rd o... | 332 |
+| OP_V_F4 | (3 * OP_N_FLAGS)        /* 4th o... | 333 |
+| OP_V_F5 | (4 * OP_N_FLAGS)        /* 5th o... | 334 |
+| OP_V_F6 | (5 * OP_N_FLAGS)        /* 6th o... | 335 |
+| OP_V_F7 | (6 * OP_N_FLAGS)        /* 7th o... | 336 |
+| OP_V_F8 | (7 * OP_N_FLAGS)        /* 8th o... | 337 |
+| OP_N | (OP_NUL << OP_V_F1) | 341 |
+| OP_I | (OP_IAR << OP_V_F1) | 342 |
+| OP_J | (OP_JAB << OP_V_F1) | 343 |
+| OP_R | (OP_FAB << OP_V_F1) | 344 |
+| OP_C | (OP_CON << OP_V_F1) | 345 |
+| OP_V | (OP_VAR << OP_V_F1) | 346 |
+| OP_A | (OP_ADR << OP_V_F1) | 347 |
+| OP_K | (OP_ADK << OP_V_F1) | 348 |
+| OP_D | (OP_ADD << OP_V_F1) | 349 |
+| OP_X | (OP_ADX << OP_V_F1) | 350 |
+| OP_T | (OP_ADT << OP_V_F1) | 351 |
+| OP_E | (OP_ADE << OP_V_F1) | 352 |
+| OP_IA | ((OP_IAR << OP_V_F1) \| (OP_ADR <... | 354 |
+| OP_JA | ((OP_JAB << OP_V_F1) \| (OP_ADR <... | 355 |
+| OP_JD | ((OP_JAB << OP_V_F1) \| (OP_ADD <... | 356 |
+| OP_RC | ((OP_FAB << OP_V_F1) \| (OP_CON <... | 357 |
+| OP_RK | ((OP_FAB << OP_V_F1) \| (OP_ADK <... | 358 |
+| OP_RF | ((OP_FAB << OP_V_F1) \| (OP_ADF <... | 359 |
+| OP_CV | ((OP_CON << OP_V_F1) \| (OP_VAR <... | 360 |
+| OP_AC | ((OP_ADR << OP_V_F1) \| (OP_CON <... | 361 |
+| OP_AA | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 362 |
+| OP_AK | ((OP_ADR << OP_V_F1) \| (OP_ADK <... | 363 |
+| OP_AX | ((OP_ADR << OP_V_F1) \| (OP_ADX <... | 364 |
+| OP_AT | ((OP_ADR << OP_V_F1) \| (OP_ADT <... | 365 |
+| OP_KV | ((OP_ADK << OP_V_F1) \| (OP_VAR <... | 366 |
+| OP_KA | ((OP_ADK << OP_V_F1) \| (OP_ADR <... | 367 |
+| OP_KK | ((OP_ADK << OP_V_F1) \| (OP_ADK <... | 368 |
+| OP_IIF | ((OP_IAR << OP_V_F1) \| (OP_IAR <... | 370 |
+| OP_IAT | ((OP_IAR << OP_V_F1) \| (OP_ADR <... | 373 |
+| OP_CVA | ((OP_CON << OP_V_F1) \| (OP_VAR <... | 376 |
+| OP_AAA | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 379 |
+| OP_AAF | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 382 |
+| OP_AAX | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 385 |
+| OP_AAT | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 388 |
+| OP_AKA | ((OP_ADR << OP_V_F1) \| (OP_ADK <... | 391 |
+| OP_AKK | ((OP_ADR << OP_V_F1) \| (OP_ADK <... | 394 |
+| OP_AXX | ((OP_ADR << OP_V_F1) \| (OP_ADX <... | 397 |
+| OP_ATT | ((OP_ADR << OP_V_F1) \| (OP_ADT <... | 400 |
+| OP_AEE | ((OP_ADR << OP_V_F1) \| (OP_ADE <... | 403 |
+| OP_AAXX | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 406 |
+| OP_AAFF | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 409 |
+| OP_AAKK | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 412 |
+| OP_KKKK | ((OP_ADK << OP_V_F1) \| (OP_ADK <... | 415 |
+| OP_AAAKK | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 418 |
+| OP_AKAKK | ((OP_ADR << OP_V_F1) \| (OP_ADK <... | 422 |
+| OP_AAACCC | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 426 |
+| OP_AAFFKK | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 430 |
+| OP_AAKAKK | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 434 |
+| OP_CATAKK | ((OP_CON << OP_V_F1) \| (OP_ADR <... | 438 |
+| OP_CCCACC | ((OP_CON << OP_V_F1) \| (OP_CON <... | 442 |
+| OP_AAAFFKK | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 446 |
+| OP_AKAKAKK | ((OP_ADR << OP_V_F1) \| (OP_ADK <... | 451 |
+| OP_AAKAKAKK | ((OP_ADR << OP_V_F1) \| (OP_ADR <... | 456 |
+| OP_CCACACCA | ((OP_CON << OP_V_F1) \| (OP_CON <... | 461 |
+| TO_COUNT(s) | ((s == fp_a) ? 0 : (uint32) (s +... | 500 |
+| AR | ABREG [0]               /* A reg... | 542 |
+| BR | ABREG [1]               /* B reg... | 543 |
+

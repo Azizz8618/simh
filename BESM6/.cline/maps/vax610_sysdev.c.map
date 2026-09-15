@@ -1,0 +1,74 @@
+=== vax610_sysdev.c — 626 строк ===
+Источник: vax610_sysdev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax610_sysdev.c -nt .cline/maps/vax610_sysdev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| vc_dev | 46 | |
+| val | 113 | |
+| val | 181 | |
+| return | 246 | |
+| mem_err | 321 | |
+| SET_IRQL | 322 | |
+| return | 342 | |
+| gbuf | 374 | |
+| slptr | 375 | |
+| regptr | 376 | |
+| dptr | 378 | |
+| uptr | 379 | |
+| r5v | 397 | |
+| SCPE_NOFNC | 452 | |
+| p2 | 464 | |
+| in_ie | 471 | |
+| in_ie | 477 | |
+| cc | 478 | |
+| cc | 490 | |
+| saved_quiet | 498 | |
+| sysboot | 499 | |
+| cmd | 500 | |
+| sim_quiet | 507 | |
+| SP | 541 | |
+| AP | 542 | |
+| SCPE_OK | 543 | |
+| gbuf | 548 | |
+| sim_vm_cmd | 565 | |
+| SCPE_OK | 566 | |
+| devices" | 571 | |
+| gbuf | 576 | |
+| SCPE_OK | 605 | |
+| SCPE_OK | 611 | |
+| SCPE_OK | 625 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ReadIPR | 111-114 |  |
+| switch | 115-185 |  |
+| WriteIPR | 186-187 |  |
+| switch | 188-275 |  |
+| ReadReg | 276-279 |  |
+| for | 280-295 |  |
+| ReadRegU | 296-310 |  |
+| WriteReg | 311-314 |  |
+| for | 315-334 |  |
+| WriteRegU | 335-351 |  |
+| vax610_boot | 352-358 |  |
+| if | 359-371 |  |
+| vax610_boot_parse | 372-383 |  |
+| if | 384-406 |  |
+| if | 407-413 |  |
+| if | 414-454 |  |
+| sysd_hlt_enb | 455-461 |  |
+| machine_check | 462-482 |  |
+| con_halt | 483-494 |  |
+| cpu_boot | 495-507 |  |
+| if | 508-545 |  |
+| vax610_set_instruction_set | 546-562 |  |
+| sysd_reset | 563-568 |  |
+| sysd_description | 569-573 |  |
+| cpu_set_model | 574-580 |  |
+| if | 581-590 |  |
+| if | 591-607 |  |
+| cpu_print_model | 608-613 |  |
+| cpu_model_help | 614-626 |  |

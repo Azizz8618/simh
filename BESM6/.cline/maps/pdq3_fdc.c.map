@@ -1,0 +1,142 @@
+=== pdq3_fdc.c — 1186 строк ===
+Источник: pdq3_fdc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdq3_fdc.c -nt .cline/maps/pdq3_fdc.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DRVDATA | 172-180 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| fdc_recbuf | 154 | |
+| fdc_recsize | 155 | |
+| dma_isautoload | 157 | |
+| cpu_unit | 160 | |
+| fdc_ioinfo | 195 | |
+| fdc_ctxt | 196 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FDC_SEL_SIDE | 0x80 /* 0=side0, 1=side1 */ | 37 |
+| FDC_SEL_SDEN | 0x40 /* 0=DDEN, 1=SDEN */ | 38 |
+| FDC_SEL_UNIT3 | 0x08 /* 1=select */ | 39 |
+| FDC_SEL_UNIT2 | 0x04 /* 1=select */ | 40 |
+| FDC_SEL_UNIT1 | 0x02 /* 1=select */ | 41 |
+| FDC_SEL_UNIT0 | 0x01 /* 1=select */ | 42 |
+| FDC_BIT_HEADLOAD | 0x08 | 45 |
+| FDC_BIT_VERIFY | 0x04 | 46 |
+| FDC_BIT_STEP3 | 0x00 | 47 |
+| FDC_BIT_STEP6 | 0x01 | 48 |
+| FDC_BIT_STEP10 | 0x02 | 49 |
+| FDC_BIT_STEP15 | 0x03 | 50 |
+| FDC_BIT_UPDATE | 0x10 | 51 |
+| FDC_BIT_MULTI | 0x10 | 52 |
+| FDC_BIT_SIDESEL | 0x08 | 53 |
+| FDC_BIT_SIDECMP | 0x02 | 54 |
+| FDC_BIT_DATAMARK | 0x01 | 55 |
+| FDC_BIT_INTIMM | 0x08 | 56 |
+| FDC_BIT_INTIDX | 0x04 | 57 |
+| FDC_BIT_INTN2R | 0x02 | 58 |
+| FDC_BIT_INTR2N | 0x01 | 59 |
+| FDC_RESTORE | 0x00 | 61 |
+| FDC_SEEK | 0x10 | 62 |
+| FDC_STEP | 0x20 | 63 |
+| FDC_STEP_U | 0x30 | 64 |
+| FDC_STEPIN | 0x40 | 65 |
+| FDC_STEPIN_U | 0x50 | 66 |
+| FDC_STEPOUT | 0x60 | 67 |
+| FDC_STEPOUT_U | 0x70 | 68 |
+| FDC_READSEC | 0x80 | 69 |
+| FDC_READSEC_M | 0x90 | 70 |
+| FDC_WRITESEC | 0xa0 | 71 |
+| FDC_WRITESEC_M | 0xb0 | 72 |
+| FDC_READADDR | 0xc4 | 73 |
+| FDC_READTRK | 0xe4 | 74 |
+| FDC_WRITETRK | 0xf4 | 75 |
+| FDC_FORCEINT | 0xd0 | 76 |
+| FDC_IDLECMD | 0xff | 77 |
+| FDC_CMDMASK | 0xf0 | 79 |
+| FDC_ST1_NOTREADY | 0x80 | 82 |
+| FDC_ST1_WRTPROT | 0x40 | 83 |
+| FDC_ST1_HEADLOAD | 0x20 | 84 |
+| FDC_ST1_SEEKERROR | 0x10 | 85 |
+| FDC_ST1_CRCERROR | 0x08 | 86 |
+| FDC_ST1_TRACK0 | 0x04 | 87 |
+| FDC_ST1_IDXPULSE | 0x02 | 88 |
+| FDC_ST1_BUSY | 0x01 | 89 |
+| FDC_ST2_NOTREADY | FDC_ST1_NOTREADY | 90 |
+| FDC_ST2_WRTPROT | FDC_ST1_WRTPROT | 91 |
+| FDC_ST2_TYPEWFLT | 0x20 | 92 |
+| FDC_ST2_RECNOTFND | 0x10 | 93 |
+| FDC_ST2_CRCERROR | FDC_ST1_CRCERROR | 94 |
+| FDC_ST2_LOSTDATA | 0x04 | 95 |
+| FDC_ST2_DRQ | 0x02 | 96 |
+| FDC_ST2_BUSY | FDC_ST1_BUSY | 97 |
+| DMA_CTRL_AECE | 0x40 | 100 |
+| DMA_CTRL_HBUS | 0x20 | 101 |
+| DMA_CTRL_IOM | 0x10 | 102 |
+| DMA_CTRL_TCIE | 0x08 | 103 |
+| DMA_CTRL_TOIE | 0x04 | 104 |
+| DMA_CTRL_DIE | 0x02 | 105 |
+| DMA_CTRL_RUN | 0x01 | 106 |
+| DMA_ST_BUSY | 0x80 | 109 |
+| DMA_ST_AECE | DMA_CTRL_AECE | 110 |
+| DMA_ST_HBUS | DMA_CTRL_HBUS | 111 |
+| DMA_ST_IOM | DMA_CTRL_IOM | 112 |
+| DMA_ST_TCZI | 0x08 | 113 |
+| DMA_ST_TOI | 0x04 | 114 |
+| DMA_ST_DINT | 0x02 | 115 |
+| DMA_ST_BOW | 0x01 | 116 |
+| UNIT_V_FDC_WLK | (UNIT_V_UF + 0) /* write locked ... | 119 |
+| UNIT_FDC_WLK | (1 << UNIT_V_FDC_WLK) | 120 |
+| UNIT_V_FDC_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 121 |
+| UNIT_FDC_VERBOSE | (1 << UNIT_V_FDC_VERBOSE) | 122 |
+| FDC_WAIT_STEP | 3000 | 125 |
+| FDC_WAIT_READ | 8000 | 126 |
+| FDC_WAIT_READNEXT | 800 | 127 |
+| FDC_WAIT_WRITE | 8000 | 128 |
+| FDC_WAIT_WRITENEXT | 800 | 129 |
+| FDC_WAIT_FORCEINT | 100 | 130 |
+| FDC_WAIT_IDXPULSE | 16000 | 131 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| fdc_boot | 267-273 | boot unit - not available through BOOT FDC cmd, use BOOT CPU instead |
+| fdc_attach | 274-323 |  |
+| fdc_detach | 324-343 |  |
+| fdc_start | 344-349 |  |
+| fdc_stop | 350-355 |  |
+| fdc_update_rdonly | 356-363 |  |
+| fdc_driveready | 364-380 |  |
+| fdc_istrk0 | 381-391 |  |
+| fdc_stepin | 392-403 | return true if invalid track (CRC error) |
+| fdc_stepout | 404-410 | return true if trk0 reached |
+| fdc_clr_st1_error | 411-414 |  |
+| dma_interrupt | 415-421 |  |
+| dma_abort | 422-438 |  |
+| dma_finish | 439-446 | all data transferred |
+| dma_reqinterrupt | 447-451 | request interrupt from FDC |
+| dma_fix_regs | 452-460 |  |
+| dma_transfer_to_ram | 461-504 | return true if successfully transferred |
+| dma_transfer_from_ram | 505-547 | return true if successfully transferred |
+| fdc_readsec | 548-582 | return true if read satisfied, false if error |
+| fdc_writesec | 583-630 |  |
+| fdc_rwerror | 631-635 |  |
+| fdc_set_notready | 636-662 |  |
+| fdc_restartmulti | 663-672 |  |
+| fdc_svc | 673-747 | process the FDC commands, and restart, if necessary |
+| fdc_binit | 748-772 |  |
+| fdc_reset | 773-795 |  |
+| fdc_select | 796-820 | select drive, according to select register |
+| debug_fdccmd | 821-866 |  |
+| fdc_docmd | 867-933 |  |
+| dma_docmd | 934-943 |  |
+| fdc_autoload | 944-964 | setup FDC/DMA to read first track into low memory |
+| fdc_write | 965-1032 |  |
+| fdc_read | 1033-1087 |  |
+| pdq3_diskCreate | 1088-1159 | If the IMD file already exists, the user will be given the option of overwriting it. |
+| pdq3_diskFormat | 1160-1186 |  |

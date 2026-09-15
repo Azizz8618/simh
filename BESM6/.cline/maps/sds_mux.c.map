@@ -1,0 +1,105 @@
+=== sds_mux.c — 562 строк ===
+Источник: sds_mux.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sds_mux.c -nt .cline/maps/sds_mux.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| alert | 104 | |
+| stop_invins | 105 | |
+| cpu_unit | 106 | |
+| mux_dib | 139 | |
+| ln | 253 | |
+| SCPE_OK | 284 | |
+| ln | 291 | |
+| flag | 292 | |
+| SCPE_OK | 306 | |
+| SCPE_OK | 346 | |
+| ln | 357 | |
+| SCPE_OK | 389 | |
+| SCPE_OK | 416 | |
+| return | 454 | |
+| muxl_dev.flags | 465 | |
+| SCPE_OK | 477 | |
+| SCPE_OK | 492 | |
+| newln | 513 | |
+| MUX_NUMLIN | 543 | |
+| SCPE_OK | 544 | |
+| flg | 551 | |
+| mux_sta | 555 | |
+| mux_flags | 557 | |
+| mux_flags | 558 | |
+| mux_flags | 559 | |
+| mux_flags | 560 | |
+| return | 561 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PROJ_GENIE | (cpu_unit.flags & UNIT_GENIE) | 44 |
+| MUX_NUMLIN | mux_desc.lines | 45 |
+| MUX_LINES | 32                              ... | 47 |
+| MUX_FLAGS | 4                               ... | 48 |
+| MUX_FLAGMASK | (MUX_FLAGS - 1) | 49 |
+| MUX_SCANMAX | (MUX_LINES * MUX_FLAGS)         ... | 50 |
+| MUX_SCANMASK | (MUX_SCANMAX - 1) | 51 |
+| MUX_INIT_POLL | 8000 | 52 |
+| MUXL_WAIT | 250 | 53 |
+| MUX_SETFLG(l,x) | mux_flags[((l) * MUX_FLAGS) + (x... | 54 |
+| MUX_SETINT(x) | int_req = int_req \| (INT_MUXR >>... | 55 |
+| MUX_CLRINT(x) | int_req = int_req & ~(INT_MUXR >... | 56 |
+| MUX_CHKINT(x) | (int_req & (INT_MUXR >> (x))) | 57 |
+| P_V_CHAR | 16                              ... | 61 |
+| P_M_CHAR | 0377 | 62 |
+| P_CHAR(x) | (((x) >> P_V_CHAR) & P_M_CHAR) | 63 |
+| PIN_OVR | 000100000                       ... | 64 |
+| POT_NOX | 000100000                       ... | 65 |
+| POT_XMI | 000040000                       ... | 66 |
+| POT_GLNE | 000020000                       ... | 67 |
+| POT_SCDT | 000020000                       ... | 68 |
+| P_V_CHAN | 0                               ... | 69 |
+| P_M_CHAN | (MUX_LINES - 1) | 70 |
+| P_CHAN(x) | (((x) >> P_V_CHAN) & P_M_CHAN) | 71 |
+| SKS_XBE | 000001000                       ... | 75 |
+| SKS_CRO | 000000400                       ... | 76 |
+| SKS_DSR | 000000200                       ... | 77 |
+| SKS_CHAN(x) | P_CHAN(x) | 78 |
+| SKG_V_CHAN | 7 | 82 |
+| SKG_M_CHAN | (MUX_LINES - 1) | 83 |
+| SKG_CHAN(x) | (((x) >> SKG_V_CHAN) & SKG_M_CHAN) | 84 |
+| MUX_FRCV | 0                               ... | 88 |
+| MUX_FXMT | 1                               ... | 89 |
+| MUX_FCRN | 2                               ... | 90 |
+| MUX_FCRF | 3                               ... | 91 |
+| MUX_SCHP | 001                             ... | 95 |
+| MUX_SOVR | 002                             ... | 96 |
+| MUX_SLNE | 004                             ... | 97 |
+| MUX_SXIE | 010                             ... | 98 |
+| MUX_SCRO | 020                             ... | 99 |
+| MUX_SDSR | 040                             ... | 100 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mux | 251-254 |  |
+| switch | 255-288 |  |
+| pin_mux | 289-297 |  |
+| if | 298-308 |  |
+| pot_mux | 309-313 |  |
+| if | 314-317 |  |
+| if | 318-354 |  |
+| muxi_svc | 355-363 |  |
+| if | 364-372 |  |
+| for | 373-393 |  |
+| muxo_svc | 394-398 |  |
+| if | 399-411 |  |
+| if | 412-436 |  |
+| mux_scan_next | 437-444 |  |
+| for | 445-458 | will be Rx flag of next ch. |
+| mux_reset | 459-465 |  |
+| if | 466-481 |  |
+| mux_attach | 482-496 |  |
+| mux_detach | 497-510 |  |
+| mux_vlines | 511-522 |  |
+| if | 523-548 |  |
+| mux_reset_ln | 549-562 |  |

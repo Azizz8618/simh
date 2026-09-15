@@ -1,0 +1,247 @@
+=== pdp11_rp.c — 1468 строк ===
+Источник: pdp11_rp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_rp.c -nt .cline/maps/pdp11_rp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rp_dib | 587 | |
+| rp_unit | 589 | |
+| rp_dptr | 657 | |
+| rp_dptr | 731 | |
+| val | 738 | |
+| uptr | 739 | |
+| SCPE_OK | 838 | |
+| old_reg | 845 | |
+| uptr | 846 | |
+| SCPE_OK | 926 | |
+| dc | 933 | |
+| uptr | 934 | |
+| MBE_GOE | 1039 | |
+| uptr->io_status | 1059 | |
+| uptr->io_complete | 1060 | |
+| wc | 1075 | |
+| da | 1076 | |
+| SCPE_OK | 1215 | |
+| uptr | 1222 | |
+| rper1 | 1226 | |
+| rpds | 1227 | |
+| o_ds | 1254 | |
+| uptr | 1255 | |
+| rpds | 1266 | |
+| rpds | 1267 | |
+| uptr | 1282 | |
+| inited | 1283 | |
+| SCPE_OK | 1328 | |
+| drv | 1335 | |
+| rper1 | 1349 | |
+| SCPE_OK | 1351 | |
+| drv | 1358 | |
+| uptr | 1417 | |
+| SCPE_OK | 1428 | |
+| SCPE_NOFNC | 1435 | |
+| SCPE_OK | 1462 | |
+| controller" | 1467 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| INIT_DTYPE | "RM03" | 60 |
+| INIT_DTYPE | "RP06" | 64 |
+| DMASK | 0xFFFF | 65 |
+| RP_CTRL | DRVFL_TYPE_RP                   ... | 75 |
+| RM_CTRL | DRVFL_TYPE_RM                   ... | 76 |
+| RP_NUMDR | 8                               ... | 77 |
+| RP_NUMWD | 256                             ... | 78 |
+| RP_MAXFR | (1 << 16)                       ... | 79 |
+| GET_SECTOR(x,d) | ((int) fmod (sim_gtime() / ((dou... | 80 |
+| RM_OF | (MBA_RMASK + 1) | 82 |
+| UNIT_V_AUTO | (DKUF_V_UF + 0)                 ... | 86 |
+| UNIT_V_DUMMY | (UNIT_V_AUTO + 1)               ... | 87 |
+| UNIT_AUTO | (1 << UNIT_V_AUTO) | 88 |
+| UNIT_DUMMY | (1 << UNIT_V_DUMMY) | 89 |
+| CYL | u3                              ... | 93 |
+| RP_CS1_OF | 0 | 100 |
+| RM_CS1_OF | (0 + RM_OF) | 101 |
+| CS1_GO | CSR_GO                          ... | 102 |
+| CS1_V_FNC | 1                               ... | 103 |
+| CS1_M_FNC | 037                             ... | 104 |
+| CS1_N_FNC | (CS1_M_FNC + 1) | 105 |
+| FNC_NOP | 000                             ... | 106 |
+| FNC_UNLOAD | 001                             ... | 107 |
+| FNC_SEEK | 002                             ... | 108 |
+| FNC_RECAL | 003                             ... | 109 |
+| FNC_DCLR | 004                             ... | 110 |
+| FNC_RELEASE | 005                             ... | 111 |
+| FNC_OFFSET | 006                             ... | 112 |
+| FNC_RETURN | 007                             ... | 113 |
+| FNC_PRESET | 010                             ... | 114 |
+| FNC_PACK | 011                             ... | 115 |
+| FNC_SEARCH | 014                             ... | 116 |
+| FNC_XFER | 024                             ... | 117 |
+| FNC_WCHK | 024                             ... | 118 |
+| FNC_WRITE | 030                             ... | 119 |
+| FNC_WRITEH | 031                             ... | 120 |
+| FNC_READ | 034                             ... | 121 |
+| FNC_READH | 035                             ... | 122 |
+| CS1_RW | 076 | 123 |
+| CS1_DVA | 04000                           ... | 124 |
+| GET_FNC(x) | (((x) >> CS1_V_FNC) & CS1_M_FNC) | 125 |
+| RP_DS_OF | 1 | 152 |
+| RM_DS_OF | (1 + RM_OF) | 153 |
+| DS_OFM | 0000001                         ... | 154 |
+| DS_VV | 0000100                         ... | 155 |
+| DS_RDY | 0000200                         ... | 156 |
+| DS_DPR | 0000400                         ... | 157 |
+| DS_PGM | 0001000                         ... | 158 |
+| DS_LST | 0002000                         ... | 159 |
+| DS_WRL | 0004000                         ... | 160 |
+| DS_MOL | 0010000                         ... | 161 |
+| DS_PIP | 0020000                         ... | 162 |
+| DS_ERR | 0040000                         ... | 163 |
+| DS_ATA | 0100000                         ... | 164 |
+| DS_MBZ | 0000076 | 165 |
+| RP_ER1_OF | 2 | 185 |
+| RM_ER1_OF | (2 + RM_OF) | 186 |
+| ER1_ILF | 0000001                         ... | 187 |
+| ER1_ILR | 0000002                         ... | 188 |
+| ER1_RMR | 0000004                         ... | 189 |
+| ER1_PAR | 0000010                         ... | 190 |
+| ER1_FER | 0000020                         ... | 191 |
+| ER1_WCF | 0000040                         ... | 192 |
+| ER1_ECH | 0000100                         ... | 193 |
+| ER1_HCE | 0000200                         ... | 194 |
+| ER1_HCR | 0000400                         ... | 195 |
+| ER1_AOE | 0001000                         ... | 196 |
+| ER1_IAE | 0002000                         ... | 197 |
+| ER1_WLE | 0004000                         ... | 198 |
+| ER1_DTE | 0010000                         ... | 199 |
+| ER1_OPI | 0020000                         ... | 200 |
+| ER1_UNS | 0040000                         ... | 201 |
+| ER1_DCK | 0100000                         ... | 202 |
+| RP_MR_OF | 3 | 226 |
+| RM_MR_OF | (3 + RM_OF) | 227 |
+| RP_AS_OF | 4 | 236 |
+| RM_AS_OF | (4 + RM_OF) | 237 |
+| AS_U0 | 0000001                         ... | 238 |
+| RP_DA_OF | 5 | 255 |
+| RM_DA_OF | (5 + RM_OF) | 256 |
+| DA_V_SC | 0                               ... | 257 |
+| DA_M_SC | 077                             ... | 258 |
+| DA_V_SF | 8                               ... | 259 |
+| DA_M_SF | 077                             ... | 260 |
+| DA_MBZ | 0140300 | 261 |
+| GET_SC(x) | (uint32)(((x) >> DA_V_SC) & DA_M... | 262 |
+| GET_SF(x) | (uint32)(((x) >> DA_V_SF) & DA_M... | 263 |
+| RP_DT_OF | 6 | 275 |
+| RM_DT_OF | (6 + RM_OF) | 276 |
+| RP_LA_OF | 7 | 290 |
+| RM_LA_OF | (7 + RM_OF) | 291 |
+| LA_V_SC | 6                               ... | 292 |
+| RP_SN_OF | 8 | 303 |
+| RM_SN_OF | (8 + RM_OF) | 304 |
+| RP_OF_OF | 9 | 313 |
+| RM_OF_OF | (9 + RM_OF) | 314 |
+| OF_HCI | 0002000                         ... | 315 |
+| OF_ECI | 0004000                         ... | 316 |
+| OF_F22 | 0010000                         ... | 317 |
+| OF_MBZ | 0161400 | 318 |
+| RP_DC_OF | 10 | 333 |
+| RM_DC_OF | (10 + RM_OF) | 334 |
+| DC_V_CY | 0                               ... | 335 |
+| DC_M_CY | 01777                           ... | 336 |
+| DC_MBZ | 0176000 | 337 |
+| GET_CY(x) | (uint32)(((x) >> DC_V_CY) & DC_M... | 338 |
+| GET_DA(c,fs,d) | ((((GET_CY (c) * d->surf) +  | 339 |
+| RP_CC_OF | 11 | 351 |
+| RM_HR_OF | (11 + RM_OF) | 352 |
+| RP_ER2_OF | 12 | 362 |
+| RM_MR2_OF | (12 + RM_OF) | 363 |
+| RP_ER3_OF | 13 | 383 |
+| RM_ER2_OF | (13 + RM_OF) | 384 |
+| RP_EC1_OF | 14 | 403 |
+| RM_EC1_OF | (14 + RM_OF) | 404 |
+| RP_EC2_OF | 15 | 414 |
+| RM_EC2_OF | (15 + RM_OF) | 415 |
+| RM03_SECT | 32 | 481 |
+| RM03_SURF | 5 | 482 |
+| RM03_CYL | 823 | 483 |
+| RM03_DEC144 | 1 | 484 |
+| RM03_DEV | 020024 | 485 |
+| RP04_SECT | 22 | 487 |
+| RP04_SURF | 19 | 488 |
+| RP04_CYL | 411 | 489 |
+| RP04_DEC144 | 0 | 490 |
+| RP04_DEV | 020020 | 491 |
+| RP05_SECT | 22 | 493 |
+| RP05_SURF | 19 | 494 |
+| RP05_CYL | 411 | 495 |
+| RP05_DEC144 | 0 | 496 |
+| RP05_DEV | 020021 | 497 |
+| RM80_SECT | 31 | 499 |
+| RM80_SURF | 14 | 500 |
+| RM80_CYL | 559 | 501 |
+| RM80_DEC144 | 1 | 502 |
+| RM80_DEV | 020026 | 503 |
+| RP06_SECT | 22 | 505 |
+| RP06_SURF | 19 | 506 |
+| RP06_CYL | 815 | 507 |
+| RP06_DEC144 | 0 | 508 |
+| RP06_DEV | 020022 | 509 |
+| RM05_SECT | 32 | 511 |
+| RM05_SURF | 19 | 512 |
+| RM05_CYL | 823 | 513 |
+| RM05_DEC144 | 1 | 514 |
+| RM05_DEV | 020027 | 515 |
+| RP07_SECT | 50 | 517 |
+| RP07_SURF | 32 | 518 |
+| RP07_CYL | 630 | 519 |
+| RP07_DEC144 | 1 | 520 |
+| RP07_DEV | 020042 | 521 |
+| RP_DRV(d, | ct)  | 523 |
+| IOLN_RP | 054 | 585 |
+| DBG_TRC | 0x0001                          ... | 633 |
+| DBG_REG | 0x0002                          ... | 634 |
+| DBG_REQ | 0x0004                          ... | 635 |
+| DBG_DSK | 0x0008                          ... | 636 |
+| DBG_DAT | 0x0010                          ... | 637 |
+| BOOT_START | 02000                           ... | 1384 |
+| BOOT_ENTRY | (BOOT_START + 002)              ... | 1385 |
+| BOOT_UNIT | (BOOT_START + 010)              ... | 1386 |
+| BOOT_CSR | (BOOT_START + 014)              ... | 1387 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (uin... | 1388 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rp_drv_to_unit | 727-735 |  |
+| rp_mbrd | 736-742 |  |
+| if | 743-750 |  |
+| switch | 751-842 |  |
+| rp_mbwr | 843-852 |  |
+| if | 853-862 |  |
+| switch | 863-930 |  |
+| rp_go | 931-943 |  |
+| if | 944-949 |  |
+| switch | 950-1043 |  |
+| rp_abort | 1044-1053 |  |
+| rp_io_complete | 1054-1071 |  |
+| rp_svc | 1072-1085 |  |
+| if | 1086-1092 |  |
+| if | 1093-1155 |  |
+| End | 1156-1219 |  |
+| rp_set_er | 1220-1232 |  |
+| rp_clr_as | 1233-1237 |  |
+| for | 1238-1251 |  |
+| rp_update_ds | 1252-1270 |  |
+| if | 1271-1278 |  |
+| rp_reset | 1279-1286 |  |
+| if | 1287-1298 |  |
+| for | 1299-1332 |  |
+| rp_attach | 1333-1355 |  |
+| rp_detach | 1356-1371 |  |
+| rp_set_bad | 1372-1413 |  |
+| rp_boot | 1414-1432 |  |
+| rp_boot | 1433-1439 |  |
+| rp_help | 1440-1464 |  |
+| rp_description | 1465-1468 |  |

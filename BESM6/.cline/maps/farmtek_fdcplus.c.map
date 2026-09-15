@@ -1,0 +1,76 @@
+=== farmtek_fdcplus.c — 785 строк ===
+Источник: farmtek_fdcplus.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test farmtek_fdcplus.c -nt .cline/maps/farmtek_fdcplus.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| poc | 65 | |
+| current_disk | 84 | |
+| current_track | 86 | |
+| current_sector | 87 | |
+| current_byte | 88 | |
+| current_flag | 89 | |
+| sectors_per_track | 92 | |
+| sector_size | 93 | |
+| tracks | 94 | |
+| in9_count | 95 | |
+| in9_message | 96 | |
+| drive_type | 101 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DEVICE_NAME | "FarmTek FDC+ Floppy Disk Contro... | 53 |
+| DEVICE_DEV | "FDCP" | 54 |
+| IN_MSG | (1 << 0) | 57 |
+| OUT_MSG | (1 << 1) | 58 |
+| READ_MSG | (1 << 2) | 59 |
+| WRITE_MSG | (1 << 3) | 60 |
+| SECTOR_STUCK_MSG | (1 << 4) | 61 |
+| TRACK_STUCK_MSG | (1 << 5) | 62 |
+| VERBOSE_MSG | (1 << 6) | 63 |
+| FDCP_SELECT | 0x08 /* Out */ | 111 |
+| FDCP_DRVSTAT | 0x08 /* In  */ | 112 |
+| FDCP_CONTROL | 0x09 /* Out */ | 113 |
+| FDCP_SECTOR | 0x09 /* In  */ | 114 |
+| FDCP_WDATA | 0x0a /* Out */ | 115 |
+| FDCP_RDATA | 0x0a /* In  */ | 116 |
+| FDCP_IOSTAT | 0x0b /* Out */ | 117 |
+| FDCP_TRACK | 0x0b /* In  */ | 118 |
+| FDCP_CLEAR | 0x80 /* Clear disk select */ | 120 |
+| FDCP_ENWD | 0x01 /* Enter new write data */ | 122 |
+| FDCP_MVHD | 0x02 /* Move head            */ | 123 |
+| FDCP_HS | 0x04 /* Head status          */ | 124 |
+| FDCP_RDY | 0x08 /* Ready                */ | 125 |
+| FDCP_WP | 0x10 /* Write protected      */ | 126 |
+| FDCP_INTE | 0x20 /* Interrupt enabled    */ | 127 |
+| FDCP_TRK0 | 0x40 /* Track 0              */ | 128 |
+| FDCP_NRDA | 0x80 /* New read data avail. */ | 129 |
+| FDCP_STEPIN | 0x01 /* Step in              */ | 131 |
+| FDCP_STEPOUT | 0x02 /* Step out             */ | 132 |
+| FDCP_HDLD | 0x04 /* Head load            */ | 133 |
+| FDCP_HDUL | 0x08 /* Head unload          */ | 134 |
+| FDCP_IE | 0x10 /* Interrupt enable     */ | 135 |
+| FDCP_RE | 0x10 /* Read enable (Type 5) */ | 136 |
+| FDCP_ID | 0x20 /* Interrupt disable    */ | 137 |
+| FDCP_HCS | 0x40 /* Head current switch  */ | 138 |
+| FDCP_WE | 0x80 /* Write enable         */ | 139 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| fdcp_description | 214-248 |  |
+| selectInOut | 249-255 |  |
+| fdcp_reset | 256-303 |  |
+| fdcp_attach | 304-335 |  |
+| fdcp_detach | 336-340 |  |
+| fdcp_boot | 341-347 |  |
+| dskseek | 348-355 |  |
+| writebuf | 356-420 | precondition: current_disk < NUM_OF_DSK |
+| fdcp_08h | 421-481 |  |
+| fdcp_09h | 482-610 |  |
+| fdcp_0ah | 611-708 |  |
+| fdcp_0bh | 709-731 |  |
+| fdcp_set_type | 732-764 |  |
+| fdcpd_show_help | 765-785 |  |

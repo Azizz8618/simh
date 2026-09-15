@@ -1,0 +1,105 @@
+=== vax4xx_rz94.c — 784 строк ===
+Источник: vax4xx_rz94.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax4xx_rz94.c -nt .cline/maps/vax4xx_rz94.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rz_last_cmd | 72 | |
+| rz_seq | 80 | |
+| rz_dest | 81 | |
+| rz_fifo | 82 | |
+| rz_fifo_t | 83 | |
+| rz_fifo_b | 84 | |
+| rz_fifo_c | 85 | |
+| rz_dma | 86 | |
+| rz_dir | 87 | |
+| rz_buf | 88 | |
+| rz_bus | 89 | |
+| rz_unit | 125 | |
+| rz_fifo_c | 190 | |
+| rz_fifo_t | 191 | |
+| rz_fifo | 192 | |
+| data | 199 | |
+| SET_IRQL | 265 | |
+| data | 266 | |
+| SET_IRQL | 338 | |
+| SCPE_OK | 347 | |
+| tgt | 359 | |
+| txc | 361 | |
+| rz_txc | 709 | |
+| rz_cfg1 | 710 | |
+| rz_cfg2 | 711 | |
+| rz_cfg3 | 712 | |
+| rz_stat | 713 | |
+| rz_seq | 714 | |
+| rz_int | 715 | |
+| rz_dest | 716 | |
+| uptr | 725 | |
+| inited | 726 | |
+| SCPE_OK | 753 | |
+| SCPE_OK | 773 | |
+| controller" | 783 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CMD_DISC | 0x40                            ... | 35 |
+| CMD_TARG | 0x20                            ... | 36 |
+| CMD_INIT | 0x10                            ... | 37 |
+| STS_INT | 0x80                            ... | 41 |
+| STS_GE | 0x40                            ... | 42 |
+| STS_PE | 0x20                            ... | 43 |
+| STS_TC | 0x10                            ... | 44 |
+| STS_VGC | 0x08                            ... | 45 |
+| STS_PH | 0x07                            ... | 46 |
+| STS_CLR | 0x10 | 47 |
+| INT_SCSIRST | 0x80                            ... | 51 |
+| INT_ILLCMD | 0x40                            ... | 52 |
+| INT_DIS | 0x20                            ... | 53 |
+| INT_BUSSV | 0x10                            ... | 54 |
+| INT_FC | 0x08                            ... | 55 |
+| INT_RSEL | 0x04                            ... | 56 |
+| INT_SELA | 0x02                            ... | 57 |
+| INT_SEL | 0x01                            ... | 58 |
+| CFG1_SLOW | 0x80                            ... | 62 |
+| CFG1_SRD | 0x40                            ... | 63 |
+| CFG1_PTST | 0x20                            ... | 64 |
+| CFG1_PEN | 0x10                            ... | 65 |
+| CFG1_TEST | 0x08                            ... | 66 |
+| CFG1_MYID | 0x07                            ... | 67 |
+| RZ_MAXFR | (1u << 16)                      ... | 69 |
+| RZ_NUMDR | 8 | 70 |
+| DBG_REG | 0x0001                          ... | 93 |
+| DBG_CMD | 0x0002                          ... | 94 |
+| DBG_INT | 0x0004                          ... | 95 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rz_fifo_rd | 164-165 |  |
+| if | 166-174 |  |
+| rz_fifo_wr | 175-176 |  |
+| if | 177-187 |  |
+| rz_fifo_reset | 188-196 |  |
+| rz_rd | 197-200 |  |
+| if | 201-203 |  |
+| if | 204-207 |  |
+| switch | 208-268 |  |
+| rz_wr | 269-272 |  |
+| if | 273-276 |  |
+| if | 277-281 |  |
+| switch | 282-342 |  |
+| rz_svc | 343-349 |  |
+| rz_setint | 350-355 |  |
+| rz_cmd | 356-362 |  |
+| if | 363-367 |  |
+| if | 368-372 |  |
+| if | 373-378 |  |
+| switch | 379-702 |  |
+| rz_sw_reset | 703-721 |  |
+| rz_reset | 722-736 |  |
+| if | 737-755 |  |
+| rz_help | 756-775 |  |
+| rz_attach | 776-780 |  |
+| rz_description | 781-784 |  |

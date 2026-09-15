@@ -1,0 +1,110 @@
+=== m68kmake.c — 1408 строк ===
+Источник: m68kmake.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test m68kmake.c -nt .cline/maps/m68kmake.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| opcode_struct | 178-191 |
+| ea_info_struct | 195-201 |
+| body_struct | 205-209 |
+| replace_struct | 213-217 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| g_version | 60 | |
+| g_input_filename | 256 | |
+| g_input_file | 259 | |
+| g_prototype_file | 260 | |
+| g_table_file | 261 | |
+| g_opcode_input_table | 268 | |
+| g_opcode_output_table | 270 | |
+| g_opcode_output_table_length | 271 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| M68K_MAX_PATH | 1024 | 78 |
+| M68K_MAX_DIR | 1024 | 79 |
+| MAX_LINE_LENGTH | 200	/* length of 1 line */ | 81 |
+| MAX_BODY_LENGTH | 300	/* Number of lines in 1 func... | 82 |
+| MAX_REPLACE_LENGTH | 30	/* Max number of replace stri... | 83 |
+| MAX_INSERT_LENGTH | 5000	/* Max size of insert piece */ | 84 |
+| MAX_NAME_LENGTH | 30	/* Max length of ophandler na... | 85 |
+| MAX_SPEC_PROC_LENGTH | 4	/* Max length of special proce... | 86 |
+| MAX_SPEC_EA_LENGTH | 5	/* Max length of specified EA ... | 87 |
+| EA_ALLOWED_LENGTH | 11	/* Max length of ea allowed s... | 88 |
+| MAX_OPCODE_INPUT_TABLE_LENGTH | 1000	/* Max length of opcode han... | 89 |
+| MAX_OPCODE_OUTPUT_TABLE_LENGTH | 3000	/* Max length of opcode han... | 90 |
+| FILENAME_INPUT | "m68k_in.c" | 93 |
+| FILENAME_PROTOTYPE | "m68kops.h" | 94 |
+| FILENAME_TABLE | "m68kops.c" | 95 |
+| ID_INPUT_SEPARATOR | "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX... | 100 |
+| ID_BASE | "M68KMAKE" | 102 |
+| ID_PROTOTYPE_HEADER | ID_BASE "_PROTOTYPE_HEADER" | 103 |
+| ID_PROTOTYPE_FOOTER | ID_BASE "_PROTOTYPE_FOOTER" | 104 |
+| ID_TABLE_HEADER | ID_BASE "_TABLE_HEADER" | 105 |
+| ID_TABLE_FOOTER | ID_BASE "_TABLE_FOOTER" | 106 |
+| ID_TABLE_BODY | ID_BASE "_TABLE_BODY" | 107 |
+| ID_TABLE_START | ID_BASE "_TABLE_START" | 108 |
+| ID_OPHANDLER_HEADER | ID_BASE "_OPCODE_HANDLER_HEADER" | 109 |
+| ID_OPHANDLER_FOOTER | ID_BASE "_OPCODE_HANDLER_FOOTER" | 110 |
+| ID_OPHANDLER_BODY | ID_BASE "_OPCODE_HANDLER_BODY" | 111 |
+| ID_END | ID_BASE "_END" | 112 |
+| ID_OPHANDLER_NAME | ID_BASE "_OP" | 114 |
+| ID_OPHANDLER_EA_AY_8 | ID_BASE "_GET_EA_AY_8" | 115 |
+| ID_OPHANDLER_EA_AY_16 | ID_BASE "_GET_EA_AY_16" | 116 |
+| ID_OPHANDLER_EA_AY_32 | ID_BASE "_GET_EA_AY_32" | 117 |
+| ID_OPHANDLER_OPER_AY_8 | ID_BASE "_GET_OPER_AY_8" | 118 |
+| ID_OPHANDLER_OPER_AY_16 | ID_BASE "_GET_OPER_AY_16" | 119 |
+| ID_OPHANDLER_OPER_AY_32 | ID_BASE "_GET_OPER_AY_32" | 120 |
+| ID_OPHANDLER_CC | ID_BASE "_CC" | 121 |
+| ID_OPHANDLER_NOT_CC | ID_BASE "_NOT_CC" | 122 |
+| DECL_SPEC |  | 126 |
+| UNSPECIFIED | "." | 144 |
+| UNSPECIFIED_CH | '.' | 145 |
+| HAS_NO_EA_MODE(A) | (strcmp(A, "..........") == 0) | 147 |
+| HAS_EA_AI(A) | ((A)[0] == 'A') | 148 |
+| HAS_EA_PI(A) | ((A)[1] == '+') | 149 |
+| HAS_EA_PD(A) | ((A)[2] == '-') | 150 |
+| HAS_EA_DI(A) | ((A)[3] == 'D') | 151 |
+| HAS_EA_IX(A) | ((A)[4] == 'X') | 152 |
+| HAS_EA_AW(A) | ((A)[5] == 'W') | 153 |
+| HAS_EA_AL(A) | ((A)[6] == 'L') | 154 |
+| HAS_EA_PCDI(A) | ((A)[7] == 'd') | 155 |
+| HAS_EA_PCIX(A) | ((A)[8] == 'x') | 156 |
+| HAS_EA_I(A) | ((A)[9] == 'I') | 157 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| error_exit | 472-488 | Print an error message and exit with status error |
+| perror_exit | 489-505 | Print an error message, call perror(), and exit with status error |
+| check_strsncpy | 506-519 | copy until 0 or space and exit with error if we read too far |
+| check_strcncpy | 520-533 | copy until 0 or specified character and exit with error if we read too far |
+| check_atoi | 534-549 | convert ascii to integer and exit with error if we find invalid data |
+| skip_spaces | 550-560 | Skip past spaces in a string |
+| num_bits | 561-570 | Count the number of set bits in a value |
+| atoh | 571-592 | Convert a hex value written in ASCII |
+| fgetline | 593-617 | Get a line of text from a file, discarding any end-of-line characters |
+| get_oper_cycles | 618-659 | Calculate the number of cycles an opcode requires |
+| find_opcode | 660-676 | Find an opcode in the opcode handler list |
+| find_illegal_opcode | 677-689 | Specifically find the illegal opcode in the list |
+| extract_opcode_info | 690-724 | Parse an opcode handler name |
+| add_replace_string | 725-734 | Add a search/replace pair to a replace structure |
+| write_body | 735-773 | Write a function body while replacing any selected strings |
+| get_base_name | 774-785 | Generate a base function name from an opcode struct |
+| write_function_name | 786-790 | Write the name of an opcode handler function |
+| add_opcode_output_table_entry | 791-808 |  |
+| compare_nof_true_bits | 809-818 | the mask compare the match values |
+| print_opcode_output_table | 819-828 |  |
+| write_table_entry | 829-846 | Write an entry in the opcode handler table |
+| set_opcode_struct | 847-862 | Fill out an opcode struct with a specific addressing mode of the source opcode struct |
+| generate_opcode_handler | 863-897 | Generate a final opcode handler from the provided data |
+| generate_opcode_ea_variants | 898-952 | Generate opcode variants based on available addressing modes |
+| generate_opcode_cc_variants | 953-988 | Generate variants of condition code opcodes |
+| process_opcode_handlers | 989-1061 | Process the opcode handlers section of the input file |
+| populate_table | 1062-1156 | Populate the opcode handler table from the input file |
+| read_insert | 1157-1215 | Read a header or footer insert from the input file |
+| main | 1216-1408 |  |

@@ -1,0 +1,50 @@
+=== m68kfpu.c — 1769 строк ===
+Источник: m68kfpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test m68kfpu.c -nt .cline/maps/m68kfpu.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FPCC_N | 0x08000000 | 15 |
+| FPCC_Z | 0x04000000 | 16 |
+| FPCC_I | 0x02000000 | 17 |
+| FPCC_NAN | 0x01000000 | 18 |
+| DOUBLE_INFINITY | (unsigned long long)(0x7ff000000... | 20 |
+| DOUBLE_EXPONENT | (unsigned long long)(0x7ff000000... | 21 |
+| DOUBLE_MANTISSA | (unsigned long long)(0x000ffffff... | 22 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| fatalerror | 7-41 |  |
+| fx80_to_double | 42-53 |  |
+| double_to_fx80 | 54-62 |  |
+| load_extended_float80 | 63-78 |  |
+| store_extended_float80 | 79-86 |  |
+| load_pack_float80 | 87-137 |  |
+| store_pack_float80 | 138-269 |  |
+| SET_CONDITION_CODES | 270-298 |  |
+| TEST_CONDITION | 299-360 |  |
+| READ_EA_8 | 361-416 |  |
+| READ_EA_16 | 417-473 |  |
+| READ_EA_32 | 474-538 |  |
+| READ_EA_64 | 539-596 |  |
+| READ_EA_FPE | 597-659 |  |
+| READ_EA_PACK | 660-706 |  |
+| WRITE_EA_8 | 707-774 |  |
+| WRITE_EA_16 | 775-842 |  |
+| WRITE_EA_32 | 843-915 |  |
+| WRITE_EA_64 | 916-949 |  |
+| WRITE_EA_FPE | 950-1001 |  |
+| WRITE_EA_PACK | 1002-1047 |  |
+| fpgen_rm_reg | 1048-1298 |  |
+| fmove_reg_mem | 1299-1363 |  |
+| fmove_fpcr | 1364-1390 |  |
+| fmovem | 1391-1480 |  |
+| fscc | 1481-1515 |  |
+| fbcc16 | 1516-1532 |  |
+| fbcc32 | 1533-1550 |  |
+| m68040_fpu_op0 | 1551-1613 |  |
+| perform_fsave | 1614-1639 |  |
+| do_frestore_null | 1640-1657 | FRESTORE on a NULL frame reboots the FPU - all registers to NaN, the 3 status regs to 0 |
+| m68040_fpu_op1 | 1658-1769 |  |

@@ -1,0 +1,76 @@
+=== i7010_cpu.c — 4032 строк ===
+Источник: i7010_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7010_cpu.c -nt .cline/maps/i7010_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rtc_tps | 109 | |
+| time_digs | 152 | |
+| chan_unit | 158 | |
+| bcd_bin | 247 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_MSIZE | (UNIT_V_UF + 0) | 50 |
+| UNIT_MSIZE | (017 << UNIT_V_MSIZE) | 51 |
+| UNIT_V_CPUMODEL | (UNIT_V_UF + 5) | 52 |
+| UNIT_MODEL | (0x3 << UNIT_V_CPUMODEL) | 53 |
+| CPU_MODEL | ((cpu_unit.flags >> UNIT_V_CPUMO... | 54 |
+| MODEL(x) | (x << UNIT_V_CPUMODEL) | 55 |
+| MEMAMOUNT(x) | (x << UNIT_V_MSIZE) | 56 |
+| OPTION_PRIO | (1 << (UNIT_V_UF + 13)) | 57 |
+| OPTION_FLOAT | (1 << (UNIT_V_UF + 14)) | 58 |
+| OPTION_PROT | (1 << (UNIT_V_UF_31)) | 59 |
+| TMR_RTC | 100 | 61 |
+| HIST_XCT | 1       /* instruction */ | 63 |
+| HIST_INT | 2       /* interrupt cycle */ | 64 |
+| HIST_TRP | 3       /* trap cycle */ | 65 |
+| HIST_MIN | 64 | 66 |
+| HIST_MAX | 65536 | 67 |
+| HIST_NOEA | 0x40000000 | 68 |
+| HIST_PC | 0x100000 | 69 |
+| HIST_MSK | 0x0FFFFF | 70 |
+| HIST_1401 | 0x200000        /* 1401 instruct... | 71 |
+| NORELA | 0x2 | 259 |
+| NORELB | 0x4 | 260 |
+| O_A | 001             /* Can take A */ | 286 |
+| O_B | 002             /* Can take B */ | 287 |
+| O_AB | (O_A\|O_B)       /* Can take both... | 288 |
+| O_M | 004             /* Can take modi... | 289 |
+| O_X | 010             /* Special Opera... | 290 |
+| O_C | 020             /* Load C regist... | 291 |
+| O_D | 0100            /* Load D regist... | 292 |
+| O_DBL | 0200            /* When chained ... | 293 |
+| O_ABCD | (O_A\|O_B\|O_C\|O_D) | 294 |
+| UpReg(reg) | reg++; if ((reg & AMASK) == MEMS... | 544 |
+| DownReg(reg) | if ((reg & AMASK) == 0) {  | 547 |
+| ValidAddr(reg) | if ((reg & AMASK)== 0 \|\| !MEM_AD... | 550 |
+| ZeroAddr(reg) | if ((reg & AMASK)== 0) {  | 554 |
+| UpAddr(reg) | reg++; if ((reg & AMASK) == MEMS... | 3509 |
+| DownAddr(reg) | if ((reg & AMASK) == 0) {  | 3511 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| FetchP | 345-371 |  |
+| ReadP | 372-405 |  |
+| WriteP | 406-439 |  |
+| ReplaceMask | 440-475 |  |
+| SetBit | 476-509 |  |
+| ClrBit | 510-558 |  |
+| sim_instr | 559-3515 |  |
+| do_addint | 3516-3568 | Add constant, two digits only, used by FP code |
+| do_addsub | 3569-3663 |  |
+| do_mult | 3664-3747 |  |
+| do_divide | 3748-3830 |  |
+| rtc_srv | 3831-3846 |  |
+| cpu_reset | 3847-3863 |  |
+| cpu_ex | 3864-3876 |  |
+| cpu_dep | 3877-3885 |  |
+| cpu_set_size | 3886-3912 |  |
+| cpu_set_hist | 3913-3947 |  |
+| cpu_show_hist | 3948-3995 |  |
+| cpu_description | 3996-4001 |  |
+| cpu_help | 4002-4032 |  |

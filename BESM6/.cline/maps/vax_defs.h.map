@@ -1,0 +1,528 @@
+=== vax_defs.h — 1051 строк ===
+Источник: vax_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_defs.h -nt .cline/maps/vax_defs.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 855-863 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| save_env | 80 | |
+| cpu_psl_bits | 842 | |
+| opcode | 843 | |
+| drom | 844 | |
+| mem_err | 890 | |
+| crd_err | 891 | |
+| drom | 964 | |
+| cpu_instruction_set | 974 | |
+| byte_mask | 1043 | |
+| boot_code_filename | 1049 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VAX_DEFS_H | 0 | 45 |
+| VM_VAX | 0 | 48 |
+| STOP_HALT | 1                               ... | 55 |
+| STOP_IBKPT | 2                               ... | 56 |
+| STOP_CHMFI | 3                               ... | 57 |
+| STOP_ILLVEC | 4                               ... | 58 |
+| STOP_INIE | 5                               ... | 59 |
+| STOP_PPTE | 6                               ... | 60 |
+| STOP_UIPL | 7                               ... | 61 |
+| STOP_RQ | 8                               ... | 62 |
+| STOP_LOOP | 9                               ... | 63 |
+| STOP_SANITY | 10                              ... | 64 |
+| STOP_SWDN | 11                              ... | 65 |
+| STOP_BOOT | 12                              ... | 66 |
+| STOP_UNKNOWN | 13                              ... | 67 |
+| STOP_UNKABO | 14                              ... | 68 |
+| STOP_DTOFF | 15                              ... | 69 |
+| ABORT_INTR | -1                              ... | 70 |
+| ABORT_MCHK | (-SCB_MCHK)                     ... | 71 |
+| ABORT_RESIN | (-SCB_RESIN)                    ... | 72 |
+| ABORT_RESAD | (-SCB_RESAD)                    ... | 73 |
+| ABORT_RESOP | (-SCB_RESOP)                    ... | 74 |
+| ABORT_CMODE | (-SCB_CMODE)                    ... | 75 |
+| ABORT_ARITH | (-SCB_ARITH)                    ... | 76 |
+| ABORT_ACV | (-SCB_ACV)                      ... | 77 |
+| ABORT_TNV | (-SCB_TNV)                      ... | 78 |
+| ABORT(x) | longjmp (save_env, (x))         ... | 79 |
+| RSVD_INST_FAULT(opc) | do {                            ... | 81 |
+| RSVD_ADDR_FAULT | ABORT (ABORT_RESAD) | 92 |
+| RSVD_OPND_FAULT(opc) | do {                            ... | 93 |
+| FLT_OVFL_FAULT | p1 = FLT_OVRFLO, ABORT (ABORT_AR... | 97 |
+| FLT_DZRO_FAULT | p1 = FLT_DIVZRO, ABORT (ABORT_AR... | 98 |
+| FLT_UNFL_FAULT | p1 = FLT_UNDFLO, ABORT (ABORT_AR... | 99 |
+| CMODE_FAULT(cd) | do {                            ... | 100 |
+| MACH_CHECK(cd) | do {                            ... | 105 |
+| LOG_CPU_I | 0x001                       /* i... | 113 |
+| LOG_CPU_R | 0x002                       /* R... | 114 |
+| LOG_CPU_A | 0x004                       /* A... | 115 |
+| LOG_CPU_P | 0x008                       /* p... | 116 |
+| LOG_CPU_FAULT_RSVD | 0x010                       /* r... | 117 |
+| LOG_CPU_FAULT_FLT | 0x020                       /* f... | 118 |
+| LOG_CPU_FAULT_CMODE | 0x040                       /* c... | 119 |
+| LOG_CPU_FAULT_MCHK | 0x080                       /* m... | 120 |
+| LOG_CPU_FAULT_EMUL | 0x100                       /* e... | 121 |
+| RQ_RN | 0xF                             ... | 125 |
+| RQ_V_LNT | 4                               ... | 126 |
+| RQ_M_LNT | 0x7                             ... | 127 |
+| RQ_DIR | 0x800                           ... | 128 |
+| RQ_REC(d,r) | (((d) << RQ_V_LNT) \| (r)) | 129 |
+| RQ_GETRN(x) | ((x) & RQ_RN) | 130 |
+| RQ_GETLNT(x) | (((x) >> RQ_V_LNT) & RQ_M_LNT) | 131 |
+| VAMASK | 0xFFFFFFFF                      ... | 135 |
+| PAWIDTH | 30                              ... | 136 |
+| PASIZE | (1 << PAWIDTH)                  ... | 137 |
+| PAMASK | (PASIZE - 1)                    ... | 138 |
+| IOPAGE | (1 << (PAWIDTH - 1))            ... | 139 |
+| BMASK | 0x000000FF                      ... | 143 |
+| BSIGN | 0x00000080 | 144 |
+| WMASK | 0x0000FFFF                      ... | 145 |
+| WSIGN | 0x00008000 | 146 |
+| LMASK | 0xFFFFFFFF                      ... | 147 |
+| LSIGN | 0x80000000 | 148 |
+| FPSIGN | 0x00008000                      ... | 149 |
+| L_BYTE | 1                               ... | 150 |
+| L_WORD | 2                               ... | 151 |
+| L_LONG | 4 | 152 |
+| L_QUAD | 8 | 153 |
+| L_OCTA | 16 | 154 |
+| NUM_INST | 512                             ... | 155 |
+| MAX_SPEC | 6                               ... | 156 |
+| FD_V_EXP | 7                               ... | 160 |
+| FD_M_EXP | 0xFF | 161 |
+| FD_BIAS | 0x80                            ... | 162 |
+| FD_EXP | (FD_M_EXP << FD_V_EXP) | 163 |
+| FD_HB | (1 << FD_V_EXP)                 ... | 164 |
+| FD_GUARD | (15 - FD_V_EXP)                 ... | 165 |
+| FD_GETEXP(x) | (((x) >> FD_V_EXP) & FD_M_EXP) | 166 |
+| G_V_EXP | 4                               ... | 168 |
+| G_M_EXP | 0x7FF | 169 |
+| G_BIAS | 0x400                           ... | 170 |
+| G_EXP | (G_M_EXP << G_V_EXP) | 171 |
+| G_HB | (1 << G_V_EXP)                  ... | 172 |
+| G_GUARD | (15 - G_V_EXP)                  ... | 173 |
+| G_GETEXP(x) | (((x) >> G_V_EXP) & G_M_EXP) | 174 |
+| H_V_EXP | 0                               ... | 176 |
+| H_M_EXP | 0x7FFF | 177 |
+| H_BIAS | 0x4000                          ... | 178 |
+| H_EXP | (H_M_EXP << H_V_EXP) | 179 |
+| H_HB | (1 << H_V_EXP)                  ... | 180 |
+| H_GUARD | (15 - H_V_EXP)                  ... | 181 |
+| H_GETEXP(x) | (((x) >> H_V_EXP) & H_M_EXP) | 182 |
+| KERN | 0 | 186 |
+| EXEC | 1 | 187 |
+| SUPV | 2 | 188 |
+| USER | 3 | 189 |
+| AP | R[nAP] | 197 |
+| FP | R[nFP] | 198 |
+| SP | R[nSP] | 199 |
+| PC | R[nPC] | 200 |
+| RGMASK | 0xF | 201 |
+| KSP | STK[KERN] | 202 |
+| ESP | STK[EXEC] | 203 |
+| SSP | STK[SUPV] | 204 |
+| USP | STK[USER] | 205 |
+| IS | STK[4] | 206 |
+| PSL_V_CM | 31                              ... | 210 |
+| PSL_CM | (1u << PSL_V_CM) | 211 |
+| PSL_V_TP | 30                              ... | 212 |
+| PSL_TP | (1 << PSL_V_TP) | 213 |
+| PSL_V_FPD | 27                              ... | 214 |
+| PSL_FPD | (1 << PSL_V_FPD) | 215 |
+| PSL_V_IS | 26                              ... | 216 |
+| PSL_IS | (1 << PSL_V_IS) | 217 |
+| PSL_V_CUR | 24                              ... | 218 |
+| PSL_V_PRV | 22                              ... | 219 |
+| PSL_M_MODE | 0x3                             ... | 220 |
+| PSL_CUR | (PSL_M_MODE << PSL_V_CUR) | 221 |
+| PSL_PRV | (PSL_M_MODE << PSL_V_PRV) | 222 |
+| PSL_V_IPL | 16                              ... | 223 |
+| PSL_M_IPL | 0x1F | 224 |
+| PSL_IPL | (PSL_M_IPL << PSL_V_IPL) | 225 |
+| PSL_IPL1 | (0x01 << PSL_V_IPL) | 226 |
+| PSL_IPL17 | (0x17 << PSL_V_IPL) | 227 |
+| PSL_IPL1F | (0x1F << PSL_V_IPL) | 228 |
+| PSL_MBZ | (0x30200000 \| PSW_MBZ)          ... | 229 |
+| PSW_MBZ | 0xFF00                          ... | 230 |
+| PSW_DV | 0x80                            ... | 231 |
+| PSW_FU | 0x40                            ... | 232 |
+| PSW_IV | 0x20                            ... | 233 |
+| PSW_T | 0x10                            ... | 234 |
+| CC_N | 0x08                            ... | 235 |
+| CC_Z | 0x04                            ... | 236 |
+| CC_V | 0x02                            ... | 237 |
+| CC_C | 0x01                            ... | 238 |
+| CC_MASK | (CC_N \| CC_Z \| CC_V \| CC_C) | 239 |
+| PSL_GETCUR(x) | (((x) >> PSL_V_CUR) & PSL_M_MODE) | 240 |
+| PSL_GETPRV(x) | (((x) >> PSL_V_PRV) & PSL_M_MODE) | 241 |
+| PSL_GETIPL(x) | (((x) >> PSL_V_IPL) & PSL_M_IPL) | 242 |
+| SISR_MASK | 0xFFFE | 246 |
+| SISR_2 | (1 << 2) | 247 |
+| AST_MASK | 7 | 251 |
+| AST_MAX | 4 | 252 |
+| VA_N_OFF | 9                               ... | 256 |
+| VA_PAGSIZE | (1u << VA_N_OFF)                ... | 257 |
+| VA_M_OFF | ((1u << VA_N_OFF) - 1)          ... | 258 |
+| VA_V_VPN | VA_N_OFF                        ... | 259 |
+| VA_N_VPN | (31 - VA_N_OFF)                 ... | 260 |
+| VA_M_VPN | ((1u << VA_N_VPN) - 1)          ... | 261 |
+| VA_S0 | (1u << 31)                      ... | 262 |
+| VA_P1 | (1u << 30)                      ... | 263 |
+| VA_N_TBI | 12                              ... | 264 |
+| VA_TBSIZE | (1u << VA_N_TBI)                ... | 265 |
+| VA_M_TBI | ((1u << VA_N_TBI) - 1)          ... | 266 |
+| VA_GETOFF(x) | ((x) & VA_M_OFF) | 267 |
+| VA_GETVPN(x) | (((x) >> VA_V_VPN) & VA_M_VPN) | 268 |
+| VA_GETTBI(x) | ((x) & VA_M_TBI) | 269 |
+| PTE_V_V | 31                              ... | 273 |
+| PTE_V | (1u << PTE_V_V) | 274 |
+| PTE_V_ACC | 27                              ... | 275 |
+| PTE_M_ACC | 0xF | 276 |
+| PTE_ACC | (PTE_M_ACC << PTE_V_ACC) | 277 |
+| PTE_V_M | 26                              ... | 278 |
+| PTE_M | (1u << PTE_V_M) | 279 |
+| PTE_GETACC(x) | (((x) >> PTE_V_ACC) & PTE_M_ACC) | 280 |
+| TLB_V_RACC | 0                               ... | 284 |
+| TLB_V_WACC | 4                               ... | 285 |
+| TLB_M_ACC | 0xF | 286 |
+| TLB_RACC | (TLB_M_ACC << TLB_V_RACC) | 287 |
+| TLB_WACC | (TLB_M_ACC << TLB_V_WACC) | 288 |
+| TLB_V_M | 8                               ... | 289 |
+| TLB_M | (1u << TLB_V_M) | 290 |
+| TLB_N_PFN | (PAWIDTH - VA_N_OFF)            ... | 291 |
+| TLB_M_PFN | ((1u << TLB_N_PFN) - 1)         ... | 292 |
+| TLB_PFN | (TLB_M_PFN << VA_V_VPN) | 293 |
+| TIR_V_IRQL | 0                               ... | 297 |
+| TIR_V_TRAP | 5                               ... | 298 |
+| TIR_M_TRAP | 07 | 299 |
+| TIR_TRAP | (TIR_M_TRAP << TIR_V_TRAP) | 300 |
+| TRAP_INTOV | (1 << TIR_V_TRAP)               ... | 301 |
+| TRAP_DIVZRO | (2 << TIR_V_TRAP)               ... | 302 |
+| TRAP_FLTOVF | (3 << TIR_V_TRAP)               ... | 303 |
+| TRAP_FLTDIV | (4 << TIR_V_TRAP)               ... | 304 |
+| TRAP_FLTUND | (5 << TIR_V_TRAP)               ... | 305 |
+| TRAP_DECOVF | (6 << TIR_V_TRAP)               ... | 306 |
+| TRAP_SUBSCR | (7 << TIR_V_TRAP)               ... | 307 |
+| SET_TRAP(x) | trpirq = (trpirq & PSL_M_IPL) \| (x) | 308 |
+| CLR_TRAPS | trpirq = trpirq & ~TIR_TRAP | 309 |
+| SET_IRQL | trpirq = (trpirq & TIR_TRAP) \| e... | 310 |
+| GET_TRAP(x) | (((x) >> TIR_V_TRAP) & TIR_M_TRAP) | 311 |
+| GET_IRQL(x) | (((x) >> TIR_V_IRQL) & PSL_M_IPL) | 312 |
+| FLT_OVRFLO | 0x8                             ... | 316 |
+| FLT_DIVZRO | 0x9                             ... | 317 |
+| FLT_UNDFLO | 0xA                             ... | 318 |
+| CMODE_RSVI | 0x0                             ... | 322 |
+| CMODE_BPT | 0x1                             ... | 323 |
+| CMODE_IOT | 0x2                             ... | 324 |
+| CMODE_EMT | 0x3                             ... | 325 |
+| CMODE_TRAP | 0x4                             ... | 326 |
+| CMODE_ILLI | 0x5                             ... | 327 |
+| CMODE_ODD | 0x6                             ... | 328 |
+| EO_END | 0x00                            ... | 332 |
+| EO_END_FLOAT | 0x01                            ... | 333 |
+| EO_CLR_SIGNIF | 0x02                            ... | 334 |
+| EO_SET_SIGNIF | 0x03                            ... | 335 |
+| EO_STORE_SIGN | 0x04                            ... | 336 |
+| EO_LOAD_FILL | 0x40                            ... | 337 |
+| EO_LOAD_SIGN | 0x41                            ... | 338 |
+| EO_LOAD_PLUS | 0x42                            ... | 339 |
+| EO_LOAD_MINUS | 0x43                            ... | 340 |
+| EO_INSERT | 0x44                            ... | 341 |
+| EO_BLANK_ZERO | 0x45                            ... | 342 |
+| EO_REPL_SIGN | 0x46                            ... | 343 |
+| EO_ADJUST_LNT | 0x47                            ... | 344 |
+| EO_FILL | 0x80                            ... | 345 |
+| EO_MOVE | 0x90                            ... | 346 |
+| EO_FLOAT | 0xA0                            ... | 347 |
+| EO_RPT_MASK | 0x0F                            ... | 348 |
+| EO_RPT_FLAG | 0x80                            ... | 349 |
+| ED_V_CC | 16                              ... | 353 |
+| ED_M_CC | 0xFF | 354 |
+| ED_CC | (ED_M_CC << ED_V_CC) | 355 |
+| ED_V_SIGN | 8                               ... | 356 |
+| ED_M_SIGN | 0xFF | 357 |
+| ED_SIGN | (ED_M_SIGN << ED_V_SIGN) | 358 |
+| ED_V_FILL | 0                               ... | 359 |
+| ED_M_FILL | 0xFF | 360 |
+| ED_FILL | (ED_M_FILL << ED_V_FILL) | 361 |
+| ED_GETCC(x) | (((x) >> ED_V_CC) & CC_MASK) | 362 |
+| ED_GETSIGN(x) | (((x) >> ED_V_SIGN) & ED_M_SIGN) | 363 |
+| ED_GETFILL(x) | (((x) >> ED_V_FILL) & ED_M_FILL) | 364 |
+| ED_PUTCC(r,x) | (((r) & ~ED_CC) \| (((x) << ED_V_... | 365 |
+| ED_PUTSIGN(r,x) | (((r) & ~ED_SIGN) \| (((x) << ED_... | 366 |
+| ED_PUTFILL(r,x) | (((r) & ~ED_FILL) \| (((x) << ED_... | 367 |
+| SCB_MCHK | 0x04                            ... | 371 |
+| SCB_KSNV | 0x08                            ... | 372 |
+| SCB_PWRFL | 0x0C                            ... | 373 |
+| SCB_RESIN | 0x10                            ... | 374 |
+| SCB_XFC | 0x14                            ... | 375 |
+| SCB_RESOP | 0x18                            ... | 376 |
+| SCB_RESAD | 0x1C                            ... | 377 |
+| SCB_ACV | 0x20                            ... | 378 |
+| SCB_TNV | 0x24                            ... | 379 |
+| SCB_TP | 0x28                            ... | 380 |
+| SCB_BPT | 0x2C                            ... | 381 |
+| SCB_CMODE | 0x30                            ... | 382 |
+| SCB_ARITH | 0x34                            ... | 383 |
+| SCB_CHMK | 0x40                            ... | 384 |
+| SCB_CHME | 0x44                            ... | 385 |
+| SCB_CHMS | 0x48                            ... | 386 |
+| SCB_CHMU | 0x4C                            ... | 387 |
+| SCB_CRDERR | 0x54                            ... | 388 |
+| SCB_MEMERR | 0x60                            ... | 389 |
+| SCB_IPLSOFT | 0x80                            ... | 390 |
+| SCB_INTTIM | 0xC0                            ... | 391 |
+| SCB_EMULATE | 0xC8                            ... | 392 |
+| SCB_EMULFPD | 0xCC                            ... | 393 |
+| SCB_CSI | 0xF0                            ... | 394 |
+| SCB_CSO | 0xF4                            ... | 395 |
+| SCB_TTI | 0xF8                            ... | 396 |
+| SCB_TTO | 0xFC                            ... | 397 |
+| SCB_INTR | 0x100                           ... | 398 |
+| IPL_HLTPIN | 0x1F                            ... | 400 |
+| IPL_MEMERR | 0x1D                            ... | 401 |
+| IPL_CRDERR | 0x1A                            ... | 402 |
+| IE_SVE | -1                              ... | 406 |
+| IE_EXC | 0                               ... | 407 |
+| IE_INT | 1                               ... | 408 |
+| DR_F | 0x80                            ... | 422 |
+| DR_NSPMASK | 0x07                            ... | 423 |
+| DR_V_USPMASK | 4 | 424 |
+| DR_M_USPMASK | 0x7                             ... | 425 |
+| DR_GETNSP(x) | ((x) & DR_NSPMASK)              ... | 426 |
+| DR_GETUSP(x) | (((x) >> DR_V_USPMASK) & DR_M_US... | 427 |
+| DR_V_RESMASK | 8 | 431 |
+| DR_M_RESMASK | 0x000F | 432 |
+| RB_0 | (0 << DR_V_RESMASK)     /* No Re... | 433 |
+| RB_B | (1 << DR_V_RESMASK)     /* Byte ... | 434 |
+| RB_W | (2 << DR_V_RESMASK)     /* Word ... | 435 |
+| RB_L | (3 << DR_V_RESMASK)     /* Long ... | 436 |
+| RB_Q | (4 << DR_V_RESMASK)     /* Quad ... | 437 |
+| RB_O | (5 << DR_V_RESMASK)     /* Octa ... | 438 |
+| RB_OB | (6 << DR_V_RESMASK)     /* Octa ... | 439 |
+| RB_OW | (7 << DR_V_RESMASK)     /* Octa ... | 440 |
+| RB_OL | (8 << DR_V_RESMASK)     /* Octa ... | 441 |
+| RB_OQ | (9 << DR_V_RESMASK)     /* Octa ... | 442 |
+| RB_R0 | (10 << DR_V_RESMASK)     /* Reg ... | 443 |
+| RB_R1 | (11 << DR_V_RESMASK)     /* Regs... | 444 |
+| RB_R3 | (12 << DR_V_RESMASK)     /* Regs... | 445 |
+| RB_R5 | (13 << DR_V_RESMASK)     /* Regs... | 446 |
+| RB_SP | (14 << DR_V_RESMASK)     /* @SP ... | 447 |
+| DR_GETRES(x) | (((x) >> DR_V_RESMASK) & DR_M_RE... | 448 |
+| DR_V_IGMASK | 12 | 453 |
+| DR_M_IGMASK | 0x0007 | 454 |
+| IG_RSVD | (0 << DR_V_IGMASK)  /* Reserved ... | 455 |
+| IG_BASE | (1 << DR_V_IGMASK)  /* Base Inst... | 456 |
+| IG_BSGFL | (2 << DR_V_IGMASK)  /*   Base su... | 457 |
+| IG_BSDFL | (3 << DR_V_IGMASK)  /*   Base su... | 458 |
+| IG_PACKD | (4 << DR_V_IGMASK)  /* packed-de... | 459 |
+| IG_EXTAC | (5 << DR_V_IGMASK)  /* extended-... | 460 |
+| IG_EMONL | (6 << DR_V_IGMASK)  /* emulated-... | 461 |
+| IG_VECTR | (7 << DR_V_IGMASK)  /* vector-pr... | 462 |
+| IG_MAX_GRP | 7                   /* Maximum I... | 463 |
+| DR_GETIGRP(x) | (((x) >> DR_V_IGMASK) & DR_M_IGM... | 464 |
+| VAX_FULL_BASE | ((1 << DR_GETIGRP(IG_BASE))  \|  | 466 |
+| VAX_BASE | (1 << DR_GETIGRP(IG_BASE)) | 469 |
+| VAX_GFLOAT | (1 << DR_GETIGRP(IG_BSGFL)) | 470 |
+| VAX_DFLOAT | (1 << DR_GETIGRP(IG_BSDFL)) | 471 |
+| VAX_PACKED | (1 << DR_GETIGRP(IG_PACKD)) | 472 |
+| VAX_EXTAC | (1 << DR_GETIGRP(IG_EXTAC)) | 473 |
+| VAX_EMONL | (1 << DR_GETIGRP(IG_EMONL)) | 474 |
+| VAX_VECTR | (1 << DR_GETIGRP(IG_VECTR)) | 475 |
+| FULL_INSTRUCTION_SET | (VAX_FULL_BASE               \|  | 476 |
+| DR_ACMASK | 0x300                           ... | 483 |
+| DR_SPFLAG | 0x008                           ... | 484 |
+| DR_LNMASK | 0x007                           ... | 485 |
+| DR_LNT(x) | (1 << (x & DR_LNMASK))          ... | 486 |
+| DR_BYTE | 0x000                           ... | 490 |
+| DR_WORD | 0x001                           ... | 491 |
+| DR_LONG | 0x002                           ... | 492 |
+| DR_QUAD | 0x003                           ... | 493 |
+| DR_OCTA | 0x004                           ... | 494 |
+| SH0 | 0x000                           ... | 498 |
+| SH1 | 0x010 | 499 |
+| SH2 | 0x020 | 500 |
+| SH3 | 0x030 | 501 |
+| IDX | 0x040                           ... | 502 |
+| GRN | 0x050                           ... | 503 |
+| RGD | 0x060                           ... | 504 |
+| ADC | 0x070                           ... | 505 |
+| AIN | 0x080                           ... | 506 |
+| AID | 0x090                           ... | 507 |
+| BDP | 0x0A0                           ... | 508 |
+| BDD | 0x0B0                           ... | 509 |
+| WDP | 0x0C0                           ... | 510 |
+| WDD | 0x0D0                           ... | 511 |
+| LDP | 0x0E0                           ... | 512 |
+| LDD | 0x0F0                           ... | 513 |
+| DR_R | 0x000                           ... | 517 |
+| DR_M | 0x100                           ... | 518 |
+| DR_A | 0x200                           ... | 519 |
+| DR_W | 0x300                           ... | 520 |
+| RB | (DR_R\|DR_BYTE) | 524 |
+| RW | (DR_R\|DR_WORD) | 525 |
+| RL | (DR_R\|DR_LONG) | 526 |
+| RQ | (DR_R\|DR_QUAD) | 527 |
+| RO | (DR_R\|DR_OCTA) | 528 |
+| MB | (DR_M\|DR_BYTE) | 529 |
+| MW | (DR_M\|DR_WORD) | 530 |
+| ML | (DR_M\|DR_LONG) | 531 |
+| MQ | (DR_M\|DR_QUAD) | 532 |
+| MO | (DR_M\|DR_OCTA) | 533 |
+| AB | (DR_A\|DR_BYTE) | 534 |
+| AW | (DR_A\|DR_WORD) | 535 |
+| AL | (DR_A\|DR_LONG) | 536 |
+| AQ | (DR_A\|DR_QUAD) | 537 |
+| AO | (DR_A\|DR_OCTA) | 538 |
+| WB | (DR_W\|DR_BYTE) | 539 |
+| WW | (DR_W\|DR_WORD) | 540 |
+| WL | (DR_W\|DR_LONG) | 541 |
+| WQ | (DR_W\|DR_QUAD) | 542 |
+| WO | (DR_W\|DR_OCTA) | 543 |
+| VB | (DR_SPFLAG\|WB)                  ... | 558 |
+| RF | (DR_SPFLAG\|RL)                  ... | 559 |
+| RD | (DR_SPFLAG\|RQ)                  ... | 560 |
+| RG | (DR_SPFLAG\|MQ)                  ... | 561 |
+| RH | (DR_SPFLAG\|RO)                  ... | 562 |
+| BB | (DR_SPFLAG\|WB\|6)                ... | 563 |
+| BW | (DR_SPFLAG\|WB\|7)                ... | 564 |
+| PR_ACV | 0                               ... | 568 |
+| PR_LNV | 1                               ... | 569 |
+| PR_PACV | 2                               ... | 570 |
+| PR_PLNV | 3                               ... | 571 |
+| PR_TNV | 4                               ... | 572 |
+| PR_PTNV | 6                               ... | 574 |
+| PR_OK | 7                               ... | 575 |
+| MM_PARAM(w,p) | (((w)? 4: 0) \| ((p) & 3))       ... | 576 |
+| MM_WRITE | 4                               ... | 580 |
+| MM_EMASK | 3                               ... | 581 |
+| MT_KSP | 0 | 585 |
+| MT_ESP | 1 | 586 |
+| MT_SSP | 2 | 587 |
+| MT_USP | 3 | 588 |
+| MT_IS | 4 | 589 |
+| MT_P0BR | 8 | 590 |
+| MT_P0LR | 9 | 591 |
+| MT_P1BR | 10 | 592 |
+| MT_P1LR | 11 | 593 |
+| MT_SBR | 12 | 594 |
+| MT_SLR | 13 | 595 |
+| MT_PCBB | 16 | 596 |
+| MT_SCBB | 17 | 597 |
+| MT_IPL | 18 | 598 |
+| MT_ASTLVL | 19 | 599 |
+| MT_SIRR | 20 | 600 |
+| MT_SISR | 21 | 601 |
+| MT_ICCS | 24 | 602 |
+| MT_NICR | 25 | 603 |
+| MT_ICR | 26 | 604 |
+| MT_TODR | 27 | 605 |
+| MT_CSRS | 28 | 606 |
+| MT_CSRD | 29 | 607 |
+| MT_CSTS | 30 | 608 |
+| MT_CSTD | 31 | 609 |
+| MT_RXCS | 32 | 610 |
+| MT_RXDB | 33 | 611 |
+| MT_TXCS | 34 | 612 |
+| MT_TXDB | 35 | 613 |
+| MT_MAPEN | 56 | 614 |
+| MT_TBIA | 57 | 615 |
+| MT_TBIS | 58 | 616 |
+| MT_PME | 61 | 617 |
+| MT_SID | 62 | 618 |
+| MT_TBCHK | 63 | 619 |
+| BR_MASK | 0xFFFFFFFC | 621 |
+| LR_MASK | 0x003FFFFF | 622 |
+| SXTB(x) | (((x) & BSIGN)? ((x) \| ~BMASK): ... | 671 |
+| SXTW(x) | (((x) & WSIGN)? ((x) \| ~WMASK): ... | 672 |
+| SXTBW(x) | (((x) & BSIGN)? ((x) \| (WMASK - ... | 673 |
+| SXTL(x) | (((x) & LSIGN)? ((x) \| ~LMASK): ... | 674 |
+| INTOV | if (PSL & PSW_IV) SET_TRAP (TRAP... | 675 |
+| V_INTOV | cc = cc \| CC_V; INTOV | 676 |
+| NEG(x) | ((~(x) + 1) & LMASK) | 677 |
+| PCQ_SIZE | 64                              ... | 681 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 682 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 683 |
+| GET_ISTR(d,l) | d = get_istr (l, acc) | 684 |
+| CHECK_FOR_IDLE_LOOP | if (PC == fault_PC) {           ... | 685 |
+| BRANCHB_ALWAYS(d) | do {PCQ_ENTRY; PC = PC + SXTB (d... | 691 |
+| BRANCHW_ALWAYS(d) | do {PCQ_ENTRY; PC = PC + SXTW (d... | 692 |
+| JUMP_ALWAYS(d) | do {PCQ_ENTRY; PC = (d);        ... | 693 |
+| BRANCHB(d) | do {PCQ_ENTRY; PC = PC + SXTB (d... | 695 |
+| BRANCHW(d) | do {PCQ_ENTRY; PC = PC + SXTW (d... | 696 |
+| JUMP(d) | do {PCQ_ENTRY; PC = (d); FLUSH_I... | 697 |
+| CMODE_JUMP(d) | do {PCQ_ENTRY; PC = (d); CHECK_F... | 698 |
+| SETPC(d) | PC = (d), FLUSH_ISTR | 699 |
+| FLUSH_ISTR | ibcnt = 0, ppc = -1 | 700 |
+| STR_V_DPC | 24                              ... | 704 |
+| STR_M_DPC | 0xFF | 705 |
+| STR_V_CHR | 16                              ... | 706 |
+| STR_M_CHR | 0xFF | 707 |
+| STR_LNMASK | 0xFFFF                          ... | 708 |
+| STR_GETDPC(x) | (((x) >> STR_V_DPC) & STR_M_DPC) | 709 |
+| STR_GETCHR(x) | (((x) >> STR_V_CHR) & STR_M_CHR) | 710 |
+| STR_PACK(m,x) | ((((PC - fault_PC) & STR_M_DPC) ... | 711 |
+| RA | (acc) | 716 |
+| WA | ((acc) << TLB_V_WACC) | 717 |
+| ACC_MASK(x) | (1 << (x)) | 718 |
+| TLB_ACCR(x) | (ACC_MASK (x) << TLB_V_RACC) | 719 |
+| TLB_ACCW(x) | (ACC_MASK (x) << TLB_V_WACC) | 720 |
+| REF_V | 0 | 721 |
+| REF_P | 1 | 722 |
+| CC_ZZ1P | cc = CC_Z \| (cc & CC_C) | 726 |
+| CC_IIZZ_B(r) |  | 728 |
+| CC_IIZZ_W(r) |  | 732 |
+| CC_IIZZ_L(r) |  | 736 |
+| CC_IIZZ_Q(rl,rh) |  | 740 |
+| CC_IIZZ_FP | CC_IIZZ_W | 744 |
+| CC_IIZP_B(r) |  | 746 |
+| CC_IIZP_W(r) |  | 750 |
+| CC_IIZP_L(r) |  | 754 |
+| CC_IIZP_Q(rl,rh) |  | 758 |
+| CC_IIZP_O(rl,rm2,rm1,rh) |  | 762 |
+| CC_IIZP_FP | CC_IIZP_W | 766 |
+| V_ADD_B(r,s1,s2) |  | 768 |
+| V_ADD_W(r,s1,s2) |  | 770 |
+| V_ADD_L(r,s1,s2) |  | 772 |
+| C_ADD(r,s1,s2) |  | 774 |
+| CC_ADD_B(r,s1,s2) |  | 777 |
+| CC_ADD_W(r,s1,s2) |  | 781 |
+| CC_ADD_L(r,s1,s2) |  | 785 |
+| V_SUB_B(r,s1,s2) |  | 790 |
+| V_SUB_W(r,s1,s2) |  | 792 |
+| V_SUB_L(r,s1,s2) |  | 794 |
+| C_SUB(r,s1,s2) |  | 796 |
+| CC_SUB_B(r,s1,s2) |  | 799 |
+| CC_SUB_W(r,s1,s2) |  | 803 |
+| CC_SUB_L(r,s1,s2) |  | 807 |
+| CC_CMP_B(s1,s2) |  | 812 |
+| CC_CMP_W(s1,s2) |  | 817 |
+| CC_CMP_L(s1,s2) |  | 822 |
+| OP_MEM | 0xFFFFFFFF | 829 |
+| VAX_IDLE_VMS | 0x01 | 831 |
+| VAX_IDLE_ULT | 0x02    /* Ultrix more recent ve... | 832 |
+| VAX_IDLE_ULTOLD | 0x04    /* Ultrix older versions */ | 833 |
+| VAX_IDLE_ULT1X | 0x08    /* Ultrix 1.x */ | 834 |
+| VAX_IDLE_QUAD | 0x10 | 835 |
+| VAX_IDLE_BSDNEW | 0x20 | 836 |
+| VAX_IDLE_SYSV | 0x40 | 837 |
+| VAX_IDLE_ELN | 0x40    /* VAXELN */ | 838 |
+| VAX_IDLE_INFOSERVER | 0x80    /* InfoServer */ | 839 |
+| HIST_MIN | 64 | 849 |
+| HIST_MAX | 2000000 | 850 |
+| OPND_SIZE | 16 | 852 |
+| INST_SIZE | 52 | 853 |
+| CPU_INSTRUCTION_SET | FULL_INSTRUCTION_SET | 1009 |
+| CPU_INSTRUCTION_SET | VAX_FULL_BASE | 1011 |
+| CPU_MODEL_MODIFIERS | /* No model specific CPU modifie... | 1015 |
+| CPU_INST_MODIFIERS | { MTAB_XTD\|MTAB_VDV\|MTAB_VALR\|MT... | 1018 |
+| IDX_IMM_TEST | RSVD_ADDR_FAULT | 1024 |
+| BOOT_CODE_ARRAY | NULL | 1030 |
+| BOOT_CODE_SIZE | 0 | 1031 |
+

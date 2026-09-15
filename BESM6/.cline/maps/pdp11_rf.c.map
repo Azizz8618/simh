@@ -1,0 +1,101 @@
+=== pdp11_rf.c — 564 строк ===
+Источник: pdp11_rf.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_rf.c -nt .cline/maps/pdp11_rf.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| rf_cma | 129 | |
+| rf_wc | 130 | |
+| rf_dae | 132 | |
+| rf_dbr | 133 | |
+| rf_maint | 134 | |
+| rf_unit | 166 | |
+| SCPE_OK | 253 | |
+| SCPE_OK | 324 | |
+| ma | 335 | |
+| dat | 336 | |
+| SCPE_OK | 405 | |
+| oldcs | 412 | |
+| rf_cs | 429 | |
+| inited | 436 | |
+| rf_cs | 444 | |
+| rf_da | 445 | |
+| rf_dbr | 446 | |
+| rf_cma | 447 | |
+| rf_wc | 448 | |
+| rf_maint | 449 | |
+| SCPE_OK | 491 | |
+| text2 | 504 | |
+| SCPE_OK | 558 | |
+| controller" | 563 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_GETP(u) | ((u)->capac / RF_DKSIZE) | 50 |
+| RF_NUMWD | 2048                            ... | 54 |
+| RF_NUMTR | 128                             ... | 55 |
+| RF_DKSIZE | (RF_NUMTR * RF_NUMWD)           ... | 56 |
+| RF_NUMDK | 8                               ... | 57 |
+| RF_WMASK | (RF_NUMWD - 1)                  ... | 58 |
+| RF_DRV(d) |  | 60 |
+| FUNC | u4                              ... | 79 |
+| RFCS_ERR | (CSR_ERR)                       ... | 83 |
+| RFCS_FRZ | 0040000                         ... | 84 |
+| RFCS_WCHK | 0020000                         ... | 85 |
+| RFCS_DPAR | 0010000                         ... | 86 |
+| RFCS_NED | 0004000                         ... | 87 |
+| RFCS_WLK | 0002000                         ... | 88 |
+| RFCS_MXFR | 0001000                         ... | 89 |
+| RFCS_CLR | 0000400                         ... | 90 |
+| RFCS_DONE | (CSR_DONE) | 91 |
+| RFCS_IE | (CSR_IE) | 92 |
+| RFCS_M_MEX | 0000003                         ... | 93 |
+| RFCS_V_MEX | 4 | 94 |
+| RFCS_MEX | (RFCS_M_MEX << RFCS_V_MEX) | 95 |
+| RFCS_MAINT | 0000010                         ... | 96 |
+| RFCS_M_FUNC | 0000003                         ... | 97 |
+| RFNC_NOP | 0 | 98 |
+| RFNC_WRITE | 1 | 99 |
+| RFNC_READ | 2 | 100 |
+| RFNC_WCHK | 3 | 101 |
+| RFCS_V_FUNC | 1 | 102 |
+| RFCS_FUNC | (RFCS_M_FUNC << RFCS_V_FUNC) | 103 |
+| RFCS_GO | 0000001 | 104 |
+| RFCS_ALLERR | (RFCS_FRZ\|RFCS_WCHK\|RFCS_DPAR\|RF... | 105 |
+| RFCS_W | (RFCS_IE\|RFCS_MEX\|RFCS_FUNC) | 106 |
+| RFCMA_RW | 0177776 | 110 |
+| RFDAE_ALLERR | 0176000 | 114 |
+| RFDAE_NXM | 0002000 | 115 |
+| RFDAE_INH | 0000400                         ... | 116 |
+| RFDAE_RLAT | 0000200                         ... | 117 |
+| RFDAE_DAE | 0000077                         ... | 118 |
+| RFDAE_R | 0176677 | 119 |
+| RFDAE_W | 0000677 | 120 |
+| GET_FUNC(x) | (((x) >> RFCS_V_FUNC) & RFCS_M_F... | 122 |
+| GET_MEX(x) | (((x) & RFCS_MEX) << (16 - RFCS_... | 123 |
+| GET_DEX(x) | (((x) & RFDAE_DAE) << 16) | 124 |
+| GET_POS(x) | ((int) fmod (sim_gtime() / ((dou... | 125 |
+| IOLN_RF | 020 | 158 |
+| BOOT_START | 02000                           ... | 459 |
+| BOOT_ENTRY | (BOOT_START + 002)              ... | 460 |
+| BOOT_CSR | (BOOT_START + 010)              ... | 461 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (uin... | 462 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rf_rd | 217-218 |  |
+| switch | 219-255 |  |
+| rf_wr | 256-259 |  |
+| switch | 260-332 |  |
+| rf_svc | 333-338 |  |
+| if | 339-409 |  |
+| update_rfcs | 410-433 |  |
+| rf_reset | 434-437 |  |
+| if | 438-482 |  |
+| rf_boot | 483-495 |  |
+| rf_attach | 496-501 |  |
+| rf_help | 502-560 |  |
+| rf_description | 561-564 |  |

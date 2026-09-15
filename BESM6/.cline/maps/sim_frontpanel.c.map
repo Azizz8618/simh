@@ -1,0 +1,355 @@
+=== sim_frontpanel.c — 2894 строк ===
+Источник: sim_frontpanel.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sim_frontpanel.c -nt .cline/maps/sim_frontpanel.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| REG | 154-163 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| now | 73 | |
+| unixbase | 75 | |
+| dwStatus | 87 | |
+| szMsgBuffer | 101 | |
+| cur | 131 | |
+| foo | 132 | |
+| tp->tv_sec | 135 | |
+| tp->tv_nsec | 136 | |
+| sim_prompt | 251 | |
+| register_repeat_prefix | 252 | |
+| register_repeat_stop | 253 | |
+| register_repeat_stop_all | 254 | |
+| register_repeat_units | 255 | |
+| register_get_prefix | 256 | |
+| register_collect_prefix | 257 | |
+| register_collect_mid1 | 258 | |
+| register_collect_mid2 | 259 | |
+| register_collect_mid3 | 260 | |
+| register_get_postfix | 261 | |
+| register_get_start | 262 | |
+| register_get_end | 263 | |
+| register_repeat_start | 264 | |
+| register_repeat_end | 265 | |
+| register_dev_echo | 266 | |
+| register_ind_echo | 267 | |
+| command_status | 268 | |
+| command_done_echo | 269 | |
+| little_endian | 270 | |
+| panel_thread_id | 275 | |
+| obufsize | 321 | |
+| arglist | 419 | |
+| arglist | 429 | |
+| flush_interval | 441 | |
+| sleeps | 442 | |
+| p->debugflush_thread_running | 449 | |
+| p->debugflush_thread_running | 466 | |
+| NULL | 468 | |
+| sent | 502 | |
+| sent | 524 | |
+| dev | 537 | |
+| buf_data | 568 | |
+| dev | 573 | |
+| cmd_stat | 644 | |
+| buf | 645 | |
+| buf_data | 659 | |
+| panels | 688 | |
+| panel_count | 689 | |
+| sim_panel_error_buf | 690 | |
+| sim_panel_error_bufsize | 691 | |
+| panels | 713 | |
+| fIn | 750 | |
+| fOut | 751 | |
+| statb | 752 | |
+| buf | 753 | |
+| port | 754 | |
+| cmd_stat | 755 | |
+| hostport | 757 | |
+| NULL | 1074 | |
+| reg | 1112 | |
+| panel | 1113 | |
+| panel->State | 1221 | |
+| regs | 1235 | |
+| response | 1236 | |
+| data | 1237 | |
+| cmd_stat | 1239 | |
+| reg | 1258 | |
+| reg->indirect | 1269 | |
+| reg->addr | 1270 | |
+| reg->size | 1271 | |
+| reg->element_count | 1272 | |
+| reg->bits | 1273 | |
+| reg->bit_count | 1274 | |
+| panel->regs | 1363 | |
+| panel->new_register | 1364 | |
+| panel->io_response_data | 1454 | |
+| panel->io_waiting | 1455 | |
+| panel->callback | 1482 | |
+| panel->callback_context | 1483 | |
+| panel->sample_frequency | 1540 | |
+| panel->sample_dither_pct | 1541 | |
+| panel->sample_depth | 1542 | |
+| panel->halt_reason | 1586 | |
+| cmd_stat | 1593 | |
+| response | 1594 | |
+| cmd_stat | 1628 | |
+| response | 1629 | |
+| response | 1708 | |
+| cmd_stat | 1709 | |
+| response | 1732 | |
+| cmd_stat | 1733 | |
+| response | 1756 | |
+| cmd_stat | 1757 | |
+| response | 1780 | |
+| cmd_stat | 1781 | |
+| response | 1818 | |
+| data | 1819 | |
+| cmd_stat | 1820 | |
+| response | 1866 | |
+| cmd_stat | 1867 | |
+| response | 1892 | |
+| cmd_stat | 1893 | |
+| response | 1908 | |
+| data | 1938 | |
+| cmd_stat | 1939 | |
+| response | 1980 | |
+| data | 1981 | |
+| cmd_stat | 1982 | |
+| data | 2037 | |
+| cmd_stat | 2038 | |
+| address | 2080 | |
+| cmd_stat | 2081 | |
+| cmd_stat | 2116 | |
+| response | 2145 | |
+| OrigState | 2146 | |
+| stat | 2147 | |
+| cmd_stat | 2148 | |
+| OrigState | 2154 | |
+| stat | 2170 | |
+| response | 2183 | |
+| OrigState | 2184 | |
+| stat | 2185 | |
+| cmd_stat | 2186 | |
+| OrigState | 2192 | |
+| stat | 2208 | |
+| sched_policy | 2217 | |
+| sched_priority | 2218 | |
+| buf | 2219 | |
+| buf_data | 2220 | |
+| processing_register_output | 2221 | |
+| io_wait_done | 2222 | |
+| transitioned_to_halt | 2223 | |
+| buf | 2236 | |
+| p->io_thread_running | 2268 | |
+| p->io_thread_running | 2561 | |
+| NULL | 2563 | |
+| sched_policy | 2570 | |
+| sched_priority | 2571 | |
+| buf | 2572 | |
+| buf_data | 2573 | |
+| cmd_stat | 2574 | |
+| p->callback_thread_running | 2588 | |
+| p->callback_thread_running | 2672 | |
+| NULL | 2675 | |
+| sim_panel_error_buf | 2687 | |
+| sim_panel_error_bufsize | 2688 | |
+| arglist | 2697 | |
+| len | 2698 | |
+| sim_panel_error_buf | 2718 | |
+| -1 | 2744 | |
+| stackbuf | 2750 | |
+| buf | 2752 | |
+| len | 2753 | |
+| ret | 2755 | |
+| ret | 2864 | |
+| arglist | 2870 | |
+| status | 2871 | |
+| status | 2876 | |
+| arglist | 2882 | |
+| status | 2883 | |
+| status | 2888 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CLOCK_REALTIME | 0 | 70 |
+| SET_THREAD_NAME(name) | pthread_setname_np (pthread_self... | 104 |
+| HAVE_STRUCT_TIMESPEC | 1   /* OSX defined the structure... | 111 |
+| CLOCK_REALTIME | 1 | 116 |
+| NEED_CLOCK_GETTIME | 1 | 117 |
+| HAVE_STRUCT_TIMESPEC |  | 119 |
+| _TIMESPEC_DEFINED |  | 121 |
+| SET_THREAD_NAME(name) | pthread_setname_np (pthread_self... | 143 |
+| SET_THREAD_NAME(name) | pthread_setname_np (name) | 146 |
+| SET_THREAD_NAME(name) |  | 148 |
+| TN_IAC | 0xFFu /* -1 */                  ... | 277 |
+| TN_DONT | 0xFEu /* -2 */                  ... | 278 |
+| TN_DO | 0xFDu /* -3 */                  ... | 279 |
+| TN_WONT | 0xFCu /* -4 */                  ... | 280 |
+| TN_WILL | 0xFBu /* -5 */                  ... | 281 |
+| TN_BIN | 0                             /*... | 283 |
+| TN_ECHO | 1                             /*... | 284 |
+| TN_SGA | 3                             /*... | 285 |
+| TN_CR | 015                             ... | 286 |
+| TN_LF | 012                             ... | 287 |
+| TN_LINE | 34                             /... | 288 |
+| GCC_FMT_ATTR(n, | m) | 310 |
+| GCC_FMT_ATTR(n, | m) __attribute__ ((format (__pri... | 313 |
+| _panel_debug(p, | dbits, fmt, buf, bufsize, ...) d... | 317 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| clock_gettime | 71-83 |  |
+| GetErrorText | 84-128 |  |
+| clock_gettime | 129-298 |  |
+| _panel_malloc | 299-318 |  |
+| __panel_vdebug | 319-322 |  |
+| while | 323-416 |  |
+| __panel_debug | 417-426 |  |
+| sim_panel_debug | 427-437 |  |
+| _panel_debugflusher | 438-453 |  |
+| while | 454-460 |  |
+| if | 461-472 |  |
+| _set_debug_file | 473-482 |  |
+| sim_panel_set_debug_mode | 483-489 |  |
+| sim_panel_flush_debug | 490-499 |  |
+| _panel_send | 500-506 |  |
+| while | 507-533 |  |
+| _panel_register_query_string | 534-542 |  |
+| for | 543-557 |  |
+| if | 558-568 |  |
+| if | 569-573 |  |
+| for | 574-612 |  |
+| if | 613-616 |  |
+| for | 617-624 |  |
+| if | 625-640 |  |
+| _panel_establish_register_bits_collection | 641-647 |  |
+| for | 648-652 |  |
+| if | 653-659 |  |
+| for | 660-694 |  |
+| _panel_cleanup | 695-701 |  |
+| _panel_register_panel | 702-705 |  |
+| if | 706-718 |  |
+| _panel_deregister_panel | 719-722 |  |
+| for | 723-759 |  |
+| if | 760-768 |  |
+| if | 769-866 |  |
+| if | 867-897 |  |
+| if | 898-938 |  |
+| for | 939-945 |  |
+| if | 946-958 |  |
+| if | 959-985 |  |
+| if | 986-989 |  |
+| if | 990-1009 |  |
+| if | 1010-1056 |  |
+| if | 1057-1062 |  |
+| if | 1063-1109 |  |
+| sim_panel_destroy | 1110-1119 |  |
+| if | 1120-1216 |  |
+| sim_panel_get_state | 1217-1240 |  |
+| if | 1241-1244 |  |
+| if | 1245-1248 |  |
+| if | 1249-1260 |  |
+| if | 1261-1274 |  |
+| for | 1275-1278 |  |
+| if | 1279-1292 |  |
+| for | 1293-1325 |  |
+| if | 1326-1332 | Validate existence of requested register/array |
+| if | 1333-1342 |  |
+| if | 1343-1368 |  |
+| if | 1369-1430 |  |
+| _panel_get_registers | 1431-1432 |  |
+| if | 1433-1436 |  |
+| if | 1437-1440 |  |
+| if | 1441-1446 |  |
+| if | 1447-1465 |  |
+| sim_panel_get_registers | 1466-1476 |  |
+| if | 1477-1483 |  |
+| if | 1484-1497 |  |
+| if | 1498-1527 |  |
+| if | 1528-1531 |  |
+| if | 1532-1535 |  |
+| if | 1536-1557 |  |
+| sim_panel_exec_halt | 1558-1559 |  |
+| if | 1560-1563 |  |
+| if | 1564-1567 |  |
+| if | 1568-1581 |  |
+| sim_panel_halt_text | 1582-1590 |  |
+| sim_panel_exec_boot | 1591-1595 |  |
+| if | 1596-1599 |  |
+| if | 1600-1603 |  |
+| if | 1604-1612 |  |
+| if | 1613-1617 |  |
+| if | 1618-1625 |  |
+| sim_panel_exec_start | 1626-1630 |  |
+| if | 1631-1634 |  |
+| if | 1635-1638 |  |
+| if | 1639-1645 |  |
+| if | 1646-1649 | increasing time values when register data is delivered. |
+| if | 1650-1655 |  |
+| if | 1656-1663 |  |
+| sim_panel_exec_run | 1664-1665 |  |
+| if | 1666-1669 |  |
+| if | 1670-1673 |  |
+| if | 1674-1683 |  |
+| sim_panel_exec_step | 1684-1685 |  |
+| if | 1686-1689 |  |
+| if | 1690-1693 |  |
+| if | 1694-1697 |  |
+| if | 1698-1705 |  |
+| sim_panel_break_set | 1706-1710 |  |
+| if | 1711-1714 |  |
+| if | 1715-1729 |  |
+| sim_panel_break_clear | 1730-1734 |  |
+| if | 1735-1738 |  |
+| if | 1739-1753 |  |
+| sim_panel_break_output_set | 1754-1758 |  |
+| if | 1759-1762 |  |
+| if | 1763-1777 |  |
+| sim_panel_break_output_clear | 1778-1782 |  |
+| if | 1783-1786 |  |
+| if | 1787-1821 |  |
+| if | 1822-1825 |  |
+| if | 1826-1829 |  |
+| if | 1830-1834 |  |
+| if | 1835-1868 |  |
+| if | 1869-1872 |  |
+| if | 1873-1876 |  |
+| if | 1877-1894 |  |
+| if | 1895-1940 |  |
+| if | 1941-1944 |  |
+| if | 1945-1983 |  |
+| if | 1984-1987 |  |
+| if | 1988-1995 |  |
+| if | 1996-2000 |  |
+| if | 2001-2039 |  |
+| if | 2040-2043 |  |
+| if | 2044-2047 |  |
+| if | 2048-2082 |  |
+| if | 2083-2086 |  |
+| if | 2087-2117 |  |
+| if | 2118-2121 |  |
+| if | 2122-2149 |  |
+| if | 2150-2187 |  |
+| if | 2188-2212 |  |
+| _panel_reader | 2213-2237 |  |
+| if | 2238-2553 |  |
+| if | 2554-2566 |  |
+| _panel_callback | 2567-2660 |  |
+| if | 2661-2677 | stop any established repeating activity in the simulator |
+| sim_panel_get_error | 2678-2682 |  |
+| sim_panel_clear_error | 2683-2694 |  |
+| sim_panel_set_error | 2695-2699 |  |
+| if | 2700-2708 |  |
+| if | 2709-2719 |  |
+| while | 2720-2747 |  |
+| _panel_vsendf_completion | 2748-2759 |  |
+| while | 2760-2781 |  |
+| if | 2782-2788 |  |
+| if | 2789-2804 |  |
+| if | 2805-2867 |  |
+| _panel_sendf | 2868-2879 |  |
+| _panel_sendf_completion | 2880-2894 |  |

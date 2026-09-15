@@ -1,0 +1,63 @@
+=== m68k_sys.c — 991 строк ===
+Источник: m68k_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test m68k_sys.c -nt .cline/maps/m68k_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| conds | 659 | |
+| conds2 | 660 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ONERR_QUIT() | if (rc==SCPE_ARG) { printf("??\n... | 285 |
+| REG0_FIELD(inst) | (inst&7) | 286 |
+| REG0_CHAR(inst) | (inst&7) + '0' | 287 |
+| REG9_CHAR(inst) | ((inst>>9)&7) + '0' | 288 |
+| OPLEN_FIELD(inst) | (inst>>6)&3 | 289 |
+| EA_FIELD(inst) | inst&077 | 290 |
+| EAMOD_FIELD(inst) | inst & 070 | 291 |
+| BWL_CHAR(oplen) | (oplen==0) ? 'b' : ((oplen==1) ?... | 292 |
+| DATA_B(x) | (x&0xff) | 293 |
+| DATA_W(x) | (x&0xffff) | 294 |
+| BITEMIT() | if (sl) fputc('/',of); sl = 1;  | 477 |
+| BITSEQ() | bit = regset & 1; regset >>= 1;  | 482 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| set_iobase | 36-63 |  |
+| show_iobase | 64-76 |  |
+| m68k_set_cpu | 77-87 |  |
+| m68k_show_cpu | 88-93 |  |
+| m68k_alloc_mem | 94-102 |  |
+| m68k_set_size | 103-110 |  |
+| m68k_set_fpu | 111-115 |  |
+| m68k_set_nofpu | 116-121 |  |
+| m68kcpu_set_flag | 122-127 |  |
+| m68kcpu_set_noflag | 128-134 |  |
+| m68kcpu_ex | 135-142 |  |
+| m68kcpu_dep | 143-147 |  |
+| getHex | 148-167 |  |
+| m68k_sread | 168-233 | checksum    2 Bytes     (lsb of 1'comp of fields reclength-data |
+| sim_load | 234-295 |  |
+| _fsymea | 296-358 |  |
+| _fsymead | 359-369 |  |
+| _fsymimm | 370-382 |  |
+| _fsym0 | 383-456 |  |
+| _fsym123 | 457-485 |  |
+| _fsymregs | 486-500 |  |
+| _fsym4 | 501-661 |  |
+| _fsym5 | 662-691 |  |
+| _fsym6 | 692-705 |  |
+| _fsym7 | 706-716 |  |
+| _fsym8 | 717-756 |  |
+| _fsym9 | 757-795 |  |
+| _fsyma | 796-800 |  |
+| _fsymb | 801-836 |  |
+| _fsymc | 837-875 |  |
+| _fsymd | 876-912 |  |
+| _fsyme | 913-948 |  |
+| _fsymf | 949-953 |  |
+| fprint_sym | 954-991 |  |

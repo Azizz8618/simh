@@ -1,0 +1,154 @@
+=== m68kasm.c — 4052 строк ===
+Источник: m68kasm.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test m68kasm.c -nt .cline/maps/m68kasm.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| OPHASH | 3697-3703 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| oplen | 179 | |
+| yyrc | 189 | |
+| yyerrc | 191 | |
+| yydebug | 237 | |
+| YYSTYPE | 426 | |
+| yylval | 432 | |
+| yysymbol_kind_t | 644 | |
+| yytype_int8 | 671 | |
+| yytype_int8 | 673 | |
+| yytype_int8 | 675 | |
+| yytype_int16 | 679 | |
+| yytype_int16 | 681 | |
+| yytype_int16 | 683 | |
+| yytype_uint8 | 687 | |
+| yytype_uint8 | 690 | |
+| yytype_uint8 | 692 | |
+| yytype_uint8 | 694 | |
+| yytype_uint16 | 698 | |
+| yytype_uint16 | 701 | |
+| yytype_uint16 | 703 | |
+| yytype_uint16 | 705 | |
+| yy_state_t | 747 | |
+| yy_state_fast_t | 750 | |
+| YYENOMEM | 1577 | |
+| yydebug | 1736 | |
+| yychar | 1786 | |
+| yylval | 1789 | |
+| yynerrs | 1791 | |
+| ophash | 3709 | |
+| yystream | 3791 | |
+| yyvalptr | 3905 | |
+| yyaddr | 3907 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| YYBISON | 1 | 49 |
+| YYBISON_VERSION | "3.6.2" | 52 |
+| YYSKELETON_NAME | "yacc.c" | 55 |
+| YYPURE | 0 | 58 |
+| YYPUSH | 0 | 61 |
+| YYPULL | 1 | 64 |
+| YYDEBUG | 1 | 205 |
+| YY_CAST(Type, | Val) static_cast<Type> (Val) | 212 |
+| YY_REINTERPRET_CAST(Type, | Val) reinterpret_cast<Type> (Val) | 213 |
+| YY_CAST(Type, | Val) ((Type) (Val)) | 215 |
+| YY_REINTERPRET_CAST(Type, | Val) ((Type) (Val)) | 216 |
+| YY_NULLPTR | nullptr | 222 |
+| YY_NULLPTR | 0 | 224 |
+| YY_NULLPTR | ((void*)0) | 227 |
+| YYDEBUG | 0 | 234 |
+| YYTOKENTYPE |  | 242 |
+| YYSTYPE_IS_TRIVIAL | 1 | 427 |
+| YYSTYPE_IS_DECLARED | 1 | 428 |
+| YY_STDINT_H |  | 661 |
+| YYPTRDIFF_T | __PTRDIFF_TYPE__ | 710 |
+| YYPTRDIFF_MAXIMUM | __PTRDIFF_MAX__ | 711 |
+| YYPTRDIFF_T | ptrdiff_t | 716 |
+| YYPTRDIFF_MAXIMUM | PTRDIFF_MAX | 717 |
+| YYPTRDIFF_T | long | 719 |
+| YYPTRDIFF_MAXIMUM | LONG_MAX | 720 |
+| YYSIZE_T | __SIZE_TYPE__ | 726 |
+| YYSIZE_T | size_t | 728 |
+| YYSIZE_T | size_t | 731 |
+| YYSIZE_T | unsigned | 733 |
+| YYSIZE_MAXIMUM |  | 737 |
+| YYSIZEOF(X) | YY_CAST (YYPTRDIFF_T, sizeof (X)) | 743 |
+| YY_(Msgid) | dgettext ("bison-runtime", Msgid) | 756 |
+| YY_(Msgid) | Msgid | 760 |
+| YY_ATTRIBUTE_PURE | __attribute__ ((__pure__)) | 767 |
+| YY_ATTRIBUTE_PURE |  | 769 |
+| YY_ATTRIBUTE_UNUSED | __attribute__ ((__unused__)) | 775 |
+| YY_ATTRIBUTE_UNUSED |  | 777 |
+| YYUSE(E) | ((void) (E)) | 783 |
+| YYUSE(E) | /* empty */ | 785 |
+| YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN |  | 790 |
+| YY_IGNORE_MAYBE_UNINITIALIZED_END |  | 794 |
+| YY_INITIAL_VALUE(Value) | Value | 797 |
+| YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN |  | 800 |
+| YY_IGNORE_MAYBE_UNINITIALIZED_END |  | 801 |
+| YY_INITIAL_VALUE(Value) | /* Nothing. */ | 804 |
+| YY_IGNORE_USELESS_CAST_BEGIN |  | 808 |
+| YY_IGNORE_USELESS_CAST_END |  | 811 |
+| YY_IGNORE_USELESS_CAST_BEGIN |  | 815 |
+| YY_IGNORE_USELESS_CAST_END |  | 816 |
+| YY_ASSERT(E) | ((void) (0 && (E))) | 820 |
+| YYSTACK_ALLOC | __builtin_alloca | 829 |
+| YYSTACK_ALLOC | __alloca | 833 |
+| YYSTACK_ALLOC | alloca | 838 |
+| EXIT_SUCCESS | 0 | 843 |
+| YYSTACK_FREE(Ptr) | do { /* empty */; } while (0) | 852 |
+| YYSTACK_ALLOC_MAXIMUM | 4032 /* reasonable circa 2006 */ | 858 |
+| YYSTACK_ALLOC | YYMALLOC | 861 |
+| YYSTACK_FREE | YYFREE | 862 |
+| YYSTACK_ALLOC_MAXIMUM | YYSIZE_MAXIMUM | 864 |
+| EXIT_SUCCESS | 0 | 871 |
+| YYMALLOC | malloc | 875 |
+| YYFREE | free | 881 |
+| YYSTACK_GAP_MAXIMUM | (YYSIZEOF (union yyalloc) - 1) | 901 |
+| YYSTACK_BYTES(N) |  | 905 |
+| YYCOPY_NEEDED | 1 | 909 |
+| YYSTACK_RELOCATE(Stack_alloc, | Stack)                            | 916 |
+| YYCOPY(Dst, | Src, Count)  | 934 |
+| YYCOPY(Dst, | Src, Count)               | 937 |
+| YYFINAL | 266 | 950 |
+| YYLAST | 928 | 952 |
+| YYNTOKENS | 153 | 955 |
+| YYNNTS | 49 | 957 |
+| YYNRULES | 276 | 959 |
+| YYNSTATES | 462 | 961 |
+| YYMAXUTOK | 401 | 963 |
+| YYTRANSLATE(YYX) |  | 968 |
+| YY_ACCESSING_SYMBOL(State) | YY_CAST (yysymbol_kind_t, yystos... | 1056 |
+| YYPACT_NINF | (-343) | 1123 |
+| YYTABLE_NINF | (-1) | 1128 |
+| YYACCEPT | goto yyacceptlab | 1582 |
+| YYABORT | goto yyabortlab | 1583 |
+| YYERROR | goto yyerrorlab | 1584 |
+| YYRECOVERING() | (!!yyerrstatus) | 1587 |
+| YYBACKUP(Token, | Value)                          ... | 1589 |
+| YYERRCODE | YYUNDEF | 1608 |
+| YYFPRINTF | fprintf | 1616 |
+| YYDPRINTF(Args) |  | 1619 |
+| YY_LOCATION_PRINT(File, | Loc) ((void) 0) | 1627 |
+| YY_SYMBOL_PRINT(Title, | Kind, Value, Location)          ... | 1631 |
+| YY_STACK_PRINT(Bottom, | Top)                             | 1697 |
+| YY_REDUCE_PRINT(Rule) |  | 1728 |
+| YYDPRINTF(Args) | ((void) 0) | 1738 |
+| YY_SYMBOL_PRINT(Title, | Kind, Value, Location) | 1739 |
+| YY_STACK_PRINT(Bottom, | Top) | 1740 |
+| YY_REDUCE_PRINT(Rule) |  | 1741 |
+| YYINITDEPTH | 200 | 1747 |
+| YYMAXDEPTH | 10000 | 1758 |
+| YYPOPSTACK(N) | (yyvsp -= (N), yyssp -= (N)) | 1838 |
+| OPHASHSIZE | 97 | 3705 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| yysymbol_name | 1093-1685 |  |
+| yy_stack_print | 1686-1800 |  |
+| yyparse | 1801-4052 |  |

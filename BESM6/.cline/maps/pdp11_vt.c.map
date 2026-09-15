@@ -1,0 +1,72 @@
+=== pdp11_vt.c — 1165 строк ===
+Источник: pdp11_vt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_vt.c -nt .cline/maps/pdp11_vt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| int_vec | 87 | |
+| vt_stop_flag | 147 | |
+| vt_stop_flag | 151 | |
+| vt_rom_base | 358 | |
+| SCPE_OK | 707 | |
+| vt_rom_dib | 710 | |
+| gbuf | 952 | |
+| SCPE_OK | 963 | |
+| SCPE_OK | 970 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| VT11_DELAY | 1 | 69 |
+| MEMORY_CYCLE | 1                  /* either .98... | 74 |
+| CYCLE_US | (MEMORY_CYCLE*(VT11_DELAY*2+1)) | 82 |
+| UNIT_V_NOSPACEWAR | (UNIT_V_UF + 0) | 84 |
+| UNIT_NOSPACEWAR | (1 << UNIT_V_NOSPACEWAR) | 85 |
+| IOLN_VT11 | 010             /* VT11 */ | 114 |
+| IOLN_VS60 | 040             /* VS60 */ | 115 |
+| DEB_OPS | 0001                          /*... | 156 |
+| DEB_RRD | 0002                          /*... | 157 |
+| DEB_RWR | 0004                          /*... | 158 |
+| DEB_TRC | 0010                          /*... | 159 |
+| DEB_STINT | 0020                          /*... | 160 |
+| DEB_LPINT | 0040                          /*... | 161 |
+| DEB_CHINT | 0100                          /*... | 162 |
+| DEB_NMINT | 0200                          /*... | 163 |
+| DEB_INT | 0360                          /*... | 164 |
+| DEB_VT11 | 0400                          /*... | 165 |
+| DEB_VMOU | SIM_VID_DBG_MOUSE             /*... | 166 |
+| DEB_VKEY | SIM_VID_DBG_KEY               /*... | 167 |
+| DEB_VCUR | SIM_VID_DBG_CURSOR            /*... | 168 |
+| DEB_VVID | SIM_VID_DBG_VIDEO             /*... | 169 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| vt_quit_callback | 149-227 |  |
+| vt_rd | 228-255 |  |
+| vt_wr | 256-315 |  |
+| vt_svc | 316-328 |  |
+| vt_reset | 329-703 |  |
+| vt_rom_rd | 704-712 |  |
+| vt_boot | 713-767 |  |
+| vt_set_crt | 768-792 |  |
+| vt_show_crt | 793-799 |  |
+| vt_set_scale | 800-817 |  |
+| vt_show_scale | 818-824 |  |
+| vt_set_hspace | 825-842 |  |
+| vt_show_hspace | 843-849 |  |
+| vt_set_vspace | 850-867 |  |
+| vt_show_vspace | 868-876 |  |
+| vt_stop_intr | 877-883 |  |
+| vt_lpen_intr | 884-890 |  |
+| vt_char_intr | 891-897 |  |
+| vt_name_intr | 898-905 |  |
+| vt_fetch | 906-936 |  |
+| vt_description | 937-949 |  |
+| vt_set_kb | 950-965 |  |
+| vt_show_kb | 966-973 |  |
+| cpu_set_switches | 974-980 |  |
+| cpu_get_switches | 981-982 |  |
+| if | 983-988 |  |
+| vt_help | 989-1165 |  |

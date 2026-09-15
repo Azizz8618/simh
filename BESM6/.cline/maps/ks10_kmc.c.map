@@ -1,0 +1,152 @@
+=== ks10_kmc.c — 3080 строк ===
+Источник: ks10_kmc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ks10_kmc.c -nt .cline/maps/ks10_kmc.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| KMC_RDX | 8 | 43 |
+| DIM(x) | (sizeof(x)/sizeof((x)[0])) | 48 |
+| UNUSED_ARG(x) | (void)(x) | 49 |
+| DUP_LINES | (NUM_DEVS_DUP+1) | 65 |
+| KMC_UNITS | 1 | 70 |
+| INITIAL_KMCS | 1 | 75 |
+| INITIAL_KMCS | KMC_UNITS | 80 |
+| INITIAL_KMCS | 1 | 85 |
+| KMC_DIS | DEV_DIS | 86 |
+| KMC_DIS | 0 | 88 |
+| DUP_RXRESYNC | 1 | 94 |
+| MAX_SPEED | (1*1000*1000) | 106 |
+| DFLT_SPEED | (19200) | 108 |
+| XTIME(n,speed) | (((n)*8*1000*1000)/(speed)) | 115 |
+| SEL0_RUN | 0100000                     /* R... | 136 |
+| SEL0_MRC | 0040000                     /* M... | 137 |
+| SEL0_CWR | 0020000                     /* C... | 138 |
+| SEL0_SLU | 0010000                     /* S... | 139 |
+| SEL0_LUL | 0004000                     /* L... | 140 |
+| SEL0_RMO | 0002000                     /* R... | 141 |
+| SEL0_RMI | 0001000                     /* R... | 142 |
+| SEL0_SUP | 0000400                     /* S... | 143 |
+| SEL0_RQI | 0000200                     /* R... | 144 |
+| SEL0_IEO | 0000020                     /* I... | 145 |
+| SEL0_IEI | 0000001                     /* I... | 146 |
+| SEL2_OVR | 0100000                     /* C... | 150 |
+| SEL2_V_LINE | 8                           /* L... | 151 |
+| SEL2_LINE | (0177 << SEL2_V_LINE) | 152 |
+| MAX_LINE | 017                        /* Ma... | 153 |
+| MAX_ACTIVE | (MAX_LINE+1) | 154 |
+| UNASSIGNED_LINE | (MAX_ACTIVE+1) | 155 |
+| SEL2_RDO | 0000200                     /* R... | 156 |
+| SEL2_RDI | 0000020                     /* R... | 157 |
+| SEL2_IOT | 0000004                     /* I... | 158 |
+| SEL2_V_CMD | 0                     /* Command... | 159 |
+| SEL2_CMD | 0000003                     /* C... | 160 |
+| CMD_BUFFIN | 0                     /*   BUFFE... | 164 |
+| CMD_CTRLIN | 1                     /*   CONTR... | 165 |
+| CMD_BASEIN | 3                     /*   BASE ... | 166 |
+| CMD_BUFFOUT | 0                     /*   BUFFE... | 167 |
+| CMD_CTRLOUT | 1                     /*   CONTR... | 168 |
+| SEL2_II_RESERVED | (SEL2_OVR \| 0354)     /* Reserve... | 170 |
+| SEL4_CI_POLL | 0377                    /* DUP p... | 173 |
+| SEL4_ADDR | 0177777                    /* Ge... | 175 |
+| SEL6_V_CO_XAD | 14                     /* Unibus... | 179 |
+| SEL6_CO_XAD | (3u << SEL6_V_CO_XAD) | 180 |
+| SEL6_II_DUPCSR | 0017770                  /* BASE... | 183 |
+| SEL6_BI_ENABLE | 0020000                  /* BUFF... | 186 |
+| SEL6_BI_KILL | 0010000                  /* BUFF... | 187 |
+| SEL6_BO_EOM | 0010000                  /* BUFF... | 190 |
+| SEL6_CO_ABORT | 006                      /* Bit ... | 193 |
+| SEL6_CO_HCRC | 010                      /* DDCM... | 194 |
+| SEL6_CO_DCRC | 012                      /* DDCM... | 195 |
+| SEL6_CO_NOBUF | 014                      /* No R... | 196 |
+| SEL6_CO_DSRCHG | 016                      /* DSR ... | 197 |
+| SEL6_CO_NXM | 020                      /* NXM */ | 198 |
+| SEL6_CO_TXU | 022                      /* Tran... | 199 |
+| SEL6_CO_RXO | 024                      /* Rece... | 200 |
+| SEL6_CO_KDONE | 026                      /* Kill... | 201 |
+| SEL6_CI_V_DDCMP | 15                      /* Run D... | 204 |
+| SEL6_CI_DDCMP | (1u << SEL6_CI_V_DDCMP) | 205 |
+| SEL6_CI_V_HDX | 13                      /* Half-... | 206 |
+| SEL6_CI_HDX | (1u << SEL6_CI_V_HDX) | 207 |
+| SEL6_CI_V_ENASS | 12                      /* Enabl... | 208 |
+| SEL6_CI_ENASS | (1u << SEL6_CI_V_ENASS) | 209 |
+| SEL6_CI_V_NOCRC | 9 | 210 |
+| SEL6_CI_NOCRC | (1u << SEL6_CI_V_NOCRC) | 211 |
+| SEL6_CI_V_ENABLE | 8 | 212 |
+| SEL6_CI_ENABLE | (1u << SEL6_CI_V_ENABLE) | 213 |
+| SEL6_CI_SADDR | 0377 | 214 |
+| BDL_LDS | 0100000                      /* ... | 218 |
+| BDL_RSY | 0010000                      /* ... | 219 |
+| BDL_XAD | 0006000                      /* ... | 220 |
+| BDL_S_XAD | (16-10)                      /* ... | 221 |
+| BDL_EOM | 0001000                      /* ... | 222 |
+| BDL_SOM | 0000400                      /* ... | 223 |
+| KMC_CRAMSIZE | 1024                       /* Si... | 225 |
+| KMC_DRAMSIZE | 1024 | 226 |
+| KMC_CYCLETIME | 300                       /* Mic... | 227 |
+| MAXQUEUE | 2                              /... | 229 |
+| LINK_DSR | 1 | 260 |
+| LINK_SEL | 2 | 261 |
+| RXIDLE | 0 | 274 |
+| RXBDL | 1 | 275 |
+| RXBUF | 2 | 276 |
+| RXDAT | 3 | 277 |
+| RXLAST | 4 | 278 |
+| RXFULL | 5 | 279 |
+| RXNOBUF | 6 | 280 |
+| TXIDLE | 0 | 292 |
+| TXDONE | 1 | 293 |
+| TXRTS | 2 | 294 |
+| TXSOM | 3 | 295 |
+| TXHDR | 4 | 296 |
+| TXHDRX | 5 | 297 |
+| TXDATA | 6 | 298 |
+| TXDATAX | 7 | 299 |
+| TXMRDY | 8 | 300 |
+| TXRDY | 9 | 301 |
+| TXACT | 10 | 302 |
+| TXKILL | 11 | 303 |
+| TXKILR | 12 | 304 |
+| DF_CMD | 00001                          /... | 319 |
+| DF_BFO | 00002                          /... | 320 |
+| DF_CTO | 00004                          /... | 321 |
+| DF_QUE | 00010                          /... | 322 |
+| DF_RGR | 00020                          /... | 323 |
+| DF_RGW | 00040                          /... | 324 |
+| DF_INF | 00100                          /... | 325 |
+| DF_ERR | 00200                          /... | 326 |
+| DF_PKT | 00400                          /... | 327 |
+| DF_INT | 01000                          /... | 328 |
+| DF_BUF | 02000                          /... | 329 |
+| HALT_STOP | 0                        /* Run ... | 378 |
+| HALT_MRC | 1                        /* Mast... | 379 |
+| HALT_BADRES | 2                        /* Resu... | 380 |
+| HALT_LINE | 3                        /* Line... | 381 |
+| HALT_BADCMD | 4                        /* Unde... | 382 |
+| HALT_BADCSR | 5                        /* BASE... | 383 |
+| HALT_RCVOVF | 6                        /* Too ... | 384 |
+| HALT_MTRCV | 7                        /* Rece... | 385 |
+| HALT_XMTOVF | 8                        /* Too ... | 386 |
+| HALT_XSOM | 9                        /* Tran... | 387 |
+| HALT_XSOM2 | 10                        /* Dat... | 388 |
+| HALT_BADUC | 11                        /* No ... | 389 |
+| CQUEUE_MAX | (29) | 405 |
+| FLG_INIT | 000001         /* Master clear h... | 443 |
+| FLG_AINT | 000002         /* Pending KMC "A... | 446 |
+| FLG_BINT | 000004         /* Pending KMC "B... | 447 |
+| FLG_UCINI | 000010         /* Ucode initiali... | 448 |
+| IOLN_KMC | 010 | 492 |
+| RXPOLL_DELAY | (1*1000)                 /* Poll... | 514 |
+| RXBDL_DELAY | (10*1000)                /* Grac... | 515 |
+| RXNEWBD_DELAY | (10)                     /* Dela... | 516 |
+| RXSTART_DELAY | (50)                     /* Host... | 517 |
+| TXSTART_DELAY | (10)                     /* TX B... | 553 |
+| TXDONE_DELAY | (10)                     /* Comp... | 554 |
+| TXCTS_DELAY | (100*1000)               /* Poll... | 555 |
+| TXDUP_DELAY | (1*1000*1000)            /* Wait... | 556 |
+| MAX_LIST_SIZE(q) | DIM(q),    (q),       sizeof(q[0]) | 697 |
+| INIT_HDR_ONLY | 0,         NULL,      0 | 698 |
+| TXSTATE(newstate) | {     | 1037 |
+| TXDELAY(newstate,time) | {        | 1043 |
+| TXSTOP | {              | 1053 |
+

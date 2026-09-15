@@ -1,0 +1,177 @@
+=== sds_cpu.c — 1949 строк ===
+Источник: sds_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sds_cpu.c -nt .cline/maps/sds_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 155-163 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| inst | 366 | |
+| reason | 367 | |
+| reason | 373 | |
+| reason | 522 | |
+| op | 529 | |
+| old_A | 530 | |
+| SCPE_OK | 1145 | |
+| pgn | 1204 | |
+| SCPE_OK | 1229 | |
+| pgn | 1236 | |
+| SCPE_OK | 1265 | |
+| mode | 1272 | |
+| pa | 1273 | |
+| pa | 1299 | |
+| DMASK | 1312 | |
+| DMASK | 1320 | |
+| hi | 1327 | |
+| return | 1348 | |
+| return | 1392 | |
+| return | 1410 | |
+| return | 1426 | |
+| RL1 | 1433 | |
+| SCPE_OK | 1435 | |
+| RL2 | 1440 | |
+| SCPE_OK | 1442 | |
+| SCPE_OK | 1449 | |
+| return | 1484 | |
+| return | 1518 | |
+| OV | 1532 | |
+| EM2 | 1533 | |
+| EM3 | 1534 | |
+| RL1 | 1535 | |
+| ion | 1536 | |
+| cpu_mode | 1537 | |
+| mon_usr_trap | 1538 | |
+| int_req | 1539 | |
+| int_reqhi | 1540 | |
+| api_lvl | 1541 | |
+| api_lvlhi | 1542 | |
+| alert | 1543 | |
+| SCPE_IERR | 1547 | |
+| sim_vm_is_subroutine_call | 1550 | |
+| sim_vm_post | 1551 | |
+| SCPE_OK | 1553 | |
+| returns | 1592 | |
+| inst | 1593 | |
+| op_case | 1594 | |
+| atomic | 1595 | |
+| return_p | 1596 | |
+| va | 1597 | |
+| exu_cnt | 1598 | |
+| pa | 1676 | |
+| SCPE_OK | 1685 | |
+| pa | 1692 | |
+| SCPE_OK | 1700 | |
+| mc | 1707 | |
+| MEMSIZE | 1716 | |
+| SCPE_OK | 1719 | |
+| drm_dev | 1727 | |
+| drm_unit | 1728 | |
+| mux_dib | 1729 | |
+| SCPE_OK | 1747 | |
+| SCPE_OK | 1762 | |
+| op | 1769 | |
+| SCPE_OK | 1787 | |
+| sim_clock_precalibrate_commands | 1818 | |
+| sim_clock_precalibrate_cleanup_commands | 1819 | |
+| SCPE_OK | 1823 | |
+| rtc_tps | 1834 | |
+| SCPE_OK | 1835 | |
+| SCPE_OK | 1843 | |
+| hst | 1856 | |
+| hst | 1857 | |
+| hst | 1858 | |
+| hst | 1859 | |
+| hst | 1860 | |
+| hst | 1861 | |
+| return | 1862 | |
+| hst_p | 1883 | |
+| SCPE_OK | 1903 | |
+| ov | 1910 | |
+| cyc | 1914 | |
+| modes | 1915 | |
+| lnt | 1924 | |
+| SCPE_OK | 1948 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 142 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 143 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 144 |
+| UNIT_V_MSIZE | (UNIT_V_GENIE + 1)              ... | 145 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 146 |
+| HIST_XCT | 1                               ... | 148 |
+| HIST_INT | 2                               ... | 149 |
+| HIST_TRP | 3                               ... | 150 |
+| HIST_MIN | 64 | 151 |
+| HIST_MAX | 65536 | 152 |
+| HIST_NOEA | 0x40000000 | 153 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 364-382 |  |
+| while | 383-526 |  |
+| one_inst | 527-537 |  |
+| if | 538-568 |  |
+| switch | 569-1149 |  |
+| Ea | 1150-1156 |  |
+| for | 1157-1174 |  |
+| EaSh | 1175-1181 |  |
+| for | 1182-1201 |  |
+| Read | 1202-1205 |  |
+| if | 1206-1213 |  |
+| if | 1214-1233 |  |
+| Write | 1234-1237 |  |
+| if | 1238-1245 |  |
+| if | 1246-1269 |  |
+| RelocC | 1270-1278 |  |
+| if | 1279-1284 |  |
+| if | 1285-1303 |  |
+| Add24 | 1304-1314 |  |
+| AddM24 | 1315-1322 |  |
+| Mul48 | 1323-1328 |  |
+| if | 1329-1341 |  |
+| if | 1342-1356 |  |
+| Div48 | 1357-1363 |  |
+| if | 1364-1373 |  |
+| for | 1374-1396 |  |
+| RotR48 | 1397-1400 |  |
+| if | 1401-1412 |  |
+| ShfR48 | 1413-1416 |  |
+| if | 1417-1430 |  |
+| pot_RL1 | 1431-1437 |  |
+| pot_RL2 | 1438-1444 |  |
+| pot_RL4 | 1445-1459 |  |
+| set_dyn_map | 1460-1488 |  |
+| api_findreq | 1489-1493 |  |
+| for | 1494-1502 |  |
+| api_dismiss | 1503-1510 |  |
+| for | 1511-1522 |  |
+| cpu_post_cmd | 1523-1529 |  |
+| cpu_reset | 1530-1589 |  |
+| cpu_is_pc_a_subroutine_call | 1590-1607 |  |
+| if | 1608-1616 |  |
+| switch | 1617-1673 |  |
+| cpu_ex | 1674-1689 |  |
+| cpu_dep | 1690-1704 |  |
+| cpu_set_size | 1705-1723 |  |
+| cpu_set_type | 1724-1735 |  |
+| if | 1736-1755 |  |
+| rtc_svc | 1756-1766 |  |
+| rtc_inst | 1767-1815 |  |
+| rtc_reset | 1816-1827 |  |
+| rtc_set_freq | 1828-1839 |  |
+| rtc_show_freq | 1840-1847 |  |
+| inst_hist | 1848-1866 |  |
+| cpu_set_hist | 1867-1871 |  |
+| if | 1872-1891 |  |
+| if | 1892-1896 |  |
+| if | 1897-1907 |  |
+| cpu_show_hist | 1908-1918 |  |
+| if | 1919-1928 |  |
+| for | 1929-1949 |  |

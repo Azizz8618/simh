@@ -1,0 +1,67 @@
+=== kx10_dc.c — 587 строк ===
+Источник: kx10_dc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_dc.c -nt .cline/maps/kx10_dc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dc_desc | 85 | |
+| tmxr_poll | 90 | |
+| dc_dib | 115 | |
+| ln | 310 | |
+| reason | 518 | |
+| SCPE_OK | 524 | |
+| reason | 537 | |
+| SCPE_OK | 579 | |
+| interface" | 584 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_DC | 0 | 33 |
+| DC_DIS | DEV_DIS | 39 |
+| DC_DIS | 0 | 43 |
+| DC_DEVNUM | 0240 | 46 |
+| DC10_LINES | 8 | 48 |
+| DC10_MLINES | 32 | 49 |
+| STATUS | u3 | 51 |
+| DTS_LINE | 007700         /* Scanner line n... | 53 |
+| PI_CHN | 000007         /* IN STATUS. */ | 54 |
+| RCV_PI | 000010         /* IN STATUS. */ | 55 |
+| XMT_PI | 000020         /* IN STATUS. */ | 56 |
+| DTR_DIS | 000040         /* DTR FLAG */ | 57 |
+| RST_SCN | 000010         /* CONO */ | 58 |
+| DTR_SET | 000020         /* CONO */ | 59 |
+| CLR_SCN | 000040         /* CONO */ | 60 |
+| DATA | 0000377 | 62 |
+| FLAG | 0000400        /* Recieve data/ ... | 63 |
+| LINE | 0000077        /* Line number in... | 64 |
+| LFLAG | 0000100        /* Direct line nu... | 65 |
+| CTS | 0000004        /* Clear to send */ | 68 |
+| RES_DET | 0000002        /* Ring detect */ | 69 |
+| DLO | 0000040        /* (ACU) Data lin... | 70 |
+| PND | 0000020        /* (ACU) Present ... | 71 |
+| ACR | 0000010        /* (ACU) Abandon ... | 72 |
+| CRQ | 0000040        /* (ACU) Call Req... | 73 |
+| DPR | 0000020        /* (ACU) Digit Pr... | 74 |
+| NB | 0000017        /* (ACU) Number */ | 75 |
+| OFF_HOOK | 0000100        /* Off Hook (CD) */ | 76 |
+| CAUSE_PI | 0000200        /* Cause PI */ | 77 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dc_devio | 165-307 | IOT routine |
+| dc_svc | 308-350 |  |
+| dc_doscan | 351-380 | Scan to see if something to do |
+| dc_reset | 381-400 |  |
+| dc_set_modem | 401-423 |  |
+| dc_show_modem | 424-431 |  |
+| dc_setnl | 432-466 |  |
+| dc_set_log | 467-485 |  |
+| dc_set_nolog | 486-500 |  |
+| dc_show_log | 501-515 |  |
+| dc_attach | 516-528 |  |
+| dc_detach | 529-539 |  |
+| dc_help | 540-581 |  |
+| dc_description | 582-587 |  |

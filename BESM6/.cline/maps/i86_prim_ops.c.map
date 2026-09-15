@@ -1,0 +1,65 @@
+=== i86_prim_ops.c — 1529 строк ===
+Источник: i86_prim_ops.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i86_prim_ops.c -nt .cline/maps/i86_prim_ops.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| xor_0x3_tab | 153 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| aad_word | 218-230 |  |
+| aam_word | 231-242 |  |
+| adc_byte | 243-261 |  |
+| adc_word | 262-285 |  |
+| add_byte | 286-306 |  |
+| add_word | 307-328 |  |
+| and_byte | 329-346 |  |
+| and_word | 347-359 |  |
+| cmp_byte | 360-377 |  |
+| cmp_word | 378-393 |  |
+| dec_byte | 394-410 |  |
+| dec_word | 411-431 |  |
+| inc_byte | 432-450 |  |
+| inc_word | 451-465 |  |
+| or_byte | 466-477 |  |
+| or_word | 478-490 |  |
+| neg_byte | 491-510 |  |
+| neg_word | 511-530 |  |
+| not_byte | 531-535 |  |
+| not_word | 536-543 |  |
+| mem_access_word | 544-553 |  |
+| push_word | 554-564 |  |
+| pop_word | 565-578 |  |
+| rcl_byte | 579-640 |  |
+| rcl_word | 641-685 |  |
+| rcr_byte | 686-763 |  |
+| rcr_word | 764-834 |  |
+| rol_byte | 835-869 |  |
+| rol_word | 870-904 |  |
+| ror_byte | 905-937 |  |
+| ror_word | 938-971 |  |
+| shl_byte | 972-1018 |  |
+| shl_word | 1019-1065 |  |
+| shr_byte | 1066-1107 |  |
+| shr_word | 1108-1150 |  |
+| sar_byte | 1151-1192 | XXXX ??? flags may be wrong??? |
+| sar_word | 1193-1234 |  |
+| sbb_byte | 1235-1253 |  |
+| sbb_word | 1254-1272 |  |
+| sub_byte | 1273-1288 |  |
+| sub_word | 1289-1304 |  |
+| test_byte | 1305-1316 |  |
+| test_word | 1317-1328 |  |
+| xor_byte | 1329-1340 |  |
+| xor_word | 1341-1353 |  |
+| imul_byte | 1354-1372 |  |
+| imul_word | 1373-1392 |  |
+| mul_byte | 1393-1411 |  |
+| mul_word | 1412-1431 |  |
+| idiv_byte | 1432-1454 |  |
+| idiv_word | 1455-1480 |  |
+| div_byte | 1481-1504 |  |
+| div_word | 1505-1529 |  |

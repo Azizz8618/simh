@@ -1,0 +1,62 @@
+=== mkboot.c — 706 строк ===
+Источник: mkboot.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test mkboot.c -nt .cline/maps/mkboot.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CPCODE | 460-463 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| {R_ABSOLUTE | 72 | |
+| {B_1130 | 74 | |
+| verbose | 76 | |
+| infile | 77 | |
+| mode | 78 | |
+| addr_from | 79 | |
+| maxiplcols | 81 | |
+| pta | 83 | |
+| load_low | 84 | |
+| load_high | 85 | |
+| fname | 109 | |
+| fout | 110 | |
+| corecard_maxaddr | 552 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| BOOL | int | 56 |
+| TRUE | 1 | 57 |
+| FALSE | 0 | 58 |
+| BETWEEN(v,a,b) | (((v) >= (a)) && ((v) <= (b))) | 66 |
+| MIN(a,b) | (((a) <= (b)) ? (a) : (b)) | 67 |
+| MAX(a,b) | (((a) >= (b)) ? (a) : (b)) | 68 |
+| MAXADDR | 4096 | 70 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| main | 112-194 |  |
+| write_1130 | 195-224 |  |
+| write_1800 | 225-252 |  |
+| write_core | 253-277 |  |
+| flushcard | 278-316 |  |
+| show_data | 317-346 |  |
+| loadcard | 347-364 |  |
+| loaddata | 365-425 |  |
+| bail | 426-431 |  |
+| unpack | 432-448 |  |
+| verify_checksum | 449-532 |  |
+| ascii_to_hollerith | 533-556 |  |
+| corecard_init | 557-566 |  |
+| corecard_writecard | 567-589 |  |
+| corecard_writedata | 590-598 |  |
+| corecard_flush | 599-608 |  |
+| corecard_setorg | 609-616 |  |
+| corecard_writew | 617-627 |  |
+| corecard_endcard | 628-644 |  |
+| upcase | 645-658 |  |
+| strnicmp | 659-683 |  |
+| strcmpi | 684-706 |  |

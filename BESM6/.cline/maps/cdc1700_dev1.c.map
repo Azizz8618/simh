@@ -1,0 +1,67 @@
+=== cdc1700_dev1.c — 1429 строк ===
+Источник: cdc1700_dev1.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_dev1.c -nt .cline/maps/cdc1700_dev1.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 34 | |
+| Areg | 57 | |
+| IOFWinitialized | 59 | |
+| tti_manualIntr | 185 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IODP_TTI_XFER | 0x01                    /* Trans... | 169 |
+| IODP_TTI_MOTION | 0x02                    /* Paper... | 170 |
+| IO_1711_CONTR | (IO_1711_MANUAL \| IO_1711_MON \| ... | 172 |
+| IO_1711_IDEVICE | (IO_ST_ALARM \| IO_ST_EOP \| IO_ST... | 174 |
+| IO_1711_ODEVICE | (IO_ST_ALARM \| IO_ST_EOP \| IO_ST... | 175 |
+| TTUF_V_HDX | (TTUF_V_UF + 0) | 187 |
+| TTUF_HDX | (1 << TTUF_V_HDX) | 188 |
+| IODP_PTRSTOPPED | 0x0000 | 856 |
+| IODP_PTRSTARTED | 0x0001 | 857 |
+| IODP_PTR_MASK | 0x0001 | 858 |
+| IODP_PTPINTRWAIT | 0x0001 | 1163 |
+| IODP_PTPDATAWAIT | 0x0002 | 1164 |
+| IODP_PTP_MASK | (IODP_PTPINTRWAIT \| IODP_PTPDATA... | 1165 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| TTIstate | 289-306 | Dump the current state of the TTI device |
+| tti_svc | 307-421 |  |
+| tti_reset | 422-437 |  |
+| TTIin | 438-455 |  |
+| TTIcint | 456-471 |  |
+| TTIccont | 472-486 |  |
+| TTOstate | 487-503 | Dump the current state of the TTO device |
+| tto_svc | 504-536 |  |
+| tto_reset | 537-547 |  |
+| TTOout | 548-566 |  |
+| TTOcint | 567-583 |  |
+| TTOccont | 584-600 |  |
+| TTstate | 601-617 | associated physical device. |
+| TTreset | 618-625 | Reset routine |
+| TTrebuild | 626-638 |  |
+| TTreject | 639-669 |  |
+| TTin | 670-681 |  |
+| TTout | 682-756 |  |
+| tt_help | 757-919 |  |
+| PTRstate | 920-930 |  |
+| ptr_svc | 931-980 |  |
+| ptr_reset | 981-995 |  |
+| ptr_attach | 996-1008 |  |
+| ptr_detach | 1009-1019 |  |
+| PTRin | 1020-1037 |  |
+| PTRout | 1038-1068 |  |
+| ptr_help | 1069-1226 |  |
+| PTPstate | 1227-1237 |  |
+| ptp_svc | 1238-1284 |  |
+| ptp_reset | 1285-1299 |  |
+| PTPin | 1300-1307 |  |
+| PTPout | 1308-1375 |  |
+| ptp_help | 1376-1403 |  |
+| dev1INTR | 1404-1416 | interrupt status active, return the device 1 interrupt mask bit. |
+| dev1Interrupts | 1417-1429 | status. |

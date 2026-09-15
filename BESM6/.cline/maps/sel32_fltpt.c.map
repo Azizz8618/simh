@@ -1,0 +1,50 @@
+=== sel32_fltpt.c — 1637 строк ===
+Источник: sel32_fltpt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_fltpt.c -nt .cline/maps/sel32_fltpt.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NORMASK | 0xf8000000              /* norma... | 86 |
+| DNORMASK | 0xf800000000000000ll   /* double... | 87 |
+| EXMASK | 0x7f000000              /* expon... | 88 |
+| FRMASK | 0x80ffffff              /* fract... | 89 |
+| DEXMASK | 0x7f00000000000000ll    /* expon... | 90 |
+| DFSVAL | 0xff00000000000000ll    /* minus... | 91 |
+| DFRMASK | 0x80ffffffffffffffll    /* fract... | 92 |
+| NEGATE32(val) | ((~val) + 1)    /* negate a valu... | 93 |
+| CMASK | 0x10000000              /* carry... | 648 |
+| EMASK | 0x7f000000              /* singl... | 649 |
+| UMASK | 0x0ffffff0              /* singl... | 650 |
+| XMASK | 0x0fffffff              /* singl... | 651 |
+| MMASK | 0x00ffffff              /* singl... | 652 |
+| NMASK | 0x0f000000              /* singl... | 653 |
+| ZMASK | 0x00f00000              /* singl... | 654 |
+| DMMASK | 0x00ffffffffffffffLL    /* doubl... | 1099 |
+| DCMASK | 0x1000000000000000LL    /* doubl... | 1100 |
+| DIBMASK | 0x0fffffffffffffffLL    /* doubl... | 1101 |
+| DUMASK | 0x0ffffffffffffff0LL    /* doubl... | 1102 |
+| DNMASK | 0x0f00000000000000LL    /* doubl... | 1103 |
+| DZMASK | 0x00f0000000000000LL    /* shift... | 1104 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| s_nor | 121-140 | normalize floating point fraction |
+| s_nord | 141-160 | normalize double floating point number |
+| s_normfw | 161-248 | normalize the memory value when adding number to zero |
+| sfpval | 249-264 | sfpval - determine floating point data value |
+| dfpval | 265-283 | dfpval - determine double floating point data value |
+| s_normfd | 284-368 | normalize the memory value when adding number to zero |
+| s_fixw | 369-451 | set CC1 if overflow/underflow exception |
+| s_fltw | 452-500 | No overflow (CC1) can be generated |
+| s_fixd | 501-582 | set CC1 if overflow/underflow exception |
+| s_fltd | 583-658 | No overflow (CC1) can be generated |
+| s_adfw | 659-819 | Add/Sub single floating point |
+| s_sufw | 820-826 | subtract memory floating point number from register floating point number |
+| s_mpfw | 827-972 | use revised normalization code |
+| s_dvfw | 973-1109 | divide register float by memory float |
+| s_adfd | 1110-1272 | set CC1 if overflow/underflow |
+| s_sufd | 1273-1279 | subtract memory floating point number from register floating point number |
+| s_mpfd | 1280-1438 | use revised normalization code |
+| s_dvfd | 1439-1637 | use revised normalization code |

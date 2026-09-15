@@ -1,0 +1,226 @@
+=== hp3000_atc.c — 2976 строк ===
+Источник: hp3000_atc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_atc.c -nt .cline/maps/hp3000_atc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| atcd_interface | 767 | |
+| atcc_interface | 768 | |
+| signal | 1185 | |
+| working_set | 1186 | |
+| outbound_value | 1187 | |
+| outbound_signals | 1188 | |
+| signal | 1381 | |
+| working_set | 1382 | |
+| outbound_value | 1383 | |
+| outbound_signals | 1384 | |
+| set_lines | 1385 | |
+| SCPE_OK | 1645 | |
+| SCPE_OK | 1672 | |
+| SCPE_OK | 1694 | |
+| SCPE_OK | 1746 | |
+| channel | 1765 | |
+| SCPE_OK | 1776 | |
+| status | 1802 | |
+| status | 1815 | |
+| channel | 1846 | |
+| status | 1847 | |
+| status | 1859 | |
+| return | 1883 | |
+| chan | 1909 | |
+| return | 1937 | |
+| chan | 1968 | |
+| return | 1983 | |
+| recv_data | 2108 | |
+| result | 2109 | |
+| chan | 2305 | |
+| status | 2306 | |
+| delay | 2404 | |
+| usec_per_char | 2569 | |
+| recv_data | 2704 | |
+| return | 2784 | |
+| channel | 2811 | |
+| return | 2817 | |
+| chan | 2852 | |
+| chan_count | 2943 | |
+| interrupts | 2944 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TERM_COUNT | 16                              ... | 306 |
+| AUX_COUNT | 5                               ... | 307 |
+| POLL_COUNT | 1                               ... | 308 |
+| RECV_CHAN_COUNT | (TERM_COUNT + AUX_COUNT)        ... | 310 |
+| SEND_CHAN_COUNT | TERM_COUNT                      ... | 311 |
+| UNIT_COUNT | (TERM_COUNT + POLL_COUNT)       ... | 312 |
+| FIRST_TERM | 0                               ... | 314 |
+| LAST_TERM | (FIRST_TERM + TERM_COUNT - 1)   ... | 315 |
+| FIRST_AUX | TERM_COUNT                      ... | 316 |
+| LAST_AUX | (FIRST_AUX + AUX_COUNT - 1)     ... | 317 |
+| FAST_IO_TIME | 500                 /* initial f... | 322 |
+| POLL_RATE | 100                 /* poll 100 ... | 324 |
+| POLL_TIME | mS (10)             /* poll time... | 325 |
+| NUL | '\000'              /* null */ | 327 |
+| ENQ | '\005'              /* enquire */ | 328 |
+| ACK | '\006'              /* acknowled... | 329 |
+| ASCII_MASK | 000177u             /* 7-bit ASC... | 330 |
+| GEN_ACK | (TMXR_VALID \| SCPE_KFLAG \| ACK) ... | 332 |
+| SCAN_ALL | (-1)                /* scan all ... | 334 |
+| RECV_PARITY(c) | (odd_parity [(c) & D8_MASK] ? 0 ... | 339 |
+| SEND_PARITY(c) | (odd_parity [(c) & D8_MASK] ? 0 ... | 340 |
+| DEB_CSRW | (1u << 0)           /* trace com... | 345 |
+| DEB_XFER | (1u << 1)           /* trace dat... | 346 |
+| DEB_IOB | (1u << 2)           /* trace I/O... | 347 |
+| DEB_SERV | (1u << 3)           /* trace cha... | 348 |
+| DEB_PSERV | (1u << 4)           /* trace pol... | 349 |
+| DEV_DIAG_SHIFT | (DEV_V_UF + 0)              /* d... | 361 |
+| DEV_REALTIME_SHIFT | (DEV_V_UF + 1)              /* t... | 362 |
+| DEV_DIAG | (1u << DEV_DIAG_SHIFT)      /* d... | 364 |
+| DEV_REALTIME | (1u << DEV_REALTIME_SHIFT)  /* r... | 365 |
+| UNIT_CAPSLOCK_SHIFT | (TTUF_V_UF + 0)             /* c... | 370 |
+| UNIT_LOCALACK_SHIFT | (TTUF_V_UF + 1)             /* l... | 371 |
+| UNIT_MODEM_SHIFT | (TTUF_V_UF + 2)             /* m... | 372 |
+| UNIT_CAPSLOCK | (1u << UNIT_CAPSLOCK_SHIFT) /* c... | 374 |
+| UNIT_LOCALACK | (1u << UNIT_LOCALACK_SHIFT) /* E... | 375 |
+| UNIT_MODEM | (1u << UNIT_MODEM_SHIFT)    /* c... | 376 |
+| DCN_MR | 0100000u            /* (M) maste... | 403 |
+| DCN_IRQ_RESET | 0040000u            /* (R) inter... | 404 |
+| DCN_CHAN_MASK | 0037000u            /* channel n... | 405 |
+| DCN_ENABLE | 0000002u            /* (E) enabl... | 406 |
+| DCN_ACKN | 0000001u            /* (A) ackno... | 407 |
+| DCN_CHAN_SHIFT | 9                   /* channel n... | 409 |
+| DCN_CHAN(c) | (((c) & DCN_CHAN_MASK) >> DCN_CH... | 411 |
+| DST_DIO_OK | 0040000u            /* (D) direc... | 444 |
+| DST_IRQ | 0020000u            /* (I) inter... | 445 |
+| DST_COMPLETE | 0004000u            /* (C) opera... | 446 |
+| DST_SEND_IRQ | 0002000u            /* (R) inter... | 447 |
+| DST_CHAR_LOST | 0001000u            /* (L) chara... | 448 |
+| DST_BREAK | 0000400u            /* (B) break... | 449 |
+| DST_DIAGNOSE | 0000000u            /* status is... | 450 |
+| DST_CHAN(n) | 0                   /* position ... | 452 |
+| DPI_IS_PARAM | 0100000u            /* value is ... | 495 |
+| DPI_IS_SEND | 0040000u            /* (R) value... | 496 |
+| DPI_ENABLE_IRQ | 0020000u            /* (I) enabl... | 497 |
+| DPI_ENABLE_PARITY | 0010000u            /* (E) enabl... | 498 |
+| DPI_ENABLE_ECHO | 0010000u            /* (E) enabl... | 499 |
+| DPI_DIAGNOSE | 0004000u            /* (D) conne... | 500 |
+| DPI_SIZE_MASK | 0003400u            /* character... | 501 |
+| DPI_RATE_MASK | 0000377u            /* baud rate... | 502 |
+| DPI_CHAR_CONFIG | (DPI_SIZE_MASK \| DPI_RATE_MASK) ... | 504 |
+| DPI_SIZE_SHIFT | 8                   /* character... | 506 |
+| DPI_RATE_SHIFT | 0                   /* baud rate... | 507 |
+| DPI_CHAR_SIZE(p) | (((p) & DPI_SIZE_MASK) >> DPI_SI... | 509 |
+| DPI_BAUD_RATE(p) | (((p) & DPI_RATE_MASK) >> DPI_RA... | 510 |
+| BAUD_RATE(p) | ((28800 / (DPI_BAUD_RATE (p) + 1... | 512 |
+| PAD_BITS(c) | (~((1u << bits_per_char [DPI_CHA... | 514 |
+| DDS_IS_SEND | 0040000u            /* value is ... | 540 |
+| DDS_SYNC | 0004000u            /* (S) sync */ | 541 |
+| DDS_DATA_MASK | 0003777u            /* data valu... | 542 |
+| DDS_PARITY | 0000200u            /* data pari... | 543 |
+| DDS_MARK | (DDS_SYNC \| DDS_DATA_MASK)  /* a... | 545 |
+| DDS_DATA(d) | ((d) & DDS_DATA_MASK) | 547 |
+| DDR_CHAN_MASK | 0174000u            /* channel n... | 569 |
+| DDR_PARITY | 0002000u            /* (P) compu... | 570 |
+| DDR_DATA_MASK | 0001777u            /* data valu... | 571 |
+| DDR_CHAN_SHIFT | 11                  /* channel n... | 573 |
+| DDR_DATA_SHIFT | 0                   /* data alig... | 574 |
+| DDR_CHAN(n) | ((n) << DDR_CHAN_SHIFT & DDR_CHA... | 576 |
+| DDR_DATA(d) | ((d) << DDR_DATA_SHIFT & DDR_DAT... | 577 |
+| DDR_TO_CHAN(w) | (((w) & DDR_CHAN_MASK) >> DDR_CH... | 579 |
+| DDR_TO_DATA(w) | (((w) & DDR_DATA_MASK) >> DDR_DA... | 580 |
+| CCN_MR | 0100000u            /* (M) maste... | 599 |
+| CCN_IRQ_RESET | 0040000u            /* (R) inter... | 600 |
+| CCN_SCAN | 0020000u            /* (S) scan ... | 601 |
+| CCN_UPDATE | 0010000u            /* (U) updat... | 602 |
+| CCN_CHAN_MASK | 0007400u            /* channel n... | 603 |
+| CCN_ECX_MASK | 0000300u            /* control o... | 604 |
+| CCN_EC2 | 0000200u            /* (W) C2 ou... | 605 |
+| CCN_EC1 | 0000100u            /* (X) C1 ou... | 606 |
+| CCN_CX_MASK | 0000060u            /* output ma... | 607 |
+| CCN_C2 | 0000040u            /* (Q) C2 ou... | 608 |
+| CCN_C1 | 0000020u            /* (T) C1 ou... | 609 |
+| CCN_STAT_MASK | 0000017u            /* status RA... | 610 |
+| CCN_ESX_MASK | 0000014u            /* status in... | 611 |
+| CCN_ES2 | 0000010u            /* (Y) S2 in... | 612 |
+| CCN_ES1 | 0000004u            /* (Z) S1 in... | 613 |
+| CCN_SX_MASK | 0000003u            /* status ma... | 614 |
+| CCN_S2 | 0000002u            /* (C) S2 st... | 615 |
+| CCN_S1 | 0000001u            /* (D) S1 st... | 616 |
+| CCN_CHAN_SHIFT | 8                   /* channel n... | 618 |
+| CCN_CX_SHIFT | 4                   /* control a... | 619 |
+| CCN_ECX_SHIFT | 2                   /* control o... | 620 |
+| CCN_ESX_SHIFT | 2                   /* status in... | 621 |
+| CCN_CHAN(c) | (((c) & CCN_CHAN_MASK) >> CCN_CH... | 623 |
+| CCN_ECX(c) | (((c) & CCN_ECX_MASK)  >> CCN_EC... | 624 |
+| CCN_CX(c) | (((c) & CCN_CX_MASK)   >> CCN_CX... | 625 |
+| CCN_ESX(c) | (((c) & CCN_ESX_MASK)  >> CCN_ES... | 626 |
+| CST_DIO_OK | 0040000u            /* direct I/... | 659 |
+| CST_IRQ | 0020000u            /* (I) inter... | 660 |
+| CST_ON | 0010000u            /* (always s... | 661 |
+| CST_CHAN_MASK | 0007400u            /* channel n... | 662 |
+| CST_IX_MASK | 0000060u            /* status in... | 663 |
+| CST_I2 | 0000040u            /* (J) S2 in... | 664 |
+| CST_I1 | 0000020u            /* (K) S1 in... | 665 |
+| CST_ESX_MASK | 0000014u            /* status in... | 666 |
+| CST_ES2 | 0000010u            /* (Y) S2 in... | 667 |
+| CST_ES1 | 0000004u            /* (Z) S1 in... | 668 |
+| CST_SX_MASK | 0000003u            /* status ma... | 669 |
+| CST_S2 | 0000002u            /* (C) S2 st... | 670 |
+| CST_S1 | 0000001u            /* (D) S1 st... | 671 |
+| CST_CHAN_SHIFT | 8                   /* channel n... | 673 |
+| CST_IX_SHIFT | 4                   /* status in... | 674 |
+| CST_CHAN(n) | ((n) << CST_CHAN_SHIFT & CST_CHA... | 676 |
+| CST_IX(i) | ((i) << CST_IX_SHIFT   & CST_IX_... | 677 |
+| RTS | CCN_C2              /* TCI #1 C2... | 702 |
+| DTR | CCN_C1              /* TCI #1 C1... | 703 |
+| DCD | CCN_S2              /* TCI #1 S2... | 704 |
+| DSR | CCN_S1              /* TCI #1 S1... | 705 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| atcd_interface | 1183-1192 |  |
+| while | 1193-1378 |  |
+| atcc_interface | 1379-1389 |  |
+| while | 1390-1572 |  |
+| atc_set_endis | 1573-1615 |  |
+| atc_set_mode | 1616-1619 |  |
+| switch | 1620-1656 |  |
+| atc_show_mode | 1657-1683 |  |
+| atc_show_status | 1684-1723 |  |
+| atcd_reset | 1724-1727 |  |
+| if | 1728-1733 |  |
+| if | 1734-1762 |  |
+| atcc_reset | 1763-1768 |  |
+| if | 1769-1799 |  |
+| atcd_attach | 1800-1843 |  |
+| atcd_detach | 1844-1848 |  |
+| if | 1849-1873 |  |
+| tdi_set_interrupt | 1874-1906 |  |
+| tdi_master_reset | 1907-1918 |  |
+| for | 1919-1930 |  |
+| for | 1931-1965 |  |
+| tci_master_reset | 1966-1977 |  |
+| for | 1978-2102 |  |
+| line_service | 2103-2118 |  |
+| if | 2119-2125 |  |
+| if | 2126-2134 |  |
+| if | 2135-2148 |  |
+| if | 2149-2302 |  |
+| poll_service | 2303-2314 |  |
+| if | 2315-2353 |  |
+| if | 2354-2400 |  |
+| activate_unit | 2401-2563 |  |
+| service_time | 2564-2608 |  |
+| store | 2609-2701 |  |
+| receive | 2702-2714 |  |
+| if | 2715-2807 |  |
+| diagnose | 2808-2849 |  |
+| scan_channels | 2850-2853 |  |
+| if | 2854-2861 |  |
+| for | 2862-2881 |  |
+| for | 2882-2940 |  |
+| scan_status | 2941-2950 |  |
+| while | 2951-2976 |  |

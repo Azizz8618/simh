@@ -1,0 +1,27 @@
+=== sel32_clk.c — 714 строк ===
+Источник: sel32_clk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_clk.c -nt .cline/maps/sel32_clk.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_CLK | UNIT_IDLE\|UNIT_DISABLE | 37 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rtc_srv | 107-153 | service clock signal from simulator |
+| rtc_setup | 154-179 | level = interrupt level |
+| rtc_reset | 180-188 | Clock reset |
+| rtc_set_freq | 189-199 | Set frequency |
+| rtc_show_freq | 200-210 | Show frequency |
+| rtc_help | 211-222 | sho help rtc |
+| rtc_desc | 223-296 | device description |
+| itm_srv | 297-366 | cause interrupt |
+| itm_rdwr | 367-637 | ret = return value read from timer |
+| itm_setup | 638-663 | level = interrupt level |
+| itm_reset | 664-676 | Clock reset |
+| itm_set_freq | 677-687 | Set frequency |
+| itm_show_freq | 688-695 | Show frequency |
+| itm_help | 696-707 | sho help rtc |
+| itm_desc | 708-714 | device description |

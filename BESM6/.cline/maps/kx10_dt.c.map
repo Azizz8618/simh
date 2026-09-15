@@ -1,0 +1,165 @@
+=== kx10_dt.c — 1308 строк ===
+Источник: kx10_dt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_dt.c -nt .cline/maps/kx10_dt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| dt_mpx_lvl | 274 | |
+| dt_dib | 297 | |
+| SCPE_OK | 1065 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_DT | 0 | 88 |
+| DT_DIS | DEV_DIS | 94 |
+| DT_DIS | 0 | 98 |
+| DT_DEVNUM | 0320 | 101 |
+| DT_NUMDR | 8                           /* #... | 102 |
+| UNIT_V_8FMT | (UNIT_V_UF + 0)             /* 1... | 103 |
+| UNIT_V_11FMT | (UNIT_V_UF + 1)             /* 1... | 104 |
+| UNIT_8FMT | (1 << UNIT_V_8FMT) | 105 |
+| UNIT_11FMT | (1 << UNIT_V_11FMT) | 106 |
+| DT_LPERMC | 6                           /* l... | 110 |
+| DT_BLKWD | 1                           /* b... | 111 |
+| DT_CSMWD | 4                           /* c... | 112 |
+| DT_HTWRD | 5                           /* h... | 113 |
+| DT_EZLIN | (8192 * DT_LPERMC)          /* e... | 114 |
+| DT_BFLIN | (200 * DT_LPERMC)           /* b... | 115 |
+| DT_BLKLN | (DT_BLKWD * DT_LPERMC)      /* b... | 116 |
+| DT_CSMLN | (DT_CSMWD * DT_LPERMC)      /* c... | 117 |
+| DT_HTLIN | (DT_HTWRD * DT_LPERMC)      /* h... | 118 |
+| D18_WSIZE | 6                           /* w... | 122 |
+| D18_BSIZE | 256                         /* b... | 123 |
+| D18_TSIZE | 578                         /* t... | 124 |
+| D18_LPERB | (DT_HTLIN + (D18_BSIZE * DT_WSIZ... | 125 |
+| D18_FWDEZ | (DT_EZLIN + (D18_LPERB * D18_TSI... | 126 |
+| D18_CAPAC | (D18_TSIZE * D18_BSIZE)     /* t... | 127 |
+| D11_FILSIZ | (D18_CAPAC * sizeof (int16)) | 128 |
+| D8_WSIZE | 4                           /* w... | 132 |
+| D8_BSIZE | 86                          /* b... | 133 |
+| D8_TSIZE | 1474                        /* t... | 134 |
+| D8_LPERB | (DT_HTLIN + (D8_BSIZE * DT_WSIZE... | 135 |
+| D8_FWDEZ | (DT_EZLIN + (D8_LPERB * D8_TSIZE)) | 136 |
+| D8_CAPAC | (D8_TSIZE * D8_BSIZE)       /* t... | 137 |
+| D8_NBSIZE | ((D8_BSIZE * D18_WSIZE) / D8_WSIZE) | 139 |
+| D8_FILSIZ | (D8_NBSIZE * D8_TSIZE * sizeof (... | 140 |
+| DT_CAPAC | D18_CAPAC                   /* d... | 144 |
+| DT_WSIZE | D18_WSIZE | 145 |
+| DTU_BSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_BS... | 149 |
+| DTU_TSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_TS... | 150 |
+| DTU_LPERB(u) | (((u)->flags & UNIT_8FMT)? D8_LP... | 151 |
+| DTU_FWDEZ(u) | (((u)->flags & UNIT_8FMT)? D8_FW... | 152 |
+| DTU_CAPAC(u) | (((u)->flags & UNIT_8FMT)? D8_CA... | 153 |
+| DT_LIN2BL(p,u) | (((p) - DT_EZLIN) / DTU_LPERB (u)) | 155 |
+| DT_LIN2OF(p,u) | (((p) - DT_EZLIN) % DTU_LPERB (u)) | 156 |
+| DT_LIN2WD(p,u) | ((DT_LIN2OF (p,u) - DT_HTLIN) / ... | 157 |
+| DT_BLK2LN(p,u) | (((p) * DTU_LPERB (u)) + DT_EZLIN) | 158 |
+| DT_QREZ(u) | (((u)->pos) < DT_EZLIN) | 159 |
+| DT_QFEZ(u) | (((u)->pos) >= ((uint32) DTU_FWD... | 160 |
+| DT_QEZ(u) | (DT_QREZ (u) \|\| DT_QFEZ (u)) | 161 |
+| DTC_FLAG_PIA | 07                  /* PI Channe... | 164 |
+| DTC_DATA_PIA | 070                 /* PI Channe... | 165 |
+| DTC_V_FNC | 6 | 166 |
+| DTC_M_FNC | 07 | 167 |
+| FNC_MOVE | 00                 /* move */ | 168 |
+| FNC_RALL | 01                 /* read all */ | 169 |
+| FNC_SRCH | 02                 /* search */ | 170 |
+| FNC_READ | 03                 /* read */ | 171 |
+| FNC_WMRK | 04                 /* write timi... | 172 |
+| FNC_WALL | 05                 /* write All */ | 173 |
+| FNC_WBLK | 06                 /* Write Bloc... | 174 |
+| FNC_WRIT | 07                 /* write data */ | 175 |
+| DTC_V_UNIT | 9                   /* unit sele... | 176 |
+| DTC_M_UNIT | 07 | 177 |
+| DTC_DESEL | 0010000             /* Deslect a... | 178 |
+| DTC_SEL | 0020000             /* Select un... | 179 |
+| DTC_NODELAY | 0040000             /* Don't del... | 180 |
+| DTC_RVDRV | 0100000             /* Move unit... | 181 |
+| DTC_FWDRV | 0200000             /* Move unit... | 182 |
+| DTC_STSTOP | 0400000             /* Stop unit */ | 183 |
+| CMD | u3 | 185 |
+| DTC_FNC_STOP | 001                 /* Unit stop... | 187 |
+| DTC_FNC_START | 002                 /* Start uni... | 188 |
+| DTC_FNC_REV | 004                 /* Unit to c... | 189 |
+| DTS_FUNC_STOP | 0000001 | 192 |
+| DTS_STOP_ALL | 0000002 | 193 |
+| DTS_BLK_MISS | 0010000 | 194 |
+| DTS_END_ZONE | 0020000 | 195 |
+| DTS_ILL_OP | 0040000 | 196 |
+| DTS_JOB_DONE | 0100000 | 197 |
+| DTS_DATA_MISS | 0200000 | 198 |
+| DTS_PAR_ERR | 0400000 | 199 |
+| DTC_GETFNC(x) | (((x) >> DTC_V_FNC) & DTC_M_FNC) | 201 |
+| DTC_GETUNI(x) | (((x) >> DTC_V_UNIT) & DTC_M_UNIT) | 202 |
+| DTB_PARENB | 0400000000000LL      /* Parity E... | 206 |
+| DTB_TIMENB | 0200000000000LL      /* Data mis... | 207 |
+| DTB_JOBENB | 0100000000000LL      /* Job done... | 208 |
+| DTB_ILLENB | 0040000000000LL      /* Illegal ... | 209 |
+| DTB_ENDENB | 0020000000000LL      /* End Zone... | 210 |
+| DTB_MISENB | 0010000000000LL      /* Block Mi... | 211 |
+| DTB_DLY | 0004000000000LL      /* Delay in... | 212 |
+| DTB_ACT | 0002000000000LL      /* Active */ | 213 |
+| DTB_SPD | 0001000000000LL      /* Controll... | 214 |
+| DTB_BLK | 0000400000000LL      /* Block nu... | 215 |
+| DTB_REV | 0000200000000LL      /* Reverse ... | 216 |
+| DTB_DAT | 0000100000000LL      /* Data */ | 217 |
+| DTB_FIN | 0000040000000LL      /* Final */ | 218 |
+| DTB_CHK | 0000020000000LL      /* Checksum */ | 219 |
+| DTB_IDL | 0000010000000LL      /* Idle */ | 220 |
+| DTB_BLKRD | 0000004000000LL      /* Block Nu... | 221 |
+| DTB_STOP | 0000001000000LL      /* Function... | 222 |
+| DTB_PAR | 0000000400000LL      /* Parity E... | 223 |
+| DTB_MIS | 0000000200000LL      /* Data Mis... | 224 |
+| DTB_DONE | 0000000100000LL      /* Job Done */ | 225 |
+| DTB_ILL | 0000000040000LL      /* Illegal ... | 226 |
+| DTB_END | 0000000020000LL      /* End Zone */ | 227 |
+| DTB_BLKMIS | 0000000010000LL      /* Block Mi... | 228 |
+| DTB_WRLK | 0000000004000LL      /* Write Lo... | 229 |
+| DTB_WRMK | 0000000002000LL      /* Write Ma... | 230 |
+| DTB_INCBLK | 0000000001000LL      /* Incomple... | 231 |
+| DTB_MRKERR | 0000000000200LL      /* Mark Tra... | 232 |
+| DTB_SELERR | 0000000000100LL      /* Select e... | 233 |
+| DTB_FLGREQ | 0000000000002LL      /* Flag Req... | 234 |
+| DTB_DATREQ | 0000000000001LL      /* Data Req... | 235 |
+| DSTATE | u5              /* Dectape curre... | 237 |
+| DTC_FEND | 0                    /* Tape in ... | 239 |
+| DTC_FBLK | 1                    /* In forwa... | 240 |
+| DTC_FCHK | 2                    /* In forwa... | 241 |
+| DTC_BLOCK | 3                    /* In block */ | 242 |
+| DTC_RCHK | 4                    /* In rever... | 243 |
+| DTC_RBLK | 5                    /* In rever... | 244 |
+| DTC_REND | 7                    /* In final... | 245 |
+| DTC_MOTMASK | 0170 | 247 |
+| DTC_MOT | 0010                 /* Tape in ... | 248 |
+| DTC_REV | 0020                 /* Tape in ... | 249 |
+| DTC_STOP | 0040                 /* Tape to ... | 250 |
+| DTC_ACCL | 0100                 /* Tape acc... | 251 |
+| DTC_V_WORD | 8                    /* Shift fo... | 253 |
+| DTC_M_WORD | 0177                 /* 128 word... | 254 |
+| DTC_V_BLK | 16                   /* Shift fo... | 255 |
+| DTC_M_BLK | 01777                /* Block ma... | 256 |
+| LOG_MS | 00200                           ... | 260 |
+| LOG_RW | 00400                           ... | 261 |
+| LOG_RA | 01000                           ... | 262 |
+| LOG_BL | 02000                           ... | 263 |
+| ABS(x) | (((x) < 0)? (-(x)): (x)) | 265 |
+| DT_WRDTIM | 15000 | 267 |
+| WRITTEN | u6          /* Set when tape mod... | 269 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dt_devio | 367-546 | IOT routines |
+| dt_getword | 547-559 |  |
+| dt_putword | 560-575 |  |
+| dt_svc | 576-586 |  |
+| if | 587-1069 | Check if in motion or stopping. |
+| dt_boot | 1070-1105 |  |
+| dt_set_mpx | 1106-1119 | set MPX level number |
+| dt_show_mpx | 1120-1131 |  |
+| dt_reset | 1132-1154 |  |
+| dt_attach | 1155-1238 |  |
+| dt_flush | 1239-1286 |  |
+| dt_detach | 1287-1308 |  |

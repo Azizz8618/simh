@@ -1,0 +1,236 @@
+=== kl10_fe.c — 2497 строк ===
+Источник: kl10_fe.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kl10_fe.c -nt .cline/maps/kl10_fe.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 184 | |
+| eb_ptr | 224 | |
+| rtc_tps | 225 | |
+| rtc_tick | 226 | |
+| rtc_wait | 227 | |
+| dte_in_ptr | 241 | |
+| dte_in_cmd | 242 | |
+| dte_out_ptr | 243 | |
+| dte_out_res | 244 | |
+| cty_done | 257 | |
+| lp20_buffer | 356 | |
+| lp20_vfu | 365 | |
+| lp20_ram | 366 | |
+| lp20_queue | 438 | |
+| tty_out | 483 | |
+| tty_desc | 485 | |
+| tty_connect | 486 | |
+| tty_done | 487 | |
+| tty_enable | 488 | |
+| tmxr_poll | 489 | |
+| SCPE_OK | 1969 | |
+| SCPE_OK | 2224 | |
+| reason | 2431 | |
+| SCPE_OK | 2437 | |
+| reason | 2450 | |
+| SCPE_OK | 2488 | |
+| interface" | 2493 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_DUMMY | (1 << UNIT_V_UF) | 34 |
+| DTE_DEVNUM | 0200 | 36 |
+| DEV_V_OS | (DEV_V_UF + 1)                 /... | 37 |
+| DEV_M_OS | (1 << DEV_V_OS) | 38 |
+| TYPE_RSX10 | (0 << DEV_V_OS) | 39 |
+| TYPE_RSX20 | (1 << DEV_V_OS) | 40 |
+| DTE_RM | 00100000    /* Restricted mode */ | 46 |
+| DTE_D11 | 00040000    /* Dead-11 */ | 47 |
+| DTE_11DB | 00020000    /* TO11 Door bell re... | 48 |
+| DTE_10DB | 00001000    /* TO10 Door bell re... | 49 |
+| DTE_11ER | 00000400    /* Error during TO11... | 50 |
+| DTE_11DN | 00000100    /* TO 11 transfer do... | 51 |
+| DTE_10DN | 00000040    /* TO 10 transfer do... | 52 |
+| DTE_10ER | 00000020    /* Error during TO10... | 53 |
+| DTE_PIE | 00000010    /* PIO enabled */ | 54 |
+| DTE_PIA | 00000007    /* PI channel assigm... | 55 |
+| DTE_11RELD | 01000000    /* Reload 11. */ | 58 |
+| DTE_TO11 | 02000000    /* Transfer to 11 */ | 59 |
+| DTE_SEC | 04000000    /* In secondary prot... | 60 |
+| DTE_IND | 010000000   /* Next transfer wil... | 61 |
+| DTE_SIND | 020000000   /* Send indirect dat... | 62 |
+| DTE_CO11DB | 0020000     /* Set TO11 Door bel... | 65 |
+| DTE_CO11CR | 0010000     /* Clear reload 11 b... | 66 |
+| DTE_CO11SR | 0004000     /* Set reload 11 but... | 67 |
+| DTE_CO10DB | 0001000     /* Clear TO10 Door b... | 68 |
+| DTE_CO11CL | 0000100     /* Clear TO11 done a... | 69 |
+| DTE_CO10CL | 0000040     /* Clear TO10 done a... | 70 |
+| DTE_PIENB | 0000020     /* Load PI and enabl... | 71 |
+| DTE_TO10IB | 010000      /* Interrupt after t... | 74 |
+| DTE_TO10BC | 007777      /* Byte count for tr... | 75 |
+| SEC_DTFLG | 0444        /* Operation complet... | 78 |
+| SEC_DTCLK | 0445        /* Clock interrupt f... | 79 |
+| SEC_DTCI | 0446        /* Clock interrupt i... | 80 |
+| SEC_DTT11 | 0447        /* 10 to 11 argument */ | 81 |
+| SEC_DTF11 | 0450        /* 10 from 11 argume... | 82 |
+| SEC_DTCMD | 0451        /* To 11 command wor... | 83 |
+| SEC_DTSEQ | 0452        /* Operation sequenc... | 84 |
+| SEC_DTOPR | 0453        /* Operational DTE # */ | 85 |
+| SEC_DTCHR | 0454        /* Last typed charac... | 86 |
+| SEC_DTMTD | 0455        /* Monitor tty outpu... | 87 |
+| SEC_DTMTI | 0456        /* Monitor tty input... | 88 |
+| SEC_DTSWR | 0457        /* 10 switch registe... | 89 |
+| SEC_PGMCTL | 00400 | 91 |
+| SEC_ENDPASS | 00404 | 92 |
+| SEC_LOOKUP | 00406 | 93 |
+| SEC_RDWRD | 00407 | 94 |
+| SEC_RDBYT | 00414 | 95 |
+| SEC_ESEC | 00440 | 96 |
+| SEC_EPRI | 00500 | 97 |
+| SEC_ERTM | 00540 | 98 |
+| SEC_CLKCTL | 01000 | 99 |
+| SEC_CLKOFF | 01000 | 100 |
+| SEC_CLKON | 01001 | 101 |
+| SEC_CLKWT | 01002 | 102 |
+| SEC_CLKRD | 01003 | 103 |
+| SEC_RDSW | 01400 | 104 |
+| SEC_CLRDDT | 03000 | 105 |
+| SEC_SETDDT | 03400 | 106 |
+| SEC_MONO | 04000 | 107 |
+| SEC_MONON | 04400 | 108 |
+| SEC_SETPRI | 05000 | 109 |
+| SEC_RTM | 05400 | 110 |
+| SEC_CMDMSK | 07400 | 111 |
+| DTE_MON | 00000001     /* Save in unit1 ST... | 112 |
+| SEC_CLK | 00000002     /* Clock enabled */ | 113 |
+| ITS_ON | 00000004     /* ITS Is alive */ | 114 |
+| PRI_CMTW_0 | 0 | 117 |
+| PRI_CMTW_PPT | 1            /* Pointer to com r... | 118 |
+| PRI_CMTW_STS | 2            /* Status word */ | 119 |
+| PRI_CMT_PWF | SMASK        /* Power failure */ | 120 |
+| PRI_CMT_L11 | BIT1         /* Load 11 */ | 121 |
+| PRI_CMT_INI | BIT2         /* Init */ | 122 |
+| PRI_CMT_TST | BIT3         /* Valid examine bi... | 123 |
+| PRI_CMT_QP | 020000000LL  /* Do Queued protoc... | 124 |
+| PRI_CMT_FWD | 001000000LL  /* Do full word tra... | 125 |
+| PRI_CMT_IP | RSIGN        /* Indirect transfe... | 126 |
+| PRI_CMT_TOT | 0200000LL    /* TOIT bit */ | 127 |
+| PRI_CMT_10IC | 0177400LL    /* TO10 IC for queu... | 128 |
+| PRI_CMT_11IC | 0000377LL    /* TO11 IC for queu... | 129 |
+| PRI_CMTW_CNT | 3            /* Queue Count */ | 130 |
+| PRI_CMTW_KAC | 5            /* Keep alive count */ | 131 |
+| PRI_IND_FLG | 0100000      /* Flag function as... | 132 |
+| PRI_EM2EI | 001          /* Initial message ... | 134 |
+| PRI_EM2TI | 002          /* Replay to initia... | 135 |
+| PRI_EMSTR | 003          /* String data */ | 136 |
+| PRI_EMLNC | 004          /* Line-Char */ | 137 |
+| PRI_EMRDS | 005          /* Request device s... | 138 |
+| PRI_EMOPS | 006 | 139 |
+| PRI_EMHDS | 007          /* Here is device s... | 140 |
+| PRI_EMRDT | 011          /* Request Date/Tim... | 141 |
+| PRI_EMHDR | 012          /* Here is date and... | 142 |
+| PRI_EMFLO | 013          /* Flush output */ | 143 |
+| PRI_EMSNA | 014          /* Send all (ttys) */ | 144 |
+| PRI_EMDSC | 015          /* Dataset connect */ | 145 |
+| PRI_EMHUD | 016          /* Hang up dataset */ | 146 |
+| PRI_EMLBE | 017          /* Acknowledge line */ | 147 |
+| PRI_EMXOF | 020          /* XOFF line */ | 148 |
+| PRI_EMXON | 021          /* XON line */ | 149 |
+| PRI_EMHLS | 022          /* Here is line spe... | 150 |
+| PRI_EMHLA | 023          /* Here is line all... | 151 |
+| PRI_EMRBI | 024          /* Reboot informati... | 152 |
+| PRI_EMAKA | 025          /* Ack ALL */ | 153 |
+| PRI_EMTDO | 026          /* Turn device On/O... | 154 |
+| PRI_EMEDR | 027          /* Enable/Disable l... | 155 |
+| PRI_EMLDR | 030          /* Load LP RAM */ | 156 |
+| PRI_EMLDV | 031          /* Load LP VFU */ | 157 |
+| PRI_EMCTY | 001          /* Device code for ... | 159 |
+| PRI_EMDL1 | 002          /* DL11 */ | 160 |
+| PRI_EMDH1 | 003          /* DH11 #1 */ | 161 |
+| PRI_EMDLS | 004          /* DLS (all ttys co... | 162 |
+| PRI_EMLPT | 005          /* Front end LPT */ | 163 |
+| PRI_EMCDR | 006          /* CDR */ | 164 |
+| PRI_EMCLK | 007          /* Clock */ | 165 |
+| PRI_EMFED | 010          /* Front end device */ | 166 |
+| PRI_CTYDV | 000          /* Line number for ... | 167 |
+| NUM_DLS | 5            /* Number of first ... | 168 |
+| ITS_DTEVER | 0400         /* Protocol version... | 172 |
+| ITS_DTECHK | 0401         /* Increment at 60H... | 173 |
+| ITS_DTEINP | 0402         /* Input from 10 to... | 174 |
+| ITS_DTEOUT | 0403         /* Output from 10 t... | 175 |
+| ITS_DTELSP | 0404         /* Line # to set sp... | 176 |
+| ITS_DTELPR | 0405         /* Parameter */ | 177 |
+| ITS_DTEOST | 0406         /* Line # to start ... | 178 |
+| ITS_DTETYI | 0410         /* Received char (L... | 179 |
+| ITS_DTEODN | 0411         /* Output done (Lin... | 180 |
+| ITS_DTEHNG | 0412         /* Hangup/dialup */ | 181 |
+| QITS | (cpu_unit[0].flags & UNIT_ITSPAGE) | 216 |
+| QITS | 0 | 218 |
+| STATUS | u3 | 221 |
+| CNT | u4 | 222 |
+| NUM_DEVS_LP20 | 0 | 321 |
+| COL | u4 | 326 |
+| POS | u5 | 327 |
+| LINE | u6 | 328 |
+| LPST | us9 | 329 |
+| LPCNT | us10 | 330 |
+| EOFFLG | 001      /* Tops 20 wants EOF */ | 332 |
+| HDSFLG | 002      /* Tell Tops 20 The cur... | 333 |
+| ACKFLG | 004      /* Post an acknowwledge... | 334 |
+| INTFLG | 010      /* Send interrupt */ | 335 |
+| DELFLG | 020      /* Previous character w... | 336 |
+| MARGIN | 6 | 338 |
+| UNIT_V_CT | (UNIT_V_UF + 0) | 340 |
+| UNIT_UC | (1 << UNIT_V_CT) | 341 |
+| UNIT_CT | (3 << UNIT_V_CT) | 342 |
+| LP20_RAM_RAP | 010000     /* RAM Parity */ | 358 |
+| LP20_RAM_INT | 04000      /* Interrrupt bit */ | 359 |
+| LP20_RAM_DEL | 02000      /* Delimiter bit */ | 360 |
+| LP20_RAM_TRN | 01000      /* Translation bite */ | 361 |
+| LP20_RAM_PI | 00400      /* Paper Instruction */ | 362 |
+| LP20_RAM_CHR | 00377      /* Character translat... | 363 |
+| NUM_DEVS_TTY | 0 | 478 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| " | 210-562 |  |
+| dte_devio | 563-620 |  |
+| dte_devirq | 621-625 |  |
+| dte_svc | 626-642 | Handle TO11 interrupts |
+| dte_second | 643-776 | Handle secondary protocol |
+| dte_its | 777-852 | Process ITS Ioeleven locations |
+| dte_primary | 853-985 | Handle primary protocol |
+| dte_function | 986-1425 |  |
+| dte_transfer | 1426-1511 | Send to 10 when requested. |
+| dte_input | 1512-1684 |  |
+| dte_queue | 1685-1717 |  |
+| dte_start | 1718-1761 |  |
+| dtei_svc | 1762-1810 | Check for input from CTY and put on queue. |
+| dteo_svc | 1811-1832 | Handle output of characters to CTY. Started whenever there is output pending |
+| dtertc_srv | 1833-1896 |  |
+| dte_reset | 1897-1910 |  |
+| dte_set_type | 1911-1922 |  |
+| dte_show_type | 1923-1939 |  |
+| dte_stop_os | 1940-1945 |  |
+| tty_set_mode | 1946-1951 |  |
+| dte_help | 1952-1971 |  |
+| dte_description | 1972-1980 |  |
+| lp20_printline | 1981-2014 |  |
+| lp20_output | 2015-2032 |  |
+| lp20_svc | 2033-2139 |  |
+| lp20_reset | 2140-2169 |  |
+| lp20_attach | 2170-2177 |  |
+| lp20_detach | 2178-2187 |  |
+| lp20_setlpp | 2188-2204 |  |
+| lp20_getlpp | 2205-2226 |  |
+| lp20_description | 2227-2236 |  |
+| ttyi_svc | 2237-2283 | Unit service |
+| ttyo_svc | 2284-2331 | Output whatever we can |
+| tty_reset | 2332-2345 |  |
+| tty_setnl | 2346-2379 |  |
+| tty_set_log | 2380-2398 |  |
+| tty_set_nolog | 2399-2413 |  |
+| tty_show_log | 2414-2428 |  |
+| tty_attach | 2429-2441 |  |
+| tty_detach | 2442-2452 |  |
+| tty_help | 2453-2490 |  |
+| tty_description | 2491-2497 |  |

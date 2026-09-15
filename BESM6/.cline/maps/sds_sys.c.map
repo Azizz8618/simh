@@ -1,0 +1,101 @@
+=== sds_sys.c — 801 строк ===
+Источник: sds_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sds_sys.c -nt .cline/maps/sds_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dev | 36 | |
+| chan_dev | 37 | |
+| ptr_dev | 38 | |
+| ptp_dev | 39 | |
+| cr_dev | 40 | |
+| cp_dev | 41 | |
+| tti_dev | 42 | |
+| tto_dev | 43 | |
+| lpt_dev | 44 | |
+| rtc_dev | 45 | |
+| drm_dev | 46 | |
+| rad_dev | 47 | |
+| dsk_dev | 48 | |
+| mt_dev | 49 | |
+| mux_dev | 50 | |
+| cpu_unit | 51 | |
+| cpu_reg | 52 | |
+| cpu_mode | 53 | |
+| sim_name | 66 | |
+| sim_PC | 68 | |
+| sim_emax | 70 | |
+| col | 201 | |
+| lpt_ccl | 203 | |
+| lpt_cct | 204 | |
+| cptr | 205 | |
+| cbuf | 206 | |
+| ptr | 208 | |
+| lpt_ccl | 232 | |
+| lpt_ccp | 233 | |
+| SCPE_OK | 236 | |
+| wd | 258 | |
+| ldr | 264 | |
+| SCPE_NXM | 293 | |
+| return | 498 | |
+| inst | 539 | |
+| va | 544 | |
+| shf | 545 | |
+| nonop | 546 | |
+| SCPE_ARG | 633 | |
+| tptr | 647 | |
+| gbuf | 648 | |
+| gbuf | 676 | |
+| cptr | 681 | |
+| SCPE_OK | 800 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| FMTASC(x) | ((x) < 040)? "<%03o>": "%c", (x) | 34 |
+| I_V_FL | 24                              ... | 298 |
+| I_M_FL | 017                             ... | 299 |
+| I_V_NPN | 000                             ... | 300 |
+| I_V_PPO | 001                             ... | 301 |
+| I_V_IOI | 002                             ... | 302 |
+| I_V_MRF | 003                             ... | 303 |
+| I_V_REG | 004                             ... | 304 |
+| I_V_SHF | 005                             ... | 305 |
+| I_V_OPO | 006                             ... | 306 |
+| I_V_CHC | 007                             ... | 307 |
+| I_V_CHT | 010                             ... | 308 |
+| I_V_SPP | 011                             ... | 309 |
+| I_NPN | (I_V_NPN << I_V_FL) | 310 |
+| I_PPO | (I_V_PPO << I_V_FL) | 311 |
+| I_IOI | (I_V_IOI << I_V_FL) | 312 |
+| I_MRF | (I_V_MRF << I_V_FL) | 313 |
+| I_REG | (I_V_REG << I_V_FL) | 314 |
+| I_SHF | (I_V_SHF << I_V_FL) | 315 |
+| I_OPO | (I_V_OPO << I_V_FL) | 316 |
+| I_CHC | (I_V_CHC << I_V_FL) | 317 |
+| I_CHT | (I_V_CHT << I_V_FL) | 318 |
+| I_SPP | (I_V_SPP << I_V_FL) | 319 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_load_cct | 199-208 |  |
+| for | 209-242 |  |
+| get_word | 243-246 |  |
+| for | 247-260 |  |
+| sim_load | 261-270 |  |
+| for | 271-287 |  |
+| for | 288-484 |  |
+| fprint_reg | 485-489 |  |
+| for | 490-502 |  |
+| sds_to_ascii | 503-513 |  |
+| ascii_to_sds | 514-547 |  |
+| if | 548-558 |  |
+| if | 559-567 |  |
+| for | 568-644 |  |
+| get_tag | 645-670 |  |
+| parse_sym | 671-681 |  |
+| if | 682-698 |  |
+| if | 699-719 |  |
+| switch | 720-801 |  |

@@ -1,0 +1,217 @@
+=== pdp1_dt.c — 1126 строк ===
+Источник: pdp1_dt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp1_dt.c -nt .cline/maps/pdp1_dt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| stop_inst | 251 | |
+| cpu_unit | 252 | |
+| dt_substate | 260 | |
+| dt_logblk | 261 | |
+| dt_stopoffr | 262 | |
+| fnc | 365 | |
+| uptr | 366 | |
+| DT_UPDINT | 411 | |
+| dat | 412 | |
+| old_unit | 419 | |
+| uptr | 420 | |
+| return | 431 | |
+| new_unit | 457 | |
+| prev_mving | 458 | |
+| uptr | 459 | |
+| uptr | 464 | |
+| return | 529 | |
+| fnc | 546 | |
+| oldpos | 547 | |
+| return | 623 | |
+| new_time | 646 | |
+| unum | 648 | |
+| uptr->pos | 680 | |
+| FALSE | 690 | |
+| dir | 701 | |
+| blk | 704 | |
+| ba | 705 | |
+| SCPE_OK | 851 | |
+| DT_UPDINT | 873 | |
+| return | 874 | |
+| newpos | 881 | |
+| return | 887 | |
+| dat | 898 | |
+| csum | 909 | |
+| wrd | 923 | |
+| uptr | 941 | |
+| SCPE_OK | 963 | |
+| pdp8b | 988 | |
+| pdp11b | 989 | |
+| ba | 990 | |
+| SCPE_OK | 1059 | |
+| pdp8b | 1073 | |
+| pdp11b | 1074 | |
+| ba | 1075 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DT_NUMDR | 8                               ... | 96 |
+| UNIT_V_8FMT | (UNIT_V_UF + 0)                 ... | 97 |
+| UNIT_V_11FMT | (UNIT_V_UF + 1)                 ... | 98 |
+| UNIT_8FMT | (1 << UNIT_V_8FMT) | 99 |
+| UNIT_11FMT | (1 << UNIT_V_11FMT) | 100 |
+| STATE | u3                              ... | 101 |
+| LASTT | u4                              ... | 102 |
+| DT_WC | 030                             ... | 103 |
+| DT_CA | 031                             ... | 104 |
+| DT_LPERMC | 6                               ... | 108 |
+| DT_BLKWD | 1                               ... | 109 |
+| DT_CSMWD | 4                               ... | 110 |
+| DT_HTWRD | 5                               ... | 111 |
+| DT_EZLIN | (8192 * DT_LPERMC)              ... | 112 |
+| DT_BFLIN | (200 * DT_LPERMC)               ... | 113 |
+| DT_BLKLN | (DT_BLKWD * DT_LPERMC)          ... | 114 |
+| DT_CSMLN | (DT_CSMWD * DT_LPERMC)          ... | 115 |
+| DT_HTLIN | (DT_HTWRD * DT_LPERMC)          ... | 116 |
+| D18_WSIZE | 6                               ... | 120 |
+| D18_BSIZE | 256                             ... | 121 |
+| D18_TSIZE | 578                             ... | 122 |
+| D18_LPERB | (DT_HTLIN + (D18_BSIZE * DT_WSIZ... | 123 |
+| D18_FWDEZ | (DT_EZLIN + (D18_LPERB * D18_TSI... | 124 |
+| D18_CAPAC | (D18_TSIZE * D18_BSIZE)         ... | 125 |
+| D11_FILSIZ | (D18_CAPAC * sizeof (int16)) | 126 |
+| D8_WSIZE | 4                               ... | 130 |
+| D8_BSIZE | 86                              ... | 131 |
+| D8_TSIZE | 1474                            ... | 132 |
+| D8_LPERB | (DT_HTLIN + (D8_BSIZE * DT_WSIZE... | 133 |
+| D8_FWDEZ | (DT_EZLIN + (D8_LPERB * D8_TSIZE)) | 134 |
+| D8_CAPAC | (D8_TSIZE * D8_BSIZE)           ... | 135 |
+| D8_NBSIZE | ((D8_BSIZE * D18_WSIZE) / D8_WSIZE) | 137 |
+| D8_FILSIZ | (D8_NBSIZE * D8_TSIZE * sizeof (... | 138 |
+| DT_CAPAC | D18_CAPAC                       ... | 142 |
+| DT_WSIZE | D18_WSIZE | 143 |
+| DTU_BSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_BS... | 147 |
+| DTU_TSIZE(u) | (((u)->flags & UNIT_8FMT)? D8_TS... | 148 |
+| DTU_LPERB(u) | (((u)->flags & UNIT_8FMT)? D8_LP... | 149 |
+| DTU_FWDEZ(u) | (((u)->flags & UNIT_8FMT)? D8_FW... | 150 |
+| DTU_CAPAC(u) | (((u)->flags & UNIT_8FMT)? D8_CA... | 151 |
+| DT_LIN2BL(p,u) | (((p) - DT_EZLIN) / DTU_LPERB (u)) | 153 |
+| DT_LIN2OF(p,u) | (((p) - DT_EZLIN) % DTU_LPERB (u)) | 154 |
+| DT_LIN2WD(p,u) | ((DT_LIN2OF (p,u) - DT_HTLIN) / ... | 155 |
+| DT_BLK2LN(p,u) | (((p) * DTU_LPERB (u)) + DT_EZLIN) | 156 |
+| DT_QREZ(u) | (((u)->pos) < DT_EZLIN) | 157 |
+| DT_QFEZ(u) | (((u)->pos) >= ((uint32) DTU_FWD... | 158 |
+| DT_QEZ(u) | (DT_QREZ (u) \|\| DT_QFEZ (u)) | 159 |
+| DTA_V_UNIT | 12                              ... | 163 |
+| DTA_M_UNIT | 017 | 164 |
+| DTA_UNIT | (DTA_M_UNIT << DTA_V_UNIT) | 165 |
+| DTA_V_MOT | 4                               ... | 166 |
+| DTA_M_MOT | 03 | 167 |
+| DTA_V_FNC | 0                               ... | 168 |
+| DTA_M_FNC | 07 | 169 |
+| FNC_MOVE | 00                             /... | 170 |
+| FNC_SRCH | 01                             /... | 171 |
+| FNC_READ | 02                             /... | 172 |
+| FNC_WRIT | 03                             /... | 173 |
+| FNC_RALL | 05                             /... | 174 |
+| FNC_WALL | 06                             /... | 175 |
+| FNC_WMRK | 07                             /... | 176 |
+| DTA_STSTP | (1u << (DTA_V_MOT + 1)) | 177 |
+| DTA_FWDRV | (1u << DTA_V_MOT) | 178 |
+| DTA_MODE | 0                               ... | 179 |
+| DTA_RW | 077 | 180 |
+| DTA_GETUNIT(x) | map_unit[(((x) >> DTA_V_UNIT) & ... | 181 |
+| DT_UPDINT | if (dtsb & (DTB_DTF \| DTB_BEF \| ... | 182 |
+| DTA_GETMOT(x) | (((x) >> DTA_V_MOT) & DTA_M_MOT) | 185 |
+| DTA_GETFNC(x) | (((x) >> DTA_V_FNC) & DTA_M_FNC) | 186 |
+| DTB_V_DTF | 17                              ... | 190 |
+| DTB_V_BEF | 16                              ... | 191 |
+| DTB_V_ERF | 15                              ... | 192 |
+| DTB_V_END | 14                              ... | 193 |
+| DTB_V_TIM | 13                              ... | 194 |
+| DTB_V_REV | 12                              ... | 195 |
+| DTB_V_GO | 11                              ... | 196 |
+| DTB_V_MRK | 10                              ... | 197 |
+| DTB_V_SEL | 9                               ... | 198 |
+| DTB_DTF | (1u << DTB_V_DTF) | 199 |
+| DTB_BEF | (1u << DTB_V_BEF) | 200 |
+| DTB_ERF | (1u << DTB_V_ERF) | 201 |
+| DTB_END | (1u << DTB_V_END) | 202 |
+| DTB_TIM | (1u << DTB_V_TIM) | 203 |
+| DTB_REV | (1u << DTB_V_REV) | 204 |
+| DTB_GO | (1u << DTB_V_GO) | 205 |
+| DTB_MRK | (1u << DTB_V_MRK) | 206 |
+| DTB_SEL | (1u << DTB_V_SEL) | 207 |
+| DTB_ALLERR | (DTB_END \| DTB_TIM \| DTB_MRK \| D... | 208 |
+| DTS_V_MOT | 3                               ... | 212 |
+| DTS_M_MOT | 07 | 213 |
+| DTS_STOP | 0                              /... | 214 |
+| DTS_DECF | 2                              /... | 215 |
+| DTS_DECR | 3                              /... | 216 |
+| DTS_ACCF | 4                              /... | 217 |
+| DTS_ACCR | 5                              /... | 218 |
+| DTS_ATSF | 6                              /... | 219 |
+| DTS_ATSR | 7                              /... | 220 |
+| DTS_DIR | 01                              ... | 221 |
+| DTS_V_FNC | 0                               ... | 222 |
+| DTS_M_FNC | 07 | 223 |
+| DTS_OFR | 7                               ... | 224 |
+| DTS_GETMOT(x) | (((x) >> DTS_V_MOT) & DTS_M_MOT) | 225 |
+| DTS_GETFNC(x) | (((x) >> DTS_V_FNC) & DTS_M_FNC) | 226 |
+| DTS_V_2ND | 6                               ... | 227 |
+| DTS_V_3RD | (DTS_V_2ND + DTS_V_2ND)         ... | 228 |
+| DTS_STA(y,z) | (((y) << DTS_V_MOT) \| ((z) << DT... | 229 |
+| DTS_SETSTA(y,z) | uptr->STATE = DTS_STA (y, z) | 230 |
+| DTS_SET2ND(y,z) | uptr->STATE = (uptr->STATE & 077... | 231 |
+| DTS_SET3RD(y,z) | uptr->STATE = (uptr->STATE & 077... | 233 |
+| DTS_NXTSTA(x) | (x >> DTS_V_2ND) | 235 |
+| DTO_WCO | 1                               ... | 239 |
+| DTO_SOB | 2                               ... | 240 |
+| LOG_MS | 001                             ... | 244 |
+| LOG_RW | 002                             ... | 245 |
+| LOG_BL | 004                             ... | 246 |
+| ABS(x) | (((x) < 0)? (-(x)): (x)) | 248 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dt | 362-373 |  |
+| if | 374-379 |  |
+| if | 380-391 |  |
+| if | 392-395 |  |
+| if | 396-399 |  |
+| if | 400-416 |  |
+| dt_deselect | 417-454 |  |
+| dt_newsa | 455-464 |  |
+| if | 465-478 |  |
+| if | 479-488 |  |
+| if | 489-499 |  |
+| if | 500-512 |  |
+| if | 513-522 |  |
+| if | 523-543 |  |
+| dt_newfnc | 544-559 |  |
+| if | 560-565 |  |
+| switch | 566-617 |  |
+| if | 618-643 |  |
+| dt_setpos | 644-654 |  |
+| switch | 655-697 |  |
+| dt_svc | 698-713 |  |
+| switch | 714-744 |  |
+| if | 745-750 |  |
+| switch | 751-857 |  |
+| dt_seterr | 858-861 |  |
+| if | 862-878 |  |
+| dt_schedez | 879-891 |  |
+| dt_comobv | 892-902 |  |
+| dt_csum | 903-909 |  |
+| for | 910-920 |  |
+| dt_gethdr | 921-937 |  |
+| dt_reset | 938-942 |  |
+| for | 943-967 |  |
+| dt_iors | 968-985 |  |
+| dt_attach | 986-996 |  |
+| if | 997-1012 |  |
+| if | 1013-1024 |  |
+| if | 1025-1041 |  |
+| if | 1042-1070 |  |
+| dt_detach | 1071-1079 |  |
+| if | 1080-1088 |  |
+| if | 1089-1126 |  |

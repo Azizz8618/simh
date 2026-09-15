@@ -1,0 +1,168 @@
+=== vax_io.c — 988 строк ===
+Источник: vax_io.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_io.c -nt .cline/maps/vax_io.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ssc_bto | 119 | |
+| qba_dib | 149 | |
+| iodibp | 195 | |
+| idx | 213 | |
+| idx | 231 | |
+| mem_err | 243 | |
+| return | 244 | |
+| iod | 258 | |
+| SET_IRQL | 264 | |
+| iod | 265 | |
+| iod | 300 | |
+| SET_IRQL | 306 | |
+| iod | 307 | |
+| SET_IRQL | 330 | |
+| return | 331 | |
+| SET_IRQL | 378 | |
+| return | 379 | |
+| nval | 500 | |
+| return | 522 | |
+| nval | 535 | |
+| return | 545 | |
+| SCPE_OK | 553 | |
+| SCPE_OK | 559 | |
+| return | 596 | |
+| ma | 614 | |
+| SCPE_OK | 629 | |
+| ma | 635 | |
+| SCPE_OK | 658 | |
+| FALSE | 681 | |
+| FALSE | 698 | |
+| return | 709 | |
+| return | 720 | |
+| return | 728 | |
+| cq_mbr | 735 | |
+| cq_scr | 736 | |
+| SCPE_OK | 737 | |
+| cq_dser | 749 | |
+| SCPE_OK | 752 | |
+| ma | 766 | |
+| ma | 798 | |
+| ba | 800 | |
+| bc | 801 | |
+| ma | 830 | |
+| ma | 862 | |
+| ba | 864 | |
+| bc | 865 | |
+| SCPE_NXM | 903 | |
+| SCPE_NXM | 918 | |
+| dptr | 926 | |
+| dibp | 927 | |
+| SCPE_OK | 938 | |
+| qa | 947 | |
+| SCPE_OK | 959 | |
+| qb_map | 966 | |
+| SCPE_OK | 982 | |
+| adapter" | 987 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CQSCR_POK | 0x00008000                      ... | 58 |
+| CQSCR_BHL | 0x00004000                      ... | 59 |
+| CQSCR_AUX | 0x00000400                      ... | 60 |
+| CQSCR_DBO | 0x0000000C                      ... | 61 |
+| CQSCR_RW | (CQSCR_BHL \| CQSCR_DBO) | 62 |
+| CQSCR_MASK | (CQSCR_RW \| CQSCR_POK \| CQSCR_AUX) | 63 |
+| CQDSER_BHL | 0x00008000                      ... | 67 |
+| CQDSER_DCN | 0x00004000                      ... | 68 |
+| CQDSER_MNX | 0x00000080                      ... | 69 |
+| CQDSER_MPE | 0x00000020                      ... | 70 |
+| CQDSER_SME | 0x00000010                      ... | 71 |
+| CQDSER_LST | 0x00000008                      ... | 72 |
+| CQDSER_TMO | 0x00000004                      ... | 73 |
+| CQDSER_SNX | 0x00000001                      ... | 74 |
+| CQDSER_ERR | (CQDSER_MNX \| CQDSER_MPE \| CQDSE... | 75 |
+| CQDSER_MASK | 0x0000C0BD | 76 |
+| CQMEAR_MASK | 0x00001FFF                      ... | 80 |
+| CQSEAR_MASK | 0x000FFFFF                      ... | 84 |
+| CQMBR_MASK | 0x1FFF8000                      ... | 88 |
+| CQIPC_QME | 0x00008000                      ... | 92 |
+| CQIPC_INV | 0x00004000                      ... | 93 |
+| CQIPC_AHLT | 0x00000100                      ... | 94 |
+| CQIPC_DBIE | 0x00000040                      ... | 95 |
+| CQIPC_LME | 0x00000020                      ... | 96 |
+| CQIPC_DB | 0x00000001                      ... | 97 |
+| CQIPC_W1C | CQIPC_QME | 98 |
+| CQIPC_RW | (CQIPC_AHLT \| CQIPC_DBIE \| CQIPC... | 99 |
+| CQIPC_MASK | (CQIPC_RW \| CQIPC_QME ) | 100 |
+| CQMAP_VLD | 0x80000000                      ... | 104 |
+| CQMAP_PAG | 0x000FFFFF                      ... | 105 |
+| QB_VEC_MASK | 0x1FC                           ... | 107 |
+| IOLN_DBL | 002 | 147 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ReadQb | 211-214 |  |
+| if | 215-219 |  |
+| if | 220-228 |  |
+| WriteQb | 229-232 |  |
+| if | 233-237 |  |
+| if | 238-255 |  |
+| ReadIO | 256-297 |  |
+| ReadIOU | 298-319 |  |
+| WriteIO | 320-351 |  |
+| WriteIOU | 352-353 |  |
+| switch | 354-383 |  |
+| eval_int | 384-401 |  |
+| for | 402-411 |  |
+| for | 412-420 |  |
+| get_vector | 421-425 |  |
+| if | 426-429 |  |
+| if | 430-433 |  |
+| if | 434-436 |  |
+| for | 437-463 |  |
+| cqbic_rd | 464-467 |  |
+| switch | 468-488 |  |
+| cqbic_wr | 489-492 |  |
+| if | 493-500 |  |
+| switch | 501-527 |  |
+| cqipc_rd | 528-532 |  |
+| cqipc_wr | 533-536 |  |
+| if | 537-549 |  |
+| dbl_rd | 550-555 |  |
+| dbl_wr | 556-567 |  |
+| cqmap_rd | 568-578 |  |
+| cqmap_wr | 579-582 |  |
+| if | 583-610 |  |
+| cqm_rd | 611-615 |  |
+| if | 616-623 |  |
+| if | 624-631 |  |
+| cqm_wr | 632-636 |  |
+| if | 637-662 |  |
+| qba_map_addr | 663-667 |  |
+| if | 668-685 |  |
+| qba_map_addr_c | 686-690 |  |
+| if | 691-702 |  |
+| cq_merr | 703-713 |  |
+| cq_serr | 714-724 |  |
+| ioreset_wr | 725-732 |  |
+| qba_powerup | 733-741 |  |
+| qba_reset | 742-762 |  |
+| Map_ReadB | 763-767 |  |
+| if | 768-794 |  |
+| Map_ReadW | 795-801 |  |
+| if | 802-826 |  |
+| Map_WriteB | 827-831 |  |
+| if | 832-858 |  |
+| Map_WriteW | 859-865 |  |
+| if | 866-892 |  |
+| qba_ex | 893-898 |  |
+| if | 899-907 |  |
+| qba_dep | 908-913 |  |
+| if | 914-922 |  |
+| build_dib_tab | 923-930 |  |
+| for | 931-942 |  |
+| qba_show_virt | 943-948 |  |
+| if | 949-963 |  |
+| qba_show_map | 964-970 |  |
+| qba_help | 971-984 |  |
+| qba_description | 985-988 |  |

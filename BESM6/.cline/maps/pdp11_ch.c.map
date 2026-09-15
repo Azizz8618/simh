@@ -1,0 +1,70 @@
+=== pdp11_ch.c — 586 строк ===
+Источник: pdp11_ch.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_ch.c -nt .cline/maps/pdp11_ch.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| peer | 115 | |
+| status | 116 | |
+| address | 117 | |
+| rx_count | 118 | |
+| tx_count | 119 | |
+| rx_buffer | 120 | |
+| tx_buffer | 121 | |
+| ch_lines | 123 | |
+| ch_tmxr | 124 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TIE | 0000001 /* Timer interrupt enabl... | 47 |
+| LOOP | 0000002 /* Loop back */ | 48 |
+| SPY | 0000004 /* Loop back */ | 49 |
+| CRX | 0000010 /* Clear receiver */ | 50 |
+| RXIE | 0000020 /* Receive interrupt ena... | 51 |
+| TXIE | 0000040 /* Transmit interrupt en... | 52 |
+| TXA | 0000100 /* Transmit abort */ | 53 |
+| TXD | 0000200 /* Transmit done */ | 54 |
+| CTX | 0000400 /* Clear transmitter */ | 55 |
+| LOST | 0017000 /* Lost count */ | 56 |
+| RESET | 0020000 /* Reset */ | 57 |
+| CRC | 0040000 /* CRC error */ | 58 |
+| RXD | 0100000 /* Receive done */ | 59 |
+| STATUS_BITS | (TIE\|LOOP\|SPY\|RXIE\|TXIE\|TXA\|TXD\|... | 61 |
+| COMMAND_BITS | (TIE\|LOOP\|SPY\|RXIE\|TXIE) | 62 |
+| CHUDP_HEADER | 4 | 81 |
+| IOLN_CH | 020 | 82 |
+| DBG_TRC | 0x0001 | 83 |
+| DBG_REG | 0x0002 | 84 |
+| DBG_PKT | 0x0004 | 85 |
+| DBG_DAT | 0x0008 | 86 |
+| DBG_INT | 0x0010 | 87 |
+| DBG_ERR | 0x0020 | 88 |
+| CH11_NO_ADDRESS | 0XFFFF | 113 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ch_checksum | 177-186 |  |
+| ch_rx_word | 187-206 |  |
+| ch_tx_word | 207-223 |  |
+| ch_test_int | 224-238 |  |
+| ch_transmit | 239-261 |  |
+| ch_validate | 262-289 |  |
+| ch_receive | 290-323 |  |
+| ch_rd | 324-355 |  |
+| ch_clear | 356-369 |  |
+| ch_command | 370-393 |  |
+| ch_wr | 394-421 |  |
+| ch_svc | 422-440 |  |
+| ch_attach | 441-468 |  |
+| ch_detach | 469-475 |  |
+| ch_reset | 476-494 |  |
+| ch_show_peer | 495-500 |  |
+| ch_set_peer | 501-517 |  |
+| ch_show_node | 518-526 |  |
+| ch_set_node | 527-544 |  |
+| ch_description | 545-549 |  |
+| ch_help | 550-574 |  |
+| ch_help_attach | 575-586 |  |

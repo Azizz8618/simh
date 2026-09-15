@@ -1,0 +1,85 @@
+=== i7000_mt.c — 1414 строк ===
+Источник: i7000_mt.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i7000_mt.c -nt .cline/maps/i7000_mt.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mt_chan | 143 | |
+| mt_buffer | 146 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_MT | 0 | 41 |
+| BUFFSIZE | (MAXMEMSIZE * CHARSPERWORD) | 46 |
+| UNIT_MT(x) | UNIT_ATTABLE \| UNIT_DISABLE \| UN... | 47 |
+| MTUF_LDN | (1 << MTUF_V_UF) | 49 |
+| MTUF_ONLINE | (1 << UNIT_V_UF_31) | 50 |
+| MT_RDS | 1 | 55 |
+| MT_RDSB | 2 | 56 |
+| MT_WRS | 3 | 57 |
+| MT_WRSB | 4 | 58 |
+| MT_WEF | 5 | 59 |
+| MT_BSR | 6 | 60 |
+| MT_BSF | 7 | 61 |
+| MT_REW | 8 | 62 |
+| MT_SDN | 9 | 63 |
+| MT_RUN | 10 | 64 |
+| MT_SKIP | 11      /* Do skip to end of rec... | 65 |
+| MT_WRITE | 12      /* Actual transfer opera... | 66 |
+| MT_SKR | 13 | 67 |
+| MT_ERG | 14 | 68 |
+| MT_RDB | 15 | 69 |
+| MT_LREW | 16      /* Low speed rewind */ | 70 |
+| MT_HREW | 17      /* High speed rewind */ | 71 |
+| MT_CMDMSK | 000037      /* Command being run */ | 72 |
+| MT_RDY | 000040      /* Device is ready f... | 73 |
+| MT_IDLE | 000100      /* Tape still in mot... | 74 |
+| MT_MARK | 000200      /* Hit tape mark */ | 75 |
+| MT_EOT | 000400      /* At End Of Tape */ | 76 |
+| MT_RM | 001000      /* Hit a record mark... | 77 |
+| MT_EOR | 002000      /* Set EOR on next r... | 78 |
+| MT_UNLOAD | 004000      /* Unload when rewin... | 79 |
+| MT_EGAP | 010000      /* Write extended ga... | 80 |
+| MT_LWR | 020000      /* Last command was ... | 81 |
+| MT_CLRIND | 040000      /* On I7010 flag for... | 82 |
+| MTC_SEL | 0020        /* Controller execut... | 87 |
+| MTC_BSY | 0040        /* Controller is bus... | 88 |
+| MTC_UNIT | 0017        /* device Channel is... | 89 |
+| IPS | 75      /* Inches per second 75 ... | 92 |
+| HS_IPS | 500      /* High speed rewind In... | 93 |
+| LD | 300 | 95 |
+| HD | 150 | 96 |
+| LT_GAP_LEN | ((3 * LD)/ 4)   /* Gap length fo... | 98 |
+| HT_GAP_LEN | ((3 * HD)/ 4)   /* Gap length fo... | 99 |
+| LT | (1000000/(LD * IPS))   /* Time p... | 100 |
+| HT | (1000000/(HD * IPS))   /* Time p... | 101 |
+| LT_GAP_TIM | (LT_GAP_LEN * LT)     /* Time pe... | 102 |
+| HT_GAP_TIM | (HT_GAP_LEN * HT)     /* Time pe... | 103 |
+| T1 | ((uptr->flags & MTUF_LDN) ?LT:HT) | 106 |
+| T1_us | us_to_ticks(T1) | 107 |
+| T2 | ((uptr->flags & MTUF_LDN) ?LT_GA... | 109 |
+| T2_us | us_to_ticks(T2) | 110 |
+| T3 | (((uptr->flags & MTUF_LDN) ?LT_G... | 112 |
+| T3_us | us_to_ticks(T3) | 113 |
+| GAP_LEN | ((uptr->flags & MTUF_LDN) ?LT_GA... | 114 |
+| NUM_DEVS | (NUM_DEVS_MT + 1) | 137 |
+| NUM_DEVS | (NUM_DEVS_MT) | 139 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mt_rew | 358-369 |  |
+| mt_cmd | 370-635 | Start off a mag tape command |
+| mt_read_buff | 636-684 |  |
+| mt_error | 685-725 | Map simH errors into machine errors |
+| mt_srv | 726-1309 | Handle processing of tape requests. |
+| mt_boot | 1310-1344 |  |
+| mt_ini | 1345-1357 |  |
+| mt_reset | 1358-1363 |  |
+| mt_tape_density | 1364-1369 |  |
+| mt_attach | 1370-1383 |  |
+| mt_detach | 1384-1392 |  |
+| mt_help | 1393-1408 |  |
+| mt_description | 1409-1414 |  |

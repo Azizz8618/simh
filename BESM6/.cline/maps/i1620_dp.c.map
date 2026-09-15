@@ -1,0 +1,90 @@
+=== i1620_dp.c — 528 строк ===
+Источник: i1620_dp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i1620_dp.c -nt .cline/maps/i1620_dp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ind | 83 | |
+| cpu_unit | 84 | |
+| drv | 150 | |
+| uptr | 151 | |
+| ind | 157 | |
+| ad | 280 | |
+| SCPE_OK | 307 | |
+| SCPE_OK | 332 | |
+| SCPE_OK | 353 | |
+| SCPE_OK | 374 | |
+| dskad | 385 | |
+| -1 | 411 | |
+| dskad | 421 | |
+| STOP_CYOERR | 434 | |
+| SCPE_OK | 458 | |
+| return | 514 | |
+| ind | 526 | |
+| SCPE_OK | 527 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DP_NUMDR | 4                               ... | 44 |
+| UNIT_V_WAE | (UNIT_V_UF + 0)                 ... | 45 |
+| UNIT_WAE | (1 << UNIT_V_WAE) | 46 |
+| DP_ADDR | 5                               ... | 50 |
+| DP_DATA | 100                             ... | 51 |
+| DP_NUMCH | (DP_ADDR + DP_DATA) | 52 |
+| DP_NUMSC | 20                              ... | 54 |
+| DP_NUMSF | 10                              ... | 55 |
+| DP_NUMCY | 100                             ... | 56 |
+| DP_TOTSC | (DP_NUMCY * DP_NUMSF * DP_NUMSC) | 57 |
+| DP_SIZE | (DP_TOTSC * DP_NUMCH) | 58 |
+| DCF_DRV | 0                               ... | 62 |
+| DCF_SEC | 1                               ... | 63 |
+| DCF_SEC_LEN | 5 | 64 |
+| DCF_CNT | (DCF_SEC + DCF_SEC_LEN)         ... | 65 |
+| DCF_CNT_LEN | 3 | 66 |
+| DCF_ADR | (DCF_CNT + DCF_CNT_LEN)         ... | 67 |
+| DCF_ADR_LEN | 5 | 68 |
+| DCF_LEN | (DCF_ADR + DCF_ADR_LEN) | 69 |
+| FNC_SEEK | 1                               ... | 73 |
+| FNC_SEC | 0                               ... | 74 |
+| FNC_WCH | 1                               ... | 75 |
+| FNC_NRL | 2                               ... | 76 |
+| FNC_TRK | 4                               ... | 77 |
+| FNC_WRI | 8                               ... | 78 |
+| CYL | u3                              ... | 80 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dp | 148-166 |  |
+| if | 167-174 |  |
+| if | 175-192 |  |
+| if | 193-200 |  |
+| switch | 201-262 |  |
+| if | 263-276 |  |
+| dp_rdadr | 277-287 |  |
+| for | 288-311 |  |
+| dp_rdsec | 312-317 |  |
+| for | 318-336 |  |
+| dp_wradr | 337-342 |  |
+| for | 343-357 |  |
+| dp_wrsec | 358-363 |  |
+| for | 364-378 |  |
+| dp_fndsec | 379-389 |  |
+| if | 390-396 |  |
+| for | 397-415 |  |
+| dp_nexsec | 416-422 |  |
+| if | 423-438 |  |
+| dp_zeroad | 439-442 |  |
+| for | 443-451 |  |
+| dp_tstgm | 452-453 |  |
+| if | 454-462 |  |
+| dp_cvt_ad | 463-467 |  |
+| for | 468-478 |  |
+| dp_trkop | 479-488 |  |
+| dp_cvt_bcd | 489-493 |  |
+| for | 494-505 |  |
+| dp_fill | 506-507 |  |
+| while | 508-518 |  |
+| dp_reset | 519-528 |  |

@@ -1,0 +1,35 @@
+=== imlac_sys.c — 603 строк ===
+Источник: imlac_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test imlac_sys.c -nt .cline/maps/imlac_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| sim_emax | 31 | |
+| sim_name | 32 | |
+| dev_tab | 35 | |
+| sim_PC | 36 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| get4 | 65-79 |  |
+| get8 | 80-91 |  |
+| get16 | 92-103 |  |
+| load_stty | 104-153 |  |
+| get_word | 154-167 |  |
+| load_ptr | 168-221 |  |
+| sim_load | 222-236 |  |
+| build_dev_tab | 237-255 |  |
+| fprint_class1 | 256-276 |  |
+| fprint_class2 | 277-289 |  |
+| fprint_class3 | 290-315 |  |
+| fprint_iot | 316-329 |  |
+| fprint_opr | 330-355 |  |
+| fprint_cpu | 356-416 |  |
+| fprint_dopr | 417-459 |  |
+| fprint_inc_byte | 460-509 |  |
+| fprint_deim | 510-519 |  |
+| fprint_dp_opt | 520-537 |  |
+| fprint_dp | 538-567 |  |
+| fprint_inc | 568-603 |  |

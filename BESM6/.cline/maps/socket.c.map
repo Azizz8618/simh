@@ -1,0 +1,22 @@
+=== socket.c — 724 строк ===
+Источник: socket.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test socket.c -nt .cline/maps/socket.c.map
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| socreate | 44-62 |  |
+| sofree | 63-85 |  |
+| sopreprbuf | 86-152 |  |
+| soread | 153-212 |  |
+| soreadbuf | 213-262 |  |
+| sorecvoob | 263-289 |  |
+| sosendoob | 290-347 |  |
+| sowrite | 348-439 |  |
+| sorecvfrom | 440-540 |  |
+| sosendto | 541-668 |  |
+| soisfconnecting | 669-676 |  |
+| soisfconnected | 677-683 |  |
+| sofcantrcvmore | 684-698 |  |
+| sofcantsendmore | 699-717 |  |
+| sofwdrain | 718-724 |  |

@@ -1,0 +1,106 @@
+=== 3b2_mau.c — 3595 строк ===
+Источник: 3b2_mau.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test 3b2_mau.c -nt .cline/maps/3b2_mau.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| mau_state | 227 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MAU_ID | 0        /* Coprocessor ID of MA... | 113 |
+| TININESS_BEFORE_ROUNDING | TRUE | 115 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mau_case_div_zero | 387-402 |  |
+| mau_exc | 403-434 |  |
+| mau_exception_present | 435-446 | Returns true if an exceptional condition is present. |
+| abort_on_fault | 447-489 |  |
+| clear_asr | 490-512 | Clears N and Z flags in the ASR if appropriate. |
+| set_nz | 513-525 | set! |
+| mau_reset | 526-543 |  |
+| le_128 | 544-553 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| eq_128 | 554-563 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| lt_128 | 564-574 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| leading_zeros | 575-605 | Algorithm couresty of "Hacker's Delight" by Henry S. Warren. |
+| leading_zeros_64 | 606-632 | value. |
+| shift_right_32_jamming | 633-655 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| shift_right_64_jamming | 656-813 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| mul_64_to_128 | 814-843 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| mul_64_by_shifted_32_to_128 | 844-858 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| estimate_div_128_to_64 | 859-887 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| approx_recip_sqrt_32 | 888-928 |  |
+| round_pack_int | 929-1037 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| round_pack_sfp | 1038-1232 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| propagate_xfp_nan | 1233-1266 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| propagate_xfp_nan_128 | 1267-1341 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| normalize_sfp_subnormal | 1342-1364 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| normalize_dfp_subnormal | 1365-1387 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| normalize_xfp_subnormal | 1388-1406 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| sfp_to_common_nan | 1407-1427 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| dfp_to_common_nan | 1428-1448 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_to_common_nan | 1449-1469 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| common_nan_to_sfp | 1470-1482 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| common_nan_to_dfp | 1483-1495 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| common_nan_to_xfp | 1496-1507 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| sfp_to_xfp | 1508-1542 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| dfp_to_xfp | 1543-1580 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_to_sfp | 1581-1615 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_to_dfp | 1616-1652 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_eq | 1653-1676 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_lt | 1677-1710 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| mau_int_to_xfp | 1711-1744 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_to_int64 | 1745-1770 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| mau_int64_to_xfp | 1771-1795 |  |
+| xfp_to_decimal | 1796-1847 | Convert a float value to a decimal value. |
+| mau_decimal_to_xfp | 1848-1923 | Convert a decimal value to a float value. |
+| xfp_to_int | 1924-1954 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| mau_round_xfp_to_int | 1955-2044 | Derived from the SoftFloat 2c library (see copyright notice above) |
+| xfp_add_fracs | 2045-2131 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_sub_fracs | 2132-2241 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_cmp | 2242-2278 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_cmpe | 2279-2304 |  |
+| xfp_cmps | 2305-2328 |  |
+| xfp_cmpes | 2329-2346 |  |
+| xfp_add | 2347-2360 |  |
+| xfp_sub | 2361-2377 |  |
+| xfp_mul | 2378-2460 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_div | 2461-2572 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_sqrt | 2573-2697 | Derived from the SoftFloat 2c package (see copyright notice above) |
+| xfp_remainder | 2698-2820 |  |
+| load_src_op | 2821-2870 | memory or register, based on the operand's specification. |
+| load_op1_decimal | 2871-2890 | Load OP1 as a DEC value. |
+| store_op3_int | 2891-2921 |  |
+| store_op3_decimal | 2922-2939 |  |
+| store_op3_reg | 2940-2990 |  |
+| store_op3 | 2991-3107 |  |
+| mau_rdasr | 3108-3132 |  |
+| mau_wrasr | 3133-3153 |  |
+| mau_move | 3154-3161 | OP3 = OP1 |
+| mau_cmp | 3162-3170 |  |
+| mau_cmps | 3171-3179 |  |
+| mau_cmpe | 3180-3188 |  |
+| mau_cmpes | 3189-3197 |  |
+| mau_ldr | 3198-3209 |  |
+| mau_erof | 3210-3261 |  |
+| mau_rtoi | 3262-3270 |  |
+| mau_ftoi | 3271-3280 |  |
+| mau_dtof | 3281-3290 |  |
+| mau_ftod | 3291-3300 |  |
+| mau_add | 3301-3313 |  |
+| mau_sub | 3314-3326 | OP3 = OP2 - OP1 |
+| mau_mul | 3327-3339 | OP3 = OP1 * OP2 |
+| mau_div | 3340-3353 | OP3 = OP1 / OP2 |
+| mau_neg | 3354-3365 |  |
+| mau_abs | 3366-3380 |  |
+| mau_sqrt | 3381-3395 | OP3 = sqrt(OP1) |
+| mau_itof | 3396-3430 | word is converted. |
+| mau_remainder | 3431-3445 | OP3 = REMAINDER(b/a) |
+| mau_decode | 3446-3466 | to any value if not used. |
+| mau_execute | 3467-3565 | Handle a command. |
+| mau_broadcast | 3566-3587 | Receive a broadcast from the CPU, and potentially handle it. |
+| mau_description | 3588-3595 |  |

@@ -1,0 +1,205 @@
+=== vax_vc.c — 1115 строк ===
+Источник: vax_vc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_vc.c -nt .cline/maps/vax_vc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| vc_icm_rp_names | 116 | |
+| vc_active | 234 | |
+| crtc_rg | 422 | |
+| SCPE_OK | 504 | |
+| crtc_rg | 510 | |
+| old_data | 511 | |
+| SCPE_OK | 668 | |
+| nval | 681 | |
+| scrln | 685 | |
+| idx | 686 | |
+| bufln | 722 | |
+| vc_buf | 728 | |
+| ln | 733 | |
+| data | 743 | |
+| mask | 744 | |
+| result | 852 | |
+| mev | 872 | |
+| kev | 873 | |
+| lines | 875 | |
+| ln | 876 | |
+| xpos | 877 | |
+| cur | 878 | |
+| vc_cur_y | 907 | |
+| vc_cur_v | 909 | |
+| vc_cur_f | 910 | |
+| vc_cur_new_data | 911 | |
+| lines | 943 | |
+| SCPE_OK | 982 | |
+| vc_intc.irr | 995 | |
+| vc_intc.imr | 996 | |
+| vc_intc.isr | 997 | |
+| vc_intc.acr | 998 | |
+| vc_intc.mode | 999 | |
+| vc_icsr | 1000 | |
+| vc_curx | 1003 | |
+| vc_mpos | 1004 | |
+| SCPE_OK | 1070 | |
+| vc_input_captured | 1082 | |
+| SCPE_OK | 1083 | |
+| SCPE_OK | 1094 | |
+| SCPE_OK | 1105 | |
+| Adapter" | 1110 | |
+| dummy_declaration | 1114 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CSR_V_MOD | 0 | 50 |
+| CSR_MOD | (1<<CSR_V_MOD) | 51 |
+| CSR_V_VID | 2 | 54 |
+| CSR_VID | (1<<CSR_V_VID) | 55 |
+| CSR_V_FNC | 3 | 57 |
+| CSR_FNC | (1<<CSR_V_FNC) | 58 |
+| CSR_V_VRB | 4 | 60 |
+| CSR_VRB | (1<<CSR_V_VRB) | 61 |
+| CSR_V_TST | 5 | 63 |
+| CSR_TST | (1<<CSR_V_TST) | 64 |
+| CSR_V_IEN | 6 | 66 |
+| CSR_IEN | (1<<CSR_V_IEN) | 67 |
+| CSR_V_CUR | 7 | 69 |
+| CSR_CUR | (1<<CSR_V_CUR) | 70 |
+| CSR_V_MSA | 8 | 72 |
+| CSR_MSA | (1<<CSR_V_MSA) | 73 |
+| CSR_V_MSB | 9 | 75 |
+| CSR_MSB | (1<<CSR_V_MSB) | 76 |
+| CSR_V_MSC | 10 | 78 |
+| CSR_MSC | (1<<CSR_V_MSC) | 79 |
+| CSR_V_MA | 11 | 81 |
+| CSR_S_MA | 4 | 82 |
+| CSR_M_MA | (((1<<CSR_S_MA)-1)<<CSR_V_MA) | 83 |
+| CSR_RW | (CSR_IEN\|CSR_TST\|CSR_VRB\|CSR_FNC... | 87 |
+| ICSR_V_IRRVEC | 0 | 93 |
+| ICSR_S_IRRVEC | 3 | 94 |
+| ICSR_M_IRRVEC | (((1<<ICSR_S_IRRVEC)-1)<<ICSR_V_... | 95 |
+| ICSR_V_MMS | 3 | 97 |
+| ICSR_MMS | (1<<ICSR_V_MMS) | 98 |
+| ICSR_V_INM | 4 | 100 |
+| ICSR_INM | (1<<ICSR_V_INM) | 101 |
+| ICSR_V_PRM | 5 | 103 |
+| ICSR_PRM | (1<<ICSR_V_PRM) | 104 |
+| ICSR_V_ENA | 6 | 106 |
+| ICSR_ENA | (1<<ICSR_V_ENA) | 107 |
+| ICSR_V_GRI | 7 | 109 |
+| ICSR_GRI | (1<<ICSR_V_GRI) | 110 |
+| ICM_V_PM | 0 | 122 |
+| ICM_PM | (1<<ICM_V_PM) | 123 |
+| ICM_V_VS | 1 | 125 |
+| ICM_VS | (1<<ICM_V_VS) | 126 |
+| ICM_V_IM | 2 | 128 |
+| ICM_IM | (1<<ICM_V_IM) | 129 |
+| ICM_V_GIP | 3 | 131 |
+| ICM_GIP | (1<<ICM_V_GIP) | 132 |
+| ICM_V_REQP | 4 | 134 |
+| ICM_REQP | (1<<ICM_V_REQP) | 135 |
+| ICM_V_RP | 5 | 137 |
+| ICM_S_RP | 2 | 138 |
+| ICM_M_RP | (((1<<ICM_S_RP)-1)<<ICM_V_RP) | 139 |
+| ICM_V_MM | 7 | 141 |
+| ICM_MM | (1<<ICM_V_MM) | 142 |
+| CRTCP_REG | 0x001F                          ... | 146 |
+| CRTCP_VB | 0x0020                          ... | 147 |
+| CRTCP_LPF | 0x0040                          ... | 148 |
+| CRTCP_US | 0x0080                          ... | 149 |
+| CRTCP_RW | CRTCP_REG | 150 |
+| CRTC_HTOT | 0                               ... | 152 |
+| CRTC_HDSP | 1                               ... | 153 |
+| CRTC_HPOS | 2                               ... | 154 |
+| CRTC_HVWD | 3                               ... | 155 |
+| CRTC_VTOT | 4                               ... | 156 |
+| CRTC_VTOA | 5                               ... | 157 |
+| CRTC_VDSP | 6                               ... | 158 |
+| CRTC_VPOS | 7                               ... | 159 |
+| CRTC_MODE | 8                               ... | 160 |
+| CRTC_MSCN | 9                               ... | 161 |
+| CRTC_CSCS | 10                              ... | 162 |
+| CRTC_CSCE | 11                              ... | 163 |
+| CRTC_SAH | 12                              ... | 164 |
+| CRTC_SAL | 13                              ... | 165 |
+| CRTC_CAH | 14                              ... | 166 |
+| CRTC_CAL | 15                              ... | 167 |
+| CRTC_LPPL | 16                              ... | 168 |
+| CRTC_LPPH | 17                              ... | 169 |
+| CRTC_SIZE | 18                              ... | 170 |
+| IRQ_DUART | 0                               ... | 172 |
+| IRQ_VSYNC | 1                               ... | 173 |
+| IRQ_MOUSE | 2                               ... | 174 |
+| IRQ_CSTRT | 3                               ... | 175 |
+| IRQ_MBA | 4                               ... | 176 |
+| IRQ_MBB | 5                               ... | 177 |
+| IRQ_MBC | 6                               ... | 178 |
+| IRQ_SPARE | 7                               ... | 179 |
+| VC_XSIZE | 1024                            ... | 181 |
+| VC_YSIZE | 864 | 182 |
+| VC_MEMSIZE | (1u << 16)                      ... | 183 |
+| VC_MOVE_MAX | 49                              ... | 185 |
+| VCMAP_VLD | 0x80000000                      ... | 187 |
+| VCMAP_LN | 0x00000FFF                      ... | 188 |
+| VC_OFF(x,y) | ((x >> 5) \| (y << 5))           ... | 190 |
+| CUR_X | (vc_curx & 0x3FF)               ... | 191 |
+| CUR_Y | ((vc_crtc[CRTC_CAH] *  | 192 |
+| CUR_V | ((vc_crtc[CRTC_CSCS] & 0x20) == ... | 195 |
+| CUR_F | (vc_csr & CSR_FNC)             /... | 196 |
+| VSYNC_TIME | 8000                            ... | 198 |
+| IOLN_QVSS | 0100 | 200 |
+| DBG_REG | 0x0100                          ... | 267 |
+| DBG_CRTC | 0x0200                          ... | 268 |
+| DBG_CURSOR | 0x0400                          ... | 269 |
+| DBG_TCURSOR | 0x0800                          ... | 270 |
+| DBG_SCANL | 0x1000                          ... | 271 |
+| DBG_INT0 | 0x0001                          ... | 272 |
+| DBG_INT1 | 0x0002                          ... | 273 |
+| DBG_INT2 | 0x0004                          ... | 274 |
+| DBG_INT3 | 0x0008                          ... | 275 |
+| DBG_INT4 | 0x0010                          ... | 276 |
+| DBG_INT5 | 0x0020                          ... | 277 |
+| DBG_INT6 | 0x0040                          ... | 278 |
+| DBG_INT7 | 0x0080                          ... | 279 |
+| DBG_INT | 0x00FF                          ... | 280 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| vc_rd | 419-424 |  |
+| switch | 425-506 |  |
+| vc_wr | 507-513 |  |
+| switch | 514-670 |  |
+| vc_mem_rd | 671-677 |  |
+| vc_mem_wr | 678-691 |  |
+| if | 692-706 |  |
+| if | 707-722 |  |
+| for | 723-730 |  |
+| vc_invalidate | 731-740 |  |
+| vc_set_vid_cursor | 741-749 |  |
+| for | 750-773 |  |
+| if | 774-789 |  |
+| vc_checkint | 790-795 |  |
+| if | 796-822 |  |
+| vc_clrint | 823-831 |  |
+| vc_setint | 832-839 |  |
+| vc_uart_int | 840-847 |  |
+| vc_inta | 848-853 |  |
+| for | 854-869 |  |
+| vc_svc | 870-882 |  |
+| if | 883-888 |  |
+| if | 889-914 |  |
+| if | 915-943 |  |
+| for | 944-984 |  |
+| vc_reset | 985-1010 |  |
+| if | 1011-1025 |  |
+| if | 1026-1063 |  |
+| vc_detach | 1064-1065 |  |
+| if | 1066-1072 |  |
+| vc_set_enable | 1073-1077 |  |
+| vc_set_capture | 1078-1085 |  |
+| vc_show_capture | 1086-1087 |  |
+| if | 1088-1096 |  |
+| vc_help | 1097-1107 |  |
+| vc_description | 1108-1115 |  |

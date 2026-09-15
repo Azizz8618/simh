@@ -1,0 +1,61 @@
+=== s100_dazzler.c — 779 строк ===
+Источник: s100_dazzler.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_dazzler.c -nt .cline/maps/s100_dazzler.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| DAZ_CTX | 139-141 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| daz_vptr | 64 | |
+| daz_0e | 66 | |
+| daz_0f | 67 | |
+| daz_addr | 68 | |
+| daz_frame | 69 | |
+| daz_res | 70 | |
+| daz_pages | 71 | |
+| daz_window_width | 72 | |
+| daz_window_height | 73 | |
+| daz_screen_width | 74 | |
+| daz_screen_height | 75 | |
+| daz_screen_pixels | 76 | |
+| daz_color | 77 | |
+| daz_surface | 78 | |
+| daz_cpalette | 79 | |
+| daz_gpalette | 80 | |
+| js1_buttons | 82 | |
+| js1_joyx | 83 | |
+| js1_joyy | 84 | |
+| daz_ctx | 143 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DAZ_PIXELS | (128 * 128)    /* total number o... | 35 |
+| DAZ_IO_BASE | 0x0e | 37 |
+| DAZ_IO_SIZE | 2 | 38 |
+| DAZ_MEM_SIZE | 2048 | 39 |
+| DAZ_MEM_MASK | (2048 - 1) | 40 |
+| DAZ_ON | 0x80   /* On/Off */ | 42 |
+| DAZ_RESX4 | 0x40   /* Resolution X 4 */ | 43 |
+| DAZ_2K | 0x20   /* Picture in 2K bytes of... | 44 |
+| DAZ_COLOR | 0x10   /* Picture in 2K bytes of... | 45 |
+| DAZ_HIGH | 0x08   /* High intensity color */ | 46 |
+| DAZ_BLUE | 0x04   /* Blue */ | 47 |
+| DAZ_GREEN | 0x02   /* Green */ | 48 |
+| DAZ_RED | 0x01   /* Red */ | 49 |
+| DAZ_EOF | 0x40   /* End of Frame */ | 50 |
+| DAZ_EVEN | 0x80   /* Even Line */ | 51 |
+| JS1_IO_BASE | 0x18 | 53 |
+| JS1_IO_SIZE | 8 | 54 |
+| JS1_NUM_STICKS | 2 | 56 |
+| JS1_NUM_BUTTONS | 4 | 57 |
+| DAZ_SHOW_VIDEO(b) | (b & DAZ_ON) ? "ON" : "OFF" | 86 |
+| DAZ_SHOW_RES(b) | (b & DAZ_RESX4) ? "X4" : "NORMAL" | 87 |
+| DAZ_SHOW_MEMSIZE(b) | (b & DAZ_2K) ? "2K" : "512" | 88 |
+| DAZ_SHOW_COLOR(b) | (b & DAZ_COLOR) ? "COLOR" : "B/W" | 89 |
+| VERBOSE_MSG | (1 << 0) | 129 |
+

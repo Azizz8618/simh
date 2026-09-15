@@ -1,0 +1,86 @@
+=== pdq3_stddev.c — 571 строк ===
+Источник: pdq3_stddev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdq3_stddev.c -nt .cline/maps/pdq3_stddev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_unit | 37 | |
+| con_unit | 38 | |
+| con_ctrl1 | 63 | |
+| con_ctrl2 | 74 | |
+| con_status | 83 | |
+| con_xmit | 84 | |
+| con_rcv | 85 | |
+| con_ioinfo1 | 97 | |
+| con_ioinfo2 | 98 | |
+| con_ctxt | 99 | |
+| con_tto | 106 | |
+| tim | 391 | |
+| tim_ioinfo1 | 393 | |
+| tim_ioinfo2 | 394 | |
+| tim_ctxt | 395 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CONC1_LOOP | 0x80 /* 0=loopmode diagnostic, 1... | 55 |
+| CONC1_BRK | 0x40 /* 1=send break */ | 56 |
+| CONC1_MISC | 0x20 /* 1=one stop bit, 0=two */ | 57 |
+| CONC1_ECHO | 0x10 /* 1=echo received data */ | 58 |
+| CONC1_PE | 0x08 /* 1=check parity */ | 59 |
+| CONC1_RE | 0x04 /* 1=enable receiver */ | 60 |
+| CONC1_RTS | 0x02 /* 1=enable transmitter if ... | 61 |
+| CONC1_DTR | 0x01 /* 1=enable CD, DSR,RI inte... | 62 |
+| CONC2_CLENMASK | 0xc0 /* number of bits */ | 64 |
+| CONC2_CLEN8 | 0x00 | 65 |
+| CONC2_CLEN7 | 0x40 | 66 |
+| CONC2_CLEN6 | 0x80 | 67 |
+| CONC2_CLEN5 | 0xc0 | 68 |
+| CONC2_MODE | 0x20 /* not used set to 0 (async... | 69 |
+| CONC2_ODDEVN | 0x10 /* 0=even parity */ | 70 |
+| CONC2_RXCLK | 0x08 /* not used, set to 1 */ | 71 |
+| CONC2_CLKMASK | 0x07 /* clock selector */ | 72 |
+| CONC2_CLK110 | 0x06 /* must be set to 001 (rate... | 73 |
+| CONS_DSC | 0x80 /* set to 1 after status re... | 75 |
+| CONS_DSR | 0x40 /* DSR input */ | 76 |
+| CONS_CD | 0x20 /* DCD input */ | 77 |
+| CONS_FE | 0x10 /* 1=framing error */ | 78 |
+| CONS_PE | 0x08 /* 1=parity error */ | 79 |
+| CONS_OE | 0x04 /* 1= overrun error */ | 80 |
+| CONS_DR | 0x02 /* set to 1 if data receive... | 81 |
+| CONS_THRE | 0x01 /* set to 1 if data xmit bu... | 82 |
+| XMITENABLED() | (isbitset(con_ctrl1,CONC1_RTS)) | 198 |
+| XMITENABLE() | setbit(con_ctrl1,CONC1_RTS) | 199 |
+| XMITDISABLE() | clrbit(con_ctrl1,CONC1_RTS) | 200 |
+| XMITEMPTY() | (isbitset(con_status, CONS_THRE)) | 201 |
+| RCVENABLED() | (isbitset(con_ctrl1,CONC1_RE)) | 203 |
+| RCVFULL() | (isbitset(con_status, CONS_DR)) | 204 |
+| RCVENABLE() | setbit(con_ctrl1,CONC1_RE) | 205 |
+| RCVDISABLE() | clrbit(con_ctrl1,CONC1_RE) | 206 |
+| DSRACTIVE() | (isbitset(con_ctrl1,CONC1_DTR) &... | 208 |
+| XMITINTR() | cpu_assertInt(INT_CONT, XMITEMPT... | 214 |
+| RCVINTR() | cpu_assertInt(INT_CONR, RCVFULL()) | 220 |
+| DSRINTR() | cpu_assertInt(INT_PRNT, DSRACTIV... | 224 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| con_binit | 155-166 | bus reset handler |
+| con_reset | 167-186 | common handlers |
+| con_attach | 187-191 |  |
+| con_detach | 192-226 |  |
+| con_termsvc | 227-245 | Terminal output service |
+| con_pollsvc | 246-272 | Terminal input service |
+| set_parity | 273-283 |  |
+| get_parity | 284-299 | currently unused |
+| con_write | 300-353 | described in the WD1931 data sheet, not the ones in the PDQ-3_Hardware_Users_Manual |
+| con_read | 354-449 |  |
+| tim_reset | 450-464 |  |
+| tim_read | 465-478 |  |
+| sethi | 479-483 |  |
+| setlo | 484-488 |  |
+| tim_write | 489-534 |  |
+| tim0_svc | 535-543 | baud rate timer 0 is programmed in mode 2 - actually, this is ignored |
+| tim1_svc | 544-565 | system timer 1 is programmed in mode 2, causes interrupt each time it is 0 |
+| tim2_svc | 566-571 | this is triggered by timer1 - svc is ignored here */ |

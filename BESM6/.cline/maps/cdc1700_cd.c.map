@@ -1,0 +1,81 @@
+=== cdc1700_cd.c — 1418 строк ===
+Источник: cdc1700_cd.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test cdc1700_cd.c -nt .cline/maps/cdc1700_cd.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| INTprefix | 39 | |
+| IOFWinitialized | 69 | |
+| ExecutionStarted | 71 | |
+| cpu_unit | 73 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CYLADRSTATUS | iod_readR[2] | 33 |
+| CWA | iod_readR[3] | 34 |
+| CWSTATUS | iod_readR[4] | 35 |
+| DCYLSTATUS | iod_readR[5] | 36 |
+| BUFLEN | iod_buflen | 37 |
+| CD_NUMWD | (96)            /* words/sector */ | 89 |
+| CD_NUMBY | (CD_NUMWD * sizeof(uint16)) | 90 |
+| CD_NUMSC | (29)            /* sectors/cylin... | 91 |
+| CD_856_2CY | (203)           /* cylinders for... | 92 |
+| CD_856_4CY | (406)           /* cylinders for... | 93 |
+| CD_SURF | (2)             /* # of surfaces */ | 94 |
+| CD856_2_SIZE | (CD_SURF * CD_856_2CY * CD_NUMSC... | 95 |
+| CD856_4_SIZE | (CD_SURF * CD_856_4CY * CD_NUMSC... | 96 |
+| CDLBA(i) |  | 98 |
+| CD_CYL_MASK | 0xFF80          /* Cylinder addr... | 104 |
+| CD_CYL_SHIFT | 7               /*    and shift */ | 105 |
+| CD_SURF_MASK | 0x0040          /* Surface mask */ | 106 |
+| CD_SURF_SHIFT | 6               /*    and shift */ | 107 |
+| CD_DISK_MASK | 0x0020          /* Disk mask */ | 108 |
+| CD_DISK_SHIFT | 5               /*    and shift */ | 109 |
+| CD_SECTOR_MASK | 0x001F          /* Sector mask */ | 110 |
+| CD_CHECKWD_MASK | 0x0FFF          /* Checkword val... | 112 |
+| CD_SEEK_COMP0 | 0x0001          /* Drive 0 seek ... | 114 |
+| CD_SEEK_COMP1 | 0x0002          /* Drive 1 seek ... | 115 |
+| CD_SEEK_COMP2 | 0x0004          /* Drive 2 seek ... | 116 |
+| CD_SEEK_COMP3 | 0x0008          /* Drive 3 seek ... | 117 |
+| CD_SEEK_COMP |  | 118 |
+| CD_NUMDR | 4               /* # drives */ | 121 |
+| CD_IDLE | 0x0000          /* Idle */ | 126 |
+| CD_SEEK | 0x0001          /* Seeking */ | 127 |
+| CD_WRITE | 0x0002          /* Write data */ | 128 |
+| CD_READ | 0x0003          /* Read data */ | 129 |
+| CD_COMPARE | 0x0004          /* Compare data */ | 130 |
+| CD_CHECKWORD | 0x0005          /* Checkword che... | 131 |
+| CD_WRITEADDR | 0x0006          /* Write address */ | 132 |
+| CD_RTZS | 0x0007          /* Return to zer... | 133 |
+| CD_NONE | 0xFF | 141 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| show_drive | 399-421 | Display cartridge drive type |
+| set_cd856_2 | 422-450 | both be changed together. |
+| set_cd856_4 | 451-477 | both be changed together. |
+| show_addressing | 478-491 | Display the device addressing mode |
+| set_cartfirst | 492-503 | Set device to "Cartridge first" addressing |
+| set_fixedfirst | 504-519 | Set device to "Fixed first" addressing |
+| CDstate | 520-575 |  |
+| CDintr | 576-584 | Determine if a non-standard interrupt condition is present. |
+| LoadDiskAddress | 585-641 | Load and validate disk address in the A register |
+| StartCDDiskIO | 642-682 | Set up a disk I/O operation with the A register containing FWA. |
+| CDDiskIOIncSector | 683-701 | side 0 followed by side 1 before moving to the next cylinder. |
+| CDDiskIORead | 702-739 | Initiate a read operation on a disk. |
+| CDDiskIOWrite | 740-776 | Initiate a write operation on a disk. |
+| CDDiskIOCompare | 777-814 | Initiate a compare operation on a disk. |
+| CDDiskIO | 815-886 | service routine. |
+| cd_svc | 887-986 |  |
+| CDreset | 987-1041 |  |
+| cd_reset | 1042-1081 |  |
+| cd_attach | 1082-1116 |  |
+| cd_detach | 1117-1134 |  |
+| CDreject | 1135-1171 |  |
+| CDin | 1172-1198 |  |
+| CDout | 1199-1361 |  |
+| CDautoload | 1362-1381 | Autoload support |
+| cd_help | 1382-1418 |  |

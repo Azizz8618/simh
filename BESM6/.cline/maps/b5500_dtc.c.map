@@ -1,0 +1,69 @@
+=== b5500_dtc.c — 1009 строк ===
+Источник: b5500_dtc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test b5500_dtc.c -nt .cline/maps/b5500_dtc.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tmxr_poll | 161 | |
+| dtc_buf | 163 | |
+| dtc_bufsize | 170 | |
+| SCPE_OK | 990 | |
+| SCPE_OK | 1001 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_DTC | UNIT_ATTABLE \| UNIT_DISABLE \| UN... | 31 |
+| DTC_MLINES | 32      /* mux lines */ | 33 |
+| DTC_TLINES | 8 | 34 |
+| DTC_BUFSIZ | 112     /* max chan transfer */ | 35 |
+| DTCSTA_READ | 000400  /* Read flag */ | 38 |
+| DTCSTA_BINARY | 004000  /* Bypass translation */ | 39 |
+| DTCSTA_INHIBIT | 040000  /* Interrogate or Read/W... | 40 |
+| DTCSTA_TTU | 0740    /* TTU number */ | 43 |
+| DTCSTA_GM | 0020    /* Ignore GM on transfer */ | 44 |
+| DTCSTA_BUF | 0017    /* Buffer Number */ | 45 |
+| LINE | u4 | 58 |
+| CMD | u5 | 59 |
+| DTC_CHAN | 000003  /* Channel number */ | 61 |
+| DTC_RD | 000004  /* Executing a read comm... | 62 |
+| DTC_WR | 000010  /* Executing a write com... | 63 |
+| DTC_INQ | 000020  /* Executing an interrag... | 64 |
+| DTC_RDY | 000040  /* Device Ready */ | 65 |
+| DTC_BIN | 000100  /* Transfer in Binary mo... | 66 |
+| DTC_IGNGM | 000200  /* Ignore GM on transfer */ | 67 |
+| BufNotReady | 0       /* Device not connected */ | 69 |
+| BufIdle | 1       /* Buffer in Idle state */ | 70 |
+| BufInputBusy | 2       /* Buffer being filled */ | 71 |
+| BufReadRdy | 3       /* Buffer ready to read */ | 72 |
+| BufWrite | 4       /* Buffer writing */ | 73 |
+| BufWriteRdy | 5       /* Buffer ready for writ... | 74 |
+| BufOutBusy | 6       /* Buffer outputing */ | 75 |
+| BufRead | 7       /* Buffer reading */ | 76 |
+| BufSMASK | 7       /* Buffer state mask */ | 77 |
+| BufAbnormal | 010     /* Abnornmal flag */ | 78 |
+| BufGM | 020     /* Buffer term with GM */ | 79 |
+| BufIRQ | 040     /* Buffer ready */ | 80 |
+| BufDisco | 0100    /* Buffer disconnecting */ | 81 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dtc_cmd | 225-274 | Start off a terminal controller command |
+| dtc_srv | 275-533 | Handle processing terminal controller commands |
+| dtco_srv | 534-762 |  |
+| dtc_reset | 763-775 |  |
+| dtc_attach | 776-795 |  |
+| dtc_detach | 796-811 |  |
+| dtc_setnl | 812-844 |  |
+| dtc_set_log | 845-863 |  |
+| dtc_set_nolog | 864-878 |  |
+| dtc_show_log | 879-892 |  |
+| dtc_set_buf | 893-911 |  |
+| dtc_show_buf | 912-920 |  |
+| dtc_summ | 921-937 |  |
+| dtc_show | 938-956 |  |
+| dtc_help | 957-992 |  |
+| dtc_help_attach | 993-1003 |  |
+| dtc_description | 1004-1009 |  |

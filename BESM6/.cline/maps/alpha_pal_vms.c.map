@@ -1,0 +1,175 @@
+=== alpha_pal_vms.c — 1780 строк ===
+Источник: alpha_pal_vms.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test alpha_pal_vms.c -nt .cline/maps/alpha_pal_vms.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| ast_map | 105 | |
+| lnt_map | 110 | |
+| PC | 131 | |
+| p1 | 132 | |
+| vax_flag | 133 | |
+| fpen | 134 | |
+| ir | 135 | |
+| cm_racc | 136 | |
+| mmu_ispage | 137 | |
+| save_env | 138 | |
+| int_req | 139 | |
+| vms_last_pcc | 241 | |
+| vec | 259 | |
+| op | 299 | |
+| fl | 300 | |
+| SCPE_OK | 381 | |
+| val | 388 | |
+| SCPE_OK | 779 | |
+| ar | 819 | |
+| ar | 842 | |
+| ar | 859 | |
+| ar | 880 | |
+| ar | 897 | |
+| ar | 927 | |
+| ar | 947 | |
+| ar | 975 | |
+| ar | 1019 | |
+| ar | 1046 | |
+| ar | 1064 | |
+| ar | 1090 | |
+| ar | 1108 | |
+| ar | 1145 | |
+| ar | 1169 | |
+| ar | 1205 | |
+| va | 1387 | |
+| val | 1418 | |
+| tmp | 1419 | |
+| vms_ptbr | 1436 | |
+| vms_asten | 1442 | |
+| return | 1449 | |
+| exc | 1467 | |
+| vms_ps | 1494 | |
+| SCPE_OK | 1495 | |
+| t1 | 1515 | |
+| newmode | 1516 | |
+| lock_flag | 1548 | |
+| SCPE_OK | 1549 | |
+| pa | 1564 | |
+| exc | 1565 | |
+| pa | 1612 | |
+| exc | 1613 | |
+| return | 1666 | |
+| pte | 1679 | |
+| exc | 1680 | |
+| tlbp | 1681 | |
+| vptea | 1732 | |
+| vpte_vpn | 1733 | |
+| vpte_p | 1734 | |
+| mmu_ispage | 1763 | |
+| vms_ipl | 1765 | |
+| vms_ps | 1766 | |
+| vms_datfx | 1767 | |
+| vms_scbb | 1768 | |
+| vms_prbr | 1769 | |
+| vms_scc | 1770 | |
+| vms_last_pcc | 1771 | |
+| pcc_enb | 1772 | |
+| pal_eval_intr | 1773 | |
+| pal_proc_intr | 1774 | |
+| pal_proc_trap | 1775 | |
+| pal_proc_excp | 1776 | |
+| pal_proc_inst | 1777 | |
+| pal_find_pte | 1778 | |
+| SCPE_OK | 1779 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ALG_W | 1                       /* word ... | 64 |
+| ALG_L | 2                       /* long ... | 65 |
+| ALG_Q | 3                       /* quad ... | 66 |
+| ALG_ST | 0x10                    /* store */ | 67 |
+| ALG_INV | -1                      /* inval... | 68 |
+| ALG_ERR | 0                       /* inter... | 69 |
+| ALG_GETLNT(x) | ((x) & 3) | 70 |
+| GET_PSV | ((vms_ipl << PSV_V_IPL) \| (vms_c... | 72 |
+| AST_TST(l) | (((l) < IPL_AST) && (vms_asten &... | 74 |
+| MOST_PRIV(m1,m2) | (((m1) < (m2))? (m1): (m2)) | 75 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| pal_eval_intr_vms | 226-241 |  |
+| for | 242-245 |  |
+| if | 246-256 |  |
+| pal_proc_intr_vms | 257-264 |  |
+| if | 265-284 |  |
+| pal_proc_trap_vms | 285-296 |  |
+| pal_proc_excp_vms | 297-302 |  |
+| switch | 303-385 |  |
+| pal_proc_inst_vms | 386-391 |  |
+| switch | 392-814 |  |
+| vms_insqhil | 815-837 |  |
+| vms_insqhilr | 838-854 |  |
+| vms_insqhiq | 855-875 |  |
+| vms_insqhiqr | 876-892 |  |
+| vms_insqtil | 893-909 |  |
+| if | 910-922 |  |
+| vms_insqtilr | 923-942 |  |
+| vms_insqtiq | 943-957 |  |
+| if | 958-970 |  |
+| vms_insqtiqr | 971-1015 |  |
+| vms_remqhil | 1016-1031 |  |
+| if | 1032-1042 |  |
+| vms_remqhilr | 1043-1060 |  |
+| vms_remqhiq | 1061-1075 |  |
+| if | 1076-1086 |  |
+| vms_remqhiqr | 1087-1104 |  |
+| vms_remqtil | 1105-1117 |  |
+| if | 1118-1121 |  |
+| if | 1122-1129 |  |
+| if | 1130-1141 |  |
+| vms_remqtilr | 1142-1151 |  |
+| if | 1152-1165 |  |
+| vms_remqtiq | 1166-1177 |  |
+| if | 1178-1181 |  |
+| if | 1182-1189 |  |
+| if | 1190-1201 |  |
+| vms_remqtiqr | 1202-1211 |  |
+| if | 1212-1251 |  |
+| vms_insquel | 1252-1257 |  |
+| if | 1258-1272 |  |
+| vms_insqueq | 1273-1278 |  |
+| if | 1279-1315 |  |
+| vms_remquel | 1316-1320 |  |
+| if | 1321-1335 |  |
+| vms_remqueq | 1336-1340 |  |
+| if | 1341-1357 |  |
+| vms_probe | 1358-1370 |  |
+| vms_amovrr | 1371-1384 |  |
+| vms_amovrm | 1385-1395 |  |
+| if | 1396-1404 |  |
+| for | 1405-1415 |  |
+| vms_swpctx | 1416-1461 |  |
+| vms_intexc | 1462-1473 |  |
+| if | 1474-1477 |  |
+| if | 1478-1499 |  |
+| vms_mm_intexc | 1500-1512 |  |
+| vms_rei | 1513-1518 |  |
+| if | 1519-1561 |  |
+| ReadUna | 1562-1568 |  |
+| if | 1569-1574 |  |
+| if | 1575-1582 |  |
+| if | 1583-1587 |  |
+| if | 1588-1609 |  |
+| WriteUna | 1610-1616 |  |
+| if | 1617-1623 |  |
+| if | 1624-1631 |  |
+| if | 1632-1641 |  |
+| if | 1642-1674 |  |
+| Test | 1675-1682 |  |
+| if | 1683-1688 |  |
+| if | 1689-1692 |  |
+| if | 1693-1696 |  |
+| if | 1697-1707 |  |
+| tlb_check | 1708-1729 |  |
+| pal_find_pte_vms | 1730-1760 |  |
+| pal_proc_reset_vms | 1761-1780 |  |

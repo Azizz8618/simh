@@ -1,0 +1,53 @@
+=== sel32_chan.c — 2971 строк ===
+Источник: sel32_chan.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_chan.c -nt .cline/maps/sel32_chan.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| inbusy | 89 | |
+| outbusy | 90 | |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| FIFO_Push | 143-168 | add an entry to the start of the FIFO |
+| FIFO_Put | 169-192 | add an entry to the FIFO |
+| FIFO_Get | 193-212 | get the next entry from the FIFO |
+| FIFO_Num | 213-227 | get number of entries in FIFO for channel |
+| IOCLQ_Put | 228-248 | add an entry to the IOCLQ |
+| IOCLQ_Get | 249-266 | get the next entry from the IOCLQ |
+| IOCLQ_Num | 267-294 | get number of entries in IOCLQ for channel |
+| set_inch | 295-355 | return SCPE_OK or SCPE_MEM if invalid address or SCPE_ARG if already defined |
+| find_int_lev | 356-372 | return 0 if not found, otherwise level number |
+| find_int_icb | 373-399 | return 0 if not found, otherwise ICB memory address |
+| find_unit_ptr | 400-429 | Find unit pointer for given device (ch/sa) |
+| find_chanp_ptr | 430-467 | Find channel program pointer for given device (ch/sa) |
+| readfull | 468-486 | Return 0 if success. |
+| readbuff | 487-506 | Return 0 if success. |
+| writebuff | 507-528 | Return 0 if success. |
+| load_ccw | 529-806 | return = 1 error, chan_status will have reason |
+| chan_read_byte | 807-852 | write to device |
+| test_write_byte_end | 853-870 | test end of write byte I/O (device read) |
+| chan_write_byte | 871-930 | read from device |
+| set_devwake | 931-945 | post wakeup interrupt for specified async line |
+| set_devattn | 946-965 | post interrupt for specified channel |
+| chan_end | 966-1149 | channel operation completed |
+| post_csw | 1150-1206 | rstat are the bits to remove from status |
+| store_csw | 1207-1231 | store the device status into the status FIFO for the channel |
+| push_csw | 1232-1260 | store the device status into the first entry of the status FIFO for the channel |
+| checkxio | 1261-1351 | Condition codes to return 0-f as specified above |
+| startxio | 1352-1667 | Condition codes to return 0-f as specified above |
+| testxio | 1668-1772 | TIO - I/O status |
+| stopxio | 1773-1947 | Stop XIO |
+| rschnlxio | 1948-2036 | Reset Channel XIO |
+| haltxio | 2037-2237 | HIO - Halt I/O |
+| grabxio | 2238-2347 | TODO return unimplemented function error, not busy |
+| rsctlxio | 2348-2443 | reset controller XIO |
+| chan_boot | 2444-2510 | on CPU reset, the cpu has set the IOCD data at location 0-4 |
+| cont_chan | 2511-2576 | Continue a channel program for a device |
+| scan_chan | 2577-2761 |  |
+| get_dev | 2762-2786 |  |
+| chan_set_devs | 2787-2901 | only devices with a DIB will be processed |
+| set_dev_addr | 2902-2957 | Validate and set the device onto a given channel |
+| show_dev_addr | 2958-2971 | display channel/sub-address for device |

@@ -1,0 +1,104 @@
+=== sigma_lp.c — 576 строк ===
+Источник: sigma_lp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sigma_lp.c -nt .cline/maps/sigma_lp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lp_cmd | 82 | |
+| lp_stopioe | 83 | |
+| lp_model | 90 | |
+| chan_ctl_time | 122 | |
+| lp_dib | 148 | |
+| cmd | 247 | |
+| st | 248 | |
+| SCPE_OK | 328 | |
+| st | 336 | |
+| st | 404 | |
+| st | 444 | |
+| st | 449 | |
+| st | 454 | |
+| st | 466 | |
+| SCPE_OK | 477 | |
+| lp_cmd | 485 | |
+| lp_lastcmd | 486 | |
+| lp_pass | 487 | |
+| lp_inh | 488 | |
+| lp_run | 489 | |
+| SCPE_OK | 491 | |
+| lp_pass | 499 | |
+| cfile | 507 | |
+| col | 523 | |
+| cctbuf | 524 | |
+| cptr | 525 | |
+| cbuf | 527 | |
+| ptr | 529 | |
+| lp_cctl | 554 | |
+| lp_cctp | 555 | |
+| SCPE_OK | 558 | |
+| lp_model | 565 | |
+| SCPE_OK | 567 | |
+| SCPE_OK | 575 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CCT_LNT | 256                             ... | 39 |
+| BUF_LNT4 | 132                             ... | 40 |
+| BUF_LNT5 | 128 | 41 |
+| LP_7440 | 0                               ... | 43 |
+| LP_7450 | 1 | 44 |
+| LPS_INIT | 0x101 | 48 |
+| LPS_END | 0x102 | 49 |
+| LPS_PRI | 0x1 | 50 |
+| LPS_FMT | 0x3 | 51 |
+| LPS_FMTP | 0x5 | 52 |
+| LPS_INT | 0x40 | 53 |
+| LPDV_ODD | 0x40                            ... | 57 |
+| LPDV_TOF | 0x10                            ... | 58 |
+| LPDV_MOV | 0x08                            ... | 59 |
+| LPDV_V_RUN | 2                               ... | 60 |
+| LPDV_RUN | (1u << LPDV_V_RUN) | 61 |
+| LPDV_WT2 | 0x02                            ... | 62 |
+| FMT_INH | 0x60 | 66 |
+| FMT_SPC | 0xC0 | 67 |
+| FMT_SKP | 0xF0 | 68 |
+| FMT_MSPC4 | 15                              ... | 70 |
+| FMT_MSPC5 | 7 | 71 |
+| SPC_MASK | ((lp_model == LP_7440)? FMT_MSPC... | 72 |
+| FMT_MCH4 | 7                               ... | 73 |
+| FMT_MCH5 | 1 | 74 |
+| CCH_MASK | ((lp_model == LP_7440)? FMT_MCH5... | 75 |
+| CH_BOF | 0                               ... | 77 |
+| CH_TOF | 1                               ... | 78 |
+| CHP(ch,val) | ((val) & (1 << (ch))) | 80 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lp_disp | 198-199 |  |
+| switch | 200-244 |  |
+| lp_svc | 245-249 |  |
+| switch | 250-332 |  |
+| lp_fmt | 333-344 |  |
+| if | 345-359 |  |
+| lp_skip | 360-363 |  |
+| for | 364-373 |  |
+| lp_space | 374-378 |  |
+| if | 379-387 |  |
+| if | 388-399 |  |
+| lp_print | 400-405 |  |
+| if | 406-408 |  |
+| for | 409-416 |  |
+| if | 417-441 |  |
+| lp_tio_status | 442-451 |  |
+| lp_tdv_status | 452-460 |  |
+| if | 461-470 |  |
+| lp_chan_err | 471-481 |  |
+| lp_reset | 482-495 |  |
+| lp_attach | 496-504 |  |
+| lp_load_cct | 505-520 |  |
+| lp_read_cct | 521-529 |  |
+| for | 530-562 |  |
+| lp_settype | 563-571 |  |
+| lp_showtype | 572-576 |  |

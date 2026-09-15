@@ -1,0 +1,84 @@
+=== hp2100_cpu7.c — 1013 строк ===
+Источник: hp2100_cpu7.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_cpu7.c -nt .cline/maps/hp2100_cpu7.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| idx | 271 | |
+| xmata | 272 | |
+| xi | 273 | |
+| xeqt | 274 | |
+| vswp | 275 | |
+| page30 | 276 | |
+| page31 | 277 | |
+| ptemiss | 278 | |
+| no | 360 | |
+| reason | 362 | |
+| op | 363 | |
+| pattern | 364 | |
+| t16 | 365 | |
+| entry | 366 | |
+| dop0 | 368 | |
+| reason | 490 | |
+| lstpg | 518 | |
+| eqt | 519 | |
+| lgpg | 543 | |
+| relpg | 554 | |
+| relbp | 563 | |
+| SCPE_OK | 603 | |
+| suit | 614 | |
+| SCPE_OK | 654 | |
+| idext | 662 | |
+| swapflag | 664 | |
+| pagid | 723 | |
+| p30 | 724 | |
+| reason | 725 | |
+| SCPE_OK | 801 | |
+| physpg | 827 | |
+| SCPE_OK | 879 | |
+| reason | 916 | |
+| ndim | 917 | |
+| accu | 918 | |
+| din | 919 | |
+| accu | 981 | |
+| reason | 1012 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SUITMASK | 0176000u | 263 |
+| NILPAGE | 0176000u | 264 |
+| PAGEIDX | 0001777u | 265 |
+| RWPROT | 0141777u | 266 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_rte_vma | 358-373 |  |
+| if | 374-379 |  |
+| switch | 380-515 |  |
+| cpu_vma_loc | 516-522 |  |
+| if | 523-531 |  |
+| if | 532-545 |  |
+| if | 546-554 | lets do some consistency checks, CPU halt if they fail |
+| if | 555-585 |  |
+| while | 586-611 |  |
+| cpu_vma_ptevl | 612-626 |  |
+| cpu_vma_fault | 627-638 |  |
+| if | 639-659 | do a safety check: first instr of $EMA$/$VMA$ must be a DST instr |
+| cpu_vma_mapte | 660-665 |  |
+| if | 666-680 |  |
+| if | 681-720 |  |
+| cpu_vma_lbp | 721-732 |  |
+| if | 733-766 |  |
+| if | 767-778 | must be in idx 0 of PTE */ |
+| if | 779-824 |  |
+| cpu_vma_pmap | 825-829 |  |
+| if | 830-840 |  |
+| if | 841-854 |  |
+| if | 855-913 |  |
+| cpu_vma_ijmar | 914-923 |  |
+| if | 924-970 |  |
+| if | 971-981 |  |
+| while | 982-1013 |  |

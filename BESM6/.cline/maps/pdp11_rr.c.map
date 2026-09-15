@@ -1,0 +1,157 @@
+=== pdp11_rr.c — 1394 строк ===
+Источник: pdp11_rr.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_rr.c -nt .cline/maps/pdp11_rr.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| offon | 271 | |
+| rr_unit | 396 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| RPCONTR | uint16 | 36 |
+| RPWRDSZ | 16 | 37 |
+| MAP_RDW(a,c,b) | (Map_ReadW (a, (c) << 1, b) >> 1) | 38 |
+| MAP_WRW(a,c,b) | (Map_WriteW(a, (c) << 1, b) >> 1) | 39 |
+| RP_NUMWD | 256                             ... | 42 |
+| RP_NUMCY | 203                             ... | 43 |
+| RP_SPARE | 3                               ... | 44 |
+| RP_NUMSF | 20                              ... | 45 |
+| RP_NUMSC | 10                              ... | 46 |
+| RP_NUMTR | (RP_NUMCY * RP_NUMSF)           ... | 47 |
+| RP_NUMBL | (RP_NUMTR * RP_NUMSC)           ... | 48 |
+| RP_NUMDR | 8                               ... | 49 |
+| RP_MAXFR | (1 << 16)                       ... | 50 |
+| RP_SIZE(n) | (RP_NUMWD * (n))                ... | 51 |
+| RP_SIZE_RP02 | RP_SIZE(RP_NUMBL)               ... | 52 |
+| RP_SIZE_RP03 | RP_SIZE(RP_NUMBL*2)             ... | 53 |
+| RP_ROT_12 | 125                             ... | 54 |
+| RP_RP11 | "RP11-C" | 57 |
+| RP_RP02 | "RP02" | 58 |
+| RP_RP03 | "RP03" | 59 |
+| CYL | u3                              ... | 62 |
+| HEAD | u4                              ... | 63 |
+| FUNC | us9                             ... | 64 |
+| STATUS | u5                              ... | 65 |
+| SEEKING | u6                              ... | 66 |
+| RP_IOFF | 4 | 69 |
+| RP_IOLN | 040 | 71 |
+| RP_DRV(d, | factor, seek_L, seek_AVG, seek_M... | 81 |
+| RPDS_ATTN | 0000377                         ... | 95 |
+| RPDS_WLK | 0000400                         ... | 97 |
+| RPDS_UNSAFE | 0001000                         ... | 99 |
+| RPDS_SEEK | 0002000                         ... | 101 |
+| RPDS_INC | 0004000                         ... | 103 |
+| RPDS_HNF | 0010000                         ... | 105 |
+| RPDS_RP03 | 0020000                         ... | 107 |
+| RPDS_ONLN | 0040000                         ... | 109 |
+| RPDS_RDY | 0100000                         ... | 111 |
+| RPDS_REAL | 0017400                         ... | 115 |
+| RPDS_DKER | (RPDS_HNF \| RPDS_INC)           ... | 116 |
+| RPER_DKER(x) | ((x) & RPDS_DKER ? RPER_DRE : 0)... | 117 |
+| RPER_DRE | 0000001                         ... | 121 |
+| RPER_EOP | 0000002                         ... | 123 |
+| RPER_NXM | 0000004                         ... | 125 |
+| RPER_WCE | 0000010                         ... | 127 |
+| RPER_TE | 0000020                         ... | 129 |
+| RPER_CSE | 0000040                         ... | 131 |
+| RPER_WPE | 0000100                         ... | 133 |
+| RPER_LPE | 0000200                         ... | 135 |
+| RPER_MODE | 0000400                         ... | 137 |
+| RPER_FMTE | 0001000                         ... | 139 |
+| RPER_PGE | 0002000                         ... | 141 |
+| RPER_NXS | 0004000                         ... | 143 |
+| RPER_NXT | 0010000                         ... | 145 |
+| RPER_NXC | 0020000                         ... | 147 |
+| RPER_FUV | 0040000                         ... | 149 |
+| RPER_WPV | 0100000                         ... | 151 |
+| RPER_REAL | 0177776 | 155 |
+| RPER_HARDERR | (RPER_WPV \| RPER_FUV \| RPER_NXC ... | 157 |
+| RPER_SOFTERR | (RPER_LPE \| RPER_WPE \| RPER_CSE ... | 160 |
+| RPER_HARD(x) | ((x) & RPER_HARDERR ? (RPCS_ERR ... | 162 |
+| RPER_SOFT(x) | ((x) & RPER_SOFTERR ?  RPCS_ERR ... | 163 |
+| RPCS_V_FUNC | 1 | 173 |
+| RPCS_M_FUNC | 7 | 174 |
+| RPCS_FUNC | (RPCS_M_FUNC << RPCS_V_FUNC)    ... | 175 |
+| RPCS_RESET | 0 | 176 |
+| RPCS_WRITE | 1 | 177 |
+| RPCS_READ | 2 | 178 |
+| RPCS_WCHK | 3 | 179 |
+| RPCS_SEEK | 4 | 180 |
+| RPCS_WR_NOSEEK | 5 | 181 |
+| RPCS_HOME | 6 | 182 |
+| RPCS_RD_NOSEEK | 7 | 183 |
+| RPCS_V_MEX | 4 | 185 |
+| RPCS_M_MEX | 3 | 186 |
+| RPCS_MEX | (RPCS_M_MEX << RPCS_V_MEX)      ... | 187 |
+| RPCS_V_DRV | 8 | 193 |
+| RPCS_M_DRV | 7 | 194 |
+| RPCS_DRV | (RPCS_M_DRV << RPCS_V_DRV)      ... | 195 |
+| RPCS_HDR | 0004000                         ... | 197 |
+| RPCS_MODE | 0010000                         ... | 199 |
+| RPCS_AIE | 0020000                         ... | 201 |
+| RPCS_HERR | 0040000                         ... | 203 |
+| RPCS_ERR | CSR_ERR                         ... | 205 |
+| RPCS_REAL | 0037776                         ... | 207 |
+| RPCS_RW | 0037576                         ... | 208 |
+| GET_FUNC(x) | (((x) & RPCS_FUNC) >> RPCS_V_FUNC) | 209 |
+| GET_DRIVE(x) | (((x) & RPCS_DRV) >> RPCS_V_DRV) | 210 |
+| RPWC_IMP | 0177777                         ... | 217 |
+| RPBA_IMP | 0177776                         ... | 224 |
+| RPCA_IMP | 0000777                         ... | 231 |
+| RPDA_IMPL | 0017777                         ... | 238 |
+| RPDA_RW | 0017417                         ... | 239 |
+| RPDA_M_SECT | 017 | 240 |
+| RPDA_SECT | RPDA_M_SECT                     ... | 241 |
+| RPDA_V_SOT | 4 | 243 |
+| RPDA_SOT | (RPDA_M_SECT << RPDA_V_SOT)     ... | 244 |
+| RPDA_V_TRACK | 8 | 246 |
+| RPDA_M_TRACK | 037 | 247 |
+| RPDA_TRACK | (RPDA_M_TRACK << RPDA_V_TRACK)  ... | 248 |
+| GET_SECT(x) | ((x) & RPDA_SECT) | 250 |
+| GET_TRACK(x) | (((x) & RPDA_TRACK) >> RPDA_V_TR... | 251 |
+| GET_DA(c,h,s) | (((c) * RP_NUMSF + (h)) * RP_NUM... | 252 |
+| RPWLOA_IMPL | 03777 | 273 |
+| RPWLOA_CYL2 | 0377                            ... | 274 |
+| RPWLOA_V_DRV | 8 | 276 |
+| RPWLOA_M_DRV | 7 | 277 |
+| RPWLOA_DRV | (RPWLOA_M_DRV << RPWLOA_V_DRV)  ... | 278 |
+| GET_WLOACYL(x) | (((((uint32)(x)) & RPWLOA_CYL2) ... | 280 |
+| GET_WLOADRV(x) | ((((uint32)(x)) & RPWLOA_DRV) >>... | 281 |
+| RPWLOA_ON | 0100000 | 283 |
+| RRDEB_OPS | 001                             ... | 304 |
+| RRDEB_RRD | 002                             ... | 305 |
+| RRDEB_RWR | 004                             ... | 306 |
+| RRDEB_TRC | 010                             ... | 307 |
+| RRDEB_INT | 020                             ... | 308 |
+| RRDEB_DAT | 0100                            ... | 309 |
+| RR_DATOB(r, | d)  (PA & 1 ? ((d) << 8) \| ((r) ... | 552 |
+| BOOT_START | 02000                           ... | 1265 |
+| BOOT_ENTRY | (BOOT_START + 002)              ... | 1266 |
+| BOOT_UNIT | (BOOT_START + 010)              ... | 1267 |
+| BOOT_CSR | (BOOT_START + 014)              ... | 1268 |
+| BOOT_LEN | (sizeof (rr_boot_rom) / sizeof (... | 1269 |
+| RP_DESCRIPTION | RP_RP11 "/" RP_RP02 "/" RP_RP03 ... | 1321 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rr_rd | 481-553 |  |
+| rr_wr | 554-638 |  |
+| rr_seek_init | 639-649 |  |
+| rr_go | 650-806 |  |
+| rr_seek_done | 807-837 |  |
+| rr_svc | 838-1110 |  |
+| rr_clr_done | 1111-1121 |  |
+| rr_set_done | 1122-1133 |  |
+| rr_inta | 1134-1144 |  |
+| rr_reset | 1145-1192 |  |
+| rr_attach | 1193-1203 |  |
+| rr_detach | 1204-1228 |  |
+| rr_set_wloa | 1229-1306 |  |
+| rr_boot | 1307-1322 |  |
+| rr_help | 1323-1378 |  |
+| rr_description | 1379-1385 |  |
+| rr_show_ctrl | 1386-1394 |  |

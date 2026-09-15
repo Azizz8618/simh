@@ -1,0 +1,237 @@
+=== kx10_cpu.c — 14142 строк ===
+Источник: kx10_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_cpu.c -nt .cline/maps/kx10_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| InstHistory | 368-377 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| spt | 292 | |
+| cst | 293 | |
+| cst_msk | 294 | |
+| cst_dat | 295 | |
+| hsb | 296 | |
+| pcst | 304 | |
+| rtc_tps | 316 | |
+| rtc_tps | 318 | |
+| qua_tps | 322 | |
+| tmxr_poll | 327 | |
+| rh_nums | 362 | |
+| rh | 364 | |
+| timer_irq | 1480 | |
+| reason | 4449 | |
+| flag1 | 4460 | |
+| flag3 | 4461 | |
+| RUN | 4473 | |
+| prog_stop | 4474 | |
+| reason | 4476 | |
+| RUN | 12321 | |
+| reason | 12327 | |
+| SCPE_OK | 13758 | |
+| SCPE_OK | 13795 | |
+| val | 13816 | |
+| SCPE_OK | 13827 | |
+| lnt | 13975 | |
+| apr_serial | 13991 | |
+| SCPE_OK | 13992 | |
+| SCPE_OK | 14004 | |
+| hst_p | 14023 | |
+| SCPE_OK | 14035 | |
+| sim_eval | 14044 | |
+| lnt | 14054 | |
+| SCPE_OK | 14109 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| HIST_PC | 0x40000000 | 100 |
+| HIST_PC2 | 0x80000000 | 101 |
+| HIST_PCE | 0x20000000 | 102 |
+| HIST_MIN | 64 | 103 |
+| HIST_MAX | 5000000 | 104 |
+| TMR_RTC | 0 | 105 |
+| TMR_QUA | 1 | 106 |
+| T11RANGE(addr) | ((addr) >= ten11_base && (addr) ... | 330 |
+| AUXCPURANGE(addr) | ((addr) >= auxcpu_base && (addr)... | 332 |
+| DEFMEM | 4096 | 421 |
+| DEFMEM | 512 | 423 |
+| DEFMEM | 256 | 425 |
+| DF_FLAG | UNIT_DF10C | 429 |
+| DF_FLAG | 0 | 431 |
+| FCE | 000001   /* Fetch memory into AR */ | 715 |
+| FCEPSE | 000002   /* Fetch and store memo... | 716 |
+| SCE | 000004   /* Save AR into memory */ | 717 |
+| FAC | 000010   /* Copy AR to BR, then ... | 718 |
+| FAC2 | 000020   /* Fetch AC+1 into MQ */ | 719 |
+| SAC | 000040   /* Save AC into AR */ | 720 |
+| SACZ | 000100   /* Save AC into AR if A... | 721 |
+| SAC2 | 000200   /* Save MQ into AC+1 */ | 722 |
+| SWAR | 000400   /* Swap AR */ | 723 |
+| FBR | 001000   /* Load AC into BR */ | 724 |
+| P6(x) | x | 727 |
+| P10(x) | 0 | 728 |
+| P6(x) | 0 | 730 |
+| P10(x) | x | 731 |
+| PC_CHANGE | FLAGS \|= PCHNG; check_apr_irq(); | 735 |
+| PC_CHANGE |  | 737 |
+| SWAP_AR | ((RMASK & AR) << 18) \| ((AR >> 1... | 739 |
+| SMEAR_SIGN(x) | x = ((x) & SMASK) ? (x) \| EXPO :... | 740 |
+| GET_EXPO(x) | ((((x) & SMASK) ? 0377 : 0 )   | 741 |
+| AOB(x) | ((x + 1) & RMASK) \| ((x + 010000... | 744 |
+| SOB(x) | ((x + RMASK) & RMASK) \| ((x + LM... | 745 |
+| AOB(x) | (x + 01000001LL) | 747 |
+| SOB(x) | (x + 0777776777777LL) | 748 |
+| QITS | (cpu_unit[0].flags & UNIT_ITSPAGE) | 751 |
+| QTEN11 | (ten11_unit[0].flags & UNIT_ATT) | 752 |
+| QAUXCPU | (auxcpu_unit[0].flags & UNIT_ATT) | 753 |
+| QITS | (cpu_unit[0].flags & UNIT_ITSPAGE) | 756 |
+| QITS | 0 | 758 |
+| QBBN | (cpu_unit[0].flags & UNIT_BBNPAGE) | 762 |
+| QBBN | 0 | 764 |
+| QWAITS | (cpu_unit[0].flags & UNIT_WAITS) | 767 |
+| QWAITS | 0 | 769 |
+| QKLB | (cpu_unit[0].flags & UNIT_KL10B) | 772 |
+| QKLB | 0 | 774 |
+| QSLAVE | (slave_unit[0].flags & UNIT_ATT) | 777 |
+| QSLAVE | 0 | 779 |
+| UPDATE_MI(a) | if (!MI_flag && a == AS) {  | 783 |
+| UPDATE_MI(a) |  | 787 |
+| MAX_DEV | 128 | 789 |
+| PG_PUB | 0040000 | 1912 |
+| PG_WRT | 0020000 | 1913 |
+| PG_KEP | 0010000 | 1914 |
+| PG_CAC | 0004000 | 1915 |
+| PG_STG | (0000077LL << 18) | 1916 |
+| PG_IDX | 0000777 | 1917 |
+| PG_MASK | 0000003777777LL | 1919 |
+| PG_AGE | 0770000000000LL | 1920 |
+| PG_PAG | 0003777 | 1921 |
+| PG_PUB | 0040000 | 2410 |
+| PG_WRT | 0020000 | 2411 |
+| PG_KEP | 0010000 | 2412 |
+| PG_CAC | 0004000 | 2413 |
+| PG_STG | (0000077LL << 18) | 2414 |
+| PG_IDX | 0000777 | 2415 |
+| PG_MASK | 0000003777777LL | 2417 |
+| PG_AGE | 0770000000000LL | 2418 |
+| PG_PAG | 0017777 | 2419 |
+| NEG | flag1 = flag3 = 0;  | 7710 |
+| NEG | flag1 = flag3 = 0;  | 7725 |
+| BMASK1 | 0776000000000LL | 11615 |
+| BMASK2 | 0001774000000LL | 11616 |
+| BMASK3 | 0000003770000LL | 11617 |
+| BMASK4 | 0000000007760LL | 11618 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| UDATA | 434-834 |  |
+| set_quantum | 835-848 |  |
+| load_quantum | 849-865 |  |
+| get_quantum | 866-882 |  |
+| set_interrupt | 883-896 | Level 0 means that device interrupt is not enabled |
+| set_interrupt_mpx | 897-915 |  |
+| clr_interrupt | 916-933 | Clear the interrupt flag for a device |
+| check_irq_level | 934-995 | else set pi_enc to highest level and return 1. |
+| restore_pi_hold | 996-1020 | Recover from held interrupt. |
+| set_pi_hold | 1021-1035 | Hold interrupts at the current level. |
+| dev_pi | 1036-1147 | PI device for KA and KI and KL |
+| null_dev | 1148-1164 | Non existent device |
+| update_times | 1165-1184 |  |
+| dev_pag | 1185-1283 | Page device for KL10. |
+| dev_cca | 1284-1294 | All operations set sweep done. |
+| check_apr_irq | 1295-1308 | Check if the last operation caused a APR IRQ to be generated. |
+| dev_apr | 1309-1363 | APR device for KL10. |
+| dev_mtr | 1364-1408 | MTR device for KL10. |
+| dev_tim | 1409-1471 | TIM device for KL10. |
+| tim_irq | 1472-1484 |  |
+| dev_pag | 1485-1549 | Page device for KI10. |
+| check_apr_irq | 1550-1568 | Check if the last operation caused a APR IRQ to be generated. |
+| dev_apr | 1569-1632 | APR device for KI10. |
+| dev_pag | 1633-1701 |  |
+| check_apr_irq | 1702-1719 | Check if the last operation caused a APR IRQ to be generated. |
+| dev_apr | 1720-1827 | APR Device for KA10. |
+| check_apr_irq | 1828-1840 | Check if the last operation caused a APR IRQ to be generated. |
+| cty_interrupt | 1841-1850 | Set interrupt from CTY. |
+| cty_execute | 1851-1856 | Execute instruction at location 071. |
+| load_tlb | 1857-2117 |  |
+| page_lookup | 2118-2272 | fetch is set for instruction fetches. |
+| Mem_read | 2273-2313 |  |
+| Mem_write | 2314-2357 |  |
+| load_tlb | 2358-2621 |  |
+| page_lookup | 2622-2813 | fetch is set for instruction fetches. |
+| Mem_read | 2814-2861 |  |
+| Mem_write | 2862-2910 |  |
+| exec_page_lookup | 2911-2950 | executive page table lookup |
+| Mem_examine_word | 2951-2964 |  |
+| Mem_deposit_word | 2965-2981 |  |
+| Mem_read_byte | 2982-3024 | Read in 16 bits of data from a byte pointer. |
+| Mem_write_byte | 3025-3072 |  |
+| address_conditions | 3073-3097 |  |
+| load_tlb | 3098-3151 |  |
+| page_lookup | 3152-3239 | fetch is set for instruction fetches. |
+| get_reg | 3240-3246 | Register access on KI 10 |
+| set_reg | 3247-3253 |  |
+| Mem_read | 3254-3298 |  |
+| Mem_write | 3299-3359 |  |
+| its_load_tlb | 3360-3395 | Load TBL entry for ITS. |
+| page_lookup_its | 3396-3527 |  |
+| Mem_read_its | 3528-3587 | Return of 0 if successful, 1 if there was an error. |
+| Mem_write_its | 3588-3646 | Return of 0 if successful, 1 if there was an error. |
+| page_lookup_bbn | 3647-3906 |  |
+| Mem_read_bbn | 3907-3951 | Return of 0 if successful, 1 if there was an error. |
+| Mem_write_bbn | 3952-3990 | Return of 0 if successful, 1 if there was an error. |
+| page_lookup_waits | 3991-4031 |  |
+| Mem_read_waits | 4032-4068 |  |
+| Mem_write_waits | 4069-4101 |  |
+| page_lookup_ka | 4102-4126 |  |
+| Mem_read_ka | 4127-4157 |  |
+| Mem_write_ka | 4158-4185 |  |
+| check_apr_irq | 4186-4200 | Check if the last operation caused a APR IRQ to be generated. |
+| dev_apr | 4201-4283 | APR Device for PDP6. |
+| page_lookup | 4284-4298 |  |
+| Mem_read | 4299-4329 |  |
+| Mem_write | 4330-4357 |  |
+| Mem_read_nopage | 4358-4382 | Return of 0 if successful, 1 if there was an error. |
+| Mem_write_nopage | 4383-4406 | Return of 0 if successful, 1 if there was an error. |
+| Mem_read_word | 4407-4418 | On KI10 and KL10, optional EPT flag indicates address relative to ept. |
+| Mem_write_word | 4419-4434 |  |
+| nlzero | 4435-4446 | Function to determine number of leading zero bits in a work |
+| sim_instr | 4447-4467 |  |
+| if | 4468-12333 |  |
+| do_byte_setup | 12334-12537 |  |
+| load_byte | 12538-12576 |  |
+| store_byte | 12577-12615 |  |
+| get_mask | 12616-12630 |  |
+| adj_byte | 12631-12683 |  |
+| adv_byte | 12684-12749 |  |
+| bak_byte | 12750-12778 |  |
+| do_xlate | 12779-12863 |  |
+| do_extend | 12864-13544 |  |
+| rtc_srv | 13545-13584 |  |
+| qua_srv | 13585-13597 |  |
+| tim_srv | 13598-13630 |  |
+| cpu_reset | 13631-13722 |  |
+| cpu_ex | 13723-13762 |  |
+| cpu_dep | 13763-13798 |  |
+| cpu_detach | 13799-13808 | Called at close of simulator |
+| cpu_set_size | 13809-13816 |  |
+| if | 13817-13831 |  |
+| build_dev_tab | 13832-13972 | Build device dispatch table |
+| cpu_set_serial | 13973-13977 | Set serial |
+| if | 13978-13995 |  |
+| cpu_show_serial | 13996-13998 | Show serial |
+| if | 13999-14008 |  |
+| cpu_set_hist | 14009-14013 | Set history |
+| if | 14014-14023 |  |
+| if | 14024-14028 |  |
+| if | 14029-14038 |  |
+| cpu_show_hist | 14039-14048 | Show history |
+| if | 14049-14058 |  |
+| for | 14059-14112 |  |
+| cpu_help | 14113-14124 |  |
+| cpu_description | 14125-14142 |  |

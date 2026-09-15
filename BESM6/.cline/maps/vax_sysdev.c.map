@@ -1,0 +1,270 @@
+=== vax_sysdev.c — 1940 строк ===
+Источник: vax_sysdev.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax_sysdev.c -nt .cline/maps/vax_sysdev.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| boot_code_filename | 64 | |
+| sys_model | 70 | |
+| clk_unit | 222 | |
+| MSER | 223 | |
+| tmr_poll | 224 | |
+| vc_dev | 225 | |
+| ssc_adsk | 249 | |
+| val | 545 | |
+| SCPE_OK | 572 | |
+| SCPE_OK | 586 | |
+| SCPE_OK | 598 | |
+| SCPE_OK | 623 | |
+| memory" | 628 | |
+| nvr | 637 | |
+| SCPE_OK | 664 | |
+| SCPE_OK | 678 | |
+| SCPE_OK | 692 | |
+| SCPE_OK | 734 | |
+| memory" | 739 | |
+| csi_csr | 751 | |
+| csi_unit.buf | 767 | |
+| csi_csr | 768 | |
+| SCPE_OK | 770 | |
+| input" | 775 | |
+| cso_unit.buf | 797 | |
+| cso_csr | 798 | |
+| cso_csr | 805 | |
+| cso_unit.pos | 815 | |
+| SCPE_OK | 816 | |
+| cso_unit.buf | 821 | |
+| cso_csr | 822 | |
+| SCPE_OK | 825 | |
+| output" | 830 | |
+| val | 851 | |
+| val | 924 | |
+| ssc_bto | 1037 | |
+| ssc_bto | 1076 | |
+| baseaddr | 1174 | |
+| SCPE_OK | 1194 | |
+| BDR_BRKENB | 1227 | |
+| odd | 1265 | |
+| val | 1273 | |
+| tmr_tir | 1515 | |
+| tmr_csr | 1522 | |
+| before_tmr_csr | 1527 | |
+| before_tmr_csr | 1532 | |
+| delta_usecs | 1580 | |
+| SCPE_OK | 1586 | |
+| tmr_tivr | 1658 | |
+| tmr_tivr | 1664 | |
+| in_ie | 1689 | |
+| in_ie | 1696 | |
+| cc | 1697 | |
+| temp | 1704 | |
+| gbuf | 1729 | |
+| PC | 1746 | |
+| PSL | 1747 | |
+| conpc | 1748 | |
+| conpsl | 1749 | |
+| SCPE_OK | 1759 | |
+| ka_hltenab | 1764 | |
+| SCPE_OK | 1769 | |
+| SCPE_OK | 1775 | |
+| csi_csr | 1791 | |
+| csi_unit.buf | 1792 | |
+| cso_csr | 1795 | |
+| cso_unit.buf | 1796 | |
+| sim_vm_cmd | 1799 | |
+| SCPE_OK | 1800 | |
+| ka_cacr | 1815 | |
+| ssc_base | 1816 | |
+| ssc_cnf | 1817 | |
+| ssc_bto | 1818 | |
+| ssc_otp | 1819 | |
+| SCPE_OK | 1820 | |
+| SCPE_OK | 1840 | |
+| devices" | 1845 | |
+| gbuf | 1850 | |
+| SCPE_OK | 1883 | |
+| SCPE_OK | 1889 | |
+| SCPE_OK | 1939 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_NODELAY | (UNIT_V_UF + 0)                 ... | 66 |
+| UNIT_NODELAY | (1u << UNIT_V_NODELAY) | 67 |
+| CSICSR_IMP | (CSR_DONE + CSR_IE)             ... | 82 |
+| CSICSR_RW | (CSR_IE) | 83 |
+| CSOCSR_IMP | (CSR_DONE + CSR_IE)             ... | 84 |
+| CSOCSR_RW | (CSR_IE) | 85 |
+| CMCNF_VLD | 0x80000000                      ... | 89 |
+| CMCNF_BA | 0x1FF00000                      ... | 90 |
+| CMCNF_LOCK | 0x00000040                      ... | 91 |
+| CMCNF_SRQ | 0x00000020                      ... | 92 |
+| CMCNF_SIG | 0x0000001F                      ... | 93 |
+| CMCNF_RW | (CMCNF_VLD \| CMCNF_BA)          ... | 94 |
+| CMCNF_MASK | (CMCNF_RW \| CMCNF_SIG) | 95 |
+| MEM_BANK | (1 << 22)                       ... | 96 |
+| MEM_SIG | (0x17)                          ... | 97 |
+| CMERR_RDS | 0x80000000                      ... | 101 |
+| CMERR_FRQ | 0x40000000                      ... | 102 |
+| CMERR_CRD | 0x20000000                      ... | 103 |
+| CMERR_PAG | 0x1FFFFC00                      ... | 104 |
+| CMERR_DMA | 0x00000100                      ... | 105 |
+| CMERR_BUS | 0x00000080                      ... | 106 |
+| CMERR_SYN | 0x0000007F                      ... | 107 |
+| CMERR_W1C | (CMERR_RDS \| CMERR_FRQ \| CMERR_C... | 108 |
+| CMCSR_PMI | 0x00002000                      ... | 113 |
+| CMCSR_CRD | 0x00001000                      ... | 114 |
+| CMCSR_FRF | 0x00000800                      ... | 115 |
+| CMCSR_DET | 0x00000400                      ... | 116 |
+| CMCSR_FDT | 0x00000200                      ... | 117 |
+| CMCSR_DCM | 0x00000080                      ... | 118 |
+| CMCSR_SYN | 0x0000007F                      ... | 119 |
+| CMCSR_MASK | (CMCSR_PMI \| CMCSR_CRD \| CMCSR_D... | 120 |
+| BDR_BRKENB | 0x00000080                      ... | 125 |
+| CACR_DRO | 0x00FFFF00                      ... | 129 |
+| CACR_V_DPAR | 24                              ... | 130 |
+| CACR_FIXED | 0x00000040                      ... | 131 |
+| CACR_CPE | 0x00000020                      ... | 132 |
+| CACR_CEN | 0x00000010                      ... | 133 |
+| CACR_DPE | 0x00000004                      ... | 134 |
+| CACR_WWP | 0x00000002                      ... | 135 |
+| CACR_DIAG | 0x00000001                      ... | 136 |
+| CACR_W1C | (CACR_CPE) | 137 |
+| CACR_RW | (CACR_CEN \| CACR_DPE \| CACR_WWP ... | 138 |
+| SSCBASE_MBO | 0x20000000                      ... | 142 |
+| SSCBASE_RW | 0x1FFFFC00                      ... | 143 |
+| SSCCNF_BLO | 0x80000000                      ... | 147 |
+| SSCCNF_IVD | 0x08000000                      ... | 148 |
+| SSCCNF_IPL | 0x03000000                      ... | 149 |
+| SSCCNF_ROM | 0x00F70000                      ... | 150 |
+| SSCCNF_CTLP | 0x00008000                      ... | 151 |
+| SSCCNF_BAUD | 0x00007700                      ... | 152 |
+| SSCCNF_ADS | 0x00000077                      ... | 153 |
+| SSCCNF_W1C | SSCCNF_BLO | 154 |
+| SSCCNF_RW | 0x0BF7F777 | 155 |
+| SSCBTO_BTO | 0x80000000                      ... | 177 |
+| SSCBTO_RWT | 0x40000000                      ... | 178 |
+| SSCBTO_INTV | 0x00FFFFFF                      ... | 179 |
+| SSCBTO_W1C | (SSCBTO_BTO \| SSCBTO_RWT) | 180 |
+| SSCBTO_RW | SSCBTO_INTV | 181 |
+| SSCOTP_MASK | 0x0000000F                      ... | 185 |
+| TMR_CSR_ERR | 0x80000000                      ... | 189 |
+| TMR_CSR_DON | 0x00000080                      ... | 190 |
+| TMR_CSR_IE | 0x00000040                      ... | 191 |
+| TMR_CSR_SGL | 0x00000020                      ... | 192 |
+| TMR_CSR_XFR | 0x00000010                      ... | 193 |
+| TMR_CSR_STP | 0x00000004                      ... | 194 |
+| TMR_CSR_RUN | 0x00000001                      ... | 195 |
+| TMR_CSR_W1C | (TMR_CSR_ERR \| TMR_CSR_DON) | 196 |
+| TMR_CSR_RW | (TMR_CSR_IE \| TMR_CSR_STP \| TMR_... | 197 |
+| TMR_VEC_MASK | 0x000003FC                      ... | 216 |
+| SSCADS_MASK | 0x3FFFFFFC                      ... | 220 |
+| DBG_REGR | 0x0001 /* Interval TMR register ... | 499 |
+| DBG_REGW | 0x0002 /* Interval TMR register ... | 500 |
+| DBG_INT | 0x0004 /* Interval TMR Interrupt */ | 501 |
+| DBG_SCHD | 0x0008 /* Interval TMR Schedulin... | 502 |
+| DBG_TODR | 0x0010 /* TODR register access  */ | 503 |
+| DBG_CNF | 0x0020 /* CNF register access  */ | 504 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rom_rd | 542-552 |  |
+| rom_wr_B | 553-562 |  |
+| rom_ex | 563-576 |  |
+| rom_dep | 577-590 |  |
+| rom_reset | 591-600 |  |
+| rom_help | 601-625 |  |
+| rom_description | 626-632 |  |
+| nvr_rd | 633-639 |  |
+| nvr_wr | 640-643 |  |
+| if | 644-654 |  |
+| nvr_ex | 655-668 |  |
+| nvr_dep | 669-682 |  |
+| nvr_reset | 683-684 |  |
+| if | 685-696 |  |
+| nvr_attach | 697-713 |  |
+| nvr_detach | 714-723 |  |
+| nvr_help | 724-736 |  |
+| nvr_description | 737-743 |  |
+| csrs_rd | 744-748 |  |
+| csrd_rd | 749-755 |  |
+| csrs_wr | 756-764 |  |
+| csi_reset | 765-772 |  |
+| csi_description | 773-779 |  |
+| csts_rd | 780-784 |  |
+| csts_wr | 785-794 |  |
+| cstd_wr | 795-802 |  |
+| cso_svc | 803-809 |  |
+| if | 810-818 |  |
+| cso_reset | 819-827 |  |
+| cso_description | 828-848 |  |
+| ReadIPR | 849-852 |  |
+| switch | 853-926 |  |
+| WriteIPR | 927-928 |  |
+| switch | 929-1028 |  |
+| ReadReg | 1029-1032 |  |
+| for | 1033-1050 |  |
+| ReadRegU | 1051-1065 |  |
+| WriteReg | 1066-1069 |  |
+| for | 1070-1089 |  |
+| WriteRegU | 1090-1111 |  |
+| cmctl_rd | 1112-1115 |  |
+| switch | 1116-1135 |  |
+| cmctl_wr | 1136-1139 |  |
+| if | 1140-1143 |  |
+| switch | 1144-1170 |  |
+| cpu_show_memory | 1171-1182 |  |
+| while | 1183-1198 |  |
+| ka_rd | 1199-1202 |  |
+| switch | 1203-1214 |  |
+| ka_wr | 1215-1218 |  |
+| if | 1219-1224 |  |
+| sysd_hlt_enb | 1225-1231 |  |
+| cdg_rd | 1232-1245 |  |
+| cdg_wr | 1246-1249 |  |
+| if | 1250-1258 |  |
+| parity | 1259-1260 |  |
+| for | 1261-1269 |  |
+| ssc_rd | 1270-1274 |  |
+| switch | 1275-1357 |  |
+| ssc_wr | 1358-1361 |  |
+| if | 1362-1368 |  |
+| switch | 1369-1488 |  |
+| tmr_tir_rd | 1489-1490 |  |
+| if | 1491-1517 |  |
+| tmr_csr_rd | 1518-1524 |  |
+| tmr_csr_wr | 1525-1535 |  |
+| if | 1536-1546 |  |
+| if | 1547-1550 |  |
+| if | 1551-1576 |  |
+| tmr_svc | 1577-1590 |  |
+| tmr_incr | 1591-1594 |  |
+| if | 1595-1623 |  |
+| tmr_sched_inst | 1624-1625 |  |
+| if | 1626-1636 |  |
+| tmr_sched | 1637-1642 |  |
+| if | 1643-1654 |  |
+| tmr0_inta | 1655-1660 |  |
+| tmr1_inta | 1661-1668 |  |
+| machine_check | 1669-1677 |  |
+| for | 1678-1701 |  |
+| con_halt | 1702-1726 |  |
+| vax_boot | 1727-1741 |  |
+| cpu_boot | 1742-1751 |  |
+| if | 1752-1761 |  |
+| sysd_set_halt | 1762-1771 |  |
+| sysd_show_halt | 1772-1779 |  |
+| sysd_reset | 1780-1784 |  |
+| for | 1785-1804 |  |
+| sysd_powerup | 1805-1810 |  |
+| for | 1811-1822 |  |
+| sysd_help | 1823-1842 |  |
+| sysd_description | 1843-1847 |  |
+| cpu_set_model | 1848-1854 |  |
+| if | 1855-1858 |  |
+| if | 1859-1868 |  |
+| if | 1869-1885 |  |
+| cpu_print_model | 1886-1891 |  |
+| cpu_model_help | 1892-1940 |  |

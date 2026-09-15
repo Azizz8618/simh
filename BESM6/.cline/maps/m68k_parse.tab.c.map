@@ -1,0 +1,275 @@
+=== m68k_parse.tab.c — 3778 строк ===
+Источник: m68k_parse.tab.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test m68k_parse.tab.c -nt .cline/maps/m68k_parse.tab.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| OPHASH | 3602-3605 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| oplen | 415 | |
+| yyrc | 420 | |
+| yyerrc | 421 | |
+| yytype_uint8 | 484 | |
+| yytype_uint8 | 486 | |
+| yytype_int8 | 490 | |
+| yytype_int8 | 493 | |
+| yytype_int8 | 495 | |
+| yytype_uint16 | 499 | |
+| yytype_uint16 | 501 | |
+| yytype_int16 | 505 | |
+| yytype_int16 | 507 | |
+| yydebug | 1652 | |
+| yychar | 1941 | |
+| yylval | 1944 | |
+| yynerrs | 1947 | |
+| ophash | 3608 | |
+| yystream | 3649 | |
+| yyvalptr | 3706 | |
+| yyaddr | 3707 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| YYBISON | 1 | 47 |
+| YYBISON_VERSION | "2.3" | 50 |
+| YYSKELETON_NAME | "yacc.c" | 53 |
+| YYPURE | 0 | 56 |
+| YYLSP_NEEDED | 0 | 59 |
+| YYTOKENTYPE |  | 65 |
+| A0 | 258 | 216 |
+| A1 | 259 | 217 |
+| A2 | 260 | 218 |
+| A3 | 261 | 219 |
+| A4 | 262 | 220 |
+| A5 | 263 | 221 |
+| A6 | 264 | 222 |
+| A7 | 265 | 223 |
+| D0 | 266 | 224 |
+| D1 | 267 | 225 |
+| D2 | 268 | 226 |
+| D3 | 269 | 227 |
+| D4 | 270 | 228 |
+| D5 | 271 | 229 |
+| D6 | 272 | 230 |
+| D7 | 273 | 231 |
+| CCR | 274 | 232 |
+| SR | 275 | 233 |
+| USP | 276 | 234 |
+| PC | 277 | 235 |
+| NUMBER | 278 | 236 |
+| ABCD | 279 | 237 |
+| ADD | 280 | 238 |
+| ADDA | 281 | 239 |
+| ADDI | 282 | 240 |
+| ADDQ | 283 | 241 |
+| ADDX | 284 | 242 |
+| AND | 285 | 243 |
+| ANDI | 286 | 244 |
+| OR | 287 | 245 |
+| ORI | 288 | 246 |
+| SBCD | 289 | 247 |
+| SUB | 290 | 248 |
+| SUBA | 291 | 249 |
+| SUBI | 292 | 250 |
+| SUBQ | 293 | 251 |
+| SUBX | 294 | 252 |
+| ASL | 295 | 253 |
+| ASR | 296 | 254 |
+| LSL | 297 | 255 |
+| LSR | 298 | 256 |
+| ROL | 299 | 257 |
+| ROR | 300 | 258 |
+| ROXL | 301 | 259 |
+| ROXR | 302 | 260 |
+| BCC | 303 | 261 |
+| BCS | 304 | 262 |
+| BEQ | 305 | 263 |
+| BGE | 306 | 264 |
+| BGT | 307 | 265 |
+| BHI | 308 | 266 |
+| BLE | 309 | 267 |
+| BLS | 310 | 268 |
+| BLT | 311 | 269 |
+| BMI | 312 | 270 |
+| BNE | 313 | 271 |
+| BPL | 314 | 272 |
+| BVC | 315 | 273 |
+| BVS | 316 | 274 |
+| BSR | 317 | 275 |
+| BRA | 318 | 276 |
+| BCLR | 319 | 277 |
+| BSET | 320 | 278 |
+| BCHG | 321 | 279 |
+| BTST | 322 | 280 |
+| CHK | 323 | 281 |
+| CMP | 324 | 282 |
+| CMPA | 325 | 283 |
+| CMPI | 326 | 284 |
+| CMPM | 327 | 285 |
+| EOR | 328 | 286 |
+| EORI | 329 | 287 |
+| EXG | 330 | 288 |
+| EXT | 331 | 289 |
+| DIVU | 332 | 290 |
+| DIVS | 333 | 291 |
+| MULU | 334 | 292 |
+| MULS | 335 | 293 |
+| DBCC | 336 | 294 |
+| DBCS | 337 | 295 |
+| DBEQ | 338 | 296 |
+| DBF | 339 | 297 |
+| DBGE | 340 | 298 |
+| DBGT | 341 | 299 |
+| DBHI | 342 | 300 |
+| DBLE | 343 | 301 |
+| DBLS | 344 | 302 |
+| DBLT | 345 | 303 |
+| DBMI | 346 | 304 |
+| DBNE | 347 | 305 |
+| DBPL | 348 | 306 |
+| DBT | 349 | 307 |
+| DBVC | 350 | 308 |
+| DBVS | 351 | 309 |
+| SCC | 352 | 310 |
+| SCS | 353 | 311 |
+| SEQ | 354 | 312 |
+| SF | 355 | 313 |
+| SGE | 356 | 314 |
+| SGT | 357 | 315 |
+| SHI | 358 | 316 |
+| SLE | 359 | 317 |
+| SLS | 360 | 318 |
+| SLT | 361 | 319 |
+| SMI | 362 | 320 |
+| SNE | 363 | 321 |
+| SPL | 364 | 322 |
+| ST | 365 | 323 |
+| SVC | 366 | 324 |
+| SVS | 367 | 325 |
+| ILLEGAL | 368 | 326 |
+| NOP | 369 | 327 |
+| RESET | 370 | 328 |
+| RTE | 371 | 329 |
+| RTR | 372 | 330 |
+| RTS | 373 | 331 |
+| TRAPV | 374 | 332 |
+| JMP | 375 | 333 |
+| JSR | 376 | 334 |
+| LEA | 377 | 335 |
+| LINK | 378 | 336 |
+| MOVE | 379 | 337 |
+| MOVEA | 380 | 338 |
+| MOVEM | 381 | 339 |
+| MOVEP | 382 | 340 |
+| MOVEQ | 383 | 341 |
+| CLR | 384 | 342 |
+| NEG | 385 | 343 |
+| NEGX | 386 | 344 |
+| NBCD | 387 | 345 |
+| NOT | 388 | 346 |
+| PEA | 389 | 347 |
+| STOP | 390 | 348 |
+| TAS | 391 | 349 |
+| SWAP | 392 | 350 |
+| TRAP | 393 | 351 |
+| TST | 394 | 352 |
+| UNLK | 395 | 353 |
+| PREDEC | 396 | 354 |
+| POSTINC | 397 | 355 |
+| BSIZE | 398 | 356 |
+| WSIZE | 399 | 357 |
+| LSIZE | 400 | 358 |
+| SSIZE | 401 | 359 |
+| YYDEBUG | 1 | 428 |
+| YYDEBUG | 0 | 433 |
+| YYERROR_VERBOSE | 1 | 439 |
+| YYERROR_VERBOSE | 0 | 441 |
+| YYTOKEN_TABLE | 0 | 446 |
+| YYSTYPE_IS_DECLARED | 1 | 467 |
+| YYSTYPE_IS_TRIVIAL | 1 | 468 |
+| YYSIZE_T | __SIZE_TYPE__ | 512 |
+| YYSIZE_T | size_t | 514 |
+| YYSIZE_T | size_t | 518 |
+| YYSIZE_T | unsigned int | 520 |
+| YYSIZE_MAXIMUM | ((YYSIZE_T) -1) | 524 |
+| YY_(msgid) | dgettext ("bison-runtime", msgid) | 530 |
+| YY_(msgid) | msgid | 534 |
+| YYUSE(e) | ((void) (e)) | 540 |
+| YYUSE(e) | /* empty */ | 542 |
+| YYID(n) | (n) | 547 |
+| YYSTACK_ALLOC | __builtin_alloca | 570 |
+| YYSTACK_ALLOC | __alloca | 574 |
+| YYSTACK_ALLOC | alloca | 579 |
+| _STDLIB_H | 1 | 584 |
+| YYSTACK_FREE(Ptr) | do { /* empty */; } while (YYID ... | 593 |
+| YYSTACK_ALLOC_MAXIMUM | 4032 /* reasonable circa 2006 */ | 599 |
+| YYSTACK_ALLOC | YYMALLOC | 602 |
+| YYSTACK_FREE | YYFREE | 603 |
+| YYSTACK_ALLOC_MAXIMUM | YYSIZE_MAXIMUM | 605 |
+| _STDLIB_H | 1 | 612 |
+| YYMALLOC | malloc | 616 |
+| YYFREE | free | 623 |
+| YYSTACK_GAP_MAXIMUM | (sizeof (union yyalloc) - 1) | 645 |
+| YYSTACK_BYTES(N) |  | 649 |
+| YYCOPY(To, | From, Count)  | 657 |
+| YYCOPY(To, | From, Count)       | 660 |
+| YYSTACK_RELOCATE(Stack) |  | 676 |
+| YYFINAL | 266 | 690 |
+| YYLAST | 928 | 692 |
+| YYNTOKENS | 153 | 695 |
+| YYNNTS | 49 | 697 |
+| YYNRULES | 276 | 699 |
+| YYNSTATES | 462 | 701 |
+| YYUNDEFTOK | 2 | 704 |
+| YYMAXUTOK | 401 | 705 |
+| YYTRANSLATE(YYX) |  | 707 |
+| YYPACT_NINF | -343 | 1096 |
+| YYTABLE_NINF | -1 | 1162 |
+| YYEMPTY | (-2) | 1412 |
+| YYEOF | 0 | 1413 |
+| YYACCEPT | goto yyacceptlab | 1415 |
+| YYABORT | goto yyabortlab | 1416 |
+| YYERROR | goto yyerrorlab | 1417 |
+| YYFAIL | goto yyerrlab | 1424 |
+| YYRECOVERING() | (!!yyerrstatus) | 1426 |
+| YYBACKUP(Token, | Value)                   | 1428 |
+| YYTERROR | 1 | 1446 |
+| YYERRCODE | 256 | 1447 |
+| YYRHSLOC(Rhs, | K) ((Rhs)[K]) | 1454 |
+| YYLLOC_DEFAULT(Current, | Rhs, N)                 | 1456 |
+| YY_LOCATION_PRINT(File, | Loc)           | 1482 |
+| YY_LOCATION_PRINT(File, | Loc) ((void) 0) | 1487 |
+| YYLEX | yylex (YYLEX_PARAM) | 1495 |
+| YYLEX | yylex () | 1497 |
+| YYFPRINTF | fprintf | 1505 |
+| YYDPRINTF(Args) |  | 1508 |
+| YY_SYMBOL_PRINT(Title, | Type, Value, Location)             | 1514 |
+| YY_STACK_PRINT(Bottom, | Top)                 | 1606 |
+| YY_REDUCE_PRINT(Rule) |  | 1644 |
+| YYDPRINTF(Args) |  | 1654 |
+| YY_SYMBOL_PRINT(Title, | Type, Value, Location) | 1655 |
+| YY_STACK_PRINT(Bottom, | Top) | 1656 |
+| YY_REDUCE_PRINT(Rule) |  | 1657 |
+| YYINITDEPTH | 200 | 1663 |
+| YYMAXDEPTH | 10000 | 1674 |
+| YYPOPSTACK(N) | (yyvsp -= (N), yyssp -= (N)) | 2012 |
+| OPHASHSIZE | 97 | 3606 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| yytnamerr | 1741-1787 |  |
+| yysyntax_error | 1788-3551 |  |
+| yyerror | 3552-3609 |  |
+| getophash | 3610-3616 |  |
+| oplookup | 3617-3633 |  |
+| init_ophash | 3634-3650 |  |
+| yylex | 3651-3708 |  |
+| parse_sym | 3709-3746 |  |
+| _genop | 3747-3754 |  |
+| _genea | 3755-3761 |  |
+| _genbr | 3762-3778 |  |

@@ -1,0 +1,169 @@
+=== pdp11_td.c — 1581 строк ===
+Источник: pdp11_td.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_td.c -nt .cline/maps/pdp11_td.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| tdi_ireq | 607 | |
+| tdo_ireq | 608 | |
+| td_unit | 670 | |
+| SCPE_OK | 733 | |
+| SCPE_OK | 746 | |
+| CSI_CLR_INT | 756 | |
+| SCPE_OK | 758 | |
+| SCPE_OK | 764 | |
+| SCPE_OK | 771 | |
+| SCPE_OK | 787 | |
+| SCPE_OK | 794 | |
+| CSO_CLR_INT | 803 | |
+| SCPE_OK | 830 | |
+| reg_access | 834 | |
+| unit | 888 | |
+| opcode | 889 | |
+| opcode_name | 890 | |
+| da | 1054 | |
+| SCPE_OK | 1241 | |
+| FALSE | 1260 | |
+| ctlr | 1282 | |
+| ctlr | 1311 | |
+| ctlr->tx_buf | 1325 | |
+| ctlr->tx_csr | 1326 | |
+| CSI_CLR_INT | 1327 | |
+| ctlr->o_state | 1328 | |
+| ctlr->ibptr | 1329 | |
+| ctlr->obptr | 1330 | |
+| ctlr->ilen | 1331 | |
+| ctlr->olen | 1332 | |
+| ctlr->offset | 1333 | |
+| ctlr->txsize | 1334 | |
+| ctlr->p_state | 1335 | |
+| ctlr->ecode | 1336 | |
+| SCPE_OK | 1337 | |
+| ctlr | 1344 | |
+| ctl | 1345 | |
+| td_enabled_reset | 1346 | |
+| td_regs_inited | 1347 | |
+| cartridge" | 1435 | |
+| newln | 1442 | |
+| td_ctrls | 1459 | |
+| SCPE_OK | 1479 | |
+| SCPE_OK | 1489 | |
+| ctlr | 1497 | |
+| ctlr->dptr | 1506 | |
+| ctlr->uptr | 1507 | |
+| ctlr->rx_set_int | 1508 | |
+| ctlr->tx_set_int | 1509 | |
+| SCPE_OK | 1571 | |
+| SCPE_NOFNC | 1578 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MIN(a,b) | (((a) < (b)) ? (a) : (b)) | 461 |
+| DLICSR_RD | (CSR_DONE\|CSR_IE)               ... | 467 |
+| DLICSR_WR | (CSR_IE) | 468 |
+| DLIBUF_ERR | 0100000 | 469 |
+| DLIBUF_OVR | 0040000 | 470 |
+| DLIBUF_RBRK | 0020000 | 471 |
+| DLIBUF_RD | (DLIBUF_ERR\|DLIBUF_OVR\|DLIBUF_RB... | 472 |
+| DLOCSR_XBR | 0000001                         ... | 473 |
+| DLOCSR_RD | (CSR_DONE\|CSR_IE\|DLOCSR_XBR) | 474 |
+| DLOCSR_WR | (CSR_IE\|DLOCSR_XBR) | 475 |
+| TD_NUMCTLR | 16                              ... | 527 |
+| TD_OPDAT | 001                             ... | 530 |
+| TD_OPCMD | 002                             ... | 531 |
+| TD_OPINI | 004                             ... | 532 |
+| TD_OPBOO | 010                             ... | 533 |
+| TD_OPCNT | 020                             ... | 534 |
+| TD_OPXOF | 023                             ... | 535 |
+| TD_CMDNOP | 0000                            ... | 537 |
+| TD_CMDINI | 0001                            ... | 538 |
+| TD_CMDRD | 0002                            ... | 539 |
+| TD_CMDWR | 0003                            ... | 540 |
+| TD_CMDPOS | 0005                            ... | 541 |
+| TD_CMDDIA | 0007                            ... | 542 |
+| TD_CMDGST | 0010                            ... | 543 |
+| TD_CMDSST | 0011                            ... | 544 |
+| TD_CMDMRSP | 0012                            ... | 545 |
+| TD_CMDEND | 0100                            ... | 546 |
+| TD_STSOK | 0000                            ... | 548 |
+| TD_STSRTY | 0001                            ... | 549 |
+| TD_STSFAIL | 0377                            ... | 550 |
+| TD_STSPO | 0376                            ... | 551 |
+| TD_STSBUN | 0370                            ... | 552 |
+| TD_STSNC | 0367                            ... | 553 |
+| TD_STSWP | 0365                            ... | 554 |
+| TD_STSDCE | 0357                            ... | 555 |
+| TD_STSSE | 0340                            ... | 556 |
+| TD_STSMS | 0337                            ... | 557 |
+| TD_STSBOP | 0320                            ... | 558 |
+| TD_STSBBN | 0311                            ... | 559 |
+| TD_GETOPC | 0                               ... | 561 |
+| TD_GETLEN | 1                               ... | 562 |
+| TD_GETDATA | 2                               ... | 563 |
+| TD_IDLE | 0                               ... | 565 |
+| TD_READ | 1                               ... | 566 |
+| TD_READ1 | 2                               ... | 567 |
+| TD_READ2 | 3                               ... | 568 |
+| TD_WRITE | 4                               ... | 569 |
+| TD_WRITE1 | 5                               ... | 570 |
+| TD_WRITE2 | 6                               ... | 571 |
+| TD_END | 7                               ... | 572 |
+| TD_END1 | 8                               ... | 573 |
+| TD_INIT | 9                               ... | 574 |
+| TD_BOOTSTRAP | 10                              ... | 575 |
+| TD_POSITION | 11                              ... | 576 |
+| IOLN_DL | 010 | 663 |
+| RDATA(nm,loc,wd,desc) | STRDATAD(nm,td_ctlr[0].loc,16,wd... | 680 |
+| RDATAF(nm,loc,wd,desc,flds) | STRDATADF(nm,td_ctlr[0].loc,16,w... | 681 |
+| CSI_CLR_INT | ctlr->rx_set_int (ctlr-td_ctlr, 0) | 724 |
+| CSI_SET_INT | ctlr->rx_set_int (ctlr-td_ctlr, 1) | 725 |
+| CSO_CLR_INT | ctlr->tx_set_int (ctlr-td_ctlr, 0) | 726 |
+| CSO_SET_INT | ctlr->tx_set_int (ctlr-td_ctlr, 1) | 727 |
+| BOOT_START | 02000                           ... | 1517 |
+| BOOT_ENTRY | (BOOT_START + 000)              ... | 1518 |
+| BOOT_CSR | (BOOT_START + 002)              ... | 1519 |
+| BOOT_UNIT | (BOOT_START + 006)              ... | 1520 |
+| BOOT_LEN | (sizeof (boot_rom) / sizeof (int... | 1521 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| td_rd_i_csr | 729-735 |  |
+| td_wr_i_csr | 736-748 |  |
+| td_rd_i_buf | 749-760 |  |
+| td_wr_i_buf | 761-766 |  |
+| td_rd_o_csr | 767-773 |  |
+| td_wr_o_csr | 774-776 |  |
+| if | 777-789 |  |
+| td_rd_o_buf | 790-796 |  |
+| td_wr_o_buf | 797-804 |  |
+| switch | 805-844 |  |
+| td_rd | 845-868 |  |
+| td_wr | 869-885 |  |
+| td_process_packet | 886-891 |  |
+| switch | 892-914 |  |
+| switch | 915-1049 |  |
+| td_svc | 1050-1058 |  |
+| switch | 1059-1245 |  |
+| td_test_xfr | 1246-1264 |  |
+| tdi_set_int | 1265-1266 |  |
+| if | 1267-1279 |  |
+| tdi_iack | 1280-1284 |  |
+| for | 1285-1293 |  |
+| tdo_set_int | 1294-1295 |  |
+| if | 1296-1308 |  |
+| tdo_iack | 1309-1313 |  |
+| for | 1314-1322 |  |
+| td_reset_ctlr | 1323-1341 |  |
+| td_reset | 1342-1349 |  |
+| if | 1350-1432 |  |
+| td_description | 1433-1439 |  |
+| td_set_ctrls | 1440-1452 |  |
+| if | 1453-1475 |  |
+| td_show_ctlrs | 1476-1481 |  |
+| td_help | 1482-1498 |  |
+| for | 1499-1561 |  |
+| td_boot | 1562-1575 |  |
+| td_boot | 1576-1581 |  |

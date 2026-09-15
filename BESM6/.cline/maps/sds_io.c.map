@@ -1,0 +1,135 @@
+=== sds_io.c — 1018 строк ===
+Источник: sds_io.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sds_io.c -nt .cline/maps/sds_io.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_mode | 86 | |
+| rtc_pie | 87 | |
+| stop_invins | 88 | |
+| mon_usr_trap | 89 | |
+| cpu_unit | 90 | |
+| dev_map | 223 | |
+| ch | 260 | |
+| SCPE_OK | 272 | |
+| ch | 277 | |
+| SCPE_OK | 293 | |
+| SCPE_OK | 451 | |
+| SCPE_OK | 514 | |
+| ch | 521 | |
+| chan_flag | 525 | |
+| SCPE_OK | 526 | |
+| ch | 531 | |
+| chan_flag | 534 | |
+| SCPE_OK | 535 | |
+| ch | 540 | |
+| SCPE_OK | 543 | |
+| SCPE_OK | 564 | |
+| dat | 587 | |
+| dev | 588 | |
+| return | 655 | |
+| return | 670 | |
+| dat | 689 | |
+| dev | 690 | |
+| dev | 783 | |
+| SCPE_OK | 791 | |
+| SCPE_OK | 801 | |
+| SCPE_OK | 809 | |
+| SCPE_OK | 830 | |
+| return | 857 | |
+| return | 866 | |
+| return | 875 | |
+| return | 884 | |
+| xfr_req | 893 | |
+| SCPE_OK | 905 | |
+| dptr | 912 | |
+| dibp | 913 | |
+| SCPE_ARG | 934 | |
+| dptr | 939 | |
+| dibp | 940 | |
+| SCPE_OK | 951 | |
+| dptr | 958 | |
+| dibp | 959 | |
+| tplp | 960 | |
+| ch | 961 | |
+| FALSE | 1000 | |
+| SCPE_OK | 1017 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CHD_INT | 040                             ... | 35 |
+| CHD_PAGE | 037                             ... | 36 |
+| CHI_V_WC | 14                              ... | 40 |
+| CHI_M_WC | 01777 | 41 |
+| CHI_GETWC(x) | (((x) >> CHI_V_WC) & CHI_M_WC) | 42 |
+| CHI_V_MA | 0                               ... | 43 |
+| CHI_M_MA | 037777 | 44 |
+| CHI_GETMA(x) | (((x) >> CHI_V_MA) & CHI_M_MA) | 45 |
+| SYI_V_GRP | 18                              ... | 49 |
+| SYI_M_GRP | 077 | 50 |
+| SYI_GETGRP(x) | (((x) >> SYI_V_GRP) & SYI_M_GRP) | 51 |
+| SYI_DIS | (1 << 17)                       ... | 52 |
+| SYI_ARM | (1 << 16)                       ... | 53 |
+| SYI_M_INT | 0177777                         ... | 54 |
+| I_GETDEV3(x) | ((((x) & 020046000) != 020046000... | 58 |
+| TST_XFR(d,c) | (xfr_req & dev_map[d][c]) | 60 |
+| SET_XFR(d,c) | xfr_req = xfr_req \| dev_map[d][c] | 61 |
+| CLR_XFR(d,c) | xfr_req = xfr_req & ~dev_map[d][c] | 62 |
+| INV_DEV(d,c) | (dev_dsp[d][c] == NULL) | 63 |
+| VLD_DEV(d,c) | (dev_dsp[d][c] != NULL) | 64 |
+| TST_EOR(c) | (chan_flag[c] & CHF_EOR) | 65 |
+| QAILCE(a) | (((a) >= POT_ILCY) && ((a) < (PO... | 66 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| op_wyim | 258-263 |  |
+| if | 264-274 |  |
+| op_miwy | 275-280 |  |
+| if | 281-287 |  |
+| if | 288-295 |  |
+| op_pin | 296-305 |  |
+| op_pot | 306-317 |  |
+| op_eomd | 318-325 |  |
+| switch | 326-455 |  |
+| op_sks | 456-462 |  |
+| if | 463-468 |  |
+| switch | 469-518 |  |
+| pot_ilc | 519-528 |  |
+| pot_dcr | 529-537 |  |
+| pin_adr | 538-552 |  |
+| pot_fork | 553-557 |  |
+| if | 558-584 |  |
+| chan_read | 585-591 |  |
+| if | 592-634 |  |
+| if | 635-647 |  |
+| chan_write_mem | 648-657 |  |
+| chan_flush_war | 658-661 |  |
+| if | 662-686 |  |
+| chan_write | 687-693 |  |
+| if | 694-764 |  |
+| chan_mar_inc | 765-768 |  |
+| if | 769-779 |  |
+| chan_eor | 780-795 |  |
+| dev_disc | 796-803 |  |
+| dev_wreor | 804-814 |  |
+| chan_process | 815-819 |  |
+| for | 820-834 |  |
+| chan_testact | 835-838 |  |
+| for | 839-848 |  |
+| chan_set_ordy | 849-850 |  |
+| if | 851-861 |  |
+| chan_set_flag | 862-870 |  |
+| chan_set_uar | 871-879 |  |
+| chan_disc | 880-888 |  |
+| chan_reset | 889-893 |  |
+| for | 894-909 |  |
+| set_chan | 910-925 |  |
+| for | 926-936 |  |
+| show_chan | 937-955 |  |
+| io_init | 956-965 |  |
+| for | 966-974 |  |
+| for | 975-1004 |  |
+| chan_show_reg | 1005-1018 |  |

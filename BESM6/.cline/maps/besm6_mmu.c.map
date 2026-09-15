@@ -1,4 +1,4 @@
-=== besm6_mmu.c — 765 строк ===
+=== besm6_mmu.c — 772 строк ===
 Источник: besm6_mmu.c | Автогенерация: scripts/gen_code_map.sh
 Регенерировать: test besm6_mmu.c -nt .cline/maps/besm6_mmu.c.map
 
@@ -33,15 +33,15 @@
 | mmu_match | 343-359 |  |
 | mmu_flush_by_age | 360-377 | с mmu_flush_by_age(). |
 | mmu_flush_by_number | 378-399 |  |
-| mmu_store | 400-458 | Запись слова в память |
-| mmu_memaccess | 459-498 |  |
-| mmu_load | 499-579 | Чтение операнда |
-| mmu_fetch_check | 580-600 |  |
-| mmu_prefetch | 601-657 | Предвыборка команды на БРС |
-| mmu_fetch | 658-693 | Выборка команды |
-| mmu_setrp | 694-722 |  |
-| mmu_setup | 723-736 |  |
-| mmu_setprotection | 737-744 |  |
-| mmu_setcache | 745-749 |  |
-| mmu_getcache | 750-754 |  |
-| mmu_print_brz | 755-765 |  |
+| mmu_store | 400-460 | Запись слова в память |
+| mmu_memaccess | 461-500 |  |
+| mmu_load | 501-586 | Чтение операнда |
+| mmu_fetch_check | 587-607 |  |
+| mmu_prefetch | 608-664 | Предвыборка команды на БРС |
+| mmu_fetch | 665-700 | Выборка команды |
+| mmu_setrp | 701-729 |  |
+| mmu_setup | 730-743 |  |
+| mmu_setprotection | 744-751 |  |
+| mmu_setcache | 752-756 |  |
+| mmu_getcache | 757-761 |  |
+| mmu_print_brz | 762-772 |  |

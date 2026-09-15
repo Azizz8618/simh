@@ -1,0 +1,55 @@
+=== i8272.c — 950 строк ===
+Источник: i8272.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test i8272.c -nt .cline/maps/i8272.c.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 51 |
+| DBG_PRINT(args) |  | 53 |
+| ERROR_MSG | (1 << 0) | 57 |
+| SEEK_MSG | (1 << 1) | 58 |
+| CMD_MSG | (1 << 2) | 59 |
+| RD_DATA_MSG | (1 << 3) | 60 |
+| WR_DATA_MSG | (1 << 4) | 61 |
+| STATUS_MSG | (1 << 5) | 62 |
+| FMT_MSG | (1 << 6) | 63 |
+| VERBOSE_MSG | (1 << 7) | 64 |
+| IRQ_MSG | (1 << 8) | 65 |
+| I8272_MAX_DRIVES | 4 | 67 |
+| I8272_MAX_SECTOR | 26 | 68 |
+| I8272_SECTOR_LEN | 8192 | 69 |
+| I8272_MAX_N | 6 | 71 |
+| CMD_PHASE | 0 | 73 |
+| EXEC_PHASE | 1 | 74 |
+| DATA_PHASE | 2 | 75 |
+| UNIT_V_I8272_VERBOSE | (UNIT_V_UF + 1) /* verbose mode,... | 138 |
+| UNIT_I8272_VERBOSE | (1 << UNIT_V_I8272_VERBOSE) | 139 |
+| I8272_CAPACITY | (77*2*16*256)   /* Default Micro... | 140 |
+| I8272_CAPACITY_SSSD | (77*1*26*128)   /* Single-sided ... | 141 |
+| I8272_READ_TRACK | 0x02 | 144 |
+| I8272_SPECIFY | 0x03 | 145 |
+| I8272_SENSE_DRIVE_STATUS | 0x04 | 146 |
+| I8272_WRITE_DATA | 0x05 | 147 |
+| I8272_READ_DATA | 0x06 | 148 |
+| I8272_RECALIBRATE | 0x07 | 149 |
+| I8272_SENSE_INTR_STATUS | 0x08 | 150 |
+| I8272_WRITE_DELETED_DATA | 0x09 | 151 |
+| I8272_READ_ID | 0x0A | 152 |
+| I8272_READ_DELETED_DATA | 0x0C | 153 |
+| I8272_FORMAT_TRACK | 0x0D | 154 |
+| I8272_SEEK | 0x0F | 155 |
+| I8272_SCAN_EQUAL | 0x11 | 156 |
+| I8272_SCAN_LOW_EQUAL | 0x19 | 157 |
+| I8272_SCAN_HIGH_EQUAL | 0x1D | 158 |
+| DRIVE_STATUS_TWO_SIDED | 0x08 | 161 |
+| DRIVE_STATUS_TRACK0 | 0x10 | 162 |
+| DRIVE_STATUS_READY | 0x20 | 163 |
+| DRIVE_STATUS_WP | 0x40 | 164 |
+| DRIVE_STATUS_FAULT | 0x80 | 165 |
+| I8272_NAME | "Intel/NEC(765) FDC Core" | 184 |
+| I8272_MSR_RQM | (1 << 7) | 365 |
+| I8272_MSR_DATA_OUT | (1 << 6) | 366 |
+| I8272_MSR_NON_DMA | (1 << 5) | 367 |
+| I8272_MSR_FDC_BUSY | (1 << 4) | 368 |
+

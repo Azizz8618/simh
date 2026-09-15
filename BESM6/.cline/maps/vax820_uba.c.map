@@ -1,0 +1,177 @@
+=== vax820_uba.c — 1035 строк ===
+Источник: vax820_uba.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test vax820_uba.c -nt .cline/maps/vax820_uba.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| nexus_req | 131 | |
+| iodibp | 163 | |
+| uba_dib | 180 | |
+| idx | 248 | |
+| SCPE_OK | 368 | |
+| idx | 375 | |
+| SCPE_OK | 461 | |
+| idx | 468 | |
+| uba_biic.ber | 477 | |
+| idx | 484 | |
+| return | 494 | |
+| iod | 510 | |
+| SET_IRQL | 532 | |
+| iod | 533 | |
+| return | 557 | |
+| return | 580 | |
+| vec | 606 | |
+| ma | 620 | |
+| ma | 651 | |
+| bc | 654 | |
+| ma | 690 | |
+| ma | 722 | |
+| bc | 725 | |
+| ublk | 763 | |
+| FALSE | 790 | |
+| ublk | 797 | |
+| FALSE | 810 | |
+| return | 828 | |
+| return | 840 | |
+| return | 851 | |
+| dptr | 859 | |
+| return | 869 | |
+| SCPE_OK | 885 | |
+| return | 914 | |
+| return | 924 | |
+| uba_int | 933 | |
+| uba_aiip | 934 | |
+| uba_csr | 948 | |
+| uba_biic.ber | 950 | |
+| uba_biic.eicr | 951 | |
+| uba_biic.idest | 952 | |
+| uba_biic.sa | 953 | |
+| uba_biic.ea | 954 | |
+| uba_biic.uiic | 955 | |
+| uba_biic.gpr0 | 956 | |
+| SCPE_OK | 957 | |
+| SCPE_OK | 971 | |
+| adapter" | 976 | |
+| SCPE_NXM | 991 | |
+| SCPE_NXM | 1006 | |
+| ua | 1015 | |
+| SCPE_OK | 1027 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UBA_NDPATH | 6                               ... | 34 |
+| UBA_NMAPR | 512                             ... | 35 |
+| UBA_NMAPU | 496                             ... | 36 |
+| BIGPR0_IEN | 0x00FF0000                      ... | 39 |
+| BIGPR0_UPU | 0x00000001                      ... | 40 |
+| UBACSR_OF | 0x1C8 | 44 |
+| UBACSR_ERR | 0x80000000                      ... | 45 |
+| UBACSR_BIF | 0x10000000                      ... | 46 |
+| UBACSR_TO | 0x08000000                      ... | 47 |
+| UBACSR_UIE | 0x04000000                      ... | 48 |
+| UBACSR_IMR | 0x02000000                      ... | 49 |
+| UBACSR_BDP | 0x01000000                      ... | 50 |
+| UBACSR_EIE | 0x00100000                      ... | 51 |
+| UBACSR_UPI | 0x00020000                      ... | 52 |
+| UBACSR_DMP | 0x00010000                      ... | 53 |
+| UBACSR_MBO | 0x00008000                      ... | 54 |
+| UBACSR_IEN | 0x000000FF                      ... | 55 |
+| UBACSR_WR | (UBACSR_EIE) | 56 |
+| UBACSR_W1C | (UBACSR_BIF \| UBACSR_TO \| UBACSR... | 57 |
+| UBACSR_ERRS | (UBACSR_BIF \| UBACSR_TO \| UBACSR... | 59 |
+| UBAVO_OF | 0x1C9 | 64 |
+| UBAVO_VEC | 0x00003E00 | 65 |
+| UBAFUBAR_OF | 0x1CA | 69 |
+| UBAFUBAR_RD | 0xFFFF | 70 |
+| UBABIFA_OF | 0x1CB | 74 |
+| UBADR_OF | 0x1CC | 78 |
+| UBADPR_OF | 0x1D4 | 82 |
+| UBADPR_V_SEL | 21                              ... | 83 |
+| UBADPR_M_SEL | 0x7 | 84 |
+| UBADPR_PURGE | 0x00000001                      ... | 85 |
+| UBADPR_RD | (UBADPR_M_SEL << UBADPR_V_SEL) | 86 |
+| UBABDPS_OF | 0x1E4 | 90 |
+| UBAMAP_OF | 0x200 | 94 |
+| UBAMAP_VLD | 0x80000000                      ... | 95 |
+| UBAMAP_IOAD | 0x40000000                      ... | 96 |
+| UBAMAP_LWAE | 0x04000000                      ... | 97 |
+| UBAMAP_ODD | 0x02000000                      ... | 98 |
+| UBAMAP_V_DP | 21                              ... | 99 |
+| UBAMAP_M_DP | 0x7 | 100 |
+| UBAMAP_DP | (UBAMAP_M_DP << UBAMAP_V_DP) | 101 |
+| UBAMAP_GETDP(x) | (((x) >> UBAMAP_V_DP) & UBAMAP_M... | 102 |
+| UBAMAP_PAG | 0x001FFFFF | 103 |
+| UBAMAP_RD | (0xC6000000 \| UBAMAP_DP \| UBAMAP... | 104 |
+| UBAMAP_WR | (UBAMAP_RD) | 105 |
+| UBA_DEB_RRD | 0x01                            ... | 109 |
+| UBA_DEB_RWR | 0x02                            ... | 110 |
+| UBA_DEB_MRD | 0x04                            ... | 111 |
+| UBA_DEB_MWR | 0x08                            ... | 112 |
+| UBA_DEB_XFR | 0x10                            ... | 113 |
+| UBA_DEB_ERR | 0x20                            ... | 114 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| uba_rdreg | 246-250 |  |
+| if | 251-254 |  |
+| if | 255-258 |  |
+| if | 259-267 |  |
+| switch | 268-372 |  |
+| uba_wrreg | 373-377 |  |
+| if | 378-380 |  |
+| if | 381-389 |  |
+| switch | 390-465 |  |
+| ReadUb | 466-469 |  |
+| if | 470-481 |  |
+| WriteUb | 482-485 |  |
+| if | 486-507 |  |
+| ReadIO | 508-545 |  |
+| WriteIO | 546-561 |  |
+| uba_eval_int | 562-567 |  |
+| if | 568-575 |  |
+| for | 576-584 |  |
+| uba_get_ubvector | 585-616 |  |
+| Map_ReadB | 617-622 |  |
+| for | 623-647 |  |
+| Map_ReadW | 648-654 |  |
+| for | 655-686 |  |
+| Map_WriteB | 687-692 |  |
+| for | 693-718 |  |
+| Map_WriteW | 719-725 |  |
+| for | 726-760 |  |
+| uba_map_addr | 761-771 |  |
+| if | 772-794 |  |
+| uba_map_addr_c | 795-803 |  |
+| if | 804-818 |  |
+| uba_ub_nxm | 819-820 |  |
+| if | 821-830 |  |
+| uba_bi_nxm | 831-832 |  |
+| if | 833-842 |  |
+| uba_inv_map | 843-844 |  |
+| if | 845-855 |  |
+| uba_ubpdn | 856-863 |  |
+| for | 864-873 |  |
+| uba_svc | 874-875 |  |
+| if | 876-889 |  |
+| uba_adap_int_source | 890-894 |  |
+| uba_biic_error_int_en | 895-899 |  |
+| uba_adap_int_req | 900-905 |  |
+| uba_adap_set_int | 906-907 |  |
+| if | 908-916 |  |
+| uba_adap_clr_int | 917-918 |  |
+| if | 919-928 |  |
+| uba_reset | 929-935 |  |
+| for | 936-939 |  |
+| for | 940-959 |  |
+| uba_help | 960-973 |  |
+| uba_description | 974-980 |  |
+| uba_ex | 981-986 |  |
+| if | 987-995 |  |
+| uba_dep | 996-1001 |  |
+| if | 1002-1010 |  |
+| uba_show_virt | 1011-1016 |  |
+| if | 1017-1031 |  |
+| uba_show_map | 1032-1035 |  |

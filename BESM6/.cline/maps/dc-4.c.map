@@ -1,0 +1,60 @@
+=== dc-4.c — 652 строк ===
+Источник: dc-4.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test dc-4.c -nt .cline/maps/dc-4.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| fdcbyte | 293 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UNIT_V_ENABLE | (UNIT_V_UF + 0) /* Write Enable */ | 228 |
+| UNIT_ENABLE | (1 << UNIT_V_ENABLE) | 229 |
+| NUM_DISK | 4               /* standard 1797... | 233 |
+| SECT_SIZE | 256             /* standard FLEX... | 234 |
+| NUM_SECT | 36              //sectors/track | 235 |
+| TRAK_SIZE | (SECT_SIZE * NUM_SECT) /* trk si... | 236 |
+| HEADS | 2               //handle as DS | 237 |
+| NUM_CYL | 80              /* maximum cylin... | 238 |
+| DSK_SIZE | (NUM_SECT * HEADS * NUM_CYL * SE... | 239 |
+| LABEL | 0x10            //disk label (11... | 243 |
+| VOLNUM | 0x1B            //volume number ... | 244 |
+| FSTUSRTRK | 0x1D            //first user tra... | 245 |
+| FSTUSRSEC | 0x1E            //first user sec... | 246 |
+| LSTUSRTRK | 0x1F            //last user trac... | 247 |
+| LSTUSRSEC | 0x20            //last user sect... | 248 |
+| TOTSEC | 0x21            //total sectors ... | 249 |
+| CREMON | 0x23            //creation month... | 250 |
+| CREDAY | 0x24            //creation day (... | 251 |
+| CREYR | 0x25            //creation year ... | 252 |
+| MAXCYL | 0x26            //last cylinder # | 253 |
+| MAXSEC | 0x27            //last sector # | 254 |
+| NOTRDY | 0x80 | 258 |
+| WRPROT | 0x40 | 259 |
+| HEDLOD | 0x20 | 260 |
+| SEEKERR | 0x10 | 261 |
+| CRCERR | 0x08 | 262 |
+| LOST | 0x04 | 263 |
+| INDEX | 0x02 | 264 |
+| BUSY | 0x01 | 265 |
+| NOTRDY | 0x80 | 269 |
+| WRPROT | 0x40 | 270 |
+| WRTFALT | 0x20 | 271 |
+| RECNF | 0x10 | 272 |
+| CRCERR | 0x08 | 273 |
+| LOST | 0x04 | 274 |
+| DRQ | 0x02 | 275 |
+| BUSY | 0x01 | 276 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dsk_reset | 370-402 |  |
+| dsk_attach | 403-421 |  |
+| fdcdrv | 422-484 |  |
+| fdccmd | 485-579 |  |
+| fdctrk | 580-590 |  |
+| fdcsec | 591-604 |  |
+| fdcdata | 605-652 |  |

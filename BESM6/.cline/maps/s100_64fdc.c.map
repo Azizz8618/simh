@@ -1,0 +1,95 @@
+=== s100_64fdc.c — 1776 строк ===
+Источник: s100_64fdc.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_64fdc.c -nt .cline/maps/s100_64fdc.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| CROMFDC_INFO | 63-72 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| wd179x_infop | 74 | |
+| cromfdc_info_data | 76 | |
+| cromfdc_info | 77 | |
+| cromfdcram | 201 | |
+| motor_timeout | 1440 | |
+| ccs2810_uart_status_reg | 1765 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| DBG_PRINT(args) | sim_printf args | 46 |
+| DBG_PRINT(args) |  | 48 |
+| STATUS_MSG | (1 << 0) | 52 |
+| DRIVE_MSG | (1 << 1) | 53 |
+| VERBOSE_MSG | (1 << 2) | 54 |
+| IRQ_MSG | (1 << 3) | 55 |
+| CROMFDC_MAX_DRIVES | 4 | 57 |
+| CROMFDC_ROM_SIZE | (8 * 1024) | 58 |
+| CROMFDC_ADDR_MASK | (CROMFDC_ROM_SIZE - 1) | 59 |
+| CROMFDC_SIM_64US | 186     /* Number of "ticks" in ... | 61 |
+| UNIT_V_CROMFDC_ROM | (UNIT_V_UF + 2) /* boot ROM enab... | 91 |
+| UNIT_CROMFDC_ROM | (1 << UNIT_V_CROMFDC_ROM) | 92 |
+| CROMFDC_CAPACITY | (77*1*26*128)   /* Default SSSD ... | 93 |
+| MOTOR_TO_LIMIT | 128 | 95 |
+| CROMFDC_FLAG_DRQ | (1 << 7)    /* DRQ (All controll... | 115 |
+| CROMFDC_FLAG_BOOT | (1 << 6)    /* boot# jumper (act... | 116 |
+| CROMFDC_FLAG_SEL_REQ | (1 << 5)    /* Head Load (4FDC, ... | 117 |
+| CROMFDC_FLAG_INH_INIT | (1 << 4)    /* Unassigned (4FDC)... | 118 |
+| CROMFDC_FLAG_MTRON | (1 << 3)    /* Unassigned (4FDC)... | 119 |
+| CROMFDC_FLAG_MTO | (1 << 2)    /* Unassigned (4FDC)... | 120 |
+| CROMFDC_FLAG_ATO | (1 << 1)    /* Unassigned (4FDC)... | 121 |
+| CROMFDC_FLAG_EOJ | (1 << 0)    /* End of Job (INTRQ... | 122 |
+| CROMFDC_CTRL_AUTOWAIT | (1 << 7)    /* Auto Wait Enable ... | 125 |
+| CROMFDC_CTRL_DDENS | (1 << 6)    /* Unassigned (4FDC)... | 126 |
+| CROMFDC_CTRL_MTRON | (1 << 5)    /* Motor On (All con... | 127 |
+| CROMFDC_CTRL_MAXI | (1 << 4)    /* Maxi (8") (All co... | 128 |
+| CROMFDC_CTRL_DS4 | (1 << 3)    /* Drive Select 4 (A... | 129 |
+| CROMFDC_CTRL_DS3 | (1 << 2)    /* Drive Select 3 (A... | 130 |
+| CROMFDC_CTRL_DS2 | (1 << 1)    /* Drive Select 2 (A... | 131 |
+| CROMFDC_CTRL_DS1 | (1 << 0)    /* Drive Select 1 (A... | 132 |
+| CROMFDC_AUX_RESERVED7 | (1 << 7)    /* Unused (All Contr... | 135 |
+| CROMFDC_AUX_EJECT | (1 << 6)    /* 4FDC Eject Left* ... | 136 |
+| CCSFDC_CMD_SIDE | (1 << 6)    /* CCS2422 - Side Se... | 137 |
+| CROMFDC_AUX_SEL_OVERRIDE | (1 << 5)   /* 4FDC Eject Right* ... | 138 |
+| CROMFDC_AUX_FAST_SEEK | (1 << 4)    /* 4FDC, 16FDC Fast ... | 139 |
+| CROMFDC_AUX_RESTORE | (1 << 3)    /* 4FDC, 16FDC Resto... | 140 |
+| CROMFDC_AUX_CTRL_OUT | (1 << 2)    /* Control Out* (All... | 141 |
+| CROMFDC_AUX_CMD_SIDE | (1 << 1)    /* 16FDC, 64FDC: Sid... | 142 |
+| CROMFDC_AUX_RESERVED0 | (1 << 0)    /* Unused (All Contr... | 143 |
+| CROMFDC_IRQ_TIMER5 | (1 << 7)    /* Timer5 Interrupt ... | 147 |
+| CROMFDC_IRQ_TIMER4 | (1 << 6)    /* Timer4 Interrupt ... | 148 |
+| CROMFDC_IRQ_TBE | (1 << 5)    /* Transmit Buffer E... | 149 |
+| CROMFDC_IRQ_RDA | (1 << 4)    /* Read Data Availab... | 150 |
+| CROMFDC_IRQ_TIMER3 | (1 << 3)    /* Timer3 Interrupt ... | 151 |
+| CROMFDC_IRQ_EOJ | (1 << 2)    /* End of Job Interr... | 152 |
+| CROMFDC_IRQ_TIMER2 | (1 << 1)    /* Timer2 Interrupt ... | 153 |
+| CROMFDC_IRQ_TIMER1 | (1 << 0)    /* Timer1 Interrupt ... | 154 |
+| CROMFDC_TIMER1_RST | 0xC7        /* RST0 - 0xC7 */ | 157 |
+| CROMFDC_TIMER2_RST | 0xCF        /* RST8 - 0xCF */ | 158 |
+| CROMFDC_EOJ_RST | 0xD7        /* RST10 - 0xD7 */ | 159 |
+| CROMFDC_TIMER3_RST | 0xDF        /* RST18 - 0xDF */ | 160 |
+| CROMFDC_RDA_RST | 0xE7        /* RST20 - 0xE7 */ | 161 |
+| CROMFDC_TBE_RST | 0xEF        /* RST28 - 0xEF */ | 162 |
+| CROMFDC_TIMER4_RST | 0xF7        /* RST30 - 0xF7 */ | 163 |
+| CROMFDC_TIMER5_RST | 0xFF        /* RST38 - 0xFF */ | 164 |
+| RST_OPCODE_TO_VECTOR(x) | (x & 0x38) | 166 |
+| CROMFDC_NAME | "Cromemco 4/16/64 FDC" | 224 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ipend_to_rst_opcode | 178-225 |  |
+| cromfdc_description | 226-1430 |  |
+| cromfdc_hasProperty | 1431-1442 | returns TRUE iff there exists a disk with 'property' |
+| cromfdc_svc | 1443-1464 | Unit service routine |
+| cromfdc_reset | 1465-1529 | Reset routine |
+| cromfdc_boot | 1530-1547 |  |
+| cromfdcrom | 1548-1563 |  |
+| cromfdc_control | 1564-1659 | Disk Control/Flags Register, 0x34 / CCS2422 Control1/Status1 |
+| cromfdc_ext | 1660-1730 | For CCS2422, this is the Control2/Status2 Register (0x04 only) |
+| cromfdc_timer | 1731-1747 | 64FDC Timer registers |
+| cromfdc_banksel | 1748-1767 | 64FDC Bank Select (Write Disables boot ROM) |
+| ccs2810_uart_status | 1768-1776 | CCS 2810 UART Status Register, needed by MOSS 2.2 Monitor |

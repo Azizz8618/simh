@@ -1,0 +1,278 @@
+=== kx10_imp.c — 3274 строк ===
+Источник: kx10_imp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test kx10_imp.c -nt .cline/maps/kx10_imp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| in_addr_T | 202 | |
+| tmxr_poll | 487 | |
+| broadcast_ethaddr | 489 | |
+| broadcast_ipaddr | 491 | |
+| imp_icsr | 545 | |
+| imp_idb | 546 | |
+| imp_iba | 547 | |
+| imp_iwcnt | 548 | |
+| imp_ocsr | 549 | |
+| imp_odb | 550 | |
+| imp_oba | 551 | |
+| imp_owcnt | 552 | |
+| imp_mpx_lvl | 556 | |
+| last_coni | 557 | |
+| imp_dib | 566 | |
+| sent_flag | 2394 | |
+| SCPE_OK | 3266 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| IMP_DEVNUM | 0460 | 31 |
+| BBN_IMP_DEVNUM | 0550 | 32 |
+| WA_IMP_DEVNUM | 0400 | 33 |
+| DEVNUM | imp_dib.dev_num | 35 |
+| UNIT_V_DHCP | (UNIT_V_UF + 0)                 ... | 37 |
+| UNIT_DHCP | (1 << UNIT_V_DHCP) | 38 |
+| UNIT_V_DTYPE | (UNIT_V_UF + 1)                 ... | 39 |
+| UNIT_M_DTYPE | 3 | 40 |
+| UNIT_DTYPE | (UNIT_M_DTYPE << UNIT_V_DTYPE) | 41 |
+| GET_DTYPE(x) | (((x) >> UNIT_V_DTYPE) & UNIT_M_... | 42 |
+| TYPE_MIT | 0              /* MIT Style KAIM... | 44 |
+| TYPE_BBN | 1              /* BBN style inte... | 45 |
+| TYPE_WAITS | 2              /* IMP connected ... | 46 |
+| TYPE_UNI | 0              /* Unibus byte or... | 48 |
+| TYPE_SIMP | 1              /* PDP10 string b... | 49 |
+| CSR_GO | 0000001  /* Go transfer */ | 55 |
+| CSR_RST | 0000002  /* Reset interface */ | 56 |
+| CSR_UBA | 0000060  /* Unibus upper address */ | 57 |
+| CSR_IE | 0000100  /* Interrupt enable */ | 58 |
+| CSR_RDY | 0000200  /* Device ready */ | 59 |
+| CSR_MRE | 0001000  /* Master error */ | 60 |
+| CSR_NXM | 0040000  /* Non existant memory */ | 61 |
+| CSR_ERR | 0100000  /* Error present */ | 62 |
+| CSR_HRC | 0000004  /* Host Ready Relay Con... | 65 |
+| CSR_SE | 0000010  /* Store enable */ | 66 |
+| CSR_IBF | 0000400  /* Input Buffer full */ | 67 |
+| CSR_INR | 0002000  /* IMP not ready */ | 68 |
+| CSR_HR | 0004000  /* Host Ready */ | 69 |
+| CSR_EOM | 0020000  /* End of Message */ | 70 |
+| CSR_ELB | 0000004  /* Send EOM indication ... | 77 |
+| CSR_BB | 0000010  /* Bus Back */ | 78 |
+| CSR_OBE | 0000400  /* OUtput Buffer Empty */ | 79 |
+| CSR_WC0 | 0020000  /* Output Word Count 0 */ | 80 |
+| IMPID | 010 /* Input done. */ | 87 |
+| IMPIB | 040 /* Input busy. */ | 88 |
+| IMPOD | 0100 /* Output done. */ | 89 |
+| IMPOB | 0400 /* Output busy. */ | 90 |
+| IMPERR | 01000 /* IMP error. */ | 91 |
+| IMPR | 02000 /* IMP ready. */ | 92 |
+| IMPIC | 04000 /* IMP interrupt condition... | 93 |
+| IMPHER | 010000 /* Host error. */ | 94 |
+| IMPHR | 020000 /* Host ready. */ | 95 |
+| IMPIHE | 040000 /* Inhibit interrupt on h... | 96 |
+| IMPLW | 0100000 /* Last IMP word. */ | 97 |
+| IMPID | 010 /* Input done. */ | 104 |
+| IMPI32 | 020 /* Input in 32 bit mode. */ | 105 |
+| IMPIB | 040 /* Input busy. */ | 106 |
+| IMPOD | 0100 /* Output done. */ | 107 |
+| IMPO32 | 0200 /* Output in 32-bit mode. */ | 108 |
+| IMPOB | 0400 /* Output busy. */ | 109 |
+| IMPERR | 01000 /* IMP error. */ | 110 |
+| IMPR | 02000 /* IMP ready. */ | 111 |
+| IMPIC | 04000 /* IMP interrupt condition... | 112 |
+| IMPHER | 010000 /* Host error. */ | 113 |
+| IMPHR | 020000 /* Host ready. */ | 114 |
+| IMPIHE | 040000 /* Inhibit interrupt on h... | 115 |
+| IMPLW | 0100000 /* Last IMP word. */ | 116 |
+| IMPIDC | 010 /* Clear input done */ | 119 |
+| IMI32S | 020 /* Set 32-bit output */ | 120 |
+| IMI32C | 040 /* Clear 32-bit output */ | 121 |
+| IMPODC | 0100 /* Clear output done */ | 122 |
+| IMO32S | 0200 /* Set 32-bit input */ | 123 |
+| IMO32C | 0400 /* Clear 32-bit input */ | 124 |
+| IMPODS | 01000 /* Set output done */ | 125 |
+| IMPIR | 04000 /* Enable interrupt on IMP... | 126 |
+| IMPHEC | 010000 /* Clear host error */ | 127 |
+| IMIIHE | 040000 /* Inhibit interrupt on h... | 128 |
+| IMPLHW | 0200000 /* Set last host word. */ | 129 |
+| IMP_EN_IN | 00000010  /* Enable input PIA ch... | 134 |
+| IMP_EN_OUT | 00000200  /* Enable output PIA c... | 135 |
+| IMP_EN_END | 00004000  /* Enable end PIA chan... | 136 |
+| IMP_END_IN | 00010000  /* End of input */ | 137 |
+| IMP_END_OUT | 00020000  /* End of output */ | 138 |
+| IMP_STOP | 00040000  /* Stop the imp */ | 139 |
+| IMP_PDP_DN | 00100000  /* PDP-10 is down */ | 140 |
+| IMP_CLR | 00200000  /* Clear imp down flag */ | 141 |
+| IMP_RST | 00400000  /* Reset IMP */ | 142 |
+| IMP_IFULL | 00000010  /* Input full */ | 145 |
+| IMP_OEMPY | 00000200  /* Output empty */ | 146 |
+| IMP_ENDIN | 00014000  /* End of input */ | 147 |
+| IMP_DN | 00020000  /* IMP down */ | 148 |
+| IMP_WAS_DN | 00040000  /* IMP was down */ | 149 |
+| IMP_PWR | 00200000  /* IMP Rdy */ | 150 |
+| IMP_ODPIEN | 0000010  /* Enable change of out... | 155 |
+| IMP_IDPIEN | 0000020  /* Enable change of inp... | 156 |
+| IMP_IEPIEN | 0000040  /* Change end of input ... | 157 |
+| IMP_FINO | 0000100  /* Last bit of output */ | 158 |
+| IMP_STROUT | 0000200  /* Start output */ | 159 |
+| IMP_CLRWT | 0002000  /* Clear waiting to inp... | 160 |
+| IMP_CLRST | 0004000  /* Clear stop after inp... | 161 |
+| IMP_O32 | 0010000  /* Set output to 32bit */ | 162 |
+| IMP_I32 | 0020000  /* Set input to 32bit */ | 163 |
+| IMP_STRIN | 0040000  /* Start input */ | 164 |
+| IMP_TEST | 0100000  /* Test mode */ | 165 |
+| IMP_ODONE | 0004000  /* Output done */ | 168 |
+| IMP_IEND | 0010000  /* Input end. */ | 169 |
+| IMP_IDONE | 0020000  /* Input done */ | 170 |
+| IMP_ERR | 0040000  /* Imp error */ | 171 |
+| IMP_RDY | 0200000  /* Imp ready */ | 172 |
+| IMP_OCHN | 0000007 | 173 |
+| IMP_ICHN | 0000070 | 174 |
+| IMP_ECHN | 0000700 | 175 |
+| CONI_TIMEOUT | 3000000 | 179 |
+| STATUS | u3 | 182 |
+| OPOS | u4    /* Output bit position */ | 183 |
+| IPOS | u5    /* Input bit position */ | 184 |
+| ILEN | u6    /* Size of input buffer in... | 185 |
+| IMP_ARPTAB_SIZE | 64 | 188 |
+| IMP_ARP_MAX_AGE | 100 | 189 |
+| ETHTYPE_ARP | 0x0806 | 211 |
+| ETHTYPE_IP | 0x0800 | 212 |
+| IP_DF | 0x4000                    /* don... | 224 |
+| IP_MF | 0x2000                    /* mor... | 225 |
+| IP_OFFMASK | 0x1fff               /* mask for... | 226 |
+| TCP_PROTO | 6 | 234 |
+| TCP_FL_FIN | 0x01 | 242 |
+| TCP_FL_SYN | 0x02 | 243 |
+| TCP_FL_RST | 0x04 | 244 |
+| TCP_FL_PSH | 0x08 | 245 |
+| TCP_FL_ACK | 0x10 | 246 |
+| TCP_FL_URG | 0x20 | 247 |
+| UDP_PROTO | 17 | 253 |
+| ICMP_PROTO | 1 | 271 |
+| ARP_REQUEST | 1 | 285 |
+| ARP_REPLY | 2 | 286 |
+| ARP_HWTYPE_ETH | 1 | 287 |
+| ARP_DONT_AGE | -1 | 308 |
+| DHCP_STATE_OFF | 0 | 312 |
+| DHCP_STATE_REQUESTING | 1 | 313 |
+| DHCP_STATE_INIT | 2 | 314 |
+| DHCP_STATE_REBOOTING | 3 | 315 |
+| DHCP_STATE_REBINDING | 4 | 316 |
+| DHCP_STATE_RENEWING | 5 | 317 |
+| DHCP_STATE_SELECTING | 6 | 318 |
+| DHCP_STATE_INFORMING | 7 | 319 |
+| DHCP_STATE_CHECKING | 8 | 320 |
+| DHCP_STATE_PERMANENT | 9   /* not yet implemented */ | 321 |
+| DHCP_STATE_BOUND | 10 | 322 |
+| DHCP_STATE_RELEASING | 11  /* not yet implemented */ | 323 |
+| DHCP_STATE_BACKING_OFF | 12 | 324 |
+| DHCP_BOOTREQUEST | 1 | 327 |
+| DHCP_BOOTREPLY | 2 | 328 |
+| DHCP_DISCOVER | 1 | 331 |
+| DHCP_OFFER | 2 | 332 |
+| DHCP_REQUEST | 3 | 333 |
+| DHCP_DECLINE | 4 | 334 |
+| DHCP_ACK | 5 | 335 |
+| DHCP_NAK | 6 | 336 |
+| DHCP_RELEASE | 7 | 337 |
+| DHCP_INFORM | 8 | 338 |
+| DHCP_HTYPE_ETH | 1 | 341 |
+| DHCP_MAGIC_COOKIE | 0x63825363UL | 343 |
+| DHCP_INFINITE_LEASE | 0xFFFFFFFF | 345 |
+| DHCP_UDP_PORT_CLIENT | 68 | 347 |
+| DHCP_UDP_PORT_SERVER | 67 | 348 |
+| DHCP_OPTION_PAD | 0 | 353 |
+| DHCP_OPTION_SUBNET_MASK | 1 /* RFC 2132 3.3 */ | 354 |
+| DHCP_OPTION_ROUTER | 3 | 355 |
+| DHCP_OPTION_DNS_SERVER | 6 | 356 |
+| DHCP_OPTION_HOSTNAME | 12 | 357 |
+| DHCP_OPTION_IP_TTL | 23 | 358 |
+| DHCP_OPTION_MTU | 26 | 359 |
+| DHCP_OPTION_BROADCAST | 28 | 360 |
+| DHCP_OPTION_TCP_TTL | 37 | 361 |
+| DHCP_OPTION_NTP | 42 | 362 |
+| DHCP_OPTION_END | 255 | 363 |
+| DHCP_OPTION_REQUESTED_IP | 50 /* RFC 2132 9.1, requested IP... | 366 |
+| DHCP_OPTION_LEASE_TIME | 51 /* RFC 2132 9.2, time in seco... | 367 |
+| DHCP_OPTION_OVERLOAD | 52 /* RFC 2132 9.3, use file and... | 368 |
+| DHCP_OPTION_MESSAGE_TYPE | 53 /* RFC 2132 9.6, important fo... | 370 |
+| DHCP_OPTION_MESSAGE_TYPE_LEN | 1 | 371 |
+| DHCP_OPTION_SERVER_ID | 54 /* RFC 2132 9.7, server IP ad... | 373 |
+| DHCP_OPTION_PARAMETER_REQUEST_LIST | 55 /* RFC 2132 9.8, requested op... | 374 |
+| DHCP_OPTION_MAX_MSG_SIZE | 57 /* RFC 2132 9.10, message siz... | 376 |
+| DHCP_OPTION_MAX_MSG_SIZE_LEN | 2 | 377 |
+| DHCP_OPTION_T1 | 58 /* T1 renewal time */ | 379 |
+| DHCP_OPTION_T2 | 59 /* T2 rebinding time */ | 380 |
+| DHCP_OPTION_US | 60 | 381 |
+| DHCP_OPTION_CLIENT_ID | 61 | 382 |
+| DHCP_OPTION_TFTP_SERVERNAME | 66 | 383 |
+| DHCP_OPTION_BOOTFILE | 67 | 384 |
+| DHCP_OVERLOAD_NONE | 0 | 387 |
+| DHCP_OVERLOAD_FILE | 1 | 388 |
+| DHCP_OVERLOAD_SNAME | 2 | 389 |
+| DHCP_OVERLOAD_SNAME_FILE | 3 | 390 |
+| DHCP_CHADDR_LEN | 16 | 392 |
+| DHCP_SNAME_LEN | 64 | 393 |
+| DHCP_FILE_LEN | 128 | 394 |
+| DEBUG_DHCP | (DEBUG_IRQ<<1) | 638 |
+| DEBUG_ARP | (DEBUG_DHCP<<1) | 640 |
+| DEBUG_TCP | (DEBUG_ARP<<1) | 642 |
+| DEBUG_UDP | (DEBUG_TCP<<1) | 644 |
+| DEBUG_ICMP | (DEBUG_UDP<<1) | 646 |
+| DEBUG_ETHER | (DEBUG_ICMP<<1) | 648 |
+| IMP_OCHN | 0000007 | 665 |
+| IMP_ICHN | 0000070 | 666 |
+| IMP_ECHN | 0000700 | 667 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| check_interrupts | 670-680 |  |
+| imp_wr | 681-790 |  |
+| imp_rd | 791-842 |  |
+| check_interrupts | 843-862 |  |
+| imp_devio | 863-1000 |  |
+| imp_devirq | 1001-1012 |  |
+| imp_srv | 1013-1221 |  |
+| ip_checksum | 1222-1294 |  |
+| imp_eth_srv | 1295-1336 |  |
+| imp_timer_task | 1337-1370 |  |
+| imp_tim_srv | 1371-1383 |  |
+| imp_packet_in | 1384-1611 |  |
+| imp_send_packet | 1612-1706 |  |
+| imp_packet_out | 1707-1872 |  |
+| imp_packet_debug | 1873-2122 |  |
+| imp_write | 2123-2131 |  |
+| imp_arp_update | 2132-2192 |  |
+| imp_arp_age | 2193-2222 | Age arp entries and free up old ones. |
+| imp_arp_arpin | 2223-2297 |  |
+| imp_arp_arpout | 2298-2326 |  |
+| imp_arp_lookup | 2327-2343 |  |
+| imp_set_arp | 2344-2364 |  |
+| imp_show_arp | 2365-2394 |  |
+| sent | 2395-2468 |  |
+| imp_do_dhcp_client | 2469-2650 |  |
+| imp_dhcp_timer | 2651-2719 |  |
+| imp_dhcp_discover | 2720-2764 |  |
+| imp_dhcp_request | 2765-2812 |  |
+| imp_dhcp_release | 2813-2863 |  |
+| ipv4_inet_ntoa | 2864-2877 |  |
+| ipv4_inet_aton | 2878-2923 |  |
+| imp_set_mpx | 2924-2937 |  |
+| imp_show_mpx | 2938-2947 |  |
+| imp_show_mac | 2948-2955 |  |
+| imp_set_mac | 2956-2970 |  |
+| imp_show_ip | 2971-2978 |  |
+| imp_set_ip | 2979-3007 |  |
+| imp_show_gwip | 3008-3016 |  |
+| imp_set_gwip | 3017-3033 |  |
+| imp_show_dhcpip | 3034-3051 |  |
+| imp_show_hostip | 3052-3060 |  |
+| imp_set_hostip | 3061-3074 |  |
+| imp_get_packet | 3075-3085 |  |
+| imp_free_packet | 3086-3090 |  |
+| imp_reset | 3091-3128 |  |
+| imp_attach | 3129-3227 | attach device: |
+| imp_detach | 3228-3245 |  |
+| imp_help | 3246-3269 |  |
+| imp_description | 3270-3274 |  |

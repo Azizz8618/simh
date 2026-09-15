@@ -1,0 +1,140 @@
+=== hp2100_defs.h — 938 строк ===
+Источник: hp2100_defs.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp2100_defs.h -nt .cline/maps/hp2100_defs.h.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| BITSET_FORMAT | 771-778 |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| REG_X | REG_VMIO                    /* p... | 210 |
+| REG_A | (1u << REG_V_UF + 0)        /* d... | 212 |
+| REG_C | (1u << REG_V_UF + 1)        /* d... | 213 |
+| REG_M | (1u << REG_V_UF + 2)        /* d... | 214 |
+| TRACE_CMD | (1u <<  0)          /* trace int... | 224 |
+| TRACE_INCO | (1u <<  1)          /* trace int... | 225 |
+| TRACE_CSRW | (1u <<  2)          /* trace int... | 226 |
+| TRACE_STATE | (1u <<  3)          /* trace sta... | 227 |
+| TRACE_SERV | (1u <<  4)          /* trace uni... | 228 |
+| TRACE_PSERV | (1u <<  5)          /* trace per... | 229 |
+| TRACE_XFER | (1u <<  6)          /* trace dat... | 230 |
+| TRACE_IOBUS | (1u <<  7)          /* trace I/O... | 231 |
+| DEB_CMDS | (1u <<  8)          /* (old) tra... | 233 |
+| DEB_CPU | (1u <<  9)          /* (old) tra... | 234 |
+| DEB_BUF | (1u << 10)          /* (old) tra... | 235 |
+| DEB_XFER | (1u << 11)          /* (old) tra... | 236 |
+| DEB_RWS | (1u << 12)          /* (old) tra... | 237 |
+| DEB_RWSC | (1u << 13)          /* (old) tra... | 238 |
+| DEB_SERV | (1u << 14)          /* (old) tra... | 239 |
+| TRACING(d,f) | (sim_deb != NULL && ((d).dctrl &... | 270 |
+| TRACINGP(d,f) | (sim_deb != NULL && ((d)->dctrl ... | 272 |
+| STOP_UNIMPL | 1                   /* unimpleme... | 329 |
+| STOP_UNSC | 2                   /* stop on I... | 330 |
+| STOP_UNDEF | 3                   /* undefined... | 331 |
+| STOP_INDIR | 4                   /* stop on a... | 332 |
+| STOP_RERUN | 4                   /* stops abo... | 334 |
+| STOP_HALT | 5                   /* programme... | 336 |
+| STOP_BRKPNT | 6                   /* breakpoin... | 337 |
+| STOP_NOCONN | 7                   /* no connec... | 338 |
+| STOP_NOTAPE | 8                   /* no tape */ | 339 |
+| STOP_EOT | 9                   /* end of ta... | 340 |
+| NOTE_INDINT | 10                  /* an interr... | 342 |
+| MTAB_XDV | (MTAB_XTD \| MTAB_VDV) | 347 |
+| MTAB_XUN | (MTAB_XTD \| MTAB_VUN) | 348 |
+| USEC_PER_EVENT | 0.634               /* average C... | 392 |
+| S(t) | (uint32) (((t) * 1000000.0) / US... | 396 |
+| D4_WIDTH | 4                           /* 4... | 445 |
+| D4_MASK | 0017u                       /* 4... | 446 |
+| D8_WIDTH | 8                           /* 8... | 448 |
+| D8_MASK | 0377u                       /* 8... | 449 |
+| D8_UMAX | 0377u                       /* 8... | 450 |
+| D8_SMAX | 0177u                       /* 8... | 451 |
+| D8_SMIN | 0200u                       /* 8... | 452 |
+| D8_SIGN | 0200u                       /* 8... | 453 |
+| D16_WIDTH | 16                          /* 1... | 455 |
+| D16_MASK | 0177777u                    /* 1... | 456 |
+| D16_UMAX | 0177777u                    /* 1... | 457 |
+| D16_SMAX | 0077777u                    /* 1... | 458 |
+| D16_SMIN | 0100000u                    /* 1... | 459 |
+| D16_SIGN | 0100000u                    /* 1... | 460 |
+| D32_WIDTH | 32                          /* 3... | 462 |
+| D32_MASK | 037777777777u               /* 3... | 463 |
+| D32_UMAX | 037777777777u               /* 3... | 464 |
+| D32_SMAX | 017777777777u               /* 3... | 465 |
+| D32_SMIN | 020000000000u               /* 3... | 466 |
+| D32_SIGN | 020000000000u               /* 3... | 467 |
+| D48_WIDTH | 48                          /* 4... | 469 |
+| D48_MASK | 07777777777777777uL         /* 4... | 470 |
+| D48_UMAX | 07777777777777777uL         /* 4... | 471 |
+| D48_SMAX | 03777777777777777uL         /* 4... | 472 |
+| D48_SMIN | 04000000000000000uL         /* 4... | 473 |
+| D48_SIGN | 04000000000000000uL         /* 4... | 474 |
+| D64_WIDTH | 64                          /* 6... | 476 |
+| D64_MASK | 01777777777777777777777uL   /* 6... | 477 |
+| D64_UMAX | 01777777777777777777777uL   /* 6... | 478 |
+| D64_SMAX | 00777777777777777777777uL   /* 6... | 479 |
+| D64_SMIN | 01000000000000000000000uL   /* 6... | 480 |
+| D64_SIGN | 01000000000000000000000uL   /* 6... | 481 |
+| S16_OVFL_MASK | ((uint32) D16_UMAX << D16_WIDTH \|  | 483 |
+| S32_OVFL_MASK | ((t_uint64) D32_UMAX << D32_WIDT... | 486 |
+| LSB | 1u                          /* l... | 489 |
+| D16_SIGN_LSB | (D16_SIGN \| LSB)            /* b... | 490 |
+| R_MASK | D16_MASK                    /* 1... | 492 |
+| OF_WIDTH | 10                              ... | 546 |
+| OF_MASK | ((1u << OF_WIDTH) - 1)          ... | 547 |
+| OF_MAX | ((1u << OF_WIDTH) - 1)          ... | 548 |
+| LP_WIDTH | 5                               ... | 550 |
+| LP_MASK | ((1u << LP_WIDTH) - 1)          ... | 551 |
+| LP_MAX | ((1u << LP_WIDTH) - 1)          ... | 552 |
+| PP_WIDTH | 10                              ... | 554 |
+| PP_MASK | ((1u << PP_WIDTH) - 1)          ... | 555 |
+| PP_MAX | ((1u << PP_WIDTH) - 1)          ... | 556 |
+| LA_WIDTH | (LP_WIDTH + OF_WIDTH)           ... | 558 |
+| LA_MASK | ((1u << LA_WIDTH) - 1)          ... | 559 |
+| LA_MAX | ((1u << LA_WIDTH) - 1)          ... | 560 |
+| PA_WIDTH | (PP_WIDTH + OF_WIDTH)           ... | 562 |
+| PA_MASK | ((1u << PA_WIDTH) - 1)          ... | 563 |
+| PA_MAX | ((1u << PA_WIDTH) - 1)          ... | 564 |
+| DV_WIDTH | 16                              ... | 566 |
+| DV_MASK | ((1u << DV_WIDTH) - 1)          ... | 567 |
+| DV_SIGN | ( 1u << (DV_WIDTH - 1))         ... | 568 |
+| DV_UMAX | ((1u << DV_WIDTH) - 1)          ... | 569 |
+| DV_SMAX | ((1u << (DV_WIDTH - 1)) - 1)    ... | 570 |
+| P_PAGE(p) | ((p) >> OF_WIDTH & PP_MASK) | 584 |
+| PAGE(p) | ((p) >> OF_WIDTH & LP_MASK) | 585 |
+| OFFSET(p) | ((p) & OF_MASK) | 586 |
+| TO_PA(p,o) | (((uint32) (p) & PP_MASK) << PP_... | 587 |
+| SEXT8(x) | ((int32) ((x) & D8_SIGN  ? (x) \|... | 640 |
+| SEXT16(x) | ((int32) ((x) & D16_SIGN ? (x) \|... | 641 |
+| NEG8(x) | ((~(x) + 1) & D8_MASK) | 643 |
+| NEG16(x) | ((~(x) + 1) & D16_MASK) | 644 |
+| NEG32(x) | ((~(x) + 1) & D32_MASK) | 645 |
+| INT16(u) | ((u) > D16_SMAX ? (-(int16) (D16... | 647 |
+| INT32(u) | ((u) > D32_SMAX ? (-(int32) (D32... | 648 |
+| UPPER_BYTE(w) | (uint8)   ((w) >> D8_WIDTH & D8_... | 673 |
+| LOWER_BYTE(w) | (uint8)   ((w) &  D8_MASK) | 674 |
+| TO_WORD(u,l) | (HP_WORD) (((u) & D8_MASK) << D8... | 675 |
+| REPLACE_UPPER(w,b) | ((w) & D8_MASK \| ((b) & D8_MASK)... | 677 |
+| REPLACE_LOWER(w,b) | ((w) & D8_MASK << D8_WIDTH \| (b)... | 678 |
+| UPPER_WORD(d) | (HP_WORD) ((d) >> D16_WIDTH & D1... | 683 |
+| LOWER_WORD(d) | (HP_WORD) ((d) &  D16_MASK) | 684 |
+| TO_DWORD(u,l) | ((uint32) (u) << D16_WIDTH \| (l)) | 686 |
+| TMR_TBG | 0                   /* the time ... | 727 |
+| TMR_POLL | 1                   /* the input... | 728 |
+| POLL_RATE | 100                 /* poll 100 ... | 730 |
+| POLL_PERIOD | mS (10)             /* poll peri... | 731 |
+| POLL_FIRST | 1                   /* first pol... | 732 |
+| FMT_INIT(names,offset,dir,alt,bar) |  | 782 |
+| CPU_OPTION_SET | CPU_OPTION          /* a set of ... | 888 |
+| CPU_OPTION_SHIFT | (Option_BASE + 1) | 890 |
+| CPU_211X | (CPU_2116 \| CPU_2115 \| CPU_2114) | 892 |
+| CPU_21XX | (CPU_2116 \| CPU_2115 \| CPU_2114 ... | 893 |
+| CPU_1000_E_F | (CPU_1000_E \| CPU_1000_F) | 894 |
+| CPU_1000 | (CPU_1000_M \| CPU_1000_E \| CPU_1... | 895 |
+| CPU_ALL | (CPU_211X \| CPU_2100 \| CPU_1000) | 896 |
+| CPU_MODEL_MASK | CPU_ALL             /* a mask fo... | 898 |
+| CPU_OPTION_MASK | (~CPU_ALL)          /* a mask fo... | 899 |
+

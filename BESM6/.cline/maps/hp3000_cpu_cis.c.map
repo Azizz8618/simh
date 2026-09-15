@@ -1,0 +1,72 @@
+=== hp3000_cpu_cis.c — 1977 строк ===
+Источник: hp3000_cpu_cis.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test hp3000_cpu_cis.c -nt .cline/maps/hp3000_cpu_cis.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| source | 603 | |
+| sign | 604 | |
+| segment | 605 | |
+| source_rba | 606 | |
+| label | 607 | |
+| byte | 608 | |
+| source_length | 609 | |
+| target_length | 610 | |
+| opcode | 611 | |
+| store | 612 | |
+| trap | 613 | |
+| status | 614 | |
+| label | 1097 | |
+| source | 1198 | |
+| sign | 1199 | |
+| separate_index | 1200 | |
+| byte | 1201 | |
+| trap | 1202 | |
+| zero_fill | 1203 | |
+| bare_sign | 1204 | |
+| source | 1403 | |
+| class | 1404 | |
+| bank | 1405 | |
+| fill_char | 1406 | |
+| byte | 1407 | |
+| loop_count | 1408 | |
+| source_byte | 1843 | |
+| return | 1904 | |
+| return | 1938 | |
+| return | 1976 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MAX_DIGITS | 28                  /* maximum n... | 471 |
+| SIGN_MASK | 0360u               /* 8-bit num... | 476 |
+| SIGN_TEST_MASK | 0017u               /* 8-bit num... | 477 |
+| SIGN_PLUS | 0014u               /* 1100 -> t... | 479 |
+| SIGN_MINUS | 0015u               /* 1101 -> t... | 480 |
+| SIGN_UNSIGNED | 0017u               /* 1111 -> t... | 481 |
+| IS_NEG(v) | (((v) & SIGN_TEST_MASK) == SIGN_... | 483 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| cpu_cis_op | 601-617 |  |
+| switch | 618-1094 |  |
+| branch_external | 1095-1125 |  |
+| strip_overpunch | 1126-1127 |  |
+| if | 1128-1132 |  |
+| if | 1133-1137 |  |
+| if | 1138-1142 |  |
+| if | 1143-1195 |  |
+| convert | 1196-1205 |  |
+| switch | 1206-1244 |  |
+| while | 1245-1400 |  |
+| edit | 1401-1414 |  |
+| if | 1415-1434 |  |
+| if | 1435-1795 |  |
+| if | 1796-1840 |  |
+| compare | 1841-1846 |  |
+| while | 1847-1896 |  |
+| fprint_operands | 1897-1916 |  |
+| fprint_translated_operands | 1917-1967 |  |
+| fprint_operand | 1968-1977 |  |

@@ -1,0 +1,69 @@
+=== ibm1130_cpu.c — 1965 строк ===
+Источник: ibm1130_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ibm1130_cpu.c -nt .cline/maps/ibm1130_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| x_cmds | 167 | |
+| cr_unit | 230 | |
+| narchived | 1566 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| UPDATE_BY_TIMER |  | 156 |
+| ENABLE_BACKTRACE |  | 157 |
+| ENABLE_1800_SUPPORT | /* define to enable support for ... | 159 |
+| MAX_EXTRA_COMMANDS | 10 | 166 |
+| CRLF | "\r\n" | 170 |
+| CRLF | "\n" | 172 |
+| SIGN_BIT(v) | ((v) & 0x8000) | 179 |
+| DWSIGN_BIT(v) | ((v) & 0x80000000) | 180 |
+| ARFSET(v) | ARF = (v) & 0xFFFF      /* set A... | 244 |
+| ARFSET(v) | /* without GUI, no need for sett... | 246 |
+| UNIT_MSIZE | (1 << (UNIT_V_UF + 7))      /* f... | 266 |
+| UNIT_1800 | (1 << (UNIT_V_UF + 8))      /* f... | 267 |
+| UNIT_TRACE | (3 << (UNIT_V_UF + 9))      /* d... | 268 |
+| UNIT_TRACE_NONE | 0 | 270 |
+| UNIT_TRACE_IO | (1 << (UNIT_V_UF+9)) | 271 |
+| UNIT_TRACE_INSTR | (2 << (UNIT_V_UF+9)) | 272 |
+| UNIT_TRACE_BOTH | (3 << (UNIT_V_UF+9)) | 273 |
+| INCREMENT_IAR | IAR = (IAR + 1) & mem_mask | 448 |
+| MAXARCHIVE | 16 | 1560 |
+| DEBUG_TO_PRINTER |  | 1907 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| ReadW | 342-348 |  |
+| WriteW | 349-360 |  |
+| ReadIndex | 361-372 |  |
+| WriteIndex | 373-390 |  |
+| upcase | 391-423 |  |
+| calc_ints | 424-449 |  |
+| bail | 450-455 |  |
+| weirdop | 456-475 |  |
+| ibm1130_qcount | 476-493 |  |
+| sim_instr | 494-1215 |  |
+| simh_status_to_stopcode | 1216-1229 |  |
+| bsctest | 1230-1267 |  |
+| exit_irq | 1268-1299 |  |
+| break_simulation | 1300-1312 |  |
+| cpu_reset | 1313-1355 |  |
+| cpu_ex | 1356-1372 |  |
+| cpu_dep | 1373-1385 |  |
+| cpu_svc | 1386-1398 |  |
+| cpu_set_size | 1399-1427 |  |
+| cpu_set_type | 1428-1449 |  |
+| xio_1131_switches | 1450-1472 |  |
+| xio_error | 1473-1483 |  |
+| register_cmd | 1484-1516 |  |
+| echo_cmd | 1517-1527 |  |
+| sim_init | 1528-1567 |  |
+| archive_backtrace | 1568-1584 |  |
+| reset_backtrace | 1585-1590 |  |
+| void_backtrace | 1591-1602 |  |
+| show_backtrace | 1603-1617 |  |
+| backtrace_cmd | 1618-1631 |  |
+| void_backtrace | 1632-1965 |  |

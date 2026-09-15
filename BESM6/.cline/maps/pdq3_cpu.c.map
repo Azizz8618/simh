@@ -1,0 +1,100 @@
+=== pdq3_cpu.c — 1615 строк ===
+Источник: pdq3_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdq3_cpu.c -nt .cline/maps/pdq3_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| reg_sp | 83 | |
+| reg_splow | 84 | |
+| reg_spupr | 85 | |
+| reg_mp | 86 | |
+| reg_bp | 87 | |
+| reg_ctp | 89 | |
+| reg_rq | 90 | |
+| reg_ssv | 91 | |
+| reg_lm | 92 | |
+| reg_lsv | 93 | |
+| reg_intpending | 94 | |
+| reg_intlatch | 95 | |
+| PCX | 101 | |
+| reg_dmabase | 108 | |
+| cpu_ioinfo1 | 168 | |
+| cpu_ioinfo2 | 169 | |
+| cpu_ioinfo3 | 170 | |
+| cpu_ioinfo4 | 171 | |
+| cpu_ioinfo5 | 172 | |
+| cpu_ctxt | 173 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| MAX(a,b) | (((a) > (b)) ? (a) : (b)) | 678 |
+| MIN(a,b) | (((a) < (b)) ? (a) : (b)) | 679 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| GetPtbl | 201-207 | return start address of proctbl of current code segment |
+| GetSegbase | 208-217 | return segment base of segment |
+| GetSegno | 218-225 |  |
+| SetSEGB | 226-234 | set SEGB and return address of proc tbl (optimization for segb + segb[0] ) |
+| AdjustRefCount | 235-242 |  |
+| save_to_tib | 243-251 | save CPU regs into TIB |
+| restore_from_tib | 252-262 | restore CPU regs from TIB |
+| cpu_setRegs | 263-276 | initialize registers for boot |
+| rom_ignore | 277-309 | which occur during context switch from HDT to boot loader */ |
+| cpu_boot | 310-331 | the different boot sectors I found. |
+| cpu_finishAutoload | 332-344 |  |
+| cpu_reset | 345-365 | CPU reset |
+| cpu_ex | 366-388 | Memory examine |
+| cpu_dep | 389-407 | Memory deposit |
+| cpu_buserror | 408-412 |  |
+| ssr_read | 413-417 |  |
+| ssr_write | 418-450 |  |
+| ses_read | 451-457 |  |
+| cpu_readserial | 458-463 |  |
+| rom_baseread | 464-484 |  |
+| cpu_isIntEnabled | 485-489 |  |
+| cpu_assertInt | 490-499 | latch interrupts |
+| cpu_raiseInt | 500-511 |  |
+| cpu_ackInt | 512-522 |  |
+| cpu_setIntVec | 523-528 |  |
+| getIntLevel | 529-538 |  |
+| cpu_processInt | 539-565 |  |
+| UB | 566-570 |  |
+| W | 571-579 |  |
+| DB | 580-582 |  |
+| SB | 583-588 |  |
+| B | 589-600 |  |
+| Put | 601-603 |  |
+| Get | 604-609 |  |
+| Putb | 610-613 |  |
+| Getb | 614-619 |  |
+| TraverseMSstat | 620-626 |  |
+| Tos | 627-633 |  |
+| Pick | 634-640 |  |
+| Pop | 641-647 |  |
+| Push | 648-653 |  |
+| PopS | 654-657 |  |
+| PushS | 658-661 |  |
+| PopF | 662-669 |  |
+| PushF | 670-690 |  |
+| GetMask | 691-695 | e.g. <3:5> 0000000011111000 == 0x00f8 |
+| GetSIB | 696-702 | get address of SIB entry of segment |
+| DoCXG | 703-716 | do a CXG instruction into segment SEGNO to procedure procno |
+| Raise | 717-736 |  |
+| GetBit | 737-744 |  |
+| createMSCW | 745-770 |  |
+| enque | 771-790 | put qtask into priority queue |
+| taskswitch6 | 791-828 | perform a task switch. If no task ready to run, wait for an interrupt |
+| taskswitch5 | 829-837 |  |
+| deque | 838-845 |  |
+| DoSIGNAL | 846-891 |  |
+| DoWAIT | 892-918 |  |
+| HiByte | 919-922 |  |
+| LoByte | 923-926 |  |
+| DoInstr | 927-1552 |  |
+| sim_instr | 1553-1605 |  |
+| cpu_set_flag | 1606-1610 |  |
+| cpu_set_noflag | 1611-1615 |  |

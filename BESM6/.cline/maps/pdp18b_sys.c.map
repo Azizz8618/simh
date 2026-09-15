@@ -1,0 +1,131 @@
+=== pdp18b_sys.c — 1347 строк ===
+Источник: pdp18b_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp18b_sys.c -nt .cline/maps/pdp18b_sys.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_dev | 62 | |
+| fpp_dev | 64 | |
+| ptr_dev | 66 | |
+| tti_dev | 67 | |
+| tti_unit | 68 | |
+| clk_dev | 69 | |
+| lp62_dev | 71 | |
+| lp647_dev | 74 | |
+| lp09_dev | 77 | |
+| lp15_dev | 80 | |
+| dt_dev | 82 | |
+| drm_dev | 84 | |
+| rb_dev | 87 | |
+| rf_dev | 90 | |
+| rp_dev | 93 | |
+| mt_dev | 96 | |
+| tti1_dev | 99 | |
+| tti1_unit | 100 | |
+| g2out_dev | 103 | |
+| dr15_dev | 106 | |
+| g2out_dev | 109 | |
+| dpy_dev | 112 | |
+| cpu_unit | 114 | |
+| cpu_reg | 115 | |
+| memm | 117 | |
+| PC | 118 | |
+| sim_name | 131 | |
+| sim_name | 133 | |
+| sim_name | 135 | |
+| sim_name | 137 | |
+| sim_PC | 140 | |
+| sim_emax | 142 | |
+| word | 215 | |
+| word | 217 | |
+| word | 229 | |
+| origin | 245 | |
+| origin | 249 | |
+| bits | 282 | |
+| gbuf | 283 | |
+| SCPE_OK | 309 | |
+| SCPE_OK | 363 | |
+| sp | 937 | |
+| cflag | 965 | |
+| dptr | 966 | |
+| inst | 974 | |
+| inst | 1031 | |
+| SCPE_ARG | 1123 | |
+| gbuf | 1165 | |
+| cflag | 1166 | |
+| dptr | 1167 | |
+| cptr | 1179 | |
+| sta | 1346 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| I_V_FL | 18                              ... | 392 |
+| I_M_FL | 017                             ... | 393 |
+| I_V_DC | 22                              ... | 394 |
+| I_V_NPN | 0                               ... | 395 |
+| I_V_NPI | 1                               ... | 396 |
+| I_V_IOT | 2                               ... | 397 |
+| I_V_MRF | 3                               ... | 398 |
+| I_V_OPR | 4                               ... | 399 |
+| I_V_LAW | 5                               ... | 400 |
+| I_V_XR | 6                               ... | 401 |
+| I_V_XR9 | 7                               ... | 402 |
+| I_V_EST | 8                               ... | 403 |
+| I_V_ESH | 9                               ... | 404 |
+| I_V_EMD | 10                              ... | 405 |
+| I_V_FPM | 11                              ... | 406 |
+| I_V_FPI | 12                              ... | 407 |
+| I_V_FPN | 13                              ... | 408 |
+| I_NPN | (I_V_NPN << I_V_FL) | 409 |
+| I_NPI | (I_V_NPI << I_V_FL) | 410 |
+| I_IOT | (I_V_IOT << I_V_FL) | 411 |
+| I_MRF | (I_V_MRF << I_V_FL) | 412 |
+| I_OPR | (I_V_OPR << I_V_FL) | 413 |
+| I_LAW | (I_V_LAW << I_V_FL) | 414 |
+| I_XR | (I_V_XR << I_V_FL) | 415 |
+| I_XR9 | (I_V_XR9 << I_V_FL) | 416 |
+| I_EST | (I_V_EST << I_V_FL) | 417 |
+| I_ESH | (I_V_ESH << I_V_FL) | 418 |
+| I_EMD | (I_V_EMD << I_V_FL) | 419 |
+| I_FPM | (I_V_FPM << I_V_FL) | 420 |
+| I_FPI | (I_V_FPI << I_V_FL) | 421 |
+| I_FPN | (I_V_FPN << I_V_FL) | 422 |
+| MD(x) | ((I_EMD) + ((x) << I_V_DC)) | 423 |
+| FMTASC(x) | (((x) < 040)? "<%03o>": "%c"), (x) | 958 |
+| SIXTOASC(x) | (((x) >= 040)? (x): ((x) + 0100)) | 959 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| getword | 213-242 |  |
+| rim_load_47 | 243-249 |  |
+| for | 250-279 |  |
+| hri_load_7915 | 280-285 |  |
+| if | 286-295 |  |
+| for | 296-325 |  |
+| bin_load_915 | 326-336 |  |
+| for | 337-367 |  |
+| sim_load | 368-924 |  |
+| fprint_opr | 925-928 |  |
+| for | 929-939 |  |
+| rar | 940-974 |  |
+| if | 975-984 |  |
+| if | 985-990 |  |
+| if | 991-996 |  |
+| if | 997-1003 |  |
+| if | 1004-1009 |  |
+| if | 1010-1018 |  |
+| if | 1019-1031 |  |
+| for | 1032-1135 |  |
+| get_sint | 1136-1138 |  |
+| if | 1139-1142 |  |
+| if | 1143-1160 |  |
+| parse_sym | 1161-1179 |  |
+| if | 1180-1188 |  |
+| if | 1189-1197 |  |
+| if | 1198-1205 |  |
+| if | 1206-1216 |  |
+| if | 1217-1233 |  |
+| switch | 1234-1347 |  |

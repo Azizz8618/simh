@@ -1,0 +1,145 @@
+=== gri_cpu.c — 1110 строк ===
+Источник: gri_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test gri_cpu.c -nt .cline/maps/gri_cpu.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| src | 406 | |
+| reason | 407 | |
+| reason | 412 | |
+| reason | 591 | |
+| stop_opr | 642 | |
+| stop_opr | 647 | |
+| SCPE_OK | 664 | |
+| SCPE_OK | 686 | |
+| IR | 702 | |
+| SCPE_OK | 709 | |
+| TRP | 716 | |
+| TRP | 721 | |
+| SCPE_OK | 722 | |
+| ISR | 729 | |
+| ISR | 734 | |
+| SCPE_OK | 735 | |
+| SCPE_OK | 744 | |
+| MA | 756 | |
+| SCPE_OK | 771 | |
+| SC | 778 | |
+| SCQ_ENTRY | 783 | |
+| SCPE_OK | 785 | |
+| SWR | 792 | |
+| MSR_RW | 799 | |
+| SCPE_OK | 806 | |
+| MSR | 836 | |
+| MSR | 839 | |
+| AO | 840 | |
+| stop_opr | 857 | |
+| stop_opr | 874 | |
+| stop_opr | 892 | |
+| SCPE_OK | 957 | |
+| stop_opr | 975 | |
+| stop_opr | 993 | |
+| stop_opr | 1011 | |
+| stop_opr | 1029 | |
+| stop_opr | 1047 | |
+| AX | 1056 | |
+| XR | 1057 | |
+| TRP | 1058 | |
+| ISR | 1059 | |
+| MSR | 1060 | |
+| MA | 1061 | |
+| BSW | 1062 | |
+| dev_done | 1065 | |
+| SCPE_IERR | 1069 | |
+| SCPE_OK | 1071 | |
+| SCPE_OK | 1082 | |
+| SCPE_OK | 1092 | |
+| mc | 1097 | |
+| MEMSIZE | 1106 | |
+| SCPE_OK | 1109 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| SCQ_SIZE | 64                              ... | 151 |
+| SCQ_MASK | (SCQ_SIZE - 1) | 152 |
+| SCQ_ENTRY | scq[scq_p = (scq_p - 1) & SCQ_MA... | 153 |
+| UNIT_V_AO | (UNIT_V_UF + 0)                 ... | 154 |
+| UNIT_AO | (1u << UNIT_V_AO) | 155 |
+| UNIT_V_EAO | (UNIT_V_UF + 1)                 ... | 156 |
+| UNIT_EAO | (1u << UNIT_V_EAO) | 157 |
+| UNIT_V_GPR | (UNIT_V_UF + 2)                 ... | 158 |
+| UNIT_GPR | (1u << UNIT_V_GPR) | 159 |
+| UNIT_V_BSWPK | (UNIT_V_UF + 3)                 ... | 160 |
+| UNIT_BSWPK | (1u << UNIT_V_BSWPK) | 161 |
+| UNIT_V_GRI99 | (UNIT_V_UF + 4)                 ... | 162 |
+| UNIT_GRI99 | (1u << UNIT_V_GRI99) | 163 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 5)                 ... | 164 |
+| UNIT_MSIZE | (1u << UNIT_V_MSIZE) | 165 |
+| IDX_ADD(x) | ((((cpu_unit.flags & UNIT_GRI99)... | 167 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 404-416 |  |
+| while | 417-595 |  |
+| bus_op | 596-602 |  |
+| switch | 603-634 |  |
+| no_rd | 635-639 |  |
+| no_wr | 640-644 |  |
+| no_fo | 645-649 |  |
+| no_sf | 650-656 |  |
+| zero_rd | 657-661 |  |
+| zero_wr | 662-666 |  |
+| zero_fo | 667-668 |  |
+| switch | 669-688 |  |
+| zero_sf | 689-699 |  |
+| ir_rd | 700-704 |  |
+| ir_fo | 705-713 |  |
+| trp_rd | 714-718 |  |
+| trp_wr | 719-726 |  |
+| isr_rd | 727-731 |  |
+| isr_wr | 732-737 |  |
+| isr_fo | 738-746 |  |
+| isr_sf | 747-753 |  |
+| ma_rd | 754-760 |  |
+| mem_rd | 761-765 |  |
+| mem_wr | 766-775 |  |
+| sc_rd | 776-780 |  |
+| sc_wr | 781-789 |  |
+| swr_rd | 790-796 |  |
+| msr_rd | 797-801 |  |
+| msr_wr | 802-810 |  |
+| ao_update | 811-814 |  |
+| switch | 815-842 |  |
+| ax_rd | 843-849 |  |
+| ax_wr | 850-851 |  |
+| if | 852-859 |  |
+| ay_rd | 860-866 |  |
+| ay_wr | 867-868 |  |
+| if | 869-876 |  |
+| ao_rd | 877-883 |  |
+| ao_fo | 884-885 |  |
+| if | 886-894 |  |
+| ao_sf | 895-906 |  |
+| eao_fo | 907-912 |  |
+| switch | 913-961 |  |
+| xr_rd | 962-968 |  |
+| xr_wr | 969-970 |  |
+| if | 971-979 |  |
+| atrp_rd | 980-986 |  |
+| atrp_wr | 987-988 |  |
+| if | 989-997 |  |
+| bsw_rd | 998-1004 |  |
+| bsw_wr | 1005-1006 |  |
+| if | 1007-1015 |  |
+| bpk_rd | 1016-1022 |  |
+| bpk_wr | 1023-1024 |  |
+| if | 1025-1033 |  |
+| gr_rd | 1034-1040 |  |
+| gr_wr | 1041-1042 |  |
+| if | 1043-1051 |  |
+| cpu_reset | 1052-1075 |  |
+| cpu_ex | 1076-1086 |  |
+| cpu_dep | 1087-1094 |  |
+| cpu_set_size | 1095-1110 |  |

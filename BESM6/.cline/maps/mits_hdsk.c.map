@@ -1,0 +1,74 @@
+=== mits_hdsk.c — 575 строк ===
+Источник: mits_hdsk.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test mits_hdsk.c -nt .cline/maps/mits_hdsk.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| diskBuf1 | 154 | |
+| diskBuf2 | 155 | |
+| diskBuf3 | 156 | |
+| diskBuf4 | 157 | |
+| diskBuf | 158 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| HDSK_SECTOR_SIZE | 256             /* size of secto... | 57 |
+| HDSK_SECTORS_PER_TRACK | 24              /* sectors per t... | 58 |
+| HDSK_NUM_HEADS | 2               /* heads per dis... | 59 |
+| HDSK_NUM_TRACKS | 406             /* tracks per su... | 60 |
+| HDSK_TRACK_SIZE | (HDSK_SECTOR_SIZE * HDSK_SECTORS... | 61 |
+| HDSK_CYLINDER_SIZE | (HDSK_TRACK_SIZE * 2) | 62 |
+| HDSK_CAPACITY | (HDSK_CYLINDER_SIZE * HDSK_NUM_T... | 63 |
+| HDSK_NUMBER | 8               /* number of har... | 64 |
+| IO_IN | 0               /* I/O operation... | 65 |
+| IO_OUT | 1               /* I/O operation... | 66 |
+| UNIT_V_DSK_WLK | (UNIT_V_UF + 0)         /* write... | 67 |
+| UNIT_DSK_WLK | (1 << UNIT_V_DSK_WLK) | 68 |
+| READ_MSG | (1 << 0) | 71 |
+| WRITE_MSG | (1 << 1) | 72 |
+| VERBOSE_MSG | (1 << 2) | 73 |
+| BOOTROM_SIZE_HDSK | 256 | 76 |
+| HDSK_BOOT_ADDRESS | 0xfc00 | 77 |
+| CMD_SHIFT | 4       // shift right 4 places | 83 |
+| CMD_MASK | 0x0f    // mask after shifting | 84 |
+| CMD_SEEK | 0       // seek to track | 85 |
+| CMD_WRITE_SEC | 2       // write sector from buf n | 86 |
+| CMD_READ_SEC | 3       // read sector into buf n | 87 |
+| CMD_WRITE_BUF | 4       // load buffer n from CPU | 88 |
+| CMD_READ_BUF | 5       // read buffer n into CPU | 89 |
+| CMD_READ_STATUS | 6       // read controller IV byte | 90 |
+| CMD_SET_IV_BYTE | 8       // set controller IV byte | 91 |
+| CMD_READ_UNFMT | 10      // read unformatted sector | 92 |
+| CMD_FORMAT | 12 | 93 |
+| CMD_INITIALIZE | 14 | 94 |
+| CMD_MAX | (CMD_INITIALIZE + 1) | 95 |
+| UNIT_SHIFT | 2       // shift right 2 places | 117 |
+| UNIT_MASK | 0x03    // mask after shifting | 118 |
+| BUFFER_MASK | 0x03    // mask - no shift needed | 120 |
+| TRACK_SHIFTH | 8       // shift left 8 places i... | 122 |
+| TRACK_MASKH | 0x01    // msb of track number | 123 |
+| TRACK_MASKL | 0xff    // entire lsb of track n... | 124 |
+| HEAD_SHIFT | 5       // shift right 5 places | 126 |
+| HEAD_MASK | 0x03    // mask after shifting (... | 127 |
+| SECTOR_MASK | 0x1f    // mask - no shift needed | 129 |
+| CSTAT_WRITE_PROTECT | 0x80    // disk is write protected | 133 |
+| CSTAT_NOT_READY | 0x01    // drive not ready | 134 |
+| CSTAT_BAD_SECTOR | 0x02    // invalid sector number | 135 |
+| HDSK_NAME | "MITS Hard Disk" | 185 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| mhdsk_description | 187-250 |  |
+| mhdsk_boot | 251-256 |  |
+| cmdTranslate | 257-270 |  |
+| dsk_reset | 271-321 |  |
+| hdReturnReady | 322-341 |  |
+| hdCstat | 342-360 |  |
+| hdAcmd | 361-469 |  |
+| hdCdata | 470-494 |  |
+| hdAdata | 495-518 |  |
+| doRead | 519-549 |  |
+| doWrite | 550-575 |  |

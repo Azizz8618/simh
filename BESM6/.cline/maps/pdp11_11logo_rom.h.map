@@ -1,0 +1,44 @@
+=== pdp11_11logo_rom.h — 1695 строк ===
+Источник: pdp11_11logo_rom.h | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp11_11logo_rom.h -nt .cline/maps/pdp11_11logo_rom.h.map
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| ROM_logo_lda_H | 0 | 2 |
+| BOOT_CODE_SIZE | 0x6599 | 10 |
+| BOOT_CODE_CHECKSUM | 0xFFDD77F7 | 11 |
+| BOOT_CODE_FILENAME | "11logo.lda" | 12 |
+| BOOT_CODE_FILEPATH | "PDP11/11logo/11logo.lda" | 13 |
+| BOOT_CODE_ARRAY | NULL | 15 |
+| BOOT_CODE_ARRAY | logo_lda | 17 |
+| BOOT_CODE_URL | NULL | 19 |
+| BOOT_CODE_SIZE_1 | 0x6599 | 22 |
+| BOOT_CODE_CHECKSUM_1 | 0xFFDD77F7 | 23 |
+| BOOT_CODE_FILENAME_1 | "11logo.lda" | 24 |
+| BOOT_CODE_FILEPATH_1 | "PDP11/11logo/11logo.lda" | 25 |
+| BOOT_CODE_ARRAY_1 | NULL | 27 |
+| BOOT_CODE_ARRAY_1 | logo_lda | 29 |
+| BOOT_CODE_URL_1 | NULL | 31 |
+| BOOT_CODE_SIZE_2 | 0x6599 | 33 |
+| BOOT_CODE_CHECKSUM_2 | 0xFFDD77F7 | 34 |
+| BOOT_CODE_FILENAME_2 | "11logo.lda" | 35 |
+| BOOT_CODE_FILEPATH_2 | "PDP11/11logo/11logo.lda" | 36 |
+| BOOT_CODE_ARRAY_2 | NULL | 38 |
+| BOOT_CODE_ARRAY_2 | logo_lda | 40 |
+| BOOT_CODE_URL_2 | NULL | 42 |
+| BOOT_CODE_SIZE_3 | 0x6599 | 44 |
+| BOOT_CODE_CHECKSUM_3 | 0xFFDD77F7 | 45 |
+| BOOT_CODE_FILENAME_3 | "11logo.lda" | 46 |
+| BOOT_CODE_FILEPATH_3 | "PDP11/11logo/11logo.lda" | 47 |
+| BOOT_CODE_ARRAY_3 | NULL | 49 |
+| BOOT_CODE_ARRAY_3 | logo_lda | 51 |
+| BOOT_CODE_URL_3 | NULL | 53 |
+| BOOT_CODE_SIZE_4 | 0x6599 | 55 |
+| BOOT_CODE_CHECKSUM_4 | 0xFFDD77F7 | 56 |
+| BOOT_CODE_FILENAME_4 | "11logo.lda" | 57 |
+| BOOT_CODE_FILEPATH_4 | "PDP11/11logo/11logo.lda" | 58 |
+| BOOT_CODE_ARRAY_4 | NULL | 60 |
+| BOOT_CODE_ARRAY_4 | logo_lda | 62 |
+| BOOT_CODE_URL_4 | NULL | 64 |
+

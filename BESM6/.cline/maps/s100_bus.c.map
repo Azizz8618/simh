@@ -1,0 +1,69 @@
+=== s100_bus.c — 1079 строк ===
+Источник: s100_bus.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test s100_bus.c -nt .cline/maps/s100_bus.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| bus_addr | 58 | |
+| idev_in | 71 | |
+| idev_out | 72 | |
+| bus_console | 77 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| CLK_DELAY | 5000          /* 100 Hz */ | 36 |
+| INBUF_LEN | 600 | 682 |
+| LINE_LEN | 32 | 764 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| nulldev | 74-78 |  |
+| bus_description | 79-131 |  |
+| bus_reset | 132-167 | BUS reset |
+| bus_svc | 168-177 | Altair8800 100Hz timer |
+| bus_ex | 178-185 | memory examine |
+| bus_dep | 186-192 | memory deposit |
+| bus_show_config | 193-235 |  |
+| bus_show_console | 236-243 |  |
+| s100_bus_get_idev | 244-255 |  |
+| s100_bus_addio | 256-263 |  |
+| s100_bus_addio_in | 264-279 |  |
+| s100_bus_addio_out | 280-296 |  |
+| s100_bus_remio | 297-304 |  |
+| s100_bus_remio_in | 305-322 |  |
+| s100_bus_remio_out | 323-340 |  |
+| s100_bus_get_mdev | 341-376 |  |
+| s100_bus_setmem_dflt | 377-402 |  |
+| s100_bus_remmem_dflt | 403-412 |  |
+| s100_bus_in | 413-417 |  |
+| s100_bus_out | 418-422 |  |
+| s100_bus_memr | 423-431 |  |
+| s100_bus_memw | 432-440 |  |
+| s100_bus_set_addr | 441-447 |  |
+| s100_bus_get_addr | 448-452 |  |
+| s100_bus_int | 453-460 |  |
+| s100_bus_get_int | 461-465 |  |
+| s100_bus_get_int_data | 466-470 |  |
+| s100_bus_clr_int | 471-477 |  |
+| s100_bus_nmi | 478-482 |  |
+| s100_bus_get_nmi | 483-487 |  |
+| s100_bus_clr_nmi | 488-492 |  |
+| bus_cmd_memory | 493-553 |  |
+| sim_load | 554-610 |  |
+| bus_hexload_command | 611-635 |  |
+| bus_hexsave_command | 636-683 |  |
+| hexload | 684-765 |  |
+| hexsave | 766-827 |  |
+| set_membase | 828-878 | Set Memory Base Address routine |
+| show_membase | 879-903 | Show Base Address routine |
+| set_iobase | 904-953 | Set Memory Base Address routine |
+| show_iobase | 954-978 | Show I/O Base Address routine |
+| s100_bus_console | 979-986 | Set new CONSOLE unit |
+| s100_bus_get_console | 987-991 | Set new CONSOLE unit |
+| s100_bus_noconsole | 992-1002 |  |
+| s100_bus_poll_kbd | 1003-1011 |  |
+| bus_ddt_command | 1012-1068 |  |
+| bus_show_help | 1069-1079 |  |

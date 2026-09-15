@@ -1,0 +1,69 @@
+=== pdp10_tim.c — 522 строк ===
+Источник: pdp10_tim.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test pdp10_tim.c -nt .cline/maps/pdp10_tim.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| apr_flg | 142 | |
+| pcst | 143 | |
+| tcu_dib | 160 | |
+| tempbase | 228 | |
+| FALSE | 262 | |
+| FALSE | 275 | |
+| FALSE | 286 | |
+| old_clk_tps | 307 | |
+| old_tick_in_usecs | 308 | |
+| tim_new_period | 348 | |
+| tim_unit.wait | 368 | |
+| tmxr_poll | 369 | |
+| FALSE | 374 | |
+| SCPE_OK | 410 | |
+| return | 419 | |
+| tim_interval | 440 | |
+| clk_tps | 441 | |
+| SCPE_OK | 450 | |
+| SCPE_OK | 471 | |
+| curtim | 486 | |
+| tptr | 487 | |
+| st | 488 | |
+| st | 521 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| TIM_HW_FREQ | 4100000                         ... | 97 |
+| TIM_HWRE_MASK | 07777                           ... | 98 |
+| TIM_BASE_RAZ | 03                              ... | 99 |
+| UNIT_V_Y2K | (UNIT_V_UF + 0)                 ... | 100 |
+| UNIT_Y2K | (1u << UNIT_V_Y2K) | 101 |
+| TIM_TMXR_FREQ | 60                              ... | 103 |
+| TIM_WAIT_IPS | 480000 | 112 |
+| TIM_TPS_T10 | 60                              ... | 116 |
+| TIM_ITS_QUANT | (TIM_HW_FREQ / TIM_TPS_T10)     ... | 117 |
+| TIM_TPS_T20 | 1000                            ... | 121 |
+| PROB(x) | (((rand() * 100) / RAND_MAX) >= ... | 125 |
+| DEB_RRD | 0001                          /*... | 186 |
+| DEB_RWR | 0002                          /*... | 187 |
+| DEB_TPS | 0004                          /*... | 188 |
+| DEB_INT | 0010                          /*... | 189 |
+| DEB_TRC | 0020                          /*... | 190 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| rdtim | 222-269 |  |
+| wrtim | 270-281 | counter), and place the result in the time base registers in the workspace. |
+| rdint | 282-297 | the same as that supplied by WRINT. |
+| wrint | 298-304 |  |
+| update_interval | 305-351 |  |
+| if | 352-382 |  |
+| tim_svc | 383-384 |  |
+| if | 385-401 |  |
+| if | 402-412 |  |
+| tim_incr_base | 413-423 |  |
+| tim_reset | 424-454 |  |
+| tim_set_mod | 455-456 |  |
+| if | 457-483 |  |
+| tcu_rd | 484-496 |  |
+| switch | 497-522 |  |

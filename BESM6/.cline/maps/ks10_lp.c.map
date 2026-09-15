@@ -1,0 +1,101 @@
+=== ks10_lp.c — 896 строк ===
+Источник: ks10_lp.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test ks10_lp.c -nt .cline/maps/ks10_lp.c.map
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| lp20_buffer | 133 | |
+| lp20_cs1 | 134 | |
+| lp20_cs2 | 135 | |
+| lp20_pagcnt | 136 | |
+| lp20_ba | 137 | |
+| lp20_wcnt | 138 | |
+| lp20_col | 139 | |
+| lp20_chksum | 140 | |
+| lp20_buf | 141 | |
+| lp20_data | 142 | |
+| lp20_odd | 143 | |
+| lp20_duvfa_state | 144 | |
+| lp20_index | 145 | |
+| lp20_vfu | 154 | |
+| lp20_ram | 155 | |
+| lp20_dib | 235 | |
+| SCPE_OK | 888 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| NUM_DEVS_LP20 | 0 | 33 |
+| UNIT_V_CT | (UNIT_V_UF + 0) | 38 |
+| UNIT_UC | (1 << UNIT_V_CT) | 39 |
+| UNIT_CT | (1 << UNIT_V_CT) | 40 |
+| UNIT_V_VFU | (UNIT_V_CT + 1) | 41 |
+| UNIT_OPT | (1 << UNIT_V_VFU) | 42 |
+| LINE | u6 | 45 |
+| CS1_GO | 0000001    /* Go command */ | 48 |
+| CS1_PAR | 0000002    /* Enable Parity inte... | 49 |
+| CS1_V_FNC | 2        /* Function shift */ | 50 |
+| CS1_M_FNC | 03       /* Function mask */ | 51 |
+| FNC_PRINT | 0        /* Print */ | 52 |
+| FNC_TEST | 1        /* Test */ | 53 |
+| FNC_DVU | 2        /* Load DAVFU */ | 54 |
+| FNC_RAM | 3        /* Load translation RAM */ | 55 |
+| CS1_UBA | 0000060    /* Upper Unibus addre... | 56 |
+| CS1_IE | 0000100    /* Interrupt enable */ | 57 |
+| CS1_DONE | 0000200    /* Done flag */ | 58 |
+| CS1_INIT | 0000400    /* Init */ | 59 |
+| CS1_ECLR | 0001000    /* Clear errors */ | 60 |
+| CS1_DHOLD | 0002000    /* Delimiter hold */ | 61 |
+| CS1_ONL | 0004000    /* Online */ | 62 |
+| CS1_DVON | 0010000    /* DAVFU online */ | 63 |
+| CS1_UND | 0020000    /* Undefined Characte... | 64 |
+| CS1_PZERO | 0040000    /* Page counter zero */ | 65 |
+| CS1_ERR | 0100000    /* Errors */ | 66 |
+| CS1_MOD | (CS1_DHOLD\|CS1_IE\|(CS1_M_FNC << ... | 67 |
+| CS2_GOE | 0000001    /* Go error */ | 70 |
+| CS2_DTE | 0000002    /* DEM timing error */ | 71 |
+| CS2_MTE | 0000004    /* MSYN error */ | 72 |
+| CS2_RPE | 0000010    /* RAM parity error */ | 73 |
+| CS2_MPE | 0000020    /* Memory parity erro... | 74 |
+| CS2_LPE | 0000040    /* LPT parity error */ | 75 |
+| CS2_DVOF | 0000100    /* DAVFU not ready */ | 76 |
+| CS2_OFFL | 0000200    /* Offline */ | 77 |
+| CS2_TEST | 0003400    /* Test mode */ | 78 |
+| CS2_OVFU | 0004000    /* Optical VFU */ | 79 |
+| CS2_PBIT | 0010000    /* data parity bit */ | 80 |
+| CS2_NRDY | 0020000    /* Printer error */ | 81 |
+| CS2_LA180 | 0040000    /* LA180 printer */ | 82 |
+| CS2_VLD | 0100000    /* Valid data */ | 83 |
+| CS2_ECLR | (CS2_GOE\|CS2_DTE\|CS2_MTE\|CS2_RPE... | 84 |
+| CS2_ERR | (CS2_ECLR\|CS2_OFFL\|CS2_DVOF) | 85 |
+| EOFFLG | 001      /* Tops 20 wants EOF */ | 106 |
+| HDSFLG | 002      /* Tell Tops 20 The cur... | 107 |
+| ACKFLG | 004      /* Post an acknowwledge... | 108 |
+| INTFLG | 010      /* Send interrupt */ | 109 |
+| DELFLG | 020      /* Previous character w... | 110 |
+| MARGIN | 6 | 112 |
+| LP20_RAM_RAP | 010000     /* RAM Parity */ | 147 |
+| LP20_RAM_INT | 04000      /* Interrrupt bit */ | 148 |
+| LP20_RAM_DEL | 02000      /* Delimiter bit */ | 149 |
+| LP20_RAM_TRN | 01000      /* Translation bite */ | 150 |
+| LP20_RAM_PI | 00400      /* Paper Instruction */ | 151 |
+| LP20_RAM_CHR | 00377      /* Character translat... | 152 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| lp20_write | 285-399 |  |
+| lp20_read | 400-456 |  |
+| lp20_printline | 457-496 |  |
+| lp20_output | 497-536 |  |
+| lp20_update_chkirq | 537-561 |  |
+| lp20_update_ready | 562-581 |  |
+| lp20_svc | 582-747 |  |
+| lp20_init | 748-762 | Init routine |
+| lp20_reset | 763-814 | Reset routine |
+| lp20_attach | 815-828 |  |
+| lp20_detach | 829-841 |  |
+| lp20_setlpp | 842-858 |  |
+| lp20_getlpp | 859-890 |  |
+| lp20_description | 891-896 |  |

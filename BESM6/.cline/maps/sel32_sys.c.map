@@ -1,0 +1,61 @@
+=== sel32_sys.c — 1722 строк ===
+Источник: sel32_sys.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test sel32_sys.c -nt .cline/maps/sel32_sys.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| t_opcode | 685-690 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| cpu_reg | 27 | |
+| SPAD | 29 | |
+| PSD | 30 | |
+| sim_PC | 56 | |
+| line | 151 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PRINTABLE(x) | ((x < 32) \|\| (x > 126)) ? '.' : x | 149 |
+| FMT_NONE | 0 | 596 |
+| FMT_MEM | 1 | 597 |
+| FMT_TAP | 2 | 599 |
+| FMT_ICL | 3 | 601 |
+| TYPE_A | 0 | 666 |
+| TYPE_B | 1 | 667 |
+| TYPE_C | 2 | 668 |
+| TYPE_D | 3 | 669 |
+| TYPE_E | 4 | 670 |
+| TYPE_F | 5 | 671 |
+| TYPE_G | 6 | 672 |
+| TYPE_H | 7 | 673 |
+| TYPE_I | 8 | 674 |
+| TYPE_K | 9 | 675 |
+| TYPE_L | 10 | 676 |
+| TYPE_M | 11 | 677 |
+| TYPE_N | 12 | 678 |
+| H | 0x10                /* halfword ... | 679 |
+| B | 0x20                /* base regi... | 681 |
+| N | 0x40                /* non base ... | 682 |
+| X | 0x80                /* 32/55 or ... | 683 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| dump_mem | 153-194 | function to dump SEL32 memory up to 16 bytes with side by side ascii values |
+| dump_buf | 195-240 | off is offset in buffer to start |
+| get_word | 241-259 | return 0 - error or eof |
+| get_halfword | 260-274 | return 0 - error or eof |
+| load_mem | 275-291 | return SCPE_OK on load complete |
+| load_tap | 292-434 | return SCPE_OK on load complete |
+| get_2hex | 435-462 | or SCPE_ARG for arg error (bad number) |
+| load_icl | 463-601 | return SCPE_OK on load complete |
+| sim_load | 602-902 |  |
+| fprint_inst | 903-1094 |  |
+| fprint_sym | 1095-1179 |  |
+| get_off | 1180-1204 | Collect offset in radix. |
+| get_imm | 1205-1231 | Collect immediate in radix. |
+| parse_sym | 1232-1722 |  |

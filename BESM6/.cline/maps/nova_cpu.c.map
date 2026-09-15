@@ -1,0 +1,103 @@
+=== nova_cpu.c — 1518 строк ===
+Источник: nova_cpu.c | Автогенерация: scripts/gen_code_map.sh
+Регенерировать: test nova_cpu.c -nt .cline/maps/nova_cpu.c.map
+
+=== СТРУКТУРЫ / TYPEDEF ===
+| Имя | Строки |
+|-----|--------|
+| Hist_entry | 277-292 |
+| Hist_info | 1280-1286 |
+
+=== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+| Имя | Стр | Назначение |
+|-----|-----|------------|
+| PC | 415 | |
+| reason | 416 | |
+| reason | 425 | |
+| saved_PC | 1070 | |
+| dev_disable | 1081 | |
+| DEV_UPDATE_INTR | 1086 | |
+| return | 1087 | |
+| pimask | 1095 | |
+| dev_disable | 1096 | |
+| pwr_low | 1097 | |
+| SCPE_IERR | 1102 | |
+| SCPE_OK | 1104 | |
+| SCPE_OK | 1115 | |
+| SCPE_OK | 1125 | |
+| mc | 1132 | |
+| MEMSIZE | 1141 | |
+| SCPE_OK | 1144 | |
+| dptr | 1151 | |
+| dibp | 1152 | |
+| SCPE_OK | 1169 | |
+| saved_PC | 1252 | |
+| SCPE_OK | 1253 | |
+| addr | 1260 | |
+| hist_ptr | 1299 | |
+| hist_p | 1354 | |
+| hptr | 1427 | |
+| SCPE_OK | 1460 | |
+
+=== КЛЮЧЕВЫЕ КОНСТАНТЫ / #define ===
+| Имя | Значение | Стр |
+|-----|----------|-----|
+| PCQ_SIZE | 64                              ... | 237 |
+| PCQ_MASK | (PCQ_SIZE - 1) | 238 |
+| PCQ_ENTRY | pcq[pcq_p = (pcq_p - 1) & PCQ_MA... | 239 |
+| INCA(x) | (((x) + 1) & AMASK) | 242 |
+| DECA(x) | (((x) - 1) & AMASK) | 243 |
+| SEXT(x) | (((x) & SIGN)? ((x) \| ~DMASK): (x)) | 244 |
+| STK_CHECK(x,y) | if (((x) & 0377) < (y))  | 245 |
+| IND_STEP(x) | M[x] & A_IND;  /* return next le... | 247 |
+| INCREMENT_PC | PC = (PC + 1) & AMASK           ... | 256 |
+| UNIT_V_MDV | (UNIT_V_UF + 0)                 ... | 258 |
+| UNIT_V_STK | (UNIT_V_UF + 1)                 ... | 259 |
+| UNIT_V_BYT | (UNIT_V_UF + 2)                 ... | 260 |
+| UNIT_V_64KW | (UNIT_V_UF + 3)                 ... | 261 |
+| UNIT_V_MSIZE | (UNIT_V_UF + 4)                 ... | 262 |
+| UNIT_MDV | (1 << UNIT_V_MDV) | 263 |
+| UNIT_STK | (1 << UNIT_V_STK) | 264 |
+| UNIT_BYT | (1 << UNIT_V_BYT) | 265 |
+| UNIT_64KW | (1 << UNIT_V_64KW) | 266 |
+| UNIT_MSIZE | (1 << UNIT_V_MSIZE) | 267 |
+| UNIT_IOPT | (UNIT_MDV \| UNIT_STK \| UNIT_BYT ... | 268 |
+| UNIT_NOVA3 | (UNIT_MDV \| UNIT_STK) | 269 |
+| UNIT_NOVA4 | (UNIT_MDV \| UNIT_STK \| UNIT_BYT) | 270 |
+| UNIT_KERONIX | (UNIT_MDV \| UNIT_64KW) | 271 |
+| MODE_64K | (cpu_unit.flags & UNIT_64KW) | 273 |
+| MODE_64K_ACTIVE | ((cpu_unit.flags & UNIT_64KW) &&... | 274 |
+| BOOT_START | 00000 | 1206 |
+| BOOT_LEN | (sizeof(boot_rom) / sizeof(int32)) | 1207 |
+| HIST_IR_INVALID | -1 | 1291 |
+| HIST_MIN | 0     /*  0 == deactivate histor... | 1292 |
+| HIST_MAX | 1000000     /*  completely arbit... | 1293 |
+
+=== ФУНКЦИИ ===
+| Имя | Строки | Назначение |
+|-----|--------|------------|
+| sim_instr | 413-428 |  |
+| while | 429-1076 |  |
+| mask_out | 1077-1081 |  |
+| for | 1082-1091 |  |
+| cpu_reset | 1092-1108 |  |
+| cpu_ex | 1109-1119 |  |
+| cpu_dep | 1120-1129 |  |
+| cpu_set_size | 1130-1148 |  |
+| build_devtab | 1149-1154 |  |
+| for | 1155-1159 |  |
+| for | 1160-1246 |  |
+| cpu_boot | 1247-1257 |  |
+| MapAddr | 1258-1296 |  |
+| hist_save | 1297-1333 |  |
+| hist_set | 1334-1338 |  |
+| if | 1339-1349 |  |
+| if | 1350-1354 |  |
+| if | 1355-1360 |  |
+| if | 1361-1373 |  |
+| hist_fprintf | 1374-1375 |  |
+| if | 1376-1421 |  |
+| hist_show | 1422-1429 |  |
+| if | 1430-1495 |  |
+| devBitNames | 1496-1499 |  |
+| if | 1500-1518 |  |
