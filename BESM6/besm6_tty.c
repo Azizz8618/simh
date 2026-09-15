@@ -521,7 +521,7 @@ t_stat tty_attach (UNIT *u, CONST char *cptr)
 {
     int num = u - tty_unit;
     char gbuf[CBUFSIZE];
-    int r, m, n;
+    int r;
 
     if (num > 24 && tty_unit[num].flags & TTY_INVERSE_READY) {
         READY2 &= ~CONS_READY[num-25];
@@ -543,16 +543,13 @@ t_stat tty_attach (UNIT *u, CONST char *cptr)
         return SCPE_OK;
     }
     if (strcmp (gbuf, "CONSOLE")) {
-        /* Saving and restoring all .conn,
-         * because tmxr_attach() zeroes them. */
-        for (m=0, n=1; n<=LINES_MAX; ++n)
-            if (tty_line[n].conn)
-                m |= 1 << (LINES_MAX-n);
-        /* The unit number is ignored for the port assignment */
-        r = tmxr_attach (&tty_desc, &tty_unit[0], cptr);
-        for (n=1; n<=LINES_MAX; ++n)
-            if (m >> (LINES_MAX-n) & 1)
-                tty_line[n].conn = 1;
+        /* Prepend LINE=N so tmxr_open_master creates a per-line
+         * listener socket on the correct tmxr line.  Without this,
+         * all ports bind to the single master socket and tmxr_poll_conn
+         * assigns connections to the first free line (wrong unit). */
+        char tmxr_cptr[CBUFSIZE];
+        snprintf(tmxr_cptr, sizeof(tmxr_cptr), "LINE=%d,%s", num, cptr);
+        r = tmxr_attach (&tty_desc, &tty_unit[0], tmxr_cptr);
         return r;
     } else {
         /* Attaching SIMH console to a particular terminal. */
