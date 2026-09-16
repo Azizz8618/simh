@@ -1,0 +1,1 @@
+/home/azizz/.cline/skills/c-code-analyzer/SKILL.md

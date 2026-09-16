@@ -2202,18 +2202,17 @@ t_stat sim_instr (void)
             GRP |= GRP_SLAVE;
         }
 
-        /* === Стратегия А: проталкивание первого ДКС-прерывания ===
-         * Если PRP содержит DKS-биты (ПРП5-8,12), а MPRP их не содержит,
-         * напрямую устанавливаем GRP_SLAVE. Это обходит проверку PRP & MPRP,
-         * которая блокирует прерывания ДКС до вызова УСТРП из СВЯЗЬ7.
+        /* === Стратегия А+Г: safety net (one-shot push) ===
          *
-         * Одноразовый флаг: push выполняется 1 раз за сессию. После
-         * первого прерывания ОС сама вызывает УСТРП (УВВ '34) и настраивает
-         * MPRP. Без флага — interrupt storm (GRP_SLAVE ставится на каждой
-         * итерации, handler не чистит PRP DKS → бесконечный INT2).
+         * ОСНОВНОЙ ПУТЬ: dks_register/dks_poll устанавливают
+         * PRP и MPRP одновременно (эмуляция аппаратного hardwired
+         * МПРП К-71). Стандартный путь PRP & MPRP → GRP_SLAVE
+         * → op_int_2 работает сам по себе.
          *
-         * Сравнение с read_032: push в read_032 ineffective — вызов изнутри
-         * обработчика (PSW_INTR_DISABLE), op_int_2 не срабатывает. */
+         * ЭТОТ PUSH — запасной механизм на случай, если по какой-
+         * причине MPRP был сброшен (ГАШПРП) до обработки прерывания.
+         * Очищает PRP бит через тв218 (УВВ '30'), поэтому storm
+         * невозможен. One-shot предотвращает повторные срабатывания. */
         {
             static int dks_push_done = 0;
             if (!dks_push_done) {
@@ -2225,8 +2224,8 @@ t_stat sim_instr (void)
                     MGRP |= GRP_SLAVE;
                     dks_push_done = 1;
                     besm6_debug_sub(B6_LOG_DKS,
-                        ">>> DKS PUSH: MPRP=%06o, PRP=%06o, GRP_SLAVE set (one-shot)",
-                        MPRP, PRP);
+                        ">>> DKS PUSH: PRP=%06o, MPRP=%06o, undelivered=%06o",
+                        PRP, MPRP, dks_undelivered);
                 }
             }
         }

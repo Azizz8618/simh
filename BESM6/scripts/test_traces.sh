@@ -44,13 +44,11 @@ if [[ "${FRESH:-0}" == "1" ]]; then
     sleep 2
     rm -f "$OSZAGR/debug.txt" "$OSZAGR/log.txt" \
           "$OSZAGR/logs/debug_"*.log \
-          "$OSZAGR/1[0-9]" \
-          /tmp/besm6_in /tmp/besm6_run.log
+          "$OSZAGR/1[0-9]"
     tmux kill-session -t "$SESSION" 2>/dev/null || true
     sleep 1
 
     log "Запускаю эмулятор..."
-    mkfifo /tmp/besm6_in 2>/dev/null || true
     tmux new-session -d -s "$SESSION" \
         "cd $OSZAGR && $BESM6_DIR/../BIN/besm6 dispak.ini"
     log "Жду загрузку ОС (30 сек)..."
@@ -63,7 +61,6 @@ if ! tmux has-session -t "$SESSION" 2>/dev/null; then
     rm -f "$OSZAGR/debug.txt" "$OSZAGR/log.txt" \
           "$OSZAGR/logs/debug_"*.log \
           "$OSZAGR/1[0-9]"
-    mkfifo /tmp/besm6_in 2>/dev/null || true
     tmux new-session -d -s "$SESSION" \
         "cd $OSZAGR && $BESM6_DIR/../BIN/besm6 dispak.ini"
     log "Жду загрузку ОС (30 сек)..."

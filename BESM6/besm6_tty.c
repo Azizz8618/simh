@@ -252,9 +252,23 @@ void dks_register(int num, TMLN *line)
     besm6_debug_sub(B6_LOG_DKS, ">>> DKS: terminal %d registered, base=0x%04x (%05o), SPREQ[108-110]=%06o,%06o,%06o", 
                 num, base_addr, base_addr, kadopam_mem[108], kadopam_mem[109], kadopam_mem[110]);
     
-    /* Generate interrupt PRP12 (SREQ - S-terminal request) */
+    /* Generate interrupt PRP6 (SREQ - S-terminal request).
+     *
+     * КАДОПАМ аппаратно управляет битами ПРП (документация К71,
+     * секция 2.4.8: «сигналы прерывания запоминаются на
+     * периферийном регистре прерывания»). На реальной К-71
+     * МПРП для битов КАДОПАМ аппаратно установлены (hardwired).
+     * Эмулируем это установкой MPRP вместе с PRP.
+     *
+     * Безопасность от storm: тв218 (disp70.be:1405-1406)
+     * очищает бит PRP через УВВ '30' с инвертированной маской
+     * ДО dispatch в ОБВНП3. Дефолтный обработчик (пб БМВ)
+     * возвращает в БМВ → БМВ1 → выход. После выхода PRP=0,
+     * PRP & MPRP=0 → нет GRP_SLAVE → нет повторного прерывания. */
     PRP |= PRP_DKS_SREQ;
+    MPRP |= PRP_DKS_SREQ;
     GRP |= GRP_SLAVE;
+    MGRP |= GRP_SLAVE;
     rks_count_interrupt();   /*increment RKS interrupt counter (077775) */
     
     besm6_debug_sub(B6_LOG_DKS, ">>> DKS: PRP=%06o, MPRP=%06o, PRP&MPRP=%06o", PRP, MPRP, PRP & MPRP);
@@ -290,9 +304,12 @@ void dks_poll(void)
             besm6_debug_sub(B6_LOG_DKS, ">>> DKS: char '%c' (0%03o) from terminal %d at 0x%04x",
                         c >= ' ' ? c : '?', c, num, term->base_addr);
             
-            /* Generate interrupt PRP7 (TERMREQ - H-terminal request) */
+            /* Generate interrupt PRP7 (TERMREQ - H-terminal request).
+             * MPRP — аналогично dks_register (hardwired К-71). */
             PRP |= PRP_DKS_TERMREQ;
+            MPRP |= PRP_DKS_TERMREQ;
             GRP |= GRP_SLAVE;
+            MGRP |= GRP_SLAVE;
             rks_count_interrupt();   /* increment RKS interrupt counter (077775) */
         }
     }

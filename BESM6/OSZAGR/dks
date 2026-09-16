@@ -1,0 +1,5 @@
+-0> set debug dks
+%SIM-INFO: Debug output to "dks"
+Debug output to "dks" at Wed Sep 16 04:12:29 2026
+БЭСМ-6 simulator V4.0-0 Current        git commit id: 4043e1fc+uncommitted-changes
+sim> go
