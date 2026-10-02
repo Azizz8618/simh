@@ -37,51 +37,6 @@
  *                word from it
  */
 #include "besm6_defs.h"
-#include <math.h>
-
-/* Per-subsystem logging directory (set via command or default) */
-static char besm6_log_dir[256] = {0};
-static size_t besm6_log_max_bytes = 10*1024*1024; /* 10 MB default */
-
-/*
- * Initialize the subsystem logging infrastructure.
- * Called from cpu_reset() or the ini file.
- */
-void besm6_log_init(void)
-{
-    /* Only initialize if not already initialized */
-    if (!b6_log_is_init()) {
-        b6_log_init(besm6_log_dir[0] ? besm6_log_dir : "logs",
-                     besm6_log_max_bytes);
-    }
-}
-
-void besm6_log_setup_dir(const char *dir)
-{
-    strncpy(besm6_log_dir, dir, sizeof(besm6_log_dir)-1);
-    besm6_log_dir[sizeof(besm6_log_dir)-1] = '\0';
-}
-
-void besm6_log_setup_max(size_t max_bytes)
-{
-    besm6_log_max_bytes = max_bytes;
-    b6_log_set_max(max_bytes);
-}
-
-/*
- * Enable or disable subsystem logging.
- * When disabled, only sim_deb (debug.txt) output works.
- * Wrapper around b6_log_set_enabled().
- */
-void besm6_log_set_enabled(int enabled)
-{
-    b6_log_set_enabled(enabled);
-}
-
-const char *besm6_log_get_dir(void)
-{
-    return besm6_log_dir;
-}
 
 const char *opname_short_bemsh [64] = {
     "зп",  "зпм", "рег", "счм", "сл",  "вч",  "вчоб","вчаб",
@@ -121,7 +76,7 @@ static const char *opname_long_madlen [16] = {
  */
 const char *besm6_opname (int opcode)
 {
-    if (sim_switches & SWMASK ('L')) {
+    if (besm6_latin || (sim_switches & SWMASK ('L'))) {
         /* Latin mnemonics. */
         if (opcode & 0200)
             return opname_long_madlen [(opcode >> 3) & 017];
@@ -151,8 +106,8 @@ int besm6_opcode (char *instr)
 }
 
 /*
- * Выдача в файл протокола (журнала). На консоль не печатаем.
- * Если первый символ формата - подчерк, он пропускается (совместимость).
+ * Выдача на консоль и в файл протокола.
+ * Если первый символ формата - подчерк, на консоль не печатаем.
  * Добавляет перевод строки.
  */
 void besm6_log (const char *fmt, ...)
@@ -161,6 +116,12 @@ void besm6_log (const char *fmt, ...)
 
     if (*fmt == '_')
         ++fmt;
+    else {
+        va_start (args, fmt);
+        vprintf (fmt, args);
+        printf ("\r\n");
+        va_end (args);
+    }
     if (sim_log) {
         va_start (args, fmt);
         vfprintf (sim_log, fmt, args);
@@ -181,6 +142,11 @@ void besm6_log_cont (const char *fmt, ...)
 
     if (*fmt == '_')
         ++fmt;
+    else {
+        va_start (args, fmt);
+        vprintf (fmt, args);
+        va_end (args);
+    }
     if (sim_log) {
         va_start (args, fmt);
         vfprintf (sim_log, fmt, args);
@@ -190,77 +156,22 @@ void besm6_log_cont (const char *fmt, ...)
 }
 
 /*
- * Выдача в файл отладки: если включён режим "cpu debug".
- * На консоль не печатаем. Добавляет перевод строки.
- * (Обратная совместимость — пишет в sim_deb)
+ * Выдача на консоль и в файл отладки: если включён режим "cpu debug".
+ * Добавляет перевод строки.
  */
 void besm6_debug (const char *fmt, ...)
 {
     va_list args;
 
-    if (sim_deb) {
+    va_start (args, fmt);
+    vprintf (fmt, args);
+    printf ("\r\n");
+    va_end (args);
+    if (sim_deb && sim_deb != stdout) {
         va_start (args, fmt);
         vfprintf (sim_deb, fmt, args);
-        if (sim_deb == stdout)
-            fprintf (sim_deb, "\r");
         fprintf (sim_deb, "\n");
         fflush (sim_deb);
-        va_end (args);
-    }
-}
-
-/*
- * Subsystem-specific debug output.
- * Writes to per-subsystem log file AND to sim_deb (backward compatible).
- * subsystem: B6_LOG_SYS, B6_LOG_CPU, B6_LOG_DKS, etc.
- */
-void besm6_debug_sub (int subsystem, const char *fmt, ...)
-{
-    va_list args;
-
-    /* Write to sim_deb (backward compatible) */
-    if (sim_deb) {
-        va_start (args, fmt);
-        vfprintf (sim_deb, fmt, args);
-        if (sim_deb == stdout)
-            fprintf (sim_deb, "\r");
-        fprintf (sim_deb, "\n");
-        fflush (sim_deb);
-        va_end (args);
-    }
-
-    /* Write to subsystem log file (if initialized) */
-    if (b6_log_is_init()) {
-        va_start (args, fmt);
-        b6_vlog (subsystem, B6_LOG_DEBUG, fmt, args);
-        va_end (args);
-    }
-}
-
-/*
- * Subsystem-specific error output.
- * Writes to subsystem error file AND to errors.log AND to sim_deb.
- */
-void besm6_error (int subsystem, const char *fmt, ...)
-{
-    va_list args;
-
-    /* Write to sim_deb */
-    if (sim_deb) {
-        va_start (args, fmt);
-        fprintf (sim_deb, "[ERROR:%d] ", subsystem);
-        vfprintf (sim_deb, fmt, args);
-        if (sim_deb == stdout)
-            fprintf (sim_deb, "\r");
-        fprintf (sim_deb, "\n");
-        fflush (sim_deb);
-        va_end (args);
-    }
-
-    /* Write to subsystem log file */
-    if (b6_log_is_init()) {
-        va_start (args, fmt);
-        b6_log_error (subsystem, fmt, args);
         va_end (args);
     }
 }
@@ -723,14 +634,184 @@ t_stat besm6_read_line (FILE *input, int *type, t_value *val)
 }
 
 /*
+ * Read one 6-byte big-endian word from a binary a.out image.
+ * Returns (t_value)-1 on end of file.
+ */
+static t_value freadw (FILE *f)
+{
+    t_value w = 0;
+    int i, c;
+
+    for (i = 0; i < 6; ++i) {
+        c = getc (f);
+        if (c == EOF)
+            return (t_value) -1;
+        w = (w << 8) | (c & 0xff);
+    }
+    return w;
+}
+
+/*
+ * Base load address of a fully linked a.out image (BADDR = HDRSZ / W).
+ * Words 0..7 are reserved, so the const segment starts at word 010.
+ */
+#define AOUT_BADDR      8
+
+/*
+ * a.out magic numbers: the string "BESM" plus a variant code in the low bits.
+ * FMAGIC - standard impure executable; NMAGIC - read-only (pure) text segment.
+ */
+#define AOUT_FMAGIC     0x4245534d0107LL        /* "BESM" + 0407 */
+#define AOUT_NMAGIC     0x4245534d0108LL        /* "BESM" + 0410 */
+#define AOUT_RELFLG     1                       /* fully linked, no relocation */
+
+/*
+ * Symbol-table entry fields (see v7besm cross/besm6/b.out.h).
+ * N_TEXT symbols are functions - the only ones we keep for tracing.
+ */
+#define AOUT_N_EXT      040                     /* external (global) bit */
+#define AOUT_N_TYPE     037                     /* mask for the type field */
+#define AOUT_N_TEXT     03                      /* text (code) segment */
+
+/*
+ * Extract the a.out symbol table into the tracer's symbol table.
+ * The file position is expected to sit at the symbol table (right after
+ * the data segment).  Reads at most a_syms bytes; each entry is a byte
+ * stream: 1-byte name length (0 terminates), 1-byte type, 3-byte
+ * big-endian word address, then the raw name.  Keeps only functions.
+ */
+static void besm6_load_symbols (FILE *input, int nbytes)
+{
+    char name [256];
+    int n_len, n_type, i, c;
+    uint32 n_value;
+
+    besm6_sym_clear ();
+    while (nbytes > 0) {
+        n_len = getc (input);
+        if (n_len <= 0)                         /* terminator or EOF */
+            break;
+        n_type = getc (input);
+        n_value = 0;
+        for (i = 0; i < 3; ++i) {
+            c = getc (input);
+            if (c == EOF)
+                return;
+            n_value = (n_value << 8) | (c & 0xff);
+        }
+        for (i = 0; i < n_len; ++i) {
+            c = getc (input);
+            if (c == EOF)
+                return;
+            name[i] = c;
+        }
+        name[n_len] = 0;
+        nbytes -= n_len + 5;
+        if ((n_type & AOUT_N_TYPE) == AOUT_N_TEXT)
+            besm6_sym_add (n_value, name);
+    }
+    besm6_sym_sort ();
+}
+
+/*
+ * Load a binary a.out image: header, then the const/text/data segments.
+ * The entry point (a_entry) becomes the start address.
+ */
+static t_stat besm6_load_aout (FILE *input)
+{
+    t_value a_magic, a_const, a_text, a_data, a_bss, a_syms, a_entry, a_flag;
+    t_value word;
+    int addr, i, n;
+
+    a_magic = freadw (input);
+    a_const = freadw (input);
+    a_text  = freadw (input);
+    a_data  = freadw (input);
+    a_bss   = freadw (input);
+    a_syms  = freadw (input);
+    a_entry = freadw (input);
+    a_flag  = freadw (input);
+    if (a_flag == (t_value) -1) {
+        besm6_log ("Truncated a.out header");
+        return SCPE_FMT;
+    }
+    (void) a_bss;
+
+    /* Only fully linked images (RELFLG set) can be loaded and run directly. */
+    if (! (a_flag & AOUT_RELFLG)) {
+        besm6_log ("Cannot load relocatable binary");
+        return SCPE_FMT;
+    }
+
+    addr = AOUT_BADDR;
+    /* const segment - read-only data */
+    n = (int) (a_const / 6);
+    for (i = 0; i < n; ++i) {
+        word = freadw (input);
+        if (word == (t_value) -1 || addr > MEMSIZE)
+            return SCPE_FMT;
+        /*
+         * The const segment is data, and is tagged as such, EXCEPT for the
+         * fixed vector block a kernel lays down inside it: 0500/0501 are the
+         * internal- and external-interrupt vectors, and 0550-0577 are the
+         * extracode vectors for э50-э77.  Those words are executed, so they
+         * must carry the instruction tag -- mmu_fetch() raises "контроль
+         * команды" on a data-tagged word.
+         */
+        if (addr >= 0500 && addr <= 0577)
+            memory [addr++] = SET_PARITY (word, PARITY_INSN);
+        else
+            memory [addr++] = SET_PARITY (word, PARITY_NUMBER);
+    }
+    /* text segment - machine code */
+    n = (int) (a_text / 6);
+    for (i = 0; i < n; ++i) {
+        word = freadw (input);
+        if (word == (t_value) -1 || addr > MEMSIZE)
+            return SCPE_FMT;
+        memory [addr++] = SET_PARITY (word, PARITY_INSN);
+    }
+    /* Pure text: page-align the data segment to a 1024-word boundary. */
+    if (a_magic == AOUT_NMAGIC)
+        addr = (addr + 1023) & ~1023;
+    /* data segment - initialized variables */
+    n = (int) (a_data / 6);
+    for (i = 0; i < n; ++i) {
+        word = freadw (input);
+        if (word == (t_value) -1 || addr > MEMSIZE)
+            return SCPE_FMT;
+        memory [addr++] = SET_PARITY (word, PARITY_NUMBER);
+    }
+    /* symbol table - function names for the call/return trace */
+    besm6_load_symbols (input, (int) a_syms);
+    PC = (uint32) a_entry;
+    return SCPE_OK;
+}
+
+/*
  * Load memory from file.
+ * Automatically detects a binary a.out image and loads it; otherwise
+ * falls back to the textual .b6 memory-image format.
  */
 t_stat besm6_load (FILE *input)
 {
     int addr, type;
     t_value word;
     t_stat err;
+    unsigned char magic [6];
 
+    /* Peek at the first word to detect a binary a.out image. */
+    if (fread (magic, 1, 6, input) == 6 &&
+        magic[0] == 'B' && magic[1] == 'E' &&
+        magic[2] == 'S' && magic[3] == 'M' &&
+        magic[4] == 0x01 && (magic[5] == 0x07 || magic[5] == 0x08)) {
+        rewind (input);
+        return besm6_load_aout (input);
+    }
+    rewind (input);
+
+    /* Textual .b6 image carries no symbols: drop any from a prior a.out. */
+    besm6_sym_clear ();
     addr = 1;
     PC = 1;
     for (;;) {

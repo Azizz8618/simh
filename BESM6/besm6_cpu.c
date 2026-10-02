@@ -51,8 +51,6 @@
  * 13) A lot of comments in Russian (UTF-8).
  */
 #include "besm6_defs.h"
-#include <math.h>
-#include <float.h>
 
 
 t_value memory [MEMSIZE];
@@ -82,6 +80,7 @@ t_uint64 touched[256][1 << (24-6)];
 int corr_stack;
 int redraw_panel;
 int autotime;
+int besm6_latin;        /* persistent Latin (MADLEN) mnemonic mode */
 jmp_buf cpu_halt;
 
 t_stat cpu_examine (t_value *vptr, t_addr addr, UNIT *uptr, int32 sw);
@@ -92,10 +91,9 @@ t_stat cpu_set_pult (UNIT *u, int32 val, CONST char *cptr, void *desc);
 t_stat cpu_show_pult (FILE *st, UNIT *up, int32 v, CONST void *dp);
 t_stat cpu_set_autotime (UNIT *u, int32 val, CONST char *cptr, void *desc);
 t_stat cpu_show_autotime (FILE *st, UNIT *up, int32 v, CONST void *dp);
-t_stat cpu_set_log (UNIT *u, int32 val, CONST char *cptr, void *desc);
-t_stat cpu_show_log (FILE *st, UNIT *up, int32 v, CONST void *dp);
-t_stat cpu_set_log_dir (UNIT *u, int32 val, CONST char *cptr, void *desc);
-t_stat cpu_set_log_max (UNIT *u, int32 val, CONST char *cptr, void *desc);
+t_stat cpu_set_latin (UNIT *u, int32 val, CONST char *cptr, void *desc);
+t_stat cpu_clr_latin (UNIT *u, int32 val, CONST char *cptr, void *desc);
+t_stat cpu_show_latin (FILE *st, UNIT *up, int32 v, CONST void *dp);
 
 
 /*
@@ -158,9 +156,9 @@ MTAB cpu_mod[] = {
     { MTAB_XTD|MTAB_VDV,
         0, NULL,    "REQ",      &cpu_req,           NULL,               NULL,
                                 "Sends a request interrupt" },
-    { MTAB_XTD|MTAB_VDV,
-        0, "PANEL", "PANEL",    &besm6_init_panel,  &besm6_show_panel,  NULL,
-                                "Displays graphical panel" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALO|MTAB_QUOTE,
+    0, "PANEL", "PANEL{=fontfilename}",    &besm6_init_panel,  &besm6_show_panel,  NULL,
+                                "Enable Display of graphical panel optionally specifying font name" },
     { MTAB_XTD|MTAB_VDV,
         0, NULL,    "NOPANEL",  &besm6_close_panel, NULL,               NULL,
                                 "Closes graphical panel" },
@@ -170,15 +168,12 @@ MTAB cpu_mod[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALO,
         0, "PULT",  "PULT",     &cpu_set_pult,      &cpu_show_pult,     NULL,
                                 "Selects a hardwired program or switch reg." },
-    { MTAB_XTD|MTAB_VDV|MTAB_VALR,
-        0, "LOG",   "LOG",      &cpu_set_log,       &cpu_show_log,     NULL,
-                                "{ON, OFF} Per-subsystem logging to logs/ directory" },
-    { MTAB_XTD|MTAB_VDV|MTAB_VALR,
-        0, "LOG_DIR", "LOG_DIR", &cpu_set_log_dir,   NULL,              NULL,
-                                "Directory for per-subsystem log files (default: logs)" },
-    { MTAB_XTD|MTAB_VDV|MTAB_VALR,
-        0, "LOG_MAX", "LOG_MAX", &cpu_set_log_max,   NULL,              NULL,
-                                "Max size per log file in MB (default: 10)" },
+    { MTAB_XTD|MTAB_VDV,
+        0, "LATIN", "LATIN",   &cpu_set_latin,  &cpu_show_latin,  NULL,
+                                "Use Latin (MADLEN) instruction mnemonics" },
+    { MTAB_XTD|MTAB_VDV,
+        0, NULL,    "NOLATIN", &cpu_clr_latin,  NULL,             NULL,
+                                "Use Cyrillic (BEMSH) instruction mnemonics" },
     { 0 }
 };
 
@@ -305,6 +300,7 @@ DEVICE *sim_devices[] = {
     &vu_dev,
     &pi_dev,
     &tty_dev,       /* терминалы - телетайпы, видеотоны, "Консулы" */
+    &dks_dev,       /* КАДОПАМ и ДКС */
     0
 };
 
@@ -427,9 +423,7 @@ t_stat cpu_reset (DEVICE *dptr)
     sim_brk_types = SWMASK ('E') | SWMASK('R') | SWMASK('W');
     sim_brk_dflt = SWMASK ('E');
 
-    /* Initialize per-subsystem logging (if not already done) */
-    besm6_log_init();
-
+    besm6_trace_reset ();       /* full register dump on first trace */
     besm6_draw_panel(1);
 
     return SCPE_OK;
@@ -473,81 +467,6 @@ t_stat cpu_show_pult (FILE *st, UNIT *up, int32 v, CONST void *dp)
 }
 
 /*
- * Set per-subsystem logging: set cpu log=on | set cpu log=off
- * In INI file: set cpu log=on  or  set cpu log=off
- */
-t_stat cpu_set_log (UNIT *u, int32 val, CONST char *cptr, void *desc)
-{
-    if (cptr && *cptr) {
-        if (sim_strcasecmp(cptr, "ON") == 0) {
-            besm6_log_set_enabled(1);
-            sim_printf("Per-subsystem logging enabled (logs/)\n");
-            return SCPE_OK;
-        }
-        if (sim_strcasecmp(cptr, "OFF") == 0) {
-            besm6_log_set_enabled(0);
-            sim_printf("Per-subsystem logging disabled (debug.txt still works)\n");
-            return SCPE_OK;
-        }
-        sim_printf("Invalid argument '%s', use ON or OFF\n", cptr);
-        return SCPE_ARG;
-    }
-    /* No argument = toggle */
-    if (b6_log_is_enabled()) {
-        besm6_log_set_enabled(0);
-        sim_printf("Per-subsystem logging disabled\n");
-    } else {
-        besm6_log_set_enabled(1);
-        sim_printf("Per-subsystem logging enabled\n");
-    }
-    return SCPE_OK;
-}
-
-/*
- * Show current logging state.
- * show cpu log
- */
-t_stat cpu_show_log (FILE *st, UNIT *up, int32 v, CONST void *dp)
-{
-    fprintf(st, "Per-subsystem logging: %s",
-            b6_log_is_enabled() ? "ON" : "OFF");
-    return SCPE_OK;
-}
-
-/*
- * Set per-subsystem log directory: set cpu log-dir=<path>
- * Can be used in INI file.
- */
-t_stat cpu_set_log_dir (UNIT *u, int32 val, CONST char *cptr, void *desc)
-{
-    if (cptr && *cptr) {
-        besm6_log_setup_dir(cptr);
-        sim_printf("Subsystem log directory: %s\n", cptr);
-        return SCPE_OK;
-    }
-    return SCPE_ARG;
-}
-
-/*
- * Set per-subsystem log max file size: set cpu log-max=<MB>
- * Can be used in INI file.
- */
-t_stat cpu_set_log_max (UNIT *u, int32 val, CONST char *cptr, void *desc)
-{
-    if (cptr && *cptr) {
-        size_t mb = (size_t)atoi(cptr);
-        if (mb > 0) {
-            besm6_log_setup_max(mb * 1024 * 1024);
-            sim_printf("Subsystem log max file size: %u MB\n", (unsigned)mb);
-            return SCPE_OK;
-        }
-        sim_printf("Invalid size '%s', must be a positive integer (MB)\n", cptr);
-        return SCPE_ARG;
-    }
-    return SCPE_ARG;
-}
-
-/*
  * Write Unicode symbol to file.
  * Convert to UTF-8 encoding:
  * 00000000.0xxxxxxx -> 0xxxxxxx
@@ -583,7 +502,7 @@ void besm6_okno (const char *message)
     besm6_log ("_");
 
     /* СчАС, системные индекс-регистры 020-035. */
-    besm6_log ("_    СчАС:%05o  20:%05o  21:%05o  27:%05o  32:%05o  33:%05o  34:%05o  35:%05o",
+    besm6_log ("_      PC:%05o  20:%05o  21:%05o  27:%05o  32:%05o  33:%05o  34:%05o  35:%05o",
                PC, M[020], M[021], M[027], M[032], M[033], M[034], M[035]);
     /* Индекс-регистры 1-7. */
     besm6_log ("_       1:%05o   2:%05o   3:%05o   4:%05o   5:%05o   6:%05o   7:%05o",
@@ -592,7 +511,7 @@ void besm6_okno (const char *message)
     besm6_log ("_      10:%05o  11:%05o  12:%05o  13:%05o  14:%05o  15:%05o  16:%05o  17:%05o",
                M[010], M[011], M[012], M[013], M[014], M[015], M[016], M[017]);
     /* Сумматор, РМР, режимы АУ и УУ. */
-    besm6_log ("_      СМ:%04o %04o %04o %04o  РМР:%04o %04o %04o %04o  РАУ:%02o    РУУ:%03o",
+    besm6_log ("_     ACC:%04o %04o %04o %04o  RMR:%04o %04o %04o %04o  RAU:%02o    RUU:%03o",
                (int) (ACC >> 36) & BITS(12), (int) (ACC >> 24) & BITS(12),
                (int) (ACC >> 12) & BITS(12), (int) ACC & BITS(12),
                (int) (RMR >> 36) & BITS(12), (int) (RMR >> 24) & BITS(12),
@@ -601,17 +520,12 @@ void besm6_okno (const char *message)
 }
 
 /*
- * Пересчёт слова РКС (слркс0) по текущему PRP.
- */
-static void rks_update_slr(void);
-
-/*
  * Команда "рег"
  */
 static void cmd_002 ()
 {
 #if 0
-    besm6_debug_sub(B6_LOG_CPU, "*** рег %03o", Aex & 0377);
+    besm6_debug ("*** reg %03o", Aex & 0377);
 #endif
     switch (Aex & 0377) {
     case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
@@ -672,8 +586,8 @@ static void cmd_002 ()
             longjmp (cpu_halt, STOP_UNIMPLEMENTED);
         }
         /* Неиспользуемые адреса */
-        besm6_debug_sub(B6_LOG_CPU, "*** %05o%s: РЕГ %o - неправильный адрес спец.регистра",
-                     PC, (RUU & RUU_RIGHT_INSTR) ? "п" : "л", Aex);
+        besm6_debug ("*** %05o%s: REG %o - invalid special register address",
+                     PC, (RUU & RUU_RIGHT_INSTR) ? "R" : "L", Aex);
         break;
     }
 }
@@ -697,7 +611,7 @@ static uint32 totreads, totwrites;
 static uint32 readmap[32768], writemap[32768];
 #if 1
     if (Aex & ~04177)
-    besm6_debug_sub(B6_LOG_CPU, "*** @%05o, увв %05o, СМ[24:1]=%08o",
+    besm6_debug ("*** @%05o, ext %05o, ACC[24:1]=%08o",
                  PC, Aex, (uint32) ACC & BITS(24));
 #endif
     switch (Aex & 04177) {
@@ -740,13 +654,13 @@ static uint32 readmap[32768], writemap[32768];
         break;
     case 030:
         /* Гашение ПРП */
+/*              besm6_debug(">>> clear PRP");*/
         PRP &= ACC | PRP_WIRED_BITS;
-        rks_update_slr();
         break;
     case 031:
         /* Имитация сигналов прерывания ГРП */
-        /*besm6_debug ("*** %05o%s: имитация прерываний ГРП %016llo",
-          PC, (RUU & RUU_RIGHT_INSTR) ? "п" : "л", ACC << 24);*/
+        /*besm6_debug ("*** %05o%s: simulated interrupts GRP %016llo",
+          PC, (RUU & RUU_RIGHT_INSTR) ? "R" : "L", ACC << 24);*/
         GRP |= (ACC & BITS(24)) << 24;
         break;
     case 032: case 033:
@@ -755,10 +669,9 @@ static uint32 readmap[32768], writemap[32768];
         break;
     case 034:
         /* Запись в МПРП */
+/*              besm6_debug(">>> write to MPRP");*/
         MPRP = ACC & 077777777;
-        /* Бит 37 в MGRP разрешает прерывания от ПРП */
-        MGRP |= GRP_SLAVE;
-        besm6_debug_sub(B6_LOG_CPU, ">>> MPRP=%06o", MPRP);
+	// besm6_debug("MPRP = %016llo", MPRP);
         break;
     case 035:
         /* TODO: управление режимом имитации обмена
@@ -775,7 +688,7 @@ static uint32 readmap[32768], writemap[32768];
         break;
     case 070:
 	/* ES printer output */
-        besm6_debug_sub(B6_LOG_CPU, ">>> ES print: %016llo", ACC);
+        besm6_debug(">>> ES print: %016llo", ACC);
 	break;
     case 0140:
         /* Запись в регистр телеграфных каналов */
@@ -803,7 +716,9 @@ static uint32 readmap[32768], writemap[32768];
         mux_clear ();           /* ACC is ignored */
         memory[077023] = SET_PARITY(1LL<<47, PARITY_NUMBER);
         memory[076774] = SET_PARITY(00101010101010101LL, PARITY_NUMBER);
-        MPRP |= 040;
+        /* With КАДОПАМ there is no mux, and ПРП 6 belongs to КРК channel 2. */
+        if (dks_dev.flags & DEV_DIS)
+            MPRP |= 040;
         break;
     case 0154: case 0155:
         /*
@@ -822,7 +737,7 @@ static uint32 readmap[32768], writemap[32768];
         pl_control (Aex & 1, (uint32) ACC & BITS(8));
         break;
     case 0172: case 0173:
-        besm6_debug_sub(B6_LOG_CPU, ">>> Potential plotter output: %03o", (uint32) ACC & BITS(8));
+        besm6_debug(">>> Potential plotter output: %03o", (uint32) ACC & BITS(8));
         break;
     case 0174: case 0175:
         /* Выдача кода в пульт оператора */
@@ -831,13 +746,16 @@ static uint32 readmap[32768], writemap[32768];
     case 0147:
         /* Writing to the power supply control register
          * does not have any observable effect; repurposed
+         * as v7besm's idle hint (its kernel/intr.c).  A guest
+         * that means the panel still gets the fallthrough.
          */
+        sim_idle (0, TRUE);
       // break;
     case 0177:
         /* управление табло ГПВЦ СО АН СССР */
 	if (tableau != ((uint32) ACC & BITS(24))) {
 	  tableau = (uint32) ACC & BITS(24);
-          // besm6_debug(">>> ТАБЛО: %08o", tableau);
+          // besm6_debug(">>> PANEL: %08o", tableau);
         }
         break;
     case 04001: case 04002:
@@ -891,7 +809,7 @@ static uint32 readmap[32768], writemap[32768];
         break;
     case 04070:
 	/* ES printer status: */
-        besm6_debug_sub(B6_LOG_CPU, "<<< ES printer read");
+        besm6_debug("<<< ES printer read");
 	ACC = 01000;
 	break;
     case 04100:
@@ -913,9 +831,18 @@ static uint32 readmap[32768], writemap[32768];
         ACC = 0;
         break;
     case 04115:
-        /* Неизвестное обращение. ДИСПАК выдаёт эту команду
-         * группами по 8 штук каждые несколько секунд. */
-        ACC = 0; // 0240;
+        /* Регистр состояния выбранного МЛ ЕС-5017 (set mg4 es).
+         * ДИСПАК с разделом ЕСМЛ опрашивает его группами по 8
+         * каждые несколько секунд. */
+        ACC = es_status ();
+        break;
+    case 04117:
+        /* Регистр ошибок МЛ ЕС-5017 */
+        ACC = es_errors ();
+        break;
+    case 04012:
+        /* Число считанных с МЛ ЕС-5017 слов */
+        ACC = es_count ();
         break;
     case 04143:
         /* reading from the muxed serial interface */
@@ -956,8 +883,8 @@ static uint32 readmap[32768], writemap[32768];
         } else {
             /* Неиспользуемые адреса */
 /*              if (sim_deb && cpu_dev.dctrl)*/
-            besm6_debug_sub(B6_LOG_CPU, "*** %05o%s: УВВ %o - неправильный адрес ввода-вывода",
-                         PC, (RUU & RUU_RIGHT_INSTR) ? "п" : "л", Aex);
+            besm6_debug ("*** %05o%s: EXT %o - invalid I/O address",
+                         PC, (RUU & RUU_RIGHT_INSTR) ? "R" : "L", Aex);
             ACC = 0;
         }
     } break;
@@ -1052,170 +979,22 @@ t_stat cpu_show_autotime (FILE *st, UNIT *up, int32 v, CONST void *dp)
     return SCPE_OK;
 }
 
-/*
- * Memory of the Electronika-60 microcomputer (КАДОПАМ)
- * Declared in besm6_tty.c, used for DKS communication
- */
-extern unsigned short kadopam_mem[65536];
-
-/* Registers of КРК (Канал Регистров КАДОПАМ) */
-static unsigned short krk_counter = 0;      /* Счётчик прерываний источника (регистр 0) */
-static unsigned short krk_last_write = 0;   /* Последнее записанное значение */
-static unsigned short krk_status = 0400;    /* Статус КРК (регистр 0 при чтении) */
-
-/*
- * Регистры РКС (адресное пространство 077770-077777):
- *   077775 (адркс0) - счётчик запросов прерываний ПРП.
- *     Диспетчер ОС (страница 0471, см. tr1.txt) читает его,
- *     чтобы идентифицировать источник прерывания. Растёт при
- *     каждой установке бита ПРП от ДКС (см. rks_count_interrupt).
- *   077777 (слркс0) - служебный регистр гашения прерываний.
- */
-static unsigned short rks_adr = 0;          /* 077775 - счётчик запросов */
-static unsigned short rks_slr = 0;          /* 077777 - последнее значение слркс0 */
-
-/*
- * Увеличить счётчик запросов РКС (077775).
- * Вызывается из besm6_tty.c при каждой установке бита ПРП
- * (dks_register - ПРП12, dks_poll - ПРП7).
- */
-/*
- * Пересчитать слово РКС (слркс0) по текущему состоянию PRP.
- * Вызывается после ЛЮБОГО изменения PRP (установка или сброс битов).
- * В реальной БЭСМ-6 микро-ЭВМ "Электроника-60" формирует слово РКС
- * из текущего состояния аппаратуры ДКС. Если бит PRP сброшен
- * (ОС обработала направление), соответствующий бит в РКС тоже
- * исчезает — это совпадение между МПРП и РКС (uelles variables) в свдкс3.
- */
-static void rks_update_slr(void)
+t_stat cpu_set_latin (UNIT *u, int32 val, CONST char *cptr, void *desc)
 {
-    unsigned short new_slr = 0;
-    if (PRP & PRP_DKS_SREQ)    new_slr |= 04000;
-    if (PRP & PRP_DKS_RECV)    new_slr |= 00040;
-    if (PRP & PRP_DKS_TERMREQ) new_slr |= 00100;
-    if (PRP & PRP_DKS_XMIT)    new_slr |= 00200;
-    if (PRP & PRP_DKS_ATTN)    new_slr |= 00020;
-    rks_slr = new_slr;
+    besm6_latin = 1;
+    return SCPE_OK;
 }
 
-/*
- * Увеличить счётчик запросов РКС (077775) и пересчитать слова РКС.
- * Вызывается из besm6_tty.c при каждой установке бита ПРП
- * (dks_register - ПРП12, dks_poll - ПРП7).
- * Ранее rks_slr накапливался через OR и никогда не очищался —
- * из-за этого ОС не могла отличить "новый флаг" (УСТПРП) от
- * "уже установленного" (свдкс3 не переходил к загруз).
- */
-void rks_count_interrupt(void)
+t_stat cpu_clr_latin (UNIT *u, int32 val, CONST char *cptr, void *desc)
 {
-    rks_adr = (rks_adr + 1) & 0xFFFF;
-    rks_update_slr();
-    besm6_debug_sub(B6_LOG_DKS, ">>> RKS: interrupt counter (077775) = %06o, слркс0=%06o",
-                rks_adr, rks_slr);
+    besm6_latin = 0;
+    return SCPE_OK;
 }
 
-void write_032(int addr, t_value val) {
-    int v = val & 077777777;
-    
-    besm6_debug_sub(B6_LOG_DKS, ">>> KDP write: addr=%05o, val=%06o", addr, v);
-    
-    switch (addr) {
-    case 0:
-        /* Регистр 0 - счётчик прерываний источника */
-        krk_counter = v;
-        /* Бит 1 (значение 2) - сброс прерывания.
-         * Гасим все биты ДКС-направлений в ПРП, потому что
-         * свядкс (konfus.be) опрашивает РКС для определения
-         * активных направлений; при сбросе по адресу 0
-         * микро-ЭВМ гасит соответствующие биты. */
-        if (v & 2) {
-            PRP &= ~(PRP_DKS_SREQ | PRP_DKS_TERMREQ |
-                      PRP_DKS_XMIT | PRP_DKS_RECV | PRP_DKS_ATTN);
-            rks_update_slr();
-            besm6_debug_sub(B6_LOG_DKS, ">>> KDP: cleared all DKS PRP bits, PRP=%06o, слркс0=%06o",
-                        PRP, rks_slr);
-        }
-        krk_last_write = v;
-        break;
-        
-    case 1:
-        /* Регистр 1 - код команды / данные */
-        krk_last_write = v;
-        kadopam_mem[1] = v;
-        break;
-        
-    case 2:
-        /* Регистр 2 - адрес массива / длина */
-        krk_last_write = v;
-        kadopam_mem[2] = v;
-        break;
-        
-    case 077775:  /* = 32765: адркс0 - счётчик запросов (запись = гашение) */
-        rks_adr = v & 0xFFFF;
-        besm6_debug_sub(B6_LOG_DKS, ">>> RKS write 077775 (адркс0) = %06o", rks_adr);
-        break;
-        
-    case 077777:  /* = 32767: слркс0 - гашение прерываний */
-        rks_slr = v & 0xFFFF;
-        besm6_debug_sub(B6_LOG_DKS, ">>> RKS write 077777 (слркс0) = %06o", rks_slr);
-        /* Бит 8 (0400) - запрос прерывания от КАДОПАМ */
-        if (v & 0400) {
-            PRP |= PRP_DKS_SREQ;
-            GRP |= GRP_SLAVE;
-            rks_count_interrupt();
-            besm6_debug_sub(B6_LOG_DKS, ">>> KDP: set PRP_DKS_SREQ interrupt");
-        }
-        break;
-        
-    default:
-        /* Запись в память КАДОПАМ */
-        if (addr < 65536) {
-            kadopam_mem[addr] = v;
-            besm6_debug_sub(B6_LOG_DKS, ">>> KDP: kadopam_mem[%05o] = %06o", addr, v);
-        }
-        krk_last_write = v;
-        break;
-    }
-}
-
-t_value read_032(int addr) {
-    t_value result;
-
-    besm6_debug_sub(B6_LOG_DKS, ">>> KDP read: addr=%05o", addr);
-
-    switch (addr) {
-    case 0:
-        /* Регистр 0 - статус КРК (бит 8 = готовность).
-         * Слово РКС формируется микро-ЭВМ: старшие разряды -
-         * флаги готовности направлений (см. rks_count_interrupt). */
-        result = krk_status | rks_slr | (krk_counter & 0377);
-        besm6_debug_sub(B6_LOG_DKS, ">>> RKS read reg0: krk_status=%06o, слркс0=%06o, counter=%03o => %06o",
-                    krk_status, rks_slr, krk_counter & 0377, result);
-        return result;
-        
-    case 2:
-        /* Регистр 2 - последнее записанное значение */
-        return krk_last_write;
-        
-    case 077775:  /* = 32765: адркс0 - счётчик запросов ПРП */
-        result = rks_adr;
-        besm6_debug_sub(B6_LOG_DKS, ">>> RKS read 077775 (адркс0) = %06o", result);
-        return result;
-        
-    case 077777:  /* = 32767: слркс0 - слово РКС (формируется Э-60) */
-        result = rks_slr | (rks_adr & 0377);
-        besm6_debug_sub(B6_LOG_DKS, ">>> RKS read 077777 (слркс0) = %06o", result);
-        return result;
-        
-    default:
-        /* Чтение из памяти КАДОПАМ */
-        if (addr < 65536) {
-            result = kadopam_mem[addr];
-            besm6_debug_sub(B6_LOG_DKS, ">>> KDP read: kadopam_mem[%05o] = %06o", addr, result);
-            return result;
-        }
-        return 0;
-    }
+t_stat cpu_show_latin (FILE *st, UNIT *up, int32 v, CONST void *dp)
+{
+    fprintf (st, "%s mnemonics", besm6_latin ? "Latin" : "Cyrillic");
+    return SCPE_OK;
 }
 
 /*
@@ -1269,16 +1048,9 @@ void cpu_one_inst ()
       if (reg) besm6_log_cont("_(M%o)", reg);
       besm6_log("_");
     }
-    if (sim_deb && cpu_dev.dctrl && !IS_SUPERVISOR(RUU)) {
-        fprintf (sim_deb, "*** %05o%s: ", PC,
-                 (RUU & RUU_RIGHT_INSTR) ? "п" : "л");
-        besm6_fprint_cmd (sim_deb, RK);
-        fprintf (sim_deb, "\tСМ=");
-        fprint_sym (sim_deb, 0, &ACC, 0, 0);
-        fprintf (sim_deb, "\tРАУ=%02o", RAU);
-        if (reg)
-            fprintf (sim_deb, "\tМ[%o]=%05o", reg, M[reg]);
-        fprintf (sim_deb, "\n");
+    if (sim_deb && cpu_dev.dctrl) {
+        /* Trace this instruction: address, octal fields and mnemonics. */
+        besm6_trace_instruction ();
     }
     nextpc = ADDR(PC + 1);
     if (RUU & RUU_RIGHT_INSTR) {
@@ -1576,25 +1348,17 @@ void cpu_one_inst ()
         }
         delay = MEAN_TIME (3, 5);
         break;
-    case 032:                                       /* э32, ext - работа с КРК (КАДОПАМ) */
-        /* КК 26,'70000' транслируется как 132,00000 - адрес регистра КРК = 0 */
-        /* КК 26,'70001' транслируется как 132,00001 - адрес регистра КРК = 1 */
-        /* Бит 19 определяет запись (1) или чтение (0) !== "верхняя страница" */
-        /* Для КАДОПАМ бит 19 не модифицирует адрес (070000), а определяет */
-        /* направление чтение/запись. Снимаем префикс 070000 для корректной */
-        /* адресации ОЗУ КАДОПАМ (10-67777₈). */
-        addr &= 07777;                              /* strip 070000 prefix for KADOPAM I/O */
-        Aex = ADDR (addr + M[reg]);
-        if (RK & BBIT(19)) {
-            /* Запись в регистр КРК */
-            write_032(Aex, ACC);
-        } else {
-            /* Чтение из регистра КРК */
-            t_value res;
-            res = read_032(Aex);
-            ACC = res << 24 | ACC & 077777777;
-        }
-        break;
+    case 032:                                       /* э32, КАДОПАМ */
+	if (RK & BBIT(19))
+	    dks_write(ADDR(addr-070000+M[reg]), ACC);
+	else {
+	    t_value res;
+	    res = dks_read(ADDR(addr+M[reg]));
+	    /* The right half is cleared: СВЯЗЬ7.нтерм7 shifts a value read
+	     * this way left by 18 and ORs it into a descriptor. */
+	    ACC = res << 24;
+	}
+	break;
     case 033:                                       /* увв, ext */
         Aex = ADDR (addr + M[reg]);
         if (! IS_SUPERVISOR (RUU))
@@ -1732,14 +1496,14 @@ void cpu_one_inst ()
                  * Пропускаем э75, их обычно слишком много. */
                 t_value word = mmu_load (Aex);
                 fprintf (sim_log, "*** %05o%s: ", PC,
-                         (RUU & RUU_RIGHT_INSTR) ? "п" : "л");
+                         (RUU & RUU_RIGHT_INSTR) ? "R" : "L");
                 besm6_fprint_cmd (sim_log, RK);
-                fprintf (sim_log, "\tАисп=%05o (=", Aex);
+                fprintf (sim_log, "\tAex=%05o (=", Aex);
                 fprint_sym (sim_log, 0, &word, 0, 0);
-                fprintf (sim_log, ")  СМ=");
+                fprintf (sim_log, ")  ACC=");
                 fprint_sym (sim_log, 0, &ACC, 0, 0);
                 if (reg)
-                    fprintf (sim_log, "  М[%o]=%05o", reg, M[reg]);
+                    fprintf (sim_log, "  M[%o]=%05o", reg, M[reg]);
                 fprintf (sim_log, "\n");
             }
             /*besm6_okno ("экстракод");*/
@@ -1851,6 +1615,9 @@ void cpu_one_inst ()
         }
         PC = Aex;
         RUU &= ~RUU_RIGHT_INSTR;
+        /* uj through a saved link register (reg, 0) is a subroutine return. */
+        if (reg != 0 && addr == 0 && sim_deb && cpu_dev.dctrl)
+            besm6_trace_call_return ();
         delay = 7;
         break;
     case 0310:                                      /* пв, vjm */
@@ -1867,6 +1634,9 @@ void cpu_one_inst ()
         }
         PC = addr;
         RUU &= ~RUU_RIGHT_INSTR;
+        /* пв/vjm is a subroutine call: name the function at the target. */
+        if (sim_deb && cpu_dev.dctrl)
+            besm6_trace_call_return ();
         delay = 7;
         break;
     case 0320:                                      /* выпр, iret */
@@ -1985,8 +1755,8 @@ void op_int_1 (const char *msg)
 void op_int_2 ()
 {
     /*besm6_okno ("Внешнее прерывание");*/
-    besm6_debug_sub(B6_LOG_CPU, ">>> INT2 enter: PC=%05o GRP=%012llo MGRP=%012llo "
-                 "PRP=%06o MPRP=%06o", PC, GRP, MGRP, PRP, MPRP);
+    if (sim_deb && cpu_dev.dctrl)
+        besm6_trace_exception ("external interrupt");
     M[SPSW] = (M[PSW] & (PSW_INTR_DISABLE | PSW_MMAP_DISABLE |
                          PSW_PROT_DISABLE)) | IS_SUPERVISOR (RUU);
     M[IRET] = PC;
@@ -2016,13 +1786,11 @@ t_stat sim_instr (void)
     r = setjmp (cpu_halt);
     if (r) {
         M[017] += corr_stack;
-        if (cpu_dev.dctrl) {
+        if (sim_deb && cpu_dev.dctrl) {
             const char *message = (r >= SCPE_BASE) ?
                 sim_error_text (r) :
                 sim_stop_messages [r];
-            besm6_debug_sub(B6_LOG_CPU, "/// %05o%s: %s", PC,
-                         (RUU & RUU_RIGHT_INSTR) ? "п" : "л",
-                         message);
+            besm6_trace_exception (message);
         }
 
         /*
@@ -2202,40 +1970,14 @@ t_stat sim_instr (void)
             GRP |= GRP_SLAVE;
         }
 
-        /* === Стратегия А+Г: safety net (one-shot push) ===
-         *
-         * ОСНОВНОЙ ПУТЬ: dks_register/dks_poll устанавливают
-         * PRP и MPRP одновременно (эмуляция аппаратного hardwired
-         * МПРП К-71). Стандартный путь PRP & MPRP → GRP_SLAVE
-         * → op_int_2 работает сам по себе.
-         *
-         * ЭТОТ PUSH — запасной механизм на случай, если по какой-
-         * причине MPRP был сброшен (ГАШПРП) до обработки прерывания.
-         * Очищает PRP бит через тв218 (УВВ '30'), поэтому storm
-         * невозможен. One-shot предотвращает повторные срабатывания. */
-        {
-            static int dks_push_done = 0;
-            if (!dks_push_done) {
-                t_value dks_undelivered = PRP & (PRP_DKS_SREQ | PRP_DKS_RECV |
-                                                 PRP_DKS_TERMREQ | PRP_DKS_XMIT |
-                                                 PRP_DKS_ATTN) & ~MPRP;
-                if (dks_undelivered) {
-                    GRP |= GRP_SLAVE;
-                    MGRP |= GRP_SLAVE;
-                    dks_push_done = 1;
-                    besm6_debug_sub(B6_LOG_DKS,
-                        ">>> DKS PUSH: PRP=%06o, MPRP=%06o, undelivered=%06o",
-                        PRP, MPRP, dks_undelivered);
-                }
-            }
-        }
-
         if (! iintr && ! (RUU & RUU_RIGHT_INSTR) &&
             ! (M[PSW] & PSW_INTR_DISABLE) && (GRP & MGRP)) {
             /* external interrupt */
             op_int_2();
         }
         cpu_one_inst ();                        /* one instr */
+        if (sim_deb && cpu_dev.dctrl)
+            besm6_trace_registers ();           /* show changed registers */
         iintr = 0;
 
         sim_interval -= 1;                      /* count down instructions */

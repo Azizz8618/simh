@@ -133,7 +133,7 @@ extern t_value memory [MEMSIZE];
 extern t_value pult [11][8];
 extern unsigned pult_packet_switch; /* selector of hardwired programs */
 
-extern uint32 PC, RAU, RUU;
+extern uint32 PC, RK, Aex, RAU, RUU;
 extern uint32 M[NREGS];
 extern t_value BRZ[8], RP[8], GRP, MGRP;
 extern uint32 PRP, MPRP;
@@ -146,6 +146,7 @@ extern DEVICE md_dev[];
 extern DEVICE clock_dev;
 extern DEVICE printer_dev;
 extern DEVICE tty_dev;
+extern DEVICE dks_dev;
 extern DEVICE fs_dev;
 extern DEVICE pl_dev;
 extern DEVICE vu_dev;
@@ -343,6 +344,9 @@ void mg_ctl (int ctlr, uint32 cmd);
 int mg_state (int ctlr);
 void mg_format(uint32 cmd);
 int mg_errors (void);
+int es_status (void);
+int es_errors (void);
+int es_count (void);
 
 /*
  * Печать на АЦПУ.
@@ -365,6 +369,20 @@ void mux_send (uint32 syllable);
 uint32 mux_read (void);
 void mux_clear (void);
 int vt_is_idle (void);
+void vt_send (int num, uint32 sym);
+void vt_puts (int num, const char *s);
+
+/*
+ * КАДОПАМ (команды 032/0132) и ДКС на Электронике-60.
+ */
+t_value dks_read (int addr);
+void dks_write (int addr, t_value acc);
+void dks_line_state (int num, int connected);
+int dks_line_can_input (int num);
+void dks_line_char (int num, int c);
+void e60_set_echo (int num, int on);
+void dks_poll (void);
+int dks_busy (void);
 
 /*
  * Ввод с перфоленты.
@@ -394,17 +412,30 @@ int pi_read (int num);
  * Отладочная выдача.
  */
 void besm6_fprint_cmd (FILE *of, uint32 cmd);
+void besm6_fprint_insn (FILE *of, uint32 insn);
+extern int besm6_latin;
 void besm6_log (const char *fmt, ...);
 void besm6_log_cont (const char *fmt, ...);
 void besm6_debug (const char *fmt, ...);
-void besm6_debug_sub (int subsystem, const char *fmt, ...);
-void besm6_error (int subsystem, const char *fmt, ...);
-void besm6_log_init (void);
-void besm6_log_setup_dir (const char *dir);
-void besm6_log_setup_max (size_t max_bytes);
-const char *besm6_log_get_dir (void);
-void besm6_log_set_enabled (int enabled);
-#include "besm6_log.h"
+
+/*
+ * Instruction and register tracing (besm6_trace.c), gated by cpu_dev.dctrl.
+ */
+void besm6_trace_reset (void);
+void besm6_trace_instruction (void);
+void besm6_trace_registers (void);
+void besm6_trace_memory (int addr, t_value val, const char *opname);
+void besm6_trace_exception (const char *message);
+void besm6_trace_call_return (void);
+
+/*
+ * Symbol table extracted from an a.out image (besm6_trace.c),
+ * mapping function addresses to names for the call/return trace.
+ */
+void besm6_sym_clear (void);
+void besm6_sym_add (uint32 addr, const char *name);
+void besm6_sym_sort (void);
+const char *besm6_sym_find (uint32 addr, int *at_start);
 t_stat fprint_sym (FILE *of, t_addr addr, t_value *val,
                    UNIT *uptr, int32 sw);
 void besm6_draw_panel (int force);
@@ -497,20 +528,10 @@ t_value besm6_unpack (t_value val, t_value mask);
 #define PRP_MUX_INPUT     000000100             /* 7 */
 #define PRP_MUX_DONE      000000040             /* 6 */
 
-/*
- * Bits of the peripheral interrupt register ПРП for DKS (КАДОПАМ-КРК)
- * Based on RUKDKS documentation and SVYAZ7 module
- * 
- * DKS uses the same PRP bits as CONSOL/MUX since it's a compatible system:
- * - PRP12 (E12) = S-terminal request (connection) - same as CONS1_INPUT
- * - PRP7 (E7) = H-terminal request (character input) - same as MUX_INPUT  
- * - PRP6 (E6) = Receive ready (slow exchange) - same as MUX_DONE
- */
-#define PRP_DKS_SREQ      000004000             /* 12 - Запрос ввода S-терминала (подключение) */
-#define PRP_DKS_TERMREQ   000000100             /* 7  - Запрос ввода H-терминала (символ) */
-#define PRP_DKS_XMIT      000000200             /* 8  - Готовность к передаче (быстрый обмен) */
-#define PRP_DKS_RECV      000000040             /* 6  - Готовность приёма (медленный обмен) */
-#define PRP_DKS_ATTN      000000020             /* 5  - Внимание (быстрый обмен) */
+/* With КАДОПАМ (∧К71) ПРП 8-5 are the КРК channels 0-3 and ПРП 12 is the
+ * ДКС "attention" signal. */
+#define PRP_DKS_CHAN(n)   (0200 >> (n))
+#define PRP_DKS_ATTN      000004000             /* 12 */
 
 /* Номер блока ОЗУ или номер страницы, вызвавших прерывание */
 extern uint32 iintr_data;
