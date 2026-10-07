@@ -712,8 +712,15 @@ void vt_putc (int num, int c)
     if (! t->conn)
         return;
     if (t->rcve) {
-        /* A telnet connection. */
-        tmxr_putc_ln (t, c);
+        /* A telnet connection.  The line output buffer is only 256 bytes,
+           and tmxr_putc_ln drops the character when it is full; ДКС output
+           arrays are longer (a ДИСПАК «ИГРА» field frame is ~540 bytes), so
+           push the buffer to the socket and retry instead of losing the
+           tail.  Bound the retries so a client that never reads cannot
+           wedge the simulator. */
+        int tries = 100000;
+        while ((SCPE_STALL == tmxr_putc_ln (t, c)) && --tries)
+            tmxr_send_buffered_data (t);
     } else {
         /* Console output. */
         sim_putchar(c);
