@@ -1,48 +1,62 @@
 #!/bin/bash
-# build.sh — Фоновая сборка эмулятора БЭСМ-6
-# Использование: ./scripts/build.sh
+# build.sh — Быстрая сборка эмулятора БЭСМ-6
+# Использование: ./scripts/build.sh [--clean] [--bg]
+#
+# ПРАВИЛА СБОРКИ (2026-09-16):
+#   - Собирать ТОЛЬКО из каталога simh: make besm6
+#   - make из BESM6/ использует другой Makefile (неполный!)
+#   - Старый бинарник удалять перед сборкой
 
-set -e
+set -euo pipefail
 
-PROJECT_ROOT="/home/azizz/Yandex.Disk/simh/BESM6"
+SIMH_ROOT="/home/azizz/Yandex.Disk/simh"
+BIN="$SIMH_ROOT/BIN/besm6"
 BUILD_LOG="/tmp/besm6_build.log"
+CLEAN=0
+BG=0
 
-echo "=== Сборка эмулятора БЭСМ-6 ==="
-echo "Лог: $BUILD_LOG"
-echo ""
+for arg in "$@"; do
+    case "$arg" in
+        --clean) CLEAN=1 ;;
+        --bg)    BG=1 ;;
+    esac
+done
 
-cd "$PROJECT_ROOT"
+cd "$SIMH_ROOT"
 
-# Очистка и сборка: ТОЛЬКО из папки simh (make besm6)!
-# make из папки BESM6 НЕ пересобирает эмулятор.
-cd /home/azizz/Yandex.Disk/simh
+# Очистка
+if [ "$CLEAN" -eq 1 ]; then
+    echo "Очистка..."
+    make clean > /dev/null 2>&1 || true
+fi
 
-# ОБЯЗАТЕЛЬНОЕ правило (2026-09-06): удалять старый бинарник перед сборкой.
-# Отсутствие файла после сборки = надёжный индикатор незавершённой сборки.
-rm -f /home/azizz/Yandex.Disk/simh/BIN/besm6
+# Удаляем старый бинарник — индикатор сборки
+rm -f "$BIN"
 
-# Сборка в фоне
-echo "Запуск сборки (make besm6 из simh, старый бинарник удалён)..."
-make besm6 > "$BUILD_LOG" 2>&1 &
-BUILD_PID=$!
+echo "Сборка make besm6 из $SIMH_ROOT ..."
+START=$(date +%s)
 
-echo "PID процесса: $BUILD_PID"
-echo ""
-echo "Проверка статуса:"
-echo "  tail -f $BUILD_LOG"
-echo ""
-echo "Ожидание завершения (Ctrl+C для отмены)..."
+if [ "$BG" -eq 1 ]; then
+    # Фоновый режим (для tmux)
+    make besm6 > "$BUILD_LOG" 2>&1 &
+    BUILD_PID=$!
+    echo "PID=$BUILD_PID Лог=$BUILD_LOG"
+    exit 0
+fi
 
-# Ожидание завершения
-wait $BUILD_PID 2>/dev/null
+# Синхронный режим (ждём результат)
+make besm6 > "$BUILD_LOG" 2>&1
+RC=$?
+END=$(date +%s)
+DURATION=$((END - START))
 
-if [ $? -eq 0 ]; then
-    echo ""
-    echo "✓ Сборка успешно завершена"
-    echo "Исполняемый файл: $PROJECT_ROOT/BIN/besm6"
-    ls -lh "$PROJECT_ROOT/BIN/besm6" 2>/dev/null || true
+if [ $RC -eq 0 ] && [ -x "$BIN" ]; then
+    SIZE=$(ls -lh "$BIN" | awk '{print $5}')
+    MTIME=$(stat -c '%y' "$BIN" | cut -d. -f1)
+    echo "OK ${DURATION}с ${SIZE} $MTIME"
 else
-    echo ""
-    echo "✗ Ошибка сборки. Последние 30 строк лога:"
-    tail -30 "$BUILD_LOG"
+    echo "ОШИБКА (rc=$RC) ${DURATION}с"
+    echo "--- Последние 20 строк лога ---"
+    tail -20 "$BUILD_LOG"
+    exit 1
 fi

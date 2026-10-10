@@ -37,7 +37,7 @@ attach -e md07 ~/Yandex.Disk/simh/BESM6/MD/2253
 ;attach -e md07 ~/Yandex.Disk/simh/BESM6/MD/EC5061/2353
 ;attach -e md10 ~/Yandex.Disk/simh/BESM6/MD/2100
 ;attach -e md11 ~/Yandex.Disk/simh/BESM6/MD/EC5061/2353
-attach -e md21 ~/Yandex.Disk/simh/BESM6/MD/2061
+attach -e md40 ~/Yandex.Disk/simh/BESM6/MD/EC5061/2061
 attach -e md41 ~/Yandex.Disk/simh/BESM6/MD/EC5061/2070
 attach -e md42 ~/Yandex.Disk/simh/BESM6/MD/EC5061/2094
 attach -e md43 ~/Yandex.Disk/simh/BESM6/MD/EC5061/2086
@@ -153,6 +153,32 @@ attach tty1 console
 ; Q = "ya", W = "ve", Y = "yeru", J = "short I", X = "soft sign",
 ; C = "ts", V = "zhe", grave = "yu", tilde = "ch", { = "sh", } = "shch",
 ; | = "reverse e"
+set tty1 authbs
+;set -n tty1 log=tty1.txt
+set tty2 authbs
+set tty3 authbs
+set tty4 authbs
+set tty5 authbs
+set tty6 
+set tty7 
+set tty8 
+set tty9 
+set tty10 
+set tty11 
+set tty12 
+set tty13 
+set tty14 
+set tty15 
+set tty16 
+set tty17 
+set tty18 
+set tty19 
+set tty20 
+set tty21 
+set tty22 
+set tty23 
+set tty24 
+
 ;
 ; Enabling the true LRU behavior of caches
 ; slows down the simulation speed ~20%

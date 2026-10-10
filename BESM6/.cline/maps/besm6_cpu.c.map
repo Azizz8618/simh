@@ -1,4 +1,4 @@
-=== besm6_cpu.c — 2315 строк ===
+=== besm6_cpu.c — 2314 строк ===
 Источник: besm6_cpu.c | Автогенерация: scripts/gen_code_map.sh
 Регенерировать: test besm6_cpu.c -nt .cline/maps/besm6_cpu.c.map
 
@@ -57,6 +57,6 @@
 | cpu_one_inst | 1226-1962 | sending a stop code. |
 | op_int_1 | 1963-1984 | Описана в 9-м томе технического описания БЭСМ-6, страница 119. |
 | op_int_2 | 1985-2005 | Описана в 9-м томе технического описания БЭСМ-6, страница 129. |
-| sim_instr | 2006-2251 | Main instruction fetch/decode loop |
-| fast_clk | 2252-2294 | for a better user time/system time ratio. |
-| clk_reset | 2295-2315 |  |
+| sim_instr | 2006-2250 | Main instruction fetch/decode loop |
+| fast_clk | 2251-2293 | for a better user time/system time ratio. |
+| clk_reset | 2294-2314 |  |

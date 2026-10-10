@@ -1,0 +1,1 @@
+/home/azizz/.cline/skills/dispak-commentary/SKILL.md
