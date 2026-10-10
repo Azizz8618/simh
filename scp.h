@@ -23,7 +23,7 @@
    be used in advertising or otherwise to promote the sale, use or other dealings
    in this Software without prior written authorization from Robert M Supnik.
 
-   05-Dec-10    MP      Added macro invocation of sim_debug 
+   05-Dec-10    MP      Added macro invocation of sim_debug
    09-Aug-06    JDB     Added assign_device and deassign_device
    14-Jul-06    RMS     Added sim_activate_abs
    06-Jan-06    RMS     Added fprint_stopped_gen
@@ -38,7 +38,6 @@
 #define SIM_SCP_H_     0
 
 #include "sim_fio.h"
-#include <sys/stat.h>
 
 #ifdef  __cplusplus
 extern "C" {
@@ -58,6 +57,7 @@ extern "C" {
 #define EX_D            0                               /* deposit */
 #define EX_E            1                               /* examine */
 #define EX_I            2                               /* interactive */
+#define EX_DONE         4                               /* examine done */
 
 /* brk_cmd parameters */
 
@@ -151,6 +151,7 @@ double sim_activate_time_usecs (UNIT *uptr);
 t_stat sim_run_boot_prep (int32 flag);
 double sim_gtime (void);
 uint32 sim_grtime (void);
+void sim_reset_time (void);
 int32 sim_qcount (void);
 t_stat attach_unit (UNIT *uptr, CONST char *cptr);
 t_stat detach_unit (UNIT *uptr);
@@ -163,7 +164,8 @@ t_stat show_writelock (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 const char *sim_dname (DEVICE *dptr);
 const char *sim_uname (UNIT *dptr);
 const char *sim_set_uname (UNIT *uptr, const char *uname);
-t_stat get_yn (const char *ques, t_stat deflt);
+const char *sim_attach_name (UNIT *dptr);
+t_bool get_yn (const char *ques, t_bool deflt);
 void sim_srand (unsigned int seed);
 int sim_rand (void);
 #ifdef RAND_MAX
@@ -194,6 +196,7 @@ int Fprintf (FILE *f, const char *fmt, ...) GCC_FMT_ATTR(2, 3);
 #define fputs(_s,_f) Fprintf(_f,"%s",_s)
 #define fputc(_c,_f) Fprintf(_f,"%c",_c)
 t_stat sim_set_memory_load_file (const unsigned char *data, size_t size);
+t_stat sim_set_memory_load_file_ex (const unsigned char *data, size_t size, const char *filepath, unsigned int checksum);
 int Fgetc (FILE *f);
 t_stat fprint_val (FILE *stream, t_value val, uint32 rdx, uint32 wid, uint32 fmt);
 t_stat sprint_val (char *buf, t_value val, uint32 rdx, uint32 wid, uint32 fmt);
@@ -203,6 +206,7 @@ const char *sim_fmt_numeric (double number);
 const char *sprint_capac (DEVICE *dptr, UNIT *uptr);
 char *read_line (char *cptr, int32 size, FILE *stream);
 char *read_line_p (const char *prompt, char *ptr, int32 size, FILE *stream);
+void fprint_brk_help (FILE *st, DEVICE *dptr);
 void fprint_reg_help (FILE *st, DEVICE *dptr);
 void fprint_set_help (FILE *st, DEVICE *dptr);
 void fprint_show_help (FILE *st, DEVICE *dptr);
@@ -239,7 +243,9 @@ t_stat sim_exp_showall (FILE *st, const EXPECT *exp);
 t_stat sim_exp_check (EXPECT *exp, uint8 data);
 CONST char *match_ext (CONST char *fnam, const char *ext);
 int sim_cmp_string (const char *s1, const char *s2);
+t_stat sim_fetch_binary_file (const char *filename, const char *filepath, size_t size, unsigned int checksum);
 t_stat show_version (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, CONST char *cptr);
+t_stat set_dev_enbdis (DEVICE *dptr, UNIT *uptr, int32 flag, CONST char *cptr);
 t_stat set_dev_debug (DEVICE *dptr, UNIT *uptr, int32 flag, CONST char *cptr);
 t_stat show_dev_debug (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, CONST char *cptr);
 t_stat sim_add_debug_flags (DEVICE *dptr, DEBTAB *debflags);
@@ -253,7 +259,7 @@ void sim_perror (const char *msg);
 t_stat sim_call_argv (int (*main_like)(int argc, char *argv[]), const char *cptr);
 t_stat sim_messagef (t_stat stat, const char *fmt, ...) GCC_FMT_ATTR(2, 3);
 void sim_data_trace(DEVICE *dptr, UNIT *uptr, const uint8 *data, const char *position, size_t len, const char *txt, uint32 reason);
-void sim_debug_bits_hdr (uint32 dbits, DEVICE* dptr, const char *header, 
+void sim_debug_bits_hdr (uint32 dbits, DEVICE* dptr, const char *header,
     BITFIELD* bitdefs, uint32 before, uint32 after, int terminate);
 void sim_debug_bits (uint32 dbits, DEVICE* dptr, BITFIELD* bitdefs,
     uint32 before, uint32 after, int terminate);
@@ -272,7 +278,11 @@ void _sim_debug_device (uint32 dbits, DEVICE* dptr, const char* fmt, ...) GCC_FM
 #define sim_debug(dbits, dptr, ...) do { if ((sim_deb != NULL) && ((dptr) != NULL) && ((dptr)->dctrl & (dbits))) _sim_debug_device (dbits, dptr, __VA_ARGS__);} while (0)
 #define sim_debug_unit(dbits, uptr, ...) do { if ((sim_deb != NULL) && ((uptr) != NULL) && (uptr->dptr != NULL) && (((uptr)->dctrl | (uptr)->dptr->dctrl) & (dbits))) _sim_debug_unit (dbits, uptr, __VA_ARGS__);} while (0)
 #endif
-void sim_flush_buffered_files (void);
+void sim_flush_buffered_files (t_bool debug_flush);
+
+/* Only for use in SCP code and libraries - NOT in simulator code */
+#define SIM_SCP_ABORT(msg) _sim_scp_abort (msg, __FILE__, __LINE__)
+void _sim_scp_abort (const char *msg, const char *filename, int filelinenum);
 
 void fprint_stopped_gen (FILE *st, t_stat v, REG *pc, DEVICE *dptr);
 #define SCP_HELP_FLAT   (1u << 31)       /* Force flat help when prompting is not possible */
@@ -316,7 +326,6 @@ extern size_t sim_deb_buffer_size;                      /* debug memory buffer s
 extern char *sim_deb_buffer;                            /* debug memory buffer */
 extern size_t sim_debug_buffer_offset;                  /* debug memory buffer insertion offset */
 extern size_t sim_debug_buffer_inuse;                   /* debug memory buffer inuse count */
-extern struct timespec sim_deb_basetime;                /* debug base time for relative time output */
 extern DEVICE **sim_internal_devices;
 extern uint32 sim_internal_device_count;
 extern UNIT *sim_clock_queue;
@@ -334,10 +343,15 @@ extern t_addr sim_brk_match_addr;
 extern BRKTYPTAB *sim_brk_type_desc;                    /* type descriptions */
 extern const char *sim_prog_name;                       /* executable program name */
 extern FILE *stdnul;
+extern const char *sim_version_date_stamp;              /* Source Code base time */
 extern t_bool sim_asynch_enabled;
+extern int32 sim_asynch_latency;
+extern int32 sim_asynch_inst_latency;
 #if defined(SIM_ASYNCH_IO)
 int sim_aio_update_queue (void);
 void sim_aio_activate (ACTIVATE_API caller, UNIT *uptr, int32 event_time);
+void sim_aio_check_event (void);
+void sim_aio_set_interrupt_latency (int32 instpersec);
 #endif
 
 /* VM interface */
@@ -357,13 +371,13 @@ extern t_stat parse_sym (CONST char *cptr, t_addr addr, UNIT *uptr, t_value *val
     int32 sw);
 
 /* The per-simulator init routine is a weak global that defaults to NULL
-   The other per-simulator pointers can be overrriden by the init routine
+   The other per-simulator pointers can be overridden by the init routine
 
 extern void (*sim_vm_init) (void);
 
    This routine is no longer invoked this way since it doesn't work reliably
-   on all simh supported compile environments.  A simulator that needs these 
-   initializations can perform them in the CPU device reset routine which will 
+   on all simh supported compile environments.  A simulator that needs these
+   initializations can perform them in the CPU device reset routine which will
    always be called before anything else can be processed.
 
  */
@@ -378,7 +392,8 @@ extern t_value (*sim_vm_pc_value) (void);
 extern t_bool (*sim_vm_is_subroutine_call) (t_addr **ret_addrs);
 extern void (*sim_vm_reg_update) (REG *rptr, uint32 idx, t_value prev_val, t_value new_val);
 extern const char **sim_clock_precalibrate_commands;
-extern int32 sim_vm_initial_ips;                        /* base estimate of simulated instructions per second */
+extern const char **sim_clock_precalibrate_cleanup_commands;
+extern uint32 sim_vm_initial_ips;                       /* base estimate of simulated instructions per second */
 extern const char *sim_vm_interval_units;               /* Simulator can change this - default "instructions" */
 extern const char *sim_vm_step_unit;                    /* Simulator can change this - default "instruction" */
 

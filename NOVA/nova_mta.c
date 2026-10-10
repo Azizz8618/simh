@@ -1,6 +1,6 @@
 /* nova_mta.c: NOVA magnetic tape simulator
 
-   Copyright (c) 1993-2017, Robert M. Supnik
+   Copyright (c) 1993-2023, Robert M. Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,6 +25,8 @@
 
    mta          magnetic tape
 
+   02-Nov-23    RMS     Mode change should test STA_BOT, not sim_tape_BOT
+   26-Mar-22    RMS     Added extra case points for new MTSE definitions
    13-Mar-17    RMS     Annotated fall through in switch
    04-Jul-07    BKR     fixed boot code to properly boot self-boot tapes;
                         boot routine now uses standard DG APL boot code;
@@ -370,7 +372,7 @@ else switch (c) {                                       /* case on command */
         break;
 
     case CU_DMODE:                                      /* drive mode */
-        if (!sim_tape_bot (uptr))                       /* must be BOT */
+        if ((uptr->USTAT & STA_BOT) == 0)               /* must be BOT */
             mta_sta = mta_sta | STA_ILL;
         else mta_upddsta (uptr, (mta_cu & CU_PE)?       /* update drv status */
             uptr->USTAT | STA_PEM: uptr->USTAT & ~ STA_PEM);
@@ -514,6 +516,7 @@ switch (st) {
     case MTSE_FMT:                                      /* illegal fmt */
         mta_upddsta (uptr, uptr->USTAT | STA_WLK | STA_RDY);
         /* fall through */
+    default:
     case MTSE_UNATT:                                    /* unattached */
         mta_sta = mta_sta | STA_ILL;
         /* fall through */
@@ -552,9 +555,6 @@ switch (st) {
         mta_upddsta (uptr, uptr->USTAT | STA_WLK | STA_RDY);
         mta_sta = mta_sta | STA_ILL;                    /* illegal operation */
         break;
-
-    default:                                            /* shouldn't happen */
-        return SCPE_IERR;
         }
 
 return SCPE_OK;

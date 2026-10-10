@@ -35,6 +35,7 @@
 
 #include "vax_defs.h"
 #include "sim_tmxr.h"
+#include "sim_disk.h"
 
 /* Terminal definitions */
 
@@ -131,6 +132,15 @@ static BITFIELD tmr_iccs_bits [] = {
 #define RL_NUMSF        2                               /* surfaces/cylinder */
 #define RL_NUMCY        512                             /* cylinders/drive */
 #define RL02_SIZE (RL_NUMCY * RL_NUMSF * RL_NUMSC * RL_NUMWD)  /* words/drive */
+
+#define RL_DRV(d)                                \
+    { RL_NUMSC, RL_NUMSF, RL_NUMCY, RL02_SIZE/RL_NUMWD, #d, \
+      RL_NUMBY, DRVFL_DEC144|DRVFL_NOCHNG }
+
+static DRVTYP drv_typ[] = {
+    RL_DRV(RL02),
+    { 0 }
+    };
 
 /* Parameters in the unit descriptor */
 
@@ -260,9 +270,12 @@ t_stat tto_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cpt
 t_stat clk_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
 t_stat clk_attach (UNIT *uptr, CONST char *cptr);
 t_stat clk_detach (UNIT *uptr);
+t_stat clk_show_mode (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+t_stat clk_show_time (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat tmr_reset (DEVICE *dptr);
 t_stat rlcs_reset (DEVICE *dptr);
 t_stat rlcs_attach (UNIT *uptr, CONST char *cptr);
+t_stat rlcs_detach (UNIT *uptr);
 int32 icr_rd (void);
 void tmr_sched (uint32 incr);
 t_stat todr_resync (void);
@@ -367,6 +380,12 @@ REG clk_reg[] = {
     { NULL }
     };
 
+MTAB clk_mod[] = {
+    { MTAB_XTD|MTAB_VUN,            0, "MODE",   NULL,     NULL, &clk_show_mode, NULL, "Display TODR clock mode" },
+    { MTAB_XTD|MTAB_VUN|MTAB_SH_NL, 0, "TIME",   NULL,     NULL, &clk_show_time, NULL, "Display TODR clock time" },
+    { 0 }
+    };
+
 #define TMR_DB_TODR     0x10    /* TODR */
 
 DEBTAB todr_deb[] = {
@@ -375,7 +394,7 @@ DEBTAB todr_deb[] = {
     };
 
 DEVICE clk_dev = {
-    "TODR", &clk_unit, clk_reg, NULL,
+    "TODR", &clk_unit, clk_reg, clk_mod,
     1, 0, 8, 4, 0, 32,
     NULL, NULL, &clk_reset,
     NULL, &clk_attach, &clk_detach,
@@ -426,7 +445,8 @@ DEVICE tmr_dev = {
    rlcs_mod       CS modifier list
 */
 
-UNIT rlcs_unit = { UDATA (&rlcs_svc, UNIT_FIX+UNIT_ATTABLE+UNIT_ROABLE, RL02_SIZE) };
+
+UNIT rlcs_unit = { 0 };
 
 REG rlcs_reg[] = {
     { HRDATAD (CSR,     rlcs_csr, 16, "control/status register") },
@@ -444,13 +464,27 @@ MTAB rlcs_mod[] = {
     { 0 }
     };
 
+/* Debug detail levels */
+
+#define RLDEB_OPS      0001                             /* transactions */
+#define RLDEB_TRC      0010                             /* trace */
+#define RLDEB_DAT      0100                             /* transfer data */
+
+DEBTAB rlcs_deb[] = {
+    { "OPS",   RLDEB_OPS, "transactions" },
+    { "TRACE", RLDEB_TRC, "trace" },
+    { "DATA",  RLDEB_DAT, "data transfer"},
+    { NULL, 0 }
+    };
+
 DEVICE rlcs_dev = {
     "CS", &rlcs_unit, rlcs_reg, rlcs_mod,
     1, 10, 24, 1, 16, 16,
     NULL, NULL, &rlcs_reset,
-    NULL, &rlcs_attach, NULL,
-    NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, 
-    &rlcs_description
+    NULL, &rlcs_attach, &rlcs_detach,
+    NULL, DEV_DISK | DEV_DEBUG, 0, 
+    rlcs_deb, NULL, NULL, NULL, NULL, NULL, 
+    &rlcs_description, NULL, &drv_typ
     };
 
 /* Terminal MxPR routines
@@ -658,7 +692,7 @@ tmxr_set_console_units (tti_unit, tto_unit);
 tti_buf = 0;
 tti_csr = 0;
 tti_int = 0;
-sim_activate (&tti_unit[ID_CT], tmr_poll);
+sim_activate (&tti_unit[ID_CT], tmxr_poll);
 return SCPE_OK;
 }
 
@@ -839,7 +873,6 @@ tmr_nicr = val;
 t_stat tmr_svc (UNIT *uptr)
 {
 sim_debug (TMR_DB_TICK, &tmr_dev, "tmr_svc()\n");
-tmxr_poll = tmr_poll * TMXR_MULT;                   /* set mux poll */
 if (tmr_iccs & TMR_CSR_DON)                         /* done? set err */
     tmr_iccs = tmr_iccs | TMR_CSR_ERR;
 else
@@ -852,7 +885,6 @@ if (tmr_iccs & TMR_CSR_IE) {                        /* ie? set int req */
     }
 else
     tmr_int = 0;
-AIO_SET_INTERRUPT_LATENCY(tmr_poll*clk_tps);        /* set interrrupt latency */
 return SCPE_OK;
 }
 
@@ -873,10 +905,12 @@ else
 
 t_stat clk_reset (DEVICE *dptr)
 {
-if (clk_unit.filebuf == NULL) {                         /* make sure the TODR is initialized */
-    clk_unit.filebuf = calloc(sizeof(TOY), 1);
+if ((clk_unit.filebuf == NULL) ||                       /* make sure the TODR is initialized */
+    (sim_switches & SWMASK ('P'))) {
+    clk_unit.filebuf = realloc(clk_unit.filebuf, sizeof(TOY));
     if (clk_unit.filebuf == NULL)
         return SCPE_MEM;
+    memset (clk_unit.filebuf, 0, sizeof(TOY));
     }
 todr_resync ();
 sim_activate_after (&clk_unit, 10000);
@@ -886,9 +920,10 @@ return SCPE_OK;
 
 t_stat clk_svc (UNIT *uptr)
 {
-sim_activate_after (uptr, 10000);
-tmr_poll = sim_rtcn_calb (100, TMR_CLK);
-tmxr_poll = tmr_poll * TMXR_MULT;                       /* set mux poll */
+tmr_poll = sim_rtcn_calb (clk_tps, TMR_CLK);
+sim_activate_after (uptr, 1000000 / clk_tps);       /* 10000 usecs */
+tmxr_poll = tmr_poll * TMXR_MULT;                   /* set mux poll */
+AIO_SET_INTERRUPT_LATENCY(tmr_poll*100);            /* set interrrupt latency */
 return SCPE_OK;
 }
 
@@ -989,6 +1024,34 @@ if ((uptr->flags & UNIT_ATT) == 0)
 return r;
 }
 
+/* CLK show time */
+
+t_stat clk_show_mode (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+fprintf (st, "%s", (uptr->flags & UNIT_ATT) ? "OS Agnostic TODR Mode" : "Automatic VMS TODR Mode");
+return SCPE_OK;
+}
+
+/* CLK show time */
+
+t_stat clk_show_time (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+TOY *toy = (TOY *)uptr->filebuf;
+time_t ttime = (time_t)toy->toy_gmtbase;
+struct tm *ttm = localtime (&ttime);
+struct timespec now;
+int32 todr_now = todr_rd ();
+
+fprintf (st, "VMS Time Base: %d-%02d-%02d %02d:%02d:%02d.%03d", 1900 + ttm->tm_year, 1 + ttm->tm_mon, ttm->tm_mday, ttm->tm_hour, ttm->tm_min, ttm->tm_sec, (int)(toy->toy_gmtbasemsec));
+now.tv_nsec = (toy->toy_gmtbasemsec + (10 * (todr_now % 100)));
+now.tv_sec = (time_t)toy->toy_gmtbase + (todr_now / 100) + (now.tv_nsec / 1000000000);
+now.tv_nsec = now.tv_nsec % 1000000000;
+ttime = (time_t)now.tv_sec;
+ttm = localtime (&ttime);
+fprintf (st, ", Now: %d-%02d-%02d %02d:%02d:%02d.%03d", 1900 + ttm->tm_year, 1 + ttm->tm_mon, ttm->tm_mday, ttm->tm_hour, ttm->tm_min, ttm->tm_sec, (int)(now.tv_nsec / 1000000));
+return SCPE_OK;
+}
+
 /* Interval timer reset */
 
 t_stat tmr_reset (DEVICE *dptr)
@@ -1041,7 +1104,7 @@ sim_rtcn_get_time(&now, TMR_CLK);                       /* get curr time */
 base.tv_sec = (time_t)toy->toy_gmtbase;
 base.tv_nsec = toy->toy_gmtbasemsec * 1000000;
 sim_timespec_diff (&val, &now, &base);                  /* val = now - base */
-sim_debug (TMR_DB_TODR, &clk_dev, "todr_rd() - TODR=0x%X - %s\n", (int32)(val.tv_sec*100 + val.tv_nsec/10000000), todr_fmt_vms_todr ((int32)(val.tv_sec*100 + val.tv_nsec/10000000)));
+sim_debug (TMR_DB_TODR, &clk_dev, "todr_rd() - TODR=0x%X - %s\n", (int32)(val.tv_sec*100 + (val.tv_nsec + 5000000)/10000000), todr_fmt_vms_todr ((int32)(val.tv_sec*100 + val.tv_nsec/10000000)));
 return (int32)(val.tv_sec*100 + (val.tv_nsec + 5000000)/10000000);  /* 100hz Clock rounded Ticks */
 }
 
@@ -1185,7 +1248,8 @@ return SCPE_OK;
 
 t_stat rlcs_svc (UNIT *uptr)
 {
-int32 bcnt;
+t_seccnt sectsread, sectswritten;
+t_stat err;
 uint32 da;
 
 switch (rlcs_state) {
@@ -1202,12 +1266,11 @@ switch (rlcs_state) {
                     rlcs_state = RL_IDLE;               /* now idle */
                     break;
                     }
-                da = STXCS_GETDA(cso_csr) * 512;        /* get byte offset */
-                if (sim_fseek (uptr->fileref, da, SEEK_SET))
+                da = STXCS_GETDA(cso_csr);              /* get disk sector address */
+                err = sim_disk_rdsect (uptr, da*(RL_NUMBY/RL_NUMWD), (uint8 *)rlcs_buf, &sectsread, 2);
+                sim_disk_data_trace (uptr, (uint8 *)rlcs_buf, da*(RL_NUMBY/RL_NUMWD), sectsread*RL_NUMWD*sizeof(*rlcs_buf), "sim_disk_rdsect", RLDEB_DAT & uptr->dptr->dctrl, RLDEB_OPS);
+                if ((err != SCPE_OK) || (sectsread != (RL_NUMBY/RL_NUMWD)))
                     return SCPE_IOERR;
-                bcnt = sim_fread (rlcs_buf, sizeof (int16), RL_NUMBY, uptr->fileref);
-                for ( ; bcnt < RL_NUMBY; bcnt++)                            /* fill buffer */
-                    rlcs_buf[bcnt] = 0;
                 }
             if (rlcs_bcnt < RL_NUMBY) {                 /* more data in buffer? */
                 cso_buf = rlcs_buf[rlcs_bcnt++];        /* return next word */
@@ -1239,11 +1302,10 @@ switch (rlcs_state) {
                 (RLST_CONT << STXCS_V_STS);
             }
         else {
-            da = STXCS_GETDA(cso_csr) * 512;            /* get byte offset */
-            if (sim_fseek (uptr->fileref, da, SEEK_SET))
-                return SCPE_IOERR;
-            bcnt = sim_fwrite (rlcs_buf, sizeof (int16), RL_NUMBY, uptr->fileref);
-            if (bcnt != RL_NUMBY)
+            da = STXCS_GETDA(cso_csr);                  /* get disk sector address */
+            sim_disk_data_trace (uptr, (uint8 *)rlcs_buf, da*(RL_NUMBY/RL_NUMWD), RL_NUMWD*sizeof(uint16)*(RL_NUMBY/RL_NUMWD), "sim_disk_wrsect", RLDEB_DAT & uptr->dptr->dctrl, RLDEB_OPS);
+            err = sim_disk_wrsect (uptr, da*(RL_NUMBY/RL_NUMWD), (uint8 *)rlcs_buf, &sectswritten, 2);
+            if ((err != SCPE_OK) || (sectswritten != (RL_NUMBY/RL_NUMWD)))
                 return SCPE_IOERR;
             rlcs_state = RL_IDLE;                       /* now idle */
             rlcs_bcnt = 0;
@@ -1309,6 +1371,14 @@ return SCPE_OK;
 
 t_stat rlcs_reset (DEVICE *dptr)
 {
+static t_bool inited = FALSE;
+
+if (!inited) {
+    inited = TRUE;
+    dptr->units->action = &rlcs_svc;
+    dptr->units->flags = UNIT_FIX|UNIT_ATTABLE|UNIT_ROABLE;
+    sim_disk_set_drive_type_by_name (dptr->units, "RL02");
+    }
 cso_buf = 0;
 cso_csr = CSR_DONE;
 csi_int = 0;
@@ -1331,19 +1401,20 @@ return "Console RL02 disk";
 
 t_stat rlcs_attach (UNIT *uptr, CONST char *cptr)
 {
-uint32 p;
 t_stat r;
 
-uptr->capac = RL02_SIZE;
-r = attach_unit (uptr, cptr);                           /* attach unit */
+r = sim_disk_attach (uptr, cptr, RL_NUMBY,
+                     sizeof (uint8), TRUE, 0,
+                     "RL02", RL_NUMSC, 0);
+
 if (r != SCPE_OK)                                       /* error? */
     return r;
 uptr->TRK = 0;                                          /* cylinder 0 */
 uptr->STAT = RLDS_VCK;                                  /* new volume */
-if ((p = sim_fsize (uptr->fileref)) == 0) {             /* new disk image? */
-    if (uptr->flags & UNIT_RO)                          /* if ro, done */
-        return SCPE_OK;
-    return pdp11_bad_block (uptr, RL_NUMSC, RL_NUMWD);
-    }
 return SCPE_OK;
+}
+
+t_stat rlcs_detach (UNIT *uptr)
+{
+return sim_disk_detach (uptr);
 }

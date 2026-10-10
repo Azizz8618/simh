@@ -869,7 +869,7 @@ if (mot & DTS_DIR)                                      /* update pos */
 else uptr->pos = uptr->pos + delta;
 if (((int32) uptr->pos < 0) ||
     ((int32) uptr->pos > (DTU_FWDEZ (uptr) + DT_EZLIN))) {
-    detach_unit (uptr);                                 /* off reel? */
+    dt_detach (uptr);                                   /* off reel? */
     uptr->STATE = uptr->pos = 0;
     unum = (int32) (uptr - dt_dev.units);
     if (unum == DTA_GETUNIT (dtsa))                     /* if selected, */
@@ -945,7 +945,7 @@ switch (fnc) {                                          /* at speed, check fnc *
         return SCPE_OK;
 
     case DTS_OFR:                                       /* off reel */
-        detach_unit (uptr);                             /* must be deselected */
+        dt_detach (uptr);                               /* must be deselected */
         uptr->STATE = uptr->pos = 0;                    /* no visible action */
         break;
 

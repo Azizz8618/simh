@@ -1,0 +1,5 @@
+00011 f hello.o
+00010 a len
+00012 t loop
+00011 t main
+00016 d msg

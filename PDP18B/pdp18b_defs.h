@@ -234,7 +234,9 @@
 #define IOT_SKP         (1 << IOT_V_SKP)
 #define IOT_REASON      (1 << IOT_V_REASON)
 
-#define IORETURN(f,v)   ((f)? (v): SCPE_OK)             /* stop on error */
+#define IORETURN(f,v)   ((f)? (v):                      /* stop on error */ \
+                              (((v) != STOP_DTOFF) ? SCPE_OK :              \
+                                                   sim_messagef ((v), "*** DECtape has gone off reel - listen for the flapping tape\r\n"), SCPE_OK))             /* stop on error */
 
 /* PC change queue */
 

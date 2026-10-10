@@ -189,6 +189,8 @@ typedef struct key_event SIM_KEY_EVENT;
 t_stat vid_open (DEVICE *dptr, const char *title, uint32 width, uint32 height, int flags);
 #define SIM_VID_INPUTCAPTURED       1                       /* Mouse and Keyboard input captured (calling */
                                                             /* code responsible for cursor display in video) */
+#define SIM_VID_IGNORE_VBAR         2                       /* ignore video buffer aspect ratio */
+#define SIM_VID_RESIZABLE           4                       /* video screen is resizable */
 typedef void (*VID_QUIT_CALLBACK)(void);
 t_stat vid_register_quit_callback (VID_QUIT_CALLBACK callback);
 typedef void (*VID_GAMEPAD_CALLBACK)(int, int, int);
@@ -214,6 +216,8 @@ t_stat vid_set_fullscreen (t_bool flag);
 
 extern int vid_active;
 void vid_set_cursor_position (int32 x, int32 y);        /* cursor position (set by calling code) */
+void vid_set_window_size (VID_DISPLAY *vptr, int32 x, int32 y);            /* window size (set by calling code) */
+void vid_render_set_logical_size (VID_DISPLAY *vptr, int32 w, int32 h);
 
 t_stat vid_open_window (VID_DISPLAY **vptr, DEVICE *dptr, const char *title, uint32 width, uint32 height, int flags);
 t_stat vid_close_window (VID_DISPLAY *vptr);
@@ -230,28 +234,34 @@ t_stat vid_set_alpha_mode (VID_DISPLAY *vptr, int mode);
 
 /* A device simulator can optionally set the vid_display_kb_event_process
  * routine pointer to the address of a routine.
- * Simulator code which uses the display library which processes window 
+ * Simulator code which uses the display library which processes window
  * keyboard data with code in display/sim_ws.c can use this routine to
- * explicitly get access to keyboard events that arrive in the display 
+ * explicitly get access to keyboard events that arrive in the display
  * window.  This routine should return 0 if it has handled the event that
  * was passed, and non zero if it didn't handle it.  If the routine address
  * is not set or a non zero return value occurs, then the keyboard event
  * will be processed by the display library which may then be handled as
- * console character input if the device console code is implemented to 
+ * console character input if the device console code is implemented to
  * accept this.
  */
 extern int (*vid_display_kb_event_process)(SIM_KEY_EVENT *kev);
 
-#define SIM_VID_DBG_MOUSE   0x10000000
-#define SIM_VID_DBG_CURSOR  0x20000000
-#define SIM_VID_DBG_KEY     0x40000000
-#define SIM_VID_DBG_VIDEO   0x80000000
+#define SIM_VID_DBG_JOYSTICK 0x08000000
+#define SIM_VID_DBG_MOUSE    0x10000000
+#define SIM_VID_DBG_CURSOR   0x20000000
+#define SIM_VID_DBG_KEY      0x40000000
+#define SIM_VID_DBG_VIDEO    0x80000000
 
 #ifdef  __cplusplus
 }
 #endif
 
 #if defined(USE_SIM_VIDEO) && defined(HAVE_LIBSDL)
+
+#if defined(__APPLE__)
+#define SDL_MAIN_AVAILABLE
+#endif
+
 #include <SDL.h>
 #endif /* HAVE_LIBSDL */
 

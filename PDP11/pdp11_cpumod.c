@@ -1,6 +1,6 @@
 /* pdp11_cpumod.c: PDP-11 CPU model-specific features
 
-   Copyright (c) 2004-2020, Robert M Supnik
+   Copyright (c) 2004-2023, Robert M Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,6 +25,8 @@
 
    system       PDP-11 model-specific registers
 
+   10-Oct-23    RMS     Fixed writes to 11/70 RO registers (Tony Lawrence)
+   19-Nov-22    RMS     Fixed byte access errors in PIRQ, STKLIM, CDR (Walter Mueller)
    15-Sep-20    RMS     Fixed problem in KDJ11E programmable clock (Paul Koning)
    04-Mar-16    RMS     Fixed maximum memory sizes to exclude IO page
    14-Mar-16    RMS     Modified to keep cpu_memsize in sync with MEMSIZE
@@ -49,12 +51,21 @@
 #include "pdp11_defs.h"
 #include "pdp11_cpumod.h"
 
-/* Byte write macros for system registers */
+/* Byte write macros for system registers
 
+   EVN_IGN      byte writes to the even byte are ignored
+   ODD_IGN      byte writes to the odd byte are ignored
+   ODD_SHF      byte writes to the odd byte zero the even byte
+   ODD_MRG      byte writes write appropriate byte
+*/
+
+#define EVN_IGN(cur) \
+    if ((access == WRITEB) && ((pa & 1) == 0)) \
+        return SCPE_OK
 #define ODD_IGN(cur) \
     if ((access == WRITEB) && (pa & 1)) \
         return SCPE_OK
-#define ODD_WO(cur) \
+#define ODD_SHF(cur) \
     if ((access == WRITEB) && (pa & 1)) \
         cur = cur << 8
 #define ODD_MRG(prv,cur) \
@@ -248,7 +259,7 @@ CNFTAB cnf_tab[] = {
 static const char *opt_name[] = {
     "Unibus", "Qbus", "EIS", "NOEIS", "FIS", "NOFIS",
     "FPP", "NOFPP", "CIS", "NOCIS", "MMU", "NOMMU",
-    "RH11", "RH70", "PARITY", "NOPARITY", "Unibus map", "No map", 
+    "unused", "unused", "PARITY", "NOPARITY", "Unibus map", "No map", 
     "BEVENT enabled", "BEVENT disabled", NULL
     };
 
@@ -274,7 +285,7 @@ REG sys_reg[] = {
                            "11/84, 11/93, 11/94)") },
     { ORDATAD (DR, DR, 16, "display register or board LEDs ("
                            "11/04, 11/05, 11/20, "
-                           "1123+, 11/24, 11/34, "
+                           "11/23+, 11/24, 11/34, "
                            "11/70, 11/73B, 11/83, "
                            "11/84, 11/93, 11/94)") },
     { ORDATAD (MEMERR, MEMERR, 16, "memory error register ("
@@ -453,6 +464,12 @@ t_stat CPU44_wr (int32 data, int32 pa, int32 access)
 {
 switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
 
+    case 000:                                           /* low error */
+        return SCPE_OK;
+
+    case 001:                                           /* high error */
+        return SCPE_OK;
+
     case 002:                                           /* MEMERR */
         MEMERR = 0;
         return SCPE_OK;
@@ -470,12 +487,16 @@ switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
     case 005:                                           /* Hit/miss */
         return SCPE_OK;
 
+    case 012:                                           /* system ID */
+        return SCPE_OK;
+
     case 013:                                           /* CPUERR */
         CPUERR = 0;
         return SCPE_OK;
 
     case 015:                                           /* PIRQ */
-        ODD_WO (data);
+        EVN_IGN (data);
+        ODD_SHF (data);
         put_PIRQ (data);
         return SCPE_OK;
         }
@@ -511,12 +532,14 @@ t_stat CPU45_wr (int32 data, int32 pa, int32 access)
 switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
 
     case 015:                                           /* PIRQ */
-        ODD_WO (data);
+        EVN_IGN (data);
+        ODD_SHF (data);
         put_PIRQ (data);
         return SCPE_OK;
 
     case 016:                                           /* STKLIM */
-        ODD_WO (data);
+        EVN_IGN (data);
+        ODD_SHF (data);
         STKLIM = data & STKLIM_RW;
         return SCPE_OK;
         }                                               /* end switch pa */
@@ -590,7 +613,8 @@ switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
         return SCPE_OK;
 
     case 016:                                           /* STKLIM */
-        ODD_WO (data);
+        EVN_IGN (data);
+        ODD_SHF (data);
         STKLIM = data & STKLIM_RW;
         return SCPE_OK;
         }                                               /* end switch pa */
@@ -661,12 +685,22 @@ switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
 return SCPE_NXM;                                        /* unimplemented */
 }
 
+/* From Walter Mueller: MEMERR is always written using the standard data
+   on the bus: the whole word for DATO, the high byte for DATOB odd,
+   and the low byte with DATOB even. The simulator always puts a byte
+   in the low 8 bits, so for an odd byte reference, it must be shifted
+   to the high byte.
+*/
+
 t_stat CPU70_wr (int32 data, int32 pa, int32 access)
 {
 switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
+    case 000:                                           /* low error */
+    case 001:                                           /* high error */
+        return SCPE_OK;                                 /* error addr */
 
     case 002:                                           /* MEMERR */
-        ODD_WO (data);
+        ODD_SHF (data);
         MEMERR = MEMERR & ~data;
         return SCPE_OK;
 
@@ -687,6 +721,9 @@ switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
     case 011:                                           /* high size */
         return SCPE_OK;
 
+    case 012:                                           /* system ID */
+        return SCPE_OK;
+
     case 013:                                           /* CPUERR */
         CPUERR = 0;
         return SCPE_OK;
@@ -697,12 +734,14 @@ switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
         return SCPE_OK;
 
     case 015:                                           /* PIRQ */
-        ODD_WO (data);
+        EVN_IGN (data);
+        ODD_SHF (data);
         put_PIRQ (data);
         return SCPE_OK;
 
     case 016:                                           /* STKLIM */
-        ODD_WO (data);
+        EVN_IGN (data);
+        ODD_SHF (data);
         STKLIM = data & STKLIM_RW;
         return SCPE_OK;
         }                                               /* end switch pa */
@@ -779,7 +818,8 @@ switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
         return SCPE_OK;
 
     case 015:                                           /* PIRQ */
-        ODD_WO (data);
+        EVN_IGN (data);
+        ODD_SHF (data);
         put_PIRQ (data);
         return SCPE_OK;
         }                                               /* end switch pa */
@@ -818,12 +858,14 @@ switch ((pa >> 1) & 03) {                               /* decode pa<2:1> */
         ODD_MRG (JPCR, data);
         JPCR = data & PCRFB_RW;
         return SCPE_OK;
+
     case 1:                                             /* MAINT */
         ODD_MRG (MAINT, data);
         MAINT = data;
         return SCPE_OK;
+
     case 2:                                             /* CDR */
-        ODD_WO (data);
+        ODD_IGN (data);
         DR = data & CDRFB_WR;
         return SCPE_OK;
         }
@@ -881,7 +923,7 @@ switch ((pa >> 1) & 03) {                               /* decode pa<2:1> */
         return SCPE_OK;
 
     case 2:                                             /* CDR */
-        ODD_WO (data);
+        ODD_IGN (data);
         DR = data & CDRJB_WR;
         return SCPE_OK;
         }
@@ -972,7 +1014,7 @@ switch ((pa >> 1) & 03) {                               /* decode pa<2:1> */
         return SCPE_OK;
 
     case 2:                                             /* CDR */
-        ODD_WO (data);
+        ODD_IGN (data);
         DR = data & CDRJE_WR;
         return SCPE_OK;
 
@@ -1242,17 +1284,31 @@ t_stat cpu_set_bus (int32 opt)
 {
 DEVICE *dptr;
 uint32 i, mask;
+char busname[64] = "";
+int32 saved_switches = sim_switches;
 
-if (opt & BUS_U)                                        /* Unibus variant? */
+sim_switches |= SWMASK ('B');
+if (opt & BUS_U) {                                      /* Unibus variant? */
     mask = DEV_UBUS;
-else if (MEMSIZE <= UNIMEMSIZE)                         /* 18b Qbus devices? */
-    mask = DEV_QBUS | DEV_Q18;
-else mask = DEV_QBUS;                                   /* must be 22b */
+    strlcpy (busname, "Unibus system", sizeof (busname));
+    }
+else {
+    if (MEMSIZE <= UNIMEMSIZE) {                        /* 18b Qbus devices? */
+        mask = DEV_QBUS | DEV_Q18;
+        strlcpy (busname, "18bit Qbus system", sizeof (busname));
+        }
+    else {
+        mask = DEV_QBUS;                                 /* must be 22b */
+        snprintf (busname, sizeof (busname), "Qbus system with %s memory", sprint_capac (sim_dflt_dev, sim_dflt_dev->units));
+        }
+    }
+sim_switches = saved_switches;
+mask |= DEV_MBUS;                                       /* leave Massbus devices */
 for (i = 0; (dptr = sim_devices[i]) != NULL; i++) {
     if ((dptr->flags & DEV_DISABLE) &&                  /* disable-able? */
         !(dptr->flags & DEV_DIS) &&                     /* enabled? */
         ((dptr->flags & mask) == 0)) {                  /* not allowed? */
-        sim_printf ("Disabling %s\n", sim_dname (dptr));
+        sim_messagef (SCPE_OK, "Disabling %s which never existed on a %s\n", sim_dname (dptr), busname);
         dptr->flags = dptr->flags | DEV_DIS;
         }
     }

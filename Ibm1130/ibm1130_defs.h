@@ -15,10 +15,7 @@
 #include "sim_defs.h"                       /* main SIMH defns (include path should include .., or make a copy) */
 #include "sim_console.h"                    /* more SIMH defns (include path should include .., or make a copy) */
 
-#include <setjmp.h>
-#include <stdlib.h>
-
-#if defined(VMS)
+#if defined(__VMS)
     #  include <unistd.h>                   /* to pick up 'unlink' */
 #endif
 
@@ -44,8 +41,8 @@
 /* ------------------------------------------------------------------------ */
 /* Global state */
 
-extern int cgi;                             /* TRUE if we are running as a CGI program */
-extern int cgiwritable;                     /* TRUE if we can write the disk images back to the image file in CGI mode */
+extern t_bool cgi;                          /* TRUE if we are running as a CGI program */
+extern t_bool cgiwritable;                  /* TRUE if we can write the disk images back to the image file in CGI mode */
 extern t_bool sim_gui;
 
 extern uint16 M[];                          /* core memory, up to 32Kwords (note: don't even think about trying 64K) */

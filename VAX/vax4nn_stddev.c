@@ -229,15 +229,21 @@ return SCPE_OK;
 t_stat rom_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr)
 {
 fprintf (st, "Read-only memory (ROM)\n\n");
-fprintf (st, "The boot ROM consists of a single unit, simulating the 256KB boot ROM.  It has\n");
+fprintf (st, "The boot ROM consists of a single unit, simulating the %uKB boot ROM.  It has\n", ROMSIZE >> 10);
 fprintf (st, "no registers.  The boot ROM is loaded with a binary byte stream using the \n");
 fprintf (st, "LOAD -r command:\n\n");
-fprintf (st, "   LOAD -r KA410.BIN      load ROM image KA410.BIN\n\n");
+fprintf (st, "   LOAD -r %s      load ROM image %s\n\n", boot_code_filename, boot_code_filename);
 fprintf (st, "When the simulator starts running (via the BOOT command), if the ROM has\n");
-fprintf (st, "not yet been loaded, an attempt will be made to automatically load the\n");
-fprintf (st, "ROM image from the file ka410.bin in the current working directory.\n");
-fprintf (st, "If that load attempt fails, then a copy of the missing ROM file is\n");
-fprintf (st, "written to the current directory and the load attempt is retried.\n\n");
+#if !defined (DONT_USE_INTERNAL_ROM)
+    fprintf (st, "not yet been loaded, an internal 'built-in' copy of the %s image\n", boot_code_filename);
+    fprintf (st, "will be loaded into the ROM address space.\n");
+#else
+    fprintf (st, "not yet been loaded, an attempt will be made to automatically load the\n");
+    fprintf (st, "ROM image from the file %s in the current working directory.\n", boot_code_filename);
+    fprintf (st, "If that load attempt fails, then a copy of the missing ROM file is\n");
+    fprintf (st, "written to the current directory and the load attempt is retried.\n");
+#endif
+fprintf (st, "Once the ROM address space has been populated execution will be started.\n\n");
 fprintf (st, "ROM accesses a use a calibrated delay that slows ROM-based execution to\n");
 fprintf (st, "about 500K instructions per second.  This delay is required to make the\n");
 fprintf (st, "power-up self-test routines run correctly on very fast hosts.\n");
@@ -386,14 +392,11 @@ return;
 
 t_stat clk_svc (UNIT *uptr)
 {
-int32 t;
-
 if (clk_csr & CSR_IE)
     tmr_int = 1;
-t = sim_rtcn_calb (clk_tps, TMR_CLK);                   /* calibrate clock */
+tmr_poll = sim_rtcn_calb (clk_tps, TMR_CLK);            /* calibrate clock */
 sim_activate_after (uptr, 1000000/clk_tps);             /* reactivate unit */
-tmr_poll = t;                                           /* set tmr poll */
-tmxr_poll = t * TMXR_MULT;                              /* set mux poll */
+tmxr_poll = tmr_poll * TMXR_MULT;                       /* set mux poll */
 AIO_SET_INTERRUPT_LATENCY(tmr_poll*clk_tps);            /* set interrrupt latency */
 return SCPE_OK;
 }
@@ -402,14 +405,11 @@ return SCPE_OK;
 
 t_stat clk_reset (DEVICE *dptr)
 {
-int32 t;
-
 clk_csr = 0;
 tmr_int = 0;
-t = sim_rtcn_init_unit (&clk_unit, clk_unit.wait, TMR_CLK);/* init 100Hz timer */
+tmr_poll = sim_rtcn_init_unit (&clk_unit, clk_unit.wait, TMR_CLK);/* init 100Hz timer */
 sim_activate_after (&clk_unit, 1000000/clk_tps);        /* activate 100Hz unit */
-tmr_poll = t;                                           /* set tmr poll */
-tmxr_poll = t * TMXR_MULT;                              /* set mux poll */
+tmxr_poll = tmr_poll * TMXR_MULT;                       /* set mux poll */
 return SCPE_OK;
 }
 

@@ -22,7 +22,7 @@
    This is the standard card reader.
    This is the standard card punch.
 
-   Input formats are accepted in a variaty of formats:
+   Input formats are accepted in a variety of formats:
         Standard ASCII: one record per line.
                 returns are ignored.
                 tabs are expanded to modules 8 characters.
@@ -30,12 +30,15 @@
 
         Binary Card format:
                 Each record 160 characters.
-                First character   21012345
-                                  111
-                Second characters 6789----
-                Top 4 bits of second character are 0.
-                It is unlikely that ascii text or BCD format
-                text could produce similar profile.
+                First characters 6789----
+                Second character 21012345
+                                 111
+
+                The lower order 4 bits of first word are all
+                zero. It is unlikely that any other format could
+                look like this. An ASCII card could match this
+                if it is all blank, but the trailing return would
+                cause it to fail this test.
 
         BCD Format:
                 Each record variable length (80 chars or less).
@@ -44,7 +47,7 @@
                 Bits 5-0 are character.
 
         CBN Format:
-                Each record 160 charaters.
+                Each record 160 characters.
                 First char has bit 7 set. Rest set to 0.
                 Bit 6 is odd parity.
                 Bit 5-0 of first character are top 6 bits
@@ -53,17 +56,21 @@
                         of card.
 
     For autodetection of BCD card format, there can be no parity errors.
-    All undeterminate formats are treated as ASCII.
+    All undeterminate formats are treated as ASCII. CBN and BCD cards
+    must also contain short or full records, if the record is not terminate
+    early by a EOR flag, then only up to record size (80 for BCD and
+    160 for CBN will be read).
+
 
     ASCII mode recognizes some additional forms of input which allows the
-    intermixing of binary cards with text cards. 
+    intermixing of binary cards with text cards.
 
     Lines beginning with ~raw are taken as a number of 4 digit octal values
     with represent each column of the card from 12 row down to 9 row. If there
-    is not enough octal numbers to span a full card the remainder of the 
+    is not enough octal numbers to span a full card the remainder of the
     card will not be punched.
 
-    Also ~eor, will generate a 7/8/9 punch card. An ~eof will gernerate a
+    Also ~eor, will generate a 7/8/9 punch card. An ~eof will generate a
     6/7/9 punch card, and a ~eoi will generate a 6/7/8/9 punch.
 
     A single line of ~ will set the EOF flag when that card is read.
@@ -106,7 +113,7 @@ typedef int t_cdstat;
 #define CDSE_OK     0   /* Good */
 #define CDSE_EOF    1   /* End of File */
 #define CDSE_EMPTY  2   /* Input Hopper Empty */
-#define CDSE_ERROR  3   /* Error Card Read */  
+#define CDSE_ERROR  3   /* Error Card Read */
 
 /* Generic routines. */
 

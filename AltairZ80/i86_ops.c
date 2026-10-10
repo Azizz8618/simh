@@ -78,7 +78,7 @@ extern uint32 in(const uint32 Port);
   to the 256 byte-"opcodes" found on the 8086.  The table which
   dispatches this is found in the files optab.[ch].
 
-  Each opcode proc has a comment preceeding it which gives it's table
+  Each opcode proc has a comment preceding it which gives it's table
   address.  Several opcodes are missing (undefined) in the table.
 
   Each proc includes information for decoding (DECODE_PRINTF and
@@ -3100,7 +3100,7 @@ static void i86op_movs_byte(PC_ENV *m)
      inc = 1;
    if (m->sysmode & (SYSMODE_PREFIX_REPE | SYSMODE_PREFIX_REPNE))
        {
-      /* dont care whether REPE or REPNE */
+      /* don't care whether REPE or REPNE */
       /* move them until CX is ZERO. */
       while (m->R_CX != 0)
         {
@@ -3133,7 +3133,7 @@ static void i86op_movs_word(PC_ENV *m)
      inc = 2;
    if (m->sysmode & (SYSMODE_PREFIX_REPE | SYSMODE_PREFIX_REPNE))
        {
-      /* dont care whether REPE or REPNE */
+      /* don't care whether REPE or REPNE */
       /* move them until CX is ZERO. */
       while (m->R_CX != 0)
         {
@@ -3291,7 +3291,7 @@ static void i86op_stos_byte(PC_ENV *m)
      inc = 1;
    if (m->sysmode & (SYSMODE_PREFIX_REPE | SYSMODE_PREFIX_REPNE))
        {
-      /* dont care whether REPE or REPNE */
+      /* don't care whether REPE or REPNE */
       /* move them until CX is ZERO. */
       while (m->R_CX != 0)
         {
@@ -3319,7 +3319,7 @@ static void i86op_stos_word(PC_ENV *m)
      inc = 2;
    if (m->sysmode & (SYSMODE_PREFIX_REPE | SYSMODE_PREFIX_REPNE))
        {
-      /* dont care whether REPE or REPNE */
+      /* don't care whether REPE or REPNE */
       /* move them until CX is ZERO. */
       while (m->R_CX != 0)
         {
@@ -3347,7 +3347,7 @@ static void i86op_lods_byte(PC_ENV *m)
      inc = 1;
    if (m->sysmode & (SYSMODE_PREFIX_REPE | SYSMODE_PREFIX_REPNE))
        {
-      /* dont care whether REPE or REPNE */
+      /* don't care whether REPE or REPNE */
       /* move them until CX is ZERO. */
       while (m->R_CX != 0)
         {
@@ -3375,7 +3375,7 @@ static void i86op_lods_word(PC_ENV *m)
      inc = 2;
    if (m->sysmode & (SYSMODE_PREFIX_REPE | SYSMODE_PREFIX_REPNE))
        {
-      /* dont care whether REPE or REPNE */
+      /* don't care whether REPE or REPNE */
       /* move them until CX is ZERO. */
       while (m->R_CX != 0)
         {
@@ -4121,7 +4121,7 @@ static void i86op_opcD3_word_RM_CL(PC_ENV *m)
 /* opcode=0xd4*/
 static void i86op_aam(PC_ENV *m)
 {   uint8 a;
-    a = fetch_byte_imm(m);  /* this is a stupid encoding. */
+    a = fetch_byte_imm(m);
     if (a != 10)
         sim_printf("CPU: " ADDRESS_FORMAT " Error decoding AAM: Expected 0x0a but got 0x%2x.\n", m->Sp_regs.IP.I16_reg.x_reg, a);
     /* note the type change here --- returning AL and AH in AX. */
@@ -4132,6 +4132,10 @@ static void i86op_aam(PC_ENV *m)
 /* opcode=0xd5*/
 static void i86op_aad(PC_ENV *m)
 {
+    uint8 a;
+    a = fetch_byte_imm(m);
+    if (a != 10)
+        sim_printf("CPU: " ADDRESS_FORMAT " Error decoding AAD: Expected 0x0a but got 0x%2x.\n", m->Sp_regs.IP.I16_reg.x_reg, a);
     m->R_AX = aad_word(m,m->R_AX);
     DECODE_CLEAR_SEGOVR(m);
 }
@@ -4317,14 +4321,12 @@ static void i86op_lock(PC_ENV *m)
 static void i86op_repne(PC_ENV *m)
 {
    m->sysmode |= SYSMODE_PREFIX_REPNE;
-   DECODE_CLEAR_SEGOVR(m);
 }
 
 /*opcode=0xf3*/
 static void i86op_repe(PC_ENV *m)
 {
    m->sysmode |= SYSMODE_PREFIX_REPE;
-   DECODE_CLEAR_SEGOVR(m);
 }
 
 /*opcode=0xf4*/

@@ -59,11 +59,9 @@
 
 #include <math.h>
 
-#ifdef DONT_USE_INTERNAL_ROM
-#define BOOT_CODE_FILENAME "ka655x.bin"
-#else /* !DONT_USE_INTERNAL_ROM */
 #include "vax_ka655x_bin.h" /* Defines BOOT_CODE_FILENAME and BOOT_CODE_ARRAY, etc */
-#endif /* DONT_USE_INTERNAL_ROM */
+
+const char *boot_code_filename = BOOT_CODE_FILENAME;
 
 #define UNIT_V_NODELAY  (UNIT_V_UF + 0)                 /* ROM access equal to RAM access */
 #define UNIT_NODELAY    (1u << UNIT_V_NODELAY)
@@ -213,10 +211,6 @@ static BITFIELD tmr_csr_bits[] = {
 };
 
 
-/* SSC timer intervals */
-
-#define TMR_INC         10000U                          /* usec/interval */
-
 /* SSC timer vector */
 
 #define TMR_VEC_MASK    0x000003FC                      /* vector */
@@ -250,6 +244,7 @@ uint32 tmr_tir[2] = { 0 };                              /* curr interval */
 uint32 tmr_tnir[2] = { 0 };                             /* next interval */
 int32 tmr_tivr[2] = { 0 };                              /* vector */
 t_bool tmr_inst[2] = { 0 };                             /* wait instructions vs usecs */
+uint32 tmr_inst_remain[2] = { 0 };                      /* wait instructions remaining */
 int32 ssc_adsm[2] = { 0 };                              /* addr strobes */
 int32 ssc_adsk[2] = { 0 };
 int32 cdg_dat[CDASIZE >> 2];                            /* cache data */
@@ -297,6 +292,7 @@ int32 tmr_tir_rd (int32 tmr);
 void tmr_csr_wr (int32 tmr, int32 val);
 int32 tmr_csr_rd (int32 tmr);
 void tmr_sched (int32 tmr);
+void tmr_sched_inst (int32 tmr, uint32 usecs);
 void tmr_incr (int32 tmr, uint32 inc);
 int32 tmr0_inta (void);
 int32 tmr1_inta (void);
@@ -311,12 +307,10 @@ extern void cqipc_wr (int32 pa, int32 val, int32 lnt);
 extern int32 cqbic_rd (int32 pa);
 extern void cqbic_wr (int32 pa, int32 val, int32 lnt);
 extern int32 iccs_rd (void);
-extern int32 todr_rd (void);
 extern int32 rxcs_rd (void);
 extern int32 rxdb_rd (void);
 extern int32 txcs_rd (void);
 extern void iccs_wr (int32 dat);
-extern void todr_wr (int32 dat);
 extern void rxcs_wr (int32 dat);
 extern void txcs_wr (int32 dat);
 extern void txdb_wr (int32 dat);
@@ -486,11 +480,13 @@ REG sysd_reg[] = {
     { HRDATAD (TNIR0,  tmr_tnir[0], 32, "SSC timer 0 next interval register") },
     { HRDATAD (TIVEC0, tmr_tivr[0],  9, "SSC timer 0 interrupt vector register") },
     { FLDATAD (TINST0, tmr_inst[0],  0, "SSC timer 0 last wait instructions") },
+    { FLDATAD (TINSTR0, tmr_inst_remain[0],  0, "SSC timer 0 wait instructions remaining") },
     { HRDATADF (TCSR1, tmr_csr[1],  32, "SSC timer 1 control/status register", tmr_csr_bits) },
     { HRDATAD (TIR1,   tmr_tir[1],  32, "SSC timer 1 interval register") },
     { HRDATAD (TNIR1,  tmr_tnir[1], 32, "SSC timer 1 next interval register") },
     { HRDATAD (TIVEC1, tmr_tivr[1],  9, "SSC timer 1 interrupt vector register") },
     { FLDATAD (TINST1, tmr_inst[1],  0, "SSC timer 1 last wait instructions") },
+    { FLDATAD (TINSTR1, tmr_inst_remain[1],  0, "SSC timer 1 wait instructions remaining") },
     { HRDATAD (ADSM0,  ssc_adsm[0], 32, "SSC address match 0 address") },
     { HRDATAD (ADSK0,  ssc_adsk[0], 32, "SSC address match 0 mask") },
     { HRDATAD (ADSM1,  ssc_adsm[1], 32, "SSC address match 1 address") },
@@ -605,13 +601,21 @@ return SCPE_OK;
 t_stat rom_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr)
 {
 fprintf (st, "Read-only memory (ROM)\n\n");
-fprintf (st, "The boot ROM consists of a single unit, simulating the 128KB boot ROM.  It\n");
+fprintf (st, "The boot ROM consists of a single unit, simulating the %uKB boot ROM.  It\n", ROMSIZE >> 10);
 fprintf (st, "has no registers.  The boot ROM can be loaded with a binary byte stream\n");
 fprintf (st, "using the LOAD -r command:\n\n");
-fprintf (st, "    LOAD -r KA655X.BIN        load ROM image KA655X.BIN\n\n");
+fprintf (st, "    LOAD -r %s        load ROM image %s\n\n", boot_code_filename, boot_code_filename);
 fprintf (st, "When the simulator starts running (via the BOOT command), if the ROM has\n");
-fprintf (st, "not yet been loaded, an internal 'buit-in' copy of the KA655X.BIN image\n");
-fprintf (st, "will be loaded into the ROM address space and execution will be started.\n\n");
+#if !defined (DONT_USE_INTERNAL_ROM)
+    fprintf (st, "not yet been loaded, an internal 'built-in' copy of the %s image\n", boot_code_filename);
+    fprintf (st, "will be loaded into the ROM address space.\n");
+#else
+    fprintf (st, "not yet been loaded, an attempt will be made to automatically load the\n");
+    fprintf (st, "ROM image from the file %s in the current working directory.\n", BOOT_CODE_FILENAME);
+    fprintf (st, "If that load attempt fails, then a copy of the missing ROM file is\n");
+    fprintf (st, "written to the current directory and the load attempt is retried.\n");
+#endif
+fprintf (st, "Once the ROM address space has been populated execution will be started.\n\n");
 fprintf (st, "ROM accesses a use a calibrated delay that slows ROM-based execution to\n");
 fprintf (st, "about 500K instructions per second.  This delay is required to make the\n");
 fprintf (st, "power-up self-test routines run correctly on very fast hosts.\n");
@@ -886,6 +890,8 @@ switch (rg) {
 
     case MT_TODR:                                       /* TODR */
         val = todr_rd ();
+        if (ADDR_IS_ROM(fault_PC))                      /* running from ROM */
+            val = 1 + (sim_grtime () / 10000);          /* instruction count presuming 1 usec per instruction 10 ms tick (non-zero) */
         sim_debug (DBG_TODR, &sysd_dev, "ReadIPR() = 0x%X\n", val);
         break;
 
@@ -1477,7 +1483,7 @@ switch (rg) {
    that ROM based code execute instructions at 1 instruction per usec.
    To accommodate this, we not only throttle memory accesses to ROM space,
    but we also use instruction based delays when the interval timers are
-   programmed from the ROM for short duration delays.
+   programmed from the ROM.
 */
 
 int32 tmr_tir_rd (int32 tmr)
@@ -1485,22 +1491,26 @@ int32 tmr_tir_rd (int32 tmr)
 if (tmr_csr[tmr] & TMR_CSR_RUN) {           /* running? then interpolate */
     uint32 usecs_remaining, cur_tir;
     const char *tmr_units = NULL;
+    const char *tmr_how = NULL;
 
     if ((ADDR_IS_ROM(fault_PC)) &&                  /* running from ROM and */
         (tmr_inst[tmr])) {                          /* waiting instructions? */
         usecs_remaining = sim_activate_time (&sysd_dev.units[tmr]) - 1;
+        usecs_remaining += tmr_inst_remain[tmr];
         tmr_units = "Instructions";
+        tmr_how = "";
         }
     else {
         usecs_remaining = (uint32)(0xFFFFFFFFLL & (t_uint64)sim_activate_time_usecs (&sysd_dev.units[tmr]));
         tmr_units = "Microseconds";
+        tmr_how = ", Interpolated while running";
         }
     cur_tir = ~usecs_remaining + 1;
-    sim_debug (DBG_REGR, &sysd_dev, "tmr_tir_rd(tmr=%d) - 0x%X %s - %u usecs, Interpolated while running\n", tmr, cur_tir, tmr_units, usecs_remaining);
+    sim_debug (DBG_REGR, &sysd_dev, "tmr_tir_rd(tmr=%d) - %u(0x%X) %s - %u(0x%X) usecs%s\n", tmr, cur_tir, cur_tir, tmr_units, usecs_remaining, usecs_remaining, tmr_how);
     return cur_tir;
     }
 
-sim_debug (DBG_REGR, &sysd_dev, "tmr_tir_rd(tmr=%d) - 0x%X\n", tmr, tmr_tir[tmr]);
+sim_debug (DBG_REGR, &sysd_dev, "tmr_tir_rd(tmr=%d) - %u(0x%X)\n", tmr, tmr_tir[tmr], tmr_tir[tmr]);
 
 return tmr_tir[tmr];
 }
@@ -1527,6 +1537,7 @@ if ((val & TMR_CSR_RUN) == 0) {                         /* clearing run? */
     if (tmr_csr[tmr] & TMR_CSR_RUN)                     /* run 1 -> 0? */
         tmr_tir[tmr] = tmr_tir_rd (tmr);                /* update itr */
     sim_cancel (&sysd_unit[tmr]);                       /* cancel timer */
+    tmr_inst_remain[tmr] = 0;
     }
 tmr_csr[tmr] = tmr_csr[tmr] & ~(val & TMR_CSR_W1C);     /* W1C csr */
 tmr_csr[tmr] = (tmr_csr[tmr] & ~TMR_CSR_RW) |           /* new r/w */
@@ -1538,8 +1549,10 @@ if (val & TMR_CSR_XFR) {                                /* xfr set? */
     sim_debug (DBG_REGW, &sysd_dev, "tmr_csr_wr(tmr=%d) - XFR set TIR=0x%X\n", tmr, tmr_tir[tmr]);
     }
 if (val & TMR_CSR_RUN)  {                               /* run? */
-    if (val & TMR_CSR_XFR)                              /* new tir? */
+    if (val & TMR_CSR_XFR) {                            /* new tir? */
         sim_cancel (&sysd_unit[tmr]);                   /* stop prev */
+        tmr_inst_remain[tmr] = 0;
+        }
     if (!sim_is_active (&sysd_unit[tmr]))               /* not running? */
         tmr_sched (tmr);                                /* activate */
     }
@@ -1566,7 +1579,10 @@ t_stat tmr_svc (UNIT *uptr)
 int32 tmr = uptr - sysd_dev.units;                      /* get timer # */
 uint32 delta_usecs = ~tmr_tir[tmr] + 1;
 
-tmr_incr (tmr, delta_usecs);                            /* incr timer */
+if (tmr_inst_remain[tmr])
+    tmr_sched_inst (tmr, tmr_inst_remain[tmr]);        /* schedule remaining usecs */
+else
+    tmr_incr (tmr, delta_usecs);                        /* incr timer */
 return SCPE_OK;
 }
 
@@ -1605,16 +1621,28 @@ else {
 
 /* Timer scheduling */
 
+void tmr_sched_inst (int32 tmr, uint32 usecs)
+{
+if (usecs & 0x80000000) {   /* High bit set? */
+    sim_activate_abs (&sysd_unit[tmr], usecs >> 1);
+    tmr_inst_remain[tmr] = usecs - (usecs >> 1);
+    sim_debug (DBG_SCHD, &sysd_dev, "tmr_sched_inst(tmr=%d) - scheduling for %u instructions with %u remaining\n", tmr, (usecs >> 1), tmr_inst_remain[tmr]);
+    }
+else {
+    sim_activate_abs (&sysd_unit[tmr], usecs);
+    tmr_inst_remain[tmr] = 0;
+    }
+}
+
 void tmr_sched (int32 tmr)
 {
 uint32 usecs_sched = tmr_tir[tmr] ? (~tmr_tir[tmr] + 1) : 0xFFFFFFFF;
 double usecs_sched_d = tmr_tir[tmr] ? (double)(~tmr_tir[tmr] + 1) : (1.0 + (double)0xFFFFFFFFu);
 
 sim_cancel (&sysd_unit[tmr]);                       /* Make sure not active */
-if ((ADDR_IS_ROM(fault_PC)) &&                      /* running from ROM and */
-    (usecs_sched < TMR_INC)) {                      /* short delay? */
+if (ADDR_IS_ROM(fault_PC)) {                        /* running from ROM */
     tmr_inst[tmr] = TRUE;                           /* wait for instructions */
-    sim_activate (&sysd_unit[tmr], usecs_sched);
+    tmr_sched_inst (tmr, usecs_sched);
     sim_debug (DBG_SCHD, &sysd_dev, "tmr_sched(tmr=%d) - after %u instructions - activate after: %.0f usecs\n", tmr, usecs_sched, sim_activate_time_usecs (&sysd_unit[tmr]));
     }
 else {
@@ -1704,7 +1732,7 @@ if ((ptr = get_sim_sw (ptr)) == NULL)               /* get switches */
     return SCPE_INVSW;
 get_glyph (ptr, gbuf, 0);                           /* get glyph */
 if (gbuf[0] && strcmp (gbuf, "CPU"))
-    return SCPE_ARG;                                /* Only can specify CPU device */
+    return sim_messagef (SCPE_ARG, "Invalid boot device: %s, must specify BOOT CPU or simply BOOT\n", gbuf);
 return run_cmd (flag, "CPU");
 }
 
@@ -1722,7 +1750,7 @@ conpsl = PSL_IS | PSL_IPL1F | CON_PWRUP;
 if (rom == NULL)
     return SCPE_IERR;
 if (*rom == 0) {                                        /* no boot? */
-    r = cpu_load_bootcode (BOOT_CODE_FILENAME, BOOT_CODE_ARRAY, BOOT_CODE_SIZE, TRUE, 0);
+    r = cpu_load_bootcode (BOOT_CODE_FILENAME, BOOT_CODE_ARRAY, BOOT_CODE_SIZE, TRUE, 0, BOOT_CODE_FILEPATH, BOOT_CODE_CHECKSUM);
     if (r != SCPE_OK)
         return r;
     }
@@ -1757,6 +1785,7 @@ if (sim_switches & SWMASK ('P')) sysd_powerup ();       /* powerup? */
 for (i = 0; i < 2; i++) {
     tmr_csr[i] = tmr_tnir[i] = tmr_tir[i] = 0;
     tmr_inst[i] = FALSE;
+    tmr_inst_remain[i] = 0;
     sim_cancel (&sysd_unit[i]);
     }
 csi_csr = 0;
@@ -1834,7 +1863,7 @@ else if (MATCH_CMD(gbuf, "MICROVAX") == 0) {
     vc_dev.flags = vc_dev.flags | DEV_DIS;               /* disable QVSS */
     lk_dev.flags = lk_dev.flags | DEV_DIS;               /* disable keyboard */
     vs_dev.flags = vs_dev.flags | DEV_DIS;               /* disable mouse */
-    reset_all (0);                                       /* reset everything */
+    reset_all_p (0);                                     /* powerup reset everything */
 #endif
     }
 else if (MATCH_CMD(gbuf, "VAXSTATION") == 0) {
@@ -1844,7 +1873,7 @@ else if (MATCH_CMD(gbuf, "VAXSTATION") == 0) {
     vc_dev.flags = vc_dev.flags & ~DEV_DIS;              /* enable QVSS */
     lk_dev.flags = lk_dev.flags & ~DEV_DIS;              /* enable keyboard */
     vs_dev.flags = vs_dev.flags & ~DEV_DIS;              /* enable mouse */
-    reset_all (0);                                       /* reset everything */
+    reset_all_p (0);                                     /* powerup reset everything */
 #else
     return sim_messagef(SCPE_ARG, "Simulator built without Graphic Device Support\n");
 #endif
@@ -1884,6 +1913,22 @@ fprintf (st, "  AUTOGEN (SYS$SYSTEM:MODPARAMS.DAT).  If PHYSICALPAGES is specifi
 fprintf (st, "  it will have to be adjusted before running AUTOGEN to recognize more memory.\n");
 fprintf (st, "  The default value for PHYSICALPAGES is 1048576, which describes 512MB of RAM.\n\n");
 fprintf (st, "Initial memory size is 16MB.\n\n");
+fprintf (st, "The real KA655 is limited to 64MB of memory, and the KA655 firmware is\n");
+fprintf (st, "coded to this limit.  However, the VAX operating systems (VMS, Ultrix,\n");
+fprintf (st, "NetBSD) know very little about the hardware details.  Instead, they take\n");
+fprintf (st, "their memory size information from the Restart Parameter Block (RPB)\n");
+fprintf (st, "constructed by the console firmware when it starts.  If the firmware sets\n");
+fprintf (st, "up an RPB for more than 64MB, the operating systems use the extra memory\n");
+fprintf (st, "without requiring source changes.\n\n");
+fprintf (st, "If more than 64MB of memory is configured, the simulator implements an 18th\n");
+fprintf (st, "CMCTL register.  This read-only register gives the size of main memory in MB.\n");
+fprintf (st, "The console firmware (ka655x.bin) uses this to set up the RPB. Other parts\n");
+fprintf (st, "of the firmware are generally unaware of extended memory; thus, all the\n");
+fprintf (st, "diagnostic commands operate only on the first 64MB of memory.  However the\n");
+fprintf (st, "console SHOW MEM command will display the total amount of memory the simulator\n");
+fprintf (st, "is configured with.\n\n");
+fprintf (st, "If 64MB or less of memory is configured, the 18th CMCTL register is invisible,\n");
+fprintf (st, "and the simulator operates like a real KA655.\n\n");
 fprintf (st, "The CPU supports the BOOT command and is the only VAX device to do so.  Note\n");
 fprintf (st, "that the behavior of the bootstrap depends on the capabilities of the console\n");
 fprintf (st, "terminal emulator.  If the terminal window supports full VT100 emulation\n");

@@ -79,7 +79,7 @@ int    ch11_read(DEVICE *dptr, t_addr addr, uint16 *data, int32 access);
 uint16 ch11_checksum (const uint8 *p, int count);
 void   ch11_validate (const uint8 *p, int count);
 t_stat ch11_transmit (struct pdp_dib *dibp);
-void   ch11_receive (struct pdp_dib *dibp);
+int    ch11_receive (struct pdp_dib *dibp);
 void   ch11_clear (struct pdp_dib *dibp);
 t_stat ch11_svc(UNIT *);
 t_stat ch11_reset (DEVICE *);
@@ -97,9 +97,10 @@ static char peer[256];
 static int address;
 static uint16 ch11_csr;
 static int rx_count;
+static int rx_pos;
 static int tx_count;
-static uint8 rx_buffer[512+100];
-static uint8 tx_buffer[512+100];
+static uint8 rx_buffer[514+100];
+static uint8 tx_buffer[514+100];
 
 TMLN ch11_lines[1] = { {0} };
 TMXR ch11_tmxr = { 1, NULL, 0, ch11_lines};
@@ -111,6 +112,7 @@ UNIT ch11_unit[] = {
 REG ch11_reg[] = {
   { ORDATA(CSR,   ch11_csr,     16)},
   { GRDATAD(RXCNT,  rx_count,   16, 16, 0, "Receive word count"), REG_FIT|REG_RO},
+  { GRDATAD(RXPOS,  rx_pos,     16, 16, 0, "Receive Position"), REG_FIT|REG_RO},
   { GRDATAD(TXCNT,  tx_count,   16, 16, 0, "Transmit word count"), REG_FIT|REG_RO},
   { BRDATAD(RXBUF,  rx_buffer,  16,  8, sizeof rx_buffer, "Receive packet buffer"), REG_FIT},
   { BRDATAD(TXBUF,  tx_buffer,  16,  8, sizeof tx_buffer, "Transmit packet buffer"), REG_FIT},
@@ -134,7 +136,7 @@ MTAB ch11_mod[] = {
   { 0 },
 };
 
-DIB ch11_dib = { 0764140, 017, 0270, 6, 3, &ch11_read, &ch11_write, NULL, 0, 0 };
+DIB ch11_dib = { 0764140, 017, 0270, 5, 3, &ch11_read, &ch11_write, NULL, 0, 0 };
 
 DEBTAB ch11_debug[] = {
     { "DETAIL",    DEBUG_DETAIL,"I/O operations"},
@@ -179,6 +181,7 @@ ch11_write(DEVICE *dptr, t_addr addr, uint16 data, int32 access)
             sim_debug (DBG_REG, &ch11_dev, "Clear RX\n");
             ch11_csr &= ~CSR_RDN;
             rx_count = 0;
+            rx_pos = 0;
             ch11_lines[0].rcve = TRUE;
             uba_clr_irq(dibp, dibp->uba_vect);
         }
@@ -219,7 +222,6 @@ int
 ch11_read(DEVICE *dptr, t_addr addr, uint16 *data, int32 access)
 {
     struct pdp_dib   *dibp = (DIB *)dptr->ctxt;
-    int               i;
 
     addr &= dibp->uba_mask;
     *data = 0;
@@ -237,19 +239,19 @@ ch11_read(DEVICE *dptr, t_addr addr, uint16 *data, int32 access)
           *data = 0;
           sim_debug (DBG_ERR, &ch11_dev, "Read empty buffer\n");
         } else {
-          i = 512-rx_count;
           ch11_csr &= ~CSR_RDN;
           uba_clr_irq(dibp, dibp->uba_vect);
-          *data = ((uint64)(rx_buffer[i]) & 0xff) << 8;
-          *data |= ((uint64)(rx_buffer[i+1]) & 0xff);
-          rx_count-=2;
+          *data = ((uint64)(rx_buffer[rx_pos]) & 0xff) << 8;
+          *data |= ((uint64)(rx_buffer[rx_pos+1]) & 0xff);
           sim_debug (DBG_DAT, &ch11_dev, "Read buffer word %d:%02x %02x %06o %06o\n",
-                     rx_count, rx_buffer[i], rx_buffer[i+1], *data, ch11_csr);
+                     rx_count, rx_buffer[rx_pos], rx_buffer[rx_pos+1], *data, ch11_csr);
+          rx_count-=2;
+          rx_pos+=2;
         }
         break;
 
     case 006:  /* Bit count */
-        *data = ((512 - rx_count) - 1) & 07777;
+        *data = ((rx_count * 8) - 1) & 07777;
         break;
     case 012:  /* Start transmission */
         sim_debug (DBG_REG, &ch11_dev, "XMIT TX\n");
@@ -340,17 +342,18 @@ ch11_transmit (struct pdp_dib *dibp)
   len = CHUDP_HEADER + (size_t)tx_count;
   r = tmxr_put_packet_ln (&ch11_lines[0], (const uint8 *)&tx_buffer, len);
   if (r == SCPE_OK) {
-    sim_debug (DBG_PKT, &ch11_dev, "Sent UDP packet, %d bytes.\n", (int)len);
+    sim_debug (DBG_PKT, &ch11_dev, "Sent UDP packet, %d bytes. %04x checksum.\n", (int)len, chk);
     tmxr_poll_tx (&ch11_tmxr);
   } else {
     sim_debug (DBG_ERR, &ch11_dev, "Sending UDP failed: %d.\n", r);
     ch11_csr |= CSR_TAB;
   }
   tx_count = 0;
+  ch11_csr |= CSR_TDN;
   return SCPE_OK;
 }
 
-void
+int
 ch11_receive (struct pdp_dib *dibp)
 {
   size_t count;
@@ -360,21 +363,22 @@ ch11_receive (struct pdp_dib *dibp)
   tmxr_poll_rx (&ch11_tmxr);
   if (tmxr_get_packet_ln (&ch11_lines[0], &p, &count) != SCPE_OK) {
     sim_debug (DBG_ERR, &ch11_dev, "TMXR error receiving packet\n");
-    return;
+    return 0;
   }
   if (p == NULL)
-    return;
+    return 0;
   dest = ((p[4+CHUDP_HEADER] & 0xff) << 8) + (p[5+CHUDP_HEADER] & 0xff);
 
   sim_debug (DBG_PKT, &ch11_dev, "Received UDP packet, %d bytes for: %o\n", (int)count, dest);
   /* Check if packet for us. */
   if (dest != address && dest != 0 && (ch11_csr & CSR_SPY) == 0)
-    return;
+    return 1;
 
   if ((CSR_RDN & ch11_csr) == 0) {
-    count = (count + 1) & 0776;
-    memcpy (rx_buffer + (512 - count), p, count);
-    rx_count = count;
+    count = (count + 1) & 01776;
+    memcpy (rx_buffer, p + CHUDP_HEADER, count);
+    rx_count = count - CHUDP_HEADER;
+    rx_pos = 0;
     sim_debug (DBG_TRC, &ch11_dev, "Rx count, %d\n", rx_count);
     ch11_validate (p + CHUDP_HEADER, count - CHUDP_HEADER);
     ch11_csr |= CSR_RDN;
@@ -389,6 +393,7 @@ ch11_receive (struct pdp_dib *dibp)
     if ((ch11_csr & CSR_LOS) != CSR_LOS)
         ch11_csr = (ch11_csr & ~CSR_LOS) | (CSR_LOS & (ch11_csr + 01000));
   }
+  return 1;
 }
 
 void
@@ -397,6 +402,7 @@ ch11_clear (struct pdp_dib *dibp)
   ch11_csr = CSR_TDN;
   rx_count = 0;
   tx_count = 0;
+  rx_pos = 0;
 
   tx_buffer[0] = 1; /* CHUDP header */
   tx_buffer[1] = 1;
@@ -413,10 +419,14 @@ ch11_svc(UNIT *uptr)
    DEVICE           *dptr = find_dev_from_unit (uptr);
    struct pdp_dib   *dibp = (DIB *)dptr->ctxt;
 
-  sim_clock_coschedule (uptr, 1000);
-  (void)tmxr_poll_conn (&ch11_tmxr);
   if (ch11_lines[0].conn) {
-    ch11_receive (dibp);
+    if (ch11_receive (dibp))
+      sim_activate_after (uptr, 300);
+    else
+      sim_clock_coschedule (uptr, 1000);
+  } else {
+    (void)tmxr_poll_conn (&ch11_tmxr);
+    sim_clock_coschedule (uptr, 1000);
   }
   if (tx_count == 0) {
     ch11_csr |= CSR_TDN;

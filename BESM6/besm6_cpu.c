@@ -301,6 +301,7 @@ DEVICE *sim_devices[] = {
     &pi_dev,
     &tty_dev,       /* терминалы - телетайпы, видеотоны, "Консулы" */
     &dks_dev,       /* КАДОПАМ и ДКС */
+    &osa_dev,       /* АС-6: связь с ЕС ЭВМ (ОСА) */
     0
 };
 
@@ -357,6 +358,7 @@ t_stat cpu_deposit (t_value val, t_addr addr, UNIT *uptr, int32 sw)
 {
     if (addr >= MEMSIZE)
         return SCPE_NXM;
+    mmu_sync ();
     if (addr < 010) {
         /* Deposited values for the switch register address range
          * always go to switch registers.
@@ -610,11 +612,11 @@ static uint32 tableau;
 static uint32 totreads, totwrites;
 static uint32 readmap[32768], writemap[32768];
 #if 1
-    if (Aex & ~04177)
+    if (Aex & ~04377)
     besm6_debug ("*** @%05o, ext %05o, ACC[24:1]=%08o",
                  PC, Aex, (uint32) ACC & BITS(24));
 #endif
-    switch (Aex & 04177) {
+    switch (Aex & 04377) {
     case 0:
         /*
          * Releasing the drum printer solenoids. No effect on simulation.
@@ -687,7 +689,7 @@ static uint32 readmap[32768], writemap[32768];
         printer_hammer (Aex >= 050, Aex & 7, (uint32) (ACC & BITS(16)));
         break;
     case 070:
-	/* ES printer output */
+	/* ES printer output: not connected */
         besm6_debug(">>> ES print: %016llo", ACC);
 	break;
     case 0140:
@@ -808,7 +810,7 @@ static uint32 readmap[32768], writemap[32768];
         ACC = drum_errors() | disk_errors() | mg_errors();
         break;
     case 04070:
-	/* ES printer status: */
+	/* ES printer status: not ready */
         besm6_debug("<<< ES printer read");
 	ACC = 01000;
 	break;
@@ -871,12 +873,17 @@ static uint32 readmap[32768], writemap[32768];
         ACC = tableau;
         break;
     default: {
-        unsigned val = Aex & 04177;
+        unsigned val = Aex & 04377;
         if (0100 <= val && val <= 0137) {
             /* Управление лентопротяжными механизмами
              * и гашение разрядов регистров признаков
              * окончания подвода зоны. */
             mg_ctl(Aex - 0100, (uint32) ACC);
+        } else if (0200 <= val && val <= 0237) {
+            /* АС-6: связь с ЕС ЭВМ (модуль ОСА) */
+            osa_write (val & 037, ACC);
+        } else if (04200 <= val && val <= 04237) {
+            ACC = osa_read (val & 037);
         } else if (04140 <= val && val <= 04157) {
             /* TODO: считывание строки перфокарты */
             longjmp (cpu_halt, STOP_UNIMPLEMENTED);
@@ -1054,9 +1061,16 @@ void cpu_one_inst ()
     }
     nextpc = ADDR(PC + 1);
     if (RUU & RUU_RIGHT_INSTR) {
+        /*
+         * ТО-2, 2.3: новая выборка слова задается после выдачи на РК
+         * каждой правой команды, т.е. до ее выполнения и без учета
+         * передач управления: БРС держит два слова вперед.
+         */
+        mmu_prefetch(ADDR(PC + 2) | (IS_SUPERVISOR(RUU) ? BBIT(16) : 0), 0);
         PC += 1;                        /* increment PC */
         RUU &= ~RUU_RIGHT_INSTR;
     } else {
+        /* После передачи управления выбираются два слова */
         mmu_prefetch(nextpc | (IS_SUPERVISOR(RUU) ? BBIT(16) : 0), 0);
         RUU |= RUU_RIGHT_INSTR;
     }

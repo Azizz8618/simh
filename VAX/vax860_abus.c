@@ -31,11 +31,7 @@
 
 #include "vax_defs.h"
 
-#ifdef DONT_USE_INTERNAL_ROM
-#define BOOT_CODE_FILENAME "vmb.exe"
-#else /* !DONT_USE_INTERNAL_ROM */
 #include "vax_vmb_exe.h" /* Defines BOOT_CODE_FILENAME and BOOT_CODE_ARRAY, etc */
-#endif /* DONT_USE_INTERNAL_ROM */
 
 /* SBIA registers */
 
@@ -97,6 +93,7 @@ char cpu_boot_cmd[CBUFSIZE]  = { 0 };                   /* boot command */
 
 static struct boot_dev boot_tab[] = {
     { "RP", BOOT_MB, 0 },
+    { "RPB", BOOT_MB, 0 },
     { "HK", BOOT_HK, 0 },
     { "RL", BOOT_RL, 0 },
     { "RQ", BOOT_UDA, 1 << 24 },
@@ -122,7 +119,6 @@ extern t_stat (*nexusW[NEXUS_NUM])(int32 dat, int32 ad, int32 md);
 extern int32 iccs_rd (void);
 extern int32 nicr_rd (void);
 extern int32 icr_rd (void);
-extern int32 todr_rd (void);
 extern int32 rxcs_rd (void);
 extern int32 rxdb_rd (void);
 extern int32 txcs_rd (void);
@@ -130,7 +126,6 @@ extern int32 stxcs_rd (void);
 extern int32 stxdb_rd (void);
 extern void iccs_wr (int32 dat);
 extern void nicr_wr (int32 dat);
-extern void todr_wr (int32 dat);
 extern void rxcs_wr (int32 dat);
 extern void txcs_wr (int32 dat);
 extern void txdb_wr (int32 dat);
@@ -689,13 +684,8 @@ t_stat r;
 if ((ptr = get_sim_sw (ptr)) == NULL)                   /* get switches */
     return SCPE_INVSW;
 r = vax860_boot_parse (flag, ptr);                      /* parse the boot cmd */
-if (r != SCPE_OK) {                                     /* error? */
-    if (r >= SCPE_BASE) {                               /* message available? */
-        sim_printf ("%s\n", sim_error_text (r));
-        r |= SCPE_NOMESSAGE;
-        }
+if (r != SCPE_OK)                                       /* error? */
     return r;
-    }
 strncpy (cpu_boot_cmd, ptr, CBUFSIZE-1);                /* save for reboot */
 return run_cmd (flag, "CPU");
 }
@@ -715,7 +705,7 @@ uint32 ba;
 t_stat r;
 
 if (!ptr || !*ptr)
-    return SCPE_2FARG;
+    return sim_messagef (SCPE_2FARG, "Missing boot device/unit specifier\n");
 regptr = get_glyph (ptr, gbuf, 0);                      /* get glyph */
 if ((slptr = strchr (gbuf, '/'))) {                     /* found slash? */
     regptr = strchr (ptr, '/');                         /* locate orig */
@@ -723,7 +713,7 @@ if ((slptr = strchr (gbuf, '/'))) {                     /* found slash? */
     }
 dptr = find_unit (gbuf, &uptr);                         /* find device */
 if ((dptr == NULL) || (uptr == NULL))
-    return SCPE_ARG;
+    return sim_messagef (SCPE_NXUN, "Non existant Device or Unit: %s\n", gbuf);
 dibp = (DIB *) dptr->ctxt;                              /* get DIB */
 if (dibp == NULL)
     ba = 0;
@@ -738,13 +728,13 @@ if ((strncmp (regptr, "/R5:", 4) == 0) ||
     (strncmp (regptr, "/r5=", 4) == 0)) {
     r5v = (int32) get_uint (regptr + 4, 16, LMASK, &r);
     if (r != SCPE_OK)
-        return r;
+        return sim_messagef (r, "Can't parse R5 value from: %s\n", regptr + 4);
     }
 else 
     if (*regptr == '/') {
         r5v = (int32) get_uint (regptr + 1, 16, LMASK, &r);
         if (r != SCPE_OK)
-            return r;
+            return sim_messagef (r, "Can't parse R5 value from: %s\n", regptr + 1);
         }
     else {
         if (*regptr != 0)
@@ -767,7 +757,7 @@ for (i = 0; boot_tab[i].name != NULL; i++) {
         return SCPE_OK;
         }
     }
-return SCPE_NOFNC;
+return sim_messagef (SCPE_NOFNC, "Non bootable device: %s\n", gbuf);
 }
 
 /* Bootstrap - finish up bootstrap process */
@@ -776,7 +766,7 @@ t_stat cpu_boot (int32 unitno, DEVICE *dptr)
 {
 t_stat r;
 
-r = cpu_load_bootcode (BOOT_CODE_FILENAME, BOOT_CODE_ARRAY, BOOT_CODE_SIZE, FALSE, 0x200);
+r = cpu_load_bootcode (BOOT_CODE_FILENAME, BOOT_CODE_ARRAY, BOOT_CODE_SIZE, FALSE, 0x200, BOOT_CODE_FILEPATH, BOOT_CODE_CHECKSUM);
 if (r != SCPE_OK)
     return r;
 SP = PC = 512;

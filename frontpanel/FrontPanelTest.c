@@ -75,12 +75,7 @@ printw ("%s", buf);
 }
 #endif /* HAVE_NCURSES */
 #endif
-const char *sim_path = 
-#if defined(_WIN32)
-            "vax.exe";
-#else
-            "vax";
-#endif
+char *sim_path;
 
 const char *sim_config = 
             "VAX-PANEL.ini";
@@ -99,10 +94,20 @@ int update_display = 1;
 
 int debug = 0;
 
+/*
+ * Startup sleep is useful when running the simulator in a background 
+ * context.  The sleep allows you to reach into that background process 
+ * and attach a debugger while it is sleeping before things get going 
+ * in all aspects of the simulator's execution.  This will then allow 
+ * full debugging for any simulator activity while also debugging the
+ * front panel.
+ */
+int startup_sleep = 0;
 
 static void
 DisplayCallback (PANEL *panel, unsigned long long sim_time, void *context)
 {
+sim_panel_debug (panel, "DisplayCallback called at instruction time %u", (unsigned int)sim_time);
 simulation_time = sim_time;
 update_display = 1;
 }
@@ -113,6 +118,8 @@ DisplayRegisters (PANEL *panel, int get_pos, int set_pos)
 char buf1[100], buf2[100], buf3[100], buf4[100];
 static const char *states[] = {"Halt", "Run "};
 
+if (panel == NULL)
+    return;
 buf1[sizeof(buf1)-1] = buf2[sizeof(buf2)-1] = buf3[sizeof(buf3)-1] = buf4[sizeof(buf4)-1] = 0;
 sprintf (buf1, "%4s PC: %08X   SP: %08X   AP: %08X   FP: %08X  @PC: %08X\n", states[sim_panel_get_state (panel)], PC, SP, AP, FP, atPC);
 sprintf (buf2, "PSL: %08X                               Instructions Executed: %lld\n", PSL, simulation_time);
@@ -222,27 +229,23 @@ FILE *f;
 /* Create pseudo config file for a test */
 if ((f = fopen (sim_config, "w"))) {
     if (debug) {
+        if (startup_sleep)
+            fprintf (f, "sleep 20s\n");
         fprintf (f, "set verbose\n");
-        fprintf (f, "set debug -n -a -p simulator.dbg\n");
+        fprintf (f, "set debug -n -a -p -f simulator.dbg\n");
         fprintf (f, "set cpu simhalt\n");
         fprintf (f, "set remote telnet=2226\n");
         fprintf (f, "set rem-con debug=XMT;RCV;MODE;REPEAT;CMD\n");
         fprintf (f, "set remote notelnet\n");
         fprintf (f, "set cpu history=128\n");
         }
+    fprintf (f, "set clock nocalibrate=1m\n");
     fprintf (f, "set cpu autoboot\n");
     fprintf (f, "set cpu 64\n");
     fprintf (f, "set console telnet=buffered\n");
     fprintf (f, "set console -u telnet=1927\n");
-    /* Start a terminal emulator for the console port */
-#if defined(_WIN32)
-    fprintf (f, "set env PATH=%%PATH%%;%%ProgramFiles%%\\PuTTY;%%ProgramFiles(x86)%%\\PuTTY\n");
-    fprintf (f, "! start PuTTY telnet://localhost:1927\n");
-#elif defined(__linux) || defined(__linux__)
-    fprintf (f, "! nohup xterm -e 'telnet localhost 1927' &\n");
-#elif defined(__APPLE__)
-    fprintf (f, "! osascript -e 'tell application \"Terminal\" to do script \"telnet localhost 1927; exit\"'\n");
-#endif
+    fprintf (f, "# Start a terminal emulator for the console port\n");
+    fprintf (f, "set console telnet=connect\n");
     fclose (f);
     }
 
@@ -257,20 +260,21 @@ if (!panel) {
     goto Done;
     }
 
-if (debug) {
+if (debug)
     sim_panel_set_debug_mode (panel, DBG_XMT|DBG_RCV|DBG_REQ|DBG_RSP|DBG_THR|DBG_APP);
-    }
-sim_panel_debug (panel, "Starting Debug\n");
+
+sim_panel_debug (panel, "Starting Debug");
 if (1) {
+
+    sim_panel_debug (panel, "Adding sub panel TAPE DRIVE");
     tape = sim_panel_add_device_panel (panel, "TAPE DRIVE");
 
     if (!tape) {
         printf ("Error adding tape device to simulator: %s\n", sim_panel_get_error());
         goto Done;
         }
-    if (debug) {
+    if (debug)
         sim_panel_set_debug_mode (tape, DBG_XMT|DBG_RCV|DBG_REQ|DBG_RSP|DBG_THR|DBG_APP);
-        }
     }
 if (1) {
     unsigned int noop_noop_noop_halt = 0x00010101, addr400 = 0x00000400, pc_value;
@@ -303,7 +307,7 @@ if (1) {
         goto Done;
         }
     if (pc_value != addr400 + 4) {
-        printf ("Unexpected error getting PC value: %08X, expected: %08X\n", pc_value, addr400 + 4);
+        printf ("Unexpected value returned getting PC value: %08X, expected: %08X\n", pc_value, addr400 + 4);
         goto Done;
         }
     }
@@ -427,7 +431,7 @@ if (sim_panel_get_registers (panel, NULL)) {
     printf ("Error getting register data: %s\n", sim_panel_get_error());
     goto Done;
     }
-if (sim_panel_set_display_callback_interval (panel, &DisplayCallback, NULL, 200000)) {
+if (sim_panel_set_display_callback_interval (panel, &DisplayCallback, NULL, 100000)) {
     printf ("Error setting automatic display callback: %s\n", sim_panel_get_error());
     goto Done;
     }
@@ -591,6 +595,7 @@ if (1) {
         printf ("State not Halt after successful Halt\n");
         goto Done;
         }
+    sim_panel_debug (panel, "Halt Reason: %s", sim_panel_halt_text (panel));
     if (sim_panel_device_debug_mode (panel, "DZ", 1, NULL)) {
         printf ("Can't enable Debug for DZ device: %s\n", sim_panel_get_error());
         goto Done;
@@ -616,8 +621,7 @@ sim_panel_clear_error ();
 return 0;
 
 Done:
-sim_panel_destroy (panel);
-panel = NULL;
+sim_panel_destroy (&panel);
 
 /* Get rid of pseudo config file created above */
 (void)remove (sim_config);
@@ -668,9 +672,31 @@ int
 main (int argc, char **argv)
 {
 int was_halted = 1, i;
+char *c;
 
-if ((argc > 1) && ((!strcmp("-d", argv[1])) || (!strcmp("-D", argv[1])) || (!strcmp("-debug", argv[1]))))
-    debug = 1;
+/* Locate the vax simulator binary */
+sim_path = strcpy ((char *)malloc (strlen (argv[0]) + 10), argv[0]);
+c = strrchr (sim_path, '/');
+if (c == NULL)
+    c = strrchr (sim_path, '\\');
+if (c == NULL)
+    strcpy (sim_path, "vax");
+else
+    strcpy (c + 1, "vax");
+
+/* process potential arguments */
+while (--argc) {
+    ++argv;
+    if ((!strcmp("-d", argv[0])) || (!strcmp("-D", argv[0])) || (!strcmp("-debug", argv[0]))) {
+        debug = 1;
+        continue;
+        }
+    if ((!strcmp("-s", argv[0])) || (!strcmp("-S", argv[0])) || (!strcmp("-sleep", argv[0]))) {
+        startup_sleep = 1;
+        continue;
+        }
+    }
+
 
 if (panel_setup())
     goto Done;
@@ -688,11 +714,11 @@ if (1) {
         };
     int i;
 
-    sim_panel_debug (panel, "Testing sim_panel_exec_halt and sim_panel_destroy() () with simulator in Run State");
+    sim_panel_debug (panel, "Testing sim_panel_exec_halt() and sim_panel_destroy() with simulator in Run State");
     for (i=0; long_running_program[i].instr; i++)
         if (sim_panel_mem_deposit_instruction (panel, sizeof(long_running_program[i].addr), 
                                                &long_running_program[i].addr, long_running_program[i].instr)) {
-            printf ("Error setting depositing instruction '%s' into memory at location %XR0: %s\n", 
+            printf ("Error setting depositing instruction '%s' into memory at location %X: %s\n", 
                     long_running_program[i].instr, long_running_program[i].addr, sim_panel_get_error());
             goto Done;
             }
@@ -717,7 +743,7 @@ if (1) {
         }
     usleep (2000000);   /* 2 Seconds */
     sim_panel_debug (panel, "Shutting down while simulator is running");
-    sim_panel_destroy (panel);
+    sim_panel_destroy (&panel);
     }
 sim_panel_clear_error ();
 InitDisplay ();
@@ -837,7 +863,7 @@ while (1) {
 
 Done:
 DisplayRegisters (panel, 0, 1);
-sim_panel_destroy (panel);
+sim_panel_destroy (&panel);
 
 /* Get rid of pseudo config file created earlier */
 (void)remove (sim_config);

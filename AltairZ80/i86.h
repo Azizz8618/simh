@@ -35,7 +35,7 @@
        EAX & 0xff  === AL
        EAX & 0xffff == AX
 
-   etc.  The result is that alot of the calculations can then be
+   etc.  The result is that a lot of the calculations can then be
    done using the native instruction set fully.
 */
 
@@ -44,8 +44,7 @@ Priority 1: If LOWFIRST is defined, use it. LOWFIRST must be 1 if the
             lower part of a 16 bit quantity comes first in memory, otherwise
             LOWFIRST must be 0
 Priority 2: If __BIG_ENDIAN__ is defined, use it to define LOWFIRST accordingly
-Priority 3: OS 9 on Macintosh needs LOWFIRST 0
-Priority 4: Use LOWFIRST 1 as default
+Priority 3: Use LOWFIRST 1 as default
 */
 
 #ifndef LOWFIRST
@@ -55,8 +54,6 @@ Priority 4: Use LOWFIRST 1 as default
 #else
 #define LOWFIRST 1
 #endif
-#elif defined (__MWERKS__) && defined (macintosh)
-#define LOWFIRST 0
 #else
 #define LOWFIRST 1
 #endif
@@ -199,7 +196,7 @@ struct  pc_env
    struct i386_general_regs Gn_regs;
    struct i386_special_regs Sp_regs;
    struct i386_segment_regs Sg_regs;
-   /* our flags structrure.  This contains information on
+   /* our flags structure.  This contains information on
            REPE prefix           2 bits  repe,repne
            SEGMENT overrides     5 bits  normal,DS,SS,CS,ES
            Delayed flag set      3 bits  (zero, signed, parity)

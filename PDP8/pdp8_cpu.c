@@ -25,6 +25,7 @@
 
    cpu          central processor
 
+   21-Oct-21    RMS     Fixed bug in reporting device conflicts (Hans-Bernd Eggenstein)
    07-Sep-17    RMS     Fixed sim_eval declaration in history routine (COVERITY)
    09-Mar-17    RMS     Fixed PCQ_ENTRY for interrupts (COVERITY)
    13-Feb-17    RMS     RESET clear L'AC, per schematics
@@ -1378,12 +1379,16 @@ return reason;
  */
 
 static const char *pdp8_clock_precalibrate_commands[] = {
-    "106 100"
-    "-m 100 MQL MQA"
+    "106 100",
+    "-m 100 MQL MQA",
     "-m 101 ISZ 112",
     "-m 102 JMP I 106",
     "-m 103 JMP I 106",
     "PC 100",
+    NULL};
+
+static const char *pdp8_clock_precalibrate_cleanup_commands[] = {
+    "100-112 0",
     NULL};
 
 /* Reset routine */
@@ -1400,6 +1405,7 @@ if (pcq_r)
 else 
     return SCPE_IERR;
 sim_clock_precalibrate_commands = pdp8_clock_precalibrate_commands;
+sim_clock_precalibrate_cleanup_commands = pdp8_clock_precalibrate_cleanup_commands;
 sim_vm_initial_ips = 10 * SIM_INITIAL_IPS;
 sim_brk_types = SWMASK ('E') | SWMASK('I');
 sim_brk_dflt = SWMASK ('E');
@@ -1571,8 +1577,10 @@ if (cptr == NULL) {
     return SCPE_OK;
     }
 lnt = (int32) get_uint (cptr, 10, HIST_MAX, &r);
-if ((r != SCPE_OK) || (lnt && (lnt < HIST_MIN)))
-    return SCPE_ARG;
+if (r != SCPE_OK)
+    return sim_messagef (SCPE_ARG, "Invalid Numeric Value: %s.  Maximum is %d\n", cptr, HIST_MAX);
+if (lnt && (lnt < HIST_MIN))
+    return sim_messagef (SCPE_ARG, "%d is less than the minumum history value of %d\n", lnt, HIST_MIN);
 hst_p = 0;
 if (hst_lnt) {
     free (hst);
@@ -1602,7 +1610,7 @@ if (hst_lnt == 0)                                       /* enabled? */
 if (cptr) {
     lnt = (int32) get_uint (cptr, 10, hst_lnt, &r);
     if ((r != SCPE_OK) || (lnt == 0))
-        return SCPE_ARG;
+        return sim_messagef (SCPE_ARG, "Invalid count specifier: %s, max is %d\n", cptr, hst_lnt);
     }
 else lnt = hst_lnt;
 di = hst_p - lnt;                                       /* work forward */
@@ -1610,6 +1618,10 @@ if (di < 0)
     di = di + hst_lnt;
 fprintf (st, "PC     L AC    MQ    ea     IR\n\n");
 for (k = 0; k < lnt; k++) {                             /* print specified */
+    if (stop_cpu) {                                     /* Control-C (SIGINT) */
+        stop_cpu = FALSE;
+        break;                                          /* abandon remaining output */
+        }
     h = &hst[(++di) % hst_lnt];                         /* entry pointer */
     if (h->pc & HIST_PC) {                              /* instruction? */
         l = (h->lac >> 12) & 1;                         /* link */

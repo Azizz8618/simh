@@ -25,7 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Build Dependent ROM include File(s) &amp; Check for required build dependencies &amp; git commit id"
+				Description="Build Dependent ROM include File(s) &amp; Check for required build dependencies &amp; git commit id..."
 				CommandLine="Pre-Build-Event.cmd &quot;$(TargetDir)$(TargetName).exe&quot; LIBPCRE ROM BUILD"
 			/>
 			<Tool
@@ -41,11 +41,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../VAX/;../pdp11/;./;../;../slirp;../slirp_glue;../slirp_glue/qemu;../slirp_glue/qemu/win32/include;../../windows-build/include;;../../windows-build/include/SDL2"
-				PreprocessorDefinitions="USE_INT64;USE_ADDR64;VM_VAX;VAX_780;USE_SHARED;SIM_BUILD_TOOL=simh-Visual-Studio-Project;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;PTW32_STATIC_LIB;USE_READER_THREAD;SIM_ASYNCH_IO;SIM_NEED_GIT_COMMIT_ID;HAVE_PCRE_H;PCRE_STATIC;HAVE_SLIRP_NETWORK;USE_SIMH_SLIRP_DEBUG"
+				PreprocessorDefinitions="USE_INT64;USE_ADDR64;VM_VAX;VAX_780;USE_SHARED;SIM_BUILD_TOOL=simh-Visual-Studio-Project;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;PTW32_STATIC_LIB;USE_READER_THREAD;SIM_ASYNCH_IO;SIM_NEED_GIT_COMMIT_ID;HAVE_PCRE_H;PCRE_STATIC;HAVE_SLIRP_NETWORK;USE_SIMH_SLIRP_DEBUG;HAVE_LIBEDIT"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				WarnAsError="true"
 				DebugInformationFormat="3"
 				CompileAs="1"
 				ShowIncludes="false"
@@ -62,7 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/fixed:no"
-				AdditionalDependencies="libcmtd.lib wsock32.lib winmm.lib Iphlpapi.lib pcrestaticd.lib SDL2-StaticD.lib SDL2_ttf-StaticD.lib freetype2412MT_D.lib libpng16.lib zlib.lib dxguid.lib Imm32.lib Version.lib Setupapi.lib"
+				AdditionalDependencies="libcmtd.lib wsock32.lib winmm.lib Iphlpapi.lib pcrestaticd.lib SDL2-StaticD.lib SDL2_ttf-StaticD.lib freetype2412MT_D.lib libpng16.lib zlib.lib dxguid.lib Imm32.lib Version.lib Setupapi.lib wineditlined.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../windows-build/lib/Debug/"
 				GenerateDebugInformation="true"
@@ -78,6 +79,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				UseUnicodeResponseFiles="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -93,7 +95,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Running Available Tests"
+				Description="Running Available Tests..."
 				CommandLine="Post-Build-Event.cmd VAX &quot;$(TargetDir)$(TargetName).exe&quot; vax-diag_test"
 			/>
 		</Configuration>
@@ -106,7 +108,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Build Dependent ROM include File(s) &amp; Check for required build dependencies &amp; git commit id"
+				Description="Build Dependent ROM include File(s) &amp; Check for required build dependencies &amp; git commit id..."
 				CommandLine="Pre-Build-Event.cmd &quot;$(TargetDir)$(TargetName).exe&quot; LIBPCRE ROM BUILD"
 			/>
 			<Tool
@@ -127,12 +129,13 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../VAX/;../pdp11/;./;../;../slirp;../slirp_glue;../slirp_glue/qemu;../slirp_glue/qemu/win32/include;../../windows-build/include;;../../windows-build/include/SDL2"
-				PreprocessorDefinitions="USE_INT64;USE_ADDR64;VM_VAX;VAX_780;USE_SHARED;SIM_BUILD_TOOL=simh-Visual-Studio-Project;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;PTW32_STATIC_LIB;USE_READER_THREAD;SIM_ASYNCH_IO;SIM_NEED_GIT_COMMIT_ID;HAVE_PCRE_H;PCRE_STATIC;HAVE_SLIRP_NETWORK;USE_SIMH_SLIRP_DEBUG"
+				PreprocessorDefinitions="USE_INT64;USE_ADDR64;VM_VAX;VAX_780;USE_SHARED;SIM_BUILD_TOOL=simh-Visual-Studio-Project;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;PTW32_STATIC_LIB;USE_READER_THREAD;SIM_ASYNCH_IO;SIM_NEED_GIT_COMMIT_ID;HAVE_PCRE_H;PCRE_STATIC;HAVE_SLIRP_NETWORK;USE_SIMH_SLIRP_DEBUG;HAVE_LIBEDIT"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				WarnAsError="true"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -148,7 +151,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/fixed:no"
-				AdditionalDependencies="libcmt.lib wsock32.lib winmm.lib Iphlpapi.lib pcrestatic.lib SDL2-Static.lib SDL2_ttf-Static.lib freetype2412MT.lib libpng16.lib zlib.lib dxguid.lib Imm32.lib Version.lib Setupapi.lib"
+				AdditionalDependencies="libcmt.lib wsock32.lib winmm.lib Iphlpapi.lib pcrestatic.lib SDL2-Static.lib SDL2_ttf-Static.lib freetype2412MT.lib libpng16.lib zlib.lib dxguid.lib Imm32.lib Version.lib Setupapi.lib wineditline.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../windows-build/lib/Release/"
 				GenerateDebugInformation="false"
@@ -167,6 +170,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				UseUnicodeResponseFiles="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -182,7 +186,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Running Available Tests"
+				Description="Running Available Tests..."
 				CommandLine="Post-Build-Event.cmd VAX &quot;$(TargetDir)$(TargetName).exe&quot; vax-diag_test"
 			/>
 		</Configuration>
@@ -204,6 +208,10 @@
 			</File>
 			<File
 				RelativePath="..\PDP11\pdp11_dmc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\PDP11\pdp11_dup.c"
 				>
 			</File>
 			<File
@@ -236,6 +244,10 @@
 			</File>
 			<File
 				RelativePath="..\PDP11\pdp11_rp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\PDP11\pdp11_rpb.c"
 				>
 			</File>
 			<File
@@ -403,6 +415,10 @@
 			</File>
 			<File
 				RelativePath="..\VAX\vax_syscm.c"
+				>
+			</File>
+			<File
+				RelativePath="..\VAX\vax_uw.c"
 				>
 			</File>
 			<Filter

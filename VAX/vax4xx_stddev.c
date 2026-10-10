@@ -61,6 +61,7 @@ t_stat nvr_attach (UNIT *uptr, CONST char *cptr);
 t_stat nvr_detach (UNIT *uptr);
 const char *nvr_description (DEVICE *dptr);
 t_stat or_reset (DEVICE *dptr);
+t_stat or_show (FILE* st, UNIT* uptr, int32 val, CONST void* desc);
 t_stat or_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
 const char *or_description (DEVICE *dptr);
 t_stat clk_svc (UNIT *uptr);
@@ -127,19 +128,28 @@ DEVICE nvr_dev = {
    or_reg      OR register list
 */
 
+#define OR_ROM      up7         /* UNIT member holding the pointer to the ROM data */
+#define OR_DEVICE   up8         /* UNIT member holding the pointer to DEVICE the ROM operates */
+
 UNIT or_unit[] = {
-    { UDATA (NULL, UNIT_FIX+UNIT_RO+UNIT_BINK, ORSIZE) },
-    { UDATA (NULL, UNIT_FIX+UNIT_RO+UNIT_BINK, ORSIZE) },
-    { UDATA (NULL, UNIT_FIX+UNIT_RO+UNIT_BINK, ORSIZE) },
-    { UDATA (NULL, UNIT_FIX+UNIT_RO+UNIT_BINK, ORSIZE) }
+    { UDATA (NULL, UNIT_FIX+UNIT_RO+UNIT_BINK, 0) },
+    { UDATA (NULL, UNIT_FIX+UNIT_RO+UNIT_BINK, 0) },
+    { UDATA (NULL, UNIT_FIX+UNIT_RO+UNIT_BINK, 0) },
+    { UDATA (NULL, UNIT_FIX+UNIT_RO+UNIT_BINK, 0) }
     };
 
 REG or_reg[] = {
     { NULL }
     };
 
+MTAB or_mod[] = {
+    { MTAB_XTD|MTAB_VUN,          1, "DEVICE", NULL ,
+        NULL, &or_show, NULL, "Option ROM device" },
+    { 0 }
+    };
+
 DEVICE or_dev = {
-    "OR", or_unit, or_reg, NULL,
+    "OR", or_unit, or_reg, or_mod,
     OR_COUNT, 16, ORAWIDTH, 4, 16, 32,
     NULL, NULL, &or_reset,
     NULL, NULL, NULL,
@@ -259,15 +269,21 @@ return SCPE_OK;
 t_stat rom_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr)
 {
 fprintf (st, "Read-only memory (ROM)\n\n");
-fprintf (st, "The boot ROM consists of a single unit, simulating the 256KB boot ROM.  It has\n");
+fprintf (st, "The boot ROM consists of a single unit, simulating the %uKB boot ROM.  It has\n", ROMSIZE >> 10);
 fprintf (st, "no registers.  The boot ROM is loaded with a binary byte stream using the \n");
 fprintf (st, "LOAD -r command:\n\n");
-fprintf (st, "   LOAD -r KA410.BIN      load ROM image KA410.BIN\n\n");
+fprintf (st, "   LOAD -r %s      load ROM image %s\n\n", boot_code_filename, boot_code_filename);
 fprintf (st, "When the simulator starts running (via the BOOT command), if the ROM has\n");
-fprintf (st, "not yet been loaded, an attempt will be made to automatically load the\n");
-fprintf (st, "ROM image from the file ka410.bin in the current working directory.\n");
-fprintf (st, "If that load attempt fails, then a copy of the missing ROM file is\n");
-fprintf (st, "written to the current directory and the load attempt is retried.\n\n");
+#if !defined (DONT_USE_INTERNAL_ROM)
+    fprintf (st, "not yet been loaded, an internal 'built-in' copy of the %s image\n", boot_code_filename);
+    fprintf (st, "will be loaded into the ROM address space.\n");
+#else
+    fprintf (st, "not yet been loaded, an attempt will be made to automatically load the\n");
+    fprintf (st, "ROM image from the file %s in the current working directory.\n", boot_code_filename);
+    fprintf (st, "If that load attempt fails, then a copy of the missing ROM file is\n");
+    fprintf (st, "written to the current directory and the load attempt is retried.\n");
+#endif
+fprintf (st, "Once the ROM address space has been populated execution will be started.\n\n");
 fprintf (st, "ROM accesses a use a calibrated delay that slows ROM-based execution to\n");
 fprintf (st, "about 500K instructions per second.  This delay is required to make the\n");
 fprintf (st, "power-up self-test routines run correctly on very fast hosts.\n");
@@ -406,11 +422,11 @@ int32 or_rd (int32 pa)
 uint32 off = (pa - ORBASE);                             /* offset from start of option roms */
 uint32 rn = ((off >> 18) & 0x3);                        /* rom number (0 - 3) */
 UNIT *uptr = &or_dev.units[rn];                         /* get unit */
-uint8 *opr = (uint8*) uptr->filebuf;
+uint8 *opr = (uint8*) uptr->OR_ROM;
 int32 data = 0;
 uint32 rg;
 
-if ((uptr->flags & UNIT_ATT) && (opr != NULL)) {
+if (opr != NULL) {
     switch (opr[0]) {                                    /* number of ROM chips */
         case 1:
             rg = (off >> 2) & (uptr->capac - 1);
@@ -441,6 +457,15 @@ t_stat or_reset (DEVICE *dptr)
 return SCPE_OK;
 }
 
+t_stat or_show (FILE* st, UNIT* uptr, int32 val, CONST void* desc)
+{
+if (uptr->OR_ROM)
+    fprintf(st, "ROM for %s device", sim_dname((DEVICE *)uptr->OR_DEVICE));
+else
+    fprintf(st, "No Option Enabled");
+return SCPE_OK;
+}
+
 t_stat or_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr)
 {
 fprintf (st, "Option ROMs (OR)\n\n");
@@ -451,21 +476,25 @@ fprintf (st, "which option boards are present.\n");
 return SCPE_OK;
 }
 
-t_stat or_map (uint32 index, uint8 *rom, t_addr size)
+t_stat or_map (DEVICE *dptr, uint32 index, uint8 *rom, t_addr size)
 {
 UNIT *uptr = &or_unit[index];
-uptr->filebuf = (void *)rom;
+
+if (size > ORSIZE)
+    return sim_messagef (SCPE_IERR, "%s: %s device ROM size of %u exceeds available address slot size %u\n", 
+                                    sim_uname(uptr), sim_dname (dptr), (uint32)size, (uint32)ORSIZE);
+uptr->OR_ROM = (void *)rom;
+uptr->OR_DEVICE = (void *)dptr;
 uptr->capac = size;
-uptr->flags |= UNIT_ATT;
 return SCPE_OK;
 }
 
 t_stat or_unmap (uint32 index)
 {
 UNIT *uptr = &or_unit[index];
-uptr->filebuf = NULL;
+uptr->OR_ROM = NULL;
+uptr->OR_DEVICE = NULL;
 uptr->capac = 0;
-uptr->flags &= ~UNIT_ATT;
 return SCPE_OK;
 }
 
@@ -503,14 +532,11 @@ return;
 
 t_stat clk_svc (UNIT *uptr)
 {
-int32 t;
-
 if (clk_csr & CSR_IE)
     tmr_int = 1;
-t = sim_rtcn_calb (clk_tps, TMR_CLK);                   /* calibrate clock */
+tmr_poll = sim_rtcn_calb (clk_tps, TMR_CLK);            /* calibrate clock */
 sim_activate_after (uptr, 1000000/clk_tps);             /* reactivate unit */
-tmr_poll = t;                                           /* set tmr poll */
-tmxr_poll = t * TMXR_MULT;                              /* set mux poll */
+tmxr_poll = tmr_poll * TMXR_MULT;                       /* set mux poll */
 AIO_SET_INTERRUPT_LATENCY(tmr_poll*clk_tps);            /* set interrrupt latency */
 return SCPE_OK;
 }
@@ -519,14 +545,11 @@ return SCPE_OK;
 
 t_stat clk_reset (DEVICE *dptr)
 {
-int32 t;
-
 clk_csr = 0;
 tmr_int = 0;
-t = sim_rtcn_init_unit (&clk_unit, clk_unit.wait, TMR_CLK);/* init 100Hz timer */
+tmr_poll = sim_rtcn_init_unit (&clk_unit, clk_unit.wait, TMR_CLK);/* init 100Hz timer */
 sim_activate_after (&clk_unit, 1000000/clk_tps);        /* activate 100Hz unit */
-tmr_poll = t;                                           /* set tmr poll */
-tmxr_poll = t * TMXR_MULT;                              /* set mux poll */
+tmxr_poll = tmr_poll * TMXR_MULT;                       /* set mux poll */
 return SCPE_OK;
 }
 

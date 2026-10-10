@@ -64,6 +64,7 @@ enum {
     STOP_LOAD_ADDR_MATCH,               /* Останов по считыванию */
     STOP_STORE_ADDR_MATCH,              /* Останов по записи */
     STOP_UNIMPLEMENTED,                 /* Не реализовано */
+    STOP_VALUE_KIND,                    /* Неверный вид значения (СОП) */
 };
 
 /*
@@ -80,12 +81,15 @@ enum {
 #define BITS41          00037777777777777LL     /* биты 41..1 - мантисса и знак */
 #define BITS42          00077777777777777LL     /* биты 42..1 - мантисса и оба знака */
 #define BITS48          07777777777777777LL     /* биты 48..1 */
+#define BITS44          0377777777777777LL      /* биты 44..1 — регистр часов */
 #define BITS48_42       07740000000000000LL     /* биты 48..42 - порядок */
 #define ADDR(x)         ((x) & BITS(15))        /* адрес слова */
 
 /*
  * Работа с тегами.
  */
+#define PREFETCH_DEPTH  4       /* глубина предвыборки команд, слов */
+
 #define TAG_INSN48      035
 #define TAG_NUMBER48    036
 #define TAG_BITSET      020
@@ -108,6 +112,7 @@ enum {
 
 extern UNIT tty_unit[];
 extern UNIT clocks[];
+extern UNIT cpu_unit[];
 extern t_value memory[MEMSIZE];     /* основная память (64-битная) */
 extern uint8 tag[MEMSIZE];          /* тег для каждого слова основной памяти */
 extern DEVICE cpu_dev[];
@@ -135,6 +140,20 @@ typedef struct {
      */
     t_value RP[8];          /* РП, регистры приписки страниц пользователя */
     t_value RPS[8];         /* РПС, регистры приписки страниц супервизора */
+    /*
+     * Буфер предвыборки команд. В реальной машине выбирается на 3-4 слова
+     * вперёд, поэтому смена приписки "на ходу" (РЕГ '60'+РПАД, 036134) не
+     * влияет на уже выбранные команды: следующее слово исполняется из буфера
+     * по СТАРОЙ приписке и успевает уйти на уже переотображённый адрес.
+     */
+    int     pf_count;               /* слов в буфере предвыборки */
+    uint32  pf_base;                /* виртуальный адрес первого слова окна */
+    int     pf_last;                /* виртуальный адрес последнего выданного */
+    uint32  pf_va[PREFETCH_DEPTH];
+    uint32  pf_pa[PREFETCH_DEPTH];
+    t_value pf_word[PREFETCH_DEPTH];
+    uint8   pf_tag[PREFETCH_DEPTH];
+
     uint32 UTLB[32];        /* они же постранично, пользователя */
     uint32 STLB[32];        /* они же постранично, супервизора */
     uint32 RZ;              /* РЗ, регистр защиты */
@@ -173,7 +192,8 @@ extern CORE cpu_core[];             /* state of processor 0 */
  */
 typedef struct {
     int index;              /* номер ПВВ 0...3 */
-    uint32 HA;              /* базовый адрес */
+    uint32 HA;              /* базовый адрес (СТБАК, 0100₈) — указатель на блок БАК */
+    uint32 BAK;             /* физ. адрес блока БАКПВВ (с точки зрения ПВВ) */
     uint32 UTA;             /* адрес таблицы устройств */
     uint32 IOQA;            /* адрес таблицы запросов */
     uint32 SQA;             /* адрес таблицы ответов */
@@ -182,16 +202,53 @@ typedef struct {
 extern IOMDATA iom_data[4];         /* состояние ПВВ */
 
 /*
- * Четыре режима трассировки.
+ * Разряды флага отладки процессора: `set cpu0 debug=insn;regs'.
+ * Без списка разрядов `set cpu0 debug' включает все, то есть полную трассу.
  */
-typedef enum {
-    TRACE_NONE = 0,
-    TRACE_EXTRACODES,               /* только экстракоды (кроме э75) */
-    TRACE_INSTRUCTIONS,             /* только команды процессора */
-    TRACE_ALL,                      /* команды, регистры и обращения к памяти */
-} TRACEMODE;
+#define DEB_INSN    0001            /* команды процессора */
+#define DEB_EXTRA   0002            /* только экстракоды (кроме э75) */
+#define DEB_REGS    0004            /* регистры и обращения к памяти */
+#define DEB_FETCH   0010            /* выборка команд */
+#define DEB_DEV     0020            /* обмены каналов и устройств */
 
-extern TRACEMODE svs_trace;
+/*
+ * Окно трассы по PC (`set cpu0 window=lo:hi`): покомандная трасса и
+ * пояснения печатаются, только пока PC внутри окна.
+ */
+/*
+ * Регистр часов, номер 056 (документация, §16.16 «Часы»): циклический
+ * счётчик времени на 44 разряда, младший разряд — 1 мкс, доступен и на
+ * чтение, и на запись. Ход задаётся принятым в этой модели темпом
+ * «amortized 1 MIPS» (см. delay в cpu_one_instr): одна команда — одна мкс.
+ */
+extern t_value svs_clock;
+
+/*
+ * Регистр таймера, номер 057 (документация, §16.15 «Таймер»): 32 разряда,
+ * чтение и запись, после записи начинает считать по 1 мкс на разряд 1.
+ * Когда счёт обнуляет все разряды, в разряд 4 главного регистра внешних
+ * прерываний (GRVP_TIMER) посылается сигнал, и счёт продолжается.
+ *
+ * Считает ВВЕРХ: АДАП грузит дополнение интервала, `ВРЕМЯТ КОНД
+ * В'37777750000'` = 2^32 - 12288, то есть прерывание через 12288 мкс
+ * (в исходнике помечено «1/80 СЕК»).
+ */
+extern t_value svs_timer;
+
+extern int svs_trace_window;
+extern t_addr svs_trace_lo, svs_trace_hi;
+
+#define TRACE_IN_WINDOW(pc) \
+    (! svs_trace_window || ((pc) >= svs_trace_lo && (pc) <= svs_trace_hi))
+
+/*
+ * Критерий трассировки: флаг отладки включён и журнал открыт (`set debug file').
+ * CPU_TRACE дополнительно проверяет окно по PC, CPU_DEB — нет.
+ * Трасса устройств привязана к процессору 0.
+ */
+#define CPU_DEB(cpu, bits)       (sim_deb && (cpu_dev[(cpu)->index].dctrl & (bits)))
+#define CPU_TRACE(cpu, bits)     (CPU_DEB(cpu, bits) && TRACE_IN_WINDOW((cpu)->PC))
+#define SVS_DEV_TRACE()          (sim_deb && (cpu_dev[0].dctrl & DEB_DEV))
 
 /*
  * Разряды режима АУ.
@@ -349,30 +406,31 @@ extern t_value mmu_load64(CORE *cpu, int addr, int tag_check);
 extern t_value mmu_fetch(CORE *cpu, int addr, int *paddrp);
 extern void mmu_set_rp(CORE *cpu, int idx, t_value word, int supervisor);
 extern void mmu_setup(CORE *cpu);
+extern int  mmu_iom_pa(int vaddr);
+extern int  mmu_iom_data_pa(int addr);
+int svs_disk_zone_scale(int dev);
+int svs_disk_napr(int dev);
 extern void mmu_set_protection(CORE *cpu, int idx, t_value word);
 
 /*
  * Utility functions
  */
+void svs_draw_panel(int force);
+t_stat svs_init_panel(UNIT *u, int32 val, CONST char *cptr, void *desc);
+t_stat svs_close_panel(UNIT *u, int32 val, CONST char *cptr, void *desc);
+t_stat svs_show_panel(FILE *st, UNIT *up, int32 v, CONST void *dp);
 extern void gost_putc(unsigned char, FILE *);
 extern int odd_parity(unsigned char);
 
 /*
- * Терминалы.
+ * МПД / консоль SIMH (устройство TTY).
  */
-void tty_send(uint32 mask);
-int tty_query(void);
-void vt_print(void);
-void tt_print(void);
-void vt_receive(CORE *cpu);
 int vt_is_idle(void);
-
-/*
- * МПД.
- */
 void mpd_reset(CORE *cpu);
 void mpd_send_nibble(CORE *cpu, int data);
 void mpd_receive_update(CORE *cpu);
+void tty_strobe(CORE *cpu);
+t_stat tty_reset(DEVICE *dptr);
 
 /*
  * Отладочная выдача.
@@ -384,8 +442,15 @@ void svs_log_cont(const char *fmt, ...);
 void svs_debug(const char *fmt, ...);
 t_stat fprint_sym(FILE *of, t_addr addr, t_value *val,
                   UNIT *uptr, int32 sw);
+void svs_trace_reset(CORE *cpu);
 void svs_trace_opcode(CORE *cpu, int paddr);
 void svs_trace_registers(CORE *cpu);
+void svs_trace_memory(CORE *cpu, const char *opname,
+                      int vaddr, int paddr, uint8 t, t_value val);
+void svs_trace_memory64(CORE *cpu, const char *opname,
+                        int vaddr, int paddr, uint8 t, t_value val64);
+void svs_trace_fetch(CORE *cpu, int vaddr, int paddr, uint8 t, t_value val);
+void svs_trace_exception(CORE *cpu, const char *fmt, ...);
 
 /*
  * Арифметика.
@@ -407,6 +472,65 @@ t_value svs_unpack(t_value val, t_value mask);
  */
 void iom_reset(int index);
 void iom_request(int index);
+void iom_service_tvzp(int index);
+void iom_update_intr(int cpu_index);
+
+/*
+ * Дисковое устройство (МД).
+ */
+extern DEVICE disk_dev;
+t_stat svs_disk_io(int dev, int zone, int sysaddr, int memaddr, int is_write, int nwords);
+
+extern DEVICE drum_dev;
+t_stat svs_drum_io(int dev, int zone, int sector,
+                   int memaddr, int is_write, int nwords);
+
+/*
+ * АЦПУ (два принтера на ЕС-канале).
+ */
+extern DEVICE printer_dev;
+t_stat svs_printer_io(int num, int kop, int memaddr, int nwords);
+unsigned svs_dkoi_unicode(unsigned char b);
+void svs_put_unknown(unsigned char b, FILE *f);
+void utf8_putc(unsigned ch, FILE *fout);
+
+/*
+ * Считыватель перфокарт (VU) и фотосчитыватель ленты (FS) на ЕС-канале.
+ */
+extern DEVICE vu_dev, fs_dev;
+t_stat svs_card_io(int num, int kop, int memaddr, int nwords);
+t_stat svs_tape_io(int num, int kop, int memaddr, int nwords);
+
+/*
+ * Перфоратор карт (PI) на ЕС-канале.
+ */
+extern DEVICE pi_dev;
+t_stat svs_punch_io(int num, int kop, int memaddr, int nbytes);
+
+/*
+ * Дисплеи ЕС-7920 (DISPLAY) на ЕС-канале, клиенты tn3270. См. АЦД.md.
+ */
+extern DEVICE disp_dev;
+t_stat svs_display_io(int num, int kop, int memaddr, int nbytes);
+
+/* Ответ устройства ЕС-канала, которое формирует ДР/ДРУ само (МЛ). */
+typedef struct {
+    t_value dr48;                       /* ДР: 48-разрядное значение */
+    int     drlow;                      /* ДР: мл16 без НУС (БНС, ДРУ, ВУН) */
+    t_value dru48;                      /* ДРУ: 48-разрядное значение */
+} IOM_ES_STATUS;
+
+extern DEVICE mt_dev;
+t_stat svs_mt_io(int num, int kop, int memaddr, int nwords, int nps, int ttg,
+                 IOM_ES_STATUS *st);
+t_stat svs_disk_read(UNIT *u, int zone, int sysaddr, int memaddr, int nwords);
+t_stat svs_disk_write(UNIT *u, int zone, int sysaddr, int memaddr, int nwords);
+
+/* Адреса ячеек для autotime (из таблицы имён тома 2053 при attach). */
+extern int autotime_year;       /* ГОД */
+extern int autotime_taken;      /* ЗАНЯТА */
+extern int autotime_mgrp;       /* МГРП */
+extern int ipzzt;               /* ИПЗЖТ */
 
 /*
  * Разряды главного регистра прерываний (ГРП)
@@ -414,6 +538,8 @@ void iom_request(int index);
  */
 #define RPR_WATCHDOG    00000000000002000LL /* 11 */
 /* Внутренние: */
+#define RPR_INSN_TAG    00000000100000000LL /* 25 - некомандный тег (НКТ) */
+#define RPR_BAD_VALUE   00000000040000000LL /* 24 */
 #define RPR_DIVZERO     00000000034000000LL /* 23-21 */
 #define RPR_OVERFLOW    00000000014000000LL /* 22-21 */
 #define RPR_CHECK       00000000004000000LL /* 21 */
@@ -437,7 +563,7 @@ void iom_request(int index);
 #define GRVP_PROGRAM    0400LL
 #define GRVP_REQUEST    0200LL
 #define GRVP_RESPONSE   0100LL
-#define GRVP_IOM_FAIL   0040LL
+#define GRVP_IOM_FAIL   0040LL  /* 6: аварийные прерывания от процессоров (СКОП/СКОМП) */
 #define GRVP_RAM_FAIL   0020LL
 #define GRVP_TIMER      0010LL
 #define GRVP_INTR_IOM   0004LL

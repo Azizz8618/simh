@@ -68,6 +68,7 @@ extern DEVICE va_dev;
 extern DEVICE vc_dev;
 extern DEVICE lk_dev;
 extern DEVICE vs_dev;
+extern DEVICE dpv_dev;
 
 DEVICE *sim_devices[] = { 
     &cpu_dev,
@@ -100,6 +101,9 @@ DEVICE *sim_devices[] = {
     &tq_dev,
     &xq_dev,
     &xqb_dev,
+#if !defined(VAX_620)
+    &dpv_dev,
+#endif
     NULL
     };
 
@@ -111,6 +115,7 @@ DEVICE *sim_devices[] = {
 
    -r           load ROM
    -n           load NVR
+   -v           load VCB02 ROM
    -o           for memory, specify origin
 */
 
@@ -126,26 +131,51 @@ if (sim_switches & SWMASK ('R')) {                      /* ROM? */
     origin = ROMBASE;
     limit = ROMBASE + ROMSIZE;
     }
-else if (sim_switches & SWMASK ('N')) {                 /* NVR? */
-    origin = NVRBASE;
-    limit = NVRBASE + NVRASIZE;
-    step = 2;
-    }
 else {
-    origin = 0;                                         /* memory */
-    limit = (uint32) cpu_unit.capac;
-    if (sim_switches & SWMASK ('O')) {                  /* origin? */
-        origin = (int32) get_uint (cptr, 16, 0xFFFFFFFF, &r);
-        if (r != SCPE_OK)
-            return SCPE_ARG;
+    if (sim_switches & SWMASK ('N')) {                 /* NVR? */
+        origin = NVRBASE;
+        limit = NVRBASE + NVRASIZE;
+        step = 2;
+        }
+    else {
+#if !defined(VAX_620)
+        if (sim_switches & SWMASK ('V')) {              /* VCB02 ROM? */
+            origin = QDMBASE;
+            limit = QDMBASE + QDMSIZE;
+            step = 1;
+#else
+        if (0) {
+#endif
+            }
+        else {
+            origin = 0;                                 /* memory */
+            limit = (uint32) cpu_unit.capac;
+            if (sim_switches & SWMASK ('O')) {          /* origin? */
+                origin = (int32) get_uint (cptr, 16, 0xFFFFFFFF, &r);
+                if (r != SCPE_OK)
+                    return SCPE_ARG;
+                }
+            }
         }
     }
-while ((i = Fgetc (fileref)) != EOF) {                   /* read byte stream */
+while ((i = Fgetc (fileref)) != EOF) {                  /* read byte stream */
     if (origin >= limit)                                /* NXM? */
         return SCPE_NXM;
     if (sim_switches & SWMASK ('R'))                    /* ROM? */
         rom_wr_B (origin, i);                           /* not writeable */
-    else WriteB (origin, i);                            /* store byte */
+    else {
+#if !defined(VAX_620)
+        if (sim_switches & SWMASK ('V')) {              /* VCB02 ROM? */
+            extern void va_mem_wr_B (int32 pa, int32 val);
+
+            va_mem_wr_B (origin, i);
+#else
+        if (0) {
+#endif
+            }
+        else
+            WriteB (origin, i);                         /* store byte */
+        }
     origin = origin + step;
     }
 return SCPE_OK;

@@ -122,8 +122,15 @@ uint32 cdr_cmd(UNIT * uptr, uint16 cmd, uint16 dev)
     uptr->u5 &= ~0xF0000;
     uptr->u5 |= stk << 16;
 #endif
-    if (uptr->u5 & (URCSTA_EOF|URCSTA_ERR))
+    if (uptr->u5 & (URCSTA_EOF)) {
+        uptr->u5 &= ~(URCSTA_EOF);
+        return SCPE_EOF;
+    }
+
+    if (uptr->u5 & (URCSTA_ERR)) {
+        uptr->u5 &= ~(URCSTA_ERR);
         return SCPE_IOERR;
+    }
 
     /* Process commands */
     switch(cmd) {
@@ -141,15 +148,20 @@ uint32 cdr_cmd(UNIT * uptr, uint16 cmd, uint16 dev)
 #endif
         break;
     default:
+        sim_debug(DEBUG_CMD, &cdr_dev, "%d: CMD none %02o\n", u, cmd);
         chan_set_attn(chan);
         return SCPE_IOERR;
     }
 
     /* If at eof, just return EOF */
-    if (uptr->u5 & URCSTA_EOF) {
+    if (sim_card_eof(uptr)) {
+        uint16             *image = (uint16 *)(uptr->up7);
+        sim_debug(DEBUG_DETAIL, &cdr_dev, "%d: EOF\n", u);
         chan_set_eof(chan);
         chan_set_attn(chan);
-        return SCPE_OK;
+        uptr->u5 &= ~(URCSTA_EOF|URCSTA_ERR);
+        (void)sim_read_card(uptr, image);
+        return SCPE_EOF;
     }
 
     uptr->u5 |= URCSTA_READ;
@@ -256,6 +268,10 @@ cdr_srv(UNIT *uptr) {
 #endif
 
         ch = sim_hol_to_bcd(image[uptr->u4]);
+        /* Handle 7-9 to generate 20 */
+        if (ch == 012 && image[uptr->u4] == 0202) {
+            ch = 020;
+        }
 
         /* Handle invalid punch */
         if (ch == 0x7f) {
@@ -288,7 +304,7 @@ cdr_srv(UNIT *uptr) {
             uptr->u4++;
             break;
         }
-        sim_debug(DEBUG_DATA, &cdr_dev, "%d: Char > %02o\n", u, ch);
+        sim_debug(DEBUG_DATA, &cdr_dev, "%d: Char > %04o %02o\n", u, image[uptr->u4-1], ch);
         sim_activate(uptr, 10);
     }
     return SCPE_OK;

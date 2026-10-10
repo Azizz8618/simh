@@ -376,11 +376,10 @@ chan_proc()
             if ((chan_flags[chan] & DEV_SEL) == 0
                 && (chan_flags[chan] & STA_TWAIT)) {
                 if (chan_dev.dctrl & cmask)
-                    sim_debug(DEBUG_TRAP, &chan_dev, "chan %d Trap\n",
-                              chan);
+                    sim_debug(DEBUG_TRAP, &chan_dev, "chan %d Trap IC=%06o\n",
+                              chan, IC);
                 iotraps |= 1 << chan;
-                chan_flags[chan] &=
-                    ~(STA_START | STA_ACTIVE | STA_WAIT | STA_TWAIT);
+                chan_flags[chan] &= ~(STA_START | STA_ACTIVE | STA_WAIT | STA_TWAIT);
                 chan_info[chan] = 0;
                 continue;
             }
@@ -441,7 +440,7 @@ chan_proc()
                 /* Device has given us a dataword */
             case DEV_FULL:
                 /* If we are not waiting EOR save it in memory */
-                if ((cmd[chan] & 1) == 0) {
+                if (/*(chan_flags[chan] & CHS_ERR) == 0 &&*/ (cmd[chan] & 1) == 0) {
                     if (chan_dev.dctrl & cmask)
                          sim_debug(DEBUG_DATA, &chan_dev, "chan %d data < %012llo\n",
                                chan, assembly[chan]);
@@ -599,29 +598,30 @@ chan_proc()
                 }
 
                 /* Wait for device to recognize EOR */
-                if (chan_flags[chan] & DEV_WEOR)
+                if (chan_flags[chan] & DEV_WEOR) {
                     continue;
+                }
 
-                    /* Check if got EOR */
-                    if (chan_flags[chan] & DEV_REOR) {
-                        switch (cmd[chan] & 070) {
-                        case IORP:
-                            chan_flags[chan] &= ~(DEV_REOR);
-                            if (chan_dev.dctrl & cmask)
-                                sim_debug(DEBUG_DETAIL, &chan_dev,
-                                    "chan %d EOR> %o\n", chan, cmd[chan] & 070);
-                            chan_fetch(chan);
-                            chan_flags[chan] |= STA_ACTIVE;
-                            break;
-                        case IORT:
-                            chan_flags[chan] &= ~(DEV_REOR|STA_ACTIVE);
-                            chan_flags[chan] |= STA_TWAIT;
-                            if (chan_dev.dctrl & cmask)
-                                sim_debug(DEBUG_DETAIL, &chan_dev,
-                                    "chan %d EOR> %o\n", chan, cmd[chan] & 070);
-                            continue;
-                        }
+                /* Check if got EOR */
+                if (chan_flags[chan] & DEV_REOR) {
+                    switch (cmd[chan] & 070) {
+                    case IORP:
+                        chan_flags[chan] &= ~(DEV_REOR);
+                        if (chan_dev.dctrl & cmask)
+                            sim_debug(DEBUG_DETAIL, &chan_dev,
+                                "chan %d EOR> %o\n", chan, cmd[chan] & 070);
+                        chan_fetch(chan);
+                        chan_flags[chan] |= STA_ACTIVE;
+                        break;
+                    case IORT:
+                        chan_flags[chan] &= ~(DEV_REOR|STA_ACTIVE);
+                        chan_flags[chan] |= STA_TWAIT;
+                        if (chan_dev.dctrl & cmask)
+                            sim_debug(DEBUG_DETAIL, &chan_dev,
+                                "chan %d EOR> %o\n", chan, cmd[chan] & 070);
+                        continue;
                     }
+                }
 
                 /* Give device new word if we have one */
                 if (wcount[chan] != 0) {
@@ -1569,6 +1569,7 @@ chan_write_char(int chan, uint8 * data, int flags)
     } else {
         int     cnt = --bcnt[chan];
         t_uint64        wd;
+
         if (CHAN_G_TYPE(chan_unit[chan].flags) == CHAN_PIO)
            wd = MQ;
         else

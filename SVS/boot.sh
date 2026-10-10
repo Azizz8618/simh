@@ -1,0 +1,90 @@
+#!/bin/bash
+#
+# Сборка рабочего образа системного диска из дистрибутивного svs2053.bin
+# и запуск на нём Диспака.
+#
+#   ./boot.sh [ini-файл] [лимит-ГБ] [таймаут-секунд]
+#
+# По умолчанию: svs.ini, 4 ГБ, 300 с — как их понимает runsim.sh,
+# который и стережёт размер трассы.
+#
+# Дистрибутивный образ переводится в рабочий одной правкой служебных слов
+# (номер пакета и номер зоны; подробности — в шапке tools/makeSVS2053.py
+# и в ПВВ.md §7Б.9):
+#
+#   svs2053.bin --makeSVS2053.py--> svs2053-fixed.bin
+#   svs2048.bin --makeSVS2048.sh--> svs2048-fixed.bin   (DISK2)
+#
+# Дистрибутивный файл НЕ ПЕРЕЗАПИСЫВАЕТСЯ: он читается только на чтение.
+#
+# Образ пересобирается ПЕРЕД КАЖДЫМ ПРОГОНОМ, как и барабан: ОС пишет на
+# системный диск (после прогона образ расходится с чистым на сотни байт), и
+# повторный запуск на грязном образе уже не воспроизводим.
+#
+# Пути к дистрибутивам можно задать переменными SVS2053 и SVS2048.
+# KEEP_DRUM=1 / KEEP_DISK=1 оставляют drum5.bin / svs2053-fixed.bin и
+# svs2048-fixed.bin от прошлого прогона — на них ОС читает результаты своего
+# же прошлого запуска.
+# KEEP_ARCHIVE=1 собирает образ с включённым архивом (makeSVS2053.py
+# --set-archive 1); по умолчанию архив выключен (--set-archive 0), чтобы задача
+# архива не зацикливалась на загрузке.
+# ZERO_ARCH_PARAMS=1 обнуляет зону параметров архива (makeSVS2053.py
+# --zero-archive-params) — задача архива видит пустые параметры.
+# PPM=N[,N…] отмечает терминалы как ЕС-7934 (makeSVS2053.py --ppm); печать
+# на них — при ТР7 разр.23/22 и attach -p DISPLAYn <файл> (АЦД.md).
+
+set -e
+
+cd "$(dirname "$0")"
+
+INI=${1:-svs.ini}
+LIMIT_GB=${2:-4}
+TIMEOUT=${3:-300}
+
+SRC=${SVS2053:-/home/$USER/git/besm6.github.io/download/disks/svs2053.bin}
+IMG=svs2053-fixed.bin       # рабочая копия: поправлены номер пакета и номер зоны
+
+if [ ! -r "$SRC" ]; then
+    echo "boot.sh: не найден дистрибутивный образ: $SRC" >&2
+    echo "boot.sh: укажите его через SVS2053=/путь/к/svs2053.bin" >&2
+    exit 2
+fi
+
+if [ ! -x ../BIN/svs ]; then
+    echo "boot.sh: нет ../BIN/svs — соберите: (cd ../.. && make svs)" >&2
+    exit 2
+fi
+
+MK2053_OPTS=()
+if [ "${KEEP_ARCHIVE:-0}" = 1 ]; then
+    MK2053_OPTS+=(--set-archive 1)
+else
+    MK2053_OPTS+=(--set-archive 0)
+fi
+if [ "${ZERO_ARCH_PARAMS:-0}" = 1 ]; then
+    MK2053_OPTS+=(--zero-archive-params)
+fi
+if [ -n "${PPM:-}" ]; then
+    MK2053_OPTS+=(--ppm "$PPM")
+fi
+
+if [ "${KEEP_DISK:-0}" = 1 ] && [ -f "$IMG" ]; then
+    echo "boot.sh: образ $IMG оставлен от прошлого прогона"
+else
+    python3 tools/makeSVS2053.py "${MK2053_OPTS[@]}" "$SRC" "$IMG"
+fi
+
+if [ "${KEEP_DISK:-0}" = 1 ] && [ -f svs2048-fixed.bin ]; then
+    echo "boot.sh: образ svs2048-fixed.bin оставлен от прошлого прогона"
+else
+    tools/makeSVS2048.sh
+fi
+
+if [ "${KEEP_DRUM:-0}" = 1 ]; then
+    echo "boot.sh: барабан drum5.bin оставлен от прошлого прогона"
+else
+    rm -f drum5.bin
+fi
+
+echo "boot.sh: запускаю $INI (лимит ${LIMIT_GB} ГБ, таймаут ${TIMEOUT} с)"
+exec ./runsim.sh "$INI" "$LIMIT_GB" "$TIMEOUT"

@@ -28,15 +28,15 @@
    03-Apr-15    MP      Added logic to pass simulator startup messages in
                         panel error text if the connection to the simulator
                         shuts down while it is starting.
-   04-Apr-15    MP      Added mount and dismount routines to connect and 
+   04-Apr-15    MP      Added mount and dismount routines to connect and
                         disconnect removable media
 
    This module provides interface between a front panel application and a simh
-   simulator.  Facilities provide ways to gather information from and to 
+   simulator.  Facilities provide ways to gather information from and to
    observe and control the state of a simulator.
 
-   The details of the 'wire protocol' are internal to the API interfaces 
-   provided here and described in sim_frontpanel.h.  These details are subject 
+   The details of the 'wire protocol' are internal to the API interfaces
+   provided here and described in sim_frontpanel.h.  These details are subject
    to change from one sim_frontpanel version to the next, while all efforts
    will be made to retain any prior sim_frontpanel API interfaces.
 
@@ -80,6 +80,29 @@ tp->tv_sec = (long)(now/10000000);
 tp->tv_nsec = (now%10000000)*100;
 return 0;
 }
+
+static const char *GetErrorText (DWORD dwError)
+{
+static __declspec (thread) char szMsgBuffer[2048];
+DWORD dwStatus;
+
+dwStatus = FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM|
+                          FORMAT_MESSAGE_IGNORE_INSERTS,     //  __in      DWORD dwFlags,
+                          NULL,                              //  __in_opt  LPCVOID lpSource,
+                          dwError,                           //  __in      DWORD dwMessageId,
+                          0,                                 //  __in      DWORD dwLanguageId,
+                          szMsgBuffer,                       //  __out     LPTSTR lpBuffer,
+                          2048,                              //  __in      DWORD nSize,
+                          NULL);                             //  __in_opt  va_list *Arguments
+if (0 == dwStatus)
+    _snprintf(szMsgBuffer, sizeof(szMsgBuffer), "Error Code: %d", dwError);
+while (isspace(szMsgBuffer[strlen(szMsgBuffer)-1]))
+    szMsgBuffer[strlen(szMsgBuffer)-1] = '\0';
+return szMsgBuffer;
+}
+
+#define SET_THREAD_NAME(name) pthread_setname_np (pthread_self(), name)
+
 #else /* NOT _WIN32 */
 #include <unistd.h>
 #define msleep(n) usleep(1000*n)
@@ -116,6 +139,16 @@ return 0;
 #endif /* defined(NEED_CLOCK_GETTIME) */
 #endif /* !defined(CLOCK_REALTIME) && !defined(__hpux) */
 
+#if (defined(__linux) || defined(__linux__))
+#define SET_THREAD_NAME(name) pthread_setname_np (pthread_self(), name)
+#else
+#if defined(__APPLE__)
+#define SET_THREAD_NAME(name) pthread_setname_np (name)
+#else
+#define SET_THREAD_NAME(name)
+#endif
+#endif
+
 #endif /* NOT _WIN32 */
 
 typedef struct {
@@ -148,11 +181,13 @@ struct PANEL {
     volatile OperationalState State;
     unsigned long long      simulation_time;
     unsigned long long      simulation_time_base;
+    pthread_t               creating_thread;
     pthread_t               io_thread;
     int                     io_thread_running;
     pthread_mutex_t         io_lock;
     pthread_mutex_t         io_send_lock;
     pthread_mutex_t         io_command_lock;
+    pthread_mutex_t         debug_lock;
     int                     command_count;
     int                     io_waiting;
     char                    *io_response;
@@ -189,20 +224,23 @@ struct PANEL {
  *
  *  Mutex:               Role:
  *   io_lock             Serialize access to panel state variables
- *                        acquired and released in application threads: 
+ *                        acquired and released in application threads:
  *                                                  _panel_register_query_string,
  *                                                  _panel_establish_register_bits_collection,
  *                                                  _panel_sendf
- *                        acquired and released in internal threads: 
+ *                        acquired and released in internal threads:
  *                                                  _panel_callback
  *                                                  _panel_reader
- *   io_send_lock        Serializes writes to a panel's sockets so that complete 
- *                       command/request data can be delivered before another 
+ *   io_send_lock        Serializes writes to a panel's sockets so that complete
+ *                       command/request data can be delivered before another
  *                       thread attempts to write to the socket.
  *                        acquired and released in: _panel_send
  *   io_command_lock     To serialize frontpanel application command requests
- *                        acquired and released in: _panel_get_registers, 
+ *                        acquired and released in: _panel_get_registers,
  *                                                  _panel_sendf_completion
+ *   debug_lock          To serialize writing debug information activities
+ *                        acquired and released in: __panel_vdebug,
+ *                                                  _panel_debugflusher
  *
  *  Condition Var:  Sync Mutex:  Purpose & Duration:
  *   io_done        io_lock
@@ -291,8 +329,8 @@ while (p && p->Debug && (dbits & p->debug)) {
 
     clock_gettime(CLOCK_REALTIME, &time_now);
     sprintf (timestamp, "%lld.%03d ", (long long)(time_now.tv_sec), (int)(time_now.tv_nsec/1000000));
-    sprintf (threadname, "%s:%s ", p->parent ? p->device_name : "CPU", (pthread_getspecific (panel_thread_id)) ? (char *)pthread_getspecific (panel_thread_id) : ""); 
-    
+    sprintf (threadname, "%s:%s ", p->parent ? p->device_name : "CPU", (pthread_getspecific (panel_thread_id)) ? (const char *)pthread_getspecific (panel_thread_id) : "");
+
     obuf[obufsize - 1] = '\0';
     len = vsnprintf (obuf, obufsize - 1, fmt, arglist);
     if (len < 0)
@@ -366,7 +404,11 @@ while (p && p->Debug && (dbits & p->debug)) {
                 break;
             }
         }
-    fprintf(p->Debug, "%s%s%s\n", timestamp, threadname, obuf);
+    if (p->io_thread_running)
+        pthread_mutex_lock (&p->debug_lock);
+    fprintf(p->Debug ? p->Debug : stdout, "%s%s%s\n", timestamp, threadname, obuf);
+    if (p->io_thread_running)
+        pthread_mutex_unlock (&p->debug_lock);
     free (obuf);
     break;
     }
@@ -398,27 +440,31 @@ _panel_debugflusher(void *arg)
 PANEL *p = (PANEL*)arg;
 int flush_interval = 15;
 int sleeps = 0;
+int debug_close = 0;        /* set this to 1 in the debugger to for close the debug log */
 
 pthread_setspecific (panel_thread_id, "debugflush");
+SET_THREAD_NAME("debugflush");
 
 pthread_mutex_lock (&p->io_lock);
 p->debugflush_thread_running = 1;
 pthread_mutex_unlock (&p->io_lock);
 pthread_cond_signal (&p->startup_done);   /* Signal we're ready to go */
 msleep (100);
-pthread_mutex_lock (&p->io_lock);
-while (p->sock != INVALID_SOCKET) {
-    pthread_mutex_unlock (&p->io_lock);
+pthread_mutex_lock (&p->debug_lock);
+while ((p->sock != INVALID_SOCKET) && (debug_close == 0)) {
+    pthread_mutex_unlock (&p->debug_lock);
     msleep (1000);
-    pthread_mutex_lock (&p->io_lock);
+    pthread_mutex_lock (&p->debug_lock);
     if (0 == (sleeps++)%flush_interval)
         sim_panel_flush_debug (p);
     }
-pthread_mutex_unlock (&p->io_lock);
-pthread_mutex_lock (&p->io_lock);
+if (debug_close) {
+    fclose (p->Debug);
+    p->Debug = NULL;
+    }
 pthread_setspecific (panel_thread_id, NULL);
 p->debugflush_thread_running  = 0;
-pthread_mutex_unlock (&p->io_lock);
+pthread_mutex_unlock (&p->debug_lock);
 return NULL;
 }
 
@@ -458,11 +504,16 @@ int sent = 0;
 if (p->sock == INVALID_SOCKET)
     return sim_panel_set_error (p, "Invalid Socket for write");
 pthread_mutex_lock (&p->io_send_lock);
-while (len) {
+while ((len > 0) && (p->sock != INVALID_SOCKET)) {
     int bsent = sim_write_sock (p->sock, msg, len);
     if (bsent < 0) {
+        SOCKET sock = p->sock;
+
+        p->sock = INVALID_SOCKET;
+        sim_panel_set_error (NULL, "%s", sim_get_err_sock("Error writing to socket"));
+        sim_close_sock (sock);
         pthread_mutex_unlock (&p->io_send_lock);
-        return sim_panel_set_error (p, "%s", sim_get_err_sock("Error writing to socket"));
+        return -1;
         }
     _panel_debug (p, DBG_XMT, "Sent %d bytes: ", msg, bsent, bsent);
     len -= bsent;
@@ -589,7 +640,7 @@ return 0;
 static int
 _panel_establish_register_bits_collection (PANEL *panel)
 {
-size_t i, buf_data, buf_needed = 1, reg_count = 0, bit_reg_count = 0;
+size_t i, buf_data, buf_needed = 1;
 int cmd_stat, bits_count = 0;
 char *buf, *response = NULL;
 
@@ -620,7 +671,7 @@ for (i=0; i<panel->reg_count; i++) {
         }
     }
 pthread_mutex_unlock (&panel->io_lock);
-if (_panel_sendf (panel, &cmd_stat, &response, "%s%u%s%u%s%u%s%s\r", register_collect_prefix, panel->sample_depth, 
+if (_panel_sendf (panel, &cmd_stat, &response, "%s%u%s%u%s%u%s%s\r", register_collect_prefix, panel->sample_depth,
                                                                      register_collect_mid1, panel->sample_frequency,
                                                                      register_collect_mid2, panel->sample_dither_pct,
                                                                      register_collect_mid3, buf)) {
@@ -644,16 +695,19 @@ static void
 _panel_cleanup (void)
 {
 while (panel_count)
-    sim_panel_destroy (*panels);
+    sim_panel_destroy (panels);
 }
 
 static void
 _panel_register_panel (PANEL *p)
 {
 if (panel_count == 0)
-    pthread_key_create (&panel_thread_id, free);
-if (!pthread_getspecific (panel_thread_id))
+    pthread_key_create (&panel_thread_id, NULL);
+if (!pthread_getspecific (panel_thread_id)) {
     pthread_setspecific (panel_thread_id, p->device_name ? p->device_name : "PanelCreator");
+    SET_THREAD_NAME ("PanelCreator");
+    }
+
 ++panel_count;
 panels = (PANEL **)realloc (panels, sizeof(*panels)*panel_count);
 panels[panel_count-1] = p;
@@ -669,7 +723,7 @@ int i;
 for (i=0; i<panel_count; i++) {
     if (panels[i] == p) {
         int j;
-        for (j=i+1; j<panel_count; j++) 
+        for (j=i+1; j<panel_count; j++)
             panels[j-1] = panels[j];
         --panel_count;
         if (panel_count == 0) {
@@ -699,7 +753,7 @@ struct stat statb;
 char *buf = NULL;
 int port;
 int cmd_stat;
-size_t i, device_num;
+size_t i, device_num = 0;
 char hostport[64];
 union {int i; char c[sizeof (int)]; } end_test;
 
@@ -802,8 +856,8 @@ else {
     fclose (fIn);
     fIn = NULL;
     fprintf (fOut, "set remote notelnet\n");
-    if (device_panel_count)
-        fprintf (fOut, "set remote connections=%d\n", (int)device_panel_count+1);
+    if ((device_panel_count != 0) || (debug_file != NULL))
+        fprintf (fOut, "set remote connections=%d\n", (int)(device_panel_count + 1 + ((debug_file != NULL) ? 1 : 0)));
     fprintf (fOut, "set remote -u telnet=%s\n", hostport);
     fprintf (fOut, "set remote master\n");
     fprintf (fOut, "exit\n");
@@ -840,6 +894,7 @@ if (debug_file) {
     fclose (fIn);
     fIn = NULL;
     }
+p->creating_thread = pthread_self();
 if (!simulator_panel) {
 #if defined(_WIN32)
     char cmd[2048];
@@ -860,7 +915,7 @@ if (!simulator_panel) {
         p->dwProcessId = ProcessInfo.dwProcessId;
         }
     else { /* Creation Problem */
-        sim_panel_set_error (NULL, "CreateProcess Error: %d", GetLastError());
+        sim_panel_set_error (NULL, "CreateProcess Error: %s - %d", cmd, GetErrorText(GetLastError()));
         goto Error_Return;
         }
 #else
@@ -869,7 +924,7 @@ if (!simulator_panel) {
         close (0); close (1); close (2);        /* make sure not to pass the open standard handles */
         if (dup (dup (open ("/dev/null", O_RDWR)))) {}; /* open standard handles to /dev/null */
         if (execlp (sim_path, sim_path, p->temp_config, NULL, NULL)) {
-            perror ("execl");
+            perror ("execlp");
             exit(errno);
             }
         }
@@ -901,9 +956,31 @@ if (p->sock == INVALID_SOCKET) {
     goto Error_Return;
     }
 _panel_debug (p, DBG_XMT|DBG_RCV, "Connected to simulator on %s after %dms", NULL, 0, p->hostport, (int)i*100);
-pthread_mutex_init (&p->io_lock, NULL);
-pthread_mutex_init (&p->io_send_lock, NULL);
-pthread_mutex_init (&p->io_command_lock, NULL);
+if (1) {
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_t *mattr = NULL;
+
+    /*
+     * Error check mutexes are slightly slower, but useful to help
+     * untangle deadlock situations.  The mutex access APIs used here
+     * don't check error status since they're presumed to be well
+     * organized and thus won't encounter deadlocks.  If deadlocks
+     * occur, then it is easy enough to put OS breakpoints at all
+     * the error paths through the mutex lock and unlock code to find
+     * these cases.
+     */
+    if (debug_file) {
+        pthread_mutexattr_init (&attr);
+        pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
+        mattr = &attr;
+        }
+    pthread_mutex_init (&p->debug_lock, mattr);
+    pthread_mutex_init (&p->io_lock, mattr);
+    pthread_mutex_init (&p->io_send_lock, mattr);
+    pthread_mutex_init (&p->io_command_lock, mattr);
+    if (debug_file)
+        pthread_mutexattr_destroy (&attr);
+    }
 pthread_cond_init (&p->io_done, NULL);
 pthread_cond_init (&p->startup_done, NULL);
 if (sizeof(mantra) != _panel_send (p, (char *)mantra, sizeof(mantra))) {
@@ -988,7 +1065,7 @@ if (1) {
     char *errbuf = (char *)_panel_malloc (1 + strlen (err));
 
     strcpy (errbuf, err);               /* preserve error info while closing */
-    sim_panel_destroy (p);
+    sim_panel_destroy (&p);
     sim_panel_set_error (NULL, "%s", errbuf);
     free (errbuf);
     }
@@ -1030,9 +1107,15 @@ return sim_panel_add_device_panel_debug (simulator_panel, device_name, NULL);
 }
 
 int
-sim_panel_destroy (PANEL *panel)
+sim_panel_destroy (PANEL **ppanel)
 {
 REG *reg;
+PANEL *panel;
+
+if (ppanel)
+    panel = *ppanel;
+else
+    return -1;
 
 if (panel) {
     _panel_debug (panel, DBG_XMT|DBG_RCV, "Closing Panel %s", NULL, 0, panel->device_name? panel->device_name : panel->path);
@@ -1040,10 +1123,8 @@ if (panel) {
         size_t i;
 
         for (i=0; i<panel->device_count; i++) {
-            if (panel->devices[i]) {
-                sim_panel_destroy (panel->devices[i]);
-                panel->devices[i] = NULL;
-                }
+            if (panel->devices[i])
+                sim_panel_destroy (&panel->devices[i]);
             }
         free (panel->devices);
         panel->devices = NULL;
@@ -1053,6 +1134,7 @@ if (panel) {
         SOCKET sock = panel->sock;
         int wait_count;
 
+        _panel_debug (panel, DBG_XMT|DBG_RCV, "Closing socket", NULL, 0);
         /* First, wind down the automatic register queries */
         sim_panel_set_display_callback_interval (panel, NULL, NULL, 0);
         /* Next, attempt a simulator shutdown only with the master panel */
@@ -1068,25 +1150,31 @@ if (panel) {
         /* Now close the socket which should stop a pending read that hasn't completed */
         sim_close_sock (sock);
         pthread_join (panel->io_thread, NULL);
+
+        if ((panel->Debug) && (panel->parent == NULL))
+            pthread_join (panel->debugflush_thread, NULL);
+        /* panel mutexes and condition variables are only initialize after a successful socket open */
+        pthread_mutex_destroy (&panel->io_lock);
+        pthread_mutex_destroy (&panel->io_send_lock);
+        pthread_mutex_destroy (&panel->io_command_lock);
+        pthread_mutex_destroy (&panel->debug_lock);
+        pthread_cond_destroy (&panel->io_done);
         }
-    if ((panel->Debug) && (panel->parent == NULL))
-        pthread_join (panel->debugflush_thread, NULL);
-    pthread_mutex_destroy (&panel->io_lock);
-    pthread_mutex_destroy (&panel->io_send_lock);
-    pthread_mutex_destroy (&panel->io_command_lock);
-    pthread_cond_destroy (&panel->io_done);
 #if defined(_WIN32)
     if (panel->hProcess) {
+        _panel_debug (panel, DBG_XMT|DBG_RCV, "Stopping simulator process", NULL, 0);
         GenerateConsoleCtrlEvent (CTRL_BREAK_EVENT, panel->dwProcessId);
         msleep (200);
         TerminateProcess (panel->hProcess, 0);
         WaitForSingleObject (panel->hProcess, INFINITE);
         CloseHandle (panel->hProcess);
+        panel->hProcess = NULL;
         }
 #else
     if (panel->pidProcess) {
         int status;
 
+        _panel_debug (panel, DBG_XMT|DBG_RCV, "Stopping simulator process", NULL, 0);
         if (!kill (panel->pidProcess, 0)) {
             kill (panel->pidProcess, SIGTERM);
             msleep (200);
@@ -1094,6 +1182,7 @@ if (panel) {
                 kill (panel->pidProcess, SIGKILL);
             }
         waitpid (panel->pidProcess, &status, 0);
+        panel->pidProcess = 0;
         }
 #endif
     free (panel->path);
@@ -1119,6 +1208,7 @@ if (panel) {
         sim_cleanup_sock ();
     _panel_deregister_panel (panel);
     free (panel);
+    *ppanel = NULL;
     }
 return 0;
 }
@@ -1127,7 +1217,7 @@ OperationalState
 sim_panel_get_state (PANEL *panel)
 {
 if (!panel)
-    return Halt;
+    return Error;
 return panel->State;
 }
 
@@ -1160,7 +1250,7 @@ if ((bit_count != 0) && (panel->sample_depth == 0)) {
     sim_panel_set_error (NULL, "sim_panel_set_sampling_parameters() must be called first");
     return -1;
     }
-regs = (REG *)_panel_malloc ((1 + panel->reg_count)*sizeof(*regs)); 
+regs = (REG *)_panel_malloc ((1 + panel->reg_count)*sizeof(*regs));
 if (regs == NULL)
     return sim_panel_set_error (panel, "_panel_add_register(): Out of Memory\n");
 pthread_mutex_lock (&panel->io_lock);
@@ -1216,8 +1306,8 @@ for (i=0; i<panel->reg_count; i++) {
         }
     sprintf (t1, "%s %s", regs[i].device_name ? regs[i].device_name : "", regs[i].name);
     sprintf (t2, "%s %s", reg->device_name ? reg->device_name : "", reg->name);
-    if ((!strcmp (t1, t2)) && 
-        (reg->indirect == regs[i].indirect) && 
+    if ((!strcmp (t1, t2)) &&
+        (reg->indirect == regs[i].indirect) &&
         ((reg->bits == NULL) == (regs[i].bits == NULL))) {
         pthread_mutex_unlock (&panel->io_lock);
         sim_panel_set_error (NULL, "Duplicate Register Declaration");
@@ -1354,7 +1444,7 @@ if (!panel->reg_count) {
     }
 pthread_mutex_lock (&panel->io_command_lock);
 pthread_mutex_lock (&panel->io_lock);
-if (panel->reg_query_size != _panel_send (panel, panel->reg_query, panel->reg_query_size)) {
+if ((int)panel->reg_query_size != _panel_send (panel, panel->reg_query, panel->reg_query_size)) {
     pthread_mutex_unlock (&panel->io_lock);
     pthread_mutex_unlock (&panel->io_command_lock);
     return -1;
@@ -1379,9 +1469,9 @@ return _panel_get_registers (panel, (panel->State == Halt), simulation_time);
 }
 
 int
-sim_panel_set_display_callback_interval (PANEL *panel, 
-                                         PANEL_DISPLAY_PCALLBACK callback, 
-                                         void *context, 
+sim_panel_set_display_callback_interval (PANEL *panel,
+                                         PANEL_DISPLAY_PCALLBACK callback,
+                                         void *context,
                                          int usecs_between_callbacks)
 {
 if (!panel) {
@@ -1406,11 +1496,24 @@ if (usecs_between_callbacks && (0 == panel->usecs_between_callbacks)) { /* Need 
     pthread_cond_destroy (&panel->startup_done);
     }
 if ((usecs_between_callbacks == 0) && panel->usecs_between_callbacks) { /* Need to stop callbacks */
+    OperationalState PriorState = panel->State;                     /* record initial state */
     _panel_debug (panel, DBG_THR, "Shutting down callback thread", NULL, 0);
+
+    if (PriorState == Run) {                                        /* If running? */
+        pthread_mutex_unlock (&panel->io_lock);                     /* allow access */
+        sim_panel_exec_halt (panel);                                /* Stop for Now */
+        pthread_mutex_lock (&panel->io_lock);                       /* acquire access */
+        }
     panel->usecs_between_callbacks = 0;                             /* flag disabled */
     pthread_mutex_unlock (&panel->io_lock);                         /* allow access */
     pthread_join (panel->callback_thread, NULL);                    /* synchronize with thread rundown */
     pthread_mutex_lock (&panel->io_lock);                           /* reacquire access */
+
+    if (PriorState == Run) {                                        /* If was running? */
+        pthread_mutex_unlock (&panel->io_lock);                     /* allow access */
+        sim_panel_exec_run (panel);                                 /* resume running */
+        pthread_mutex_lock (&panel->io_lock);                       /* acquire access */
+        }
     }
 pthread_mutex_unlock (&panel->io_lock);
 return 0;
@@ -1459,7 +1562,7 @@ if (!panel || (panel->State == Error)) {
     return -1;
     }
 if (panel->parent) {
-    sim_panel_set_error (NULL, "Can't HALT simulator from device front panel");
+    sim_panel_set_error (NULL, "Can't HALT simulator from a device front panel");
     return -1;
     }
 if (panel->State == Run) {
@@ -1707,7 +1810,7 @@ return 0;
  */
 
 int
-sim_panel_gen_examine (PANEL *panel, 
+sim_panel_gen_examine (PANEL *panel,
                        const char *name_or_addr,
                        size_t size,
                        void *value)
@@ -1755,7 +1858,7 @@ return 0;
  */
 
 int
-sim_panel_get_history (PANEL *panel, 
+sim_panel_get_history (PANEL *panel,
                        int count,
                        size_t size,
                        char *buffer)
@@ -1781,7 +1884,7 @@ return 0;
 }
 
 int
-sim_panel_device_debug_mode (PANEL *panel, 
+sim_panel_device_debug_mode (PANEL *panel,
                              const char *device,
                              int set_unset,
                              const char *mode_bits)
@@ -1796,17 +1899,17 @@ if (!panel || (panel->State == Error)) {
 if ((device != NULL) &&
     ((_panel_sendf (panel, &cmd_stat, &response, "SHOW %s", device) ||
      (cmd_stat)))) {
-    sim_panel_set_error (NULL, "Can't %s Debug Mode: '%s' on Device '%s': %s", 
+    sim_panel_set_error (NULL, "Can't %s Debug Mode: '%s' on Device '%s': %s",
                                set_unset ? "Enable" : "Disable", mode_bits ? mode_bits : "", device, response);
     free (response);
     return -1;
     }
 free (response);
 response = NULL;
-if (_panel_sendf (panel, &cmd_stat, &response, "%sDEBUG %s %s", 
+if (_panel_sendf (panel, &cmd_stat, &response, "%sDEBUG %s %s",
                          set_unset ? "" : "NO", device ? device : "", mode_bits ? mode_bits : "") ||
     (cmd_stat)) {
-    sim_panel_set_error (NULL, "Can't %s Debug Mode: '%s' on Device '%s': %s", 
+    sim_panel_set_error (NULL, "Can't %s Debug Mode: '%s' on Device '%s': %s",
                                set_unset ? "Enable" : "Disable", mode_bits ? mode_bits : "", device, response);
     free (response);
     return -1;
@@ -1822,12 +1925,12 @@ return 0;
         name_or_addr the name the simulator knows this register by
         size         the size (in local storage) of the buffer which
                      contains the data to be deposited into the simulator
-        value        a pointer to the buffer which contains the data to 
+        value        a pointer to the buffer which contains the data to
                      be deposited into the simulator
  */
 
 int
-sim_panel_gen_deposit (PANEL *panel, 
+sim_panel_gen_deposit (PANEL *panel,
                        const char *name_or_addr,
                        size_t size,
                        const void *value)
@@ -1856,7 +1959,7 @@ return 0;
 
    sim_panel_mem_examine
 
-        addr_size    the size (in local storage) of the buffer which 
+        addr_size    the size (in local storage) of the buffer which
                      contains the memory address of the data to be examined
                      in the simulator
         addr         a pointer to the buffer containing the memory address
@@ -1868,7 +1971,7 @@ return 0;
  */
 
 int
-sim_panel_mem_examine (PANEL *panel, 
+sim_panel_mem_examine (PANEL *panel,
                        size_t addr_size,
                        const void *addr,
                        size_t value_size,
@@ -1913,7 +2016,7 @@ return 0;
 
    sim_panel_mem_deposit
 
-        addr_size    the size (in local storage) of the buffer which 
+        addr_size    the size (in local storage) of the buffer which
                      contains the memory address of the data to be deposited
                      into the simulator
         addr         a pointer to the buffer containing the memory address
@@ -1925,7 +2028,7 @@ return 0;
  */
 
  int
-sim_panel_mem_deposit (PANEL *panel, 
+sim_panel_mem_deposit (PANEL *panel,
                        size_t addr_size,
                        const void *addr,
                        size_t value_size,
@@ -1959,17 +2062,17 @@ return 0;
 
    sim_panel_mem_deposit_instruction
 
-        addr_size    the size (in local storage) of the buffer which 
+        addr_size    the size (in local storage) of the buffer which
                      contains the memory address of the data to be deposited
                      into the simulator
         addr         a pointer to the buffer containing the memory address
                      of the data to be deposited into the simulator
-        instruction  a pointer to the buffer that contains the mnemonic 
+        instruction  a pointer to the buffer that contains the mnemonic
                      instruction to be deposited at the indicated address
  */
 
  int
-sim_panel_mem_deposit_instruction (PANEL *panel, 
+sim_panel_mem_deposit_instruction (PANEL *panel,
                                    size_t addr_size,
                                    const void *addr,
                                    const char *instruction)
@@ -1999,8 +2102,8 @@ return 0;
 
         name        the name of a simulator register or a memory address
                     which is to receive a new value
-        value       the new value in character string form.  The string 
-                    must be in the native/natural radix that the simulator 
+        value       the new value in character string form.  The string
+                    must be in the native/natural radix that the simulator
                     uses when referencing that register
 
  */
@@ -2029,7 +2132,7 @@ return 0;
    sim_panel_mount
 
         device      the name of a simulator device/unit
-        switches    any switches appropriate for the desire attach
+        switches    any switches appropriate for the desire attach (can be NULL)
         path        the path on the local system to be attached
 
  */
@@ -2052,7 +2155,7 @@ OrigState = panel->State;
 if (OrigState == Run)
     sim_panel_exec_halt (panel);
 do {
-    if (_panel_sendf (panel, &cmd_stat, &response, "ATTACH %s %s %s", switches, device, path)) {
+    if (_panel_sendf (panel, &cmd_stat, &response, "ATTACH %s %s %s", (switches == NULL) ? "" : switches, device, path)) {
         stat = -1;
         break;
         }
@@ -2117,15 +2220,17 @@ char buf[4096];
 int buf_data = 0;
 int processing_register_output = 0;
 int io_wait_done = 0;
+int transitioned_to_halt;
 
-/* 
-   Boost Priority for this response processing thread to quickly digest 
+/*
+   Boost Priority for this response processing thread to quickly digest
    arriving data.
  */
 pthread_getschedparam (pthread_self(), &sched_policy, &sched_priority);
 ++sched_priority.sched_priority;
 pthread_setschedparam (pthread_self(), sched_policy, &sched_priority);
 pthread_setspecific (panel_thread_id, "reader");
+SET_THREAD_NAME ("reader");
 _panel_debug (p, DBG_THR, "Starting", NULL, 0);
 
 buf[buf_data] = '\0';
@@ -2135,7 +2240,11 @@ if (!p->parent) {
         int new_data = sim_read_sock (p->sock, &buf[buf_data], sizeof(buf)-(buf_data+1));
 
         if (new_data <= 0) {
-            sim_panel_set_error (NULL, "%s after reading %d bytes: %s", sim_get_err_sock("Unexpected socket read"), buf_data, buf);
+            SOCKET sock = p->sock;
+
+            sim_panel_set_error (NULL, "During Startup: %s after reading %d bytes: %s", sim_get_err_sock("Unexpected socket read"), buf_data, buf);
+            p->sock = INVALID_SOCKET;
+            sim_close_sock (sock);
             _panel_debug (p, DBG_RCV, "%s", NULL, 0, sim_panel_get_error());
             p->State = Error;
             break;
@@ -2166,6 +2275,7 @@ while ((p->sock != INVALID_SOCKET) &&
     int new_data;
     char *s, *e, *eol;
 
+    transitioned_to_halt = 0;
     if (NULL == strchr (buf, '\n')) {
         pthread_mutex_unlock (&p->io_lock);
         new_data = sim_read_sock (p->sock, &buf[buf_data], sizeof(buf)-(buf_data+1));
@@ -2186,6 +2296,11 @@ while ((p->sock != INVALID_SOCKET) &&
         *eol++ = '\0';
         while ((*s) && (s[strlen(s)-1] == '\r'))
             s[strlen(s)-1] = '\0';
+        if (p->State == Run)
+            if (0 == memcmp (s, sim_prompt, strlen (sim_prompt))) {
+                _panel_debug (p, DBG_RSP, "State transitioning to Halt with '%s': io_waiting: %d", NULL, 0, s, p->io_waiting);
+                transitioned_to_halt = 1;
+                }
         if (processing_register_output) {
             e = strchr (s, ':');
             if (e) {
@@ -2201,13 +2316,13 @@ while ((p->sock != INVALID_SOCKET) &&
                         ++s;
                     continue;                                   /* process next line */
                     }
-                if ((*s == '}') && 
+                if ((*s == '}') &&
                     (3 == sscanf (s, "}%s %s %s", smp_dev, smp_reg, smp_ind))) {   /* Register bit Sample Data? */
                     r = NULL;
                     for (i=0; i<p->reg_count; i++) {
                         if (p->regs[i].bits == NULL)
                             continue;
-                        if ((!strcmp (smp_reg, p->regs[i].name)) && 
+                        if ((!strcmp (smp_reg, p->regs[i].name)) &&
                             ((!p->device_name) || (!strcmp (smp_dev, p->device_name)))) {
                             r = &p->regs[i];
                             break;
@@ -2283,7 +2398,7 @@ while ((p->sock != INVALID_SOCKET) &&
 
                             if (end)
                                 end_index = (size_t)atoi (end + 1);
-                            if (strcmp (e, " same as above")) 
+                            if (strcmp (e, " same as above"))
                                 p->array_element_data = strtoull (e, NULL, 16);
                             while (array_index <= end_index) {
                                 if (little_endian)
@@ -2309,7 +2424,7 @@ while ((p->sock != INVALID_SOCKET) &&
             }
         if ((strlen (s) > strlen (sim_prompt)) && (!strcmp (s + strlen (sim_prompt), register_repeat_end))) {
             _panel_debug (p, DBG_RCV, "*Repeat Block Complete (Accumulated Data = %d)", NULL, 0, (int)p->io_response_data);
-            if (p->callback) {
+            if ((p->callback) && (!transitioned_to_halt)) {
                 pthread_mutex_unlock (&p->io_lock);
                 p->callback (p, p->simulation_time_base + p->simulation_time, p->callback_context);
                 pthread_mutex_lock (&p->io_lock);
@@ -2319,23 +2434,23 @@ while ((p->sock != INVALID_SOCKET) &&
             p->io_response[p->io_response_data] = '\0';
             goto Start_Next_Line;
             }
-        if ((strlen (s) > strlen (sim_prompt)) && 
+        if ((strlen (s) > strlen (sim_prompt)) &&
             ((!strcmp (s + strlen (sim_prompt), register_repeat_start)) ||
              (!strcmp (s + strlen (sim_prompt), register_get_start)))) {
             _panel_debug (p, DBG_RCV, "*Repeat/Register Block Starting", NULL, 0);
             processing_register_output = 1;
             goto Start_Next_Line;
             }
-        if ((strlen (s) > strlen (sim_prompt)) && 
+        if ((strlen (s) > strlen (sim_prompt)) &&
             (!strcmp (s + strlen (sim_prompt), register_get_end))) {
-            _panel_debug (p, DBG_RCV, "*Register Block Complete", NULL, 0);
+            _panel_debug (p, DBG_RCV, "*Register Block Complete: Request %d", NULL, 0, p->io_waiting);
             p->io_waiting = 0;
             processing_register_output = 0;
             pthread_cond_signal (&p->io_done);
             goto Start_Next_Line;
             }
         if ((strlen (s) > strlen (sim_prompt)) && (!strcmp (s + strlen (sim_prompt), command_done_echo))) {
-            _panel_debug (p, DBG_RCV, "*Received Command Complete", NULL, 0);
+            _panel_debug (p, DBG_RCV, "*Received Command Complete: Request %d", NULL, 0, p->io_waiting);
             p->io_waiting = 0;
             pthread_cond_signal (&p->io_done);
             goto Start_Next_Line;
@@ -2359,8 +2474,8 @@ while ((p->sock != INVALID_SOCKET) &&
         p->io_response_data += strlen(s);
         strcpy (p->io_response + p->io_response_data, "\r\n");
         p->io_response_data += 2;
-        if ((!p->parent) && 
-            (p->completion_string) && 
+        if ((!p->parent) &&
+            (p->completion_string) &&
             (!memcmp (s, p->completion_string, strlen (p->completion_string)))) {
             _panel_debug (p, DBG_RCV, "Match with potentially coalesced additional data: '%s'", NULL, 0, p->completion_string);
             if (eol < &buf[buf_data])
@@ -2374,10 +2489,11 @@ Start_Next_Line:
         }
     memmove (buf, s, buf_data - (s - buf) + 1);
     buf_data = strlen (buf);
-    if (buf_data)
+    if (buf_data) {
         _panel_debug (p, DBG_RSP, "Remnant Buffer Contents: '%s'", NULL, 0, buf);
-    if ((!p->parent) && 
-        (p->completion_string) && 
+        }
+    if ((!p->parent) &&
+        (p->completion_string) &&
         (!memcmp (buf, p->completion_string, strlen (p->completion_string)))) {
         _panel_debug (p, DBG_RCV, "*Received Command Complete - Match: '%s'", NULL, 0, p->completion_string);
         io_wait_done = 1;
@@ -2393,7 +2509,7 @@ Start_Next_Line:
         else
             buf[buf_data] = '\0';
         if (io_wait_done) {                     /* someone waiting for this? */
-            _panel_debug (p, DBG_RCV, "*Match Command Complete - Match signaling waiting thread", NULL, 0);
+            _panel_debug (p, DBG_RCV, "*Match Command Complete - Match signaling waiting thread: Request %d", NULL, 0, p->io_waiting);
             io_wait_done = 0;
             p->io_waiting = 0;
             p->completion_string = NULL;
@@ -2405,28 +2521,38 @@ Start_Next_Line:
             pthread_mutex_lock (&p->io_lock);
             }
         }
-    if ((p->State == Run) && (!strcmp (buf, sim_prompt))) {
+    if ((p->State == Run) && (!memcmp (buf, sim_prompt, strlen (sim_prompt)))) {
+        char *response = p->io_response;
+
         _panel_debug (p, DBG_RSP, "State transitioning to Halt: io_wait_done: %d", NULL, 0, io_wait_done);
         p->State = Halt;
         free (p->halt_reason);
-        p->halt_reason = (char *)_panel_malloc (1 + strlen (p->io_response));
+        while ((response != NULL) && isspace (*response))
+            ++response;
+        p->halt_reason = (char *)_panel_malloc (1 + strlen (response));
         if (p->halt_reason == NULL) {
             _panel_debug (p, DBG_RCV, "%s", NULL, 0, sim_panel_get_error());
             p->State = Error;
             break;
             }
-        strcpy (p->halt_reason, p->io_response);
+        strcpy (p->halt_reason, response);
+        _panel_debug (p, DBG_RSP, "Halt Reason: %s", NULL, 0, p->halt_reason);
         }
     if (io_wait_done) {
-        _panel_debug (p, DBG_RCV, "*Match Command Complete - Match signaling waiting thread", NULL, 0);
+        _panel_debug (p, DBG_RCV, "*Match Command Complete - Match signaling waiting thread: Request %d", NULL, 0, p->io_waiting);
         io_wait_done = 0;
         p->io_waiting = 0;
         p->completion_string = NULL;
         pthread_cond_signal (&p->io_done);
+        /* Let this state transition propagate to the interested thread(s) */
+        /* before processing remaining buffered data */
+        pthread_mutex_unlock (&p->io_lock);
+        msleep (50);
+        pthread_mutex_lock (&p->io_lock);
         }
     }
-if (p->io_waiting) {
-    _panel_debug (p, DBG_THR, "Receive: restarting waiting thread while exiting", NULL, 0);
+if (p->io_waiting != 0) {
+    _panel_debug (p, DBG_THR, "Receive: restarting waiting thread while exiting: Request %d", NULL, 0, p->io_waiting);
     p->io_waiting = 0;
     pthread_cond_signal (&p->io_done);
     }
@@ -2445,17 +2571,17 @@ int sched_policy;
 struct sched_param sched_priority;
 char *buf = NULL;
 size_t buf_data = 0;
-unsigned int callback_count = 0;
 int cmd_stat;
 
-/* 
-   Boost Priority for timer thread so it doesn't compete 
+/*
+   Boost Priority for timer thread so it doesn't compete
    with compute bound activities.
  */
 pthread_getschedparam (pthread_self(), &sched_policy, &sched_priority);
 ++sched_priority.sched_priority;
 pthread_setschedparam (pthread_self(), sched_policy, &sched_priority);
 pthread_setspecific (panel_thread_id, "callback");
+SET_THREAD_NAME ("callback");
 _panel_debug (p, DBG_THR, "Starting", NULL, 0);
 
 pthread_mutex_lock (&p->io_lock);
@@ -2464,13 +2590,11 @@ pthread_mutex_unlock (&p->io_lock);
 pthread_cond_signal (&p->startup_done);   /* Signal we're ready to go */
 msleep (100);
 pthread_mutex_lock (&p->io_lock);
-while ((p->sock != INVALID_SOCKET) && 
+while ((p->sock != INVALID_SOCKET) &&
        (p->usecs_between_callbacks) &&
        (p->State != Error)) {
-    int interval = p->usecs_between_callbacks;
     int new_register = p->new_register;
 
-    p->new_register = 0;
     pthread_mutex_unlock (&p->io_lock);
 
     if (new_register)           /* need to get and send updated register info */
@@ -2482,7 +2606,7 @@ while ((p->sock != INVALID_SOCKET) &&
     /*  2) update register state by polling if the simulator is halted          */
     msleep (500);
     pthread_mutex_lock (&p->io_lock);
-    if (new_register) {
+    if (new_register && (p->State == Halt)) {
         size_t repeat_data = strlen (register_repeat_prefix) +  /* prefix */
                              20                              +  /* max int width */
                              strlen (register_repeat_units)  +  /* units and spacing */
@@ -2501,9 +2625,9 @@ while ((p->sock != INVALID_SOCKET) &&
             buf_data -= (c - buf) + strlen (register_get_start);
             c += strlen (register_get_start);
             }
-        sprintf (repeat, "%s%d%s%s%*.*s", register_repeat_prefix, 
-                                     p->usecs_between_callbacks, 
-                                     register_repeat_units, 
+        sprintf (repeat, "%s%d%s%s%*.*s", register_repeat_prefix,
+                                     p->usecs_between_callbacks,
+                                     register_repeat_units,
                                      register_repeat_start,
                                      (int)buf_data, (int)buf_data, c);
         pthread_mutex_unlock (&p->io_lock);
@@ -2517,6 +2641,7 @@ while ((p->sock != INVALID_SOCKET) &&
             }
         pthread_mutex_lock (&p->io_lock);
         free (repeat);
+        p->new_register = 0;
         }
     /* when halted, we directly poll the halted system to get updated */
     /* register state which may have changed due to panel activities */
@@ -2575,6 +2700,10 @@ int len;
 if (p) {
     pthread_mutex_lock (&p->io_lock);
     p->State = Error;
+    if (p->io_waiting != 0) {
+        p->io_waiting = 0;
+        pthread_cond_signal (&p->io_done);
+        }
     pthread_mutex_unlock (&p->io_lock);
     }
 if (sim_panel_error_bufsize == 0) {
@@ -2651,7 +2780,7 @@ while (1) {                                         /* format passed string, arg
     }
 
 if (len && (buf[len-1] != '\r')) {
-    strcpy (&buf[len], "\r");           /* Make sure command line is terminated */
+    strcpy (&buf[len], "\r");           /* Make sure command line is nul terminated */
     ++len;
     }
 
@@ -2667,7 +2796,7 @@ if (completion_status || completion_string) {
     if (p->io_response_data)
         _panel_debug (p, DBG_RCV, "Receive Data Discarded: ", p->io_response, p->io_response_data);
     p->io_response_data = 0;
-    p->io_waiting = 1;
+    p->io_waiting = p->command_count;
     }
 
 _panel_debug (p, DBG_REQ, "Command %d Request%s: %*.*s", NULL, 0, p->command_count, completion_status ? " (with response)" : "", len, len, buf);
@@ -2681,7 +2810,7 @@ if (completion_status || completion_string) {
     else {                                          /* Sent OK? */
         char *tresponse = NULL;
 
-        while (p->io_waiting)
+        while (p->io_waiting != 0)
             pthread_cond_wait (&p->io_done, &p->io_lock); /* Wait for completion */
         tresponse = (char *)_panel_malloc (p->io_response_data + 1);
         if (0 == memcmp (buf, p->io_response + strlen (sim_prompt), len)) {

@@ -1,6 +1,6 @@
 /*************************************************************************
  *                                                                       *
- * Copyright (c) 2007-2020 Howard M. Harte.                              *
+ * Copyright (c) 2007-2022 Howard M. Harte.                              *
  * https://github.com/hharte                                             *
  *                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining *
@@ -16,16 +16,17 @@
  *                                                                       *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,       *
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF    *
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                 *
- * NONINFRINGEMENT. IN NO EVENT SHALL HOWARD M. HARTE BE LIABLE FOR ANY  *
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  *
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     *
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-            *
+ * INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE   *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN       *
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN     *
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE      *
+ * SOFTWARE.                                                             *
  *                                                                       *
- * Except as contained in this notice, the name of Howard M. Harte shall *
+ * Except as contained in this notice, the names of The Authors shall    *
  * not be used in advertising or otherwise to promote the sale, use or   *
  * other dealings in this Software without prior written authorization   *
- * Howard M. Harte.                                                      *
+ * from the Authors.                                                     *
  *                                                                       *
  * SIMH Interface based on altairz80_hdsk.c, by Peter Schorn.            *
  *                                                                       *
@@ -114,7 +115,7 @@ static char* hdc1001_reg_wr_str[] = {
 
 typedef struct {
     UNIT *uptr;
-    uint8  readonly;    /* Drive is read-only? */
+    uint8  isreadonly;  /* Drive is read-only? */
     uint16 sectsize;    /* sector size */
     uint16 nsectors;    /* number of sectors/track */
     uint16 nheads;      /* number of heads */
@@ -260,7 +261,7 @@ static t_stat hdc1001_attach(UNIT *uptr, CONST char *cptr)
     /* Defaults for the Quantum 2020 Drive */
     pDrive->ready = 0;
     if (pDrive->ncyls == 0) {
-        /* If geometry was not specified, default to Quantun 2020 */
+        /* If geometry was not specified, default to Quantum 2020 */
         pDrive->ncyls = 512;
         pDrive->nheads = 4;
         pDrive->nsectors = 16;
@@ -294,7 +295,7 @@ static t_stat hdc1001_attach(UNIT *uptr, CONST char *cptr)
     sim_debug(VERBOSE_MSG, &hdc1001_dev, DEV_NAME "%d, attached to '%s', type=DSK, len=%d\n",
         i, cptr, uptr->capac);
 
-    pDrive->readonly = (uptr->flags & UNIT_RO) ? 1 : 0;
+    pDrive->isreadonly = (uptr->flags & UNIT_RO) ? 1 : 0;
     hdc1001_info->error_reg = 0;
     pDrive->ready = 1;
 
@@ -307,7 +308,7 @@ static t_stat hdc1001_detach(UNIT *uptr)
 {
     HDC1001_DRIVE_INFO *pDrive;
     t_stat r;
-    int8 i;
+    int32 i;
 
     i = find_unit_index(uptr);
 
@@ -332,7 +333,7 @@ static t_stat hdc1001_detach(UNIT *uptr)
 static t_stat hdc1001_unit_set_geometry(UNIT* uptr, int32 value, CONST char* cptr, void* desc)
 {
     HDC1001_DRIVE_INFO* pDrive;
-    int8 i;
+    int32 i;
     int32 result;
     uint16 newCyls, newHeads, newSPT, newSecLen;
 
@@ -385,7 +386,7 @@ static t_stat hdc1001_unit_set_geometry(UNIT* uptr, int32 value, CONST char* cpt
 static t_stat hdc1001_unit_show_geometry(FILE* st, UNIT* uptr, int32 val, CONST void* desc)
 {
     HDC1001_DRIVE_INFO* pDrive;
-    int8 i;
+    int32 i;
 
     i = find_unit_index(uptr);
 
@@ -406,7 +407,7 @@ static t_stat hdc1001_unit_show_geometry(FILE* st, UNIT* uptr, int32 val, CONST 
 static int32 hdc1001dev(const int32 port, const int32 io, const int32 data)
 {
     if(io) {
-        HDC1001_Write(port, data);
+        HDC1001_Write(port, (uint8)data);
         return 0;
     } else {
         return(HDC1001_Read(port));
@@ -447,7 +448,7 @@ static uint8 HDC1001_Write(const uint32 Addr, uint8 cData)
                 break;
             case 2:
                 sim_debug(ERROR_MSG, &hdc1001_dev,DEV_NAME "%d: " ADDRESS_FORMAT
-                    " Invalid sector size specified in SDH registrer.\n", hdc1001_info->sel_drive, PCX);
+                    " Invalid sector size specified in SDH register.\n", hdc1001_info->sel_drive, PCX);
                 pDrive->cur_sectsize = 512;
                 break;
             case 3:
@@ -457,7 +458,7 @@ static uint8 HDC1001_Write(const uint32 Addr, uint8 cData)
 
         if (pDrive->sectsize != pDrive->cur_sectsize) {
             sim_debug(ERROR_MSG, &hdc1001_dev,DEV_NAME "%d: " ADDRESS_FORMAT
-                " Sector size specified in SDH registrer (0x%x) does not match disk geometry (0x%x.)\n",
+                " Sector size specified in SDH register (0x%x) does not match disk geometry (0x%x.)\n",
                 hdc1001_info->sel_drive, PCX, pDrive->cur_sectsize, pDrive->sectsize);
         }
             /* fall through */
@@ -625,7 +626,7 @@ static t_stat HDC1001_doCommand(void)
                 break;
             case HDC1001_CMD_WRITE_SECT:
                 /* If drive is read-only, signal a write fault. */
-                if (pDrive->readonly) {
+                if (pDrive->isreadonly) {
                     hdc1001_info->status_reg |= HDC1001_STATUS_ERROR;
                     hdc1001_info->status_reg |= HDC1001_STATUS_WRITE_FAULT;
                 break;
@@ -695,7 +696,7 @@ static t_stat HDC1001_doCommand(void)
                 uint8 *fmtBuffer;
 
                 /* If drive is read-only, signal a write fault. */
-                if (pDrive->readonly) {
+                if (pDrive->isreadonly) {
                     hdc1001_info->status_reg |= HDC1001_STATUS_ERROR;
                     hdc1001_info->status_reg |= HDC1001_STATUS_WRITE_FAULT;
                     hdc1001_info->status_reg |= HDC1001_STATUS_DRQ;
@@ -721,11 +722,16 @@ static t_stat HDC1001_doCommand(void)
                 file_offset *= pDrive->sectsize;    /* Convert #sectors to byte offset */
 
                 fmtBuffer = calloc(data_len, sizeof(uint8));
+
+                if (fmtBuffer == NULL) {
+                    return SCPE_IERR;
+                }
+
                 if (HDC1001_FORMAT_FILL_BYTE != 0) {
                     memset(fmtBuffer, HDC1001_FORMAT_FILL_BYTE, data_len);
                 }
 
-                if (0 != (r = sim_fseek((pDrive->uptr)->fileref, file_offset, SEEK_SET))) {
+                if (0 == (r = sim_fseek((pDrive->uptr)->fileref, file_offset, SEEK_SET))) {
                     if (sim_fwrite(fmtBuffer, 1, data_len, (pDrive->uptr)->fileref) != data_len) {
                         r = SCPE_IOERR;
                     }

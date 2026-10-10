@@ -39,6 +39,9 @@
 #define ROM_STTY        2
 #define ROM_PTR         3
 
+#define UNIT_V_MSIZE    (UNIT_V_UF + 0)
+#define UNIT_MSIZE      (07 << UNIT_V_MSIZE)
+
 /* CPU state. */
 static uint16 PC;
 static uint16 AC;
@@ -57,7 +60,7 @@ static uint16 ION;
 /* ROM state. */
 static int rom_type = ROM_NONE;
 
-static int halt;
+static t_stat stop_reason;
 uint16 memmask = 017777;
 
 typedef struct {
@@ -77,6 +80,7 @@ static t_stat cpu_show_hist (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 static t_stat cpu_ex (t_value *vptr, t_addr ea, UNIT *uptr, int32 sw);
 static t_stat cpu_dep (t_value val, t_addr ea, UNIT *uptr, int32 sw);
 static t_stat cpu_reset (DEVICE *dptr);
+static t_stat cpu_set_size (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static uint16 irq_iot (uint16, uint16);
 static t_stat rom_set_type (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat rom_show_type (FILE *st, UNIT *up, int32 v, CONST void *dp);
@@ -95,6 +99,9 @@ REG cpu_reg[] = {
 };
 
 static MTAB cpu_mod[] = {
+  { UNIT_MSIZE, 1,  "4K",  "4K", &cpu_set_size },
+  { UNIT_MSIZE, 2,  "8K",  "8K", &cpu_set_size },
+  { UNIT_MSIZE, 4, "16K", "16K", &cpu_set_size },
   { MTAB_XTD|MTAB_VDV, 0, "IDLE", "IDLE", &sim_set_idle, &sim_show_idle },
   { MTAB_XTD|MTAB_VDV, 0, NULL, "NOIDLE", &sim_clr_idle, NULL },
   { MTAB_XTD|MTAB_VDV|MTAB_NMO|MTAB_SHP, 0, "HISTORY", "HISTORY",
@@ -175,12 +182,17 @@ static void memaddr (uint16 addr)
 static void memrd (void)
 {
   MB = M[MA];
+  if (sim_brk_summ && sim_brk_test(MA, SWMASK('R')))
+    stop_reason = STOP_DBKPT;
 }
 
 static void memwr (void)
 {
-  if (rom_type == ROM_NONE || (MA & 0177740) != 040)
+  if (rom_type == ROM_NONE || (MA & 0177740) != 040) {
     M[MA] = MB;
+    if (sim_brk_summ && sim_brk_test(MA, SWMASK('W')))
+      stop_reason = STOP_DBKPT;
+  }
 }
 
 static void cpu_class1 (uint16 insn)
@@ -200,12 +212,14 @@ static void cpu_class1 (uint16 insn)
     AC |= DS;
   }
 
-  halt = !(insn & 0100000);
+  if ((insn & 0100000) == 0)
+    stop_reason = STOP_HALT;
 }
 
 static void cpu_ral (int n)
 {
-  int i, x;
+  int i;
+  uint16 x;
   for (i = 0; i < n; i++) {
     x = L;
     L = AC >> 15;
@@ -215,7 +229,9 @@ static void cpu_ral (int n)
 
 static void cpu_rar (int n)
 {
-  int i, x;
+  int i;
+  uint16 x;
+
   for (i = 0; i < n; i++) {
     x = L;
     L = AC & 1;
@@ -246,7 +262,7 @@ static void cpu_class2 (uint16 insn)
       x = 01600000 >> n;
     else
       x = 0;
-    AC = x | ((AC & 077777) >> n);
+    AC = (uint16) (x | ((AC & 077777) >> n));
     break;
   }
 }
@@ -443,7 +459,7 @@ t_stat sim_instr (void)
   if ((reason = build_dev_tab ()) != SCPE_OK)
     return reason;
 
-  halt = 0;
+  stop_reason = 0;
 
   for (;;) {
     AIO_CHECK_EVENT;
@@ -470,8 +486,8 @@ t_stat sim_instr (void)
         return SCPE_STEP;
     }
 
-    if (halt)
-      return STOP_HALT;
+    if (stop_reason)
+      return stop_reason;
 
     if (ion_delay && --ion_delay == 0) {
       sim_debug (DBG_IRQ, &irq_dev, "Interrupts on\n");
@@ -479,7 +495,7 @@ t_stat sim_instr (void)
     }
   }
 
-  return SCPE_OK;
+  /* unreachable: return SCPE_OK; */
 }
 
 static t_stat
@@ -519,6 +535,10 @@ cpu_show_hist (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
     j = history_m + history_i - history_n;
 
   for (i = 0; i < history_n; i++) {
+    if (stop_cpu) {                 /* Control-C (SIGINT) */
+        stop_cpu = FALSE;
+        break;                      /* abandon remaining output */
+    }
     fprintf (st, "%06o %06o %06o %06o %06o %d  ",
              history[j].PC,
              history[j].IR,
@@ -569,7 +589,7 @@ static t_bool cpu_is_pc_a_subroutine_call (t_addr **ret_addrs)
 static t_stat
 cpu_reset (DEVICE *dptr)
 {
-  sim_brk_types = SWMASK('D') | SWMASK('E');
+  sim_brk_types = SWMASK('D') | SWMASK('E') | SWMASK('R') | SWMASK('W');
   sim_brk_dflt = SWMASK ('E');
   sim_vm_is_subroutine_call = &cpu_is_pc_a_subroutine_call;
   return SCPE_OK;
@@ -679,4 +699,11 @@ void
 cpu_set_switches (unsigned long p1, unsigned long p2)
 {
   DS = p1 & 0177777;
+}
+
+static t_stat cpu_set_size (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+  cpu_unit.capac = (uint32)val * 4096;
+  memmask = cpu_unit.capac - 1;
+  return SCPE_OK;
 }

@@ -826,7 +826,7 @@ if (mot & DTS_DIR)                                      /* update pos */
 else uptr->pos = uptr->pos + delta;
 if (((int32) uptr->pos < 0) ||
     ((int32) uptr->pos > (DTU_FWDEZ (uptr) + DT_EZLIN))) {
-    detach_unit (uptr);                                 /* off reel? */
+    dt_detach (uptr);                                   /* off reel? */
     uptr->STATE = 0, uptr->pos = 0;
     unum = (int32) (uptr - dt_dev.units);
     if ((unum == CSR_GETUNIT (tccm)) && (CSR_GETFNC (tccm) != FNC_STOP))
@@ -911,7 +911,7 @@ switch (fnc) {                                          /* at speed, check fnc *
         break;
 
     case DTS_OFR:                                       /* off reel */
-        detach_unit (uptr);                             /* must be deselected */
+        dt_detach (uptr);                               /* must be deselected */
         uptr->STATE = 0, uptr->pos = 0;                 /* no visible action */
         break;
 
@@ -1424,10 +1424,10 @@ const char *const text =
 /*567901234567890123456789012345678901234567890123456789012345678901234567890*/
 "TC11/TU56 DECtape Controller (DT)\n"
 "\n"
-" The TCll is a DECtape system consists a Controller and up to 4 dual-unit\n"
-" bidirectional magnetic-tape transports, and DECtape 3/4-inch magnetic\n"
-" tape on 3.9-inch reels.  Low cost, low maintenance and high reliability\n"
-" are assured by:\n"
+" The TC11 is a DECtape system consisting of a Controller and up to\n"
+" 4 dual-unit bidirectional magnetic-tape transports, and DECtape 3/4-inch\n"
+" magnetic tape on 3.9-inch reels.  Low cost, low maintenance and\n"
+" high reliability are assured by:\n"
 "\n"
 "   - Simply designed transport mechanisms which have no capstans and\n"
 "     no pinch rollers.\n"

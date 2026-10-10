@@ -42,7 +42,8 @@ static UNIT crt_unit = {
 };
 
 static DEBTAB crt_deb[] = {
-  { "DBG", DBG },
+  { "DBG",  DBG },
+  { "VVID", SIM_VID_DBG_VIDEO },
   { NULL, 0 }
 };
 
@@ -57,7 +58,7 @@ DEVICE crt_dev = {
   1, 8, 16, 1, 8, 16,
   NULL, NULL, &crt_reset,
   NULL, NULL, NULL,
-  NULL, DEV_DISABLE | DEV_DEBUG | CRT_DIS, 0, crt_deb,
+  NULL, DEV_DISABLE | DEV_DEBUG | CRT_DIS | DEV_DISPLAY, 0, crt_deb,
   NULL, NULL, NULL, NULL, NULL, NULL
 };
 
@@ -90,8 +91,8 @@ crt_reset (DEVICE *dptr)
   } else {
     display_reset ();
     display_init (DIS_IMLAC, 1, dptr);
-    sim_activate_abs (&crt_unit, 0);
     vid_register_quit_callback (&crt_quit_callback);
+    sim_activate_abs (&crt_unit, 0);
   }
 #endif
   return SCPE_OK;

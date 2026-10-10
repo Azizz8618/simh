@@ -1,9 +1,7 @@
 /*************************************************************************
  *                                                                       *
- * $Id: tx0_stddev.c 2063 2009-02-25 07:37:57Z hharte $                  *
- *                                                                       *
- * Copyright (c) 2009-2012 Howard M. Harte.                              *
- * Based on pdp1_stddev.c, Copyright (c) 1993-2006, Robert M. Supnik     *
+ * Copyright (c) 2009-2022 Howard M. Harte.                              *
+ * https://github.com/hharte                                             *
  *                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining *
  * a copy of this software and associated documentation files (the       *
@@ -18,22 +16,20 @@
  *                                                                       *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,       *
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF    *
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                 *
- * NONINFRINGEMENT. IN NO EVENT SHALL HOWARD M. HARTE BE LIABLE FOR ANY  *
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  *
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     *
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-            *
+ * INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE   *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN       *
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN     *
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE      *
+ * SOFTWARE.                                                             *
  *                                                                       *
- * Except as contained in this notice, the name of Howard M. Harte shall *
+ * Except as contained in this notice, the names of The Authors shall    *
  * not be used in advertising or otherwise to promote the sale, use or   *
  * other dealings in this Software without prior written authorization   *
- * of Howard M. Harte.                                                   *
+ * from the Authors.                                                     *
  *                                                                       *
  * Module Description:                                                   *
  *     TX-0 Standard Devices                                             *
- *                                                                       *
- * Environment:                                                          *
- *     User mode only                                                    *
  *                                                                       *
  *************************************************************************/
 
@@ -418,6 +414,9 @@ t_stat petr_boot (int32 unitno, DEVICE *dptr)
     int32 addr, tdata;
 #endif /* SANITY_CHECK_TAPE */
 
+    if ((petr_unit.flags & UNIT_ATT) == 0)
+        return SCPE_UNATT;
+
     /* Switch to READIN mode. */
     cpu_set_mode(&cpu_unit, UNIT_MODE_READIN, NULL, NULL);
 #ifdef SANITY_CHECK_TAPE
@@ -528,7 +527,6 @@ int32 ptp (int32 inst, int32 dev, int32 dat)
 
 t_stat ptp_svc (UNIT *uptr)
 {
-    ios = 1;                                            /* restart */
     iosta = iosta | IOS_PTP;                                /* set flag */
     if ((uptr->flags & UNIT_ATT) == 0)                      /* not attached? */
         return SCPE_UNATT;

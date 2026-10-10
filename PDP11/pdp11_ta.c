@@ -1,6 +1,6 @@
 /* pdp11_ta.c: PDP-11 cassette tape simulator
 
-   Copyright (c) 2007-2013, Robert M Supnik
+   Copyright (c) 2007-2022, Robert M Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,6 +25,7 @@
 
    ta           TA11/TU60 cassette tape
    
+   26-Mar-22    RMS     Added extra case points for new MTSE definitions
    23-Oct-13    RMS     Revised for new boot setup routine
    06-Jun-13    RMS     Reset must set RDY (Ian Hammond)
                         Added CAPS-11 bootstrap (Ian Hammond)
@@ -162,7 +163,7 @@ REG ta_reg[] = {
     { ORDATAD (TACS, ta_cs, 16, "control/status register") },
     { ORDATAD (TAIDB, ta_idb, 8, "input data buffer") },
     { ORDATAD (TAODB, ta_odb, 8, "output data buffer") },
-    { FLDATAD (WRITE, ta_write, 0, "TA60 write operation flag") },
+    { FLDATAD (WRITE, ta_write, 0, "TU60 write operation flag") },
     { FLDATAD (INT, IREQ (TA), INT_V_TA, "interrupt request") },
     { FLDATAD (ERR, ta_cs, CSR_V_ERR, "error flag") },
     { FLDATAD (TR, ta_cs, CSR_V_DONE, "transfer request flag") },
@@ -530,6 +531,7 @@ switch (st) {
     case MTSE_UNATT:                                    /* unattached */
         ta_cs |= TACS_ERR|TACS_CRC;
     case MTSE_OK:                                       /* no error */
+    default:                                            /* unknown error*/
         return SCPE_IERR;                               /* never get here! */
 
     case MTSE_TMK:                                      /* end of file */
@@ -670,7 +672,7 @@ t_stat ta_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr
 {
 const char *const text =
 /*567901234567890123456789012345678901234567890123456789012345678901234567890*/
-" TA11/TA60 Cassette Tape (CT)\n"
+" TA11/TU60 Cassette Tape (CT)\n"
 "\n"
 " The TA11 is a programmed I/O controller supporting two cassette drives\n"
 " (0 and 1).  The TA11 can be used like a small magtape under RT11 and\n"
@@ -695,5 +697,5 @@ return SCPE_OK;
 
 const char *ta_description (DEVICE *dptr)
 {
-return "TA11/TA60 Cassette Tape";
+return "TA11/TU60 Cassette Tape";
 }

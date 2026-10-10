@@ -32,21 +32,6 @@
 #include "vax_defs.h"
 #include "sim_ether.h"
 
-#ifdef DONT_USE_INTERNAL_ROM
-#if defined (VAX_411)
-#define BOOT_CODE_FILENAME "ka411.bin"
-#elif defined (VAX_412)
-#define BOOT_CODE_FILENAME "ka412.bin"
-#elif defined (VAX_41A)
-#define BOOT_CODE_FILENAME "ka41a.bin"
-#elif defined (VAX_41D)
-#define BOOT_CODE_FILENAME "ka41d.bin"
-#elif defined (VAX_42A)
-#define BOOT_CODE_FILENAME "ka42a.bin"
-#elif defined (VAX_42B)
-#define BOOT_CODE_FILENAME "ka42b.bin"
-#endif
-#else /* !DONT_USE_INTERNAL_ROM */
 #if defined (VAX_411)
 #include "vax_ka411_bin.h" /* Defines BOOT_CODE_FILENAME and BOOT_CODE_ARRAY, etc */
 #elif defined (VAX_412)
@@ -60,8 +45,8 @@
 #elif defined (VAX_42B)
 #include "vax_ka42b_bin.h" /* Defines BOOT_CODE_FILENAME and BOOT_CODE_ARRAY, etc */
 #endif
-#endif /* DONT_USE_INTERNAL_ROM */
 
+const char *boot_code_filename = BOOT_CODE_FILENAME;
 
 t_stat vax420_boot (int32 flag, CONST char *ptr);
 
@@ -147,7 +132,7 @@ int32 con_halt (int32 code, int32 cc);
 int32 tmr_tir_rd (void);
 void tmr_sched ();
 
-extern t_stat or_map (uint32 index, uint8 *rom, t_addr size);
+extern t_stat or_map (DEVICE *dptr, uint32 index, uint8 *rom, t_addr size);
 extern t_stat or_unmap (uint32 index);
 extern void rom_wr_B (int32 pa, int32 val);
 extern int32 iccs_rd (void);
@@ -189,7 +174,7 @@ REG sysd_reg[] = {
     { HRDATAD (CONPC,  conpc,     32, "console PD") },
     { HRDATAD (CONPSL, conpsl,    32, "console PSL") },
     { HRDATAD (HLTCOD, ka_hltcod, 16, "KA420 halt code") },
-    { HRDATAD (MSER,   ka_mser,    8, "KA420 mem sys err") },
+    { HRDATAD (MSERKA, ka_mser,    8, "KA420 mem sys err") },
     { HRDATAD (MEAR,   ka_mear,    8, "KA420 mem err") },
     { HRDATAD (CFGTST, ka_cfgtst,  8, "KA420 config/test register") },
     { NULL }
@@ -1014,7 +999,7 @@ conpsl = PSL_IS | PSL_IPL1F | CON_PWRUP;
 if (rom == NULL)
     return SCPE_IERR;
 if (*rom == 0) {                                        /* no boot? */
-    r = cpu_load_bootcode (BOOT_CODE_FILENAME, BOOT_CODE_ARRAY, BOOT_CODE_SIZE, TRUE, 0);
+    r = cpu_load_bootcode (BOOT_CODE_FILENAME, BOOT_CODE_ARRAY, BOOT_CODE_SIZE, TRUE, 0, BOOT_CODE_FILEPATH, BOOT_CODE_CHECKSUM);
     if (r != SCPE_OK)
         return r;
     }
@@ -1030,7 +1015,7 @@ for (i = 0; (cdptr = sim_devices[i]) != NULL; i++) {    /* loop over all devices
         continue;
 
     if (cdibp->rom_array != NULL)                       /* device has an option ROM? */
-        or_map (cdibp->rom_index, cdibp->rom_array, cdibp->rom_size);
+        or_map (cdptr, cdibp->rom_index, cdibp->rom_array, cdibp->rom_size);
     }
 return SCPE_OK;
 }
@@ -1111,7 +1096,7 @@ if (MATCH_CMD(gbuf, "MICROVAX") == 0) {
 #else   /* VAX_41D */
     strcpy (sim_name, "MicroVAX 3100 M10e/M20e (KA41-D)");
 #endif
-    reset_all (0);                                       /* reset everything */
+    reset_all_p (0);                                     /* powerup reset everything */
     }
 else if (MATCH_CMD(gbuf, "VAXSERVER") == 0) {
     sys_model = 1;
@@ -1120,7 +1105,7 @@ else if (MATCH_CMD(gbuf, "VAXSERVER") == 0) {
 #else   /* VAX_41D */
     strcpy (sim_name, "VAXserver 3100 M10e/M20e (KA41-D)");
 #endif
-    reset_all (0);                                       /* reset everything */
+    reset_all_p (0);                                     /* powerup reset everything */
     }
 else
     return SCPE_ARG;
@@ -1141,7 +1126,7 @@ if ((MATCH_CMD(gbuf, "VAXSERVER") == 0) ||
 #else   /* VAX_42B */
     strcpy (sim_name, "VAXserver 3100 M38 (KA42-B)");
 #endif
-    reset_all (0);                                       /* reset everything */
+    reset_all_p (0);                                     /* powerup reset everything */
     }
 else if (MATCH_CMD(gbuf, "VAXSTATION") == 0) {
 #if defined (USE_SIM_VIDEO) && defined (HAVE_LIBSDL)
@@ -1156,7 +1141,7 @@ else if (MATCH_CMD(gbuf, "VAXSTATION") == 0) {
 #else   /* VAX_42B */
     strcpy (sim_name, "VAXstation 3100 M38 (KA42-B)");
 #endif
-    reset_all (0);                                       /* reset everything */
+    reset_all_p (0);                                     /* powerup reset everything */
 #else
     return sim_messagef (SCPE_ARG, "Simulator built without Graphic Device Support\n");
 #endif
@@ -1174,7 +1159,7 @@ else if (MATCH_CMD(gbuf, "VAXSTATIONGPX") == 0) {
 #else   /* VAX_42B */
     strcpy (sim_name, "VAXstation 3100 M38/GPX (KA42-B)");
 #endif
-    reset_all (0);                                       /* reset everything */
+    reset_all_p (0);                                     /* powerup reset everything */
 #else
     return sim_messagef (SCPE_ARG, "Simulator built without Graphic Device Support\n");
 #endif
@@ -1192,7 +1177,7 @@ else if (MATCH_CMD(gbuf, "VAXSTATIONSPX") == 0) {
 #else   /* VAX_42B */
     strcpy (sim_name, "VAXstation 3100 M38/SPX (KA42-B)");
 #endif
-    reset_all (0);                                       /* reset everything */
+    reset_all_p (0);                                     /* powerup reset everything */
 #else
     return sim_messagef (SCPE_ARG, "Simulator built without Graphic Device Support\n");
 #endif

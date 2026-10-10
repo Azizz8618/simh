@@ -1,6 +1,6 @@
 /* pdp8_sys.c: PDP-8 simulator interface
 
-   Copyright (c) 1993-2021, Robert M Supnik
+   Copyright (c) 1993-2023, Robert M Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -23,6 +23,7 @@
    used in advertising or otherwise to promote the sale, use or other dealings
    in this Software without prior written authorization from Robert M Supnik.
 
+   04-Apr-23    RMS     Fixed decoding of DVI (Reindert Voorhorst)
    11-May-21    RMS     Fixed RF/DF and LP decoding
    15-Dec-16    RMS     Added PKSTF (Dave Gesswein)
    17-Sep-13    RMS     Fixed recognition of initial field change (Dave Gesswein)
@@ -66,6 +67,9 @@ extern DEVICE df_dev, rf_dev;
 extern DEVICE dt_dev, td_dev;
 extern DEVICE mt_dev, ct_dev;
 extern DEVICE ttix_dev, ttox_dev;
+#ifdef USE_DISPLAY
+extern DEVICE dpy_dev;
+#endif
 extern REG cpu_reg[];
 extern uint16 M[];
 
@@ -113,6 +117,10 @@ DEVICE *sim_devices[] = {
     &td_dev,
     &mt_dev,
     &ct_dev,
+    &ct_dev,
+#ifdef USE_DISPLAY
+    &dpy_dev,
+#endif
     NULL
     };
 
@@ -331,6 +339,8 @@ static const char *opcode[] = {
  "PCE", "PSF", "PCF", "PPC", "PLS",
  "KCF", "KSF", "KCC", "KRS", "KIE", "KRB",              /* console */
  "TLF", "TSF", "TCF", "TPC", "SPI", "TLS",
+ "DCX", "DXL", "DIX", "DXS",
+ "DCY", "DYL", "DIY", "DYS",
  "SBE", "SPL", "CAL",                                   /* power fail */
  "CLEI", "CLDI", "CLSC", "CLLE", "CLCL", "CLSK",        /* clock */
  "CINT", "RDF", "RIF", "RIB",                           /* mem mmgt */
@@ -399,6 +409,8 @@ static const int32 opc_val[] = {
  06020+I_NPN, 06021+I_NPN, 06022+I_NPN, 06024+I_NPN, 06026+I_NPN,
  06030+I_NPN, 06031+I_NPN, 06032+I_NPN, 06034+I_NPN, 06035+I_NPN, 06036+I_NPN,
  06040+I_NPN, 06041+I_NPN, 06042+I_NPN, 06044+I_NPN, 06045+I_NPN, 06046+I_NPN,
+ 06051+I_NPN, 06053+I_NPN, 06054+I_NPN, 06057+I_NPN, 
+ 06061+I_NPN, 06063+I_NPN, 06064+I_NPN, 06067+I_NPN, 
  06101+I_NPN, 06102+I_NPN, 06103+I_NPN,
  06131+I_NPN, 06132+I_NPN, 06133+I_NPN, 06135+I_NPN, 06136+I_NPN, 06137+I_NPN,
  06204+I_NPN, 06214+I_NPN, 06224+I_NPN, 06234+I_NPN,
@@ -453,7 +465,7 @@ static const int32 opc_val[] = {
  07411+I_OP3, 07413+I_OP3, 07415+I_OP3, 07417+I_OP3,
  07441+I_OP3, 07443+I_OP3, 07445+I_OP3, 07447+I_OP3,
  07451+I_OP3, 07453+I_OP3, 07455+I_OP3, 07457+I_OP3,
- 017403+I_OP3, 017405+I_OP3, 0174017+I_OP3,
+ 017403+I_OP3, 017405+I_OP3, 017407+I_OP3,
  017411+I_OP3, 017413+I_OP3, 017415+I_OP3, 017417+I_OP3,
  017441+I_OP3, 017443+I_OP3, 017445+I_OP3, 017447+I_OP3,
  017451+I_OP3, 017453+I_OP3, 017455+I_OP3, 017457+I_OP3,

@@ -27,15 +27,19 @@ Copyright (c) 2005-2012, William Beech
 #include <ctype.h>
 #include "sim_defs.h"                   // simulator defs
 
-/* Rename of global PC variable to avoid namespace conflicts on some platforms */
+/* Rename of global PC and SP variables to avoid namespace conflicts on some platforms */
 
 #define PC PC_Global
+#define SP SP_Global
+
+//#define DONT_USE_INTERNAL_ROM 1
 
 /* Memory */
 
 #define MAXMEMSIZE      65536               // max memory size
 #define MEMSIZE         (m6800_unit.capac)  // actual memory size
 #define ADDRMASK        (MAXMEMSIZE - 1)    // address mask
+#define BYTEMASK        0xff
 #define MEM_ADDR_OK(x)  (((uint32) (x)) < MEMSIZE)
 
 /* debug definitions */

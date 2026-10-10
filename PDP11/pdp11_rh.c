@@ -1,6 +1,6 @@
 /* pdp11_rh.c: PDP-11 Massbus adapter simulator
 
-   Copyright (c) 2005-2013, Robert M Supnik
+   Copyright (c) 2005-2022, Robert M Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,6 +25,7 @@
 
    rha, rhb, rhc        RH11/RH70 Massbus adapter
 
+   25-Jul-22    RMS     Removed OPT_RH11, changed adapter type test
    02-Sep-13    RMS     Added third Massbus adapter, debug printouts
    19-Mar-12    RMS     Fixed declaration of cpu_opt (Mark Pizzolato)
    02-Feb-08    RMS     Fixed DMA memory address limit test (John Dundas)
@@ -145,7 +146,7 @@
 
 /* Declarations */
 
-#define RH11            (cpu_opt & OPT_RH11)
+#define RH11            (UNIBUS && (cpu_model != MOD_1170))
 
 typedef struct {
     uint32 cs1;                                         /* ctrl/status 1 */
@@ -163,11 +164,11 @@ MBACTX massbus[MBA_NUM];
 t_stat mba_reset (DEVICE *dptr);
 t_stat mba_rd (int32 *val, int32 pa, int32 access);
 t_stat mba_wr (int32 val, int32 pa, int32 access);
-t_stat mba_set_type (UNIT *uptr, int32 val, char *cptr, CONST void *desc);
 t_stat mba_show_type (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 int32 mba0_inta (void);
 int32 mba1_inta (void);
 int32 mba2_inta (void);
+int32 mba3_inta (void);
 void mba_set_int (uint32 mb);
 void mba_clr_int (uint32 mb);
 void mba_upd_cs1 (uint32 set, uint32 clr, uint32 mb);
@@ -202,24 +203,24 @@ static int32 mba_mapofs[(MBA_OFSMASK + 1) >> 1] = {
 
 DIB mba0_dib = {
     IOBA_AUTO, 0, &mba_rd, &mba_wr,
-    1, IVCL (RP), VEC_AUTO, { &mba0_inta }
+    1, IVCL (RHA), VEC_AUTO, { &mba0_inta }
     };
 
 UNIT mba0_unit = { UDATA (NULL, 0, 0) };
 
 REG mba0_reg[] = {
-    { ORDATA (CS1, massbus[0].cs1, 16) },
-    { ORDATA (WC, massbus[0].wc, 16) },
-    { ORDATA (BA, massbus[0].ba, 16) },
-    { ORDATA (CS2, massbus[0].cs2, 16) },
-    { ORDATA (DB, massbus[0].db, 16) },
-    { ORDATA (BAE, massbus[0].bae, 6) },
-    { ORDATA (CS3, massbus[0].cs3, 16) },
-    { FLDATA (IFF, massbus[0].iff, 0) },
-    { FLDATA (INT, IREQ (RP), INT_V_RP) },
-    { FLDATA (SC, massbus[0].cs1, CSR_V_ERR) },
-    { FLDATA (DONE, massbus[0].cs1, CSR_V_DONE) },
-    { FLDATA (IE, massbus[0].cs1, CSR_V_IE) },
+    { ORDATAD (CS1, massbus[0].cs1, 16, "control/status register 1") },
+    { ORDATAD (WC, massbus[0].wc, 16, "word count") },
+    { ORDATAD (BA, massbus[0].ba, 16, "bus address") },
+    { ORDATAD (CS2, massbus[0].cs2, 16, "control/status register 2") },
+    { ORDATAD (DB, massbus[0].db, 16, "data buffer") },
+    { ORDATAD (BAE, massbus[0].bae, 6, "bus address extension") },
+    { ORDATAD (CS3, massbus[0].cs3, 16, "control/status register 3") },
+    { FLDATAD (IFF, massbus[0].iff, 0, "transfer complete interrupt request flag") },
+    { FLDATAD (INT, IREQ (RHA), INT_V_RHA, "interrupt pending flag (RP)") },
+    { FLDATAD (SC, massbus[0].cs1, CSR_V_ERR, "special condition (CSR1<15>)") },
+    { FLDATAD (DONE, massbus[0].cs1, CSR_V_DONE, "device done flag (CSR1<7>)") },
+    { FLDATAD (IE, massbus[0].cs1, CSR_V_IE, "interrupt enable flag (CSR1<6>)") },
     { ORDATA (DEVADDR, mba0_dib.ba, 32), REG_HRO },
     { ORDATA (DEVVEC, mba0_dib.vec, 16), REG_HRO },
     { NULL }
@@ -227,32 +228,34 @@ REG mba0_reg[] = {
 
 MTAB mba0_mod[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0100, "ADDRESS", "ADDRESS",
-      &set_addr, &show_addr, NULL },
+      &set_addr, &show_addr, NULL, "Bus address" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "VECTOR", "VECTOR",
-      &set_vec, &show_vec, NULL },
+      &set_vec, &show_vec, NULL, "Interrupt vector" },
+    { MTAB_XTD|MTAB_VDV, 0, "TYPE", NULL,
+      NULL, &mba_show_type, NULL, "Massbus Adapter Type" },
     { 0 }
     };
 
 DIB mba1_dib = {
     IOBA_AUTO, 0, &mba_rd, &mba_wr,
-    1, IVCL (TU), VEC_AUTO, { &mba1_inta }
+    1, IVCL (RHB), VEC_AUTO, { &mba1_inta }
     };
 
 UNIT mba1_unit = { UDATA (NULL, 0, 0) };
 
 REG mba1_reg[] = {
-    { ORDATA (CS1, massbus[1].cs1, 16) },
-    { ORDATA (WC, massbus[1].wc, 16) },
-    { ORDATA (BA, massbus[1].ba, 16) },
-    { ORDATA (CS2, massbus[1].cs2, 16) },
-    { ORDATA (DB, massbus[1].db, 16) },
-    { ORDATA (BAE, massbus[1].bae, 6) },
-    { ORDATA (CS3, massbus[1].cs3, 16) },
-    { FLDATA (IFF, massbus[1].iff, 0) },
-    { FLDATA (INT, IREQ (TU), INT_V_TU) },
-    { FLDATA (SC, massbus[1].cs1, CSR_V_ERR) },
-    { FLDATA (DONE, massbus[1].cs1, CSR_V_DONE) },
-    { FLDATA (IE, massbus[1].cs1, CSR_V_IE) },
+    { ORDATAD (CS1, massbus[1].cs1, 16, "control/status register 1") },
+    { ORDATAD (WC, massbus[1].wc, 16, "word count") },
+    { ORDATAD (BA, massbus[1].ba, 16, "bus address") },
+    { ORDATAD (CS2, massbus[1].cs2, 16, "control/status register 2") },
+    { ORDATAD (DB, massbus[1].db, 16, "data buffer") },
+    { ORDATAD (BAE, massbus[1].bae, 6, "bus address extension") },
+    { ORDATAD (CS3, massbus[1].cs3, 16, "control/status register 3") },
+    { FLDATAD (IFF, massbus[1].iff, 0, "transfer complete interrupt request flag") },
+    { FLDATAD (INT, IREQ (RHB), INT_V_RHB, "interrupt pending flag (TU)") },
+    { FLDATAD (SC, massbus[1].cs1, CSR_V_ERR, "special condition (CSR1<15>)") },
+    { FLDATAD (DONE, massbus[1].cs1, CSR_V_DONE, "device done flag (CSR1<7>)") },
+    { FLDATAD (IE, massbus[1].cs1, CSR_V_IE, "interrupt enable flag (CSR1<6>)") },
     { ORDATA (DEVADDR, mba1_dib.ba, 32), REG_HRO },
     { ORDATA (DEVVEC, mba1_dib.vec, 16), REG_HRO },
     { NULL }
@@ -260,32 +263,34 @@ REG mba1_reg[] = {
 
 MTAB mba1_mod[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0040, "ADDRESS", "ADDRESS",
-      &set_addr, &show_addr, NULL },
+      &set_addr, &show_addr, NULL, "Bus address" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "VECTOR", "VECTOR",
-      &set_vec, &show_vec, NULL },
+      &set_vec, &show_vec, NULL, "Interrupt vector" },
+    { MTAB_XTD|MTAB_VDV, 0, "TYPE", NULL,
+      NULL, &mba_show_type, NULL, "Massbus Adapter Type" },
     { 0 }
     };
 
 DIB mba2_dib = {
     IOBA_AUTO, 0, &mba_rd, &mba_wr,
-    1, IVCL (RS), VEC_AUTO, { &mba2_inta }
+    1, IVCL (RHC), VEC_AUTO, { &mba2_inta }
     };
 
 UNIT mba2_unit = { UDATA (NULL, 0, 0) };
 
 REG mba2_reg[] = {
-    { ORDATA (CS1, massbus[2].cs1, 16) },
-    { ORDATA (WC, massbus[2].wc, 16) },
-    { ORDATA (BA, massbus[2].ba, 16) },
-    { ORDATA (CS2, massbus[2].cs2, 16) },
-    { ORDATA (DB, massbus[2].db, 16) },
-    { ORDATA (BAE, massbus[2].bae, 6) },
-    { ORDATA (CS3, massbus[2].cs3, 16) },
-    { FLDATA (IFF, massbus[2].iff, 0) },
-    { FLDATA (INT, IREQ (TU), INT_V_TU) },
-    { FLDATA (SC, massbus[2].cs1, CSR_V_ERR) },
-    { FLDATA (DONE, massbus[2].cs1, CSR_V_DONE) },
-    { FLDATA (IE, massbus[2].cs1, CSR_V_IE) },
+    { ORDATAD (CS1, massbus[2].cs1, 16, "control/status register 1") },
+    { ORDATAD (WC, massbus[2].wc, 16, "word count") },
+    { ORDATAD (BA, massbus[2].ba, 16, "bus address") },
+    { ORDATAD (CS2, massbus[2].cs2, 16, "control/status register 2") },
+    { ORDATAD (DB, massbus[2].db, 16, "data buffer") },
+    { ORDATAD (BAE, massbus[2].bae, 6, "bus address extension") },
+    { ORDATAD (CS3, massbus[2].cs3, 16, "control/status register 3") },
+    { FLDATAD (IFF, massbus[2].iff, 0, "transfer complete interrupt request flag") },
+    { FLDATAD (INT, IREQ (RHC), INT_V_RHC, "interrupt pending flag (RS)") },
+    { FLDATAD (SC, massbus[2].cs1, CSR_V_ERR, "special condition (CSR1<15>)") },
+    { FLDATAD (DONE, massbus[2].cs1, CSR_V_DONE, "device done flag (CSR1<7>)") },
+    { FLDATAD (IE, massbus[2].cs1, CSR_V_IE, "interrupt enable flag (CSR1<6>)") },
     { ORDATA (DEVADDR, mba2_dib.ba, 32), REG_HRO },
     { ORDATA (DEVVEC, mba2_dib.vec, 16), REG_HRO },
     { NULL }
@@ -293,11 +298,50 @@ REG mba2_reg[] = {
 
 MTAB mba2_mod[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0040, "ADDRESS", "ADDRESS",
-      &set_addr, &show_addr, NULL },
+      &set_addr, &show_addr, NULL, "Bus address" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "VECTOR", "VECTOR",
-      &set_vec, &show_vec, NULL },
+      &set_vec, &show_vec, NULL, "Interrupt vector" },
+    { MTAB_XTD|MTAB_VDV, 0, "TYPE", NULL,
+      NULL, &mba_show_type, NULL, "Massbus Adapter Type" },
     { 0 }
     };
+
+#if MBA_NUM != 3
+DIB mba3_dib = {
+    IOBA_AUTO, 0, &mba_rd, &mba_wr,
+    1, IVCL (RHD), VEC_AUTO, { &mba3_inta }
+    };
+
+UNIT mba3_unit = { UDATA (NULL, 0, 0) };
+
+REG mba3_reg[] = {
+    { ORDATAD (CS1, massbus[3].cs1, 16, "control/status register 1") },
+    { ORDATAD (WC, massbus[3].wc, 16, "word count") },
+    { ORDATAD (BA, massbus[3].ba, 16, "bus address") },
+    { ORDATAD (CS2, massbus[3].cs2, 16, "control/status register 2") },
+    { ORDATAD (DB, massbus[3].db, 16, "data buffer") },
+    { ORDATAD (BAE, massbus[3].bae, 6, "bus address extension") },
+    { ORDATAD (CS3, massbus[3].cs3, 16, "control/status register 3") },
+    { FLDATAD (IFF, massbus[3].iff, 0, "transfer complete interrupt request flag") },
+    { FLDATAD (INT, IREQ (RHD), INT_V_RHC, "interrupt pending flag (RS)") },
+    { FLDATAD (SC, massbus[3].cs1, CSR_V_ERR, "special condition (CSR1<15>)") },
+    { FLDATAD (DONE, massbus[3].cs1, CSR_V_DONE, "device done flag (CSR1<7>)") },
+    { FLDATAD (IE, massbus[3].cs1, CSR_V_IE, "interrupt enable flag (CSR1<6>)") },
+    { ORDATA (DEVADDR, mba3_dib.ba, 32), REG_HRO },
+    { ORDATA (DEVVEC, mba3_dib.vec, 16), REG_HRO },
+    { NULL }
+    };
+
+MTAB mba3_mod[] = {
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0040, "ADDRESS", "ADDRESS",
+      &set_addr, &show_addr, NULL, "Bus address" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "VECTOR", "VECTOR",
+      &set_vec, &show_vec, NULL, "Interrupt vector" },
+    { MTAB_XTD|MTAB_VDV, 0, "TYPE", NULL,
+      NULL, &mba_show_type, NULL, "Massbus Adapter Type" },
+    { 0 }
+    };
+#endif
 
 DEVICE mba_dev[] = {
     {
@@ -326,6 +370,17 @@ DEVICE mba_dev[] = {
     &mba2_dib, DEV_DEBUG | DEV_UBUS | DEV_QBUS, 0,
     NULL, NULL, NULL, &rh_help, NULL, NULL,
     &rh_description 
+#if MBA_NUM != 3
+    },
+    {
+    "RHD", &mba3_unit, mba3_reg, mba2_mod,
+    1, 0, 0, 0, 0, 0,
+    NULL, NULL, &mba_reset,
+    NULL, NULL, NULL,
+    &mba3_dib, DEV_DEBUG | DEV_UBUS | DEV_QBUS, 0,
+    NULL, NULL, NULL, &rh_help, NULL, NULL,
+    &rh_description 
+#endif
     }
     };
 
@@ -780,6 +835,14 @@ massbus[2].iff = 0;                                     /* clear CSTB INTR */
 return mba2_dib.vec;                                    /* acknowledge */
 }
 
+int32 mba3_inta (void)
+{
+massbus[3].cs1 &= ~CS1_IE;                              /* clear int enable */
+massbus[3].cs3 &= ~CS1_IE;                              /* in both registers */
+massbus[3].iff = 0;                                     /* clear CSTB INTR */
+return mba3_dib.vec;                                    /* acknowledge */
+}
+
 /* Map physical address to Massbus number, offset */
 
 int32 mba_map_pa (int32 pa, int32 *ofs)
@@ -819,7 +882,8 @@ mb = dptr - mba_dev;
 if (mb >= MBA_NUM)
     return SCPE_NOFNC;
 massbus[mb].cs1 = CS1_DONE;
-massbus[mb].wc = 0;
+if ((sim_switches & SWMASK ('P')) !=0)
+    massbus[mb].wc = 0;                             /* powerup only */
 massbus[mb].ba = 0;
 massbus[mb].cs2 = 0;
 massbus[mb].db = 0;
@@ -843,13 +907,14 @@ if (((dptr->flags & DEV_DIS) &&     /* Already Disabled     */
     (!(dptr->flags & DEV_DIS) &&    /* Already Enabled      */
      (dibp->ba != MBA_AUTO)))
     return;
-if (dptr->flags & DEV_DIS) {        /* Disabling? */
+if ((dptr->flags & DEV_DIS) ||      /* Disabling OR */
+    (build_dib_tab() != SCPE_OK)) { /* somehow invalid? */
     uint32 mb = dibp->ba;
 
+    dptr->flags |= DEV_DIS;         /*   assure disabled */
     dibp->ba = MBA_AUTO;            /*   Flag unassigned */
     mba_reset (&mba_dev[mb]);       /*   reset prior MBA */
     }
-build_dib_tab();
 if (!(dptr->flags & DEV_DIS))       /* Enabling? */
     mba_reset (&mba_dev[dibp->ba]); /*   reset new MBA */
 }
@@ -867,6 +932,18 @@ dibp = (DIB *) dptr->ctxt;
 if (dibp == NULL)
     return SCPE_IERR;
 fprintf (st, "Massbus adapter %d (RH%c)", dibp->ba, 'A' + dibp->ba);
+return SCPE_OK;
+}
+
+/* Show adapter type */
+
+t_stat mba_show_type (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+if (RH11)
+    fprintf (st, "RH11");
+else if (UNIBUS)
+    fprintf (st, "RH70");
+else fprintf (st, "RH70 emulator");
 return SCPE_OK;
 }
 
@@ -897,7 +974,7 @@ for (i = mba_devs = 0; sim_devices[i] != NULL; i++) {
 t_stat build_mbus_tab (DEVICE *dptr, DIB *dibp)
 {
 uint32 idx;
-static const char *mbus_devs[MBA_NUM+1] = {"RP", "TU", "RS", NULL};
+static const char *mbus_devs[] = {"RP", "TU", "RS", "RPB", NULL};
 
 if ((dptr == NULL) || (dibp == NULL))                   /* validate args */
     return SCPE_IERR;
@@ -905,18 +982,16 @@ for (idx = 0; mbus_devs[idx]; idx++)
     if (!strcmp (dptr->name, mbus_devs[idx]))
         break;
 if ((!mbus_devs[idx]) || (idx >= MBA_NUM))
-    return SCPE_IERR;
+    return sim_messagef (SCPE_IERR, "More Massbus devices than Massbuses, can't support %s\n", dptr->name);
 dibp->ba = idx;                                         /* Mbus # */
 if ((mbregR[idx] && dibp->rd &&                         /* conflict? */
     (mbregR[idx] != dibp->rd)) ||
     (mbregW[idx] && dibp->wr &&
     (mbregW[idx] != dibp->wr)) ||
     (mbabort[idx] && dibp->ack[0] &&
-    (mbabort[idx] != dibp->ack[0]))) {
-        sim_printf ("Massbus %s assignment conflict at %d\n",
-                    sim_dname (dptr), dibp->ba);
-        return SCPE_STOP;
-        }
+    (mbabort[idx] != dibp->ack[0])))
+    return sim_messagef (SCPE_STOP, "Massbus %s assignment conflict at %d\n",
+                                    sim_dname (dptr), dibp->ba);
 mbregR[idx] = dibp->rd;                                 /* set rd dispatch */
 mbregW[idx] = dibp->wr;                                 /* set wr dispatch */
 mbabort[idx] = dibp->ack[0];                            /* set abort dispatch */
@@ -930,25 +1005,37 @@ t_stat rh_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr
 {
 const char *const text =
 /*567901234567890123456789012345678901234567890123456789012345678901234567890*/
-" RH70/RH11 Massbus adapters (RHA, RHB, RHC)\n"
+#if MBA_NUM == 3
+" RH11/RH70/RH70-emulating Massbus adapters (RHA, RHB, RHC)\n"
+#else
+" RH11/RH70/RH70-emulating Massbus adapters (RHA, RHB, RHC, RHD)\n"
+#endif
 "\n"
-" The RH70/RH11 Massbus adapters interface Massbus peripherals to the\n"
-" memory bus or Unibus of the CPU.  The simulator provides three Massbus\n"
-" adapters.  These adapters (RHA, RHB, and RHC) are used by (in order):\n"
-"       1) the RP family of disk drives.\n"
-"       2) the TU family of tape controllers.\n"
-"       3) the RS family of fixed head disks.\n"
-" Depending on which of the RP, TU, and RS devices are enabled, will\n"
-" determine which adapter is assigned to which device.\n"
+" The RH70/RH11/RH70-emulating Massbus adapters interface Massbus\n"
+" peripherals to the memory bus or Unibus of the CPU.  The simulator\n"
+#if MBA_NUM == 3
+" provides three Massbus adapters.  These adapters (RHA, RHB, and RHC)\n"
+" are used by (in order):\n\n"
+#else
+" provides four Massbus adapters.  These adapters (RHA, RHB, RHC and\n"
+" RHD) are used by (in order):\n\n"
+#endif
+"++1) the RP family of disk drives.\n"
+"++2) the TU family of tape controllers.\n"
+"++3) the RS family of fixed head disks.\n"
+#if MBA_NUM != 3
+"++4) the RPB additional RP family fixed head disks.\n"
+#endif
+"\n"
 " In a Unibus system, the RH adapters implement 22b addressing for the\n"
 " 11/70 and 18b addressing for all other models.  In a Qbus system, the\n"
 " RH adapters always implement 22b addressing.\n"
 /*567901234567890123456789012345678901234567890123456789012345678901234567890*/
-"\n";
-fprintf (st, "%s", text);
-fprint_show_help (st, dptr);
-fprint_reg_help (st, dptr);
-return SCPE_OK;
+"\n"
+"1$Set commands\n"
+"1$Show commands\n"
+"1$Registers\n";
+return scp_help (st, dptr, uptr, flag, text, "");
 }
 
 const char *rh_description (DEVICE *dptr)
@@ -968,7 +1055,8 @@ else {
             break;
         }
     }
-sprintf (buf, "RH70/RH11 Massbus adapter%s%s%s", 
+sprintf (buf, "%s Massbus adapter%s%s%s", 
+               UNIBUS ? ((cpu_model == MOD_1170) ? "RH70" : "RH11") : "RH70 Emulating",
                dptr ? " (for " : "", dptr ? dptr->name : "", dptr ? ")" : "");
 return buf;
 }

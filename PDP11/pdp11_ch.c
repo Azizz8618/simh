@@ -61,7 +61,7 @@
 #define STATUS_BITS (TIE|LOOP|SPY|RXIE|TXIE|TXA|TXD|LOST|CRC|RXD)
 #define COMMAND_BITS (TIE|LOOP|SPY|RXIE|TXIE)
 
-BITFIELD ch_csr_bits[] = {
+static BITFIELD ch_csr_bits[] = {
   BIT(TIE),
   BIT(LOOP),
   BIT(SPY),
@@ -87,19 +87,28 @@ BITFIELD ch_csr_bits[] = {
 #define DBG_INT  0x0010
 #define DBG_ERR  0x0020
 
-t_stat ch_svc(UNIT *);
-t_stat ch_reset (DEVICE *);
-t_stat ch_attach (UNIT *, CONST char *);
-t_stat ch_detach (UNIT *);
-t_stat ch_rd(int32 *, int32, int32);
-t_stat ch_wr(int32, int32, int32);
-t_stat ch_show_peer (FILE* st, UNIT* uptr, int32 val, CONST void* desc);
-t_stat ch_set_peer (UNIT* uptr, int32 val, CONST char* cptr, void* desc);
-t_stat ch_show_node (FILE* st, UNIT* uptr, int32 val, CONST void* desc);
-t_stat ch_set_node (UNIT* uptr, int32 val, CONST char* cptr, void* desc);
-t_stat ch_help (FILE *, DEVICE *, UNIT *, int32, const char *);
-t_stat ch_help_attach (FILE *, DEVICE *, UNIT *, int32, const char *);
-const char *ch_description (DEVICE *);
+static t_stat ch_svc(UNIT *);
+static t_stat ch_reset (DEVICE *);
+static t_stat ch_attach (UNIT *, CONST char *);
+static t_stat ch_detach (UNIT *);
+static t_stat ch_rd(int32 *, int32, int32);
+static t_stat ch_wr(int32, int32, int32);
+static t_stat ch_show_peer (FILE* st, UNIT* uptr, int32 val, CONST void* desc);
+static t_stat ch_set_peer (UNIT* uptr, int32 val, CONST char* cptr, void* desc);
+static t_stat ch_show_node (FILE* st, UNIT* uptr, int32 val, CONST void* desc);
+static t_stat ch_set_node (UNIT* uptr, int32 val, CONST char* cptr, void* desc);
+static t_stat ch_help (FILE *, DEVICE *, UNIT *, int32, const char *);
+static t_stat ch_help_attach (FILE *, DEVICE *, UNIT *, int32, const char *);
+static const char *ch_description (DEVICE *);
+static int ch_checksum (const uint8 *p, int length);
+static t_stat ch_rx_word (int32 *data);
+static t_stat ch_tx_word (int data);
+static int ch_test_int (void);
+static t_stat ch_transmit ();
+static void ch_validate (const uint8 *p, int count);
+static int ch_receive (void);
+static void ch_clear (void);
+static void ch_command (int32 data);
 
 #define CH11_NO_ADDRESS 0XFFFF
 
@@ -111,14 +120,14 @@ static uint16 tx_count;
 static uint8 rx_buffer[512+100];
 static uint8 tx_buffer[512+100];
 
-TMLN ch_lines[1] = { {0} };
-TMXR ch_tmxr = { 1, NULL, 0, ch_lines};
+static TMLN ch_lines[1] = { {0} };
+static TMXR ch_tmxr = { 1, NULL, 0, ch_lines};
 
-UNIT ch_unit[] = {
+static UNIT ch_unit[] = {
   { UDATA (&ch_svc, UNIT_IDLE|UNIT_ATTABLE, 0) },
 };
 
-REG ch_reg[] = {
+static REG ch_reg[] = {
   { GRDATADF(CSR,   status,     16, 16, 0, "Control and status", ch_csr_bits), 0 },
   { GRDATAD(RXCNT,  rx_count,   16, 16, 0, "Receive word count"), REG_RO},
   { GRDATAD(TXCNT,  tx_count,   16, 16, 0, "Transmit word count"), REG_RO},
@@ -128,7 +137,7 @@ REG ch_reg[] = {
   { GRDATAD(NODE,   address,    16, 16, 0, "Node address"), REG_HRO},
   { NULL }  };
 
-MTAB ch_mod[] = {
+static MTAB ch_mod[] = {
   { MTAB_XTD|MTAB_VDV|MTAB_VALR, 010, "ADDRESS", "ADDRESS",
     &set_addr, &show_addr, NULL, "Unibus address" },
   { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "VECTOR", "VECTOR",
@@ -140,12 +149,12 @@ MTAB ch_mod[] = {
   { 0 },
 };
 
-DIB ch_dib = {
+static DIB ch_dib = {
   IOBA_AUTO, IOLN_CH, &ch_rd, &ch_wr,
   1, IVCL (CH), VEC_AUTO
 };
 
-DEBTAB ch_debug[] = {
+static DEBTAB ch_debug[] = {
     { "TRC",       DBG_TRC,   "Detailed trace" },
     { "REG",       DBG_REG,   "Hardware registers" },
     { "PKT",       DBG_PKT,   "Packets" },
@@ -186,13 +195,18 @@ t_stat ch_rx_word (int32 *data)
     sim_debug (DBG_DAT, &ch_dev, "Read buffer word %d: %06o\n",
                rx_count, *data);
     rx_count--;
+    if (rx_count == 0) {
+      ch_lines[0].rcve = TRUE;
+      sim_debug (DBG_TRC, &ch_dev, "Read all, rx on\n");
+      status &= ~RXD;
+    }
   }
   return SCPE_OK;
 }
 
 t_stat ch_tx_word (int data)
 {
-  if (tx_count < 126) {
+  if (tx_count < 246) {
     int i = CHUDP_HEADER + 2*tx_count;
     sim_debug (DBG_DAT, &ch_dev, "Write buffer word %d: %06o\n",
                tx_count, data);
@@ -237,10 +251,11 @@ t_stat ch_transmit ()
   if (r == SCPE_OK) {
     sim_debug (DBG_PKT, &ch_dev, "Sent UDP packet, %d bytes.\n", (int)len);
     tmxr_poll_tx (&ch_tmxr);
-    status |= TXD;
-    ch_test_int ();
   } else
     sim_debug (DBG_ERR, &ch_dev, "Sending UDP failed: %d.\n", r);
+  tx_count = 0;
+  status |= TXD;
+  ch_test_int ();
   return SCPE_OK;
 }
 
@@ -272,7 +287,7 @@ void ch_validate (const uint8 *p, int count)
     sim_debug (DBG_TRC, &ch_dev, "Checksum: %05o\n", chksum);
 }
 
-void ch_receive (void)
+int ch_receive (void)
 {
   size_t count;
   const uint8 *p;
@@ -280,10 +295,10 @@ void ch_receive (void)
   tmxr_poll_rx (&ch_tmxr);
   if (tmxr_get_packet_ln (&ch_lines[0], &p, &count) != SCPE_OK) {
     sim_debug (DBG_ERR, &ch_dev, "TMXR error receiving packet\n");
-    return;
+    return 0;
   }
   if (p == NULL)
-    return;
+    return 0;
 
   sim_debug (DBG_PKT, &ch_dev, "Received UDP packet, %d bytes\n", (int)count);
   if ((status & RXD) == 0) {
@@ -302,6 +317,8 @@ void ch_receive (void)
     if ((status & LOST) < LOST)
       status += 01000;
   }
+
+  return 1;
 }
 
 t_stat ch_rd (int32 *data, int32 PA, int32 access)
@@ -404,8 +421,18 @@ t_stat ch_wr (int32 data, int32 PA, int32 access)
 
 t_stat ch_svc(UNIT *uptr)
 {
+  if (ch_lines[0].conn) {
+    if (ch_receive ()) {
+      sim_activate_after (uptr, 300);
+      return SCPE_OK;
+    }
+  } else {
+    if (tmxr_poll_conn (&ch_tmxr) != -1)
+      ch_lines[0].rcve = TRUE;
+  }
   sim_clock_coschedule (uptr, 1000);
-  (void)tmxr_poll_conn (&ch_tmxr);
+  if (tmxr_poll_conn (&ch_tmxr) != -1)
+    ch_lines[0].rcve = TRUE;
   if (ch_lines[0].conn)
     ch_receive ();
   return SCPE_OK;

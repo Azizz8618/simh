@@ -1,6 +1,6 @@
 /* sds_cr.c: SDS-930 card reader simulator
 
-   Copyright (c) 2020, Ken Rector
+   Copyright (c) 2020-2021, Ken Rector
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -23,8 +23,9 @@
    used in advertising or otherwise to promote the sale, use or other dealings
    in this Software without prior written authorization from Ken Rector.
 
-   03-Mar-20    kenr    Initial Version
-
+   17-Feb-21    kenr    Initial Version
+   17-Feb-21    kenr    Added C register support to CDR boot
+   10-Mar-23    kenr    Reset cr_eor on disconnect
    */
 
 /*
@@ -220,6 +221,8 @@ t_stat cr_devio (uint32 fnc, uint32 inst, uint32 *dat) {
         case IO_DISC:                                   /* disconnect */
             xfr_req = xfr_req & ~XFR_CR;                /* clr xfr flag */
             sim_cancel (uptr);                          /* deactivate unit */
+            cr_eor = 0;
+            uptr->STATUS = 0;
             break;
         case IO_SKS:                                    /* SKS */
             new_ch = I_GETSKCH (inst);                  /* get chan # */
@@ -353,7 +356,7 @@ t_stat cr_attach (UNIT *uptr, CONST char *cptr) {
 
 /* Boot routine - simulate FILL console command */
 t_stat cr_boot (int32 unitno, DEVICE *dptr) {
-    extern uint32 P, M[];
+    extern uint32 P, C, M[];
     
     cr_reset(dptr);
     M[0] = 077777771;       /* -7B */
@@ -362,6 +365,7 @@ t_stat cr_boot (int32 unitno, DEVICE *dptr) {
     M[3] = 003200002;       /* WIM 2 */
     M[4] = 000100002;       /* BRU 2 */
     P = 1;                  /* start at 1 */
+    C = M[1];
     return SCPE_OK;
 }
    

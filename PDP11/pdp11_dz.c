@@ -1,6 +1,6 @@
 /* pdp11_dz.c: DZ11 terminal multiplexor simulator
 
-   Copyright (c) 2001-2008, Robert M Supnik
+   Copyright (c) 2001-2023, Robert M Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,6 +25,7 @@
 
    dz           DZ11 terminal multiplexor
 
+   23-Feb-23    RMS     Fixed line number calculation in connect (Walter Mueller)
    29-Dec-08    RMS     Added MTAB_NC to SET LOG command (Walter Mueller)
    19-Nov-08    RMS     Revised for common TMXR show routines
    18-Jun-07    RMS     Added UNIT_IDLE flag
@@ -72,7 +73,6 @@
 #define DZ_8B_DFLT      TT_MODE_8B
 #endif
 
-#include "sim_sock.h"
 #include "sim_tmxr.h"
 
 #if !defined (DZ_MUXES)
@@ -342,10 +342,6 @@ MTAB dz_mod[] = {
         &set_addr, &show_addr, NULL, "Bus address" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "VECTOR", "VECTOR",
         &set_vec, &dz_show_vec, (void *) &dz_desc, "Interrupt vector" },
-#if !defined (VM_PDP10)
-    { MTAB_XTD|MTAB_VDV, 0, NULL, "AUTOCONFIGURE",
-        &set_addr_flt, NULL, NULL, "Enable autoconfiguration of address & vector" },
-#endif
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "LINES", "LINES=n",
         &dz_setnl, &tmxr_show_lines, (void *) &dz_desc, "Display number of lines" },
     { MTAB_XTD|MTAB_VDV|MTAB_NC, 0, NULL, "LOG=n=file",
@@ -465,8 +461,8 @@ switch ((PA >> 1) & 03) {                               /* case on PA<2:1> */
                     (dz_csr[dz] & ~0377) | data;
         if (data & CSR_CLR)                             /* clr? reset */
             dz_clear (dz, FALSE);
-        if (data & CSR_MSE)                             /* MSE? start poll */
-            sim_clock_coschedule (dz_unit, tmxr_poll);
+        if (data & CSR_MSE)                             /* MSE? start next poll */
+            sim_clock_coschedule_abs (dz_unit, tmxr_poll);
         else
             dz_csr[dz] &= ~(CSR_SA | CSR_RDONE | CSR_TRDY);
         if ((data & CSR_RIE) == 0)                      /* RIE = 0? */
@@ -581,11 +577,13 @@ if (t) {                                                /* any enabled? */
     tmxr_poll_tx (&dz_desc);                            /* poll output */
     dz_update_xmti ();                                  /* upd xmt intr */
     for (dz = 0; dz < dz_desc.lines/DZ_LINES; dz++) {
-        if (dz_csr[dz] & CSR_RDONE)
+        if ((dz_csr[dz] & CSR_RDONE) || (dz_csr[dz] & CSR_SAE))
             break;
         }
-    if (dz == dz_desc.lines/DZ_LINES)                   /* All idle? */
+    if ((dz == dz_desc.lines/DZ_LINES) ||               /* All idle? */
+        (dz_csr[dz] & CSR_SAE)){                        /* or a controller in drain Silo mode? */
         sim_clock_coschedule (uptr, tmxr_poll);         /* reactivate */
+        }
     }
 return SCPE_OK;
 }
@@ -844,8 +842,8 @@ for (dz = 0; dz < dz_desc.lines/DZ_LINES; dz++) {
     for (muxln = 0; muxln < DZ_LINES; muxln++) {
         TMLN *lp = &dz_ldsc[(dz * DZ_LINES) + muxln];
 
-		if (lp->serconfig)
-            tmxr_set_config_line (lp, lp->serconfig);	/* make settings consistent */
+        if (lp->serconfig)
+            tmxr_set_config_line (lp, lp->serconfig);   /* make settings consistent */
         }
     if (!dz_mctl || (0 == (dz_csr[dz] & CSR_MSE)))      /* enabled? */
         continue;
@@ -873,10 +871,10 @@ for (dz = 0; dz < dz_desc.lines/DZ_LINES; dz++) {
     for (muxln = 0; muxln < DZ_LINES; muxln++) {
         TMLN *lp = &dz_ldsc[(dz * DZ_LINES) + muxln];
 
-		free (lp->serconfig);
-		lp->serconfig = NULL;
+        free (lp->serconfig);
+        lp->serconfig = NULL;
         }
-	}
+    }
 return r;
 }
 

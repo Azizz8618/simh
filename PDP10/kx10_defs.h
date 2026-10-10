@@ -30,6 +30,9 @@
 
 #include "sim_defs.h"                                   /* simulator defns */
 
+/* Rename of global PC variable to avoid namespace conflicts on some platforms */
+#define PC PC_Global
+ 
 #if defined(USE_ADDR64)
 #error "PDP-10 does not support 64b addresses!"
 #endif
@@ -99,6 +102,10 @@
 #define MAGIC_SWITCH 0
 #endif
 
+#ifndef PIDP10        /* PiDP10 front panel support. */
+#define PIDP10 0
+#endif
+
 
 /* MPX interrupt multiplexer for ITS systems */
 #define MPX_DEV ITS
@@ -159,6 +166,7 @@ typedef t_uint64     uint64;
 #define DEBUG_CONO      0x0000040       /* Show CONO instructions */
 #define DEBUG_DATAIO    0x0000100       /* Show DATAI/O instructions */
 #define DEBUG_IRQ       0x0000200       /* Show IRQ requests */
+#define DEBUG_TRACE     0x0000400       /* Trace cpu instruction execution */
 
 extern DEBTAB dev_debug[];
 extern DEBTAB crd_debug[];
@@ -207,6 +215,12 @@ extern DEBTAB crd_debug[];
 #if KS
 #define IOCTL    00000017000000LL
 #endif
+
+#define ADR_IFETCH  020
+#define ADR_DFETCH  010
+#define ADR_WRITE   004
+#define ADR_STOP    002
+#define ADR_BREAK   001
 
 /* IRQ Flags in APR */
 #if KL
@@ -346,11 +360,9 @@ extern DEBTAB crd_debug[];
 #define API_MASK        0000000007
 #define PI_ENABLE       0000000010      /* Clear DONE */
 #define BUSY            0000000020      /* STOP */
-#define CCW_COMP        0000000040      /* Write Final CCW */
 /* RH10 / RH20 interrupt */
 #define IADR_ATTN       0000000000040LL   /* Interrupt on attention */
 #define IARD_RAE        0000000000100LL   /* Interrupt on register access error */
-#define CCW_COMP_1      0000000040000LL   /* Control word written. */
 
 #if KI
 #define DEF_SERIAL      514             /* Default DEC test machine */
@@ -423,6 +435,10 @@ extern DEBTAB crd_debug[];
 #define UNIT_V_MPX      (UNIT_V_WAITS + 1)
 #define UNIT_M_MPX      (1 << UNIT_V_MPX)
 #define UNIT_MPX        (UNIT_M_MPX)          /* MPX Device for ITS */
+#define UNIT_V_DF10     (UNIT_V_MPX + 1)      /* DF10 18 bit or 22 bit */
+#define UNIT_M_DF10     (1 << UNIT_V_DF10)
+#define UNIT_DF10C      (UNIT_M_DF10)
+#define UNIT_DF10       0
 #define CNTRL_V_RH      (UNIT_V_UF + 4)
 #define CNTRL_M_RH      7
 #define GET_CNTRL_RH(x) (((x) >> CNTRL_V_RH) & CNTRL_M_RH)
@@ -500,6 +516,8 @@ extern DEVICE   pd_dev;
 extern DEVICE   pclk_dev;
 extern DEVICE   dpy_dev;
 extern DEVICE   iii_dev;
+extern DEVICE   dd_dev;
+extern DEVICE   vds_dev;
 extern DEVICE   imx_dev;
 extern DEVICE   imp_dev;
 extern DEVICE   ch10_dev;
@@ -515,7 +533,6 @@ extern DEVICE   tv_dev;
 extern DEVICE   wcnsls_dev;             /* MIT Spacewar Consoles */
 extern DEVICE   ocnsls_dev;             /* Old MIT Spacewar Consoles */
 extern DEVICE   ai_dev;
-extern DEVICE   dn_dev;
 extern DEVICE   dct_dev;                /* PDP6 devices. */
 extern DEVICE   dtc_dev;
 extern DEVICE   mtc_dev;
@@ -525,6 +542,10 @@ extern DEVICE   dz_dev;
 extern DEVICE   kmc_dev;
 extern DEVICE   dup_dev;
 extern DEVICE   tcu_dev;
+extern DEVICE   ddc_dev;
+extern DEVICE   tym_dev;
+extern DEVICE   ge_dev;
+extern DEVICE   gtyo_dev;
 
 #if KS
 
@@ -620,9 +641,11 @@ struct df10 {
       uint32         wcr;        /* CUrrent word count */
       uint32         cda;        /* Current transfer address */
       uint32         devnum;     /* Device number */
-      t_uint64       buf;        /* Data buffer */
+      uint64         buf;        /* Data buffer */
       uint8          nxmerr;     /* Bit to set for NXM */
-      uint8          ccw_comp;   /* Have we written out CCW */
+      uint64         amask;      /* Address mask */
+      uint64         wmask;      /* Word mask */
+      int            cshift;     /* Shift amount */
 } ;
 
 /* RH10/RH20 Interface */
@@ -660,7 +683,7 @@ struct pdp_dib {
     t_addr              (*irq)(uint32 dev, t_addr addr);
     struct rh_if        *rh;
 };
- 
+
 #define RH10_DEV        01000
 #define RH20_DEV        02000
 struct rh_dev {
@@ -678,6 +701,7 @@ void df10_setup(struct df10 *df, uint32 addr);
 int  df10_fetch(struct df10 *df);
 int  df10_read(struct df10 *df);
 int  df10_write(struct df10 *df);
+void df10_init(struct df10 *df, uint32 dev_num, uint8 nxmerr);
 #if PDP6_DEV
 int  dct_read(int u, t_uint64 *data, int c);
 int  dct_write(int u, t_uint64 *data, int c);
@@ -711,11 +735,13 @@ extern void ka10_lights_set_aux (int);
 extern void ka10_lights_clear_aux (int);
 #endif
 
+#define IBM_DEV        04000
+
 /* I/O system parameters */
 #if !(PDP6 | KS)
 #define NUM_DEVS_LP     1
 #endif
-#if !(KL | KS)
+#if !(KS)
 #define NUM_DEVS_PT     1
 #define NUM_DEVS_CR     1
 #define NUM_DEVS_CP     1
@@ -730,6 +756,7 @@ extern void ka10_lights_clear_aux (int);
 #define NUM_DEVS_DSK    1
 #define NUM_DEVS_DCS    1
 #define NUM_DEVS_SLAVE  PDP6
+#define NUM_DEVS_GE     PDP6
 #endif
 #if !(PDP6 | KS)
 #define NUM_DEVS_DC     1
@@ -740,7 +767,6 @@ extern void ka10_lights_clear_aux (int);
 #define NUM_DEVS_TTY    1
 #define NUM_LINES_TTY   64
 #define NUM_DEVS_NIA    1
-#define NUM_DEVS_DN     0
 #elif KS
 #define NUM_DEVS_LP20   1
 #define NUM_DEVS_DZ     4
@@ -748,30 +774,32 @@ extern void ka10_lights_clear_aux (int);
 #define NUM_DEVS_DUP    2
 #define NUM_DEVS_KMC    2
 #if KS_ITS
-#define NUM_DEVS_IMP    KS_ITS
 #define NUM_DEVS_CH11   KS_ITS
 #endif
 #endif
 #if KA | KI
 #define NUM_DEVS_RC     1
-#define NUM_DEVS_DT     1
 #define NUM_DEVS_DK     1
-#define NUM_DEVS_DP     2
+#define NUM_DEVS_DDC    1
 #endif
 #if KS
 #define NUM_DEVS_RP     1
 #elif KA | KI | KL
+#define NUM_DEVS_DT     1
+#define NUM_DEVS_DP     2
 #define NUM_DEVS_RP     4
 #define NUM_DEVS_RS     1
 #endif
 #if !(PDP6)
 #define NUM_DEVS_TU     1
+#define NUM_DEVS_IMP    1
 #endif
 #if KA
 #define NUM_DEVS_PMP    WAITS
 #define NUM_DEVS_DKB    (WAITS * USE_DISPLAY)
 #define NUM_DEVS_III    (WAITS * USE_DISPLAY)
 #define NUM_DEVS_TV     (WAITS * USE_DISPLAY)
+#define NUM_DEVS_DD     (WAITS * USE_DISPLAY)
 #define NUM_DEVS_PD     ITS
 #define NUM_DEVS_PCLK   WAITS
 #define NUM_DEVS_IMX    ITS
@@ -780,18 +808,19 @@ extern void ka10_lights_clear_aux (int);
 #define NUM_DEVS_MTY    ITS
 #define NUM_DEVS_TEN11  ITS
 #define NUM_DEVS_AUXCPU ITS
-#define NUM_DEVS_IMP    ITS
 #define NUM_DEVS_CH10   ITS
 #define NUM_DEVS_DPK    ITS
 #define NUM_DEVS_AI     ITS
 #endif
 #if KL_ITS
 #define NUM_DEVS_PD     KL_ITS
-#define NUM_DEVS_IMP    KL_ITS
 #define NUM_DEVS_CH10   KL_ITS
 #endif
 #if MAGIC_SWITCH && !KA && !ITS
 #error "Magic switch only valid on KA10 with ITS mods"
+#endif
+#if KI
+#define NUM_DEVS_TYM    1
 #endif
 
 /* Global data */
@@ -822,6 +851,17 @@ extern UNIT     auxcpu_unit[];
 //int slave_read (t_addr addr);
 //int slave_write (t_addr addr, uint64);
 //extern UNIT     slave_unit[];
+#endif
+#if NUM_DEVS_III
+extern uint32 iii_keyboard_line (void *);
+#endif
+#if NUM_DEVS_DD
+extern uint32 dd_keyboard_line (void *);
+#endif
+
+#if PIDP10
+t_stat pi_panel_start();
+void pi_panel_stop();
 #endif
 
 #endif

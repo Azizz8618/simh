@@ -1,6 +1,6 @@
 /* sigma_io.c: XDS Sigma IO simulator
 
-   Copyright (c) 2007-2017, Robert M Supnik
+   Copyright (c) 2007-2024, Robert M Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -23,6 +23,14 @@
    used in advertising or otherwise to promote the sale, use or other dealings
    in this Software without prior written authorization from Robert M Supnik.
 
+   19-Mar-2024  RMS     Added chaining modifier flag (Ken Rector)
+   11-Feb-2024  RMS     Fixed false dispatch bug (Ken Rector)
+   04-May-2023  RMS     Fixed location 21 usage in even register case (Ken Rector)
+   15-Dec-2022  RMS     Moved SIO interrupt test to devices
+   23-Jul-2022  RMS     Made chan_ctl_time accessible as a register
+   21-Jul-2022  RMS     Added numeric channel numbers to SET/SHOW
+   07-Jul-2022  RMS     Fixed dangling else in read/write direct (Ken Rector)
+   05-Mar-2020  RMS     Fixed s5x0_ireg size declaration (Mark Pizzolato)
    09-Mar-2017  RMS     Fixed unspecified return value in HIO (COVERITY)
 */
 
@@ -38,7 +46,7 @@ uint32 ei_bmax = EIGRP_DFLT;                            /* ext int grps */
 uint32 s9_snap = 0;
 uint32 s9_marg = 0;
 uint32 chan_num = CHAN_DFLT;                            /* num chan */
-uint32 s5x0_ireg[] = { 0 };
+uint32 s5x0_ireg[32] = { 0 };
 uint16 int_arm[INTG_MAX];                               /* int grps: arm */
 uint16 int_enb[INTG_MAX];                               /* enable */
 uint16 int_req[INTG_MAX];                               /* request */
@@ -174,6 +182,7 @@ REG chana_reg[] = {
     { BRDATA (CHF, chan[0].chf, 16, 16, CHAN_N_DEV) },
     { BRDATA (CHI, chan[0].chi, 16, 8, CHAN_N_DEV) },
     { BRDATA (CHSF, chan[0].chsf, 16, 8, CHAN_N_DEV) },
+    { DRDATA (CTIME, chan_ctl_time, 4), REG_NZ+REG_HIDDEN+PV_LEFT },
     { NULL }
     };
 
@@ -348,11 +357,6 @@ if (!io_init_inst (rn, ad, ch, dev, R[0])) {            /* valid inst? */
     CC |= CC1|CC2;
     return 0;
     }
-if (chan[ch].chf[dev] & CHF_INP) {                      /* int pending? */
-    chan[ch].disp[dev] (OP_TIO, ad, &dvst);             /* get status */
-    CC |= (CC2 | io_set_status (rn, ch, dev, dvst, 0)); /* set status */
-    return 0;
-    }
 st = chan[ch].disp[dev] (OP_SIO, ad, &dvst);            /* start I/O */
 CC |= io_set_status (rn, ch, dev, dvst, 0);             /* set status */
 if (CC & cpu_tab[cpu_model].iocc)                       /* error? */
@@ -360,6 +364,7 @@ if (CC & cpu_tab[cpu_model].iocc)                       /* error? */
 chan[ch].chf[dev] = 0;                                  /* clear flags */
 chan[ch].chi[dev] = 0;                                  /* clear intrs */
 chan[ch].chsf[dev] |= CHSF_ACT;                         /* set chan active */
+chan[ch].chsf[dev] &= ~CHSF_CM;                         /* clear chain mod */
 chan_new_cmd (ch, dev, R[0]);                           /* new command */
 return st;
 }
@@ -473,14 +478,27 @@ CC |= CC1|CC2;                                          /* no recognition */
 return 0;
 }
 
-/* Initiate I/O instruction */
+/* Initiate I/O instruction
+
+   False dispatch problem. Although device numbers are not permitted to overlap,
+   there is nothing to stop programs from issuing IO instructions to a multi-
+   unit device address using its single-unit counterpart, or vice-versa.
+   For example, an IO address of 0x00 will map to the dispatch used for
+   0x80, and vice versa. This routine must detect that the device
+   address actually agrees with the type of device in that dispatch slot.
+*/
 
 t_bool io_init_inst (uint32 rn, uint32 ad, uint32 ch, uint32 dev, uint32 r0)
 {
 uint32 loc20;
+t_bool ch_mu, dva_mu;
 
-if (ch >= chan_num)                                     /* bad chan? */
+if ((dev >= CHAN_N_DEV) || (ch >= chan_num))            /* bad dev or chan? */
     return FALSE;
+ch_mu = (chan[ch].chsf[dev] & CHSF_MU) != 0;            /* does chan think MU? */
+dva_mu = (ad & DVA_MU) != 0;                            /* is dva MU? */
+if (ch_mu != dva_mu)                                    /* not the same? */
+    return FALSE;                                       /* dev not there */
 loc20 = ((ad & 0xFF) << 24) |                           /* <0:7> = dev ad */
     ((rn & 1) | (rn? 3: 0) << 22) |                     /* <8:9> = reg ind */
     (r0 & (cpu_tab[cpu_model].pamask >> 1));            /* <14/16:31> = r0 */
@@ -493,17 +511,17 @@ return (chan[ch].disp[dev] != NULL)? TRUE: FALSE;
 uint32 io_set_status (uint32 rn, uint32 ch, uint32 dev, uint32 dvst, t_bool tdv)
 {
 uint32 mrgst;
-uint32 odd = rn & 1;
 
 if ((rn != 0) && !(dvst & DVT_NOST)) {                  /* return status? */
     if (tdv)
         mrgst = (DVT_GETDVS (dvst) << 8) | (chan[ch].chf[dev] & 0xFF);
     else mrgst = ((DVT_GETDVS(dvst) << 8) & ~CHF_ALL) | (chan[ch].chf[dev] & CHF_ALL);
-    R[rn] = chan[ch].clc[dev];                          /* even reg */
-    if (!odd)                                           /* even pair? */
-        WritePW (0x20, R[rn]);                          /* write to 20 */
+    if ((rn & 1) == 0) {                                /* even reg? */
+        R[rn] = chan[ch].clc[dev];                      /* current addr to R */
+        WritePW (0x20, R[rn]);                          /* and loc 20 */
+        }
     R[rn|1] = (mrgst << 16) | chan[ch].bc[dev];         /* odd reg */
-    WritePW (0x20 + odd, R[rn|1]);                      /* write to 20/21 */
+    WritePW (0x21, R[rn|1]);                            /* write loc 21 */
     }
 return DVT_GETCC (dvst);
 }
@@ -528,16 +546,18 @@ return 0;
 uint32 chan_end (uint32 dva)
 {
 uint32 ch, dev;
-uint32 st;
+uint32 st, cm;
 
 if ((st = chan_proc_prolog (dva, &ch, &dev)) != 0)      /* valid, active? */
     return st;
 if (chan[ch].cmf[dev] & CMF_ICE)                        /* int on chan end? */
     chan_set_chi (dva, CHI_END);
+cm = chan[ch].chsf[dev] & CHSF_CM ? 1 : 0;              /* get modifier flag, */
+chan[ch].chsf[dev] &= ~CHSF_CM;                         /* then clear it */
 if ((chan[ch].cmf[dev] & CMF_CCH) &&                    /* command chain? */
-    !chan_new_cmd (ch, dev, chan[ch].clc[dev] + 1))     /* next command? */
+    !chan_new_cmd (ch, dev, chan[ch].clc[dev] + 1 + cm)) /* next command? */
     return CHS_CCH;
-else chan[ch].chsf[dev] &= ~CHSF_ACT;                   /* channel inactive */
+else chan[ch].chsf[dev] &= ~(CHSF_ACT|CHSF_CM);         /* channel inactive */
 return 0;
 }
 
@@ -595,7 +615,7 @@ if (!VALID_DVA (ch, dev))                               /* valid? */
 if (chan[ch].cmf[dev] & CMF_IUE)                        /* int on uend? */
     chan_set_chi (dva, CHI_UEN);
 chan[ch].chf[dev] |= CHF_UEN;                           /* flag uend */
-chan[ch].chsf[dev] &= ~CHSF_ACT;
+chan[ch].chsf[dev] &= ~(CHSF_ACT|CHSF_CM);
 return CHS_INACTV;                                      /* done */
 }
 
@@ -744,7 +764,7 @@ for (i = 0; i < 2; i++) {                               /* max twice */
     chan[ch].clc[dev] = clc;                            /* and save */
     if (ReadPW (clc << 1, &ccw1)) {                     /* get ccw1, nxm? */
         chan[ch].chf[dev] |= CHF_IOME;                  /* memory error */
-        chan[ch].chsf[dev] &= ~CHSF_ACT;                /* stop channel */
+        chan[ch].chsf[dev] &= ~(CHSF_ACT|CHSF_CM);      /* stop channel */
         return CHS_INACTV;
         }
     ReadPW ((clc << 1) + 1, &ccw2);                     /* get ccw2 */
@@ -760,7 +780,7 @@ for (i = 0; i < 2; i++) {                               /* max twice */
         }
     }
 chan[ch].chf[dev] |= CHF_IOCE;                          /* control error */
-chan[ch].chsf[dev] &= ~CHSF_ACT;                        /* stop channel */
+chan[ch].chsf[dev] &= ~(CHSF_ACT|CHSF_CM);              /* stop channel */
 return CHS_INACTV;
 }
 
@@ -801,7 +821,7 @@ if (chan[ch].chi[dev] & CHI_CTL)                        /* ctl int pending? */
 else return -1;
 }
 
-/* Set device interrupt */
+/* Set, check device interrupt */
 
 void chan_set_dvi (uint32 dva)
 {
@@ -810,6 +830,30 @@ uint32 dev = DVA_GETDEV (dva);
 
 chan[ch].chf[dev] |= CHF_INP;                           /* int pending */
 return;
+}
+
+t_bool chan_chk_dvi (uint32 dva)
+{
+uint32 ch = DVA_GETCHAN (dva);                          /* get ch, dev */
+uint32 dev = DVA_GETDEV (dva);
+
+if ((chan[ch].chf[dev] & CHF_INP) != 0)
+    return TRUE;
+return FALSE;
+}
+
+/* Channel set Chaining Modifier flag */
+
+uint32 chan_set_cm (uint32 dva)
+{
+uint32 ch, dev;
+
+ch = DVA_GETCHAN (dva);                                 /* get chan, dev */
+dev = DVA_GETDEV (dva);
+if (!VALID_DVA (ch, dev))                               /* valid? */
+    return SCPE_IERR;
+chan[ch].chsf[dev] |= CHSF_CM;
+return 0;
 }
 
 /* Called by device reset to reset channel registers */
@@ -823,7 +867,7 @@ dev = DVA_GETDEV (dva);
 if (!VALID_DVA (ch, dev))                               /* valid? */
     return SCPE_IERR;
 chan[ch].chf[dev] &= ~CHF_INP;                          /* clear intr */
-chan[ch].chsf[dev] &= ~CHSF_ACT;                        /* clear active */
+chan[ch].chsf[dev] &= ~(CHSF_ACT|CHSF_CM);              /* clear active */
 return SCPE_OK;
 }
 
@@ -1108,13 +1152,15 @@ uint32 i, beg, end, mask, sc;
 uint32 grp = DIO_GET1GRP (ad);
 uint32 fnc = DIO_GET1FNC (ad);
 
+if (grp == 1)                                           /* group 1? */
+    return 0;                                           /* not there */
 if (grp == 0) {                                         /* overrides? */
     beg = INTG_OVR;
     end = INTG_IO;
     }
-else if (grp == 1)                                      /* group 1? */
-    return 0;                                           /* not there */
-else beg = end = grp + 1;
+else {                                                  /* all others */
+    beg = end = grp + 1;
+    }
 
 if (op == OP_RD) {                                      /* read direct? */
     if (!QCPU_S89_5X0)                                  /* S89, 5X0 only */
@@ -1217,7 +1263,7 @@ for (i = 0; i < CHAN_N_DEV; i++) {
     chan[ch].bc[i] = 0;
     chan[ch].chf[i] = 0;
     chan[ch].chi[i] = 0;
-    chan[ch].chsf[i] &= ~CHSF_ACT;
+    chan[ch].chsf[i] &= ~(CHSF_ACT|CHSF_CM);
     for (j = 0; (devp = sim_devices[j]) != NULL; j++) { /* loop thru dev */
         if (devp->ctxt != NULL) {
             dib_t *dibp = (dib_t *) devp->ctxt;
@@ -1391,15 +1437,19 @@ t_stat io_set_dvc (UNIT* uptr, int32 val, CONST char *cptr, void *desc)
 int32 num;
 DEVICE *dptr;
 dib_t *dibp;
+t_stat r;
 
 if (((dptr = find_dev_from_unit (uptr)) == NULL) ||
     ((dibp = (dib_t *) dptr->ctxt) == NULL))
     return SCPE_IERR;
-if ((cptr == NULL) || (*cptr == 0) || (*(cptr + 1) != 0))
+if ((cptr == NULL) || (*cptr == 0))
     return SCPE_ARG;
-num = *cptr - 'A';
-if ((num < 0) || (num >= (int32) chan_num))
+num = (int32) get_uint (cptr, 10, cpu_tab[cpu_model].chan_max, &r);
+if (r != SCPE_OK) {
+    num = *cptr - 'A';
+    if ((num < 0) || (num >= (int32) cpu_tab[cpu_model].chan_max))
     return SCPE_ARG;
+    }
 dibp->dva = (dibp->dva & ~DVA_CHAN) | (num << DVA_V_CHAN);
 return SCPE_OK;
 }
@@ -1408,11 +1458,13 @@ t_stat io_show_dvc (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
 {
 DEVICE *dptr;
 dib_t *dibp;
+uint32 dvc;
 
 if (((dptr = find_dev_from_unit (uptr)) == NULL) ||
     ((dibp = (dib_t *) dptr->ctxt) == NULL))
     return SCPE_IERR;
-fprintf (st, "channel=%c", DVA_GETCHAN (dibp->dva) + 'A');
+dvc = DVA_GETCHAN (dibp->dva);
+fprintf (st, "channel=%d (%c)", dvc, (dvc + 'A'));
 return SCPE_OK;
 }
 

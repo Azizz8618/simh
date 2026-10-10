@@ -78,7 +78,9 @@
 #define IOT_V_REASON    13                              /* reason */
 #define IOT_SKP         (1 << IOT_V_SKP)
 #define IOT_REASON      (1 << IOT_V_REASON)
-#define IORETURN(f,v)   ((f)? (v): SCPE_OK)             /* stop on error */
+#define IORETURN(f,v)   ((f)? (v):                      /* stop on error */ \
+                              (((v) != STOP_DTOFF) ? SCPE_OK :              \
+                                                   sim_messagef ((v), "*** DECtape has gone off reel - listen for the flapping tape\r\n"), SCPE_OK))             /* stop on error */
 
 /* Timers */
 
@@ -107,6 +109,7 @@ typedef struct {
 #define DEV_PTP         002                             /* paper tape punch */
 #define DEV_TTI         003                             /* console input */
 #define DEV_TTO         004                             /* console output */
+#define DEV_DPY         005                             /* Type 34 display */
 #define DEV_CLK         013                             /* clock */
 #define DEV_TSC         036
 #define DEV_KJ8         040                             /* extra terminals */

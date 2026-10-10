@@ -522,10 +522,6 @@ t_stat rh_devio(uint32 dev, uint64 *data) {
 
          case DATAI:
               *data = 0;
-              if (rhc->status & BUSY && rhc->reg != 04) {
-                  rhc->status |= CC_CHAN_ACT;
-                  return SCPE_OK;
-              }
               if (rhc->reg < 040) {
                   int parity;
                   if (rhc->dev_read(dptr, rhc, rhc->reg, &drdat))
@@ -652,8 +648,10 @@ t_stat rh_devio(uint32 dev, uint64 *data) {
             rhc->status &= ~(CXR_ILFC|CXR_SD_RAE);
          if (*data & DRE_CLR)
             rhc->status &= ~(CR_DRE);
-         if (*data & WRT_CW)
+         if (*data & WRT_CW) {
             rh_writecw(rhc, 0);
+            rhc->status |= (CCW_COMP_1);
+         }
          if (*data & PI_ENABLE)
             rhc->status &= ~PI_ENABLE;
          if (rhc->status & PI_ENABLE)
@@ -666,10 +664,6 @@ t_stat rh_devio(uint32 dev, uint64 *data) {
 
      case DATAI:
         *data = 0;
-        if (rhc->status & BUSY && rhc->reg != 04) {
-            rhc->status |= CC_CHAN_ACT;
-            return SCPE_OK;
-        }
         if (rhc->reg == 040) {
               if (rhc->dev_read(dptr, rhc, 0, &drdat))
                   rhc->status |= CR_DRE;
@@ -914,7 +908,6 @@ void rh_writecw(struct rh_if *rhc, int nxm) {
 #endif
      if (nxm)
         rhc->status |= CXR_NXM;
-     rhc->status |= CCW_COMP_1;
      if (rhc->wcr != 0)
          rhc->cda++;
      wrd1 = ((uint64)(rhc->ccw & WMASK) << CSHIFT) | ((uint64)(rhc->cda) & AMASK);

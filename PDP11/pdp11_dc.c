@@ -45,7 +45,6 @@
 #else                                                   /* PDP-11 version */
 #include "pdp11_defs.h"
 #endif
-#include "sim_sock.h"
 #include "sim_tmxr.h"
 
 #define DCX_MAXMUX      (dcx_desc.lines - 1)
@@ -157,7 +156,7 @@ DIB dci_dib = {
     2, IVCL (DCI), VEC_AUTO, { &dci_iack, &dco_iack }, IOLN_DC,
     };
 
-UNIT dci_unit = { UDATA (&dci_svc, 0, 0), TMLN_SPD_9600_BPS };
+UNIT dci_unit = { UDATA (&dci_svc, UNIT_IDLE, 0), TMLN_SPD_9600_BPS };
 
 REG dci_reg[] = {
     { BRDATAD (BUF,          dci_buf, DEV_RDX, 8, DCX_LINES,  "input control/stats register") },
@@ -528,6 +527,10 @@ t_stat dcx_reset (DEVICE *dptr)
 {
 int32 ln;
 
+for (ln = 0; ln < dcx_desc.lines; ln++) {
+    tmxr_set_line_output_unit (&dcx_desc, ln, &dco_unit[ln]);
+    tmxr_set_line_speed (&dcx_desc.ldsc[ln], "9600");
+    }
 dcx_enbdis (dptr->flags & DEV_DIS);                     /* sync enables */
 sim_cancel (&dci_unit);                                 /* assume stop */
 if (dci_unit.flags & UNIT_ATT)                          /* if attached, */
@@ -556,7 +559,6 @@ return;
 t_stat dcx_attach (UNIT *uptr, CONST char *cptr)
 {
 t_stat r;
-
 r = tmxr_attach (&dcx_desc, uptr, cptr);                /* attach */
 if (r != SCPE_OK)                                       /* error? */
     return r;

@@ -1,6 +1,6 @@
 /*  altairz80_hdsk.c: simulated hard disk device to increase capacity
 
-    Copyright (c) 2002-2014, Peter Schorn
+    Copyright (c) 2002-2023, Peter Schorn
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the "Software"),
@@ -26,7 +26,7 @@
     Contains code from Howard M. Harte for defining and changing disk geometry.
 */
 
-#include "m68k.h"
+#include "m68k/m68k.h"
 #include "sim_imd.h"
 
 /* Debug flags */
@@ -308,13 +308,13 @@ static DPB dpb[] = {
         0xC0,   0x00,   0x0000, 0x0003, 0x02,   0x03,   0,      0,  NULL },             /* Osborne1 5.25" SS DD         */
 
     { "NSSS1",  179200,         40,     0x03,   0x07,   0x00,   0xA4,   0x003F,
-        0xC0,   0x00,   0x0010, 0x0002, 0x02,   0x03,   0,      0,  NULL },             /* Northstar SSDD Format 1      */
+        0xC0,   0x00,   0x0010, 0x0002, 0x02,   0x03,   0,      0,  NULL },             /* NorthStar SSDD Format 1      */
 
     { "NSSS2",  179200,         40,     0x04,   0x0F,   0x01,   0x51,   0x003F,
-        0x80,   0x00,   0x0010, 0x0002, 0x02,   0x03,   0,      0,  NULL },             /* Northstar SSDD Format 2      */
+        0x80,   0x00,   0x0010, 0x0002, 0x02,   0x03,   0,      0,  NULL },             /* NorthStar SSDD Format 2      */
 
     { "NSDS2",  358400,         40,     0x04,   0x0F,   0x01,   0xA9,   0x003F,
-        0x80,   0x00,   0x0010, 0x0002, 0x02,   0x03,   0,      0,  NULL },             /* Northstar DSDD Format 2      */
+        0x80,   0x00,   0x0010, 0x0002, 0x02,   0x03,   0,      0,  NULL },             /* NorthStar DSDD Format 2      */
 
     { "VGSS",   315392,         32,     0x04,   0x0F,   0x00,   149,    0x007F,
         0xC0,   0x00,   0x0020, 0x0002, 0x02,   0x03,   0,      0,  NULL },             /* Vector SS SD                 */
@@ -324,6 +324,9 @@ static DPB dpb[] = {
 
     { "DISK1A", 630784,         64,     0x04,   0x0F,   0x00,   299,    0x007F,
         0xC0,   0x00,   0x0020, 0x0002, 0x02,   0x03,   0,      0,  NULL },             /* CompuPro Disk1A 8" SS SD     */
+
+    { "HDCPM",  8519680,        0x0400, 0x06,   0x3F,   0x03,   0x03FF, 0x03FF,         /* Hard disk for Amstrad        */
+        0xF0,   0x00,   0x0000, 0x0001, 0x02,   0x03,   0,      0,  NULL },             /* CPC 6128 with ULIfAC board   */
 
     { "SSSD8",  256256,         SPT26,  0x03,   0x07,   0x00,   242,    0x003F,
         0xC0,   0x00,   0x0000, 0x0002, 0x00,   0x00,   0,      0,  NULL },             /* Standard 8" SS SD            */
@@ -419,7 +422,7 @@ static DISK_INFO* hdsk_imd[HDSK_NUMBER];
 static REG hdsk_reg[] = {
     { DRDATAD (HDCMD,   hdskLastCommand,        32, "Last command"),
         REG_RO  },
-    { DRDATAD (HDPOS,   hdskCommandPosition,    32, "Commmand position"),
+    { DRDATAD (HDPOS,   hdskCommandPosition,    32, "Command position"),
         REG_RO  },
     { DRDATAD (HDDSK,   selectedDisk,           32, "Selected disk"),
         REG_RO  },
@@ -605,7 +608,7 @@ static t_stat hdsk_attach(UNIT *uptr, CONST char *cptr) {
     }
     ASSURE((uptr -> HDSK_SECTORS_PER_TRACK) && (uptr -> HDSK_SECTOR_SIZE) && (uptr -> HDSK_FORMAT_TYPE >= 0));
 
-    /* Step 4: Number of tracks is smallest number to accomodate capacity                               */
+    /* Step 4: Number of tracks is smallest number to accommodate capacity                                */
     uptr -> HDSK_NUMBER_OF_TRACKS = (uptr -> capac + uptr -> HDSK_SECTORS_PER_TRACK *
                                      uptr -> HDSK_SECTOR_SIZE - 1) / (uptr -> HDSK_SECTORS_PER_TRACK * uptr -> HDSK_SECTOR_SIZE);
     ASSURE( ( (t_addr) ((uptr -> HDSK_NUMBER_OF_TRACKS - 1) * uptr -> HDSK_SECTORS_PER_TRACK *
@@ -692,6 +695,9 @@ static t_stat set_format(UNIT *uptr, int32 val, CONST char *cptr, void *desc) {
         sim_printf("Cannot set format for not attached unit %i.\n", find_unit_index(uptr));
         return SCPE_ARG;
     }
+
+    fmtname[DPB_NAME_LENGTH] = '\0';
+
     for (i = 0; dpb[i].capac != 0; i++) {
         if (strncmp(fmtname, dpb[i].name, strlen(fmtname)) == 0) {
             uptr -> HDSK_FORMAT_TYPE = i;

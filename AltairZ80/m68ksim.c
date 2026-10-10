@@ -1,6 +1,6 @@
 /*  m68kcpmsim.c: CP/M for Motorola 68000 definitions
 
- Copyright (c) 2014, Peter Schorn
+ Copyright (c) 2014 - 2023, Peter Schorn
 
  Permission is hereby granted, free of charge, to any person obtaining a
  copy of this software and associated documentation files (the "Software"),
@@ -48,7 +48,7 @@
  sector number to the sector register. This write triggers the requested
  operation. The status of the operation can be determined by reading the
  status register.
- A zero indicates that no error occured.
+ A zero indicates that no error occurred.
 
  Note that these operations invoke read() and write() system calls directly
  so that they will alter the image on the hard disk. KEEP BACKUPS!
@@ -77,7 +77,7 @@
 
  */
 
-#include "m68k.h"
+#include "m68k/m68k.h"
 
 /* Read/write macros */
 #define READ_BYTE(BASE, ADDR) (BASE)[ADDR]
@@ -98,7 +98,7 @@
 
 /* Memory-mapped IO ports */
 
-/* 6850 serial port like thing. Implements a reduced set of functionallity. */
+/* 6850 serial port like thing. Implements a reduced set of functionality. */
 #define MC6850_STAT     0xff1000L   // command/status register
 #define MC6850_DATA     0xff1002L   // receive/transmit data register
 
@@ -121,6 +121,7 @@
 #define IRQ_MC6850      5
 
 extern uint32 PCX;
+extern uint32 SIMHSleep;
 
 /* Prototypes */
 static void MC6850_reset(void);
@@ -153,10 +154,17 @@ extern int32 hdsk_read(void);
 extern int32 hdsk_write(void);
 extern int32 hdsk_flush(void);
 
+/* Interface to SIMH I/O devices */
+extern void out(const uint32 Port, const uint32 Value);
+extern uint32 in(const uint32 Port);
+
 static uint32 m68k_fc;                              /* Current function code from CPU */
 
 extern uint32 m68k_registers[M68K_REG_CPU_TYPE + 1];
 extern UNIT cpu_unit;
+extern uint32 mmiobase;                             /* M68K MMIO base address            */
+extern uint32 mmiosize;                             /* M68K MMIO window size             */
+extern uint32 m68kvariant;                          /* M68K variant (68000, 68010, etc.) */
 
 #define M68K_BOOT_LENGTH        (32 * 1024)                 /* size of bootstrap    */
 #define M68K_BOOT_PC            0x000400                    /* initial PC for boot  */
@@ -242,8 +250,16 @@ void m68k_clear_memory(void ) {
 }
 
 void m68k_cpu_reset(void) {
+
     WRITE_LONG(m68k_ram, 0, 0x00006000);    // SP
     WRITE_LONG(m68k_ram, 4, 0x00000200);    // PC
+    m68k_init();
+
+    if ((m68kvariant == M68K_CPU_TYPE_INVALID) || (m68kvariant > M68K_CPU_TYPE_SCC68070)) {
+        sim_printf("M68K variant %u not supported, using 68000\n", m68kvariant);
+        m68kvariant = M68K_CPU_TYPE_68000;
+    }
+    m68k_set_cpu_type(m68kvariant);
     m68k_pulse_reset(); // also calls MC6850_reset()
     m68k_CPUToView();
 }
@@ -266,7 +282,6 @@ static void MC6850_reset(void) {
 }
 
 #define INITIAL_IDLE    100
-#define IDLE_SLEEP      20
 static uint32 idleCount = INITIAL_IDLE;
 
 static void m68k_input_device_update(void) {
@@ -279,8 +294,8 @@ static void m68k_input_device_update(void) {
     } else if (--idleCount == 0) {
         const t_stat ch = sim_poll_kbd();
         idleCount = INITIAL_IDLE;
-        if (IDLE_SLEEP)
-            sim_os_ms_sleep(IDLE_SLEEP);
+        if (SIMHSleep)
+            sim_os_ms_sleep(SIMHSleep);
         if (ch) {
             characterAvailable = TRUE;
             keyboardCharacter = ch;
@@ -292,15 +307,16 @@ static void m68k_input_device_update(void) {
 static uint32 MC6850_data_read(void) {
     t_stat ch;
     int_controller_clear(IRQ_MC6850);
-    m68k_MC6850_status &= ~0x81;          // clear data ready and interrupt flag
+    m68k_MC6850_status &= ~0x81;        // clear data ready and interrupt flag
     if (characterAvailable) {
         ch = keyboardCharacter;
         characterAvailable = FALSE;
     } else
         ch = sim_poll_kbd();
     while ((ch <= 0) && (!stop_cpu)) {
-        if (IDLE_SLEEP)
-            sim_os_ms_sleep(IDLE_SLEEP);
+        sim_interval -= KBD_POLL_WAIT;  // ensure progress
+        if (SIMHSleep)
+            sim_os_ms_sleep(SIMHSleep);
         ch = sim_poll_kbd();
     }
     if (ch == SCPE_STOP)
@@ -308,7 +324,7 @@ static uint32 MC6850_data_read(void) {
     return (((ch > 0) && (!stop_cpu)) ? ch & 0xff : 0xff);
 }
 
-static int MC6850_status_read() {
+static int MC6850_status_read(void) {
     return m68k_MC6850_status;
 }
 
@@ -319,7 +335,7 @@ static int MC6850_device_ack(void) {
 
 static void MC6850_data_write(uint32 value) {
     sim_putchar(value);
-    if ((m68k_MC6850_control & 0x60) == 0x20) { // transmit interupt enabled?
+    if ((m68k_MC6850_control & 0x60) == 0x20) { // transmit interrupt enabled?
         int_controller_clear(IRQ_MC6850);
         int_controller_set(IRQ_MC6850);
     }
@@ -347,6 +363,10 @@ unsigned int m68k_cpu_read_byte(unsigned int address) {
         case MC6850_STAT:
             return MC6850_status_read();
         default:
+            if ((address >= mmiobase) && (address < mmiobase + mmiosize)) {
+                /* Memory-mapped I/O */
+                return (in(address & 0xff) & 0xff);
+            }
             break;
     }
     if (address > M68K_MAX_RAM) {
@@ -413,6 +433,10 @@ void m68k_cpu_write_byte(unsigned int address, unsigned int value) {
             MC6850_control_write(value & 0xff);
             return;
         default:
+            if ((address >= mmiobase) && (address < mmiobase + mmiosize)) {
+                /* Memory-mapped I/O */
+                out(address & 0xff, value & 0xff);
+            }
             break;
     }
     if (address > M68K_MAX_RAM) {

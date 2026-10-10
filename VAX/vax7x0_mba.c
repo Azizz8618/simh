@@ -23,7 +23,7 @@
    used in advertising or otherwise to promote the sale, use or other dealings
    in this Software without prior written authorization from Robert M Supnik.
 
-   mba0, mba1           RH780 Massbus adapter
+   mba0, mba1, mba2           RH780 Massbus adapter
 
    28-May-08    RMS     Inlined physical memory routines
 */
@@ -269,7 +269,7 @@ static t_stat (*mbregR[MBA_NUM])(int32 *dat, int32 ad, int32 md);
 static t_stat (*mbregW[MBA_NUM])(int32 dat, int32 ad, int32 md);
 static int32 (*mbabort[MBA_NUM])(void);
 
-static int32 mba_active = 0;    /* Number of active MBA's */
+static uint32 mba_active = 0;   /* Number of active MBA's */
 
 /* Massbus adapter data structures
 
@@ -324,6 +324,31 @@ REG mba1_reg[] = {
     { NULL }
     };
 
+#if MBA_NUM != 2
+DIB mba2_dib = { TR_MBA2, 0, &mba_rdreg, &mba_wrreg, 0, NVCL (MBA2) };
+
+UNIT mba2_unit = { UDATA (NULL, 0, 0) };
+
+MTAB mba2_mod[] = {
+    { MTAB_XTD|MTAB_VDV, TR_MBA2, "NEXUS", NULL,
+      NULL, &show_nexus, NULL, "Display nexus" },
+    { 0 }
+    };
+
+REG mba2_reg[] = {
+    { HRDATAD (CNFR,            mba_cnf[2],      32, "config register") },
+    { HRDATAD (CR,               mba_cr[2],       4, "control register") },
+    { HRDATAD (SR,               mba_sr[2],      32, "status register") },
+    { HRDATAD (VA,               mba_va[2],      17, "virtual address register") },
+    { HRDATAD (BC,               mba_bc[2],      16, "byte count register") },
+    { HRDATAD (DR,               mba_dr[2],      32, "diag register") },
+    { HRDATAD (SMR,              mba_dr[2],      32, "sel map register") },
+    { BRDATAD (MAP,             mba_map[2], 16, 32, MBA_NMAPR, "map registers") },
+    { FLDATAD (NEXINT, nexus_req[IPL_MBA2], TR_MBA2, "nexus interrupt request") },
+    { NULL }
+    };
+#endif
+
 DEBTAB mba_deb[] = {
     { "REGREAD", MBA_DEB_RRD },
     { "REGWRITE", MBA_DEB_RWR },
@@ -353,6 +378,17 @@ DEVICE mba_dev[] = {
     &mba1_dib, DEV_NEXUS | DEV_DEBUG, 0,
     mba_deb, NULL, NULL, &mba_help, NULL, NULL, 
     &mba_description
+#if MBA_NUM != 2
+    },
+    {
+    "MBA2", &mba2_unit, mba2_reg, mba2_mod,
+    1, 0, 0, 0, 0, 0,
+    NULL, NULL, &mba_reset,
+    NULL, NULL, NULL,
+    &mba2_dib, DEV_NEXUS | DEV_DEBUG, 0,
+    mba_deb, NULL, NULL, &mba_help, NULL, NULL, 
+    &mba_description
+#endif
     }
     };
 
@@ -360,8 +396,8 @@ DEVICE mba_dev[] = {
 
 t_stat mba_rdreg (int32 *val, int32 pa, int32 lnt)
 {
-int32 mb, ofs, drv, rtype;
-uint32 t;
+int32 ofs, drv, rtype;
+uint32 mb, t;
 t_stat r;
 
 mb = NEXUS_GETNEX (pa) - TR_MBA0;                       /* get MBA */
@@ -378,7 +414,7 @@ if ((pa & 3) || (lnt != L_LONG)) {                      /* unaligned or not lw? 
     return SCPE_OK;
     }
 #endif
-if (mb >= MBA_NUM)                                      /* valid? */
+if (mb >= mba_active)                                   /* valid? */
     return SCPE_NXM;
 rtype = MBA_RTYPE (pa);                                 /* get reg type */
 
@@ -459,8 +495,8 @@ return SCPE_OK;
 
 t_stat mba_wrreg (int32 val, int32 pa, int32 lnt)
 {
-int32 mb, ofs, drv, rtype;
-uint32 old_reg, old_sr;
+int32 ofs, drv, rtype;
+uint32 mb, old_reg, old_sr;
 t_stat r;
 t_bool cs1dt;
 
@@ -472,7 +508,7 @@ if ((pa & 3) || (lnt != L_LONG)) {                      /* unaligned or not lw? 
 #endif
     return SCPE_OK;
     }
-if (mb >= MBA_NUM)                                      /* valid? */
+if (mb >= mba_active)                                   /* valid? */
     return SCPE_NXM;
 rtype = MBA_RTYPE (pa);                                 /* get reg type */
 
@@ -598,7 +634,7 @@ int32 mba_rdbufW (uint32 mb, int32 bc, uint16 *buf)
 int32 i, j, ba, mbc, pbc;
 uint32 pa, dat;
 
-if (mb >= MBA_NUM)                                      /* valid MBA? */
+if (mb >= mba_active)                                   /* valid MBA? */
     return 0;
 ba = mba_va[mb];                                        /* get virt addr */
 mbc = (MBABC_WR + 1) - mba_bc[mb];                      /* get Mbus bc */
@@ -647,7 +683,7 @@ int32 mba_wrbufW (uint32 mb, int32 bc, const uint16 *buf)
 int32 i, j, ba, mbc, pbc;
 uint32 pa, dat;
 
-if (mb >= MBA_NUM)                                      /* valid MBA? */
+if (mb >= mba_active)                                   /* valid MBA? */
     return 0;
 ba = mba_va[mb];                                        /* get virt addr */
 mbc = (MBABC_WR + 1) - mba_bc[mb];                      /* get Mbus bc */
@@ -697,7 +733,7 @@ int32 mba_chbufW (uint32 mb, int32 bc, uint16 *buf)
 int32 i, j, ba, mbc, pbc;
 uint32 pa, dat, cmp;
 
-if (mb >= MBA_NUM)                                      /* valid MBA? */
+if (mb >= mba_active)                                   /* valid MBA? */
     return 0;
 ba = mba_va[mb];                                        /* get virt addr */
 mbc = (MBABC_WR + 1) - mba_bc[mb];                      /* get Mbus bc */
@@ -779,7 +815,7 @@ return;
 
 int32 mba_get_bc (uint32 mb)
 {
-if (mb >= MBA_NUM)
+if (mb >= mba_active)
     return 0;
 return (MBABC_WR + 1) - mba_bc[mb];
 }
@@ -788,7 +824,7 @@ void mba_set_int (uint32 mb)
 {
 DIB *dibp;
 
-if (mb >= MBA_NUM)
+if (mb >= mba_active)
     return;
 dibp = (DIB *) mba_dev[mb].ctxt;
 if (dibp) {
@@ -802,7 +838,7 @@ void mba_clr_int (uint32 mb)
 {
 DIB *dibp;
 
-if (mb >= MBA_NUM)
+if (mb >= mba_active)
     return;
 dibp = (DIB *) mba_dev[mb].ctxt;
 if (dibp) {
@@ -816,7 +852,7 @@ void mba_upd_sr (uint32 set, uint32 clr, uint32 mb)
 {
 uint32 o_sr;
 
-if (mb >= MBA_NUM)
+if (mb >= mba_active)
     return;
 o_sr = mba_sr[mb];
 if (set & MBASR_ABORTS)
@@ -862,14 +898,23 @@ return build_dib_tab();
 
 t_stat mba_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr)
 {
-fprintf (st, "Massbus Adapters (MBA0, MBA1)\n\n");
-fprintf (st, "The Massbus adapters (MBA0, MBA1) simulate RH780's.  RP disk drives get\n");
-fprintf (st, "assigned to MBA0 if it is enabled, and TU tape drives get assigned to\n");
-fprintf (st, "MBA1 if RP is enabled, and MBA0 otherwise.\n");
-fprint_set_help (st, dptr);
-fprint_show_help (st, dptr);
-fprint_reg_help (st, dptr);
-return SCPE_OK;
+const char *const text =
+/*567901234567890123456789012345678901234567890123456789012345678901234567890*/
+#if MBA_NUM == 3
+" Massbus Adapters (MBA0, MBA1, MBA2)\n\n"
+" The Massbus adapters (MBA0, MBA1, MBA2) simulate RH780's.  RP, RPB and TU\n"
+" get assigned to MBA0, MBA1 and MBA2 in that order if they are enabled.\n"
+#else
+" Massbus Adapters (MBA0, MBA1)\n\n"
+" The Massbus adapters (MBA0, MBA1) simulate RH780's.  RP disk drives get\n"
+" assigned to MBA0 if it is enabled, and TU tape drives get assigned to\n"
+" MBA1 if RP is enabled, and MBA0 otherwise.\n"
+#endif
+"1$Set commands\n"
+"1$Show commands\n"
+"1$Registers\n";
+
+return scp_help (st, dptr, uptr, flag, text, "");
 }
 
 const char *mba_description (DEVICE *dptr)
@@ -972,11 +1017,9 @@ if ((mbregR[idx] && dibp->rd &&                         /* conflict? */
     (mbregW[idx] && dibp->wr &&
     (mbregW[idx] != dibp->wr)) ||
     (mbabort[idx] && dibp->ack[0] &&
-    (mbabort[idx] != dibp->ack[0]))) {
-        sim_printf ("Massbus %s assignment conflict at %d\n",
-                    sim_dname (dptr), dibp->ba);
-        return SCPE_STOP;
-        }
+    (mbabort[idx] != dibp->ack[0])))
+    return sim_messagef (SCPE_STOP, "Massbus %s assignment conflict at %d\n",
+                                    sim_dname (dptr), dibp->ba);
 if (dibp->rd)                                           /* set rd dispatch */
     mbregR[idx] = dibp->rd;
 if (dibp->wr)                                           /* set wr dispatch */

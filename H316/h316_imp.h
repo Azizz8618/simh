@@ -90,14 +90,14 @@
 #define INT_V_HI2TX  (INT_V_EXTD+ 4)    // host 2 transmit interrupt
 
 // Host interface, line #3 ...
-#define HI3                     051     // device address for host interface #3
+#define HI3                     050     // device address for host interface #3
 #define HI3_RX_DMC        (DMC1-1+16)   // DMC channel for host 3 receive
 #define HI3_TX_DMC        (DMC1-1+15)   // DMC channel for host 3 transmit
 #define INT_V_HI3RX   (INT_V_EXTD+ 6)   // host 3 receive interrupt
 #define INT_V_HI3TX   (INT_V_EXTD+11)   // host 3 transmit interrupt
 
 // Host interface, line #4 ...
-#define HI4                     050     // device address for host interface #4
+#define HI4                     051     // device address for host interface #4
 #define HI4_RX_DMC       (DMC1-1+10)    // DMC channel for host 4 receive
 #define HI4_TX_DMC       (DMC1-1+ 5)    // DMC channel for host 4 transmit
 #define INT_V_HI4RX  (INT_V_EXTD+ 7)    // host 4 receive interrupt
@@ -176,9 +176,12 @@ struct _HIDB {
   uint16      rxdata[MAXDATA];  // UDP packet received.
   uint16      rxnext;           // Index to next word in UDP packet.
   uint16      rxsize;           // Size of UDP packet.
+  uint16      padding;          // Padding for long leaders.
+  t_bool      convert;          // Convert between 1822 short/long messages.
   // Transmitter (IMP -> HOST) data ...
   uint32      txdelay;          // RTC ticks until TX done interrupt
   uint32      txtotal;          // total host messages sent
+  t_bool      txfirst;          // First packet in a series
   // Other data ...
   t_bool      iloop;            // local loop back enabled
   t_bool      enabled;          // TRUE if the host is enabled

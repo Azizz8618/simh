@@ -106,7 +106,7 @@ REG xs_reg[] = {
     { GRDATA  ( RXNEXT, xs_var.rxnext,   DEV_RDX, 32, 0), REG_FIT },
     { BRDATA  ( RXHDR,  xs_var.rxhdr,    DEV_RDX, 16, 4), REG_HRO },
     { BRDATA  ( TXHDR,  xs_var.txhdr,    DEV_RDX, 16, 4), REG_HRO },
-    { FLDATAD ( INT,    int_req[IPL_XS1], INT_V_XS1, "interrupt pending flag") },
+    { FLDATAD ( INTREQ, int_req[IPL_XS1], INT_V_XS1, "interrupt pending flag") },
     { NULL }
     };
 
@@ -130,7 +130,7 @@ DEVICE xs_dev = {
     1, DEV_RDX, 20, 1, DEV_RDX, 8,
     NULL, NULL, &xs_reset,
     NULL, &xs_attach, &xs_detach,
-    &xs_dib, DEV_DEBUG | XS_FLAGS, 0,
+    &xs_dib, DEV_DEBUG | XS_FLAGS | DEV_ETHER, 0,
     xs_debug, NULL, NULL, &xs_help, NULL, NULL,
     &xs_description
     };

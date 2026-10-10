@@ -456,6 +456,8 @@ OP CODE 11 (Resened)
 
 #include "pdp11_td.h"
 
+#include "sim_disk.h"
+
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
 
 /* DL Definitions */
@@ -524,9 +526,6 @@ static const char *tdc_regnam[] =
 
 #define TD_NUMCTLR      16                              /* #controllers */
 
-#define TD_NUMBLK       512                             /* blocks/tape */
-#define TD_NUMBY        512                             /* bytes/block */
-#define TD_SIZE         (TD_NUMBLK * TD_NUMBY)          /* bytes/tape */
 
 #define TD_OPDAT        001                             /* Data */
 #define TD_OPCMD        002                             /* Command */
@@ -641,6 +640,7 @@ static t_stat td_reset (DEVICE *dptr);
 static t_stat td_set_ctrls (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat td_show_ctlrs (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 static t_stat td_boot (int32 unitno, DEVICE *dptr);
+static t_stat td_attach (UNIT *uptr, CONST char *cptr);
 static t_stat td_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
 static void tdi_set_int (int32 ctlr, t_bool val);
 static int32 tdi_iack (void);
@@ -667,7 +667,7 @@ static DIB td_dib = {
     2, IVCL (TDRX), VEC_AUTO, { &tdi_iack, &tdo_iack }, IOLN_DL,
     };
 
-static UNIT td_unit[2*TD_NUMCTLR];
+static UNIT td_unit[2*TD_NUMCTLR] = {{0}};
 
 static REG td_reg[] = {
     { DRDATAD (CTRLRS, td_ctrls,  4, "number of controllers"), REG_HRO },
@@ -715,10 +715,10 @@ DEVICE tdc_dev = {
     "TDC", td_unit, td_reg, td_mod,
     2*TD_NUMCTLR, DEV_RDX, 20, 1, DEV_RDX, 8,
     NULL, NULL, &td_reset,
-    &td_boot, NULL, NULL,
-    &td_dib, DEV_DISABLE | DEV_DIS | DEV_UBUS | DEV_QBUS | DEV_DEBUG, 0,
+    &td_boot, &td_attach, NULL,
+    &td_dib, DEV_DISABLE | DEV_DIS | DEV_UBUS | DEV_QBUS | DEV_DEBUG | DEV_DISK, 0,
     td_deb, NULL, NULL, &td_help, NULL, NULL,
-    &td_description
+    &td_description, NULL, &drv_tab
     };
 
 #define CSI_CLR_INT ctlr->rx_set_int (ctlr-td_ctlr, 0)
@@ -1346,6 +1346,7 @@ int ctl;
 static t_bool td_enabled_reset = FALSE;
 static t_bool td_regs_inited = FALSE;
 
+sim_debug (TDDEB_INT, dptr, "td_reset()\n");
 if (!td_regs_inited) {
     int regs;
     int reg;
@@ -1398,35 +1399,33 @@ else {
     if (!td_enabled_reset) {
         char num[16];
 
+        for (ctl=0; ctl<TD_NUMCTLR; ctl++) {
+            ctlr = &td_ctlr[ctl];
+            ctlr->dptr = &tdc_dev;
+            ctlr->uptr = td_unit + 2*ctl;
+            ctlr->rx_set_int = tdi_set_int;
+            ctlr->tx_set_int = tdo_set_int;
+            td_unit[2*ctl+0].action = &td_svc;
+            td_unit[2*ctl+0].flags = UNIT_FIX|UNIT_ATTABLE|UNIT_BUFABLE|UNIT_MUSTBUF|UNIT_DIS;
+            sim_disk_set_drive_type_by_name (&td_unit[2*ctl+0], "TU58");
+            td_unit[2*ctl+0].up7 = ctlr;
+            td_unit[2*ctl+1].action = &td_svc;
+            td_unit[2*ctl+1].flags = UNIT_FIX|UNIT_ATTABLE|UNIT_BUFABLE|UNIT_MUSTBUF|UNIT_DIS;
+            sim_disk_set_drive_type_by_name (&td_unit[2*ctl+1], "TU58");
+            td_unit[2*ctl+1].up7 = ctlr;
+            td_reset_ctlr (ctlr);
+            sim_cancel (&td_unit[2*ctl]);
+            sim_cancel (&td_unit[2*ctl+1]);
+            }
+        for (ctl=0; ctl<td_ctrls; ctl++) {
+            td_unit[2*ctl+0].flags &= ~UNIT_DIS;
+            td_unit[2*ctl+1].flags &= ~UNIT_DIS;
+            }
         td_enabled_reset = TRUE;
         /* make sure to bound the number of DLI devices */
         sprintf (num, "%d", td_ctrls);
         td_set_ctrls (dptr->units, 0, num, NULL);
         }
-    }
-
-sim_debug (TDDEB_INT, dptr, "td_reset()\n");
-for (ctl=0; ctl<TD_NUMCTLR; ctl++) {
-    ctlr = &td_ctlr[ctl];
-    ctlr->dptr = &tdc_dev;
-    ctlr->uptr = td_unit + 2*ctl;
-    ctlr->rx_set_int = tdi_set_int;
-    ctlr->tx_set_int = tdo_set_int;
-    td_unit[2*ctl+0].action = &td_svc;
-    td_unit[2*ctl+0].flags |= UNIT_FIX|UNIT_ATTABLE|UNIT_BUFABLE|UNIT_MUSTBUF|UNIT_DIS;
-    td_unit[2*ctl+0].capac = TD_SIZE;
-    td_unit[2*ctl+0].up7 = ctlr;
-    td_unit[2*ctl+1].action = &td_svc;
-    td_unit[2*ctl+1].flags |= UNIT_FIX|UNIT_ATTABLE|UNIT_BUFABLE|UNIT_MUSTBUF|UNIT_DIS;
-    td_unit[2*ctl+1].capac = TD_SIZE;
-    td_unit[2*ctl+1].up7 = ctlr;
-    td_reset_ctlr (ctlr);
-    sim_cancel (&td_unit[2*ctl]);
-    sim_cancel (&td_unit[2*ctl+1]);
-    }
-for (ctl=0; ctl<td_ctrls; ctl++) {
-    td_unit[2*ctl+0].flags &= ~UNIT_DIS;
-    td_unit[2*ctl+1].flags &= ~UNIT_DIS;
     }
 return auto_config (tdc_dev.name, td_ctrls);    /* auto config */
 }
@@ -1498,11 +1497,11 @@ uint32 i;
 CTLR *ctlr = &td_ctlr[TD_NUMCTLR];
 
 for (i=0; i<dptr->numunits; i++) {
-    dptr->units[i].capac = TD_SIZE;
     dptr->units[i].action = td_svc;
     dptr->units[i].flags |= UNIT_FIX|UNIT_ATTABLE|UNIT_BUFABLE|UNIT_MUSTBUF;
     dptr->units[i].up7 = (void *)ctlr;
     sim_cancel (&dptr->units[i]);
+    sim_disk_set_drive_type_by_name (&dptr->units[i], "TU58");
     }
 ctlr->dptr = dptr;
 ctlr->uptr = dptr->units;

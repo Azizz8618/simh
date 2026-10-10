@@ -3314,17 +3314,35 @@ control:
                         i = compare();
                         switch(field) {
                         case VARIANT(WMOP_GEQ):
-                                if ((i & 5) != 0) f = 1; break;
+                                if ((i & 5) != 0) {
+                                    f = 1;
+                                }
+                                break;
                         case VARIANT(WMOP_GTR):
-                                if (i == 4) f = 1; break;
+                                if (i == 4) {
+                                    f = 1;
+                                }
+                                break;
                         case VARIANT(WMOP_NEQ):
-                                if (i != 1) f = 1; break;
+                                if (i != 1) {
+                                    f = 1;
+                                }
+                                break;
                         case VARIANT(WMOP_LEQ):
-                                if ((i & 3) != 0) f = 1; break;
+                                if ((i & 3) != 0) {
+                                    f = 1;
+                                }
+                                break;
                         case VARIANT(WMOP_LSS):
-                                if (i == 2) f = 1; break;
+                                if (i == 2) {
+                                    f = 1;
+                                }
+                                break;
                         case VARIANT(WMOP_EQL):
-                                if (i == 1) f = 1; break;
+                                if (i == 1) {
+                                    f = 1;
+                                }
+                                break;
                         }
                         B = f;
                         AROF = 0;
@@ -3929,8 +3947,10 @@ cpu_set_hist(UNIT * uptr, int32 val, CONST char *cptr, void *desc)
         return SCPE_OK;
     }
     lnt = (int32) get_uint(cptr, 10, HIST_MAX, &r);
-    if ((r != SCPE_OK) || (lnt && (lnt < HIST_MIN)))
-        return SCPE_ARG;
+    if (r != SCPE_OK)
+        return sim_messagef (SCPE_ARG, "Invalid Numeric Value: %s.  Maximum is %d\n", cptr, HIST_MAX);
+    if (lnt && (lnt < HIST_MIN))
+        return sim_messagef (SCPE_ARG, "%d is less than the minumum history value of %d\n", lnt, HIST_MIN);
     hst_p = 0;
     if (hst_lnt) {
         free(hst);
@@ -3974,6 +3994,10 @@ cpu_show_hist(FILE * st, UNIT * uptr, int32 val, CONST void *desc)
                 "                       X     S     F     R      M  GH KV Flags"
                 "  Q Intruction     IAR\n\n");
     for (k = 0; k < lnt; k++) { /* print specified */
+        if (stop_cpu) {                 /* Control-C (SIGINT) */
+            stop_cpu = FALSE;
+            break;                      /* abandon remaining output */
+        }
         h = &hst[(++di) % hst_lnt];     /* entry pointer */
         if (h->c & HIST_PC) {   /* instruction? */
             int i;

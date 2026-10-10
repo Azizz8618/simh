@@ -98,12 +98,13 @@
 
 #define NEXUS_NUM       16                              /* number of nexus */
 #define MCTL_NUM        2                               /* number of mem ctrl */
-#define MBA_NUM         2                               /* number of MBA's */
+#define MBA_NUM         3                               /* number of MBA's */
 #define TR_MCTL0        1                               /* nexus assignments */
 #define TR_MCTL1        2
 #define TR_UBA          3
 #define TR_MBA0         8
 #define TR_MBA1         9
+#define TR_MBA2         10
 #define NEXUS_HLVL      (IPL_HMAX - IPL_HMIN + 1)
 #define SCB_NEXUS       0x100                           /* nexus intr base */
 #define SBI_FAULTS      0xFC000000                      /* SBI fault flags */
@@ -118,6 +119,7 @@
 #define IPL_UBA         (0x15 - IPL_HMIN)
 #define IPL_MBA0        (0x15 - IPL_HMIN)
 #define IPL_MBA1        (0x15 - IPL_HMIN)
+#define IPL_MBA2        (0x15 - IPL_HMIN)
 
 /* Nexus interrupt macros */
 
@@ -275,6 +277,7 @@ extern t_stat cpu_show_memory (FILE* st, UNIT* uptr, int32 val, CONST void* desc
 #define DEV_NEXUS       (1u << DEV_V_NEXUS)
 #define DEV_QBUS        (0)
 #define DEV_Q18         (0)
+#define DEV_NOAUTOCON   (0)
 
 #define UNIBUS          TRUE                            /* Unibus only */
 
@@ -342,6 +345,7 @@ typedef struct {
 #define INT_V_DUPTX     12
 #define INT_V_RK        13
 #define INT_V_CH        14
+#define INT_V_UW        15
 
 #define INT_V_LPT       0                               /* BR4 */
 #define INT_V_PTR       1
@@ -376,6 +380,7 @@ typedef struct {
 #define INT_TDRX        (1u << INT_V_TDRX)
 #define INT_TDTX        (1u << INT_V_TDTX)
 #define INT_CH          (1u << INT_V_CH)
+#define INT_UW          (1u << INT_V_UW)
 
 #define IPL_DTA         (0x16 - IPL_HMIN)
 #define IPL_CR          (0x16 - IPL_HMIN)
@@ -401,6 +406,7 @@ typedef struct {
 #define IPL_RK          (0x15 - IPL_HMIN)
 #define IPL_TDRX        (0x14 - IPL_HMIN)
 #define IPL_TDTX        (0x14 - IPL_HMIN)
+#define IPL_UW          (0x15 - IPL_HMIN)
 
 /* Device vectors */
 

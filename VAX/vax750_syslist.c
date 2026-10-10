@@ -55,6 +55,7 @@ extern DEVICE rl_dev;
 extern DEVICE hk_dev;
 extern DEVICE rk_dev;
 extern DEVICE rp_dev;
+extern DEVICE rpb_dev;
 extern DEVICE ry_dev;
 extern DEVICE ts_dev;
 extern DEVICE tq_dev;
@@ -63,7 +64,9 @@ extern DEVICE dz_dev;
 extern DEVICE vh_dev;
 extern DEVICE xu_dev, xub_dev;
 extern DEVICE dmc_dev;
+extern DEVICE dup_dev;
 extern DEVICE ch_dev;
+extern DEVICE uw_dev;
 
 DEVICE *sim_devices[] = { 
     &cpu_dev,
@@ -73,6 +76,7 @@ DEVICE *sim_devices[] = {
     &uba_dev,
     &mba_dev[0],
     &mba_dev[1],
+    &mba_dev[2],
     &clk_dev,
     &tmr_dev,
     &tti_dev,
@@ -85,6 +89,7 @@ DEVICE *sim_devices[] = {
     &cr_dev,
     &lpt_dev,
     &rp_dev,
+    &rpb_dev,
     &rl_dev,
     &hk_dev,
     &rk_dev,
@@ -99,7 +104,9 @@ DEVICE *sim_devices[] = {
     &xu_dev,
     &xub_dev,
     &dmc_dev,
+    &dup_dev,
     &ch_dev,
+    &uw_dev,
     NULL
     };
 

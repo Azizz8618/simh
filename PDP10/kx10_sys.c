@@ -177,6 +177,10 @@ DEVICE *sim_devices[] = {
 #if (NUM_DEVS_TV > 0)
     &tv_dev,
 #endif
+#if (NUM_DEVS_DD > 0)
+    &dd_dev,
+    &vds_dev,
+#endif
 #if NUM_DEVS_IMP > 0
     &imp_dev,
 #endif
@@ -233,8 +237,15 @@ DEVICE *sim_devices[] = {
 #if NUM_DEVS_DUP > 0
     &dup_dev,
 #endif
-#if NUM_DEVS_DN > 0
-    &dn_dev,
+#if NUM_DEVS_DDC > 0
+    &ddc_dev,
+#endif
+#if NUM_DEVS_TYM > 0
+    &tym_dev,
+#endif
+#if NUM_DEVS_GE > 0
+    &ge_dev,
+    &gtyo_dev,
 #endif
     NULL
     };
@@ -718,7 +729,11 @@ t_stat load_exe (FILE *fileref, int ftype)
                 }
                 fpage++;
             }
-            ma = mpage << PAG_V_PN;                     /* mem addr */
+            if ((sim_switches & SWMASK ('M')) == 0) {   /* -m? */
+                ma = mpage << PAG_V_PN;                 /* mem addr */
+            } else {
+                ma = mpage;
+            }
             for (k = 0; k < PAG_SIZE; k++, ma++) {      /* copy buf to mem */
                 if (ma > MEMSIZE)
                     return SCPE_NXM;
@@ -1349,7 +1364,7 @@ t_stat parse_sym (CONST char *cptr, t_addr addr, UNIT *uptr, t_value *val, int32
             if (strchr (cptr, ',')) {                   /* AC specified? */
                 cptr = get_glyph (cptr, gbuf, ',');     /* get glyph */
                 if (gbuf[0]) {                          /* can be omitted */
-                    ac = get_uint (gbuf, 8, 017 - 1, &r);
+                    ac = get_uint (gbuf, 8, 017, &r);
                     if (r != SCPE_OK)
                         return SCPE_ARG;
                     val[0] = val[0] | (ac << INST_V_AC);

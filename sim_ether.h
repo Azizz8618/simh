@@ -31,12 +31,12 @@
   01-Mar-12  AGN  Cygwin doesn't have non-blocking pcap I/O pcap (it uses WinPcap)
   17-Nov-11  MP   Added dynamic loading of libpcap on *nix platforms
   30-Oct-11  MP   Added support for vde (Virtual Distributed Ethernet) networking
-  18-Apr-11  MP   Fixed race condition with self loopback packets in 
+  18-Apr-11  MP   Fixed race condition with self loopback packets in
                   multithreaded environments
   09-Dec-10  MP   Added support to determine if network address conflicts exist
   07-Dec-10  MP   Reworked DECnet self detection to the more general approach
                   of loopback self when any Physical Address is being set.
-  04-Dec-10  MP   Changed eth_write to do nonblocking writes when 
+  04-Dec-10  MP   Changed eth_write to do nonblocking writes when
                   USE_READER_THREAD is defined.
   07-Feb-08  MP   Added eth_show_dev to display ethernet state
   28-Jan-08  MP   Added eth_set_async
@@ -52,7 +52,7 @@
   14-Nov-03  DTH  Added #ifdef DECNET_FIX for problematic duplicate detection code
   07-Jun-03  MP   Added WIN32 support for DECNET duplicate address detection.
   05-Jun-03  DTH  Added used to struct eth_packet
-  01-Feb-03  MP   Changed some uint8 strings to char* to reflect usage 
+  01-Feb-03  MP   Changed some uint8 strings to char* to reflect usage
   22-Oct-02  DTH  Added all_multicast and promiscuous support
   21-Oct-02  DTH  Corrected copyright again
   16-Oct-02  DTH  Fixed copyright
@@ -82,7 +82,7 @@ extern "C" {
 #define USE_SETNONBLOCK 1
 #endif
 
-/* cygwin dowsn't have the right features to use the threaded network I/O */
+/* cygwin doesn't have the right features to use the threaded network I/O */
 #if defined(__CYGWIN__) || defined(__ZAURUS__) // psco added check for Zaurus platform
 #define DONT_USE_READER_THREAD
 #endif
@@ -129,28 +129,36 @@ extern "C" {
 #undef USE_SHARED
 #endif
 
-/* USE_SHARED implies shared pcap, so force HAVE_PCAP_NETWORK */
-#if defined(USE_SHARED) && !defined(HAVE_PCAP_NETWORK)
-#define HAVE_PCAP_NETWORK 1
-#endif
-
 /*
-  USE_BPF is defined to let this code leverage the libpcap/OS kernel provided 
-  BPF packet filtering.  This generally will enhance performance.  It may not 
-  be available in some environments and/or it may not work correctly, so 
+  USE_BPF is defined to let this code leverage the libpcap/OS kernel provided
+  BPF packet filtering.  This generally will enhance performance.  It may not
+  be available in some environments and/or it may not work correctly, so
   undefining this will still provide working code here.
 */
-#if defined(HAVE_PCAP_NETWORK)
+#if defined(HAVE_PCAP_NETWORK) || defined(USE_SHARED)
 #define USE_BPF 1
 #if defined (_WIN32) && !defined (BPF_CONST_STRING)
+#if !defined(HAVE_PCAP_NETWORK)
+#define HAVE_PCAP_NETWORK 1
+#endif
 #define BPF_CONST_STRING 1
 #endif
 #else
 #define DONT_USE_PCAP_FINDALLDEVS 1
 #endif
 
-#if defined (USE_READER_THREAD)
-#include <pthread.h>
+/* Generally avoid pcap APIs when running with vmnet.framework */
+#if defined(HAVE_VMNET_NETWORK)
+#define DONT_USE_PCAP_FINDALLDEVS 1
+#if !defined(DONT_USE_VMNET_HOST)
+#define USE_VMNET_HOST_AS_TAP 1
+#if defined(HAVE_TAP_NETWORK)
+#undef HAVE_TAP_NETWORK
+#endif
+#endif
+#if defined(HAVE_VDE_NETWORK)
+#undef HAVE_VDE_NETWORK
+#endif
 #endif
 
 /* structure declarations */
@@ -160,10 +168,11 @@ extern "C" {
 #define ETH_FILTER_MAX        20                        /* maximum address filters */
 #define ETH_DEV_NAME_MAX     256                        /* maximum device name size */
 #define ETH_DEV_DESC_MAX     256                        /* maximum device description size */
+#define ETH_DEV_INFO_MAX     256                        /* maximum device info size */
 #define ETH_MIN_PACKET        60                        /* minimum ethernet packet size */
 #define ETH_MAX_PACKET      1514                        /* maximum ethernet packet size */
 #define ETH_MAX_JUMBO_FRAME 65536                       /* maximum ethernet jumbo frame size (or Offload Segment Size) */
-#define ETH_MAX_DEVICE        20                        /* maximum ethernet devices */
+#define ETH_MAX_DEVICE        40                        /* maximum ethernet devices */
 #define ETH_CRC_SIZE           4                        /* ethernet CRC size */
 #define ETH_FRAME_SIZE (ETH_MAX_PACKET+ETH_CRC_SIZE)    /* ethernet maximum frame size */
 #define ETH_MIN_JUMBO_FRAME ETH_MAX_PACKET              /* Threshold size for Jumbo Frame Processing */
@@ -237,6 +246,8 @@ typedef unsigned char ETH_MAC[6];
 struct eth_list {
   char    name[ETH_DEV_NAME_MAX];
   char    desc[ETH_DEV_DESC_MAX];
+  char    info[ETH_DEV_INFO_MAX];
+  char    connect[ETH_DEV_NAME_MAX];
   int     eth_api;
 };
 
@@ -259,12 +270,13 @@ struct eth_device {
   SOCKET        fd_handle;                              /* fd to kernel device (where needed) */
   char*         bpf_filter;                             /* bpf filter currently in effect */
   int           eth_api;                                /* Designator for which API is being used to move packets */
-#define ETH_API_NONE 0                                  /* No API in use yet */
-#define ETH_API_PCAP 1                                  /* Pcap API in use */
-#define ETH_API_TAP  2                                  /* tun/tap API in use */
-#define ETH_API_VDE  3                                  /* VDE API in use */
-#define ETH_API_UDP  4                                  /* UDP API in use */
-#define ETH_API_NAT  5                                  /* NAT (SLiRP) API in use */
+#define ETH_API_NONE  0                                 /* No API in use yet */
+#define ETH_API_PCAP  1                                 /* Pcap API in use */
+#define ETH_API_TAP   2                                 /* tun/tap API in use */
+#define ETH_API_VDE   3                                 /* VDE API in use */
+#define ETH_API_UDP   4                                 /* UDP API in use */
+#define ETH_API_NAT   5                                 /* NAT (SLiRP) API in use */
+#define ETH_API_VMNET 6                                 /* Apple vmnet.framework in use */
   ETH_PCALLBACK read_callback;                          /* read callback function */
   ETH_PCALLBACK write_callback;                         /* write callback function */
   ETH_PACK*     read_packet;                            /* read packet */
@@ -280,6 +292,7 @@ struct eth_device {
   ETH_MAC       physical_addr;                          /* physical address of interface */
   int32         have_host_nic_phy_addr;                 /* flag indicating that the host_nic_phy_hw_addr is valid */
   ETH_MAC       host_nic_phy_hw_addr;                   /* MAC address of the attached NIC */
+  ETH_BOOL      host_nic_is_wifi;                       /* Attached NIC is a WiFi device */
   uint32        jumbo_fragmented;                       /* Giant IPv4 Frames Fragmented */
   uint32        jumbo_dropped;                          /* Giant Frames Dropped */
   uint32        jumbo_truncated;                        /* Giant Frames too big for capture buffer - Dropped */
@@ -335,7 +348,9 @@ t_stat eth_open   (ETH_DEV* dev, const char* name,      /* open ethernet interfa
                    DEVICE* dptr, uint32 dbit);
 t_stat eth_close  (ETH_DEV* dev);                       /* close ethernet interface */
 t_stat eth_attach_help(FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
-t_stat eth_write  (ETH_DEV* dev, ETH_PACK* packet,      /* write sychronous packet; */
+const char *eth_attach_scp_help_string (DEVICE *dptr);
+const char *eth_attach_flat_help_string (DEVICE *dptr);
+t_stat eth_write  (ETH_DEV* dev, ETH_PACK* packet,      /* write synchronous packet; */
                    ETH_PCALLBACK routine);              /*  callback when done */
 int eth_read      (ETH_DEV* dev, ETH_PACK* packet,      /* read single packet; */
                    ETH_PCALLBACK routine);              /*  callback when done*/
@@ -354,7 +369,7 @@ t_stat eth_filter_hash_ex (ETH_DEV* dev, int addr_count,/* set filter on incomin
                            ETH_BOOL promiscuous,
                            ETH_BOOL match_broadcast,
                            ETH_MULTIHASH* const hash);  /* AUTODIN II based 8 byte imperfect hash */
-t_stat eth_check_address_conflict (ETH_DEV* dev, 
+t_stat eth_check_address_conflict (ETH_DEV* dev,
                                    ETH_MAC* const address);
 const char *eth_version (void);                         /* Version of dynamically loaded library (pcap) */
 void eth_setcrc   (ETH_DEV* dev, int need_crc);         /* enable/disable CRC mode */
@@ -383,7 +398,7 @@ void ethq_remove (ETH_QUE* que);                        /* remove item from FIFO
 void ethq_insert (ETH_QUE* que, int32 type,             /* insert item into FIFO queue */
                   ETH_PACK* packet, int32 status);
 void ethq_insert_data(ETH_QUE* que, int32 type,         /* insert item into FIFO queue */
-                  const uint8 *data, int used, size_t len, 
+                  const uint8 *data, int used, size_t len,
                   size_t crc_len, const uint8 *crc_data, int32 status);
 t_stat ethq_destroy(ETH_QUE* que);                      /* release FIFO queue */
 const char *eth_capabilities(void);
@@ -393,6 +408,60 @@ t_stat sim_ether_test (DEVICE *dptr, const char *cptr); /* unit test routine */
 #define SIM_TEST_INIT
 #define SIM_TEST(xxx)
 #endif
+
+
+     /****************************************************************************/
+#if defined(_WIN32)
+#define ETH_PLATFORM_SCP_DEPENDENCIES                                              \
+    "1 Dependencies\n"                                                             \
+    " The NPcap or WinPcap package must be installed in order to enable\n"         \
+    " communication with the host system or other computers on the local LAN.\n"   \
+    "\n"                                                                           \
+    " The NPcap package is available from https://github.com/nmap/npcap\n"         \
+    " The WinPcap package is available from http://www.winpcap.org/\n"
+#else /* !defined(_WIN32) */
+#define ETH_PLATFORM_SCP_DEPENDENCIES                                              \
+    "1 Dependencies\n"                                                             \
+    " To build simulators with the ability to communicate to other computers\n"    \
+    " on the local LAN, the libpcap development package must be installed on\n"    \
+    " the system which builds the simulator.\n"                                    \
+    "\n"                          
+#endif  /* defined(_WIN32) */
+     /****************************************************************************/
+#if defined(_WIN32)
+#define ETH_PLATFORM_SCP_PRIVILEGES                                                \
+    "1 Privileges Required\n"                                                      \
+    " Windows systems can attach the simulated %D device to the local LAN\n"       \
+    " network interface without any special privileges as long as the\n"           \
+    " Npcap or WinPcap package has been previously installed on the host system.\n"
+#else /* !defined(_WIN32) */
+#define ETH_PLATFORM_SCP_PRIVILEGES                                                \
+    "1 Privileges Required\n"                                                      \
+    " Linux, macOS and most other Unix like systems require root privilege\n"      \
+    " to access network interfaces on the host system.\n"
+#endif  /* defined(_WIN32) */
+     /****************************************************************************/
+#if defined(_WIN32)
+#define ETH_PLATFORM_SCP_HOST_COMMUNICATIONS                                       \
+    "1 Host Computer Communications\n"                                             \
+    " On Windows using the WinPcap interface, the simulated %D device\n"           \
+    " can be used to communicate with the host computer on the same LAN\n"         \
+    " which it is attached to.\n"
+#else /* !defined(_WIN32) */
+#if defined(HAVE_VMNET_NETWORK)
+#define ETH_PLATFORM_SCP_HOST_COMMUNICATIONS                                       \
+    "1 Host Computer Communications\n"                                             \
+    " On macOS using the LAN or WiFi interfaces, the simulated %D device\n"        \
+    " can be used to communicate with the host computer and other computers\n"     \
+    " on the same LAN as well as reaching beyond across the Internet.\n"
+#else /* !defined(HAVE_VMNET_NETWORK) */
+#define ETH_PLATFORM_SCP_HOST_COMMUNICATIONS 
+#endif /* defined(HAVE_VMNET_NETWORK) */
+#endif  /* defined(_WIN32) */
+     /****************************************************************************/
+#define ETH_PLATFORM_SCP_DETAILS    ETH_PLATFORM_SCP_DEPENDENCIES           \
+                                    ETH_PLATFORM_SCP_PRIVILEGES             \
+                                    ETH_PLATFORM_SCP_HOST_COMMUNICATIONS
 
 #ifdef  __cplusplus
 }

@@ -25,6 +25,8 @@
 
    cpu          central processor
 
+   12-Jul-22    RMS     Fix incorrect decrement on breakpoint (Ken Rector)
+
    The system state for the Sigma CPU is as follows:
 
    RF[0:15][0:31]<0:31> register blocks
@@ -172,6 +174,7 @@ uint32 cpu_pdf = 0;                                     /* proc detected fault *
 uint32 cons_alarm = 0;                                  /* console alarm */
 uint32 cons_alarm_enb = 0;                              /* alarm enable */
 uint32 cons_pcf = 0;
+uint32 wait_state = 0;                                  /* wait state */
 uint32 rf_bmax = 4;                                     /* num reg blocks */
 uint32 exu_lim = 32;                                    /* nested EXU limit */
 uint32 stop_op = 0;                                     /* stop on ill op */
@@ -444,7 +447,8 @@ while (reason == 0) {                                   /* loop until stop */
 
     if (int_hireq < NO_INT) {                           /* interrupt req? */
         uint32 sav_hi, vec, wd, op;
-        
+
+        wait_state = 0;                                 /* exit wait state */
         sav_hi = int_hireq;                             /* save level */
         vec = io_ackn_int (int_hireq);                  /* get vector */
         if (vec == 0) {                                 /* illegal vector? */
@@ -472,10 +476,13 @@ while (reason == 0) {                                   /* loop until stop */
             }
         else reason = tr2;                              /* normal status code */
         }
+    else if (wait_state != 0)                           /* wait state? don't fetch */
+         continue;
     else {                                              /* normal instruction */
         if (sim_brk_summ &&
             sim_brk_test (PC, SWMASK ('E'))) {          /* breakpoint? */
             reason = STOP_IBKPT;                        /* stop simulation */
+            sim_interval++;                             /* undo decrement */
             break;
             }
         if (PSW_QRX9 && (PC & PSW1_XA))                 /* S9 real ext && ext? */
@@ -1498,7 +1505,7 @@ switch (op) {
         if (!io_poss_int ())                            /* intr possible? */
             return STOP_WAITNOINT;                      /* machine is hung */
 // put idle here
-        int_hireq = io_eval_int ();                     /* re-eval intr */
+        wait_state = 1;                                 /* wait for intr */
         break;
 
     case OP_AIO:                                        /* acknowledge int */
@@ -2510,6 +2517,7 @@ cpu_new_PSD (1, PSW1_DFLT | (PSW1 & PSW1_PCMASK), PSW2_DFLT);
 cpu_pdf = 0;
 cons_alarm = 0;
 cons_pcf = 0;
+wait_state = 0;
 set_rf_display (R);
 if (M == NULL)
     M = (uint32 *) calloc (MAXMEMSIZE, sizeof (uint32));
@@ -2769,8 +2777,10 @@ if (cptr == NULL) {
     return SCPE_OK;
     }
 lnt = (int32) get_uint (cptr, 10, HIST_MAX, &r);
-if ((r != SCPE_OK) || (lnt && (lnt < HIST_MIN)))
-    return SCPE_ARG;
+if (r != SCPE_OK)
+    return sim_messagef (SCPE_ARG, "Invalid Numeric Value: %s.  Maximum is %d\n", cptr, HIST_MAX);
+if (lnt && (lnt < HIST_MIN))
+    return sim_messagef (SCPE_ARG, "%d is less than the minumum history value of %d\n", lnt, HIST_MIN);
 hst_p = 0;
 if (hst_lnt) {
     free (hst);
@@ -2831,13 +2841,18 @@ if (hst_lnt == 0)                                   /* enabled? */
     return SCPE_NOFNC;
 if (cptr) {
     lnt = (int32) get_uint (cptr, 10, hst_lnt, &r);
-    if ((r != SCPE_OK) || (lnt == 0)) return SCPE_ARG;
+    if ((r != SCPE_OK) || (lnt == 0))
+        return sim_messagef (SCPE_ARG, "Invalid count specifier: %s, max is %d\n", cptr, hst_lnt);
     }
 else lnt = hst_lnt;
 di = hst_p - lnt;                                       /* work forward */
 if (di < 0) di = di + hst_lnt;
 fprintf (st, "  PC   CC Rn       Rn|1     EA    operand  operand1 IR\n\n");
 for (k = 0; k < lnt; k++) {                             /* print specified */
+    if (stop_cpu) {                                     /* Control-C (SIGINT) */
+        stop_cpu = FALSE;
+        break;                                          /* abandon remaining output */
+        }
     h = &hst[(++di) % hst_lnt];                         /* entry pointer */
     if (h->typ_cc_pc)                                   /* instruction? */
         cpu_fprint_one_inst (st, h->typ_cc_pc, h->ir, h->rn, h->rn1, h->ea, h->op, h->op1);

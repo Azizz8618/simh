@@ -173,9 +173,10 @@ typedef void (*TAPE_PCALLBACK)(UNIT *unit, t_stat status);
 /* Tape Internal Debug flags */
 
 #define MTSE_DBG_API   0x10000000                       /* API Trace */
-#define MTSE_DBG_DAT   0x20000000                       /* Debug Data */
-#define MTSE_DBG_POS   0x40000000                       /* Debug Positioning activities */
-#define MTSE_DBG_STR   0x80000000                       /* Debug Tape Structure */
+#define MTSE_DBG_INT   0x20000000                       /* API Internal activities */
+#define MTSE_DBG_DAT   0x40000000                       /* Debug Data */
+#define MTSE_DBG_POS   0x80000000                       /* Debug Positioning activities */
+#define MTSE_DBG_STR   0x08000000                       /* Debug Tape Structure */
 
 /* Prototypes */
 
@@ -231,6 +232,7 @@ t_stat sim_tape_show_capac (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat sim_tape_set_dens (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat sim_tape_show_dens (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat sim_tape_density_supported (char *string, size_t string_size, int32 valid_bits);
+t_stat sim_tape_set_chunk_mode (UNIT *uptr, uint32 chunk_size);
 const char *sim_tape_error_text (t_stat stat);
 t_stat sim_tape_set_asynch (UNIT *uptr, int latency);
 t_stat sim_tape_clr_asynch (UNIT *uptr);

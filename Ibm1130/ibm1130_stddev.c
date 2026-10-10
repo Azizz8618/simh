@@ -83,7 +83,6 @@
  */
 
 #include "ibm1130_defs.h"
-#include <memory.h>
 
 /* #define DEBUG_CONSOLE */
 
@@ -111,8 +110,6 @@ typedef struct tag_os_map {                 /* os_map = overstrike mapping */
     int nin;                                /* nin = number of overstruck characters */
     unsigned char inlist[MAX_OS_CHARS];     /* inlist = overstruck ASCII characters, sorted. NOT NULL TERMINATED */
 } OS_MAP;
-
-extern int cgi;
 
 static int32 tti_dsw = 0;                   /* device status words */
 static int32 tto_dsw = 0;

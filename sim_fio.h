@@ -79,33 +79,48 @@ int sim_mkdir(const char *path);
 int sim_rmdir(const char *path);
 t_stat sim_copyfile (const char *source_file, const char *dest_file, t_bool overwrite_existing);
 char *sim_filepath_parts (const char *pathname, const char *parts);
+const char *sim_relative_path (const char *filepath);
 char *sim_getcwd (char *buf, size_t buf_size);
-#include <sys/stat.h>
-typedef void (*DIR_ENTRY_CALLBACK)(const char *directory, 
+typedef void (*DIR_ENTRY_CALLBACK)(const char *directory,
                                    const char *filename,
                                    t_offset FileSize,
                                    const struct stat *filestat,
                                    void *context);
 t_stat sim_dir_scan (const char *cptr, DIR_ENTRY_CALLBACK entry, void *context);
 char **sim_get_filelist (const char *filename);
+void sim_set_get_filelist_skip_directories (const char * const *dirlist);
+void sim_clear_get_filelist_skip_directories (void);
 void sim_free_filelist (char ***pfilelist);
 void sim_print_filelist (char **filelist);
+int sim_count_filelist (char **filelist);
 
 void sim_buf_swap_data (void *bptr, size_t size, size_t count);
 void sim_byte_swap_data (void *bptr, size_t size, size_t count);
 void sim_buf_copy_swapped (void *dptr, const void *bptr, size_t size, size_t count);
+t_bool sim_buf_pack_unpack (const void *sptr,          /* source buffer pointer */
+                            void *dptr,                /* destination buffer pointer */
+                            uint32 sbits,              /* source buffer element size in bits */
+                            t_bool sLSB_o_numbering,   /* source numbered using LSB ordering */
+                            uint32 scount,             /* count of source elements */
+                            uint32 dbits,              /* interesting bits of each destination element */
+                            t_bool dLSB_o_numbering);  /* destination numbered using LSB ordering */
+t_stat sim_fio_test (const char *cptr);
 const char *sim_get_os_error_text (int error);
 typedef struct SHMEM SHMEM;
 t_stat sim_shmem_open (const char *name, size_t size, SHMEM **shmem, void **addr);
 void sim_shmem_close (SHMEM *shmem);
 int32 sim_shmem_atomic_add (int32 *ptr, int32 val);
 t_bool sim_shmem_atomic_cas (int32 *ptr, int32 oldv, int32 newv);
+extern int sim_check_source (int argc, char **argv);
 
 extern t_bool sim_taddr_64;         /* t_addr is > 32b and Large File Support available */
 extern t_bool sim_toffset_64;       /* Large File (>2GB) file I/O support */
 extern t_bool sim_end;              /* TRUE = little endian, FALSE = big endian */
 
+extern const char sim_file_path_separator;  /* Platform specific value \ or / as appropriate */
+
 char *sim_trim_endspc (char *cptr);
+char *sim_trim_spc (char *cptr);
 int sim_isspace (int c);
 #ifdef isspace
 #undef isspace

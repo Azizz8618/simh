@@ -1,9 +1,7 @@
 /*************************************************************************
  *                                                                       *
- * $Id: tx0_cpu.c 2066 2009-02-27 15:57:22Z hharte $                     *
- *                                                                       *
- * Copyright (c) 2009-2017 Howard M. Harte.                              *
- * Based on pdp1_cpu.c, Copyright (c) 1993-2007, Robert M. Supnik        *
+ * Copyright (c) 2009-2022 Howard M. Harte.                              *
+ * https://github.com/hharte                                             *
  *                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining *
  * a copy of this software and associated documentation files (the       *
@@ -18,22 +16,20 @@
  *                                                                       *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,       *
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF    *
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                 *
- * NONINFRINGEMENT. IN NO EVENT SHALL HOWARD M. HARTE BE LIABLE FOR ANY  *
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  *
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     *
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-            *
+ * INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE   *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN       *
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN     *
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE      *
+ * SOFTWARE.                                                             *
  *                                                                       *
- * Except as contained in this notice, the name of Howard M. Harte shall *
+ * Except as contained in this notice, the names of The Authors shall    *
  * not be used in advertising or otherwise to promote the sale, use or   *
  * other dealings in this Software without prior written authorization   *
- * of Howard M. Harte.                                                   *
+ * from the Authors.                                                     *
  *                                                                       *
  * Module Description:                                                   *
  *     TX-0 Central Processor                                            *
- *                                                                       *
- * Environment:                                                          *
- *     User mode only                                                    *
  *                                                                       *
  * References:                                                           *
  *     See: www.bitsavers.org/pdf/mit/tx-0/ for documentation.           *
@@ -108,7 +104,6 @@ from "A Functional Description of the TX-0 Computer" Oct, 1958
    5. Bugs, limitations, and known issues:
         o There is a bug in the 1961 instruction set simulation, which causes the
           mouse maze program's searching algorithm to fail.
-        o The CRY micro-order is not implemented.
         o The instruction timing (ie, sim_interval) is not accurate, so implementing a
           timing-critical I/O device like the Magtape would require this to be added first.
         o PCQ and History do not work.
@@ -154,6 +149,8 @@ In addtion, many of the operate-class micro-orders changed.
   orb  --- --- --- --- --- 101  1.3 Or LR into MBR
   lmb  --- --- --- --- --- 01x  1.4 Tranfer LR contents to MBR
   mbx  --- --- --- --- --- 0x1  1.8 Transfer MBR contents to XR
+
+See TX-0 memo M-5001-19 for a simple formula for cry, used in the code below.
 */
 #include "tx0_defs.h"
 
@@ -284,16 +281,16 @@ int32 fpc_OP;                                           /* shadow op for FPC acc
 
 int32 addr_mask = YMASK;
 
-t_stat cpu_ex (t_value *vptr, t_addr addr, UNIT *uptr, int32 sw);
-t_stat cpu_dep (t_value val, t_addr addr, UNIT *uptr, int32 sw);
-t_stat cpu_reset (DEVICE *dptr);
-t_stat cpu_set_size (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static t_stat cpu_ex (t_value *vptr, t_addr addr, UNIT *uptr, int32 sw);
+static t_stat cpu_dep (t_value val, t_addr addr, UNIT *uptr, int32 sw);
+static t_stat cpu_reset (DEVICE *dptr);
+static t_stat cpu_set_size (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat cpu_set_mode (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 int32 cpu_get_mode (void);
-t_stat cpu_set_hist (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
-t_stat cpu_set_ext (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
-t_stat cpu_set_noext (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
-t_stat cpu_show_hist (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+static t_stat cpu_set_hist (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static t_stat cpu_set_ext (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static t_stat cpu_set_noext (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static t_stat cpu_show_hist (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat Read (void);
 t_stat Write (void);
 
@@ -307,6 +304,8 @@ extern int32 drm (int32 inst, int32 dev, int32 dat);
 #ifdef USE_DISPLAY
 extern int32 dpy (int32 ac);
 #endif
+
+extern UNIT petr_unit;
 
 /* CPU data structures
 
@@ -474,14 +473,20 @@ t_stat sim_instr (void)
             break;
         }
 
+        sim_interval = sim_interval - 1;
+
         if (ios) {
             TRACE_PRINT(ERROR_MSG, ("I/O Stop - Waiting...\n"));
-            continue;
+            continue; /* Don't execute test/readin/normal mode */
         }
 
         /* Handle Instruction Execution in TEST and READIN modes */
         if (mode_tst) { /* Test Mode / Readin mode */
             if (mode_rdin) { /* Readin Mode */
+
+                if ((petr_unit.flags & UNIT_ATT) == 0)
+                    return SCPE_UNATT;
+
                 reason = SCPE_OK;   /* Default is to continue reading, and transfer control when done. */
                 AC = petr(3,0,0);   /* Read three chars from tape into AC */
                 MAR = AC & AMASK;   /* Set memory address */
@@ -490,6 +495,7 @@ t_stat sim_instr (void)
                 if (!MEM_ADDR_OK(MAR)) {
                     TRACE_PRINT(ERROR_MSG, ("READIN: Tape address out of range.\n"));
                     reason = SCPE_FMT;
+                    break;
                 }
 
                 switch (IR) {
@@ -501,29 +507,29 @@ t_stat sim_instr (void)
                         break;
                     case 02:    /* Transfer Control (trn x) Start Execution */
                         PC = MAR;
-                        reason = SCPE_OK;   /* let SIMH start execution. */
                         TRACE_PRINT(READIN_MSG, ("READIN: trn %06o (Start Execution)\n", PC));
                         reason = cpu_set_mode(&cpu_unit, 0, NULL, NULL);
                         break;
                     case 01:    /* Transfer (add x) - Halt */
                         PC = MAR;
-                        reason = SCPE_STOP; /* let SIMH halt. */
                         TRACE_PRINT(READIN_MSG, ("READIN: add %06o (Halt)\n", PC));
                         reason = cpu_set_mode(&cpu_unit, 0, NULL, NULL);
+                        if (reason == SCPE_OK) reason = SCPE_STOP; /* let SIMH halt. */
                         break;
                     default:
                         reason = SCPE_IERR;
                         break;
                 }
-            } else if (mode_tst) {  /* Test mode not implemented yet. */
+                continue;  /* Don't fall into normal-mode processing. */
+            } else {  /* Test mode not implemented yet. */
                 TRACE_PRINT(ERROR_MSG, ("TEST Mode not implemented.\n"));
                 reason = SCPE_STOP;
-
-            } else {
-                TRACE_PRINT(ERROR_MSG, ("Invalid CPU mode.\n"));
-                reason = SCPE_IERR;
+                break;
             }
-            continue;   /* Proceed with next instruction */
+        } else if (mode_rdin) {
+            TRACE_PRINT(ERROR_MSG, ("Invalid CPU mode.\n"));
+            reason = SCPE_IERR;
+            break;
         }
 
         /* Fetch, decode instruction in NORMAL mode */
@@ -534,7 +540,6 @@ t_stat sim_instr (void)
         inst_class = IR >> 3;
         op = MBR & AMASK;
         y = MBR & YMASK;
-        sim_interval = sim_interval - 1;
 
         if ((cpu_unit.flags & UNIT_EXT_INST) == 0) {  /* Original instruction set */
             IR &= 030;
@@ -936,20 +941,10 @@ t_stat sim_instr (void)
             }
 
             if (op & OPR_PAD) { /* 1.5 Partial Add (XOR): AC = MBR ^ AC */
-                if (op & OPR_CRY) { /* 1.7 */
-                    TRACE_PRINT(ORD_MSG, ("[%06o] PAD+CRY: AC=%06o, MBR=%06o = ", PC-1, AC, MBR));
-                    AC = AC + MBR;
-                    if (AC > DMASK) {
-                        AC += 1;
-                    }
-                    AC &= DMASK;
-                    TRACE_PRINT(ORD_MSG, ("%06o\n", AC));
-                } else {
-                    TRACE_PRINT(ORD_MSG, ("[%06o] PAD: AC=%06o, MBR=%06o\n", PC-1, AC, MBR)); 
-                    AC = AC ^ MBR;
-                    AC &= DMASK;
-                    TRACE_PRINT(ORD_MSG, ("[%06o] PAD: Check: AC=%06o\n", PC-1, AC)); 
-                }
+                TRACE_PRINT(ORD_MSG, ("[%06o] PAD: AC=%06o, MBR=%06o = ", PC-1, AC, MBR));
+                AC = AC ^ MBR;
+                AC &= DMASK;
+                TRACE_PRINT(ORD_MSG, ("%06o\n", AC));
                 inst_ctr.pad++;
             }
 
@@ -972,11 +967,16 @@ t_stat sim_instr (void)
             }
 
             if (op & OPR_CRY) { /* 1.7 */
-                if (op & OPR_PAD) {
-                } else {
-                    TRACE_PRINT(ERROR_MSG, ("[%06o] CRY: TODO: AC=%06o\n", PC-1, AC)); 
-                    inst_ctr.cry++;
+                TRACE_PRINT(ORD_MSG, ("[%06o] CRY: AC=%06o, MBR=%06o = ", PC-1, AC, MBR));
+                AC = AC ^ MBR;
+                AC &= DMASK;
+                AC = AC + MBR;
+                if (AC > DMASK) {
+                    AC += 1;
                 }
+                AC &= DMASK;
+                TRACE_PRINT(ORD_MSG, ("%06o\n", AC));
+                inst_ctr.cry++;
             }
 
             if ((op & OPR_MBX_MASK) == OPR_MBX) { /* 1.8    MBR[5:17] -> XR[5:17], MBR[0] -> XR[4] */
@@ -1030,7 +1030,7 @@ t_stat Write (void)
 
 /* Reset routine */
 
-t_stat cpu_reset (DEVICE *dptr)
+static t_stat cpu_reset (DEVICE *dptr)
 {
     ios = 0;
     PF = 0;
@@ -1051,7 +1051,7 @@ t_stat cpu_reset (DEVICE *dptr)
 
 /* Memory examine */
 
-t_stat cpu_ex (t_value *vptr, t_addr addr, UNIT *uptr, int32 sw)
+static t_stat cpu_ex (t_value *vptr, t_addr addr, UNIT *uptr, int32 sw)
 {
     if (addr >= MEMSIZE) return SCPE_NXM;
     if (vptr != NULL) *vptr = M[addr] & DMASK;
@@ -1061,7 +1061,7 @@ t_stat cpu_ex (t_value *vptr, t_addr addr, UNIT *uptr, int32 sw)
 
 /* Memory deposit */
 
-t_stat cpu_dep (t_value val, t_addr addr, UNIT *uptr, int32 sw)
+static t_stat cpu_dep (t_value val, t_addr addr, UNIT *uptr, int32 sw)
 {
     if (addr >= MEMSIZE) return SCPE_NXM;
 
@@ -1072,7 +1072,7 @@ t_stat cpu_dep (t_value val, t_addr addr, UNIT *uptr, int32 sw)
 
 /* Change memory size */
 
-t_stat cpu_set_size (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+static t_stat cpu_set_size (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
     int32 mc = 0;
     uint32 i;
@@ -1108,13 +1108,13 @@ t_stat cpu_set_mode (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 
 /* Set TX-0 with Extended Instruction Set */
 
-t_stat cpu_set_ext (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+static t_stat cpu_set_ext (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
     sim_printf("Set CPU Extended Mode\n");
     return SCPE_OK;
 }
 
-t_stat cpu_set_noext (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+static t_stat cpu_set_noext (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
     sim_printf("Set CPU Non-Extended Mode\n");
     return SCPE_OK;
@@ -1129,7 +1129,7 @@ int32 cpu_get_mode (void)
 
 /* Set history */
 
-t_stat cpu_set_hist (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+static t_stat cpu_set_hist (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
 int32 i, lnt;
 t_stat r;
@@ -1140,7 +1140,10 @@ if (cptr == NULL) {
     return SCPE_OK;
     }
 lnt = (int32) get_uint (cptr, 10, HIST_MAX, &r);
-if ((r != SCPE_OK) || (lnt && (lnt < HIST_MIN))) return SCPE_ARG;
+if (r != SCPE_OK)
+    return sim_messagef (SCPE_ARG, "Invalid Numeric Value: %s.  Maximum is %d\n", cptr, HIST_MAX);
+if (lnt && (lnt < HIST_MIN))
+    return sim_messagef (SCPE_ARG, "%d is less than the minumum history value of %d\n", lnt, HIST_MIN);
 hst_p = 0;
 if (hst_lnt) {
     free (hst);
@@ -1157,7 +1160,7 @@ return SCPE_OK;
 
 /* Show history */
 
-t_stat cpu_show_hist (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+static t_stat cpu_show_hist (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
 {
 int32 ov, pf, op, k, di, lnt;
 const char *cptr = (const char *) desc;
@@ -1167,13 +1170,18 @@ InstHistory *h;
 if (hst_lnt == 0) return SCPE_NOFNC;                    /* enabled? */
 if (cptr) {
     lnt = (int32) get_uint (cptr, 10, hst_lnt, &r);
-    if ((r != SCPE_OK) || (lnt == 0)) return SCPE_ARG;
+    if ((r != SCPE_OK) || (lnt == 0))
+        return sim_messagef (SCPE_ARG, "Invalid count specifier: %s, max is %d\n", cptr, hst_lnt);
     }
 else lnt = hst_lnt;
 di = hst_p - lnt;                                       /* work forward */
 if (di < 0) di = di + hst_lnt;
 fprintf (st, "PC      OV AC     IO      PF EA      IR\n\n");
 for (k = 0; k < lnt; k++) {                             /* print specified */
+    if (stop_cpu) {                                     /* Control-C (SIGINT) */
+        stop_cpu = FALSE;
+        break;                                          /* abandon remaining output */
+        }
     h = &hst[(++di) % hst_lnt];                         /* entry pointer */
     if (h->pc & HIST_PC) {                              /* instruction? */
         ov = (h->ovac >> HIST_V_SHF) & 1;               /* overflow */
@@ -1230,9 +1238,10 @@ t_stat sim_load(FILE *fileref, CONST char *cptr, CONST char *fnam, int flag) {
     } else {
         lo = strtotv(cptr, &result, 8) & 0xFFFF;
         sz = sim_fsize(fileref);
-        sz_words = MIN (sz, sizeof (M)) / 4;
+        sz_words = MIN (sz, sizeof (M)) / sizeof (word);
         for (j = lo; j < sz_words; j++) {
-            sim_fread(&word, 4, 1, fileref);
+            if (1 != sim_fread(&word, 4, 1, fileref))
+                break;
             M[j] = word;
         }
     }
@@ -1447,30 +1456,24 @@ t_stat sim_opr_orig(int32 op)
     }
 
     if (op & OOPR_PAD) {    /* 1.5 Partial Add (XOR): AC = MBR ^ AC */
-        if (op & OOPR_CRY) {    /* 1.7 */
-            TRACE_PRINT(ORD_MSG, ("[%06o] PAD+CRY: AC=%06o, MBR=%06o = ", PC-1, AC, MBR));
-            AC = AC + MBR;
-            if (AC & 01000000) {
-                AC += 1;
-            }
-            AC &= DMASK;
-            TRACE_PRINT(ORD_MSG, ("%06o\n", AC));
-            inst_ctr.cry++;
-        } else {
-            TRACE_PRINT(ORD_MSG, ("[%06o] PAD: AC=%06o, MBR=%06o\n", PC-1, AC, MBR)); 
-            AC = AC ^ MBR;
-            AC &= DMASK;
-            TRACE_PRINT(ORD_MSG, ("[%06o] PAD: Check: AC=%06o\n", PC-1, AC)); 
-        }
+        TRACE_PRINT(ORD_MSG, ("[%06o] PAD: AC=%06o, MBR=%06o = ", PC-1, AC, MBR));
+        AC = AC ^ MBR;
+        AC &= DMASK;
+        TRACE_PRINT(ORD_MSG, ("%06o\n", AC));
         inst_ctr.pad++;
     }
 
     if (op & OOPR_CRY) {    /* 1.7 */
-        if (op & OOPR_PAD) {
-        } else {
-            TRACE_PRINT(ERROR_MSG, ("[%06o] CRY: TODO: AC=%06o\n", PC-1, AC)); 
-            inst_ctr.cry++;
+        TRACE_PRINT(ORD_MSG, ("[%06o] CRY: AC=%06o, MBR=%06o = ", PC-1, AC, MBR));
+        AC = AC ^ MBR;
+        AC &= DMASK;
+        AC = AC + MBR;
+        if (AC > DMASK) {
+            AC += 1;
         }
+        AC &= DMASK;
+        TRACE_PRINT(ORD_MSG, ("%06o\n", AC));
+        inst_ctr.cry++;
     }
 
     if ((op & OOPR_HLT) == OOPR_HLT) {   /* hlt  1.8 Halt the computer */

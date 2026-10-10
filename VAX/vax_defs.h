@@ -49,7 +49,6 @@
 #endif
 
 #include "sim_defs.h"
-#include <setjmp.h>
 
 /* Stops and aborts */
 
@@ -848,7 +847,7 @@ void cpu_idle (void);
 
 /* Instruction History */
 #define HIST_MIN        64
-#define HIST_MAX        250000
+#define HIST_MAX        2000000
 
 #define OPND_SIZE       16
 #define INST_SIZE       52
@@ -974,6 +973,10 @@ extern t_stat build_dib_tab (void);
 extern void rom_wr_B (int32 pa, int32 val);
 extern int32 cpu_instruction_set;
 
+/* vax*_stddev dependent definitions */
+extern int32 todr_rd (void);
+extern void todr_wr (int32 dat);
+
 #if defined (VAX_780)
 #include "vax780_defs.h"
 #elif defined (VAX_750)
@@ -1028,7 +1031,7 @@ extern int32 cpu_instruction_set;
 #define BOOT_CODE_SIZE 0
 #endif
 
-extern t_stat cpu_load_bootcode (const char *filename, const unsigned char *builtin_code, size_t size, t_bool rom, t_addr offset);
+extern t_stat cpu_load_bootcode (const char *filename, const unsigned char *builtin_code, size_t size, t_bool rom, t_addr offset, const char *filepath, unsigned int checksum);
 extern t_stat cpu_print_model (FILE *st);
 extern t_stat cpu_show_model (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 extern t_stat cpu_set_model (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
@@ -1036,12 +1039,13 @@ extern t_stat cpu_show_instruction_set (FILE *st, UNIT *uptr, int32 val, CONST v
 extern t_stat cpu_set_instruction_set (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 extern t_stat cpu_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
 extern t_stat cpu_model_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
-extern void vax_init();
+extern void vax_init(void);
 extern const uint32 byte_mask[33];
 extern int32 autcon_enb;                                /* autoconfig enable */
 extern int32 int_req[IPL_HLVL];                         /* intr, IPL 14-17 */
 extern uint32 *M;                                       /* Memory */
 extern DEVICE cpu_dev;                                  /* CPU */
 extern UNIT cpu_unit;                                   /* CPU */
+extern const char *boot_code_filename;
 
 #endif                                                  /* _VAX_DEFS_H */

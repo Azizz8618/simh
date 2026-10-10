@@ -57,13 +57,11 @@
 
 #elif defined (VM_PDP11)
 #include "pdp11_defs.h"
-#define INIT_DTYPE      RM03_DTYPE
-#define INIT_SIZE       RM03_SIZE
+#define INIT_DTYPE      "RM03"
 
 #elif defined (VM_VAX)
 #include "vax_defs.h"
-#define INIT_DTYPE      RP06_DTYPE
-#define INIT_SIZE       RP06_SIZE
+#define INIT_DTYPE      "RP06"
 #define DMASK           0xFFFF
 #if (!UNIBUS)
 #error "Qbus not supported!"
@@ -74,25 +72,21 @@
 #include "sim_disk.h"
 #include <math.h>
 
-#define RP_CTRL         0                               /* ctrl is RP */
-#define RM_CTRL         1                               /* ctrl is RM */
+#define RP_CTRL         DRVFL_TYPE_RP                   /* ctrl is RP */
+#define RM_CTRL         DRVFL_TYPE_RM                   /* ctrl is RM */
 #define RP_NUMDR        8                               /* #drives */
 #define RP_NUMWD        256                             /* words/sector */
 #define RP_MAXFR        (1 << 16)                       /* max transfer */
 #define GET_SECTOR(x,d) ((int) fmod (sim_gtime() / ((double) (x)), \
-                        ((double) drv_tab[d].sect)))
+                        ((double) d->sect)))
 #define RM_OF           (MBA_RMASK + 1)
 
 /* Flags in the unit flags word */
 
-#define UNIT_V_DTYPE    (DKUF_V_UF + 0)                 /* disk type */
-#define UNIT_M_DTYPE    7
-#define UNIT_V_AUTO     (DKUF_V_UF + 3)                 /* autosize */
-#define UNIT_V_DUMMY    (DKUF_V_UF + 4)                 /* dummy flag */
-#define UNIT_DTYPE      (UNIT_M_DTYPE << UNIT_V_DTYPE)
+#define UNIT_V_AUTO     (DKUF_V_UF + 0)                 /* autosize */
+#define UNIT_V_DUMMY    (UNIT_V_AUTO + 1)               /* dummy flag */
 #define UNIT_AUTO       (1 << UNIT_V_AUTO)
 #define UNIT_DUMMY      (1 << UNIT_V_DUMMY)
-#define GET_DTYPE(x)    (((x) >> UNIT_V_DTYPE) & UNIT_M_DTYPE)
 
 /* Parameters in the unit descriptor */
 
@@ -137,7 +131,7 @@ static const char *rp_fname[CS1_N_FNC] = {
     "WRITE", "WRHDR", "32", "33", "READ", "RDHDR", "36", "37"
     };
 
-BITFIELD rp_cs1_bits[] = {
+static BITFIELD rp_cs1_bits[] = {
   BIT(GO),                                  /* Go */
   BITFNAM(FUNC,5,rp_fname),                 /* Function Code */
   BIT(IE),                                  /* Interrupt Enable */
@@ -170,7 +164,7 @@ BITFIELD rp_cs1_bits[] = {
 #define DS_ATA          0100000                         /* attention active */
 #define DS_MBZ          0000076
 
-BITFIELD rp_ds_bits[] = {
+static BITFIELD rp_ds_bits[] = {
   BIT(OM),                                  /* offset mode */
   BITF(MBZ,5),                              /* must be zero */
   BIT(VV),                                  /* volume valid */
@@ -207,7 +201,7 @@ BITFIELD rp_ds_bits[] = {
 #define ER1_UNS         0040000                         /* drive unsafe */
 #define ER1_DCK         0100000                         /* data check NI */
 
-BITFIELD rp_er1_bits[] = {
+static BITFIELD rp_er1_bits[] = {
   BIT(ILF),                                 /* Illegal Function */
   BIT(ILR),                                 /* Illegal Register */
   BIT(RMR),                                 /* reg mod refused */
@@ -232,7 +226,7 @@ BITFIELD rp_er1_bits[] = {
 #define RP_MR_OF        3
 #define RM_MR_OF        (3 + RM_OF)
 
-BITFIELD rp_mr_bits[] = {
+static BITFIELD rp_mr_bits[] = {
   BITF(MR,16),                              /* Maintenance Register */
   ENDBITS
 };
@@ -243,7 +237,7 @@ BITFIELD rp_mr_bits[] = {
 #define RM_AS_OF        (4 + RM_OF)
 #define AS_U0           0000001                         /* unit 0 flag */
 
-BITFIELD rp_as_bits[] = {
+static BITFIELD rp_as_bits[] = {
   BIT(ATA0),                                /* Drive 0 Attention */
   BIT(ATA1),                                /* Drive 1 Attention */
   BIT(ATA2),                                /* Drive 2 Attention */
@@ -265,10 +259,10 @@ BITFIELD rp_as_bits[] = {
 #define DA_V_SF         8                               /* track pos */
 #define DA_M_SF         077                             /* track mask */
 #define DA_MBZ          0140300
-#define GET_SC(x)       (((x) >> DA_V_SC) & DA_M_SC)
-#define GET_SF(x)       (((x) >> DA_V_SF) & DA_M_SF)
+#define GET_SC(x)       (uint32)(((x) >> DA_V_SC) & DA_M_SC)
+#define GET_SF(x)       (uint32)(((x) >> DA_V_SF) & DA_M_SF)
 
-BITFIELD rp_da_bits[] = {
+static BITFIELD rp_da_bits[] = {
   BITF(SA,5),                               /* Sector Address */
   BITNCF(3),                                /* 05:07 Reserved */
   BITF(TA,5),                               /* Track Address */
@@ -281,7 +275,7 @@ BITFIELD rp_da_bits[] = {
 #define RP_DT_OF        6
 #define RM_DT_OF        (6 + RM_OF)
 
-BITFIELD rp_dt_bits[] = {
+static BITFIELD rp_dt_bits[] = {
   BITF(DT,9),                               /* Drive Type */
   BITNCF(2),                                /* 09:10 Reserved */
   BIT(DRQ),                                 /* Drive Request Required */
@@ -297,7 +291,7 @@ BITFIELD rp_dt_bits[] = {
 #define RM_LA_OF        (7 + RM_OF)
 #define LA_V_SC         6                               /* sector pos */
 
-BITFIELD rp_la_bits[] = {
+static BITFIELD rp_la_bits[] = {
   BITNCF(6),                                /* 00:05 Reserved */
   BITF(SC,5),                               /* sector pos */
   BITNCF(5),                                /* 12:15 Reserved */
@@ -309,7 +303,7 @@ BITFIELD rp_la_bits[] = {
 #define RP_SN_OF        8
 #define RM_SN_OF        (8 + RM_OF)
 
-BITFIELD rp_sn_bits[] = {
+static BITFIELD rp_sn_bits[] = {
   BITF(SN,16),                              /* Serial Number */
   ENDBITS
 };
@@ -323,7 +317,7 @@ BITFIELD rp_sn_bits[] = {
 #define OF_F22          0010000                         /* format NI */
 #define OF_MBZ          0161400
 
-BITFIELD rp_of_bits[] = {
+static BITFIELD rp_of_bits[] = {
   BITNCF(7),                                /* 00:06 Reserved */
   BIT(OFFDIR),                              /* Offset Direction */
   BITNCF(2),                                /* 08:09 Reserved */
@@ -341,11 +335,11 @@ BITFIELD rp_of_bits[] = {
 #define DC_V_CY         0                               /* cylinder pos */
 #define DC_M_CY         01777                           /* cylinder mask */
 #define DC_MBZ          0176000
-#define GET_CY(x)       (((x) >> DC_V_CY) & DC_M_CY)
-#define GET_DA(c,fs,d)  ((((GET_CY (c) * drv_tab[d].surf) + \
-                        GET_SF (fs)) * drv_tab[d].sect) + GET_SC (fs))
+#define GET_CY(x)       (uint32)(((x) >> DC_V_CY) & DC_M_CY)
+#define GET_DA(c,fs,d)  ((((GET_CY (c) * d->surf) + \
+                        GET_SF (fs)) * d->sect) + GET_SC (fs))
 
-BITFIELD rp_dc_bits[] = {
+static BITFIELD rp_dc_bits[] = {
   BITF(DC,10),                              /* Offset Direction */
   BITNCF(6),                                /* 10:15 Unused */
   ENDBITS
@@ -357,7 +351,7 @@ BITFIELD rp_dc_bits[] = {
 #define RP_CC_OF        11
 #define RM_HR_OF        (11 + RM_OF)
 
-BITFIELD rp_cc_bits[] = {
+static BITFIELD rp_cc_bits[] = {
   BITF(CC,16),                              /* current cylinder */
   ENDBITS
 };
@@ -368,7 +362,7 @@ BITFIELD rp_cc_bits[] = {
 #define RP_ER2_OF       12
 #define RM_MR2_OF       (12 + RM_OF)
 
-BITFIELD rp_er2_bits[] = {
+static BITFIELD rp_er2_bits[] = {
   BITNCF(3),                                /* 00:02 Unused */
   BIT(DPE),                                 /* data parity error */
   BITNCF(3),                                /* 04:06 Unused */
@@ -389,7 +383,7 @@ BITFIELD rp_er2_bits[] = {
 #define RP_ER3_OF       13
 #define RM_ER2_OF       (13 + RM_OF)
 
-BITFIELD rp_er3_bits[] = {
+static BITFIELD rp_er3_bits[] = {
   BITNCF(3),                                /* 00:02 Unused */
   BIT(DPE),                                 /* data parity error */
   BITNCF(3),                                /* 04:06 Unused */
@@ -409,7 +403,7 @@ BITFIELD rp_er3_bits[] = {
 #define RP_EC1_OF       14
 #define RM_EC1_OF       (14 + RM_OF)
 
-BITFIELD rp_ec1_bits[] = {
+static BITFIELD rp_ec1_bits[] = {
   BITF(P,13),                               /* ECC Position Register */
   BITNCF(3),                                /* 13:15 Unused */
   ENDBITS
@@ -420,13 +414,13 @@ BITFIELD rp_ec1_bits[] = {
 #define RP_EC2_OF       15
 #define RM_EC2_OF       (15 + RM_OF)
 
-BITFIELD rp_ec2_bits[] = {
+static BITFIELD rp_ec2_bits[] = {
   BITF(PAT,11),                             /* ECC Pattern Register */
   BITNCF(5),                                /* 11:15 Unused */
   ENDBITS
 };
 
-BITFIELD *rp_reg_bits[] = {
+static BITFIELD *rp_reg_bits[] = {
     rp_cs1_bits,
     rp_ds_bits,
     rp_er1_bits,
@@ -484,120 +478,100 @@ BITFIELD *rp_reg_bits[] = {
    Note: the RP07, despite its designation, belongs to the RM family
 */
 
-#define RM03_DTYPE      0
 #define RM03_SECT       32
 #define RM03_SURF       5
 #define RM03_CYL        823
 #define RM03_DEC144     1
 #define RM03_DEV        020024
-#define RM03_SIZE       (RM03_SECT * RM03_SURF * RM03_CYL * RP_NUMWD)
 
-#define RP04_DTYPE      1
 #define RP04_SECT       22
 #define RP04_SURF       19
 #define RP04_CYL        411
 #define RP04_DEC144     0
 #define RP04_DEV        020020
-#define RP04_SIZE       (RP04_SECT * RP04_SURF * RP04_CYL * RP_NUMWD)
 
-#define RP05_DTYPE      2
 #define RP05_SECT       22
 #define RP05_SURF       19
 #define RP05_CYL        411
 #define RP05_DEC144     0
 #define RP05_DEV        020021
-#define RP05_SIZE       (RP05_SECT * RP05_SURF * RP05_CYL * RP_NUMWD)
 
-#define RM80_DTYPE      3
 #define RM80_SECT       31
 #define RM80_SURF       14
 #define RM80_CYL        559
 #define RM80_DEC144     1
 #define RM80_DEV        020026
-#define RM80_SIZE       (RM80_SECT * RM80_SURF * RM80_CYL * RP_NUMWD)
 
-#define RP06_DTYPE      4
 #define RP06_SECT       22
 #define RP06_SURF       19
 #define RP06_CYL        815
 #define RP06_DEC144     0
 #define RP06_DEV        020022
-#define RP06_SIZE       (RP06_SECT * RP06_SURF * RP06_CYL * RP_NUMWD)
 
-#define RM05_DTYPE      5
 #define RM05_SECT       32
 #define RM05_SURF       19
 #define RM05_CYL        823
 #define RM05_DEC144     1
 #define RM05_DEV        020027
-#define RM05_SIZE       (RM05_SECT * RM05_SURF * RM05_CYL * RP_NUMWD)
 
-#define RP07_DTYPE      6
 #define RP07_SECT       50
 #define RP07_SURF       32
 #define RP07_CYL        630
 #define RP07_DEC144     1
 #define RP07_DEV        020042
-#define RP07_SIZE       (RP07_SECT * RP07_SURF * RP07_CYL * RP_NUMWD)
 
-struct drvtyp {
-    int32       sect;                                   /* sectors */
-    int32       surf;                                   /* surfaces */
-    int32       cyl;                                    /* cylinders */
-    int32       size;                                   /* #blocks */
-    int32       devtype;                                /* device type */
-    int32       dec144;                                 /* DEC Std 144 bad block */
-    int32       ctrl;                                   /* ctrl type */
-    const char  *name;                                  /* device type name */
-    };
+#define RP_DRV(d, ct) \
+    { d##_SECT, d##_SURF, d##_CYL,  (d##_SECT * d##_SURF * d##_CYL),    \
+      #d,       512,      (d##_DEC144 * DRVFL_DEC144) + ct##_CTRL,      \
+      (ct##_CTRL == RM_CTRL)? "DR" : "DB",                              \
+      0,        d##_DEV }
 
-static struct drvtyp drv_tab[] = {
-    { RM03_SECT, RM03_SURF, RM03_CYL, RM03_SIZE, RM03_DEV, RM03_DEC144, RM_CTRL, "RM03" },
-    { RP04_SECT, RP04_SURF, RP04_CYL, RP04_SIZE, RP04_DEV, RP04_DEC144, RP_CTRL, "RP04" },
-    { RP05_SECT, RP05_SURF, RP05_CYL, RP05_SIZE, RP05_DEV, RP05_DEC144, RP_CTRL, "RP05" },
-    { RM80_SECT, RM80_SURF, RM80_CYL, RM80_SIZE, RM80_DEV, RM80_DEC144, RM_CTRL, "RM80" },
-    { RP06_SECT, RP06_SURF, RP06_CYL, RP06_SIZE, RP06_DEV, RP06_DEC144, RP_CTRL, "RP06" },
-    { RM05_SECT, RM05_SURF, RM05_CYL, RM05_SIZE, RM05_DEV, RM05_DEC144, RM_CTRL, "RM05" },
-    { RP07_SECT, RP07_SURF, RP07_CYL, RP07_SIZE, RP07_DEV, RP07_DEC144, RM_CTRL, "RP07" },
+static DRVTYP drv_tab[] = {
+    RP_DRV (RM03, RM),
+    RP_DRV (RP04, RP),
+    RP_DRV (RP05, RP),
+    RP_DRV (RM80, RM),
+    RP_DRV (RP06, RP),
+    RP_DRV (RM05, RM),
+    RP_DRV (RP07, RM),
     { 0 }
     };
 
-uint16 *rpxb[RP_NUMDR] = { 0 };                          /* xfer buffer */
-uint16 rpcs1[RP_NUMDR] = { 0 };                         /* control/status 1 */
-uint16 rpda[RP_NUMDR] = { 0 };                          /* track/sector */
-uint16 rpds[RP_NUMDR] = { 0 };                          /* drive status */
-uint16 rper1[RP_NUMDR] = { 0 };                         /* error status 1 */
-uint16 rmhr[RP_NUMDR] = { 0 };                          /* holding reg */
-uint16 rpmr[RP_NUMDR] = { 0 };                          /* maint reg */
-uint16 rmmr2[RP_NUMDR] = { 0 };                         /* maint reg 2 */
-uint16 rpof[RP_NUMDR] = { 0 };                          /* offset */
-uint16 rpdc[RP_NUMDR] = { 0 };                          /* cylinder */
-uint16 rper2[RP_NUMDR] = { 0 };                         /* error status 2 */
-uint16 rper3[RP_NUMDR] = { 0 };                         /* error status 3 */
-uint16 rpec1[RP_NUMDR] = { 0 };                         /* ECC correction 1 */
-uint16 rpec2[RP_NUMDR] = { 0 };                         /* ECC correction 2 */
-uint16 rpxbc[RP_NUMDR] = { 0 };                         /* Byte Count Copy */
-int32 rp_stopioe = 1;                                   /* stop on error */
-int32 rp_swait = 26;                                    /* seek time */
-int32 rp_rwait = 10;                                    /* rotate time */
+static uint16 *rpxb[RP_NUMDR] = { 0 };                          /* xfer buffer */
+static uint16 rpcs1[RP_NUMDR] = { 0 };                         /* control/status 1 */
+static uint16 rpda[RP_NUMDR] = { 0 };                          /* track/sector */
+static uint16 rpds[RP_NUMDR] = { 0 };                          /* drive status */
+static uint16 rper1[RP_NUMDR] = { 0 };                         /* error status 1 */
+static uint16 rmhr[RP_NUMDR] = { 0 };                          /* holding reg */
+static uint16 rpmr[RP_NUMDR] = { 0 };                          /* maint reg */
+static uint16 rmmr2[RP_NUMDR] = { 0 };                         /* maint reg 2 */
+static uint16 rpof[RP_NUMDR] = { 0 };                          /* offset */
+static uint16 rpdc[RP_NUMDR] = { 0 };                          /* cylinder */
+static uint16 rper2[RP_NUMDR] = { 0 };                         /* error status 2 */
+static uint16 rper3[RP_NUMDR] = { 0 };                         /* error status 3 */
+static uint16 rpec1[RP_NUMDR] = { 0 };                         /* ECC correction 1 */
+static uint16 rpec2[RP_NUMDR] = { 0 };                         /* ECC correction 2 */
+static uint16 rpxbc[RP_NUMDR] = { 0 };                         /* Byte Count Copy */
+static int32 rp_stopioe = 1;                                   /* stop on error */
+static int32 rp_swait = 26;                                    /* seek time */
+static int32 rp_rwait = 10;                                    /* rotate time */
 
-t_stat rp_mbrd (int32 *data, int32 ofs, int32 drv);
-t_stat rp_mbwr (int32 data, int32 ofs, int32 drv);
-t_stat rp_svc (UNIT *uptr);
-t_stat rp_reset (DEVICE *dptr);
-t_stat rp_attach (UNIT *uptr, CONST char *cptr);
-t_stat rp_detach (UNIT *uptr);
-t_stat rp_boot (int32 unitno, DEVICE *dptr);
-void rp_set_er (int16 flg, int32 drv);
-void rp_clr_as (int32 mask);
-void rp_update_ds (uint16 flg, int32 drv);
-t_stat rp_go (int32 drv);
-t_stat rp_set_type (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
-t_stat rp_show_type (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
-t_stat rp_set_bad (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
-int32 rp_abort (void);
-t_stat rp_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
-const char *rp_description (DEVICE *dptr);
+static t_stat rp_mbrd (int32 *data, int32 ofs, int32 drv);
+static t_stat rp_mbwr (int32 data, int32 ofs, int32 drv);
+static t_stat rp_svc (UNIT *uptr);
+static t_stat rp_reset (DEVICE *dptr);
+static t_stat rp_attach (UNIT *uptr, CONST char *cptr);
+static t_stat rp_detach (UNIT *uptr);
+static t_stat rp_boot (int32 unitno, DEVICE *dptr);
+static void rp_set_er (int16 flg, int32 drv);
+static void rp_clr_as (int32 mask);
+static void rp_update_ds (uint16 flg, int32 drv);
+static t_stat rp_go (int32 drv);
+static t_stat rp_set_bad (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static int32 rp_abort (void);
+static void rp_io_complete (UNIT *uptr, t_stat status);
+static t_stat rp_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
+static const char *rp_description (DEVICE *dptr);
 
 
 /* RP data structures
@@ -610,28 +584,11 @@ const char *rp_description (DEVICE *dptr);
 
 #define IOLN_RP         054
 
-DIB rp_dib = { MBA_AUTO, IOLN_RP, &rp_mbrd, &rp_mbwr, 0, 0, 0, { &rp_abort } };
+static DIB rp_dib = { MBA_AUTO, IOLN_RP, &rp_mbrd, &rp_mbwr, 0, 0, 0, { &rp_abort } };
 
-UNIT rp_unit[] = {
-    { UDATA (&rp_svc, UNIT_FIX+UNIT_ATTABLE+UNIT_DISABLE+UNIT_AUTO+
-             UNIT_ROABLE+(INIT_DTYPE << UNIT_V_DTYPE), INIT_SIZE) },
-    { UDATA (&rp_svc, UNIT_FIX+UNIT_ATTABLE+UNIT_DISABLE+UNIT_AUTO+
-             UNIT_ROABLE+(INIT_DTYPE << UNIT_V_DTYPE), INIT_SIZE) },
-    { UDATA (&rp_svc, UNIT_FIX+UNIT_ATTABLE+UNIT_DISABLE+UNIT_AUTO+
-             UNIT_ROABLE+(INIT_DTYPE << UNIT_V_DTYPE), INIT_SIZE) },
-    { UDATA (&rp_svc, UNIT_FIX+UNIT_ATTABLE+UNIT_DISABLE+UNIT_AUTO+
-             UNIT_ROABLE+(INIT_DTYPE << UNIT_V_DTYPE), INIT_SIZE) },
-    { UDATA (&rp_svc, UNIT_FIX+UNIT_ATTABLE+UNIT_DISABLE+UNIT_AUTO+
-             UNIT_ROABLE+(INIT_DTYPE << UNIT_V_DTYPE), INIT_SIZE) },
-    { UDATA (&rp_svc, UNIT_FIX+UNIT_ATTABLE+UNIT_DISABLE+UNIT_AUTO+
-             UNIT_ROABLE+(INIT_DTYPE << UNIT_V_DTYPE), INIT_SIZE) },
-    { UDATA (&rp_svc, UNIT_FIX+UNIT_ATTABLE+UNIT_DISABLE+UNIT_AUTO+
-             UNIT_ROABLE+(INIT_DTYPE << UNIT_V_DTYPE), INIT_SIZE) },
-    { UDATA (&rp_svc, UNIT_FIX+UNIT_ATTABLE+UNIT_DISABLE+UNIT_AUTO+
-             UNIT_ROABLE+(INIT_DTYPE << UNIT_V_DTYPE), INIT_SIZE) }
-    };
+static UNIT rp_unit[RP_NUMDR] = {{0}};
 
-REG rp_reg[] = {
+static REG rp_reg[] = {
     { BRDATADF (CS1,              rpcs1, DEV_RDX, 16, RP_NUMDR, "current operation", rp_cs1_bits) },
     { BRDATADF (DA,                rpda, DEV_RDX, 16, RP_NUMDR, "desired surface, sector", rp_da_bits) },
     { BRDATADF (DS,                rpds, DEV_RDX, 16, RP_NUMDR, "drive status", rp_ds_bits) },
@@ -654,7 +611,7 @@ REG rp_reg[] = {
     { NULL }
     };
 
-MTAB rp_mod[] = {
+static MTAB rp_mod[] = {
     { MTAB_XTD|MTAB_VDV, 0, "MASSBUS", NULL, 
         NULL, &mba_show_num, NULL, "Display Massbus number" },
     { MTAB_XTD|MTAB_VUN, 0, "write enabled", "WRITEENABLED", 
@@ -663,22 +620,6 @@ MTAB rp_mod[] = {
         &set_writelock, NULL,   NULL, "Write lock disk drive" },
     { UNIT_DUMMY,      0, NULL,            "BADBLOCK", 
         &rp_set_bad, NULL, NULL, "write bad block table on last track" },
-    { MTAB_XTD|MTAB_VUN, RM03_DTYPE, NULL, "RM03",
-      &rp_set_type, NULL, NULL, "Set RM03 Disk Type" },
-    { MTAB_XTD|MTAB_VUN, RP04_DTYPE, NULL, "RP04",
-      &rp_set_type, NULL, NULL, "Set RP04 Disk Type" },
-    { MTAB_XTD|MTAB_VUN, RP05_DTYPE, NULL, "RP05",
-      &rp_set_type, NULL, NULL, "Set RP05 Disk Type" },
-    { MTAB_XTD|MTAB_VUN, RM80_DTYPE, NULL, "RM80",
-      &rp_set_type, NULL, NULL, "Set RM80 Disk Type" },
-    { MTAB_XTD|MTAB_VUN, RP06_DTYPE, NULL, "RP06",
-      &rp_set_type, NULL, NULL, "Set RP06 Disk Type" },
-    { MTAB_XTD|MTAB_VUN, RM05_DTYPE, NULL, "RM05",
-      &rp_set_type, NULL, NULL, "Set RM05 Disk Type" },
-    { MTAB_XTD|MTAB_VUN, RP07_DTYPE, NULL, "RP07",
-      &rp_set_type, NULL, NULL, "Set RP07 Disk Type" },
-    { MTAB_XTD|MTAB_VUN, 0, "TYPE", NULL,
-      NULL, &rp_show_type, NULL, "Display device type" },
     { UNIT_AUTO, UNIT_AUTO, "autosize", "AUTOSIZE", 
       NULL, NULL, NULL, "Set type based on file size at attach" },
     { UNIT_AUTO,         0, "noautosize",   "NOAUTOSIZE",   
@@ -695,7 +636,7 @@ MTAB rp_mod[] = {
 #define DBG_DSK  0x0008                                 /* display sim_disk activities */
 #define DBG_DAT  0x0010                                 /* display transfer data */
 
-DEBTAB rp_debug[] = {
+static DEBTAB rp_debug[] = {
   {"TRACE",  DBG_TRC, "trace routine calls"},
   {"REG",    DBG_REG, "trace read/write registers"},
   {"REQ",    DBG_REQ, "display transfer requests"},
@@ -709,12 +650,13 @@ DEVICE rp_dev = {
     RP_NUMDR, DEV_RDX, 30, 1, DEV_RDX, 16,
     NULL, NULL, &rp_reset,
     &rp_boot, &rp_attach, &rp_detach,
-    &rp_dib, DEV_DISABLE | DEV_UBUS | DEV_QBUS | DEV_MBUS | DEV_DEBUG | DEV_DISK,
+    &rp_dib, DEV_DISABLE | DEV_MBUS | DEV_DEBUG | DEV_DISK,
     0, rp_debug, NULL, NULL, &rp_help, NULL, NULL, 
-    &rp_description
+    &rp_description, NULL, &drv_tab
     };
+static DEVICE *rp_dptr = &rp_dev;
 
-const char *rp_regnam[] = 
+static const char *rp_regnam[] = 
     {
     "RP_CS1",    /* 0 */
     "RP_DS",     /* 1 */
@@ -782,22 +724,28 @@ const char *rp_regnam[] =
     "63",        /* 63 */
     };
 
+static DEVICE *rp_drv_to_unit (int32 drv, UNIT **puptr)
+{
+if (puptr)
+    *puptr = rp_dptr->units + drv;
+return rp_dptr;
+}
+
 /* Massbus register read */
 
 t_stat rp_mbrd (int32 *data, int32 ofs, int32 drv)
 {
-uint32 val, dtype, i;
+uint32 val, i;
 UNIT *uptr;
+DEVICE *dptr = rp_drv_to_unit (drv, &uptr);             /* get unit & device */;
 
 rp_update_ds (0, drv);                                  /* update ds */
-uptr = rp_dev.units + drv;                              /* get unit */
 if (uptr->flags & UNIT_DIS) {                           /* nx disk */
     *data = 0;
     return MBE_NXD;
     }
-dtype = GET_DTYPE (uptr->flags);                        /* get drive type */
 ofs = ofs & MBA_RMASK;                                  /* mask offset */
-if (drv_tab[dtype].ctrl == RM_CTRL)                     /* RM? convert */
+if (DRVFL_GET_IFTYPE(uptr->drvtyp) == RM_CTRL)          /* RM? convert */
     ofs = ofs + RM_OF;
 
 switch (ofs) {                                          /* decode offset */
@@ -827,7 +775,7 @@ switch (ofs) {                                          /* decode offset */
         break;
 
     case RP_LA_OF: case RM_LA_OF:                       /* RPLA */
-        val = GET_SECTOR (rp_rwait, dtype) << LA_V_SC;
+        val = GET_SECTOR (rp_rwait, uptr->drvtyp) << LA_V_SC;
         break;
 
     case RP_MR_OF: case RM_MR_OF:                       /* RPMR */
@@ -835,7 +783,7 @@ switch (ofs) {                                          /* decode offset */
         break;
 
     case RP_DT_OF: case RM_DT_OF:                       /* RPDT */
-        val = drv_tab[dtype].devtype;
+        val = uptr->drvtyp->model;
         break;
 
     case RP_SN_OF: case RM_SN_OF:                       /* RPSN */
@@ -883,8 +831,8 @@ switch (ofs) {                                          /* decode offset */
         return MBE_NXR;
         }
 
-sim_debug(DBG_REG, &rp_dev, "rp_mbrd(drv=%d(%s), %s=0x%X)\n", drv, drv_tab[dtype].name, rp_regnam[ofs], val);
-sim_debug_bits(DBG_REG, &rp_dev, rp_reg_bits[ofs], val, val, 1);
+sim_debug(DBG_REG, dptr, "rp_mbrd(drv=%d(%s), %s=0x%X)\n", drv, uptr->drvtyp->name, rp_regnam[ofs], val);
+sim_debug_bits(DBG_REG, dptr, rp_reg_bits[ofs], val, val, 1);
 
 *data = val;
 return SCPE_OK;
@@ -895,10 +843,10 @@ return SCPE_OK;
 t_stat rp_mbwr (int32 data, int32 ofs, int32 drv)
 {
 uint32 old_reg;
-UNIT *uptr = rp_dev.units + drv;                        /* get unit */
-int32 dtype = GET_DTYPE (uptr->flags);                  /* get drive type */
+UNIT *uptr;
+DEVICE *dptr = rp_drv_to_unit (drv, &uptr);             /* get unit & device */;
 
-sim_debug(DBG_REG, &rp_dev, "rp_mbwr(drv=%d(%s), %s=0x%X)\n", drv, drv_tab[dtype].name, rp_regnam[ofs], data);
+sim_debug(DBG_REG, dptr, "rp_mbwr(drv=%s(%s), %s=0x%X)\n", sim_uname (uptr), uptr->drvtyp->name, rp_regnam[ofs], data);
 
 if (uptr->flags & UNIT_DIS)                             /* nx disk */
     return MBE_NXD;
@@ -909,7 +857,7 @@ if ((ofs != RP_AS_OF) && sim_is_active (uptr)) {        /* unit busy? */
     }
 rmhr[drv] = (uint16)data;                               /* save write */
 ofs = ofs & MBA_RMASK;                                  /* mask offset */
-if (drv_tab[dtype].ctrl == RM_CTRL)                     /* RM? convert */
+if (DRVFL_GET_IFTYPE(uptr->drvtyp) == RM_CTRL)          /* RM? convert */
     ofs = ofs + RM_OF;
 
 switch (ofs) {                                          /* decode PA<5:1> */
@@ -917,7 +865,7 @@ switch (ofs) {                                          /* decode PA<5:1> */
     case RP_CS1_OF: case RM_CS1_OF:                     /* RPCS1 */
         old_reg = rpcs1[drv];
         rpcs1[drv] = data & CS1_RW;
-        sim_debug_bits(DBG_REG, &rp_dev, rp_reg_bits[ofs], old_reg, rpcs1[drv], 1);
+        sim_debug_bits(DBG_REG, dptr, rp_reg_bits[ofs], old_reg, rpcs1[drv], 1);
         if (data & CS1_GO)                              /* start op */
             return rp_go (drv);
         break;  
@@ -925,36 +873,36 @@ switch (ofs) {                                          /* decode PA<5:1> */
     case RP_DA_OF: case RM_DA_OF:                       /* RPDA */
         old_reg = rpds[drv];
         rpda[drv] = (uint16)(data & ~DA_MBZ);
-        sim_debug_bits(DBG_REG, &rp_dev, rp_reg_bits[ofs], old_reg, rpds[drv], 1);
+        sim_debug_bits(DBG_REG, dptr, rp_reg_bits[ofs], old_reg, rpds[drv], 1);
         break;
 
     case RP_AS_OF: case RM_AS_OF:                       /* RPAS */
-        sim_debug_bits(DBG_REG, &rp_dev, rp_reg_bits[ofs], data, data, 1);
+        sim_debug_bits(DBG_REG, dptr, rp_reg_bits[ofs], data, data, 1);
         rp_clr_as (data);
         break;
 
     case RP_MR_OF: case RM_MR_OF:                       /* RPMR */
         old_reg = rpmr[drv];
         rpmr[drv] = (uint16)data;
-        sim_debug_bits(DBG_REG, &rp_dev, rp_reg_bits[ofs], old_reg, rpmr[drv], 1);
+        sim_debug_bits(DBG_REG, dptr, rp_reg_bits[ofs], old_reg, rpmr[drv], 1);
         break;
 
     case RP_OF_OF: case RM_OF_OF:                       /* RPOF */
         old_reg = rpof[drv];
         rpof[drv] = (uint16)(data & ~OF_MBZ);
-        sim_debug_bits(DBG_REG, &rp_dev, rp_reg_bits[ofs], old_reg, rpof[drv], 1);
+        sim_debug_bits(DBG_REG, dptr, rp_reg_bits[ofs], old_reg, rpof[drv], 1);
         break;
 
     case RP_DC_OF: case RM_DC_OF:                       /* RPDC */
         old_reg = rpdc[drv];
         rpdc[drv] = (uint16)(data & ~DC_MBZ);
-        sim_debug_bits(DBG_REG, &rp_dev, rp_reg_bits[ofs], old_reg, rpdc[drv], 1);
+        sim_debug_bits(DBG_REG, dptr, rp_reg_bits[ofs], old_reg, rpdc[drv], 1);
         break;
 
     case RM_MR2_OF:                                     /* RMMR2 */
         old_reg = rmmr2[drv];
         rmmr2[drv] = (uint16)data;
-        sim_debug_bits(DBG_REG, &rp_dev, rp_reg_bits[ofs], old_reg, rmmr2[drv], 1);
+        sim_debug_bits(DBG_REG, dptr, rp_reg_bits[ofs], old_reg, rmmr2[drv], 1);
         break;
 
     case RP_ER1_OF: case RM_ER1_OF:                     /* RPER1 */
@@ -983,15 +931,14 @@ return SCPE_OK;
 t_stat rp_go (int32 drv)
 {
 int32 dc, fnc, t;
-DEVICE *dptr = &rp_dev;
-UNIT *uptr = dptr->units + drv;                         /* get unit */
-int32 dtype = GET_DTYPE (uptr->flags);                  /* get drive type */
+UNIT *uptr;
+DEVICE *dptr = rp_drv_to_unit (drv, &uptr);             /* get unit & device */;
 
-sim_debug(DBG_REQ, dptr, "rp_go(drv=%d(%s))\n", drv, drv_tab[dtype].name);
+sim_debug(DBG_REQ, dptr, "rp_go(drv=%s(%s))\n", sim_uname (uptr), uptr->drvtyp->name);
 
 fnc = GET_FNC (rpcs1[drv]);                             /* get function */
-sim_debug(DBG_REQ, dptr, ">>RP%d STRT: fnc=%s, ds=%o, cyl=%o, da=%o, er=%o\n",
-          drv, rp_fname[fnc], rpds[drv], rpdc[drv], rpda[drv], rper1[drv]);
+sim_debug(DBG_REQ, dptr, ">>%s STRT: fnc=%s, ds=%o, cyl=%o, da=%o, er=%o\n",
+          sim_uname (uptr), rp_fname[fnc], rpds[drv], rpdc[drv], rpda[drv], rper1[drv]);
 rp_clr_as (AS_U0 << drv);                               /* clear attention */
 dc = rpdc[drv];                                         /* assume seek, sch */
 if ((fnc != FNC_DCLR) && (rpds[drv] & DS_ERR)) {        /* err & ~clear? */
@@ -1006,13 +953,13 @@ switch (fnc) {                                          /* case on function */
     case FNC_DCLR:                                      /* drive clear */
         rper1[drv] = rper2[drv] = rper3[drv] = 0;       /* clear errors */
         rpec2[drv] = 0;                                 /* clear EC2 */
-        if (drv_tab[dtype].ctrl == RM_CTRL)             /* RM? */
+        if (DRVFL_GET_IFTYPE(uptr->drvtyp) == RM_CTRL)  /* RM? */
             rpmr[drv] = 0;                              /* clear maint */
         else rpec1[drv] = 0;                            /* RP, clear EC1 */
         rpds[drv] = rpds[drv] & ~DS_ERR;                /* Clear ERR */
     case FNC_NOP:                                       /* no operation */
-        sim_debug (DBG_REQ, dptr, ">>RP%d DONE: fnc=%s, ds=%o, cyl=%o, da=%o, er=%d\n",
-                     drv, rp_fname[fnc], rpds[drv], rpdc[drv], rpda[drv], rper1[drv]);
+        sim_debug (DBG_REQ, dptr, ">>%s DONE: fnc=%s, ds=%o, cyl=%o, da=%o, er=%d\n",
+                     sim_uname (uptr), rp_fname[fnc], rpds[drv], rpdc[drv], rpda[drv], rper1[drv]);
         return SCPE_OK;
 
     case FNC_PRESET:                                    /* read-in preset */
@@ -1034,7 +981,7 @@ switch (fnc) {                                          /* case on function */
         return SCPE_OK;
 
     case FNC_UNLOAD:                                    /* unload */
-        if (drv_tab[dtype].ctrl == RM_CTRL) {           /* RM? */
+        if (DRVFL_GET_IFTYPE(uptr->drvtyp) == RM_CTRL) {/* RM? */
             rp_set_er (ER1_ILF, drv);                   /* not supported */
             break;
             }
@@ -1049,9 +996,9 @@ switch (fnc) {                                          /* case on function */
             rp_set_er (ER1_UNS, drv);                   /* unsafe */
             break;
             }
-        if ((GET_CY (dc) >= drv_tab[dtype].cyl) ||      /* bad cylinder */
-            (GET_SF (rpda[drv]) >= drv_tab[dtype].surf) || /* bad surface */
-            (GET_SC (rpda[drv]) >= drv_tab[dtype].sect)) { /* or bad sector? */
+        if ((GET_CY (dc) >= uptr->drvtyp->cyl) ||       /* bad cylinder */
+            (GET_SF (rpda[drv]) >= uptr->drvtyp->surf) || /* bad surface */
+            (GET_SC (rpda[drv]) >= uptr->drvtyp->sect)) { /* or bad sector? */
             rp_set_er (ER1_IAE, drv);
             break;
             }
@@ -1072,9 +1019,9 @@ switch (fnc) {                                          /* case on function */
             rp_set_er (ER1_UNS, drv);                   /* unsafe */
             break;
             }
-        if ((GET_CY (dc) >= drv_tab[dtype].cyl) ||      /* bad cylinder */
-            (GET_SF (rpda[drv]) >= drv_tab[dtype].surf) || /* bad surface */
-            (GET_SC (rpda[drv]) >= drv_tab[dtype].sect)) { /* or bad sector? */
+        if ((GET_CY (dc) >= uptr->drvtyp->cyl) ||       /* bad cylinder */
+            (GET_SF (rpda[drv]) >= uptr->drvtyp->surf) || /* bad surface */
+            (GET_SC (rpda[drv]) >= uptr->drvtyp->sect)) { /* or bad sector? */
             rp_set_er (ER1_IAE, drv);
             break;
             }
@@ -1096,8 +1043,10 @@ return MBE_GOE;
 
 int32 rp_abort (void)
 {
-sim_debug(DBG_TRC, &rp_dev, "rp_abort()\n");
-return rp_reset (&rp_dev);
+DEVICE *dptr = rp_drv_to_unit (0, NULL);                /* get device */
+
+sim_debug(DBG_TRC, dptr, "rp_abort()\n");
+return rp_reset (dptr);
 }
 
 /* I/O completion callback */
@@ -1106,7 +1055,7 @@ void rp_io_complete (UNIT *uptr, t_stat status)
 {
 DEVICE *dptr = find_dev_from_unit (uptr);
 
-sim_debug(DBG_TRC, dptr, "rp_io_complete(rp%d, status=%d)\n", (int)(uptr - dptr->units), status);
+sim_debug(DBG_TRC, dptr, "rp_io_complete(%s%d, status=%d)\n", dptr->name, (int)(uptr - dptr->units), status);
 uptr->io_status = status;
 uptr->io_complete = 1;
 /* Initiate Bottom End processing */
@@ -1122,17 +1071,17 @@ sim_activate (uptr, 0);
 
 t_stat rp_svc (UNIT *uptr)
 {
-int32 i, fnc, dtype, drv, err;
-int32 wc, abc, awc, mbc, da;
+int32 i, fnc, drv, err;
+int32 wc, abc, awc, mbc;
+uint32 da;
 DEVICE *dptr = find_dev_from_unit (uptr);
 DIB *dibp = (DIB *) dptr->ctxt;
 
-dtype = GET_DTYPE (uptr->flags);                        /* get drive type */
-drv = (int32) (uptr - rp_dev.units);                    /* get drv number */
-da = GET_DA (rpdc[drv], rpda[drv], dtype) * RP_NUMWD;   /* get disk addr */
+drv = (int32) (uptr - dptr->units);                     /* get drv number */
+da = GET_DA (rpdc[drv], rpda[drv], uptr->drvtyp) * RP_NUMWD;/* get disk addr */
 fnc = GET_FNC (rpcs1[drv]);                             /* get function */
 
-sim_debug(DBG_TRC, dptr, "rp_svc(rp%d(%s), %s, da=0x%X, fnc=%s)\n", drv, drv_tab[dtype].name, uptr->io_complete ? "Bottom" : "Top", da, rp_fname[fnc]);
+sim_debug(DBG_TRC, dptr, "rp_svc(%s%d(%s), %s, da=0x%X, fnc=%s)\n", dptr->name, drv, uptr->drvtyp->name, uptr->io_complete ? "Bottom" : "Top", da, rp_fname[fnc]);
 
 if ((uptr->flags & UNIT_ATT) == 0) {                    /* not attached? */
     rp_set_er (ER1_UNS, drv);                           /* set drive error */
@@ -1172,11 +1121,11 @@ if (!uptr->io_complete) { /* Top End (I/O Initiation) Processing */
         case FNC_READH:                                 /* read headers */
             mbc = rpxbc[drv] = (uint16)mba_get_bc (dibp->ba);/* get byte count */
             wc = (mbc + 1) >> 1;                        /* convert to words */
-            if ((da + wc) > drv_tab[dtype].size) {      /* disk overrun? */
+            if ((da + wc) > uptr->capac) {              /* disk overrun? */
                 rp_set_er (ER1_AOE, drv);               /* set err */
-                wc = drv_tab[dtype].size - da;          /* trim xfer */
+                wc = (int32)(uptr->capac - da);         /* trim xfer */
                 mbc = wc << 1;                          /* trim mb count */
-                if (da >= drv_tab[dtype].size) {        /* none left? */
+                if (da >= uptr->capac) {                /* none left? */
                     mba_set_exc (dibp->ba);             /* set exception */
                     rp_update_ds (DS_ATA, drv);         /* set attn */
                     break;
@@ -1217,8 +1166,7 @@ else { /* Bottom End (After I/O processing) */
         case FNC_SEARCH:                                /* search */
         case FNC_SEEK:                                  /* seek */
         case FNC_WRITEH:                                /* write headers stub */
-            abort ();                                   /* should NEVER happen */
-            break;
+            return SCPE_IERR;                           /* should NEVER happen */
 
         case FNC_WRITE:                                 /* write */
         case FNC_WCHK:                                  /* write check */
@@ -1238,13 +1186,13 @@ else { /* Bottom End (After I/O processing) */
                 else mba_wrbufW (dibp->ba, mbc, rpxb[drv]);/* store in mem */
                 }                                       /* end if read */
             da = da + wc + (RP_NUMWD - 1);
-            if (da >= drv_tab[dtype].size)
+            if (da >= uptr->capac)
                 rpds[drv] = rpds[drv] | DS_LST;
             da = da / RP_NUMWD;
-            rpda[drv] = (uint16)(da % drv_tab[dtype].sect);
-            da = da / drv_tab[dtype].sect;
-            rpda[drv] = (uint16)(rpda[drv] | ((da % drv_tab[dtype].surf) << DA_V_SF));
-            rpdc[drv] = (uint16)(da / drv_tab[dtype].surf);
+            rpda[drv] = (uint16)(da % uptr->drvtyp->sect);
+            da = da / uptr->drvtyp->sect;
+            rpda[drv] = (uint16)(rpda[drv] | ((da % uptr->drvtyp->surf) << DA_V_SF));
+            rpdc[drv] = (uint16)(da / uptr->drvtyp->surf);
             uptr->CYL = rpdc[drv];
 
             if (err != 0) {                             /* error? */
@@ -1262,8 +1210,8 @@ else { /* Bottom End (After I/O processing) */
     }
 rpds[drv] = (rpds[drv] & ~DS_PIP) | DS_RDY;             /* change drive status */
 
-sim_debug (DBG_REQ, dptr, ">>RP%d DONE: fnc=%s, ds=%o, cyl=%o, da=%o, er=%d\n",
-             drv, rp_fname[fnc], rpds[drv], rpdc[drv], rpda[drv], rper1[drv]);
+sim_debug (DBG_REQ, dptr, ">>%s DONE: fnc=%s, ds=%o, cyl=%o, da=%o, er=%d\n",
+             sim_uname (uptr), rp_fname[fnc], rpds[drv], rpdc[drv], rpda[drv], rper1[drv]);
 return SCPE_OK;
 }
 
@@ -1271,11 +1219,13 @@ return SCPE_OK;
 
 void rp_set_er (int16 flag, int32 drv)
 {
-sim_debug(DBG_TRC, &rp_dev, "rp_set_er(rp%d, flag=0x%X)\n", drv, flag);
+UNIT *uptr;
+DEVICE *dptr = rp_drv_to_unit (drv, &uptr);             /* get unit & device */;
+
+sim_debug(DBG_TRC, dptr, "rp_set_er(%s, flag=0x%X)\n", sim_uname (uptr), flag);
 rper1[drv] = rper1[drv] | flag;
 rpds[drv] = rpds[drv] | DS_ATA;
 mba_upd_ata (rp_dib.ba, 1);
-return;
 }
 
 /* Clear attention flags */
@@ -1283,6 +1233,7 @@ return;
 void rp_clr_as (int32 mask)
 {
 uint32 i, as;
+DEVICE *dptr = rp_drv_to_unit (0, NULL);                /* get device */;
 
 for (i = as = 0; i < RP_NUMDR; i++) {
     if (mask & (AS_U0 << i))
@@ -1291,10 +1242,9 @@ for (i = as = 0; i < RP_NUMDR; i++) {
         as = 1;
     }
 
-sim_debug(DBG_TRC, &rp_dev, "rp_clr_as(mask=0x%X, as=0x%X)\n", mask, as);
+sim_debug(DBG_TRC, dptr, "rp_clr_as(mask=0x%X, as=0x%X)\n", mask, as);
 
 mba_upd_ata (rp_dib.ba, as);
-return;
 }
 
 /* Drive status update */
@@ -1302,6 +1252,8 @@ return;
 void rp_update_ds (uint16 flag, int32 drv)
 {
 uint16 o_ds = rpds[drv];
+UNIT *uptr;
+DEVICE *dptr = rp_drv_to_unit (drv, &uptr);             /* get unit & device */
 
 if (rp_unit[drv].flags & UNIT_DIS)
     rpds[drv] = rper1[drv] = 0;
@@ -1317,11 +1269,9 @@ if (flag & DS_ATA)
     mba_upd_ata (rp_dib.ba, 1);
 
 if (o_ds != rpds[drv]) {
-    sim_debug(DBG_TRC, &rp_dev, "rp_update_ds(rp%d, flag=0x%X, ds=0x%X)\n", drv, flag, rpds[drv]);
-    sim_debug_bits(DBG_TRC, &rp_dev, rp_ds_bits, o_ds, rpds[drv], 1);
+    sim_debug(DBG_TRC, dptr, "rp_update_ds(%s, flag=0x%X, ds=0x%X)\n", sim_uname (uptr), flag, rpds[drv]);
+    sim_debug_bits(DBG_TRC, dptr, rp_ds_bits, o_ds, rpds[drv], 1);
     }
-
-return;
 }
 
 /* Device reset */
@@ -1330,9 +1280,21 @@ t_stat rp_reset (DEVICE *dptr)
 {
 int32 i;
 UNIT *uptr;
+static t_bool inited = FALSE;
 
 sim_debug(DBG_TRC, dptr, "rp_reset()\n");
 
+if (!inited) {
+    inited = TRUE;
+    if (strcmp (dptr->name, "RP") != 0)
+        dptr->flags |= DEV_DIS;
+    for (i = 0; i < RP_NUMDR; i++) {
+        uptr = dptr->units + i;
+        uptr->action = &rp_svc;
+        uptr->flags = UNIT_FIX|UNIT_ATTABLE|UNIT_DISABLE|UNIT_AUTO|UNIT_ROABLE;
+        sim_disk_set_drive_type_by_name (uptr, INIT_DTYPE);
+        }
+    }
 mba_set_enbdis (dptr);
 for (i = 0; i < RP_NUMDR; i++) {
     uptr = dptr->units + i;
@@ -1341,9 +1303,11 @@ for (i = 0; i < RP_NUMDR; i++) {
     if (uptr->flags & UNIT_ATT)
         rpds[i] = (rpds[i] & DS_VV) | DS_DPR | DS_RDY | DS_MOL |
                   ((uptr->flags & UNIT_WPRT)? DS_WRL: 0);
-    else if (uptr->flags & UNIT_DIS)
-        rpds[i] = 0;
-    else rpds[i] = DS_DPR;
+    else 
+        if (uptr->flags & UNIT_DIS)
+            rpds[i] = 0;
+        else
+            rpds[i] = DS_DPR;
     rpcs1[i] = 0;
     rper1[i] = 0;
     rpof[i] = 0;
@@ -1371,14 +1335,12 @@ t_stat rp_attach (UNIT *uptr, CONST char *cptr)
 int32 drv;
 t_stat r;
 DEVICE *dptr = find_dev_from_unit (uptr);
-static const char *drives[] = {"RM03", "RP04", "RP05", "RM80", "RP06", "RM05", "RP07", NULL};
 
-uptr->capac = drv_tab[GET_DTYPE (uptr->flags)].size;
 r = sim_disk_attach_ex (uptr, cptr, RP_NUMWD * sizeof (uint16), 
                         sizeof (uint16), TRUE, DBG_DSK, 
-                        drv_tab[GET_DTYPE (uptr->flags)].name, 
-                        drv_tab[GET_DTYPE (uptr->flags)].dec144 ? drv_tab[GET_DTYPE (uptr->flags)].sect : 0, 
-                        0, (uptr->flags & UNIT_AUTO) ? drives : NULL);
+                        uptr->drvtyp->name, 
+                        (uptr->drvtyp->flags & DRVFL_DEC144) ? uptr->drvtyp->sect : 0, 
+                        0, NULL);
 if (r != SCPE_OK)                                       /* error? */
     return r;
 drv = (int32) (uptr - dptr->units);                     /* get drv number */
@@ -1405,35 +1367,14 @@ if (!sim_is_running)                                    /* from console? */
 return sim_disk_detach (uptr);
 }
 
-/* Set type command validation routine */
-
-t_stat rp_set_type (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
-{
-if ((val < 0) || (cptr && *cptr))
-    return SCPE_ARG;
-if (uptr->flags & UNIT_ATT)
-    return SCPE_ALATT;
-uptr->flags = (uptr->flags & ~UNIT_DTYPE) | (val << UNIT_V_DTYPE);
-uptr->capac = (t_addr)drv_tab[val].size;
-return SCPE_OK;
-}
-
-/* Show unit type */
-
-t_stat rp_show_type (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
-{
-fprintf (st, "%s", drv_tab[GET_DTYPE (uptr->flags)].name);
-return SCPE_OK;
-}
-
 /* Set bad block routine */
 
 t_stat rp_set_bad (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
-if (drv_tab[GET_DTYPE (uptr->flags)].dec144)
-    return pdp11_bad_block (uptr, drv_tab[GET_DTYPE (uptr->flags)].sect, RP_NUMWD);
+if (uptr->drvtyp->flags & DRVFL_DEC144)
+    return pdp11_bad_block (uptr, uptr->drvtyp->sect, RP_NUMWD);
 return sim_messagef (SCPE_ARG, "%s: %s disk drives did not have a DEC Standard 144 bad block table\n",
-                     sim_uname (uptr), drv_tab[GET_DTYPE (uptr->flags)].name);
+                     sim_uname (uptr), uptr->drvtyp->name);
 }
 
 /* Boot routine */
@@ -1479,7 +1420,7 @@ for (i = 0; i < BOOT_LEN; i++)
     WrMemW (BOOT_START + (2 * i), boot_rom[i]);
 WrMemW (BOOT_UNIT, unitno & (RP_NUMDR - 1));
 WrMemW (BOOT_CSR, mba_get_csr (rp_dib.ba) & DMASK);
-if (drv_tab[GET_DTYPE (uptr->flags)].ctrl == RP_CTRL)
+if (DRVFL_GET_IFTYPE(uptr->drvtyp) == RP_CTRL)
     WrMemW (BOOT_START, 042102);                    /* "BD" */
 else 
     WrMemW (BOOT_START, 042122);                    /* "RD" */
@@ -1498,8 +1439,8 @@ return SCPE_NOFNC;
 
 t_stat rp_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr)
 {
-fprintf (st, "RP04/05/06/07, RM02/03/05/80 Disk Pack Drives (RP)\n\n");
-fprintf (st, "The RP controller implements the Massbus family of large disk drives.  RP\n");
+fprintf (st, "RP04/05/06/07, RM02/03/05/80 Disk Pack Drives (%s)\n\n", dptr->name);
+fprintf (st, "The %s controller implements the Massbus family of large disk drives.  %s\n", dptr->name, dptr->name);
 fprintf (st, "options include the ability to set units write enabled or write locked, to\n");
 fprintf (st, "set the drive type to one of six disk types or autosize, and to write a DEC\n");
 fprintf (st, "standard 144 compliant bad block table on the last track.\n\n");
@@ -1507,7 +1448,7 @@ fprint_set_help (st, dptr);
 fprint_show_help (st, dptr);
 fprintf (st, "\nThe type options can be used only when a unit is not attached to a file.\n");
 fprintf (st, "The bad block option can be used only when a unit is attached to a file.\n");
-fprintf (st, "The RP device supports the BOOT command.\n");
+fprintf (st, "The %s device supports the BOOT command.\n", dptr->name);
 fprint_reg_help (st, dptr);
 fprintf (st, "\nError handling is as follows:\n\n");
 fprintf (st, "    error         STOP_IOE   processed as\n");

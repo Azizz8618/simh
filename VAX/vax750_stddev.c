@@ -145,13 +145,6 @@ static BITFIELD tmr_iccs_bits [] = {
     ENDBITS
     };
 
-/* TU58 definitions */
-
-#define TD_NUMBLK       512                             /* blocks/tape */
-#define TD_NUMBY        512                             /* bytes/block */
-#define TD_SIZE         (TD_NUMBLK * TD_NUMBY)          /* bytes/tape */
-
-
 
 int32 tti_csr = 0;                                      /* control/status */
 uint32 tti_buftime;                                     /* time input character arrived */
@@ -196,6 +189,8 @@ t_stat tto_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cpt
 t_stat clk_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
 t_stat clk_attach (UNIT *uptr, CONST char *cptr);
 t_stat clk_detach (UNIT *uptr);
+t_stat clk_show_mode (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+t_stat clk_show_time (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat tmr_reset (DEVICE *dptr);
 const char *tmr_description (DEVICE *dptr);
 t_stat td_reset (DEVICE *dptr);
@@ -294,6 +289,12 @@ REG clk_reg[] = {
     { NULL }
     };
 
+MTAB clk_mod[] = {
+    { MTAB_XTD|MTAB_VUN,            0, "MODE",   NULL,     NULL, &clk_show_mode, NULL, "Display TODR clock mode" },
+    { MTAB_XTD|MTAB_VUN|MTAB_SH_NL, 0, "TIME",   NULL,     NULL, &clk_show_time, NULL, "Display TODR clock time" },
+    { 0 }
+    };
+
 #define TMR_DB_TODR     0x10    /* TODR */
 
 DEBTAB todr_deb[] = {
@@ -302,7 +303,7 @@ DEBTAB todr_deb[] = {
     };
 
 DEVICE clk_dev = {
-    "TODR", &clk_unit, clk_reg, NULL,
+    "TODR", &clk_unit, clk_reg, clk_mod,
     1, 0, 8, 4, 0, 32,
     NULL, NULL, &clk_reset,
     NULL, &clk_attach, &clk_detach,
@@ -389,9 +390,9 @@ DEVICE td_dev = {
     "TD", &td_unit, td_reg, td_mod,
     1, DEV_RDX, 20, 1, DEV_RDX, 8,
     NULL, NULL, &td_reset,
-    NULL, NULL, NULL,
-    NULL, DEV_DEBUG, 0, td_deb, NULL, NULL, NULL, NULL, NULL, 
-    &td_description
+    NULL, &td_attach, NULL,
+    NULL, DEV_DEBUG | DEV_DISK, 0, td_deb, NULL, NULL, NULL, NULL, NULL, 
+    &td_description, NULL, &drv_tab
     };
 
 static void set_csi_int (int32 ctlr, t_bool val)
@@ -730,7 +731,6 @@ tmr_nicr = val;
 t_stat tmr_svc (UNIT *uptr)
 {
 sim_debug (TMR_DB_TICK, &tmr_dev, "tmr_svc()\n");
-tmxr_poll = tmr_poll * TMXR_MULT;                   /* set mux poll */
 if (tmr_iccs & TMR_CSR_DON)                         /* done? set err */
     tmr_iccs = tmr_iccs | TMR_CSR_ERR;
 else
@@ -743,7 +743,6 @@ if (tmr_iccs & TMR_CSR_IE) {                        /* ie? set int req */
     }
 else
     tmr_int = 0;
-AIO_SET_INTERRUPT_LATENCY(tmr_poll*clk_tps);        /* set interrrupt latency */
 return SCPE_OK;
 }
 
@@ -764,22 +763,26 @@ else
 
 t_stat clk_reset (DEVICE *dptr)
 {
-if (clk_unit.filebuf == NULL) {                         /* make sure the TODR is initialized */
-    clk_unit.filebuf = calloc(sizeof(TOY), 1);
+if ((clk_unit.filebuf == NULL) ||                       /* make sure the TODR is initialized */
+    (sim_switches & SWMASK ('P'))) {
+    clk_unit.filebuf = realloc(clk_unit.filebuf, sizeof(TOY));
     if (clk_unit.filebuf == NULL)
         return SCPE_MEM;
+    memset (clk_unit.filebuf, 0, sizeof(TOY));
     }
 todr_resync ();
 sim_activate_after (&clk_unit, 10000);
 tmr_poll = sim_rtcn_init_unit (&clk_unit, CLK_DELAY, TMR_CLK);  /* init timer */
+tmxr_poll = tmr_poll * TMXR_MULT;                   /* set mux poll */
 return SCPE_OK;
 }
 
 t_stat clk_svc (UNIT *uptr)
 {
-sim_activate_after (uptr, 10000);
-tmr_poll = sim_rtcn_calb (100, TMR_CLK);
-tmxr_poll = tmr_poll * TMXR_MULT;                       /* set mux poll */
+tmr_poll = sim_rtcn_calb (clk_tps, TMR_CLK);
+sim_activate_after (uptr, 1000000 / clk_tps);       /* 10000 usecs */
+tmxr_poll = tmr_poll * TMXR_MULT;                   /* set mux poll */
+AIO_SET_INTERRUPT_LATENCY(tmr_poll*100);            /* set interrrupt latency */
 return SCPE_OK;
 }
 
@@ -880,6 +883,34 @@ if ((uptr->flags & UNIT_ATT) == 0)
 return r;
 }
 
+/* CLK show time */
+
+t_stat clk_show_mode (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+fprintf (st, "%s", (uptr->flags & UNIT_ATT) ? "OS Agnostic TODR Mode" : "Automatic VMS TODR Mode");
+return SCPE_OK;
+}
+
+/* CLK show time */
+
+t_stat clk_show_time (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+TOY *toy = (TOY *)uptr->filebuf;
+time_t ttime = (time_t)toy->toy_gmtbase;
+struct tm *ttm = localtime (&ttime);
+struct timespec now;
+int32 todr_now = todr_rd ();
+
+fprintf (st, "VMS Time Base: %d-%02d-%02d %02d:%02d:%02d.%03d", 1900 + ttm->tm_year, 1 + ttm->tm_mon, ttm->tm_mday, ttm->tm_hour, ttm->tm_min, ttm->tm_sec, (int)(toy->toy_gmtbasemsec));
+now.tv_nsec = (toy->toy_gmtbasemsec + (10 * (todr_now % 100)));
+now.tv_sec = (time_t)toy->toy_gmtbase + (todr_now / 100) + (now.tv_nsec / 1000000000);
+now.tv_nsec = now.tv_nsec % 1000000000;
+ttime = (time_t)now.tv_sec;
+ttm = localtime (&ttime);
+fprintf (st, ", Now: %d-%02d-%02d %02d:%02d:%02d.%03d", 1900 + ttm->tm_year, 1 + ttm->tm_mon, ttm->tm_mday, ttm->tm_hour, ttm->tm_min, ttm->tm_sec, (int)(now.tv_nsec / 1000000));
+return SCPE_OK;
+}
+
 
 /* Interval timer reset */
 
@@ -933,7 +964,7 @@ sim_rtcn_get_time(&now, TMR_CLK);                       /* get curr time */
 base.tv_sec = (time_t)toy->toy_gmtbase;
 base.tv_nsec = toy->toy_gmtbasemsec * 1000000;
 sim_timespec_diff (&val, &now, &base);                  /* val = now - base */
-sim_debug (TMR_DB_TODR, &clk_dev, "todr_rd() - TODR=0x%X - %s\n", (int32)(val.tv_sec*100 + val.tv_nsec/10000000), todr_fmt_vms_todr ((int32)(val.tv_sec*100 + val.tv_nsec/10000000)));
+sim_debug (TMR_DB_TODR, &clk_dev, "todr_rd() - TODR=0x%X - %s\n", (int32)(val.tv_sec*100 + (val.tv_nsec + 5000000)/10000000), todr_fmt_vms_todr ((int32)(val.tv_sec*100 + val.tv_nsec/10000000)));
 return (int32)(val.tv_sec*100 + (val.tv_nsec + 5000000)/10000000);  /* 100hz Clock rounded Ticks */
 }
 

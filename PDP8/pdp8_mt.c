@@ -1,6 +1,6 @@
 /* pdp8_mt.c: PDP-8 magnetic tape simulator
 
-   Copyright (c) 1993-2011, Robert M Supnik
+   Copyright (c) 1993-2023, Robert M Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,6 +25,8 @@
 
    mt           TM8E/TU10 magtape
 
+   01-Nov-23    RMS     Fixed illegal op test to use BOT flag
+   26-Mar-22    RMS     Added extra case points for new MTSE definitions
    16-Feb-06    RMS     Added tape capacity checking
    16-Aug-05    RMS     Fixed C++ declaration and cast problems
    18-Mar-05    RMS     Added attached test to detach routine
@@ -269,7 +271,7 @@ switch (IR & 07) {                                      /* decode IR<9:11> */
         if (((uptr->flags & UNIT_ATT) == 0) ||
               sim_is_active (uptr) ||
            (((f == FN_WRITE) || (f == FN_WREOF)) && sim_tape_wrp (uptr))
-           || (((f == FN_SPACER) || (f == FN_REWIND)) && sim_tape_bot (uptr))) {
+           || (((f == FN_SPACER) || (f == FN_REWIND)) && (uptr->USTAT & STA_BOT))) {
             mt_sta = mt_sta | STA_ILL | STA_ERR;        /* illegal op error */
             mt_set_done ();                             /* set done */
             mt_updcsta (uptr);                          /* update status */
@@ -558,6 +560,7 @@ switch (st) {
 
     case MTSE_FMT:                                      /* illegal fmt */
     case MTSE_UNATT:                                    /* unattached */
+    default:                                            /* unknown error */
         mt_sta = mt_sta | STA_ILL | STA_ERR;
     case MTSE_OK:                                       /* no error */
         return SCPE_IERR;                               /* never get here! */
@@ -590,9 +593,6 @@ switch (st) {
     case MTSE_WRP:                                      /* write protect */
         mt_sta = mt_sta | STA_ILL | STA_ERR;            /* illegal operation */
         break;
-
-    default:                                            /* shouldn't happen */
-        return SCPE_IERR;
         }
 
 return SCPE_OK;

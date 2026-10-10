@@ -1,6 +1,6 @@
 /* pdp11_cpu.c: PDP-11 CPU simulator
 
-   Copyright (c) 1993-2016, Robert M Supnik
+   Copyright (c) 1993-2022, Robert M Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,6 +25,20 @@
 
    cpu          PDP-11 CPU
 
+   30-Nov-22    RMS     More 11/45,11/70 trap hackery (Walter Mueller)
+   29-Nov-22    RMS     Trap stack abort must clear other traps/aborts (Walter Mueller)
+   23-Oct-22    RMS     Fixed priority of MME traps (Walter Mueller)
+   02-Sep-22    RMS     Fixed handling of PDR<A> (Walter Mueller)
+   31-Aug-22    RMS     MMR0<15:13> != 0 locks bits<15:13> (Walter Mueller)
+                        MMR0<12> = 1 disables further traps (Walter Mueller)
+   25-Aug-22    RMS     11/45,70 clear MMR1 in trap sequence (Walter Mueller)
+   23-Aug-22    RMS     11/45,70 detect red stack abort before memory write
+                        in JSR, MFPx (Walter Mueller)
+   20-Aug-22    RMS     MMR1 reads as 0 on subset memory mmgt systems
+                        11/44, 45, 70 track PC changes (Walter Mueller)
+                        J11 tracks PC changes on -(PC) and @-(PC)
+   25-Jul-22    RMS     Removed deprecated CPU models (Q22, UHR11, URH70)
+   04-Jun-18    RMS     Removed CPU model entries for UC15 (Mark Pizzolato)
    04-Dec-16    RMS     Removed duplicate IDLE entries in MTAB
    30-Aug-16    RMS     Fixed overloading of -d in ex/mod
    14-Mar-16    RMS     Added UC15 support
@@ -338,6 +352,8 @@ int32 relocR (int32 addr);
 int32 relocW (int32 addr);
 void relocR_test (int32 va, int32 apridx);
 void relocW_test (int32 va, int32 apridx);
+int32 clean_MMR1 (int32 mmr1);
+int32 relocC (int32 va, int32 sw);
 t_bool PLF_test (int32 va, int32 apr);
 void reloc_abort (int32 err, int32 apridx);
 int32 ReadE (int32 addr);
@@ -372,22 +388,35 @@ extern int32 get_vector (int32 nipl);
 /* Trap data structures */
 
 int32 trap_vec[TRAP_V_MAX] = {                          /* trap req to vector */
-    VEC_RED, VEC_ODD, VEC_MME, VEC_NXM,
+    VEC_RED, VEC_ODD, VEC_NXM, VEC_MME,
     VEC_PAR, VEC_PRV, VEC_ILL, VEC_BPT,
     VEC_IOT, VEC_EMT, VEC_TRAP, VEC_TRC,
     VEC_YEL, VEC_PWRFL, VEC_FPE
     };
 
+t_bool trap_load_mmr2[TRAP_V_MAX + 1] = {               /* do trap requests load MMR2? */
+    TRUE, TRUE, TRUE, TRUE,
+    TRUE, FALSE, FALSE, FALSE,
+    FALSE, FALSE, FALSE, TRUE,
+    TRUE, TRUE, TRUE, TRUE                              /* last is interrupt */
+    };
+
 int32 trap_clear[TRAP_V_MAX] = {                        /* trap clears */
-    TRAP_RED+TRAP_PAR+TRAP_YEL+TRAP_TRC+TRAP_ODD+TRAP_NXM,
-    TRAP_ODD+TRAP_PAR+TRAP_YEL+TRAP_TRC,
-    TRAP_MME+TRAP_PAR+TRAP_YEL+TRAP_TRC,
-    TRAP_NXM+TRAP_PAR+TRAP_YEL+TRAP_TRC,
-    TRAP_PAR+TRAP_TRC, TRAP_PRV+TRAP_TRC,
-    TRAP_ILL+TRAP_TRC, TRAP_BPT+TRAP_TRC,
-    TRAP_IOT+TRAP_TRC, TRAP_EMT+TRAP_TRC,
-    TRAP_TRAP+TRAP_TRC, TRAP_TRC,
-    TRAP_YEL, TRAP_PWRFL, TRAP_FPE
+    TRAP_RED+TRAP_ODD+TRAP_NXM+TRAP_PAR+TRAP_YEL+TRAP_TRC+TRAP_MME, /* red stack abort */
+    TRAP_ODD+TRAP_NXM+TRAP_PAR+TRAP_YEL+TRAP_TRC+TRAP_MME, /* odd address abort */
+    TRAP_NXM+TRAP_PAR+TRAP_YEL+TRAP_TRC+TRAP_MME,       /* nxm abort */
+    TRAP_MME+TRAP_PAR+TRAP_YEL+TRAP_TRC,                /* mme abort or trap */
+    TRAP_PAR+TRAP_YEL+TRAP_TRC,
+    TRAP_PRV+TRAP_TRC,                                  /* instruction traps */
+    TRAP_ILL+TRAP_TRC,                                  /* occur in fetch or */
+    TRAP_BPT+TRAP_TRC,                                  /* initial decode */
+    TRAP_IOT+TRAP_TRC,                                  /* no yelstk possible */
+    TRAP_EMT+TRAP_TRC,
+    TRAP_TRAP+TRAP_TRC,
+    TRAP_TRC,
+    TRAP_YEL,
+    TRAP_PWRFL,
+    TRAP_FPE
     };
 
 /* CPU data structures
@@ -587,7 +616,7 @@ REG cpu_reg[] = {
 
 MTAB cpu_mod[] = {
     { MTAB_XTD|MTAB_VDV, 0, "TYPE", NULL,
-      NULL, &cpu_show_model },
+      NULL, &cpu_show_model, NULL, "Display current model features" },
 #if !defined (UC15)
     { MTAB_XTD|MTAB_VDV, MOD_1103, NULL, "11/03", &cpu_set_model, NULL, NULL, "Set CPU type to 11/03" },
     { MTAB_XTD|MTAB_VDV, MOD_1104, NULL, "11/04", &cpu_set_model, NULL, NULL, "Set CPU type to 11/04" },
@@ -609,9 +638,9 @@ MTAB cpu_mod[] = {
     { MTAB_XTD|MTAB_VDV, MOD_1184, NULL, "11/84", &cpu_set_model, NULL, NULL, "Set CPU type to 11/84" },
     { MTAB_XTD|MTAB_VDV, MOD_1193, NULL, "11/93", &cpu_set_model, NULL, NULL, "Set CPU type to 11/93" },
     { MTAB_XTD|MTAB_VDV, MOD_1194, NULL, "11/94", &cpu_set_model, NULL, NULL, "Set CPU type to 11/94" },
-    { MTAB_XTD|MTAB_VDV, MOD_1173, NULL, "Q22", &cpu_set_model, NULL, NULL, "deprecated: same as 11/73" },
-    { MTAB_XTD|MTAB_VDV, MOD_1184, NULL, "URH11", &cpu_set_model, NULL, NULL, "deprecated: same as 11/84" },
-    { MTAB_XTD|MTAB_VDV, MOD_1170, NULL, "URH70", &cpu_set_model, NULL, NULL, "deprecated: same as 11/70" },
+//    { MTAB_XTD|MTAB_VDV, MOD_1173, NULL, "Q22", &cpu_set_model, NULL, NULL, "deprecated: same as 11/73" },
+//    { MTAB_XTD|MTAB_VDV, MOD_1184, NULL, "URH11", &cpu_set_model, NULL, NULL, "deprecated: same as 11/84" },
+//    { MTAB_XTD|MTAB_VDV, MOD_1170, NULL, "URH70", &cpu_set_model, NULL, NULL, "deprecated: same as 11/70" },
     { MTAB_XTD|MTAB_VDV, MOD_1145, NULL, "U18", &cpu_set_model, NULL, NULL, "deprecated: same as 11/45" },
     { MTAB_XTD|MTAB_VDV, OPT_EIS, NULL, "EIS", &cpu_set_opt, NULL, NULL, "enable EIS instructions" },
     { MTAB_XTD|MTAB_VDV, OPT_EIS, NULL, "NOEIS", &cpu_clr_opt, NULL, NULL, "disable EIS instructions" },
@@ -636,6 +665,7 @@ MTAB cpu_mod[] = {
     { UNIT_MSIZE, 98304, NULL, "96K", &cpu_set_size, NULL, NULL, "Set memory size to 96Kb"},
     { UNIT_MSIZE, 131072, NULL, "128K", &cpu_set_size, NULL, NULL, "Set memory size to 128Kb"},
     { UNIT_MSIZE, 196608, NULL, "192K", &cpu_set_size, NULL, NULL, "Set memory size to 192Kb"},
+    { UNIT_MSIZE, 221184, NULL, "216K", &cpu_set_size, NULL, NULL, "Set memory size to 216Kb"},
     { UNIT_MSIZE, 262144, NULL, "256K", &cpu_set_size, NULL, NULL, "Set memory size to 256Kb"},
     { UNIT_MSIZE, 393216, NULL, "384K", &cpu_set_size, NULL, NULL, "Set memory size to 384Kb"},
     { UNIT_MSIZE, 524288, NULL, "512K", &cpu_set_size, NULL, NULL, "Set memory size to 512Kb"},
@@ -727,7 +757,7 @@ isenable = calc_is (cm);
 dsenable = calc_ds (cm);
 put_PIRQ (PIRQ);                                        /* rewrite PIRQ */
 STKLIM = STKLIM & STKLIM_RW;                            /* clean up STKLIM */
-MMR0 = MMR0 | MMR0_IC;                                  /* usually on */
+MMR0 = MMR0 & ~MMR0_IC;                                 /* usually off */
 
 trap_req = calc_ints (ipl, trap_req);                   /* upd int req */
 trapea = 0;
@@ -789,7 +819,8 @@ else {
             (CPUT (STOP_STKA) || stop_spabort))
             reason = STOP_SPABORT;
         if (trapea == ~MD_KER) {                        /* kernel stk abort? */
-            setTRAP (TRAP_RED);
+            trap_req = trap_req & ~trap_clear[TRAP_RED];/* clear all traps */
+            setTRAP (TRAP_RED);                         /* set red stack trap */
             setCPUERR (CPUE_RED);
             STACKFILE[MD_KER] = 4;
             if (cm == MD_KER)
@@ -877,6 +908,10 @@ while (reason == 0)  {
    6. Update SP, PSW, and PC
    7. If not stack overflow, check for stack overflow
 
+   If the MMU registers are not frozen, the 11/45 and 11/70 will
+   also clear MMR1 and store the trap vector in MMR2, <except>
+   for the four instruction traps (EMT, TRAP, IOT, BPT).
+
    If the reads in step 3, or the writes in step 5, match a data breakpoint,
    the breakpoint status will be set but the interrupt actions will continue.
    The breakpoint stop will occur at the beginning of the next instruction 
@@ -887,13 +922,14 @@ while (reason == 0)  {
         STACKFILE[cm] = SP;
         PSW = get_PSW ();                               /* assemble PSW */
         oldrs = rs;
-        if (CPUT (HAS_MMTR)) {                          /* 45,70? */
-            if (update_MM)                              /* save vector */
-                MMR2 = trapea;
-            MMR0 = MMR0 & ~MMR0_IC;                     /* clear IC */
+        if ((CPUT (HAS_MMTR)) && (update_MM)) {         /* 45,70, not frozen? */
+            MMR1 = 0;                                   /* clear MMR1 */
+            if (trap_load_mmr2[trapnum])                /* load MMR2? */
+                MMR2 = trapea;                          /* save vector */
             }
         src = ReadCW (trapea | calc_ds (MD_KER));       /* new PC */
-        src2 = ReadCW ((trapea + 2) | calc_ds (MD_KER)); /* new PSW */
+        src2 = ReadCW ((trapea + 2) | calc_ds (MD_KER));/* new PSW */
+        src2 = src2 & cpu_tab[cpu_model].psw;           /* mask off invalid bits */
         t = (src2 >> PSW_V_CM) & 03;                    /* new cm */
         trapea = ~t;                                    /* flag pushes */
         WriteCW (PSW, ((STACKFILE[t] - 2) & 0177777) | calc_ds (t));
@@ -915,7 +951,6 @@ while (reason == 0)  {
         if ((cm == MD_KER) && (SP < (STKLIM + STKL_Y)) &&
             (trapnum != TRAP_V_RED) && (trapnum != TRAP_V_YEL))
             set_stack_trap (SP);
-        MMR0 = MMR0 | MMR0_IC;                          /* back to instr */
         continue;                                       /* end if traps */
         }
 
@@ -937,7 +972,7 @@ while (reason == 0)  {
     inst_psw = get_PSW ();
     saved_sim_interval = sim_interval;
     if (BPT_SUMM_PC) {                                  /* possible breakpoint */
-        t_addr pa = relocR (PC | isenable);             /* relocate PC */
+        t_addr pa = relocC (PC, 0);                     /* relocate PC */
         if (sim_brk_test (PC, BPT_PCVIR) ||             /* Normal PC breakpoint? */
             sim_brk_test (pa, BPT_PCPHY))               /* Physical Address breakpoint? */
             ABORT (ABRT_BKPT);                          /* stop simulation */
@@ -1222,9 +1257,9 @@ while (reason == 0)  {
                 reg_mods = calc_MMR1 (0366);
                 if (update_MM)
                     MMR1 = reg_mods;
-                WriteW (R[srcspec], SP | dsenable);
                 if ((cm == MD_KER) && (SP < (STKLIM + STKL_Y)))
                     set_stack_trap (SP);
+                WriteW (R[srcspec], SP | dsenable);
                 R[srcspec] = PC;
                 if (hst_ent)
                     hst_ent->dst = dst;
@@ -1424,9 +1459,9 @@ while (reason == 0)  {
                     MMR1 = reg_mods;
                 if (hst_ent)
                     hst_ent->dst = dst;
-                WriteW (dst, SP | dsenable);
                 if ((cm == MD_KER) && (SP < (STKLIM + STKL_Y)))
                     set_stack_trap (SP);
+                WriteW (dst, SP | dsenable);
                 }
             else setTRAP (TRAP_ILL);
             break;
@@ -1715,7 +1750,7 @@ while (reason == 0)  {
                 break;
                 }
             if ((((uint32)src) == 020000000000) && (src2 == 0177777)) {
-                V = 1;                                  /* J11,11/70 compat */
+                V = 1;                                  /* V = 1 */
                 N = Z = C = 0;                          /* N = Z = 0 */
                 break;
                 }
@@ -1730,7 +1765,7 @@ while (reason == 0)  {
                 }
             N = (dst < 0);                              /* N set on 32b result */
             if ((dst > 077777) || (dst < -0100000)) {
-                V = 1;                                  /* J11,11/70 compat */
+                V = 1;                                  /* V = 1 */
                 Z = C = 0;                              /* Z = C = 0 */
                 break;
                 }
@@ -2215,9 +2250,9 @@ while (reason == 0)  {
                     MMR1 = reg_mods;
                 if (hst_ent)
                     hst_ent->dst = dst;
-                WriteW (dst, SP | dsenable);
                 if ((cm == MD_KER) && (SP < (STKLIM + STKL_Y)))
                     set_stack_trap (SP);
+                WriteW (dst, SP | dsenable);
                 }
             else setTRAP (TRAP_ILL);
             break;
@@ -2414,6 +2449,7 @@ for (i = 0; i < 6; i++)
     REGFILE[i][rs] = R[i];
 STACKFILE[cm] = SP;
 saved_PC = PC & 0177777;
+MMR1 = clean_MMR1 (MMR1);                               /* clean up MMR1 */
 pcq_r->qptr = pcq_p;                                    /* update pc q ptr */
 set_r_display (rs, cm);
 return reason;
@@ -2454,7 +2490,7 @@ return reason;
    explicitly reference the PC.  For the J-11, this is only true for
    autodecrement operands, autodecrement deferred operands, and
    autoincrement destination operands that involve a write to memory.
-   The simulator follows the Handbook, for simplicity.
+   This is cleaned up at simulator exit or MMR1 read.
 
    Notes:
 
@@ -2482,14 +2518,14 @@ switch (spec >> 3) {                                    /* decode spec<5:3> */
     case 2:                                             /* (R)+ */
         R[reg] = ((adr = R[reg]) + 2) & 0177777;
         reg_mods = calc_MMR1 (020 | reg);
-        if (update_MM && (reg != 7))
+        if (update_MM)
             MMR1 = reg_mods;
         return (adr | ds);
 
     case 3:                                             /* @(R)+ */
         R[reg] = ((adr = R[reg]) + 2) & 0177777;
         reg_mods = calc_MMR1 (020 | reg);
-        if (update_MM && (reg != 7))
+        if (update_MM)
             MMR1 = reg_mods;
         adr = ReadW (adr | ds);
         return (adr | dsenable);
@@ -2497,7 +2533,7 @@ switch (spec >> 3) {                                    /* decode spec<5:3> */
     case 4:                                             /* -(R) */
         adr = R[reg] = (R[reg] - 2) & 0177777;
         reg_mods = calc_MMR1 (0360 | reg);
-        if (update_MM && (reg != 7))
+        if (update_MM)
             MMR1 = reg_mods;
         if ((reg == 6) && (cm == MD_KER) && (adr < (STKLIM + STKL_Y)))
             set_stack_trap (adr);
@@ -2506,7 +2542,7 @@ switch (spec >> 3) {                                    /* decode spec<5:3> */
     case 5:                                             /* @-(R) */
         adr = R[reg] = (R[reg] - 2) & 0177777;
         reg_mods = calc_MMR1 (0360 | reg);
-        if (update_MM && (reg != 7))
+        if (update_MM)
             MMR1 = reg_mods;
         if ((reg == 6) && (cm == MD_KER) && (adr < (STKLIM + STKL_Y)))
             set_stack_trap (adr);
@@ -2551,7 +2587,7 @@ switch (spec >> 3) {                                    /* decode spec<5:3> */
     case 3:                                             /* @(R)+ */
         R[reg] = ((adr = R[reg]) + 2) & 0177777;
         reg_mods = calc_MMR1 (020 | reg);
-        if (update_MM && (reg != 7))
+        if (update_MM)
             MMR1 = reg_mods;
         adr = ReadW (adr | ds);
         return (adr | dsenable);
@@ -2560,7 +2596,7 @@ switch (spec >> 3) {                                    /* decode spec<5:3> */
         delta = 1 + (reg >= 6);                         /* 2 if R6, PC */
         adr = R[reg] = (R[reg] - delta) & 0177777;
         reg_mods = calc_MMR1 ((((-delta) & 037) << 3) | reg);
-        if (update_MM && (reg != 7))
+        if (update_MM)
             MMR1 = reg_mods;
         if ((reg == 6) && (cm == MD_KER) && (adr < (STKLIM + STKL_Y)))
             set_stack_trap (adr);
@@ -2569,7 +2605,7 @@ switch (spec >> 3) {                                    /* decode spec<5:3> */
     case 5:                                             /* @-(R) */
         adr = R[reg] = (R[reg] - 2) & 0177777;
         reg_mods = calc_MMR1 (0360 | reg);
-        if (update_MM && (reg != 7))
+        if (update_MM)
             MMR1 = reg_mods;
         if ((reg == 6) && (cm == MD_KER) && (adr < (STKLIM + STKL_Y)))
             set_stack_trap (adr);
@@ -2885,14 +2921,16 @@ switch (apr & PDR_ACF) {                                /* case on ACF */
 
     case 1: case 4:                                     /* trap read */
         if (CPUT (HAS_MMTR)) {                          /* traps implemented? */
-            APRFILE[apridx] = APRFILE[apridx] | PDR_A;  /* set A */
-            if (MMR0 & MMR0_TENB) {                     /* traps enabled? */
+            int32 old_mmr0 = MMR0;
+            APRFILE[apridx] |= PDR_A;                   /* set A */
+            MMR0 = MMR0 | MMR0_TRAP;                    /* set trap flag */
+            if ((MMR0 & MMR0_TENB) != 0) {              /* traps enabled? */
                 if (update_MM)                          /* update MMR0 */
                     MMR0 = (MMR0 & ~MMR0_PAGE) | (apridx << MMR0_V_PAGE);
-                MMR0 = MMR0 | MMR0_TRAP;                /* set trap flag */
-                setTRAP (TRAP_MME);                     /* set trap */
+                if ((old_mmr0 & MMR0_TRAP) == 0)        /* first trap? */
+                    setTRAP (TRAP_MME);                 /* set trap */
                 }
-            return;                                     /* continue op */
+            return;                                     /* continue */
             }                                           /* not impl, abort NR */
     case 0: case 3: case 7:                             /* non-resident */
         err = MMR0_NR;                                  /* set MMR0 */
@@ -2918,10 +2956,10 @@ return ((apr & PDR_ED)? (dbn < plf): (dbn > plf));      /* pg lnt error? */
 
 void reloc_abort (int32 err, int32 apridx)
 {
-if (update_MM) MMR0 =                                   /* update MMR0 */
-    (MMR0 & ~MMR0_PAGE) | (apridx << MMR0_V_PAGE);
-APRFILE[apridx] = APRFILE[apridx] | PDR_A;              /* set A */
-MMR0 = MMR0 | err;                                      /* set aborts */
+if (update_MM) {                                        /* MMR0 not frozen? */
+    MMR0 = (MMR0 & ~MMR0_PAGE) | (apridx << MMR0_V_PAGE); /* record page */
+    MMR0 = MMR0 | err;                                  /* OR in aborts */
+    }
 ABORT (TRAP_MME);                                       /* abort ref */
 return;
 }
@@ -2953,7 +2991,7 @@ if (MMR0 & MMR0_MME) {                                  /* if mmgt */
         relocW_test (va, apridx);                       /* long test */
     if (PLF_test (va, apr))                             /* pg lnt error? */
         reloc_abort (MMR0_PL, apridx);
-    APRFILE[apridx] = apr | PDR_W;                      /* set W */
+    APRFILE[apridx] |= PDR_W;                           /* set W */
     pa = ((va & VA_DF) + ((apr >> 10) & 017777700)) & PAMASK;
     if ((MMR3 & MMR3_M22E) == 0) {
         pa = pa & 0777777;
@@ -2993,14 +3031,16 @@ switch (apr & PDR_ACF) {                                /* case on ACF */
 
     case 4: case 5:                                     /* trap write */
         if (CPUT (HAS_MMTR)) {                          /* traps implemented? */
-            APRFILE[apridx] = APRFILE[apridx] | PDR_A;  /* set A */
-            if (MMR0 & MMR0_TENB) {                     /* traps enabled? */
+            int32 old_mmr0 = MMR0;
+            APRFILE[apridx] |= PDR_A;                   /* set PDR <A> */
+            MMR0 = MMR0 | MMR0_TRAP;                    /* set trap flag */
+            if ((MMR0 & MMR0_TENB) != 0) {              /* traps enabled? */
                 if (update_MM)                          /* update MMR0 */
                     MMR0 = (MMR0 & ~MMR0_PAGE) | (apridx << MMR0_V_PAGE);
-                MMR0 = MMR0 | MMR0_TRAP;                /* set trap flag */
-                setTRAP (TRAP_MME);                     /* set trap */
+                if ((old_mmr0 & MMR0_TRAP) == 0)        /* first trap? */
+                    setTRAP (TRAP_MME);                 /* set trap */
                 }
-            return;                                     /* continue op */
+            return;                               /* continue, set A */
             }                                           /* not impl, abort NR */
     case 0: case 3: case 7:                             /* non-resident */
         err = MMR0_NR;                                  /* MMR0 status */
@@ -3087,7 +3127,8 @@ switch ((pa >> 1) & 3) {                                /* decode pa<2:1> */
         break;
 
     case 2:                                             /* MMR1 */
-        *data = MMR1;
+        MMR1 = clean_MMR1 (MMR1);                       /* clean up MMR1 */
+        *data = MMR1;                                   /* return data */
         break;
 
     case 3:                                             /* MMR2 */
@@ -3131,6 +3172,29 @@ MMR3 = data & cpu_tab[cpu_model].mm3;
 cpu_bme = (MMR3 & MMR3_BME) && (cpu_opt & OPT_UBM);
 dsenable = calc_ds (cm);
 return SCPE_OK;
+}
+
+/* Clean up MMR1 for presentation
+
+   !HAS_SID         MMR1 is 0
+   HAS_SID && J11   MMR1 values corresponding to # and @# are cleared
+   HAS_SID && !J11  MMR1 is unchanged
+
+   Note that # and @# always generate reg = 7 and change = 2;
+   no other specifier combination can do that.
+*/
+
+int32 clean_MMR1 (int32 mmr1)
+{
+if (!CPUT (HAS_SID))                                    /* not full mmgt? */
+    return 0;                                           /* always 0 */
+if (CPUT (CPUT_J)) {                                    /* J11? */
+    if ((mmr1 >> 8) == 027)                             /* high byte # or @#? */
+        mmr1 = mmr1 & 0377;                             /* erase high byte */
+    if ((mmr1 & 0377) == 027)                           /* low byte # or @#? */
+        mmr1 = mmr1 >> 8;                               /* erase low byte */
+    }
+return mmr1;
 }
 
 /* PARs and PDRs.  These are grouped in I/O space as follows:
@@ -3349,6 +3413,10 @@ static const char *pdp11_clock_precalibrate_commands[] = {
     "PC 100",
     NULL};
 
+static const char *pdp11_clock_precalibrate_cleanup_commands[] = {
+    "100-200 0",
+    NULL};
+
 /* Special boot command - linked into SCP by initial reset
 
    Syntax: BOOT {CPU}
@@ -3416,6 +3484,7 @@ if (M == NULL) {                    /* First time init */
     sim_brk_type_desc = cpu_breakpoints;
     sim_vm_is_subroutine_call = &cpu_is_pc_a_subroutine_call;
     sim_clock_precalibrate_commands = pdp11_clock_precalibrate_commands;
+    sim_clock_precalibrate_cleanup_commands = pdp11_clock_precalibrate_cleanup_commands;
     auto_config(NULL, 0);           /* do an initial auto configure */
     }
 pcq_r = find_reg ("PCQ", NULL, dptr);
@@ -3567,8 +3636,10 @@ if (cptr == NULL) {
     return SCPE_OK;
     }
 lnt = (int32) get_uint (cptr, 10, HIST_MAX, &r);
-if ((r != SCPE_OK) || (lnt && (lnt < HIST_MIN)))
-    return SCPE_ARG;
+if (r != SCPE_OK)
+    return sim_messagef (SCPE_ARG, "Invalid Numeric Value: %s.  Maximum is %d\n", cptr, HIST_MAX);
+if (lnt && (lnt < HIST_MIN))
+    return sim_messagef (SCPE_ARG, "%d is less than the minumum history value of %d\n", lnt, HIST_MIN);
 hst_p = 0;
 if (hst_lnt) {
     free (hst);
@@ -3599,7 +3670,7 @@ if (hst_lnt == 0)                                       /* enabled? */
 if (cptr) {
     lnt = (int32) get_uint (cptr, 10, hst_lnt, &r);
     if ((r != SCPE_OK) || (lnt == 0))
-        return SCPE_ARG;
+        return sim_messagef (SCPE_ARG, "Invalid count specifier: %s, max is %d\n", cptr, hst_lnt);
     }
 else lnt = hst_lnt;
 di = hst_p - lnt;                                       /* work forward */
@@ -3607,6 +3678,10 @@ if (di < 0)
     di = di + hst_lnt;
 fprintf (st, "PC     SP     PSW     src    dst     IR\n\n");
 for (k = 0; k < lnt; k++) {                             /* print specified */
+    if (stop_cpu) {                                     /* Control-C (SIGINT) */
+        stop_cpu = FALSE;
+        break;                                          /* abandon remaining output */
+        }
     h = &hst[(di++) % hst_lnt];                         /* entry pointer */
     if (h->pc & HIST_VLD) {                             /* instruction? */
         ir = h->inst[0];
@@ -3754,7 +3829,7 @@ fprintf (st, "theoretically possible devices to be configured simultaneously at\
 fprintf (st, "fixed addresses.  Instead, many devices have floating addresses and\n");
 fprintf (st, "vectors; that is, the assigned device address and vector depend on the\n");
 fprintf (st, "presence of other devices in the configuration:\n\n");
-fprintf (st, "       DZ11           all instances have floating addresses\n");
+fprintf (st, "       DZ11/DZV11     all instances have floating addresses\n");
 fprintf (st, "       DHU11/DHQ11    all instances have floating addresses\n");
 fprintf (st, "       RL11           first instance has fixed address, rest floating\n");
 fprintf (st, "       RX11/RX211     first instance has fixed address, rest floating\n");
@@ -3777,17 +3852,16 @@ fprintf (st, "use the same I/O addresses.\n\n");
 fprintf (st, "In addition to autoconfiguration, most devices support the SET <device>\n");
 fprintf (st, "ADDRESS command, which allows the I/O page address of the device to be\n");
 fprintf (st, "changed, and the SET <device> VECTOR command, which allows the vector of\n");
-fprintf (st, "the device to be changed.  Explicitly setting the I/O address of any device\n");
-fprintf (st, "DISABLES autoconfiguration for that device and for the entire system.  As\n");
-fprintf (st, "a consequence, the user may have to manually configure all other\n");
-fprintf (st, "autoconfigured devices, because the autoconfiguration algorithm no longer\n");
-fprintf (st, "recognizes the explicitly configured device.  A device can be reset to\n");
-fprintf (st, "autoconfigure with the SET <device> AUTOCONFIGURE command.\n");
-fprintf (st, "autoconfiguration can be restored for the entire system with the SET\n");
-fprintf (st, "CPU AUTOCONFIGURE command.\n\n");
+fprintf (st, "the device to be changed.  Explicitly setting the I/O address or vector of\n");
+fprintf (st, "any device DISABLES autoconfiguration for the entire system.  As\n");
+fprintf (st, "a consequence, when autoconfiguration is disabled, the user may have to\n");
+fprintf (st, "manually configure all remaining devices in the system that are explicitly\n");
+fprintf (st, "enabled after autoconfiguration has been disabled.  Autoconfiguration can\n");
+fprintf (st, "be restored for the entire system with the SET CPU AUTOCONFIGURE command.\n\n");
 fprintf (st, "The current I/O map can be displayed with the SHOW CPU IOSPACE command.\n");
 fprintf (st, "Addresses that have set by autoconfiguration are marked with an asterisk (*).\n");
 fprintf (st, "All devices support the SHOW <device> ADDRESS and SHOW <device> VECTOR\n");
-fprintf (st, "commands, which display the device address and vector, respectively.\n\n");
+fprintf (st, "commands, which display the device address and vector, respectively.\n");
+fprint_brk_help (st, dptr);
 return SCPE_OK;
 }

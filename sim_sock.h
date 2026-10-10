@@ -23,10 +23,10 @@
    used in advertising or otherwise to promote the sale, use or other dealings
    in this Software without prior written authorization from Robert M Supnik.
 
-   15-Oct-12    MP      Added definitions needed to detect possible tcp 
+   15-Oct-12    MP      Added definitions needed to detect possible tcp
                         connect failures
    25-Sep-12    MP      Reworked for RFC3493 interfaces supporting IPv6 and IPv4
-   04-Jun-08    RMS     Addes sim_create_sock, for IBM 1130
+   04-Jun-08    RMS     Added sim_create_sock, for IBM 1130
    14-Apr-05    RMS     Added WSAEINPROGRESS (from Tim Riker)
    20-Aug-04    HV      Added missing definition for OS/2 (from Holger Veit)
    22-Oct-03    MP      Changed WIN32 winsock include to use winsock2.h to
@@ -51,10 +51,27 @@ extern "C" {
 #endif
 
 #if defined (_WIN32)                                    /* Windows */
+#pragma push_macro ("INT_PTR")
+#pragma push_macro ("PURE")
+#pragma push_macro ("BYTE")
+#pragma push_macro ("WORD")
+#undef INT_PTR                      /* avoid macro name collision */
+#undef PURE                         /* avoid macro name collision */
+#undef BYTE                         /* avoid macro name collision */
+#undef WORD                         /* avoid macro name collision */
 #include <winsock2.h>
 #include <winerror.h>
+#undef PACKED                       /* avoid macro name collision */
+#undef ERROR                        /* avoid macro name collision */
+#undef MEM_MAPPED                   /* avoid macro name collision */
+#undef INTERFACE                    /* avoid macro name collision */
+#include <process.h>
+#pragma pop_macro ("WORD")
+#pragma pop_macro ("BYTE")
+#pragma pop_macro ("PURE")
+#pragma pop_macro ("INT_PTR")
 
-#elif !defined (__OS2__) || defined (__EMX__)           /* VMS, Mac, Unix, OS/2 EMX */
+#else                                                   /* VMS, Mac, Unix */
 #include <sys/types.h>                                  /* for fcntl, getpid */
 #include <sys/socket.h>                                 /* for sockets */
 #include <string.h>
@@ -69,7 +86,7 @@ extern "C" {
 
 #define WSAGetLastError()       errno                   /* Windows macros */
 #define WSASetLastError(err) errno = err
-#define closesocket     close 
+#define closesocket     close
 #define SOCKET          int
 #if defined(__hpux)
 #define WSAEWOULDBLOCK  EAGAIN
@@ -111,16 +128,18 @@ extern "C" {
 #define sim_printf printf
 #endif
 
-int sim_parse_addr (const char *cptr, char *host, size_t hostlen, const char *default_host, 
-                                      char *port, size_t port_len, const char *default_port, 
+int sim_parse_addr (const char *cptr, char *host, size_t hostlen, const char *default_host,
+                                      char *port, size_t port_len, const char *default_port,
                                       const char *validate_addr);
-int sim_parse_addr_ex (const char *cptr, char *host, size_t hostlen, const char *default_host, 
+int sim_parse_addr_ex (const char *cptr, char *host, size_t hostlen, const char *default_host,
                                          char *port, size_t port_len, char *localport, size_t local_port_len, const char *default_port);
 int sim_addr_acl_check (const char *validate_addr, const char *acl);
 #define SIM_SOCK_OPT_REUSEADDR      0x0001
 #define SIM_SOCK_OPT_DATAGRAM       0x0002
 #define SIM_SOCK_OPT_NODELAY        0x0004
 #define SIM_SOCK_OPT_BLOCKING       0x0008
+#define SIM_SOCK_OPT_SET_BACKLOG(N) ((N) << 16)
+#define SIM_SOCK_OPT_BACKLOG(opts)  ((((opts) >> 16) == 0) ? 1 : ((opts) >> 16))
 SOCKET sim_master_sock_ex (const char *hostport, int *parse_status, int opt_flags);
 #define sim_master_sock(hostport, parse_status) sim_master_sock_ex(hostport, parse_status, ((sim_switches & SWMASK ('U')) ? SIM_SOCK_OPT_REUSEADDR : 0))
 SOCKET sim_connect_sock_ex (const char *sourcehostport, const char *hostport, const char *default_host, const char *default_port, int opt_flags);

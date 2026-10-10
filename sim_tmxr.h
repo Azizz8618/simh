@@ -26,7 +26,7 @@
    Based on the original DZ11 simulator by Thord Nilson, as updated by
    Arthur Krewat.
 
-   10-Oct-12    MP      Added extended attach support for serial, per line 
+   10-Oct-12    MP      Added extended attach support for serial, per line
                         listener and outgoing connections
    17-Jan-11    MP      Added buffered line capabilities
    20-Nov-08    RMS     Added three new standardized SHOW routines
@@ -56,6 +56,7 @@ extern "C" {
 typedef struct SERPORT *SERHANDLE;
 #endif
 
+#include "sim_defs.h"
 #include "sim_sock.h"
 
 #define TMXR_V_VALID    15
@@ -72,7 +73,7 @@ typedef struct SERPORT *SERHANDLE;
 #define TMXR_DBG_MDM    0x00800000                       /* Debug Modem Signals */
 #define TMXR_DBG_CFG    0x01000000                       /* Debug Line Configuration Activities */
 #define TMXR_DBG_CON    0x02000000                       /* Debug Connection Activities */
-#define TMXR_DBG_ASY    0x04000000                       /* Debug Asynchronous Activities */
+#define TMXR_DBG_ASY    0x04000000                       /* Debug Asynchronous Activities - unused */
 #define TMXR_DBG_TRC    0x08000000                       /* Debug trace routine calls */
 #define TMXR_DBG_PXMT   0x10000000                       /* Debug Transmit Packet Data */
 #define TMXR_DBG_PRCV   0x20000000                       /* Debug Received Packet Data */
@@ -90,13 +91,6 @@ typedef struct SERPORT *SERHANDLE;
 #define TMXR_MDM_INCOMING   (TMXR_MDM_DCD|TMXR_MDM_RNG|TMXR_MDM_CTS|TMXR_MDM_DSR)  /* Settable Modem Bits */
 #define TMXR_MDM_OUTGOING   (TMXR_MDM_DTR|TMXR_MDM_RTS)  /* Settable Modem Bits */
 
-/* Unit flags */
-
-#define TMUF_V_NOASYNCH   (UNIT_V_UF + 12)              /* Asynch Disabled unit */
-#define TMUF_NOASYNCH     (1u << TMUF_V_NOASYNCH)       /* This flag can be defined */
-                                                        /* statically in a unit's flag field */
-                                                        /* This will disable the unit from */
-                                                        /* supporting asynchronmous mux behaviors */
 /* Receive line speed limits */
 
 #define TMLN_SPD_50_BPS     200000 /* usec per character */
@@ -123,9 +117,10 @@ typedef struct SERPORT *SERHANDLE;
 #define TMLN_SPD_76800_BPS     130 /* usec per character */
 #define TMLN_SPD_80000_BPS     125 /* usec per character */
 #define TMLN_SPD_115200_BPS     86 /* usec per character */
+#define TMLN_SPD_230400_BPS     43 /* usec per character */
 
 /* Internal struct */
-struct framer_data;    
+struct framer_data;
 
 typedef struct tmln TMLN;
 typedef struct tmxr TMXR;
@@ -142,6 +137,7 @@ struct tmln {
     SOCKET              master;                         /* line specific master socket */
     char                *port;                          /* line specific listening port */
     char                *acl;                           /* Access control list (CIDR) to accept or reject connects from */
+    uint32              backlog;                        /* line specific listening backlog */
     int32               acl_accepted_sessions;          /* count of ACL accepted tcp connections */
     int32               acl_rejected_sessions;          /* count of ACL rejected tcp connections */
     int32               sessions;                       /* count of tcp connections received */
@@ -197,6 +193,7 @@ struct tmln {
     t_bool              ser_connect_pending;            /* serial connection notice pending */
     SOCKET              connecting;                     /* Outgoing socket while connecting */
     char                *destination;                   /* Outgoing destination address:port */
+    t_bool              console;                        /* simulator I/O to console session */
     t_bool              loopback;                       /* Line in loopback mode */
     t_bool              halfduplex;                     /* Line in half-duplex mode */
     t_bool              datagram;                       /* Line is datagram packet oriented */
@@ -209,8 +206,8 @@ struct tmln {
     UNIT                *uptr;                          /* input polling unit (default to mp->uptr) */
     UNIT                *o_uptr;                        /* output polling unit (default to lp->uptr)*/
     DEVICE              *dptr;                          /* line specific device */
-    EXPECT              expect;                         /* Expect rules */
-    SEND                send;                           /* Send input state */
+    EXPECT              *expect;                        /* Expect rules */
+    SEND                *send;                          /* Send input state */
     struct framer_data  *framer;                        /* ddcmp framer data */
     };
 
@@ -224,6 +221,7 @@ struct tmxr {
     char                *acl;                           /* Access control list (CIDR) to accept or reject connects from */
     int32               acl_accepted_sessions;          /* count of ACL accepted tcp connections */
     int32               acl_rejected_sessions;          /* count of ACL rejected tcp connections */
+    uint32              backlog;                        /* listen backlog */
     UNIT                *uptr;                          /* polling unit (connection) */
     char                logfiletmpl[FILENAME_MAX];      /* template logfile name */
     int32               txcount;                        /* count of transmit bytes */
@@ -258,7 +256,8 @@ int32 tmxr_send_buffered_data (TMLN *lp);
 t_stat tmxr_open_master (TMXR *mp, CONST char *cptr);
 t_stat tmxr_close_master (TMXR *mp);
 t_stat tmxr_connection_poll_interval (TMXR *mp, uint32 seconds);
-t_stat tmxr_attach_ex (TMXR *mp, UNIT *uptr, CONST char *cptr, t_bool async);
+t_stat tmxr_attach (TMXR *mp, UNIT *uptr, CONST char *cptr);
+#define tmxr_attach_ex(mp, uptr, cptr, async) tmxr_attach (mp, uptr, cptr)
 t_stat tmxr_detach (TMXR *mp, UNIT *uptr);
 t_stat tmxr_attach_help(FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
 char *tmxr_line_attach_string(TMLN *lp);
@@ -270,6 +269,7 @@ t_stat tmxr_set_nomessage (TMXR *mp);
 t_stat tmxr_clear_nomessage (TMXR *mp);
 t_stat tmxr_set_port_speed_control (TMXR *mp);
 t_stat tmxr_clear_port_speed_control (TMXR *mp);
+t_stat tmxr_set_backlog (TMXR *mp, int32 backlog);
 t_stat tmxr_set_line_port_speed_control (TMXR *mp, int line);
 t_stat tmxr_clear_line_port_speed_control (TMXR *mp, int line);
 t_stat tmxr_set_get_modem_bits (TMLN *lp, int32 bits_to_set, int32 bits_to_clear, int32 *incoming_bits);
@@ -317,7 +317,6 @@ t_stat tmxr_clock_coschedule (UNIT *uptr, int32 interval);
 t_stat tmxr_clock_coschedule_abs (UNIT *uptr, int32 interval);
 t_stat tmxr_clock_coschedule_tmr (UNIT *uptr, int32 tmr, int32 ticks);
 t_stat tmxr_clock_coschedule_tmr_abs (UNIT *uptr, int32 tmr, int32 ticks);
-t_stat tmxr_change_async (void);
 t_stat tmxr_locate_line_send (const char *dev_line, SEND **snd);
 t_stat tmxr_locate_line_expect (const char *dev_line, EXPECT **exp);
 t_stat tmxr_locate_line (const char *dev_line, TMLN **lp);
@@ -326,8 +325,6 @@ const char *tmxr_expect_line_name (const EXPECT *exp);
 t_stat tmxr_startup (void);
 t_stat tmxr_shutdown (void);
 t_stat tmxr_sock_test (DEVICE *dptr, const char *cptr);
-t_stat tmxr_start_poll (void);
-t_stat tmxr_stop_poll (void);
 /* Framer support.  These are a NOP if called on a non-framer line. */
 void tmxr_start_framer (TMLN *line, int dmc_mode);
 void tmxr_stop_framer (TMLN *line);
@@ -342,21 +339,12 @@ void _tmxr_debug (uint32 dbits, TMLN *lp, const char *msg, char *buf, int bufsiz
 #define tmxr_debug_connect_line(lp, msg) do {if (sim_deb && (lp)->mp && (lp)->mp->dptr && (TMXR_DBG_CON & (lp)->mp->dptr->dctrl)) sim_debug (TMXR_DBG_CON, (lp)->mp->dptr, "Ln%d:%s\n", (int)((lp)-(lp)->mp->ldsc), (msg)); } while (0)
 t_stat tmxr_add_debug (DEVICE *dptr);
 
-#if defined(SIM_ASYNCH_MUX) && !defined(SIM_ASYNCH_IO)
-#undef SIM_ASYNCH_MUX
-#endif /* defined(SIM_ASYNCH_MUX) && !defined(SIM_ASYNCH_IO) */
-
-#if defined(SIM_ASYNCH_MUX)
-#define tmxr_attach(mp, uptr, cptr) tmxr_attach_ex(mp, uptr, cptr, TRUE)
-#else
-#define tmxr_attach(mp, uptr, cptr) tmxr_attach_ex(mp, uptr, cptr, FALSE)
-#endif
 #if (!defined(NOT_MUX_USING_CODE))
 #define sim_activate tmxr_activate
 #define sim_activate_abs tmxr_activate_abs
 #define sim_activate_after tmxr_activate_after
 #define sim_activate_after_abs tmxr_activate_after_abs
-#define sim_clock_coschedule tmxr_clock_coschedule 
+#define sim_clock_coschedule tmxr_clock_coschedule
 #define sim_clock_coschedule_abs tmxr_clock_coschedule_abs
 #define sim_clock_coschedule_tmr tmxr_clock_coschedule_tmr
 #define sim_clock_coschedule_tmr_abs tmxr_clock_coschedule_tmr_abs

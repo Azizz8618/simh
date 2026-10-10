@@ -25,8 +25,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Check for required build dependencies &amp; git commit id"
-				CommandLine="Pre-Build-Event.cmd &quot;$(TargetDir)$(TargetName).exe&quot; LIBPCRE"
+				Description="Check for required build dependencies &amp; git commit id..."
+				CommandLine="Pre-Build-Event.cmd &quot;$(TargetDir)$(TargetName).exe&quot; LIBPCRE LIBSDL"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -41,12 +41,13 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../AltairZ80/;./;../;../slirp;../slirp_glue;../slirp_glue/qemu;../slirp_glue/qemu/win32/include;../../windows-build/include;;../../windows-build/include/SDL2"
-				PreprocessorDefinitions="NO_INLINE;SIM_BUILD_TOOL=simh-Visual-Studio-Project;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;SIM_NEED_GIT_COMMIT_ID;HAVE_PCRE_H;PCRE_STATIC"
+				PreprocessorDefinitions="inline=__inline;SIM_BUILD_TOOL=simh-Visual-Studio-Project;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;SIM_NEED_GIT_COMMIT_ID;HAVE_PCRE_H;PCRE_STATIC;HAVE_LIBEDIT;USE_SIM_VIDEO;HAVE_LIBSDL;HAVE_LIBPNG"
 				KeepComments="false"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				WarnAsError="true"
 				DebugInformationFormat="3"
 				CompileAs="1"
 				ShowIncludes="false"
@@ -62,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmtd.lib wsock32.lib winmm.lib Iphlpapi.lib pcrestaticd.lib SDL2-StaticD.lib SDL2_ttf-StaticD.lib freetype2412MT_D.lib libpng16.lib zlib.lib dxguid.lib Imm32.lib Version.lib Setupapi.lib"
+				AdditionalDependencies="libcmtd.lib wsock32.lib winmm.lib Iphlpapi.lib pcrestaticd.lib SDL2-StaticD.lib SDL2_ttf-StaticD.lib freetype2412MT_D.lib libpng16.lib zlib.lib dxguid.lib Imm32.lib Version.lib Setupapi.lib wineditlined.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../windows-build/lib/Debug/"
 				GenerateDebugInformation="true"
@@ -78,6 +79,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				UseUnicodeResponseFiles="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -93,7 +95,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Running Available Tests"
+				Description="Running Available Tests..."
 				CommandLine="Post-Build-Event.cmd AltairZ80 &quot;$(TargetDir)$(TargetName).exe&quot;"
 			/>
 		</Configuration>
@@ -106,8 +108,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Check for required build dependencies &amp; git commit id"
-				CommandLine="Pre-Build-Event.cmd &quot;$(TargetDir)$(TargetName).exe&quot; LIBPCRE"
+				Description="Check for required build dependencies &amp; git commit id..."
+				CommandLine="Pre-Build-Event.cmd &quot;$(TargetDir)$(TargetName).exe&quot; LIBPCRE LIBSDL"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -125,12 +127,13 @@
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../AltairZ80/;./;../;../slirp;../slirp_glue;../slirp_glue/qemu;../slirp_glue/qemu/win32/include;../../windows-build/include;;../../windows-build/include/SDL2"
-				PreprocessorDefinitions="NO_INLINE;SIM_BUILD_TOOL=simh-Visual-Studio-Project;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;SIM_NEED_GIT_COMMIT_ID;HAVE_PCRE_H;PCRE_STATIC"
+				PreprocessorDefinitions="inline=__inline;SIM_BUILD_TOOL=simh-Visual-Studio-Project;_CRT_NONSTDC_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;SIM_NEED_GIT_COMMIT_ID;HAVE_PCRE_H;PCRE_STATIC;HAVE_LIBEDIT;USE_SIM_VIDEO;HAVE_LIBSDL;HAVE_LIBPNG"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				WarnAsError="true"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -145,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcmt.lib wsock32.lib winmm.lib Iphlpapi.lib pcrestatic.lib SDL2-Static.lib SDL2_ttf-Static.lib freetype2412MT.lib libpng16.lib zlib.lib dxguid.lib Imm32.lib Version.lib Setupapi.lib"
+				AdditionalDependencies="libcmt.lib wsock32.lib winmm.lib Iphlpapi.lib pcrestatic.lib SDL2-Static.lib SDL2_ttf-Static.lib freetype2412MT.lib libpng16.lib zlib.lib dxguid.lib Imm32.lib Version.lib Setupapi.lib wineditline.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../windows-build/lib/Release/"
 				GenerateDebugInformation="false"
@@ -164,6 +167,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				UseUnicodeResponseFiles="false"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -179,7 +183,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Running Available Tests"
+				Description="Running Available Tests..."
 				CommandLine="Post-Build-Event.cmd AltairZ80 &quot;$(TargetDir)$(TargetName).exe&quot;"
 			/>
 		</Configuration>
@@ -248,35 +252,47 @@
 				>
 			</File>
 			<File
+				RelativePath="..\AltairZ80\ibc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\ibc_mcc_hdc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\ibc_smd_hdc.c"
+				>
+			</File>
+			<File
 				RelativePath="..\AltairZ80\insnsd.c"
 				>
 			</File>
 			<File
-				RelativePath="..\AltairZ80\m68kasm.c"
+				RelativePath="..\AltairZ80\m68k\m68kasm.c"
 				>
 			</File>
 			<File
-				RelativePath="..\AltairZ80\m68kcpu.c"
+				RelativePath="..\AltairZ80\m68k\m68kcpu.c"
 				>
 			</File>
 			<File
-				RelativePath="..\AltairZ80\m68kdasm.c"
+				RelativePath="..\AltairZ80\m68k\m68kdasm.c"
 				>
 			</File>
 			<File
-				RelativePath="..\AltairZ80\m68kopac.c"
+				RelativePath="..\AltairZ80\m68k\m68kopac.c"
 				>
 			</File>
 			<File
-				RelativePath="..\AltairZ80\m68kopdm.c"
+				RelativePath="..\AltairZ80\m68k\m68kopdm.c"
 				>
 			</File>
 			<File
-				RelativePath="..\AltairZ80\m68kopnz.c"
+				RelativePath="..\AltairZ80\m68k\m68kopnz.c"
 				>
 			</File>
 			<File
-				RelativePath="..\AltairZ80\m68kops.c"
+				RelativePath="..\AltairZ80\m68k\m68kops.c"
 				>
 			</File>
 			<File
@@ -285,6 +301,10 @@
 			</File>
 			<File
 				RelativePath="..\AltairZ80\mfdc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\mmd.c"
 				>
 			</File>
 			<File
@@ -304,6 +324,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\AltairZ80\s100_dazzler.c"
+				>
+			</File>
+			<File
 				RelativePath="..\AltairZ80\s100_disk1a.c"
 				>
 			</File>
@@ -320,6 +344,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\AltairZ80\s100_djhdc.c"
+				>
+			</File>
+			<File
 				RelativePath="..\AltairZ80\s100_fif.c"
 				>
 			</File>
@@ -332,15 +360,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\AltairZ80\s100_if3.c"
-				>
-			</File>
-			<File
 				RelativePath="..\AltairZ80\s100_icom.c"
 				>
 			</File>
 			<File
+				RelativePath="..\AltairZ80\s100_if3.c"
+				>
+			</File>
+			<File
 				RelativePath="..\AltairZ80\s100_jadedd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\s100_jair.c"
 				>
 			</File>
 			<File
@@ -373,6 +405,18 @@
 			</File>
 			<File
 				RelativePath="..\AltairZ80\s100_tarbell.c"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\s100_tdd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\s100_tuart.c"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\s100_vdm1.c"
 				>
 			</File>
 			<File
@@ -424,6 +468,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\AltairZ80\m68k\softfloat\softfloat.c"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\sol20.c"
+				>
+			</File>
+			<File
 				RelativePath="..\AltairZ80\vfdhd.c"
 				>
 			</File>
@@ -438,6 +490,58 @@
 			>
 			<File
 				RelativePath="..\AltairZ80\altairz80_defs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\i8272.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\i86.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\insns.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\m68k\m68k.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\m68k\m68kconf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\m68k\m68kcpu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\m68k\m68kmmu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\m68k\m68kops.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\m68ksim.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\m68k\softfloat\mamesf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\mfdc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\m68k\softfloat\milieu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\nasm.h"
 				>
 			</File>
 			<File
@@ -494,6 +598,18 @@
 			</File>
 			<File
 				RelativePath="..\sim_video.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\m68k\softfloat\softfloat.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\vfdhd.h"
+				>
+			</File>
+			<File
+				RelativePath="..\AltairZ80\wd179x.h"
 				>
 			</File>
 		</Filter>

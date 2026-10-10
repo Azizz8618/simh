@@ -1,6 +1,6 @@
 /* pdp18b_lp.c: 18b PDP's line printer simulator
 
-   Copyright (c) 1993-2017, Robert M Supnik
+   Copyright (c) 1993-2026, Robert M Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -28,6 +28,7 @@
    lp09         (PDP-9,15) LP09 line printer
    lp15         (PDP-15)   LP15 line printer
 
+   09-Jun-21    RMS     Reverted use of ftell for pipe compatibility
    13-Mar-17    RMS     Annotated fall throughs in switch
    10-Mar-16    RMS     Added 3-cycle databreak set/show entry
    07-Mar-16    RMS     Revised for dynamically allocated memory
@@ -190,12 +191,12 @@ if (lp62_spc) {                                         /* space? */
     if ((uptr->flags & UNIT_ATT) == 0)                  /* attached? */
         return IORETURN (lp62_stopioe, SCPE_UNATT);
     fputs (lp62_cc[lp62_spc & 07], uptr->fileref);      /* print cctl */
-    uptr->pos = ftell (uptr->fileref);                  /* update position */
     if (ferror (uptr->fileref)) {                       /* error? */
         sim_perror ("LPT I/O error");
         clearerr (uptr->fileref);
         return SCPE_IOERR;
         }
+    uptr->pos = uptr->pos + strlen (lp62_cc[lp62_spc & 07]); /* update position */
     lp62_ovrpr = 0;                                     /* clear overprint */
     }
 else {
@@ -205,12 +206,13 @@ else {
     if (lp62_ovrpr)                                     /* overprint? */
         fputc ('\r', uptr->fileref);
     fputs (lp62_buf, uptr->fileref);                    /* print buffer */
-    uptr->pos = ftell (uptr->fileref);                  /* update position */
     if (ferror (uptr->fileref)) {                       /* test error */
         sim_perror ("LPT I/O error");
         clearerr (uptr->fileref);
         return SCPE_IOERR;
         }
+    uptr->pos = uptr->pos + strlen (lp62_buf) +         /* update position */
+        (lp62_ovrpr? 1: 0);                             /* including \r */
     lp62_bp = 0;
     for (i = 0; i <= LP62_BSIZE; i++)                   /* clear buffer */
         lp62_buf[i] = 0;
@@ -266,6 +268,8 @@ int32 lp647_err = 0;                                    /* error */
 int32 lp647_iot = 0;                                    /* saved state */
 int32 lp647_stopioe = 0;
 int32 lp647_bp = 0;                                     /* buffer ptr */
+int32 lp647_itime = 1000;                               /* init timeout */
+t_bool lp647_init = FALSE;                              /* init in progress */
 char lp647_buf[LP647_BSIZE] = { 0 };
 static const char *lp647_cc[] = {
     "\n",
@@ -311,6 +315,8 @@ REG lp647_reg[] = {
     { ORDATA (SCMD, lp647_iot, 6), REG_HRO },
     { DRDATAD (POS, lp647_unit.pos, T_ADDR_W, "position in the output file"), PV_LEFT },
     { DRDATAD (TIME, lp647_unit.wait, 24, "time from I/O initiation to interrupt"), PV_LEFT },
+    { DRDATAD (ITIME, lp647_itime, 24, "init timeout"), PV_LEFT | REG_HRO},
+    { FLDATAD (INIT, lp647_init, 0, "init in progress"), REG_HRO },
     { FLDATAD (STOP_IOE, lp647_stopioe, 0, "stop on I/O error") },
     { BRDATAD (LBUF, lp647_buf, 8, 8, LP647_BSIZE, "line buffer") },
     { ORDATA (DEVNO, lp647_dib.dev, 6), REG_HRO },
@@ -346,9 +352,9 @@ if (pulse & 02) {                                       /* pulse 02 */
         for (i = 0; i < LP647_BSIZE; i++)
             lp647_buf[i] = 0;
         lp647_bp = 0;                                   /* reset buf ptr */
-        lp647_don = 1;                                  /* set done */
-        if (lp647_ie)                                   /* set int */
-            SET_INT (LPT);
+        lp647_don = 0;                                  /* clear done */
+        lp647_init = TRUE;                              /* init in progress */
+        sim_activate (&lp647_unit, lp647_itime);        /* time it out*/
         }
     }
 if (pulse & 004) {                                      /* LPDI */
@@ -411,8 +417,9 @@ if (pulse & 04) {
 return dat;
 }
 
-/* Unit service.  lp647_iot specifies the action to be taken
+/* Unit service. lp647_init and lp647_iot specifies the action to be taken
 
+   lp647_init = TRUE            clear init flag, set DON flag
    lp647_iot = 0x               print only
    lp647_iot = 2x               space only, x is spacing command
    lp647_iot = 4x               print then space, x is spacing command
@@ -426,6 +433,10 @@ char pbuf[LP647_BSIZE + 2];
 lp647_don = 1;
 if (lp647_ie)                                           /* set flag */
     SET_INT (LPT);
+if (lp647_init) {                                       /* init in progress? */
+    lp647_init = FALSE;                                 /* mark complete */
+    return SCPE_OK;
+    }
 if ((uptr->flags & UNIT_ATT) == 0) {                    /* not attached? */
     lp647_err = 1;                                      /* set error */
     return IORETURN (lp647_stopioe, SCPE_UNATT);
@@ -439,23 +450,23 @@ if ((lp647_iot & 020) == 0) {                           /* print? */
     for (i = 0; i < LP647_BSIZE; i++)                   /* clear buffer */
         lp647_buf[i] = 0;
     fputs (pbuf, uptr->fileref);                        /* print buffer */
-    uptr->pos = ftell (uptr->fileref);                  /* update position */
     if (ferror (uptr->fileref)) {                       /* error? */
         sim_perror ("LPT I/O error");
         clearerr (uptr->fileref);
         lp647_bp = 0;
         return SCPE_IOERR;
         }
+    uptr->pos = uptr->pos + strlen (pbuf);              /* update position */
     lp647_bp = 0;                                       /* clear buffer ptr */
     }
 if (lp647_iot & 060) {                                  /* space? */
     fputs (lp647_cc[lp647_iot & 07], uptr->fileref);    /* write cctl */
-    uptr->pos = ftell (uptr->fileref);                  /* update position */
     if (ferror (uptr->fileref)) {                       /* error? */
         sim_perror ("LPT I/O error");
         clearerr (uptr->fileref);
         return SCPE_IOERR;
         }
+    uptr->pos = uptr->pos + strlen (lp647_cc[lp647_iot & 07]);
     }
 return SCPE_OK;
 }
@@ -473,6 +484,7 @@ CLR_INT (LPT);                                          /* clear int */
 sim_cancel (&lp647_unit);                               /* deactivate unit */
 lp647_bp = 0;                                           /* clear buffer ptr */
 lp647_iot = 0;                                          /* clear state */
+lp647_init = FALSE;
 for (i = 0; i < LP647_BSIZE; i++)                       /* clear buffer */
     lp647_buf[i] = 0;
 return SCPE_OK;
@@ -838,7 +850,6 @@ for (more = 1; more != 0; ) {                           /* loop until ctrl */
             lp15_buf[lp15_bp] = 0;                      /* append nul */
             fputs (lp15_buf, uptr->fileref);            /* print line */
             fputs (ctrl[c[i] & 037], uptr->fileref);    /* space */
-            uptr->pos = ftell (uptr->fileref);
             if (ferror (uptr->fileref)) {               /* error? */
                 sim_perror ("LPT I/O error");
                 clearerr (uptr->fileref);
@@ -846,6 +857,8 @@ for (more = 1; more != 0; ) {                           /* loop until ctrl */
                 lp15_updsta (STA_DON | STA_ALM);
                 return SCPE_IOERR;
                 }
+            uptr->pos = uptr->pos + strlen (lp15_buf)   /* update position */
+                + strlen (ctrl[c[i] & 037]);            /* incl spacing */
             lp15_bp = more = 0;
             }
         else {

@@ -1586,8 +1586,8 @@ for ( ;; ) {
         hst_p = hst_p + 1;
         if (hst_p >= hst_lnt)
             hst_p = 0;
-        if (hst_log && (hst_p == hst_log_p))
-            cpu_show_hist_records (hst_log, FALSE, hst_log_p, hst_lnt);
+        if (hst_log && (hst_p == hst_log_p))    /* File Logging and Full, then write all records*/
+            cpu_show_hist_records (hst_log, ((hst_switches & SWMASK('O')) != 0), hst_log_p, hst_lnt);
         }
 
 /* Dispatch to instructions */
@@ -3300,6 +3300,12 @@ return 0;                                               /* set new cc's */
 
 void cpu_idle (void)
 {
+/* Normal use of sim_idle would specify FALSE (0) as the sim_interval */
+/* adjustment parameter since this simullator doesn't have a WAIT     */
+/* instruction and merely detects instruction patterns that reflect   */
+/* the system idling.  However, a TRUE (1) value for this parameter   */
+/* produces clock calibration results while idling which closer       */
+/* the actual simulator instruction execution rate.                   */
 sim_idle (TMR_CLK, TRUE);
 }
 
@@ -3316,6 +3322,10 @@ static const char *vax_clock_precalibrate_commands[] = {
     "-m 106 MULL3 120,124,128",
     "-m 10D BRW   100",
     "PC 100",
+    NULL};
+
+static const char *vax_clock_precalibrate_cleanup_commands[] = {
+    "100-140 0",
     NULL};
 
 /* Reset */
@@ -3335,6 +3345,7 @@ if (M == NULL) {                        /* first time init? */
     sim_brk_types = sim_brk_dflt = SWMASK ('E');
     sim_vm_is_subroutine_call = cpu_is_pc_a_subroutine_call;
     sim_clock_precalibrate_commands = vax_clock_precalibrate_commands;
+    sim_clock_precalibrate_cleanup_commands = vax_clock_precalibrate_cleanup_commands;
     sim_vm_initial_ips = SIM_INITIAL_IPS;
     pcq_r = find_reg ("PCQ", NULL, dptr);
     if (pcq_r == NULL)
@@ -3527,21 +3538,22 @@ int32 i, lnt;
 char gbuf[CBUFSIZE];
 t_stat r;
 
-if (cptr == NULL) {
-    for (i = 0; i < hst_lnt; i++)
-        hst[i].iPC = 0;
-    hst_p = 0;
+if (cptr == NULL) { /* Clear History */
     if (hst_log) {
         sim_set_fsize (hst_log, (t_addr)0);
+        rewind (hst_log);
         hst_log_p = 0;
         cpu_show_hist_records (hst_log, TRUE, 0, 0);
         }
+    for (i = 0; i < hst_lnt; i++)
+        hst[i].iPC = 0;
+    hst_p = 0;
     return SCPE_OK;
     }
 cptr = get_glyph (cptr, gbuf, ':');
 lnt = (int32) get_uint (gbuf, 10, HIST_MAX, &r);
 if (r != SCPE_OK)
-    return sim_messagef (SCPE_ARG, "Invalid Numeric Value: %s\n", gbuf);
+    return sim_messagef (SCPE_ARG, "Invalid Numeric Value: %s.  Maximum is %d\n", gbuf, HIST_MAX);
 if (lnt && (lnt < HIST_MIN))
     return sim_messagef (SCPE_ARG, "%d is less than the minumum history value of %d\n", lnt, HIST_MIN);
 hst_p = 0;
@@ -3588,7 +3600,7 @@ if (hst_lnt == 0)                                       /* enabled? */
 if (cptr) {
     lnt = (int32) get_uint (cptr, 10, hst_lnt, &r);
     if ((r != SCPE_OK) || (lnt == 0))
-        return SCPE_ARG;
+        return sim_messagef (SCPE_ARG, "Invalid count specifier: %s, max is %d\n", cptr, hst_lnt);
     }
 else lnt = hst_lnt;
 di = hst_p - lnt;                                       /* work forward */
@@ -3605,11 +3617,19 @@ InstHistory *h;
 if (hst_lnt == 0)                                       /* enabled? */
     return SCPE_NOFNC;
 if (do_header) {
+    if (hst_switches & SWMASK('O')) {
+        sim_set_fsize (hst_log, (t_addr)0);
+        rewind (hst_log);
+        }
     if (hst_switches & SWMASK('T'))
         fprintf (st," TIME       ");
     fprintf (st, "PC       PSL       IR\n\n");
     }
 for (k = 0; k < count; k++) {                           /* print specified */
+    if (stop_cpu) {                                     /* Control-C (SIGINT) */
+        stop_cpu = FALSE;
+        break;                                          /* abandon remaining output */
+        }
     h = &hst[(start++) % hst_lnt];                      /* entry pointer */
     if (h->iPC == 0)                                    /* filled in? */
         continue;
@@ -3920,15 +3940,14 @@ else {
 return SCPE_OK;
 }
 
-t_stat cpu_load_bootcode (const char *filename, const unsigned char *builtin_code, size_t size, t_bool rom, t_addr offset)
+t_stat cpu_load_bootcode (const char *filename, const unsigned char *builtin_code, size_t size, t_bool rom, t_addr offset, const char *filepath, unsigned int checksum)
 {
 char args[CBUFSIZE];
 t_stat r;
 int32 saved_sim_switches = sim_switches;
 
 sim_messagef (SCPE_OK, "Loading boot code from %s%s\n", builtin_code ? "internal " : "", filename);
-if (builtin_code)
-    sim_set_memory_load_file (builtin_code, size);
+sim_set_memory_load_file_ex (builtin_code, size, filepath, checksum);
 if (rom)
     sprintf (args, "-R %s", filename);
 else
@@ -3941,6 +3960,8 @@ return r;
 
 t_stat cpu_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr)
 {
+DEVICE *bus = (find_dev ("QBA") != NULL) ? find_dev ("QBA") : find_dev ("UBA");
+
 fprintf (st, "The ");cpu_print_model (st);fprintf (st, " CPU help\n\n");
 fprintf (st, "CPU options include the size of main memory.\n\n");
 if (dptr->modifiers) {
@@ -3960,10 +3981,13 @@ fprintf (st, "translation:\n\n");
 fprintf (st, "   sim> SHOW {-kesu} CPU VIRTUAL=n      show translation for address n\n");
 fprintf (st, "                                        in kernel/exec/supervisor/user mode\n\n");
 fprintf (st, "Memory can be loaded with a binary byte stream using the LOAD command.  The\n");
-fprintf (st, "LOAD command recognizes three switches:\n\n");
+fprintf (st, "LOAD command recognizes these switches:\n\n");
 fprintf (st, "      -o      origin argument follows file name\n");
-fprintf (st, "      -r      load the boot ROM\n");
-fprintf (st, "      -n      load the non-volatile RAM\n\n");
+if (find_dev ("ROM") != NULL)
+    fprintf (st, "      -r      load the boot ROM\n");
+if (find_dev ("NVR") != NULL)
+    fprintf (st, "      -n      load the non-volatile RAM\n");
+fprintf (st, "\n");
 fprintf (st, "These switches are recognized when examining or depositing in CPU memory:\n\n");
 fprintf (st, "      -b      examine/deposit bytes\n");
 fprintf (st, "      -w      examine/deposit words\n");
@@ -3996,16 +4020,22 @@ fprintf (st, "indicats the number of seconds which the simulator must run before
 fprintf (st, "starts.\n\n");
 fprintf (st, "The CPU can maintain a history of the most recently executed instructions.\n");
 fprintf (st, "This is controlled by the SET CPU HISTORY and SHOW CPU HISTORY commands:\n\n");
-fprintf (st, "   sim> SET CPU HISTORY                 clear history buffer\n");
-fprintf (st, "   sim> SET CPU HISTORY=0               disable history\n");
-fprintf (st, "   sim> SET CPU {-T} HISTORY=n{:file}   enable history, length = n\n");
-fprintf (st, "   sim> SHOW CPU HISTORY                print CPU history\n");
-fprintf (st, "   sim> SHOW CPU HISTORY=n              print first n entries of CPU history\n\n");
+fprintf (st, "   sim> SET CPU HISTORY                    clear history buffer\n");
+fprintf (st, "   sim> SET CPU HISTORY=0                  disable history\n");
+fprintf (st, "   sim> SET CPU {-T} {-O} HISTORY=n{:file} enable history, length = n\n");
+fprintf (st, "   sim> SHOW CPU HISTORY                   print CPU history\n");
+fprintf (st, "   sim> SHOW CPU HISTORY=n                 print most recent n entries of\n");
+fprintf (st, "                                           history\n\n");
 fprintf (st, "The -T switch causes simulator time to be recorded (and displayed)\n");
-fprintf (st, "with each history entry.\n");
+fprintf (st, "with each history entry.  This may be useful when correlating history\n");
+fprintf (st, "with debug output.\n");
 fprintf (st, "When writing history to a file (SET CPU HISTORY=n:file), 'n' specifies\n");
 fprintf (st, "the buffer flush frequency.  Warning: prodigious amounts of disk space\n");
-fprintf (st, "may be comsumed.  The maximum length for the history is %d entries.\n\n", HIST_MAX);
+fprintf (st, "may be comsumed.\n");
+fprintf (st, "Consumption of prodigious amounts of disk space can be avoided, if the\n");
+fprintf (st, "-O switch is specified which will cause each buffer flush to overwrite\n");
+fprintf (st, "any previously output history.\n");
+fprintf (st, "The maximum length for the history is %d entries.\n\n", HIST_MAX);
 fprintf (st, "Different VAX systems implemented different VAX architecture instructions\n");
 fprintf (st, "in hardware with other instructions possibly emulated by software in the\n");
 fprintf (st, "system.  The instructions that a particular simulator implements can be\n");
@@ -4014,5 +4044,49 @@ fprintf (st, "   sim> SHOW CPU INSTRUCTIONS     display the instructoin groups t
 fprintf (st, "                                  implemented and emulated\n");
 fprintf (st, "   sim> SHOW CPU -V INSTRUCTIONS  disable the list of instructions implemented\n");
 fprintf (st, "                                  and emulated\n\n");
+if (bus) {
+    fprintf (st, "I/O Device Addressing\n\n");
+    fprintf (st, "%s I/O space and vector space are not large enough to allow all\n", (strcmp (bus->name, "QBA") == 0) ? "Qbus" : "Unibus");
+    fprintf (st, "theoretically possible devices to be configured simultaneously at\n");
+    fprintf (st, "fixed addresses.  Instead, many devices have floating addresses and\n");
+    fprintf (st, "vectors; that is, the assigned device address and vector depend on the\n");
+    fprintf (st, "presence of other devices in the configuration:\n\n");
+    fprintf (st, "       DZ11/DZV11     all instances have floating addresses\n");
+    fprintf (st, "       DHU11/DHQ11    all instances have floating addresses\n");
+    fprintf (st, "       RL11           first instance has fixed address, rest floating\n");
+    fprintf (st, "       RX11/RX211     first instance has fixed address, rest floating\n");
+    fprintf (st, "       DEUNA/DELUA    first instance has fixed address, rest floating\n");
+    fprintf (st, "       MSCP disk      first instance has fixed address, rest floating\n");
+    fprintf (st, "       TMSCP tape     first instance has fixed address, rest floating\n\n");
+    fprintf (st, "In addition, some devices with fixed I/O space addresses have floating\n");
+    fprintf (st, "vector addresses.  DCI/DCO and DLI/DLO have floating vector addresses.\n\n");
+    fprintf (st, "To maintain addressing consistency as the configuration changes, the\n");
+    fprintf (st, "simulator implements DEC's standard I/O address and vector autoconfiguration.\n");
+    fprintf (st, "This allows the user to enable or disable devices without needing to\n");
+    fprintf (st, "manage I/O addresses and vectors.  For example, if RY is enabled while\n");
+    fprintf (st, "RX is present, RY is assigned an I/O address in the floating I/O space\n");
+    fprintf (st, "range; but if RX is disabled and then RY is enabled, RY is assigned the\n");
+    fprintf (st, "fixed \"first instance\" I/O address for floppy disks.\n\n");
+    fprintf (st, "Autoconfiguration cannot solve address conflicts between devices with\n");
+    fprintf (st, "overlapping fixed addresses.  For example, with default I/O page addressing,\n");
+    fprintf (st, "the PDP-11 can support either a TM11 or a TS11, but not both, since they\n");
+    fprintf (st, "use the same I/O addresses.\n\n");
+    fprintf (st, "In addition to autoconfiguration, most devices support the SET <device>\n");
+    fprintf (st, "ADDRESS command, which allows the I/O page address of the device to be\n");
+    fprintf (st, "changed, and the SET <device> VECTOR command, which allows the vector of\n");
+    fprintf (st, "the device to be changed.  Explicitly changing the I/O address or vector of\n");
+    fprintf (st, "any device to a different value DISABLES autoconfiguration for the entire\n");
+    fprintf (st, "system.  As a consequence, when autoconfiguration is disabled, the user may\n");
+    fprintf (st, "have to manually configure all remaining devices in the system that are\n");
+    fprintf (st, "explicitly enabled after autoconfiguration has been disabled.\n");
+    fprintf (st, "Autoconfiguration can be restored for the entire system with the\n");
+    fprintf (st, "SET %s AUTOCONFIGURE command.\n\n", bus->name);
+    fprintf (st, "The current I/O map can be displayed with the SHOW %s IOSPACE command.\n", bus->name);
+    fprintf (st, "Addresses that have set by autoconfiguration in floating address space are\n");
+    fprintf (st, "marked with an asterisk (*).\n\n");
+    fprintf (st, "All devices support the SHOW <device> ADDRESS and SHOW <device> VECTOR\n");
+    fprintf (st, "commands, which display the device address and vector, respectively.\n");
+    }
+fprint_brk_help (st, dptr);
 return SCPE_OK;
 }

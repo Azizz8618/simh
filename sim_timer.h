@@ -41,9 +41,6 @@ extern "C" {
 #if defined(__struct_timespec_defined)
 #define _TIMESPEC_DEFINED
 #endif
-#if defined(SIM_ASYNCH_IO) || defined(USE_READER_THREAD)
-#include <pthread.h>
-#endif
 
 #if defined (__APPLE__)
 #define HAVE_STRUCT_TIMESPEC     /* OSX defined the structure but doesn't tell us */
@@ -105,11 +102,14 @@ int clock_gettime(int clock_id, struct timespec *tp);
 #define TIMER_DBG_MUX   0x004                       /* Debug Flag for Asynch Queue Debugging */
 
 t_bool sim_timer_init (void);
-void sim_timespec_diff (struct timespec *diff, struct timespec *min, struct timespec *sub);
+void sim_timespec_diff (struct timespec *diff, struct timespec *min, const struct timespec *sub);
 double sim_timenow_double (void);
 int32 sim_rtcn_init (int32 time, int32 tmr);
 int32 sim_rtcn_init_unit (UNIT *uptr, int32 time, int32 tmr);
 int32 sim_rtcn_init_unit_ticks (UNIT *uptr, int32 time, int32 tmr, int32 ticksper);
+void sim_rtcn_set_debug_basetime (const struct timespec *basetime);
+const struct timespec *sim_rtcn_get_debug_basetime (void);
+void sim_rtcn_debug_time (struct timespec *now);
 void sim_rtcn_get_time (struct timespec *now, int tmr);
 time_t sim_get_time (time_t *now);
 t_stat sim_rtcn_tick_ack (uint32 time, int32 tmr);
@@ -141,7 +141,8 @@ t_stat sim_timer_activate_after (UNIT *uptr, double usec_delay);
 int32 _sim_timer_activate_time (UNIT *uptr);
 double sim_timer_activate_time_usecs (UNIT *uptr);
 t_bool sim_timer_is_active (UNIT *uptr);
-t_bool sim_timer_cancel (UNIT *uptr);
+t_stat sim_timer_cancel (UNIT *uptr);
+t_bool sim_timer_idle (int sin_cyc);
 t_stat sim_register_clock_unit (UNIT *uptr);
 t_stat sim_register_clock_unit_tmr (UNIT *uptr, int32 tmr);
 t_stat sim_clock_coschedule (UNIT *uptr, int32 interval);
@@ -152,6 +153,7 @@ double sim_timer_inst_per_sec (void);
 void sim_timer_precalibrate_execution_rate (void);
 int32 sim_rtcn_tick_size (int32 tmr);
 int32 sim_rtcn_calibrated_tmr (void);
+int32 sim_rtcn_calibrated_tick_size (void);
 t_bool sim_timer_idle_capable (uint32 *host_ms_sleep_1, uint32 *host_tick_ms);
 #define PRIORITY_BELOW_NORMAL  -1
 #define PRIORITY_NORMAL         0
@@ -161,6 +163,7 @@ uint32 sim_get_rom_delay_factor (void);
 void sim_set_rom_delay_factor (uint32 delay);
 int32 sim_rom_read_with_delay (int32 val);
 double sim_host_speed_factor (void);
+t_stat sim_os_process_cpu_times (double *system, double *user);
 
 extern t_bool sim_idle_enab;                        /* idle enabled flag */
 extern volatile t_bool sim_idle_wait;               /* idle waiting flag */

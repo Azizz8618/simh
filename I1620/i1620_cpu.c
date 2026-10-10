@@ -1,6 +1,6 @@
 /* i1620_cpu.c: IBM 1620 CPU simulator
 
-   Copyright (c) 2002-2018, Robert M. Supnik
+   Copyright (c) 2002-2021, Robert M. Supnik
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -26,6 +26,7 @@
    This CPU module incorporates code and comments from the 1620 simulator by
    Geoff Kuenning, with his permission.
 
+   01-Feb-21    RMS     Added max value to address registers
    05-Jun-18    RMS     Fixed bug in select index A (COVERITY)
    23-Jun-17    RMS     BS should not enable indexing unless configured
    15-Jun-17    RMS     Added more information to IO in progress message
@@ -234,10 +235,10 @@ extern t_stat fp_fsr (uint32 d, uint32 s);
 UNIT cpu_unit = { UDATA (NULL, UNIT_FIX+UNIT_BCD+MI_STD, MAXMEMSIZE) };
 
 REG cpu_reg[] = {
-    { DRDATA (PC, saved_PC, 16), PV_LEFT },
-    { DRDATA (APC, actual_PC, 16), PV_LEFT + REG_HRO },
-    { DRDATAD (IR2, IR2, 16, "instruction storage address register (PC)"), PV_LEFT },
-    { DRDATAD (PR1, PR1, 16, "processor register 1"), PV_LEFT },
+    { DRDATA (PC, saved_PC, 16), PV_LEFT, MAXADDR },
+    { DRDATA (APC, actual_PC, 16), PV_LEFT + REG_HRO, MAXADDR },
+    { DRDATAD (IR2, IR2, 16, "instruction storage address register (PC)"), PV_LEFT, MAXADDR },
+    { DRDATAD (PR1, PR1, 16, "processor register 1"), PV_LEFT, MAXADDR },
     { DRDATAD (PAR, PAR, 16, "P address register (OR2)"), PV_LEFT + REG_RO },
     { DRDATAD (QAR, QAR, 16, "Q address register (OR1)"), PV_LEFT + REG_RO },
     { FLDATAD (SW1, ind[IN_SW1], 0, "sense switch 1" ) },
@@ -2407,8 +2408,10 @@ if (cptr == NULL) {
     return SCPE_OK;
     }
 lnt = (int32) get_uint (cptr, 10, HIST_MAX, &r);
-if ((r != SCPE_OK) || (lnt && (lnt < HIST_MIN)))
-    return SCPE_ARG;
+if (r != SCPE_OK)
+    return sim_messagef (SCPE_ARG, "Invalid Numeric Value: %s.  Maximum is %d\n", cptr, HIST_MAX);
+if (lnt && (lnt < HIST_MIN))
+    return sim_messagef (SCPE_ARG, "%d is less than the minumum history value of %d\n", lnt, HIST_MIN);
 hst_p = 0;
 if (hst_lnt) {
     free (hst);
@@ -2441,7 +2444,7 @@ if (hst_lnt == 0)                                       /* enabled? */
 if (cptr) {
     lnt = (int32) get_uint (cptr, 10, hst_lnt, &r);
     if ((r != SCPE_OK) || (lnt == 0))
-        return SCPE_ARG;
+        return sim_messagef (SCPE_ARG, "Invalid count specifier: %s, max is %d\n", cptr, hst_lnt);
     }
 else lnt = hst_lnt;
 di = hst_p - lnt;                                       /* work forward */
@@ -2449,6 +2452,10 @@ if (di < 0)
     di = di + hst_lnt;
 fprintf (st, "PC     IR\n\n");
 for (k = 0; k < lnt; k++) {                             /* print specified */
+    if (stop_cpu) {                                     /* Control-C (SIGINT) */
+        stop_cpu = FALSE;
+        break;                                          /* abandon remaining output */
+        }
     h = &hst[(++di) % hst_lnt];                         /* entry pointer */
     if (h->vld) {                                       /* instruction? */
         fprintf (st, "%05d  ", h->pc);

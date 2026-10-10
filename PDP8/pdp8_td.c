@@ -446,7 +446,7 @@ if (uptr->STATE & STA_DIR)                              /* update pos */
 else uptr->pos = uptr->pos + delta;
 if (((int32) uptr->pos < 0) ||
     ((int32) uptr->pos > (DTU_FWDEZ (uptr) + DT_EZLIN))) {
-    detach_unit (uptr);                                 /* off reel */
+    td_detach (uptr);                                   /* off reel */
     sim_cancel (uptr);                                  /* no timing pulses */
     return TRUE;
     }
@@ -503,7 +503,7 @@ switch (mot) {                                          /* case on motion */
         uptr->LASTT = sim_grtime ();                    /* save time */
         if (((int32) uptr->pos < 0) ||                  /* off reel? */
            (uptr->pos >= (((uint32) DTU_FWDEZ (uptr)) + DT_EZLIN))) {
-            detach_unit (uptr);
+            td_detach (uptr);
             return IORETURN (td_stopoffr, STOP_DTOFF);
             }
         break;                                          /* check function */

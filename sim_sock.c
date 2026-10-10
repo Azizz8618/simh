@@ -63,7 +63,7 @@ extern "C" {
 #define WSAAPI
 #endif
 
-#if defined(SHUT_RDWR) && !defined(SD_BOTH)
+#if !defined(SD_BOTH)
 #define SD_BOTH SHUT_RDWR
 #endif
 
@@ -83,49 +83,6 @@ extern "C" {
    sim_setnonblock      set socket non-blocking
 */
 
-/* First, all the non-implemented versions */
-
-#if defined (__OS2__) && !defined (__EMX__)
-
-void sim_init_sock (void)
-{
-}
-
-void sim_cleanup_sock (void)
-{
-}
-
-SOCKET sim_master_sock_ex (const char *hostport, int *parse_status, int opt_flags)
-{
-return INVALID_SOCKET;
-}
-
-SOCKET sim_connect_sock_ex (const char *sourcehostport, const char *hostport, const char *default_host, const char *default_port, int opt_flags)
-{
-return INVALID_SOCKET;
-}
-
-SOCKET sim_accept_conn (SOCKET master, char **connectaddr);
-{
-return INVALID_SOCKET;
-}
-
-int sim_read_sock (SOCKET sock, char *buf, int nbytes)
-{
-return -1;
-}
-
-int sim_write_sock (SOCKET sock, char *msg, int nbytes)
-{
-return 0;
-}
-
-void sim_close_sock (SOCKET sock)
-{
-return;
-}
-
-#else                                                   /* endif unimpl */
 
 /* UNIX, Win32, Macintosh, VMS, OS2 (Berkeley socket) routines */
 
@@ -205,6 +162,8 @@ typedef size_t socklen_t;
 
 typedef int (WSAAPI *getnameinfo_func) (const struct sockaddr *sa, socklen_t salen, char *host, size_t hostlen, char *serv, size_t servlen, int flags);
 static getnameinfo_func p_getnameinfo;
+
+#if !defined(AF_INET6) || defined(TEST_INFO_STUBS) || defined(_WIN32)
 
 static void    WSAAPI s_freeaddrinfo (struct addrinfo *ai)
 {
@@ -426,6 +385,8 @@ if ((host) && (hostlen > 0)) {
     }
 return 0;
 }
+
+#endif /* !defined(AF_INET6) || defined(TEST_INFO_STUBS) || defined(_WIN32) */
 
 #if defined(_WIN32) || defined(__CYGWIN__)
 
@@ -718,10 +679,10 @@ if (c != NULL) {
     bits = strtoul (c + 1, &c1, 10);
     if ((bits == 0) || (bits > 128) || (*c1 != '\0'))
         return status;
-    if ((c - validate_addr) > sizeof (v_cpy) - 1)
+    if ((size_t)(c - validate_addr) > sizeof (v_cpy) - 1)
         return status;
     memcpy (v_cpy, validate_addr, c - validate_addr);   /* Copy everything before the / */
-    v_cpy[1 + c - validate_addr] = '\0';                /* NUL terminate the result */
+    v_cpy[c - validate_addr] = '\0';                    /* NUL terminate the result */
     validate_addr = v_cpy;                              /* Use the original string minus the prefix specifier */
     }
 if (p_getaddrinfo(validate_addr, NULL, NULL, &ai_validate))
@@ -744,7 +705,7 @@ while ((*acl != '\0') && !done) {
     permit = (*acl == '+');
     cc = strchr (acl, ',');
     if (cc != NULL) {
-        if ((cc - acl) > sizeof (rule))
+        if ((size_t)(cc - acl) > sizeof (rule))
             break;                  /* Too big - error */
         memcpy (rule, acl + 1, cc - (acl + 1));
         rule[cc - (acl + 1)] = '\0';
@@ -1088,7 +1049,7 @@ if (!(opt_flags & SIM_SOCK_OPT_BLOCKING)) {
     if (sta == SOCKET_ERROR)                            /* fcntl error? */
         return sim_err_sock (newsock, "setnonblock");
     }
-sta = listen (newsock, 1);                              /* listen on socket */
+sta = listen (newsock, SIM_SOCK_OPT_BACKLOG(opt_flags));/* listen on socket */
 if (sta == SOCKET_ERROR)                                /* listen error? */
     return sim_err_sock (newsock, "listen");
 return newsock;                                         /* got it! */
@@ -1235,7 +1196,7 @@ if (connectaddr != NULL) {
     p_getnameinfo((struct sockaddr *)&clientname, size, *connectaddr, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
     if (0 == memcmp("::ffff:", *connectaddr, 7))        /* is this a IPv4-mapped IPv6 address? */
         memmove(*connectaddr, 7+*connectaddr,           /* prefer bare IPv4 address */
-                strlen(*connectaddr) - 7 + 1);          /* length to include terminating \0 */
+                strlen(7+*connectaddr) + 1);            /* length to include terminating \0 */
     }
 
 if (!(opt_flags & SIM_SOCK_OPT_BLOCKING)) {
@@ -1321,7 +1282,7 @@ int ret = 0;
 ret = p_getnameinfo(addr, size, hostnamebuf, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 if (0 == memcmp("::ffff:", hostnamebuf, 7))        /* is this a IPv4-mapped IPv6 address? */
     memmove(hostnamebuf, 7+hostnamebuf,            /* prefer bare IPv4 address */
-            strlen(hostnamebuf) + 7 - 1);          /* length to include terminating \0 */
+            strlen(7+hostnamebuf) + 1);            /* length to include terminating \0 */
 if (!ret)
     ret = p_getnameinfo(addr, size, NULL, 0, portnamebuf, NI_MAXSERV, NI_NUMERICSERV);
 return ret;
@@ -1372,8 +1333,10 @@ int sim_read_sock (SOCKET sock, char *buf, int nbytes)
 int rbytes, err;
 
 rbytes = recv (sock, buf, nbytes, 0);
-if (rbytes == 0)                                        /* disconnect */
+if (rbytes == 0) {                                       /* disconnect */
+    err = WSAGetLastError ();
     return -1;
+    }
 if (rbytes == SOCKET_ERROR) {
     err = WSAGetLastError ();
     if (err == WSAEWOULDBLOCK)                          /* no data */
@@ -1415,8 +1378,6 @@ void sim_close_sock (SOCKET sock)
 shutdown(sock, SD_BOTH);
 closesocket (sock);
 }
-
-#endif                                                  /* end else !implemented */
 
 #ifdef  __cplusplus
 }

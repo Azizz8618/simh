@@ -1,8 +1,8 @@
-/*  $Id: s100_fif.c 1995 2008-07-15 03:59:13Z hharte $
+/*
 
     IMSAI FIF Disk Controller by Ernie Price
 
-    Based on altairz80_dsk.c, Copyright (c) 2002-2014, Peter Schorn
+    Based on altairz80_dsk.c, Copyright (c) 2002-2023, Peter Schorn
 
     Plug-n-Play added by Howard M. Harte
 

@@ -33,11 +33,7 @@
 
 #include "vax_defs.h"
 
-#ifdef DONT_USE_INTERNAL_ROM
-#define BOOT_CODE_FILENAME "vmb.exe"
-#else /* !DONT_USE_INTERNAL_ROM */
 #include "vax_vmb_exe.h" /* Defines BOOT_CODE_FILENAME and BOOT_CODE_ARRAY, etc */
-#endif /* DONT_USE_INTERNAL_ROM */
 
 /* 11/750 specific IPRs */
 
@@ -97,7 +93,6 @@ t_stat vax750_show_bootdev (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 extern int32 iccs_rd (void);
 extern int32 nicr_rd (void);
 extern int32 icr_rd (void);
-extern int32 todr_rd (void);
 extern int32 rxcs_rd (void);
 extern int32 rxdb_rd (void);
 extern int32 txcs_rd (void);
@@ -106,7 +101,6 @@ extern int32 csrd_rd (void);
 extern int32 csts_rd (void);
 extern void iccs_wr (int32 dat);
 extern void nicr_wr (int32 dat);
-extern void todr_wr (int32 dat);
 extern void rxcs_wr (int32 dat);
 extern void txcs_wr (int32 dat);
 extern void txdb_wr (int32 dat);
@@ -589,6 +583,10 @@ static struct boot_dev boot_tab[] = {
     { "RP",  "DB",  "ka750_new.bin", BOOT_B, 0,        0        },  /* DBAn */
     { "RP",  "DRA", "ka750_new.bin", BOOT_B, BOOT_MB,  0        },  /* DRAn */
     { "RP",  "DR",  "ka750_new.bin", BOOT_B, 0,        0        },  /* DRAn */
+    { "RPB", "DBB", "ka750_new.bin", BOOT_B, BOOT_MB,  0        },  /* DBAn */
+    { "RPB", "DBB", "ka750_new.bin", BOOT_B, 0,        0        },  /* DBAn */
+    { "RPB", "DRB", "ka750_new.bin", BOOT_B, BOOT_MB,  0        },  /* DRAn */
+    { "RPB", "DRB", "ka750_new.bin", BOOT_B, 0,        0        },  /* DRAn */
     { "HK",  "DMA", "ka750_old.bin", BOOT_B, BOOT_HK,  0        },  /* DMAn */
     { "HK",  "DM",  "ka750_old.bin", BOOT_B, 0,        0        },  /* DMAn */
     { "RL",  "DLA", "ka750_old.bin", BOOT_C, BOOT_RL,  0        },  /* DLAn */
@@ -612,13 +610,8 @@ t_stat r;
 if ((ptr = get_sim_sw (ptr)) == NULL)                   /* get switches */
     return SCPE_INVSW;
 r = vax750_boot_parse (flag, ptr);                      /* parse the boot cmd */
-if (r != SCPE_OK) {                                     /* error? */
-    if (r >= SCPE_BASE) {                               /* message available? */
-        sim_printf ("%s\n", sim_error_text (r));
-        r |= SCPE_NOMESSAGE;
-        }
+if (r != SCPE_OK)                                       /* error? */
     return r;
-    }
 strncpy (cpu_boot_cmd, ptr, CBUFSIZE-1);                /* save for reboot */
 return run_cmd (flag, "CPU");
 }
@@ -636,7 +629,7 @@ UNIT *uptr;
 t_stat r;
 
 if (!ptr || !*ptr)
-    return SCPE_2FARG;
+    return sim_messagef (SCPE_2FARG, "Missing boot device/unit specifier\n");
 if (ptr && (*ptr == '/')) {                             /* handle "BOOT /R5:n DEV" format */
     ptr = get_glyph (ptr, rbuf, 0);                     /* get glyph */
     regptr = rbuf;
@@ -658,15 +651,18 @@ if ((strncmp (regptr, "/R5:", 4) == 0) ||
     (strncmp (regptr, "/r5=", 4) == 0)) {
     r5v = (int32) get_uint (regptr + 4, 16, LMASK, &r);
     if (r != SCPE_OK)
-        return r;
+        return sim_messagef (r, "Can't parse R5 value from: %s\n", regptr + 4);
     }
-else if (*regptr == '/') {
-    r5v = (int32) get_uint (regptr + 1, 16, LMASK, &r);
-    if (r != SCPE_OK)
-        return r;
-    }
-else if (*regptr != 0)
-    return SCPE_ARG;
+else
+    if (*regptr == '/') {
+        r5v = (int32) get_uint (regptr + 1, 16, LMASK, &r);
+        if (r != SCPE_OK)
+            return sim_messagef (r, "Can't parse R5 value from: %s\n", regptr + 1);
+        }
+    else {
+        if (*regptr != 0)
+            return sim_messagef (SCPE_ARG, "Invalid boot argument: %s\n", regptr);
+        }
 if (gbuf[0]) {
     unitno = -1;
     for (i = 0; boot_tab[i].devname != NULL; i++) {
@@ -675,7 +671,7 @@ if (gbuf[0]) {
             if (memcmp (gbuf, ((char *)rom) + (0x100 * boot_tab[i].bootdev), 2)) {
                 r = mctl_populate_rom (boot_tab[i].bootcodefile);
                 if (r != SCPE_OK)
-                    return r;
+                    return sim_messagef (r, "Can't load ROM file: %s\n", boot_tab[i].bootcodefile);
                 vax750_bootdev = boot_tab[i].bootdev;
                 }
             sprintf(dbuf, "%s%s", boot_tab[i].devname, gbuf + strlen(boot_tab[i].romdevalias));
@@ -747,7 +743,7 @@ else {
     PC = 0xFA02 + 0x100*vax750_bootdev;
     return SCPE_OK;
     }
-return SCPE_NOFNC;
+return sim_messagef (SCPE_NOFNC, "Non bootable device: %s\n", gbuf);
 }
 
 /* Bootstrap - finish up bootstrap process */
@@ -757,7 +753,7 @@ t_stat cpu_boot (int32 unitno, DEVICE *dptr)
 t_stat r;
 
 if (PC == 0x200) {    /* Use VMB directly to boot */
-    r = cpu_load_bootcode (BOOT_CODE_FILENAME, BOOT_CODE_ARRAY, BOOT_CODE_SIZE, FALSE, 0x200);
+    r = cpu_load_bootcode (BOOT_CODE_FILENAME, BOOT_CODE_ARRAY, BOOT_CODE_SIZE, FALSE, 0x200, BOOT_CODE_FILEPATH, BOOT_CODE_CHECKSUM);
     if (r != SCPE_OK)
         return r;
     }
