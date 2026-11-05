@@ -42,6 +42,7 @@ port_ini() { # port_ini <src> <dst>
 # ---- part 1: the BULK opcodes over a raw socket ------------------------
 say "== C: BULK opcodes over a raw socket (dks_c_bulk_test.py) =="
 port_ini "$DIR/dks_b2_e60.ini" "$TMP/dks_b2_e60.port.ini"
+sed -i "/^go /i set dks encoding=utf8" "$TMP/dks_b2_e60.port.ini"
 rm -f "$TMP/fifo"; mkfifo "$TMP/fifo"
 "$P11" "$TMP/dks_b2_e60.port.ini" < "$TMP/fifo" > "$TMP/e60.log" 2>&1 &
 P11PID=$!
@@ -62,6 +63,8 @@ B6PID=$!
 sleep 4
 
 OUT=$(printf 'HELLO\r\n' | python3 "$DIR/dks_telnet_test.py" 127.0.0.1 "$PORT" 10)
+# stage C, question B5: a UTF-8 telnet client on a КОИ-7 protocol line
+OUT2=$(printf 'привет\r' | python3 "$DIR/dks_telnet_test.py" 127.0.0.1 "$PORT" 12 6)
 
 # ---- shutdown: the logs are block-buffered, flush them first -----------
 printf '\005' >&3                                  # Ctrl-E: stop the CPU
@@ -92,6 +95,8 @@ check "C.10 sysreq ATTN raises ПРП12 (БЭСМ-6 log)" \
       "$(has "$(cat "$TMP/b6.log")" 'ATTN .ПРП 6. + ПРП12')"
 check "C.11 data ATTN stays plain ПРП6" \
       "$(tr -d '\r' < "$TMP/b6.log" | grep -q 'ATTN .ПРП 6.$' && echo 0 || echo 1)"
+N=$(printf '%s' "$OUT2" | grep -c 'ПРИВЕТ')
+check "C.12 UTF-8 terminal round trip (привет -> ПРИВЕТ)" $([ "$N" -ge 2 ] && echo 0 || echo 1)
 
 say ""
 say "passed: $PASS, failed: $FAIL"

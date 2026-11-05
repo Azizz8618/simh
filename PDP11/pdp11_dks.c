@@ -76,6 +76,9 @@
 static uint16 e60_mem[4][32768];
 static int32 dks_chan = DKS_CHAN;                       /* КРК channel of this Э-60 */
 static uint32 cur_chan = DKS_CHAN;                      /* window channel */
+static int dks_utf8 = 0;                /* ENCODING: 0 = raw КОИ-7Н1 */
+static uint32 utf8_acc[DKS_LINES + 1];  /* UTF-8 input assembly */
+static int utf8_need[DKS_LINES + 1];
 
 static uint16 dks_csr = 0;                              /* control/status */
 static uint16 dks_rbuf = 0;                             /* last received */
@@ -142,6 +145,8 @@ t_stat dks_set_engine (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_engine (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat dks_set_chan (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_chan (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+t_stat dks_set_encoding (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_show_encoding (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat dks_set_testos (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_testos (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat dks_set_log (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
@@ -211,6 +216,9 @@ MTAB dks_mod[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "CHAN", "CHAN=k",
         &dks_set_chan, &dks_show_chan, NULL,
         "The КРК channel of this Э-60 instance, 0-3 (stage C, default 2)" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "ENCODING", "ENCODING=KOI7|UTF8",
+        &dks_set_encoding, &dks_show_encoding, NULL,
+        "Terminal encoding (stage C): raw КОИ-7Н1 or UTF-8 conversion" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "TESTOS", "TESTOS=OFF|ON|PROMPT",
         &dks_set_testos, &dks_show_testos, NULL,
         "OS-side stub for stage A: echo loop, prompt dialog, or off" },
@@ -313,14 +321,61 @@ static void set_mem (int addr, uint32 val)
     }
 
 /* Output helpers into a telnet line (DEV: the reference uses vt_send/
-   vt_puts of besm6_tty.c; plain 7-bit output for now, the KOI-7/UTF-8
-   conversion is the stage C question B5). */
-static void dks_send_char (int n, uint32 sym)
+   vt_puts of besm6_tty.c).  Stage C, question B5: ENCODING=UTF8 spells
+   the КОИ-7Н1 Cyrillic half (0140-0176) as UTF-8 for modern telnet
+   clients; KOI7 (the default) passes the raw protocol bytes. */
+
+/* КОИ-7Н1 bytes 0140..0176 (0x60-0x7E) -> Unicode (the mapping of
+   besm6_tty.c); 0177 (0x7F) is the delimiter and stays unmapped. */
+static const uint32 koi7_to_uni[31] = {
+    0x042E, 0x0410, 0x0411, 0x0426, 0x0414, 0x0415, 0x0424, 0x0413,
+    0x0425, 0x0418, 0x0419, 0x041A, 0x041B, 0x041C, 0x041D, 0x041E,
+    0x041F, 0x042F, 0x0420, 0x0421, 0x0422, 0x0423, 0x0416, 0x0412,
+    0x042C, 0x042B, 0x0417, 0x0428, 0x042D, 0x0429, 0x0427
+    };
+
+/* Unicode -> КОИ-7Н1, -1 when unmappable.  КОИ-7 has one case: upper
+   and lower Cyrillic (0410-042F / 0430-044F) map to the same byte. */
+static int uni_to_koi7 (uint32 val)
+{
+    int i;
+
+    if (val <= '_')
+        return (int) val;
+    if (val >= 'a' && val <= 'z')
+        return (int) (val + 'Z' - 'z');
+    if (val >= 0x0430 && val <= 0x044F)         /* lower Cyrillic */
+        val -= 0x20;
+    for (i = 0; i < 31; ++i)
+        if (koi7_to_uni[i] == val)
+            return 0140 + i;                /* 0x60 + i */
+    return -1;
+}
+
+static void dks_line_out (int n, int ch)
 {
     TMLN *lp = &dks_ldsc[n - 1];
+    uint32 uni;
+    uint8 seq[2];
 
-    if (lp->conn)
-        tmxr_putc_ln (lp, sym & 0177);
+    if (! lp->conn)
+        return;
+    ch &= 0177;
+    if (! dks_utf8 || ch < 0140 || ch > 0176) {     /* not КОИ-7Н1 Cyrillic */
+        tmxr_putc_ln (lp, ch);
+        return;
+        }
+    uni = koi7_to_uni[ch - 0140];
+    seq[0] = (uint8) (0300 | (uni >> 6));           /* Cyrillic: 2 bytes */
+    seq[1] = (uint8) (0200 | (uni & 077));
+    tmxr_putc_ln (lp, seq[0]);
+    tmxr_putc_ln (lp, seq[1]);
+    }
+
+static void dks_send_char (int n, uint32 sym)
+{
+    if (dks_ldsc[n - 1].conn)
+        dks_line_out (n, (int) (sym & 0177));
     }
 
 static void dks_send_str (int n, const char *s)
@@ -1168,8 +1223,10 @@ static void dks_line_state (int n, int connected)
 
     if (connected)
         *w |= (1 << bit);
-    else
+    else {
         *w &= ~(1 << bit);
+        utf8_need[n] = 0;               /* drop a partial UTF-8 sequence */
+        }
     if (was != *w) {
         dks_csr |= DKS_CSR_LC;
         dks_update_atni ();
@@ -1301,7 +1358,7 @@ t_stat dks_wr (int32 ldata, int32 PA, int32 access)
             int32 c = data & 0177;                  /* KOI-7: bit 7 ignored */
 
             if (lp->conn) {
-                tmxr_putc_ln (lp, c);
+                dks_line_out (dks_tsel, c);
                 sim_debug (DBG_DATA, &dks_dev, "line %d -> %03o\n",
                            dks_tsel, c);
                 }
@@ -1411,7 +1468,44 @@ t_stat dks_svc (UNIT *uptr)
             while ((c = tmxr_getc_ln (&dks_ldsc[n - 1])) != 0) {
                 if (c & SCPE_BREAK)
                     continue;
-                dks_rx_char (n, c & 0377);
+                c &= 0377;
+                if (dks_utf8) {                         /* stage C, B5 */
+                    int k;
+
+                    if (utf8_need[n]) {                 /* continuation */
+                        if ((c & 0300) != 0200) {       /* broken: drop */
+                            utf8_need[n] = 0;
+                            continue;
+                            }
+                        utf8_acc[n] = (utf8_acc[n] << 6) | (c & 077);
+                        if (--utf8_need[n])
+                            continue;
+                        }
+                    else if (c < 0200) {                /* plain ASCII */
+                        dks_rx_char (n, c);
+                        continue;
+                        }
+                    else if ((c & 0340) == 0300) {      /* 2 bytes */
+                        utf8_acc[n] = c & 037;
+                        utf8_need[n] = 1;
+                        continue;
+                        }
+                    else if ((c & 0360) == 0340) {      /* 3 bytes */
+                        utf8_acc[n] = c & 017;
+                        utf8_need[n] = 2;
+                        continue;
+                        }
+                    else {                              /* 4 bytes */
+                        utf8_acc[n] = c & 007;
+                        utf8_need[n] = 3;
+                        continue;
+                        }
+                    k = uni_to_koi7 (utf8_acc[n]);      /* complete */
+                    if (k >= 0)
+                        dks_rx_char (n, k);
+                    continue;
+                    }
+                dks_rx_char (n, c);
                 }
             }
         tmxr_poll_tx (&dks_desc);                       /* poll output */
@@ -1438,6 +1532,8 @@ t_stat dks_reset (DEVICE *dptr)
     memset (e60_mem, 0, sizeof (e60_mem));
     cur_chan = dks_chan;
     dks_kctl = dks_chan;
+    memset (utf8_acc, 0, sizeof (utf8_acc));
+    memset (utf8_need, 0, sizeof (utf8_need));
     sys_busy = 0;
     sys_line = 0;
     bufh_recv = 0;
@@ -1555,6 +1651,32 @@ t_stat dks_set_chan (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 t_stat dks_show_chan (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
 {
     fprintf (st, "chan=%o", dks_chan);
+    return SCPE_OK;
+    }
+
+/* SET ENCODING=KOI7|UTF8 (stage C, question B5): UTF8 converts the
+   КОИ-7Н1 Cyrillic half to UTF-8 on output and back on input, for
+   modern telnet clients.  The default KOI7 passes the raw protocol
+   bytes (the behavior of the etalon). */
+t_stat dks_set_encoding (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+    char gbuf[CBUFSIZE];
+
+    if (cptr == NULL)
+        return SCPE_ARG;
+    cptr = get_glyph (cptr, gbuf, 0);
+    if (strcmp (gbuf, "KOI7") == 0)
+        dks_utf8 = 0;
+    else if (strcmp (gbuf, "UTF8") == 0)
+        dks_utf8 = 1;
+    else
+        return SCPE_ARG;
+    return SCPE_OK;
+    }
+
+t_stat dks_show_encoding (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+    fprintf (st, "encoding=%s", dks_utf8? "UTF8": "KOI7");
     return SCPE_OK;
     }
 

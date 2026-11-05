@@ -5,7 +5,7 @@ Connects to the DKS port, waits for the connect/term-assignment chain,
 sends its stdin (LF -> CR/LF), prints everything received.  The test
 runner greps the output for the expected strings.
 
-Usage: dks_telnet_test.py host port [seconds]
+Usage: dks_telnet_test.py host port [seconds] [pre-send wait]
 """
 import socket
 import sys
@@ -14,6 +14,8 @@ import time
 host = sys.argv[1]
 port = int(sys.argv[2])
 timeout = float(sys.argv[3]) if len(sys.argv) > 3 else 8.0
+# a reconnect needs a longer connect chain than a first session
+presend = float(sys.argv[4]) if len(sys.argv) > 4 else 2.0
 
 s = socket.create_connection((host, port), timeout=5)
 s.settimeout(0.2)
@@ -45,7 +47,7 @@ while time.time() < deadline:
     if not sent:
         # let the connect -> sysreq -> reply -> greeting chain finish
         t0 = time.time()
-        while time.time() - t0 < 2.0 and time.time() < deadline:
+        while time.time() - t0 < presend and time.time() < deadline:
             pump()
         data = sys.stdin.buffer.read()
         if data:
