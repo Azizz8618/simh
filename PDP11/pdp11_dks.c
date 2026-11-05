@@ -67,6 +67,7 @@
 
 #include "pdp11_defs.h"
 #include "pdp11_dks.h"
+#include "sim_sock.h"
 #include "sim_tmxr.h"
 
 #define DKS_FIFO_SIZE   512                             /* received data FIFO */
@@ -87,6 +88,35 @@ static int32 fifo_in = 0, fifo_out = 0;
 static int32 dks_wait = 1000;                           /* polling interval */
 static int32 dks_engine = ENGINE_SIM;                   /* protocol engine */
 static int32 dks_testos = TESTOS_PROMPT;                /* OS stub mode */
+static uint16 dks_kctl = 0;                             /* КАДОПАМ control shadow */
+
+/* ===== КАДОПАМ bridge (stage B2) =====
+
+   The bridge exposes the ОЗУ Э-60 to a БЭСМ-6 simulator over TCP, the
+   same 8-byte frames КАДОПАМ exchanges internally (plan §8.1):
+
+        request  D6 op chan addr_hi addr_lo val_hi val_lo 00
+        response D7 op|0200 ...
+
+   This side is the SERVER (SET DKS BRIDGE=port): the БЭСМ-6 connects
+   with SET DKS REMOTE=host:port (BESM6/besm6_dks.c).  Frames are served
+   from dks_svc, i.e. the PDP-11 CPU must be running (v1, no threads).
+   One client at a time; a new connection replaces a stale one. */
+
+#define BRIDGE_MAGIC_REQ    0xD6
+#define BRIDGE_MAGIC_RSP    0xD7
+#define BRIDGE_OP_READ      01
+#define BRIDGE_OP_WRITE     02
+#define BRIDGE_OP_ATTN      03
+#define BRIDGE_OP_PING      04
+
+static char dks_bridge_spec[CBUFSIZE] = "";             /* listening port */
+static SOCKET dks_lsock = INVALID_SOCKET;               /* master socket */
+static SOCKET dks_bsock = INVALID_SOCKET;               /* БЭСМ-6 client */
+static uint8 dks_bfrm[8];                               /* inbound frame */
+static int32 dks_bn = 0;                                /* bytes accumulated */
+static uint32 dks_nreads = 0, dks_nwrites = 0,          /* frame counters */
+              dks_nattn = 0, dks_npings = 0, dks_nbad = 0;
 
 TMLN dks_ldsc[DKS_LINES];                               /* line descriptors */
 TMXR dks_desc = { DKS_LINES, NULL, 0, dks_ldsc };
@@ -109,6 +139,13 @@ t_stat dks_show_testos (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat dks_set_log (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_set_nolog (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_log (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+static void dks_update_atni (void);
+t_stat dks_set_bridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_set_nobridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_show_bridge (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+static void dks_sig_besm6 (void);
+static void dks_bridge_poll (void);
+static void testos_ring (void);
 t_stat dks_show_vec (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat dks_help (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
 t_stat dks_help_attach (FILE *st, DEVICE *dptr, UNIT *uptr, int32 flag, const char *cptr);
@@ -129,7 +166,12 @@ REG dks_reg[] = {
     { ORDATAD (RBUF,  dks_rbuf,  16, "last received data") },
     { ORDATAD (TSEL,  dks_tsel,  16, "transmit line select") },
     { ORDATAD (KADDR, dks_kaddr, 16, "ОЗУ Э-60 window address") },
-    { ORDATAD (KCHAN, cur_chan,  3,  "КРК channel of the window") },
+    { ORDATAD (KCTL,  dks_kctl,  16, "КАДОПАМ control (shadow: chan | SIGNAL pulse)") },
+    { ORDATAD (BREAD, dks_nreads, 32, "bridge READ frames"), PV_LEFT },
+    { ORDATAD (BWRITE,dks_nwrites,32, "bridge WRITE frames"), PV_LEFT },
+    { ORDATAD (BATTN, dks_nattn, 32, "bridge ATTN frames sent"), PV_LEFT },
+    { ORDATAD (BPING, dks_npings, 32, "bridge PING frames"), PV_LEFT },
+    { ORDATAD (BBAD,  dks_nbad,  32, "bad bridge frames"), PV_LEFT },
     { GRDATAD (LSTAT0, dks_lstat[0], DEV_RDX, 16, 0, "lines 1-12 connected") },
     { GRDATAD (LSTAT1, dks_lstat[1], DEV_RDX, 16, 0, "lines 13-24 connected") },
     { DRDATAD (TIME,  dks_wait,  24, "polling interval"), PV_LEFT },
@@ -160,6 +202,11 @@ MTAB dks_mod[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "TESTOS", "TESTOS=OFF|ON|PROMPT",
         &dks_set_testos, &dks_show_testos, NULL,
         "OS-side stub for stage A: echo loop, prompt dialog, or off" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "BRIDGE", "BRIDGE=port",
+        &dks_set_bridge, &dks_show_bridge, NULL,
+        "КАДОПАМ bridge server: TCP port for the БЭСМ-6 (stage B2)" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, NULL, "NOBRIDGE",
+        &dks_set_nobridge, NULL, NULL, "Close the КАДОПАМ bridge" },
     { MTAB_XTD|MTAB_VDV|MTAB_NC, 0, NULL, "LOG=n=file",
         &dks_set_log, NULL, &dks_desc, "Enables logging on designated line" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, NULL, "NOLOG=n",
@@ -172,6 +219,7 @@ MTAB dks_mod[] = {
 DEBTAB dks_deb[] = {
     { "KADOPAM", DBG_KADOPAM, "KADDR/KDATA window accesses" },
     { "RING",    DBG_RING,    "ring slots, system requests, area writes" },
+    { "BRIDGE",  DBG_BRIDGE,  "КАДОПАМ bridge frames" },
     { "IRQ",     DBG_IRQ,     "interrupts raised" },
     { "DATA",    DBG_DATA,    "characters to/from the lines" },
     { "PROTO",   DBG_PROTO,   "line state machine" },
@@ -235,11 +283,11 @@ static int dks_enabled (void)
     }
 
 /* The ОС listens only after it has read the channel status.  TESTOS
-   emulates the ready ОС; with a real БЭСМ-6 the readiness arrives through
-   the bridge (stage B2). */
+   emulates the ready ОС; with TESTOS=OFF the engine posts to the real
+   БЭСМ-6 across the bridge (stage B2) regardless of readiness. */
 static int os_ready (void)
 {
-    return os_polled;
+    return os_polled || (dks_testos == TESTOS_OFF);
     }
 
 static uint32 mem (int addr)
@@ -279,6 +327,7 @@ static void dks_send_str (int n, const char *s)
 static void dks_host_atten (void)
 {
     sim_debug (DBG_RING, &dks_dev, "signal to БЭСМ-6 (ПРП6 on its side)\n");
+    dks_sig_besm6 ();
     return;
     }
 
@@ -573,6 +622,19 @@ static void testos_post_bufh (int abonent)
                abonent, src);
     }
 
+/* The БЭСМ-6 rings the Э-60 (cell 077777 = 0400 through КАДОПАМ).
+   With the engine in C the device services it directly; with the engine
+   in the firmware (stage B1) the ring is the ATN interrupt. */
+static void testos_ring (void)
+{
+    if (dks_engine == ENGINE_HOST) {
+        dks_csr |= DKS_CSR_ATN;
+        dks_update_atni ();
+        }
+    else
+        sim_activate (&dks_unit, 20);               /* like the reference */
+    }
+
 /* Write a string as an output array and ring the Э-60 (DEV: ASCII text
    for now, see the B5 question about KOI-7/UTF-8). */
 static void testos_output (int n, const char *str)
@@ -595,7 +657,7 @@ static void testos_output (int n, const char *str)
     sim_debug (DBG_RING, &dks_dev, "TESTOS: %d bytes out to line %d\n",
                len, n);
     testos_post_bufh (n);
-    sim_activate (&dks_unit, 20);               /* the doorbell */
+    testos_ring ();                                 /* the doorbell */
     }
 
 /* TESTOS=ON: send the typed line back as an output array. */
@@ -665,6 +727,8 @@ static void testos_process (void)
             uint32 cmd = mem (a + AR_CMD_IN);
 
             if (cmd == 4) {                     /* input ready */
+                set_mem (a + AR_STATUS0,
+                         mem (a + AR_STATUS0) & ~AR_FLAG);  /* acknowledge */
                 if (dks_testos == TESTOS_ON)
                     testos_echo_back (n);
                 else                            /* PROMPT */
@@ -675,6 +739,221 @@ static void testos_process (void)
             }
         }
     }
+
+/* Received data FIFO.  The interrupt is raised while IE && RR. */
+
+/* ===== КАДОПАМ bridge server (stage B2) ===== */
+
+/* Close the bridge client and, when asked, the listening socket. */
+static void dks_bridge_close (int all)
+{
+if (dks_bsock != INVALID_SOCKET) {
+    sim_close_sock (dks_bsock);
+    dks_bsock = INVALID_SOCKET;
+    }
+dks_bn = 0;
+if (all && dks_lsock != INVALID_SOCKET) {
+    sim_close_sock (dks_lsock);
+    dks_lsock = INVALID_SOCKET;
+    dks_bridge_spec[0] = '\0';
+    }
+return;
+}
+
+/* The БЭСМ-6 is listening on the other end of the bridge.  Its readiness
+   replaces the TESTOS os_polled artifact: with TESTOS=OFF the engine
+   posts to the real ОС across the bridge. */
+static int dks_bridge_up (void)
+{
+return (dks_bsock != INVALID_SOCKET);
+}
+
+/* Э-60 -> БЭСМ-6: "an entry waits in АБУФS" (ПРП6 on the БЭСМ-6 side). */
+static void dks_sig_besm6 (void)
+{
+uint8 f[8];
+
+if (dks_bsock == INVALID_SOCKET)
+    return;
+f[0] = BRIDGE_MAGIC_REQ;
+f[1] = BRIDGE_OP_ATTN;
+f[2] = DKS_CHAN;
+f[3] = f[4] = f[5] = f[6] = f[7] = 0;
+if (sim_write_sock (dks_bsock, (const char *) f, 8) == 8) {
+    ++dks_nattn;
+    sim_debug (DBG_BRIDGE, &dks_dev, "bridge: -> ATTN\n");
+    }
+return;
+}
+
+/* One complete request frame from the БЭСМ-6: execute and respond. */
+static void dks_bridge_frame (const uint8 *req)
+{
+uint8 rsp[8];
+int32 op = req[1], chan = req[2] & 7;
+int32 addr = (req[3] << 8) | req[4];
+int32 val = (req[5] << 8) | req[6];
+
+rsp[0] = BRIDGE_MAGIC_RSP;
+rsp[1] = op | 0x80;
+rsp[2] = chan;
+rsp[3] = req[3];
+rsp[4] = req[4];
+rsp[5] = rsp[6] = rsp[7] = 0;
+switch (op) {
+
+case BRIDGE_OP_READ:                                /* КАДОПАМ 032 */
+    ++dks_nreads;
+    if (addr == 0)                                  /* channel status */
+        val = DKS_STATUS;
+    else if (addr == 2)                             /* номнпр */
+        val = NOMNPR;
+    else
+        val = e60_mem[chan][addr];
+    sim_debug (DBG_BRIDGE, &dks_dev,
+               "bridge: READ [%o]%05o -> %06o\n", chan, addr, val);
+    break;
+
+case BRIDGE_OP_WRITE:                               /* КАДОПАМ 0132 */
+    ++dks_nwrites;
+    sim_debug (DBG_BRIDGE, &dks_dev,
+               "bridge: WRITE [%o]%05o <- %06o\n", chan, addr, val);
+    if (addr == 0) {                                /* channel select */
+        cur_chan = val & 7;                         /* КАДОПАМ: cell 0 <- val */
+        dks_kctl = (uint16) ((dks_kctl & ~KCTL_M_CHAN) | (val & 7));
+        break;
+        }
+    e60_mem[chan][addr] = (uint16) val;
+    if (chan == DKS_CHAN && addr == DOORBELL) {     /* the БЭСМ-6 rings */
+        if (val & ~DOORBELL_RING)
+            sim_debug (DBG_RING, &dks_dev, "doorbell %06o\n", val);
+        if (val & DOORBELL_RING) {
+            sim_debug (DBG_IRQ, &dks_dev, "doorbell from БЭСМ-6\n");
+            if (dks_engine == ENGINE_HOST) {        /* firmware reacts */
+                dks_csr |= DKS_CSR_ATN;
+                dks_update_atni ();
+                }
+            else
+                sim_activate (&dks_unit, 20);       /* like the reference */
+            }
+        }
+    else if (chan == DKS_CHAN &&
+             addr >= AREA_BASE && addr < AREA (DKS_LINES + 1) &&
+             (addr - AREA_BASE) % AREA_SIZE < 8)
+        sim_debug (DBG_RING, &dks_dev, "line %d area+%d <- %06o\n",
+                   (addr - AREA_BASE) / AREA_SIZE,
+                   (addr - AREA_BASE) % AREA_SIZE, val);
+    break;
+
+case BRIDGE_OP_ATTN:                                /* Э-60 -> БЭСМ-6 only */
+    sim_debug (DBG_BRIDGE, &dks_dev, "bridge: <- ATTN (ignored)\n");
+    break;
+
+case BRIDGE_OP_PING:
+    ++dks_npings;
+    sim_debug (DBG_BRIDGE, &dks_dev, "bridge: PING\n");
+    break;
+
+default:                                            /* unknown op */
+    ++dks_nbad;
+    sim_debug (DBG_BRIDGE, &dks_dev, "bridge: bad op %o\n", op);
+    break;
+    }
+rsp[5] = (val >> 8) & 0377;
+rsp[6] = val & 0377;
+if (sim_write_sock (dks_bsock, (const char *) rsp, 8) != 8)
+    sim_debug (DBG_BRIDGE, &dks_dev, "bridge: response write failed\n");
+return;
+}
+
+/* Poll the bridge from dks_svc: accept, accumulate, serve. */
+static void dks_bridge_poll (void)
+{
+int32 n;
+
+if (dks_lsock != INVALID_SOCKET) {
+    char *connectaddr = NULL;
+    SOCKET newsock = sim_accept_conn (dks_lsock, &connectaddr);
+
+    if (newsock != INVALID_SOCKET) {
+        if (dks_bsock != INVALID_SOCKET) {          /* replace the stale one */
+            sim_debug (DBG_BRIDGE, &dks_dev, "bridge: new client\n");
+            dks_bridge_close (FALSE);
+            }
+        dks_bsock = newsock;
+        dks_nreads = dks_nwrites = dks_nattn = 0;
+        sim_debug (DBG_BRIDGE, &dks_dev, "bridge: client %s connected\n",
+                   connectaddr? connectaddr: "?");
+        }
+    if (connectaddr)
+        free (connectaddr);
+    }
+if (dks_bsock == INVALID_SOCKET)
+    return;
+while ((n = sim_read_sock (dks_bsock, (char *) dks_bfrm + dks_bn,
+                           8 - dks_bn)) != 0) {
+    if (n < 0) {                                    /* connection lost */
+        sim_debug (DBG_BRIDGE, &dks_dev,
+                   "bridge: БЭСМ-6 disconnected\n");
+        dks_bridge_close (FALSE);
+        return;
+        }
+    dks_bn += n;
+    if (dks_bn == 8) {
+        if (dks_bfrm[0] == BRIDGE_MAGIC_REQ)
+            dks_bridge_frame (dks_bfrm);
+        else {
+            ++dks_nbad;
+            sim_debug (DBG_BRIDGE, &dks_dev,
+                       "bridge: bad magic %02x, frame dropped\n", dks_bfrm[0]);
+            }
+        dks_bn = 0;
+        }
+    }
+return;
+}
+
+/* SET/SHOW BRIDGE processors. */
+
+t_stat dks_set_bridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+t_stat r;
+char gbuf[CBUFSIZE];
+
+if (cptr == NULL || *cptr == 0)
+    return SCPE_ARG;
+if (dks_dev.flags & DEV_DIS)
+    return SCPE_UDIS;
+cptr = get_glyph (cptr, gbuf, 0);
+if (*cptr != 0)
+    return SCPE_2MARG;
+dks_bridge_close (TRUE);                            /* drop the old one */
+strncpy (dks_bridge_spec, gbuf, CBUFSIZE - 1);
+/* REUSEADDR: the БЭСМ-6 reconnects when the Э-60 restarts. */
+dks_lsock = sim_master_sock_ex (dks_bridge_spec, &r, SIM_SOCK_OPT_REUSEADDR);
+if (dks_lsock == INVALID_SOCKET) {
+    dks_bridge_spec[0] = '\0';
+    return r? r: SCPE_OPENERR;
+    }
+sim_messagef (SCPE_OK, "Bridge listening on port %s\n", dks_bridge_spec);
+return SCPE_OK;
+}
+
+t_stat dks_set_nobridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+dks_bridge_close (TRUE);
+return SCPE_OK;
+}
+
+t_stat dks_show_bridge (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+if (dks_lsock == INVALID_SOCKET)
+    fprintf (st, "bridge=off");
+else
+    fprintf (st, "bridge=%s%s", dks_bridge_spec,
+             dks_bsock != INVALID_SOCKET? " (connected)": " (listening)");
+return SCPE_OK;
+}
 
 /* Received data FIFO.  The interrupt is raised while IE && RR. */
 
@@ -950,12 +1229,21 @@ t_stat dks_wr (int32 ldata, int32 PA, int32 access)
         break;
 
     case 06:                                        /* KCTL */
-        if (access == WRITEB && (PA & 1) == 0)      /* low byte: channel only */
-            data = (cur_chan & ~KCTL_M_CHAN) | (data & KCTL_M_CHAN);
+        if (access == WRITEB) {
+            uint16 cur = dks_kctl;
+
+            data = (PA & 1)?
+                (cur & 0377) | (data << 8):
+                (cur & ~0377) | data;
+            }
+        dks_kctl = (uint16) (data & (KCTL_M_CHAN | KCTL_SIGNAL));
         cur_chan = data & KCTL_M_CHAN;
-        if (data & KCTL_SIGNAL)
+        if (data & KCTL_SIGNAL) {                   /* pulse: signal БЭСМ-6 */
+            dks_kctl &= (uint16) ~KCTL_SIGNAL;      /* self-clearing */
             sim_debug (DBG_RING, &dks_dev,
                        "signal to БЭСМ-6 (ПРП6 on its side)\n");
+            dks_sig_besm6 ();
+            }
         break;
 
     case 07:                                        /* LSTAT0/1: read only */
@@ -988,31 +1276,33 @@ t_stat dks_svc (UNIT *uptr)
 {
     int32 ln, n, c;
 
-    if (! (uptr->flags & UNIT_ATT))
-        return SCPE_OK;
-    while ((ln = tmxr_poll_conn (&dks_desc)) >= 0) {/* new connections */
-        if (ln < dks_desc.lines)
-            dks_line_state (ln + 1, TRUE);
-        }
-    for (n = 1; n <= dks_desc.lines; ++n) {         /* dropped connections */
-        if (dks_ldsc[n - 1].conn == 0 &&
-            (dks_lstat[(n - 1) / 12] & (1 << ((n - 1) % 12))))
-            dks_line_state (n, FALSE);
-        }
-    tmxr_poll_rx (&dks_desc);                       /* poll input */
-    for (n = 1; n <= dks_desc.lines; ++n) {
-        while ((c = tmxr_getc_ln (&dks_ldsc[n - 1])) != 0) {
-            if (c & SCPE_BREAK)
-                continue;
-            dks_rx_char (n, c & 0377);
+    if (uptr->flags & UNIT_ATT) {
+        while ((ln = tmxr_poll_conn (&dks_desc)) >= 0) {/* new connections */
+            if (ln < dks_desc.lines)
+                dks_line_state (ln + 1, TRUE);
             }
+        for (n = 1; n <= dks_desc.lines; ++n) {         /* dropped connections */
+            if (dks_ldsc[n - 1].conn == 0 &&
+                (dks_lstat[(n - 1) / 12] & (1 << ((n - 1) % 12))))
+                dks_line_state (n, FALSE);
+            }
+        tmxr_poll_rx (&dks_desc);                       /* poll input */
+        for (n = 1; n <= dks_desc.lines; ++n) {
+            while ((c = tmxr_getc_ln (&dks_ldsc[n - 1])) != 0) {
+                if (c & SCPE_BREAK)
+                    continue;
+                dks_rx_char (n, c & 0377);
+                }
+            }
+        tmxr_poll_tx (&dks_desc);                       /* poll output */
         }
-    tmxr_poll_tx (&dks_desc);                       /* poll output */
-    if (dks_engine == ENGINE_SIM) {                 /* stage A: engine in C */
-        if (dks_testos != TESTOS_OFF)
-            testos_process ();                      /* ОС side of the protocol */
-        dks_process ();                             /* Э-60 side */
-        }
+    /* The ОС-side stub runs with both engines: in HOST (stage B1) it is
+       the only counterpart of the firmware. */
+    if (dks_testos != TESTOS_OFF)
+        testos_process ();
+    if (dks_engine == ENGINE_SIM)                       /* stage A: engine in C */
+        dks_process ();
+    dks_bridge_poll ();                                 /* stage B2 */
     sim_activate (uptr, dks_wait);
     return SCPE_OK;
     }
@@ -1027,11 +1317,13 @@ t_stat dks_reset (DEVICE *dptr)
     dks_desc.uptr = &dks_unit;
     memset (e60_mem, 0, sizeof (e60_mem));
     cur_chan = DKS_CHAN;
+    dks_kctl = DKS_CHAN;
     sys_busy = 0;
     sys_line = 0;
     bufh_recv = 0;
     os_polled = (dks_testos != TESTOS_OFF);         /* TESTOS emulates the ОС */
     memset (testos_term_used, 0, sizeof (testos_term_used));
+    dks_bridge_close (FALSE);                       /* drop the client, keep listening */
     for (n = 1; n <= DKS_LINES; ++n) {              /* keep attached lines up */
         int up = dks_line[n].up || dks_line[n].want_connect;
 
@@ -1041,7 +1333,7 @@ t_stat dks_reset (DEVICE *dptr)
         }
     dks_mclr ();
     sim_cancel (&dks_unit);
-    if (dks_unit.flags & UNIT_ATT)
+    if ((dks_unit.flags & UNIT_ATT) || dks_lsock != INVALID_SOCKET)
         sim_activate (&dks_unit, dks_wait);
     return auto_config (dptr->name, (dptr->flags & DEV_DIS)? 0: 1);
     }
@@ -1214,10 +1506,17 @@ fprintf (st, "   sim> SHOW DKS STATISTICS             show statistics\n");
 fprintf (st, "   sim> SET DKS DISCONNECT=line         disconnect the specified line\n");
 fprintf (st, "   sim> SET DKS LINES=n                 set the number of lines (1..%d)\n", DKS_LINES);
 fprintf (st, "   sim> SET DKS ENGINE=SIM|HOST         protocol engine: in C or in firmware\n");
-fprintf (st, "   sim> SET DKS TESTOS=OFF|ON|PROMPT    OS-side stub (stage A)\n\n");
+fprintf (st, "   sim> SET DKS TESTOS=OFF|ON|PROMPT    OS-side stub (stage A)\n");
+fprintf (st, "   sim> SET DKS BRIDGE=port             КАДОПАМ bridge server (stage B2)\n");
+fprintf (st, "   sim> SET DKS NOBRIDGE                close the bridge\n\n");
 fprintf (st, "The firmware reaches the 32K-word ОЗУ of the Э-60 through the KADDR/KDATA\n");
 fprintf (st, "window (bit 0100000 of KADDR is auto-increment); cell 077777 written with\n");
-fprintf (st, "0400 is the doorbell from the БЭСМ-6.  Characters are KOI-7 (7 bits).\n\n");
+fprintf (st, "0400 is the doorbell from the БЭСМ-6.  Writing KCTL with 0400|chan pulses\n");
+fprintf (st, "the «signal БЭСМ-6» line (ПРП6 on its side, the bridge sends an ATTN\n");
+fprintf (st, "frame).  Characters are KOI-7 (7 bits).\n\n");
+fprintf (st, "The bridge (stage B2) exposes the ОЗУ Э-60 to a БЭСМ-6 simulator over\n");
+fprintf (st, "TCP: 8-byte frames, see PDP11/pdp11_dks.md §«КАДОПАМ bridge».  The\n");
+fprintf (st, "БЭСМ-6 side connects with SET DKS REMOTE=host:port (BESM6 simulator).\n\n");
 dks_help_attach (st, dptr, uptr, flag, cptr);
 return SCPE_OK;
     }

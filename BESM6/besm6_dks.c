@@ -43,6 +43,7 @@
  * editing.  A finished line is passed to the OS as one input array.
  */
 #include "besm6_defs.h"
+#include "sim_sock.h"
 #include "sim_tmxr.h"
 
 #define DKS_CHAN        2                       /* КРК channel of our Э-60 */
@@ -80,11 +81,52 @@
 #define DBG_KADOPAM     001
 #define DBG_RING        002
 #define DBG_IRQ         004
+#define DBG_BRIDGE      010
 
 /* Э-60 RAM, one per КРК channel; only DKS_CHAN is backed by an Э-60. */
 static uint16 e60_mem[4][32768];
 static uint32 cur_chan;
 static int os_polled;           /* КОНФУС has read the channel status */
+
+/* ===== REMOTE mode (stage B2) =====
+
+   With SET DKS REMOTE=host:port the ОЗУ of the Э-60 lives in another
+   SIMH process (PDP11/pdp11_dks.c, SET DKS BRIDGE=port); КАДОПАМ
+   becomes a TCP bridge.  Every 032/0132 is one 8-byte frame:
+
+        request  D6 op chan addr_hi addr_lo val_hi val_lo 00
+        response D7 op|0200 ...
+
+   The local protocol engine (dks_process and friends) is disabled in
+   this mode: the engine lives on the Э-60 side.  The БЭСМ-6 keeps only
+   its own state: os_polled, МПРП and ПРП6 (the interrupt arrives as an
+   ATTN frame from the Э-60).  Frames: READ 01, WRITE 02, ATTN 03,
+   PING 04.  BULK_READ/BULK_WRITE (05/06) are the stage C. */
+
+#define BRIDGE_MAGIC_REQ    0xD6
+#define BRIDGE_MAGIC_RSP    0xD7
+#define BRIDGE_OP_READ      01
+#define BRIDGE_OP_WRITE     02
+#define BRIDGE_OP_ATTN      03
+#define BRIDGE_OP_PING      04
+
+#define RS_DOWN         0       /* no socket, retry on the timer */
+#define RS_CONN         1       /* connect() in progress */
+#define RS_UP           2       /* established */
+
+static int dks_remote;          /* REMOTE mode is on */
+static char dks_remote_spec[CBUFSIZE] = "";     /* "host:port" */
+static SOCKET rsock = INVALID_SOCKET;
+static int rstate = RS_DOWN;
+static time_t rlasttry;         /* last connect attempt, wall clock */
+static uint8 rfrm[8];           /* inbound frame accumulator */
+static int rfrm_n;
+static uint32 n_rreads, n_rwrites, n_rattn, n_rerr;     /* counters */
+
+static int dks_remote_connect (int force);
+static void dks_remote_drop (const char *why);
+static int dks_remote_xact (int op, int addr, int32 *val);
+static void dks_remote_poll (void);
 
 /* Pending system request: 0 none, 1 connect (await reply), 3 disconnect. */
 static int sys_busy;
@@ -110,9 +152,28 @@ t_stat dks_reset (DEVICE *dptr);
 
 UNIT dks_unit = { UDATA (dks_svc, 0, 0) };
 
+/* SET/SHOW REMOTE processors (stage B2) forward declarations. */
+t_stat dks_set_remote (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_set_local (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_show_remote (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+
+MTAB dks_mtab[] = {
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "REMOTE", "REMOTE=host:port",
+        &dks_set_remote, &dks_show_remote, NULL,
+        "КАДОПАМ bridge client: connect to the Э-60 simulator (stage B2)" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, NULL, "LOCAL",
+        &dks_set_local, NULL, NULL,
+        "Turn the bridge off: the ОЗУ Э-60 is emulated locally again" },
+    { 0 }
+};
+
 REG dks_reg[] = {
     { ORDATA (CHAN, cur_chan, 3) },
     { BRDATA (MEM, e60_mem[DKS_CHAN], 8, 16, 32768) },
+    { DRDATA (BREAD, n_rreads, 32), PV_LEFT },
+    { DRDATA (BWRITE, n_rwrites, 32), PV_LEFT },
+    { DRDATA (BATTN, n_rattn, 32), PV_LEFT },
+    { DRDATA (BERR, n_rerr, 32), PV_LEFT },
     { 0 }
 };
 
@@ -120,11 +181,12 @@ DEBTAB dks_deb[] = {
     { "KADOPAM", DBG_KADOPAM, "every 032/0132 access" },
     { "RING",    DBG_RING,    "ring slots, system requests, area writes" },
     { "IRQ",     DBG_IRQ,     "interrupts raised" },
+    { "BRIDGE",  DBG_BRIDGE,  "КАДОПАМ bridge frames" },
     { NULL, 0 }
 };
 
 DEVICE dks_dev = {
-    "DKS", &dks_unit, dks_reg, NULL,
+    "DKS", &dks_unit, dks_reg, dks_mtab,
     1, 8, 15, 1, 8, 16,
     NULL, NULL, &dks_reset, NULL, NULL, NULL,
     NULL, DEV_DISABLE | DEV_DIS | DEV_DEBUG, 0, dks_deb
@@ -146,27 +208,51 @@ static int os_ready (void)
 
 static uint32 mem (int addr)
 {
+    int32 val;
+
+    if (dks_remote && dks_remote_xact (BRIDGE_OP_READ, addr, &val) == 0)
+        return val & 0177777;
     return e60_mem[DKS_CHAN][addr & 077777];
 }
 
 static void set_mem (int addr, uint32 val)
 {
+    int32 rc;
+
     e60_mem[DKS_CHAN][addr & 077777] = val & 0177777;
+    if (dks_remote) {
+        rc = (int32) (val & 0177777);
+        dks_remote_xact (BRIDGE_OP_WRITE, addr, &rc);
+    }
 }
 
 /*
  * Read by instruction 032: the result goes into bits 25-40 of the accumulator.
+ * In REMOTE mode the read crosses the bridge (cell 0 included, so that a
+ * multi-Э-60 configuration can report its live channel status).
  */
 t_value dks_read (int addr)
 {
     t_value val;
+    int32 rv = 0;
 
     if (addr == 0) {
-        val = dks_enabled () ? DKS_STATUS : 0;
         os_polled = 1;
+        if (! dks_enabled ())
+            val = 0;
+        else if (dks_remote)
+            val = dks_remote_xact (BRIDGE_OP_READ, 0, &rv) ?
+                0 : (t_value) rv;
+        else
+            val = DKS_STATUS;
     }
     else if (addr == 2)
         val = 0;        /* номнпр: meaning unknown, 0 keeps рспец out */
+    else if (dks_remote) {
+        rv = 0;
+        val = dks_remote_xact (BRIDGE_OP_READ, addr, &rv) ?
+            0 : (t_value) rv;
+    }
     else
         val = e60_mem[cur_chan & 3][addr];
     sim_debug (DBG_KADOPAM, &dks_dev, "032: [%o]%05o -> %06o\n",
@@ -176,15 +262,24 @@ t_value dks_read (int addr)
 
 /*
  * Write by instruction 0132: the low 16 bits of the accumulator.
+ * In REMOTE mode the write crosses the bridge; the Э-60 detects the
+ * doorbell (cell 077777 with 0400) on its side of the frame.
  */
 void dks_write (int addr, t_value acc)
 {
     uint32 val = (uint32) acc & 0177777;
+    int32 wv = (int32) val;
 
     sim_debug (DBG_KADOPAM, &dks_dev, "0132: [%o]%05o <- %06o\n",
                cur_chan, addr, val);
     if (addr == 0) {
+        if (dks_remote)
+            dks_remote_xact (BRIDGE_OP_WRITE, 0, &wv);
         cur_chan = val & 7;
+        return;
+    }
+    if (dks_remote) {
+        dks_remote_xact (BRIDGE_OP_WRITE, addr, &wv);
         return;
     }
     e60_mem[cur_chan & 3][addr] = val;
@@ -373,7 +468,8 @@ static void pass_input (int n)
 
 /*
  * Advance the Э-60 state machine; called by the unit service and by the
- * terminal poll.
+ * terminal poll.  In REMOTE mode the engine lives on the Э-60 side; this
+ * side only polls the bridge for ATTN frames (ПРП 6).
  */
 static void dks_process (void)
 {
@@ -381,6 +477,10 @@ static void dks_process (void)
 
     if (! dks_enabled ())
         return;
+    if (dks_remote) {
+        dks_remote_poll ();
+        return;
+    }
     drain_bufh ();
 
     /* A disconnect gets no reply: wait until the OS has read the ring. */
@@ -428,6 +528,242 @@ static void dks_process (void)
     }
 }
 
+/*
+ * ===== REMOTE bridge client (stage B2) =====
+ */
+
+/* Close the socket; the mode stays on, reconnection is by the timer. */
+static void dks_remote_drop (const char *why)
+{
+    if (rsock != INVALID_SOCKET) {
+        sim_close_sock (rsock);
+        rsock = INVALID_SOCKET;
+    }
+    rfrm_n = 0;
+    if (rstate == RS_UP)
+        sim_debug (DBG_BRIDGE, &dks_dev, "bridge down: %s\n", why? why: "?");
+    rstate = RS_DOWN;
+}
+
+/* Try to establish the connection; not more than once a second. */
+static int dks_remote_connect (int force)
+{
+    time_t now = time (NULL);
+
+    if (rstate == RS_UP)
+        return 1;
+    if (rsock == INVALID_SOCKET) {
+        if (! force && now == rlasttry)
+            return 0;
+        rlasttry = now;
+        rsock = sim_connect_sock_ex (NULL, dks_remote_spec, NULL, NULL, 0);
+        if (rsock == INVALID_SOCKET)
+            return 0;
+        rstate = RS_CONN;
+        sim_debug (DBG_BRIDGE, &dks_dev, "bridge: connecting to %s\n",
+                   dks_remote_spec);
+        return 0;
+        }
+    /* connect() in progress: writable = established, error = failed. */
+    if (sim_check_conn (rsock, 0) == 1) {
+        rstate = RS_UP;
+        sim_debug (DBG_BRIDGE, &dks_dev, "bridge up: %s\n", dks_remote_spec);
+        return 1;
+        }
+    if (sim_check_conn (rsock, 1) < 0)
+        dks_remote_drop ("connect failed");
+    return 0;
+}
+
+/*
+ * One inbound frame: ATTN raises ПРП6 locally, responses are consumed
+ * by the transaction loop.  Returns 1 when a response was consumed and
+ * stored into *val.
+ */
+static int dks_remote_frame (int op, int addr, int32 *val, int in_xact)
+{
+    if (rfrm[0] == BRIDGE_MAGIC_REQ) {              /* Э-60 -> БЭСМ-6 */
+        if (rfrm[1] == BRIDGE_OP_ATTN) {
+            ++n_rattn;
+            sim_debug (DBG_BRIDGE, &dks_dev,
+                       "bridge: <- ATTN (ПРП 6)\n");
+            sim_debug (DBG_IRQ, &dks_dev, "ПРП 6\n");
+            PRP |= DKS_PRP;
+            return 0;
+            }
+        sim_debug (DBG_BRIDGE, &dks_dev,
+                   "bridge: unexpected request op %o\n", rfrm[1]);
+        ++n_rerr;
+        return 0;
+        }
+    if (rfrm[0] != BRIDGE_MAGIC_RSP) {
+        sim_debug (DBG_BRIDGE, &dks_dev,
+                   "bridge: bad magic %02x\n", rfrm[0]);
+        dks_remote_drop ("bad frame");
+        ++n_rerr;
+        return 0;
+        }
+    /* A response: in a transaction it must echo the request. */
+    if (in_xact && rfrm[1] == (uint8) (op | 0x80) &&
+        rfrm[3] == (uint8) (addr >> 8) && rfrm[4] == (uint8) addr) {
+        *val = (rfrm[5] << 8) | rfrm[6];
+        return 1;
+        }
+    /* Late response of a timed-out transaction: drop it. */
+    sim_debug (DBG_BRIDGE, &dks_dev, "bridge: stale response dropped\n");
+    return 0;
+}
+
+/* Read and dispatch whatever inbound frames are pending. */
+static void dks_remote_poll (void)
+{
+    int n;
+
+    if (rstate != RS_UP) {
+        dks_remote_connect (FALSE);
+        return;
+        }
+    while ((n = sim_read_sock (rsock, (char *) rfrm + rfrm_n, 8 - rfrm_n))
+           != 0) {
+        if (n < 0) {
+            dks_remote_drop ("read error");
+            return;
+            }
+        rfrm_n += n;
+        if (rfrm_n == 8) {
+            dks_remote_frame (0, 0, NULL, FALSE);
+            rfrm_n = 0;
+            }
+        }
+}
+
+/*
+ * One КАДОПАМ transaction: send the request, wait for the response.
+ * Returns 0 on success (*val = the word), -1 when the bridge is not
+ * usable (the caller reads 0 / drops the write).  The BESM-6 never
+ * blocks for long: at most a few milliseconds, then the transaction
+ * fails with a rate-limited warning.
+ */
+static int dks_remote_xact (int op, int addr, int32 *val)
+{
+    uint8 req[8];
+    int i, have;
+
+    if (! dks_remote)
+        return -1;
+    if (rstate != RS_UP && ! dks_remote_connect (FALSE)) {
+        static time_t last_warn = 0;
+        time_t now = time (NULL);
+
+        if (now != last_warn) {
+            last_warn = now;
+            sim_debug (DBG_BRIDGE, &dks_dev,
+                       "bridge: %s unavailable, transaction lost\n",
+                       dks_remote_spec);
+            }
+        ++n_rerr;
+        return -1;
+        }
+    req[0] = BRIDGE_MAGIC_REQ;
+    req[1] = (uint8) op;
+    req[2] = (uint8) (cur_chan & 7);
+    req[3] = (uint8) (addr >> 8);
+    req[4] = (uint8) addr;
+    req[5] = (uint8) (*val >> 8);
+    req[6] = (uint8) (*val & 0377);
+    req[7] = 0;
+    sim_debug (DBG_BRIDGE, &dks_dev, "bridge: -> op %o [%o]%05o val %06o\n",
+               op, cur_chan & 7, addr, *val & 0177777);
+    for (have = 0; have < 8; ) {                    /* send the request */
+        i = sim_write_sock (rsock, (const char *) req + have, 8 - have);
+        if (i < 0) {
+            dks_remote_drop ("write error");
+            ++n_rerr;
+            return -1;
+            }
+        have += i;
+        }
+    for (i = 0; i < 100; ++i) {                     /* bounded wait, ~100 ms */
+        int n, spin;
+
+        for (spin = 0; spin < 200; ++spin) {
+            while ((n = sim_read_sock (rsock, (char *) rfrm + rfrm_n,
+                                      8 - rfrm_n)) > 0) {
+                rfrm_n += n;
+                if (rfrm_n == 8) {
+                    int32 v = 0;
+
+                    rfrm_n = 0;
+                    if (dks_remote_frame (op, addr, &v, TRUE)) {
+                        *val = v;
+                        if (op == BRIDGE_OP_READ)
+                            ++n_rreads;
+                        else
+                            ++n_rwrites;
+                        return 0;
+                        }
+                    }
+                }
+            if (n < 0)
+                break;
+            }
+        if (n < 0) {
+            dks_remote_drop ("read error");
+            ++n_rerr;
+            return -1;
+            }
+        sim_os_ms_sleep (1);        /* let the Э-60 process answer */
+        }
+    sim_debug (DBG_BRIDGE, &dks_dev,
+               "bridge: response timeout (%s)\n", dks_remote_spec);
+    ++n_rerr;
+    return -1;
+}
+
+/* SET/SHOW REMOTE processors. */
+
+/* Parse "host:port" (the host part may be empty for localhost). */
+static int dks_remote_parse (const char *cptr)
+{
+    char *colon;
+
+    strncpy (dks_remote_spec, cptr, CBUFSIZE - 1);
+    dks_remote_spec[CBUFSIZE - 1] = '\0';
+    colon = strrchr (dks_remote_spec, ':');
+    if (colon == NULL || colon[1] == '\0')
+        return -1;
+    return 0;
+}
+
+t_stat dks_set_remote (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+    if (cptr == NULL || *cptr == 0)
+        return SCPE_ARG;
+    if (dks_remote_parse (cptr))
+        return SCPE_ARG;
+    dks_remote_drop (NULL);
+    dks_remote = 1;
+    return SCPE_OK;
+}
+
+t_stat dks_set_local (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+    dks_remote_drop (NULL);
+    dks_remote = 0;
+    return SCPE_OK;
+}
+
+t_stat dks_show_remote (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+    if (! dks_remote)
+        fprintf (st, "remote=off");
+    else
+        fprintf (st, "remote=%s%s", dks_remote_spec,
+                 rstate == RS_UP? " (up)":
+                 rstate == RS_CONN? " (connecting)": " (down)");
+    return SCPE_OK;
+}
+
 t_stat dks_svc (UNIT *u)
 {
     dks_process ();
@@ -444,6 +780,7 @@ t_stat dks_reset (DEVICE *dptr)
     os_polled = 0;
     sys_busy = 0;
     bufh_recv = 0;
+    dks_remote_drop (NULL);         /* the bridge is re-established on demand */
     for (n = 1; n <= DKS_LINES; ++n) {
         int up = line[n].up || line[n].want_connect;
         memset (&line[n], 0, sizeof (line[n]));
@@ -525,8 +862,8 @@ int dks_busy (void)
 {
     int n;
 
-    if (! dks_enabled ())
-        return 0;
+    if (! dks_enabled () || dks_remote)
+        return 0;               /* REMOTE: nothing pending on this side */
     if (sys_busy)
         return 1;
     for (n = 1; n <= DKS_LINES; ++n)

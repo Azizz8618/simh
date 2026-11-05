@@ -53,7 +53,7 @@
 
 /* КРК channel of the OS's Э-60 and the КАДОПАМ status bit for cell 0. */
 #define DKS_CHAN        2
-#define DKS_STATUS      (0400 << DKS_CHAN)      /* 020000: channel present */
+#define DKS_STATUS      (0400 << DKS_CHAN)      /* 02000: channel present (bit 9+k) */
 
 /* System cells of the Э-60 ОЗУ (svyaz7.be). */
 #define A_BUFS          0140    /* ring Э-60 -> БЭСМ-6: +0 source, +1 receiver, +2..+5 slots */
@@ -141,5 +141,6 @@
 #define DBG_IRQ         004     /* interrupts raised */
 #define DBG_DATA        010     /* characters to/from the lines */
 #define DBG_PROTO       020     /* line state machine */
+#define DBG_BRIDGE      040     /* КАДОПАМ bridge frames (stage B2) */
 
 #endif /* PDP11_DKS_H */
