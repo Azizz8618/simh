@@ -689,12 +689,14 @@ static void testos_process (void)
 {
     uint32 src = mem (A_BUFS) & RING_MASK;
     uint32 recv = mem (A_BUFS + 1) & RING_MASK;
+    int acted = 0;
 
     while (recv != src) {
         int abonent = mem (A_BUFS + 2 + recv);
 
         recv = (recv + 1) & RING_MASK;
         set_mem (A_BUFS + 1, recv);             /* free the slot */
+        acted = 1;
         sim_debug (DBG_RING, &dks_dev, "TESTOS: take %d\n", abonent);
         if (abonent == ABONENT_OS) {
             int code = mem (A_FOSS);
@@ -717,6 +719,7 @@ static void testos_process (void)
 
                 if (term >= 1 && term <= DKS_LINES)
                     testos_term_used[term] = 0;
+                acted = 1;
                 sim_debug (DBG_RING, &dks_dev,
                            "TESTOS: disconnect term %d\n", term);
                 }
@@ -734,10 +737,19 @@ static void testos_process (void)
                 else                            /* PROMPT */
                     testos_output (n, "\r\nDKS> ");
                 }
-            else if (cmd == 5)                  /* output done: acknowledge */
+            else if (cmd == 5) {                /* output done: acknowledge */
                 set_mem (a + AR_STATUS1, mem (a + AR_STATUS1) & ~AR_FLAG);
+                acted = 1;
+                }
             }
         }
+    /* The ОС rings адркс whenever it has news for the Э-60: a system
+       reply (абфосh) or the consumption of the абуфs slots.  testos_output
+       rings on its own (the output array).  With the engine in C (SIM)
+       the ring just re-activates the unit; with the firmware (stage B1)
+       it is the ATN interrupt the firmware lives on. */
+    if (acted && dks_engine == ENGINE_HOST)
+        testos_ring ();
     }
 
 /* Received data FIFO.  The interrupt is raised while IE && RR. */
@@ -1066,7 +1078,8 @@ static void dks_line_state (int n, int connected)
         l->want_connect = 1;
         l->echo = 1;
         dks_ldsc[n - 1].rcve = 1;               /* enable the line for input */
-        dks_send_str (n, "Connected to DKS\r\n");
+        if (dks_engine == ENGINE_SIM)           /* stage B1: the firmware greets */
+            dks_send_str (n, "Connected to DKS\r\n");
         }
     else {
         l->want_connect = 0;
@@ -1082,7 +1095,7 @@ static void dks_line_state (int n, int connected)
 
 t_stat dks_rd (int32 *data, int32 PA, int32 access)
 {
-    int32 idx = ((PA - dks_dib.ba) >> 1) & 07;      /* register index */
+    int32 idx = ((PA - dks_dib.ba) >> 1) & 017;      /* register index (0-8: LSTAT1 is 8) */
 
     switch (idx) {
 
@@ -1149,7 +1162,7 @@ t_stat dks_rd (int32 *data, int32 PA, int32 access)
 
 t_stat dks_wr (int32 ldata, int32 PA, int32 access)
 {
-    int32 idx = ((PA - dks_dib.ba) >> 1) & 07;      /* register index */
+    int32 idx = ((PA - dks_dib.ba) >> 1) & 017;      /* register index (0-8: LSTAT1 is 8) */
     int32 data = ldata & 0177777;
 
     switch (idx) {
@@ -1242,7 +1255,11 @@ t_stat dks_wr (int32 ldata, int32 PA, int32 access)
             dks_kctl &= (uint16) ~KCTL_SIGNAL;      /* self-clearing */
             sim_debug (DBG_RING, &dks_dev,
                        "signal to БЭСМ-6 (ПРП6 on its side)\n");
-            dks_sig_besm6 ();
+            if (dks_testos != TESTOS_OFF)           /* the stub plays the ОС:
+                                                       it must see the new
+                                                       АБУФS entries now */
+                sim_activate (&dks_unit, 20);
+            dks_sig_besm6 ();                       /* and/or the БЭСМ-6 */
             }
         break;
 
