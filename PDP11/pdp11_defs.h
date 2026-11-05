@@ -673,6 +673,8 @@ typedef struct pdp_dib DIB;
 #define INT_V_TDTX      19
 #define INT_V_DLCJI     20
 #define INT_V_DLCJO     21
+#define INT_V_DKSRX     22                              /* DKS: rx data in the FIFO */
+#define INT_V_DKSATN    23                              /* DKS: attention (doorbell, LSTAT) */
 
 #define INT_V_PIR3      0                               /* BR3 */
 #define INT_V_PIR2      0                               /* BR2 */
@@ -742,6 +744,8 @@ typedef struct pdp_dib DIB;
 #define INT_NG          (1u << INT_V_NG)
 #define INT_DLCJI       (1u << INT_V_DLCJI)
 #define INT_DLCJO       (1u << INT_V_DLCJO)
+#define INT_DKSRX       (1u << INT_V_DKSRX)
+#define INT_DKSATN      (1u << INT_V_DKSATN)
 #define INT_DHRX        (1u << INT_V_DHRX)
 #define INT_DHTX        (1u << INT_V_DHTX)
 #define INT_RHD         (1u << INT_V_RHD)
@@ -815,6 +819,8 @@ typedef struct pdp_dib DIB;
 #define IPL_TDTX        4
 #define IPL_DLCJI       4
 #define IPL_DLCJO       4
+#define IPL_DKSRX       4                               /* ДКС terminal concentrator */
+#define IPL_DKSATN      4                               /* (BR4, like other terminal input) */
 
 #define IPL_PIR7        7
 #define IPL_PIR6        6
