@@ -1,0 +1,705 @@
+dks_fw.lst - листинг сборки dks_fw.mac
+(листинговая сборка: PDP11/tests/gen_dks_fw.py)
+
+Символы:
+  ABNOS    = 000060  AI       = 100000  AI1      = 001126  AREAB    = 001000
+  AREAIN   = 001210  AREAO    = 002144  AREAS    = 001400  A_BUFH   = 000146
+  A_BUFS   = 000140  A_FOSH   = 000157  A_FOSS   = 000154  BHR      = 010316
+  CHAN2    = 000002  CHKACK   = 002162  CK1      = 002222  CKD      = 002254
+  CL1      = 001044  CSR      = 160540  DEAD10   = 004250  DEAD14   = 004252
+  DEAD24   = 004254  DEAD34   = 004256  DEAD4    = 004246  DR0      = 003324
+  DR1      = 003424  DRAIN    = 003306  DRE1     = 003602  DRE2     = 003612
+  DRErr    = 003556  DRSY     = 003444  DRX      = 003620  FLAG     = 020000
+  IRET     = 004244  KADDR    = 160550  KCTL     = 160554  KDATA    = 160552
+  KSETA    = 001250  LBUF     = 010402  LEN      = 010226  LH1      = 001734
+  LH2      = 001764  LH3      = 002032  LH4      = 002016  LH5      = 002056
+  LH6      = 002124  LH7      = 002110  LST0     = 160556  LST1     = 160560
+  LSTATH   = 001714  M3       = 177774  M37      = 177740  M7       = 177600
+  M8       = 177400  MAIN     = 001240  MBUSY    = 010324  MEMRD    = 001256
+  MEMWR    = 001270  MFLAG    = 157600  MNOTERM  = 010350  OLD0     = 010320
+  OLD1     = 010322  OUTDN    = 000002  P3X      = 003732  P3X1     = 003730
+  PASSIN   = 002414  PCOM     = 004142  PE1      = 002344  PE2      = 002406
+  PEND     = 010062  PI1      = 002436  PI2      = 002554  PI4      = 002476
+  PI5      = 002542  PID      = 002602  PL       = 004006  PNEXT    = 004232
+  POFUL    = 001420  POST     = 001312  POSTEV   = 002256  PR0      = 003750
+  PR1      = 003772  PROC3    = 003622  PROCESS  = 003734  PTRYC    = 004060
+  PTRYI    = 004220  RBUF     = 160542  READY    = 000001  RXBS     = 001652
+  RXCR     = 001612  RXTAKE   = 001456  RXX      = 001712  SENDC    = 001424
+  SENDS    = 001436  SIG      = 001302  SIGNAL   = 000400  SN1      = 001442
+  SNX      = 001454  SR1      = 002754  SR2      = 002760  SR3      = 003002
+  SR4      = 003004  SRX      = 003066  ST       = 010144  START    = 001000
+  STARTL   = 002604  SYREQ    = 002714  SYSB     = 010310  SYSLN    = 010312
+  SYSSRC   = 010314  TAKEOUT  = 003070  TBUF     = 160546  TERM     = 010000
+  TO1      = 003126  TO2      = 003210  TO3      = 003274  TOX      = 003302
+  TSEL     = 160544  UP       = 000004  WANTC    = 000010  WANTD    = 000020
+
+№стр  адрес   слова            исходный текст
+1                             ; dks_fw.mac - firmware of the ДКС terminal concentrator, stage B1.
+2                             ;
+3                             ; The СВЯЗЬ7 protocol engine of the Э-60, ported 1:1 from the C engine of
+4                             ; PDP11/pdp11_dks.c (dks_process, drain_bufh, dks_line_char and friends),
+5                             ; which in turn follows the reference BESM6/besm6_dks.c tables.
+6                             ; Assembled by PDP11/tests/gen_dks_fw.py ("листинговая сборка") into the
+7                             ; absolute-loader image PDP11/dks_fw.bin:
+8                             ;
+9                             ;       load PDP11/dks_fw.bin           ; code at 01000, vectors at 0300/0304
+10                            ;       go                              ; PC comes from the end block
+11                            ;
+12                            ; The device is set to SET DKS ENGINE=HOST, VECTOR=300, ADDRESS=17760540
+13                            ; (the register addresses below assume exactly that; autoconfiguration
+14                            ; must not move it).  The 32K-word ОЗУ of the Э-60 lives inside the
+15                            ; device (e60_mem) and is reached through the KADDR/KDATA window - the
+16                            ; same way КАДОПАМ reaches it in the real machine.  Everything the
+17                            ; engine writes there (rings, terminal areas) is exactly what the ОС
+18                            ; sees over the КАДОПАМ bridge.
+19                            ;
+20                            ; Structure (event-driven, single-threaded - no data races):
+21                            ;
+22                            ;       MAIN:   PROCESS; WAIT; repeat
+23                            ;
+24                            ; The interrupt handlers do nothing but wake the WAIT (both are RTI):
+25                            ; DKSRX fires while the received-data FIFO is non-empty, DKSATN on a
+26                            ; doorbell from the БЭСМ-6 (cell 077777 = 0400) or on a line state
+27                            ; change (LC).  PROCESS drains the FIFO, reacts to the line state and
+28                            ; runs the protocol state machine once per wake-up - the same "polled"
+29                            ; structure as the C engine, so the two stay 1:1 comparable.
+30                            ;
+31                            ; Subroutine convention (all subroutines keep R4/R5, clobber R0-R3):
+32                            ;       R4 = line number 1..24, R5 = its word index (R4 << 1)
+33                            ;
+34                            ; Requires EIS (MUL) - the Э-60 CPU (1801ВМ2) has it.  SOB is avoided
+35                            ; (the LSI-11 instruction set does not have it).
+37                            ; ---- Unibus registers: 22-bit 17760540 = kernel 0160540 ----
+39                            CSR     = 160540                        ; control/status
+40                            RBUF    = 160542                        ; received: line<<8|char, DV 040000
+41                            TSEL    = 160544                        ; transmit line select
+42                            TBUF    = 160546                        ; transmit buffer
+43                            KADDR   = 160550                        ; ОЗУ window address; 0100000 = AI
+44                            KDATA   = 160552                        ; ОЗУ window data
+45                            KCTL    = 160554                        ; bits 0-2 channel, 0400 signal БЭСМ-6
+46                            LST0    = 160556                        ; telnet lines 1..12 connected
+47                            LST1    = 160560                        ; telnet lines 13..24 connected
+49                            ; ---- СВЯЗЬ7 constants (PDP11/pdp11_dks.h, octal word addresses) ----
+51                            A_BUFS  = 140                           ; ring Э-60 -> БЭСМ-6
+52                            A_BUFH  = 146                           ; ring БЭСМ-6 -> Э-60
+53                            A_FOSS  = 154                           ; system request
+54                            A_FOSH  = 157                           ; system reply
+55                            AREAB   = 1000                          ; base of the terminal areas
+56                            AREAS   = 1400                          ; area stride
+57                            AREAIN  = 1210                          ; input buffer word offset in an area
+58                            ABNOS   = 60                            ; abonent 48 (decimal) = the ОС
+59                            CHAN2   = 2                             ; КРК channel of the window (DKS_CHAN)
+60                            AI      = 100000                        ; KADDR auto-increment bit
+61                            FLAG    = 20000                         ; area status flag 020000
+62                            SIGNAL  = 400                           ; KCTL: "signal БЭСМ-6" (ПРП6)
+63                            M3      = 177774                        ; ~3: keep the low 2 bits (ring mask)
+64                            M37     = 177740                        ; ~037: keep 5 bits (line 1..24)
+65                            M8      = 177400                        ; ~0377: keep the low byte
+66                            M7      = 177600                        ; ~0177: KOI-7 (7-bit) characters
+67                            MFLAG   = 157600                        ; ~FLAG, for BIC
+69                            ; ---- per-line state bits (ST table) ----
+71                            READY   = 1                             ; the line finished a line, not sent
+72                            OUTDN   = 2                             ; output printed, completion not sent
+73                            UP      = 4                             ; the ОС has assigned a terminal
+74                            WANTC   = 10                            ; telnet connect not yet requested
+75                            WANTD   = 20                            ; telnet drop not yet requested
+77                            ; ---- interrupt vectors ----
+78                            ; The CPU traps (4, 10, 14, 24, 34) point at a HALT: an unexpected trap
+79                            ; stops the machine cleanly instead of running wild.  Everything else
+80                            ; that could interrupt (CLK, PTR, PTP, LPT, RHA, RK, DZ) is disabled in
+81                            ; the INI, so the DKSRX/DKSATN vectors at 0300/0304 are the only live
+82                            ; ones.
+84                                    .ASECT
+85                                    .=4
+86    000004:004246 000006:000340           .WORD   DEAD4, 340              ; odd address / timeout
+87                                    .=10
+88    000010:004250 000012:000340           .WORD   DEAD10, 340             ; reserved instruction
+89                                    .=14
+90    000014:004252 000016:000340           .WORD   DEAD14, 340             ; BPT
+91                                    .=24
+92    000024:004254 000026:000340           .WORD   DEAD24, 340             ; IOT / EMT
+93                                    .=34
+94    000034:004256 000036:000340           .WORD   DEAD34, 340             ; TRAP / CALL
+95                                    .=300
+96    000300:004244 000302:000200           .WORD   IRET, 200               ; 0300 DKSRX: wake-up only
+97    000304:004244 000306:000200           .WORD   IRET, 200               ; 0304 DKSATN: wake-up only
+99                            ; ---- code ----
+101                                   .=1000
+102   001000:012706 001002:157770   START:  mov     #157770, sp             ; below the I/O page, above LBUF
+103   001004:005067 001006:007300           clr     SYSB
+104   001010:005067 001012:007276           clr     SYSLN
+105   001014:005067 001016:007274           clr     SYSSRC
+106   001020:005067 001022:007272           clr     BHR                     ; our receiver count in АБУФH
+107   001024:005067 001026:007270           clr     OLD0
+108   001030:005067 001032:007266           clr     OLD1
+109   001034:012700 001036:010000           mov     #TERM, r0               ; TERM, PEND, ST, LEN: 4 x 25 words
+110   001040:012701 001042:000144           mov     #100., r1
+111   001044:005020   CL1:    clr     (r0)+
+112   001046:005301           dec     r1
+113   001050:001375           bne     CL1
+114   001052:012700 001054:000140           mov     #A_BUFS, r0             ; АБУФS: source = receiver = 0
+115   001056:004767 001060:000166           jsr     pc, KSETA
+116   001062:005037 001064:160552           clr     @#KDATA
+117   001066:012700 001070:000141           mov     #A_BUFS+1, r0
+118   001072:004767 001074:000152           jsr     pc, KSETA
+119   001076:005037 001100:160552           clr     @#KDATA
+120   001102:012700 001104:000147           mov     #A_BUFH+1, r0           ; АБУФH: receiver = 0 (source is the ОС)
+121   001106:004767 001110:000136           jsr     pc, KSETA
+122   001112:005037 001114:160552           clr     @#KDATA
+123   001116:012702 001120:002400           mov     #2400, r2               ; AREA(1) = 1000 + 1 * 1400
+124   001122:012704 001124:000001           mov     #1, r4
+125   001126:010200   AI1:    mov     r2, r0                  ; the header of the area, word by word
+126   001130:052700 001132:100000           bis     #AI, r0
+127   001134:010037 001136:160550           mov     r0, @#KADDR
+128   001140:005037 001142:160552           clr     @#KDATA                 ; +0 STATUS0
+129   001144:005037 001146:160552           clr     @#KDATA                 ; +1 STATUS1
+130   001150:005037 001152:160552           clr     @#KDATA                 ; +2 CMD_IN
+131   001154:010200           mov     r2, r0
+132   001156:062700 001160:001210           add     #AREAIN, r0
+133   001162:006300           asl     r0                      ; byte address of the input buffer
+134   001164:010037 001166:160552           mov     r0, @#KDATA             ; +3 INBUF
+135   001170:005037 001172:160552           clr     @#KDATA                 ; +4
+136   001174:005037 001176:160552           clr     @#KDATA                 ; +5 CMD_OUT
+137   001200:005037 001202:160552           clr     @#KDATA                 ; +6 OUTADDR
+138   001204:005037 001206:160552           clr     @#KDATA                 ; +7 OUTLEN
+139   001210:062702 001212:001400           add     #AREAS, r2
+140   001214:005204           inc     r4
+141   001216:020427 001220:000030           cmp     r4, #24.
+142   001222:003741           ble     AI1
+143   001224:012737 001226:000002 001230:160554           mov     #CHAN2, @#KCTL          ; the window is always channel 2
+144   001232:012737 001234:000100 001236:160540           mov     #100, @#CSR             ; IE: the interrupts live on WAIT
+145   001240:004767 001242:002470   MAIN:   jsr     pc, PROCESS
+146   001244:000001           wait
+147   001246:000774           br      MAIN
+149                           ; ---- window access ----
+151   001250:010037 001252:160550   KSETA:  mov     r0, @#KADDR             ; random access: KADDR <- R0
+152   001254:000207           rts     pc
+153   001256:010037 001260:160550   MEMRD:  mov     r0, @#KADDR             ; R0 = e60_mem[R0]
+154   001262:013700 001264:160552           mov     @#KDATA, r0
+155   001266:000207           rts     pc
+156   001270:010037 001272:160550   MEMWR:  mov     r0, @#KADDR             ; e60_mem[R0] <- R1
+157   001274:010137 001276:160552           mov     r1, @#KDATA
+158   001300:000207           rts     pc
+159   001302:012737 001304:000402 001306:160554   SIG:    mov     #SIGNAL+CHAN2, @#KCTL   ; pulse 0400 to the БЭСМ-6; the
+160   001310:000207           rts     pc                      ; channel bits keep the window at 2
+162                           ; ---- e60_post (abonent in R0 -> R0 = 1 posted / 0 ring full) ----
+164   001312:010002   POST:   mov     r0, r2                  ; R2 = abonent
+165   001314:012700 001316:000140           mov     #A_BUFS, r0
+166   001320:004767 001322:177732           jsr     pc, MEMRD               ; R0 = source
+167   001324:005200           inc     r0
+168   001326:042700 001330:177774           bic     #M3, r0                 ; nxt = (source + 1) & 3
+169   001332:010001           mov     r0, r1                  ; R1 = nxt
+170   001334:012700 001336:000141           mov     #A_BUFS+1, r0
+171   001340:004767 001342:177712           jsr     pc, MEMRD               ; R0 = receiver
+172   001344:020001           cmp     r0, r1
+173   001346:001424           beq     POFUL                   ; receiver caught up: ring full
+174   001350:010146           mov     r1, -(sp)               ; save nxt (= the new source)
+175   001352:005301           dec     r1
+176   001354:042701 001356:177774           bic     #M3, r1                 ; source again
+177   001360:062701 001362:000142           add     #A_BUFS+2, r1           ; address of the slot
+178   001364:010100           mov     r1, r0
+179   001366:010201           mov     r2, r1
+180   001370:004767 001372:177674           jsr     pc, MEMWR               ; slot <- abonent
+181   001374:012601           mov     (sp)+, r1
+182   001376:012700 001400:000140           mov     #A_BUFS, r0
+183   001402:004767 001404:177662           jsr     pc, MEMWR               ; source <- nxt
+184   001406:004767 001410:177670           jsr     pc, SIG              ; ПРП6 on the БЭСМ-6 side
+185   001412:012700 001414:000001           mov     #1, r0
+186   001416:000207           rts     pc
+187   001420:005000   POFUL:  clr     r0
+188   001422:000207           rts     pc
+190                           ; ---- character output ----
+191                           ; SENDC: char in R0 on line R1.  SENDS: string R0 on line R1.
+193   001424:010137 001426:160544   SENDC:  mov     r1, @#TSEL
+194   001430:010037 001432:160546           mov     r0, @#TBUF
+195   001434:000207           rts     pc
+196   001436:010137 001440:160544   SENDS:  mov     r1, @#TSEL
+197   001442:112003   SN1:    movb    (r0)+, r3
+198   001444:001403           beq     SNX
+199   001446:010337 001450:160546           mov     r3, @#TBUF
+200   001452:000773           br      SN1
+201   001454:000207   SNX:    rts     pc
+203                           ; ---- typed character from the FIFO (port of dks_line_char) ----
+204                           ; RXTAKE: RBUF word in R0.  Local echo, editing, READY on CR/LF.
+205                           ; The character is dropped when the line has no terminal or the previous
+206                           ; input line is still pending (dks_line_can_input).
+208   001456:010002   RXTAKE: mov     r0, r2                  ; R2 = RBUF word
+209   001460:010201           mov     r2, r1
+210   001462:000301           swab    r1
+211   001464:042701 001466:177740           bic     #M37, r1                ; R1 = line 1..24
+212   001470:042702 001472:177600           bic     #M7, r2                 ; R2 = char, KOI-7
+213   001474:010105           mov     r1, r5
+214   001476:006305           asl     r5                      ; R5 = word index
+215   001500:005765 001502:010000           tst     TERM(r5)
+216   001504:001502           beq     RXX                     ; not connected to the ОС: drop
+217   001506:032765 001510:000001 001512:010144           bit     #READY, ST(r5)
+218   001514:001076           bne     RXX                     ; previous line pending: drop
+219   001516:022702 001520:000015           cmp     #15, r2                 ; CR
+220   001522:001433           beq     RXCR
+221   001524:022702 001526:000012           cmp     #12, r2                 ; LF
+222   001530:001430           beq     RXCR
+223   001532:022702 001534:000010           cmp     #10, r2                 ; BS
+224   001536:001445           beq     RXBS
+225   001540:022702 001542:000177           cmp     #177, r2                ; DEL
+226   001544:001442           beq     RXBS
+227   001546:022765 001550:000356 001552:010226           cmp     #356, LEN(r5)           ; 238 (dec): INBUF_BYTES - 1
+228   001554:003456           ble     RXX                     ; buffer full: drop
+229   001556:010103           mov     r1, r3                  ; LBUF + (line-1) * 240 + len
+230   001560:070327 001562:000360           mul     #240., r3               ; r3 is odd: the low word
+231   001564:062703 001566:010022           add     #LBUF-240., r3
+232   001570:066503 001572:010226           add     LEN(r5), r3
+233   001574:110213           movb    r2, (r3)
+234   001576:005265 001600:010226           inc     LEN(r5)
+235   001602:010200           mov     r2, r0
+236   001604:004767 001606:177614           jsr     pc, SENDC               ; echo
+237   001610:000440           br      RXX
+238   001612:032765 001614:000001 001616:010144   RXCR:   bit     #READY, ST(r5)
+239   001620:001034           bne     RXX                     ; the line is already waiting: the
+240   001622:010137 001624:160544           mov     r1, @#TSEL              ; extra CR/LF of CR LF CR LF is
+241   001626:012737 001630:000015 001632:160546           mov     #15, @#TBUF             ; ignored (the ОС reads the array
+242   001634:012737 001636:000012 001640:160546           mov     #12, @#TBUF             ; before the next passin would
+243   001642:052765 001644:000001 001646:010144           bis     #READY, ST(r5)          ; overwrite it)
+244   001650:000420           br      RXX
+245   001652:005765 001654:010226   RXBS:   tst     LEN(r5)
+246   001656:001415           beq     RXX
+247   001660:005365 001662:010226           dec     LEN(r5)
+248   001664:010137 001666:160544           mov     r1, @#TSEL              ; echo BS SP BS
+249   001670:012737 001672:000010 001674:160546           mov     #10, @#TBUF
+250   001676:012737 001700:000040 001702:160546           mov     #40, @#TBUF
+251   001704:012737 001706:000010 001710:160546           mov     #10, @#TBUF
+252   001712:000207   RXX:    rts     pc
+254                           ; ---- line state change (port of dks_line_state) ----
+255                           ; Reads LSTAT0/1 (clears LC), diffs against OLD0/1, sets WANTC/WANTD.
+257   001714:013700 001716:160556   LSTATH: mov     @#LST0, r0
+258   001720:013701 001722:160560           mov     @#LST1, r1              ; both reads clear LC
+259   001724:012703 001726:000014           mov     #12., r3                ; 12 bits per register
+260   001730:012702 001732:000001           mov     #1, r2                  ; the bit mask
+261   001734:010304   LH1:    mov     r3, r4
+262   001736:005404           neg     r4
+263   001740:062704 001742:000015           add     #13., r4                ; R4 = line 1..12
+264   001744:010405           mov     r4, r5
+265   001746:006305           asl     r5
+266   001750:030267 001752:006344           bit     r2, OLD0
+267   001754:001003           bne     LH2
+268   001756:030200           bit     r2, r0
+269   001760:001424           beq     LH3                     ; off -> off
+270   001762:000415           br      LH4                     ; off -> on
+271   001764:030200   LH2:    bit     r2, r0
+272   001766:001021           bne     LH3                     ; on -> on
+273   001770:042765 001772:000010 001774:010144           bic     #WANTC, ST(r5)          ; on -> off
+274   001776:032765 002000:000004 002002:010144           bit     #UP, ST(r5)
+275   002004:001412           beq     LH3
+276   002006:052765 002010:000020 002012:010144           bis     #WANTD, ST(r5)
+277   002014:000406           br      LH3
+278   002016:042765 002020:000020 002022:010144   LH4:    bic     #WANTD, ST(r5)          ; off -> on
+279   002024:052765 002026:000010 002030:010144           bis     #WANTC, ST(r5)
+280   002032:062704 002034:000014   LH3:    add     #12., r4                ; the same for line +12
+281   002036:010405           mov     r4, r5
+282   002040:006305           asl     r5
+283   002042:030267 002044:006254           bit     r2, OLD1
+284   002046:001003           bne     LH5
+285   002050:030201           bit     r2, r1
+286   002052:001424           beq     LH6
+287   002054:000415           br      LH7
+288   002056:030201   LH5:    bit     r2, r1
+289   002060:001021           bne     LH6
+290   002062:042765 002064:000010 002066:010144           bic     #WANTC, ST(r5)
+291   002070:032765 002072:000004 002074:010144           bit     #UP, ST(r5)
+292   002076:001412           beq     LH6
+293   002100:052765 002102:000020 002104:010144           bis     #WANTD, ST(r5)
+294   002106:000406           br      LH6
+295   002110:042765 002112:000020 002114:010144   LH7:    bic     #WANTD, ST(r5)
+296   002116:052765 002120:000010 002122:010144           bis     #WANTC, ST(r5)
+297   002124:006302   LH6:    asl     r2
+298   002126:005303           dec     r3
+299   002130:001301           bne     LH1
+300   002132:010067 002134:006162           mov     r0, OLD0
+301   002136:010167 002140:006160           mov     r1, OLD1
+302   002142:000207           rts     pc
+304                           ; ---- AREA of line R4 -> R0 (clobbers R1) ----
+305                           ; MUL with an ODD register delivers the low word into it.
+307   002144:010401   AREAO:  mov     r4, r1
+308   002146:070127 002150:001400           mul     #AREAS, r1              ; r1 is odd: the low word lands in r1
+309   002152:062701 002154:001000           add     #AREAB, r1              ; AREA(n) = 1000 + n * 1400
+310   002156:010100           mov     r1, r0
+311   002160:000207           rts     pc
+313                           ; ---- check_ack: the ОС has taken the pending event? ----
+315   002162:016501 002164:010062   CHKACK: mov     PEND(r5), r1
+316   002166:001432           beq     CKD
+317   002170:022701 002172:000004           cmp     #4, r1
+318   002174:001012           bne     CK1
+319   002176:004767 002200:177742           jsr     pc, AREAO               ; STATUS0 flag gone?
+320   002202:004767 002204:177050           jsr     pc, MEMRD
+321   002206:032700 002210:020000           bit     #FLAG, r0
+322   002212:001020           bne     CKD
+323   002214:005065 002216:010062           clr     PEND(r5)
+324   002220:000207           rts     pc
+325   002222:022701 002224:000005   CK1:    cmp     #5, r1
+326   002226:001012           bne     CKD
+327   002230:004767 002232:177710           jsr     pc, AREAO               ; STATUS1 flag gone?
+328   002234:005200           inc     r0
+329   002236:004767 002240:177014           jsr     pc, MEMRD
+330   002242:032700 002244:020000           bit     #FLAG, r0
+331   002246:001002           bne     CKD
+332   002250:005065 002252:010062           clr     PEND(r5)
+333   002254:000207   CKD:    rts     pc
+335                           ; ---- post_line_event (line R4/R5, command in R0 -> R0 = 1 posted) ----
+337   002256:010003   POSTEV: mov     r0, r3                  ; R3 = command
+338   002260:004767 002262:177660           jsr     pc, AREAO
+339   002264:010001           mov     r0, r1                  ; R1 = area
+340   002266:010365 002270:010062           mov     r3, PEND(r5)            ; optimistically (undone on failure)
+341   002272:010100           mov     r1, r0
+342   002274:062700 002276:000002           add     #2, r0                  ; CMD_IN
+343   002300:010301           mov     r3, r1
+344   002302:004767 002304:176762           jsr     pc, MEMWR
+345   002306:022703 002310:000004           cmp     #4, r3
+346   002312:001014           bne     PE1
+347   002314:010100           mov     r1, r0                  ; STATUS0 |= FLAG
+348   002316:004767 002320:176734           jsr     pc, MEMRD
+349   002322:052700 002324:020000           bis     #FLAG, r0
+350   002326:010046           mov     r0, -(sp)
+351   002330:010100           mov     r1, r0
+352   002332:016601 002334:000000           mov     0(sp), r1
+353   002336:004767 002340:176726           jsr     pc, MEMWR
+354   002342:005726           tst     (sp)+
+355   002344:016500 002346:010000   PE1:    mov     TERM(r5), r0
+356   002350:004767 002352:176736           jsr     pc, POST
+357   002354:005700           tst     r0
+358   002356:001013           bne     PE2
+359   002360:005065 002362:010062           clr     PEND(r5)                ; ring full: undo
+360   002364:004767 002366:177554           jsr     pc, AREAO
+361   002370:062700 002372:000002           add     #2, r0                  ; CMD_IN <- 0 again
+362   002374:005001           clr     r1
+363   002376:004767 002400:176666           jsr     pc, MEMWR
+364   002402:005000           clr     r0
+365   002404:000207           rts     pc
+366   002406:012700 002410:000001   PE2:    mov     #1, r0
+367   002412:000207           rts     pc
+369                           ; ---- pass_input: the typed line into the area, post 4 ----
+371   002414:004767 002416:177524   PASSIN: jsr     pc, AREAO
+372   002420:062700 002422:001210           add     #AREAIN, r0             ; the word address of the buffer
+373   002424:052700 002426:100000           bis     #AI, r0
+374   002430:010037 002432:160550           mov     r0, @#KADDR             ; auto-increment over the buffer
+375   002434:005002           clr     r2                      ; R2 = i, byte counter (from 0)
+376   002436:020265 002440:010226   PI1:    cmp     r2, LEN(r5)
+377   002442:003044           bgt     PI2                     ; i > len: done
+378   002444:005003           clr     r3                      ; lo = (i < len) ? buf[i] : 0
+379   002446:020265 002450:010226           cmp     r2, LEN(r5)
+380   002452:002011           bge     PI4
+381   002454:010401           mov     r4, r1
+382   002456:070127 002460:000360           mul     #240., r1               ; r1 is odd: the low word
+383   002462:062701 002464:010022           add     #LBUF-240., r1
+384   002466:060201           add     r2, r1
+385   002470:111103           movb    (r1), r3
+386   002472:042703 002474:177400           bic     #M8, r3
+387   002476:016500 002500:010226   PI4:    mov     LEN(r5), r0             ; hi = (i+1 < len) ? buf[i+1] : 0
+388   002502:160200           sub     r2, r0                  ; len - i
+389   002504:020027 002506:000002           cmp     r0, #2
+390   002510:002414           blt     PI5
+391   002512:010401           mov     r4, r1
+392   002514:070127 002516:000360           mul     #240., r1               ; r1 is odd: the low word
+393   002520:062701 002522:010022           add     #LBUF-240., r1
+394   002524:060201           add     r2, r1
+395   002526:005201           inc     r1                      ; + i + 1
+396   002530:111101           movb    (r1), r1
+397   002532:042701 002534:177400           bic     #M8, r1
+398   002536:000301           swab    r1                      ; the byte goes to bits 8-15
+399   002540:050103           bis     r1, r3                  ; word = lo | hi << 8
+400   002542:010337 002544:160552   PI5:    mov     r3, @#KDATA             ; one word per access (AI advances)
+401   002546:062702 002550:000002           add     #2, r2
+402   002552:000731           br      PI1
+403   002554:012700 002556:000004   PI2:    mov     #4, r0                  ; EVENT_INPUT_READY
+404   002560:004767 002562:177472           jsr     pc, POSTEV
+405   002564:005700           tst     r0
+406   002566:001405           beq     PID                     ; ring full: retry later
+407   002570:005065 002572:010226           clr     LEN(r5)
+408   002574:042765 002576:000001 002600:010144           bic     #READY, ST(r5)
+409   002602:000207   PID:    rts     pc
+411                           ; ---- start_line: fresh header of the area (port of start_line) ----
+413   002604:004767 002606:177334   STARTL: jsr     pc, AREAO
+414   002610:052700 002612:100000           bis     #AI, r0
+415   002614:010037 002616:160550           mov     r0, @#KADDR
+416   002620:005037 002622:160552           clr     @#KDATA                 ; +0
+417   002624:005037 002626:160552           clr     @#KDATA                 ; +1
+418   002630:005037 002632:160552           clr     @#KDATA                 ; +2
+419   002634:010401           mov     r4, r1                  ; INBUF again (starts in bytes)
+420   002636:070127 002640:001400           mul     #AREAS, r1              ; r1 is odd: the low word
+421   002642:062701 002644:002210           add     #AREAB+AREAIN, r1
+422   002646:006301           asl     r1
+423   002650:010137 002652:160552           mov     r1, @#KDATA             ; +3
+424   002654:005037 002656:160552           clr     @#KDATA                 ; +4
+425   002660:005037 002662:160552           clr     @#KDATA                 ; +5
+426   002664:005037 002666:160552           clr     @#KDATA                 ; +6
+427   002670:005037 002672:160552           clr     @#KDATA                 ; +7
+428   002674:005065 002676:010226           clr     LEN(r5)
+429   002700:005065 002702:010062           clr     PEND(r5)
+430   002704:042765 002706:000003 002710:010144           bic     #READY+OUTDN, ST(r5)
+431   002712:000207           rts     pc
+433                           ; ---- post_sys_request (line R4/R5, code 1 or 3 in R0) ----
+435   002714:010002   SYREQ:  mov     r0, r2                  ; R2 = code
+436   002716:004767 002720:177222           jsr     pc, AREAO               ; R1 = AREA(n) (AREAO returns it in r1)
+437   002722:010146           mov     r1, -(sp)               ; area, for АБФОСS+2 (byte address)
+438   002724:012700 002726:000154           mov     #A_FOSS, r0             ; code
+439   002730:010201           mov     r2, r1
+440   002732:004767 002734:176332           jsr     pc, MEMWR
+441   002736:012700 002740:000155           mov     #A_FOSS+1, r0           ; code 1: the line, else the terminal
+442   002742:022702 002744:000001           cmp     #1, r2
+443   002746:001002           bne     SR1
+444   002750:010401           mov     r4, r1
+445   002752:000402           br      SR2
+446   002754:016501 002756:010000   SR1:    mov     TERM(r5), r1
+447   002760:004767 002762:176304   SR2:    jsr     pc, MEMWR
+448   002764:022702 002766:000001           cmp     #1, r2                  ; code 1: the byte address of the area
+449   002770:001004           bne     SR3
+450   002772:016601 002774:000000           mov     0(sp), r1
+451   002776:006301           asl     r1
+452   003000:000401           br      SR4
+453   003002:005001   SR3:    clr     r1
+454   003004:012700 003006:000156   SR4:    mov     #A_FOSS+2, r0
+455   003010:004767 003012:176254           jsr     pc, MEMWR
+456   003014:012700 003016:000140           mov     #A_BUFS, r0             ; sys_src = the source at posting time
+457   003020:004767 003022:176232           jsr     pc, MEMRD
+458   003024:042700 003026:177774           bic     #M3, r0
+459   003030:010067 003032:005260           mov     r0, SYSSRC
+460   003034:010246           mov     r2, -(sp)               ; the code: POST uses r2 for the abonent
+461   003036:012700 003040:000060           mov     #ABNOS, r0              ; abonent 48 = the ОС
+462   003042:004767 003044:176244           jsr     pc, POST
+463   003046:012602           mov     (sp)+, r2               ; the code back (POST clobbered r2)
+464   003050:005726           tst     (sp)+                   ; the area off the stack
+465   003052:005700           tst     r0
+466   003054:001404           beq     SRX                     ; ring full: not busy, retry later
+467   003056:010267 003060:005226           mov     r2, SYSB
+468   003062:010467 003064:005224           mov     r4, SYSLN
+469   003066:000207   SRX:    rts     pc
+471                           ; ---- take_output: the output array to the terminal (line R4/R5) ----
+473                           TAKEOUT:
+474   003070:004767 003072:177050           jsr     pc, AREAO
+475   003074:010046           mov     r0, -(sp)               ; area saved
+476   003076:010001           mov     r0, r1
+477   003100:062700 003102:000005           add     #5, r0                  ; CMD_OUT
+478   003104:004767 003106:176146           jsr     pc, MEMRD
+479   003110:022700 003112:000004           cmp     #4, r0                  ; 4 or 5: take an array
+480   003114:001404           beq     TO1
+481   003116:022700 003120:000005           cmp     #5, r0
+482   003122:001401           beq     TO1
+483   003124:000466           br      TOX
+484   003126:016601 003130:000000   TO1:    mov     0(sp), r1
+485   003132:010100           mov     r1, r0
+486   003134:062700 003136:000006           add     #6, r0                  ; OUTADDR (byte address)
+487   003140:004767 003142:176112           jsr     pc, MEMRD
+488   003144:006200           asr     r0                      ; -> word address
+489   003146:010002           mov     r0, r2                  ; R2 = source
+490   003150:010100           mov     r1, r0
+491   003152:062700 003154:000007           add     #7, r0                  ; OUTLEN
+492   003156:004767 003160:176074           jsr     pc, MEMRD
+493   003162:010003           mov     r0, r3                  ; R3 = length in words
+494   003164:016601 003166:000000           mov     0(sp), r1
+495   003170:010100           mov     r1, r0
+496   003172:062700 003174:000005           add     #5, r0                  ; CMD_OUT <- 0 (taken)
+497   003176:005001           clr     r1
+498   003200:004767 003202:176064           jsr     pc, MEMWR
+499   003204:010437 003206:160544           mov     r4, @#TSEL              ; the line, once
+500   003210:005703   TO2:    tst     r3
+501   003212:003430           ble     TO3
+502   003214:010200           mov     r2, r0
+503   003216:004767 003220:176034           jsr     pc, MEMRD               ; the word of the array
+504   003222:010001           mov     r0, r1
+505   003224:032700 003226:000377           bit     #377, r0                ; low byte == 0: end
+506   003230:001421           beq     TO3
+507   003232:010100           mov     r1, r0
+508   003234:042700 003236:177600           bic     #M7, r0
+509   003240:010037 003242:160546           mov     r0, @#TBUF              ; low character
+510   003244:010100           mov     r1, r0
+511   003246:000300           swab    r0
+512   003250:032700 003252:000377           bit     #377, r0                ; high byte == 0: end
+513   003254:001407           beq     TO3
+514   003256:042700 003260:177600           bic     #M7, r0
+515   003262:010037 003264:160546           mov     r0, @#TBUF              ; high character
+516   003266:005202           inc     r2
+517   003270:005303           dec     r3                      ; one word consumed
+518   003272:000746           br      TO2
+519   003274:052765 003276:000002 003300:010144   TO3:    bis     #OUTDN, ST(r5)          ; completion follows as command 5
+520   003302:005726   TOX:    tst     (sp)+
+521   003304:000207           rts     pc
+523                           ; ---- drain_bufh: the entries the ОС posted + the connect reply ----
+525   003306:012700 003310:000146   DRAIN:  mov     #A_BUFH, r0
+526   003312:004767 003314:175740           jsr     pc, MEMRD               ; source (the ОС side)
+527   003316:010001           mov     r0, r1
+528   003320:016702 003322:004772           mov     BHR, r2                 ; our receiver
+529   003324:020201   DR0:    cmp     r2, r1
+530   003326:001446           beq     DRSY
+531   003330:010200           mov     r2, r0
+532   003332:062700 003334:000150           add     #A_BUFH+2, r0
+533   003336:004767 003340:175714           jsr     pc, MEMRD               ; the abonent from the slot
+534   003342:010046           mov     r0, -(sp)               ; abonent saved
+535   003344:005202           inc     r2
+536   003346:042702 003350:177774           bic     #M3, r2
+537   003352:010267 003354:004740           mov     r2, BHR
+538   003356:010201           mov     r2, r1
+539   003360:012700 003362:000147           mov     #A_BUFH+1, r0
+540   003364:004767 003366:175700           jsr     pc, MEMWR               ; receiver <- our count
+541   003370:012600           mov     (sp)+, r0
+542   003372:001414           beq     DR1                     ; abonent 0: not a line
+543   003374:020027 003376:000030           cmp     r0, #24.                ; r0 > 24 (unsigned): the ОС, etc.
+544   003400:101011           bhi     DR1
+545   003402:010004           mov     r0, r4                  ; line abonent: print the array
+546   003404:010405           mov     r4, r5
+547   003406:006305           asl     r5
+548   003410:032765 003412:000004 003414:010144           bit     #UP, ST(r5)             ; find_line: the line must be up
+549   003416:001402           beq     DR1
+550   003420:004767 003422:177444           jsr     pc, TAKEOUT
+551   003424:012700 003426:000146   DR1:    mov     #A_BUFH, r0             ; the ОС may have added entries
+552   003430:004767 003432:175622           jsr     pc, MEMRD
+553   003434:010001           mov     r0, r1
+554   003436:016702 003440:004654           mov     BHR, r2
+555   003442:000730           br      DR0
+556   003444:022767 003446:000001 003450:004636   DRSY:   cmp     #1, SYSB                ; waiting for the connect reply?
+557   003452:001062           bne     DRX
+558   003454:012700 003456:000157           mov     #A_FOSH, r0
+559   003460:004767 003462:175572           jsr     pc, MEMRD
+560   003464:022700 003466:000002           cmp     #2, r0                  ; +0 == 2: the reply is complete
+561   003470:001053           bne     DRX
+562   003472:012700 003474:000160           mov     #A_FOSH+1, r0
+563   003476:004767 003500:175554           jsr     pc, MEMRD
+564   003502:010002           mov     r0, r2                  ; terminal
+565   003504:012700 003506:000161           mov     #A_FOSH+2, r0
+566   003510:004767 003512:175542           jsr     pc, MEMRD
+567   003514:010003           mov     r0, r3                  ; result
+568   003516:005001           clr     r1
+569   003520:012700 003522:000157           mov     #A_FOSH, r0
+570   003524:004767 003526:175540           jsr     pc, MEMWR               ; the reply is consumed
+571   003530:005067 003532:004554           clr     SYSB
+572   003534:016704 003536:004552           mov     SYSLN, r4
+573   003540:010405           mov     r4, r5
+574   003542:006305           asl     r5
+575   003544:005703           tst     r3
+576   003546:001003           bne     DRErr
+577   003550:010265 003552:010000           mov     r2, TERM(r5)            ; success: the terminal is ours
+578   003554:000421           br      DRX
+579   003556:016701 003560:004530   DRErr:  mov     SYSLN, r1               ; the ОС refused
+580   003562:022703 003564:000001           cmp     #1, r3
+581   003566:001405           beq     DRE1
+582   003570:012700 003572:010350           mov     #MNOTERM, r0
+583   003574:004767 003576:175636           jsr     pc, SENDS
+584   003600:000404           br      DRE2
+585   003602:012700 003604:010324   DRE1:   mov     #MBUSY, r0
+586   003606:004767 003610:175624           jsr     pc, SENDS
+587   003612:042765 003614:000004 003616:010144   DRE2:   bic     #UP, ST(r5)
+588   003620:000207   DRX:    rts     pc
+590                           ; ---- disconnect completion: the ОС has read the ring (sys_busy = 3) ----
+592   003622:022767 003624:000003 003626:004460   PROC3:  cmp     #3, SYSB
+593   003630:001040           bne     P3X
+594   003632:012700 003634:000140           mov     #A_BUFS, r0
+595   003636:004767 003640:175414           jsr     pc, MEMRD               ; source
+596   003642:166700 003644:004446           sub     SYSSRC, r0
+597   003646:042700 003650:177774           bic     #M3, r0                 ; posted
+598   003652:010046           mov     r0, -(sp)
+599   003654:012700 003656:000141           mov     #A_BUFS+1, r0
+600   003660:004767 003662:175372           jsr     pc, MEMRD               ; receiver
+601   003664:166700 003666:004424           sub     SYSSRC, r0
+602   003670:042700 003672:177774           bic     #M3, r0                 ; taken
+603   003674:001415           beq     P3X1
+604   003676:020066 003700:000000           cmp     r0, 0(sp)
+605   003702:101012           bhi     P3X1                    ; taken > posted: not yet
+606   003704:005726           tst     (sp)+
+607   003706:005067 003710:004376           clr     SYSB
+608   003712:016704 003714:004374           mov     SYSLN, r4
+609   003716:010405           mov     r4, r5
+610   003720:006305           asl     r5
+611   003722:005065 003724:010000           clr     TERM(r5)                ; the terminal is released
+612   003726:000207           rts     pc
+613   003730:005726   P3X1:   tst     (sp)+
+614   003732:000207   P3X:    rts     pc
+616                           ; ---- PROCESS: one pass of the state machine ----
+618                           PROCESS:
+619   003734:032737 003736:000400 003740:160540           bit     #400, @#CSR             ; LC: the lines have changed
+620   003742:001402           beq     PR0
+621   003744:004767 003746:175744           jsr     pc, LSTATH
+622   003750:032737 003752:000200 003754:160540   PR0:    bit     #200, @#CSR             ; RR: the FIFO has characters
+623   003756:001405           beq     PR1
+624   003760:013700 003762:160542           mov     @#RBUF, r0              ; pops the FIFO
+625   003764:004767 003766:175466           jsr     pc, RXTAKE
+626   003770:000767           br      PR0
+627   003772:004767 003774:177310   PR1:    jsr     pc, DRAIN
+628   003776:004767 004000:177620           jsr     pc, PROC3
+629   004002:012704 004004:000001           mov     #1, r4
+630   004006:010405   PL:     mov     r4, r5
+631   004010:006305           asl     r5
+632   004012:005767 004014:004272           tst     SYSB
+633   004016:001051           bne     PCOM
+634   004020:016500 004022:010144           mov     ST(r5), r0
+635   004024:032700 004026:000020           bit     #WANTD, r0
+636   004030:001413           beq     PTRYC
+637   004032:042765 004034:000020 004036:010144           bic     #WANTD, ST(r5)          ; disconnect: no reply is sent
+638   004040:005765 004042:010000           tst     TERM(r5)
+639   004044:001472           beq     PNEXT
+640   004046:012700 004050:000003           mov     #3, r0
+641   004052:004767 004054:176636           jsr     pc, SYREQ
+642   004056:000465           br      PNEXT
+643   004060:032700 004062:000010   PTRYC:  bit     #WANTC, r0
+644   004064:001426           beq     PCOM
+645   004066:042765 004070:000010 004072:010144           bic     #WANTC, ST(r5)
+646   004074:004767 004076:176504           jsr     pc, STARTL
+647   004100:052765 004102:000004 004104:010144           bis     #UP, ST(r5)
+648   004106:012700 004110:000001           mov     #1, r0
+649   004112:004767 004114:176576           jsr     pc, SYREQ
+650   004116:005767 004120:004166           tst     SYSB
+651   004122:001043           bne     PNEXT                   ; posted: the reply will come
+652   004124:042765 004126:000004 004130:010144           bic     #UP, ST(r5)             ; ring full: revert, try again
+653   004132:052765 004134:000010 004136:010144           bis     #WANTC, ST(r5)
+654   004140:000434           br      PNEXT
+655   004142:005765 004144:010000   PCOM:   tst     TERM(r5)
+656   004146:001431           beq     PNEXT
+657   004150:004767 004152:176006           jsr     pc, CHKACK
+658   004154:005765 004156:010062           tst     PEND(r5)
+659   004160:001024           bne     PNEXT                   ; the ОС has not taken the event yet
+660   004162:016500 004164:010144           mov     ST(r5), r0
+661   004166:032700 004170:000002           bit     #OUTDN, r0
+662   004172:001412           beq     PTRYI
+663   004174:012700 004176:000005           mov     #5, r0                  ; output done: post 5
+664   004200:004767 004202:176052           jsr     pc, POSTEV
+665   004204:005700           tst     r0
+666   004206:001411           beq     PNEXT
+667   004210:042765 004212:000002 004214:010144           bic     #OUTDN, ST(r5)
+668   004216:000405           br      PNEXT
+669   004220:032700 004222:000001   PTRYI:  bit     #READY, r0
+670   004224:001402           beq     PNEXT
+671   004226:004767 004230:176162           jsr     pc, PASSIN              ; the finished line: post 4
+672   004232:005204   PNEXT:  inc     r4
+673   004234:020427 004236:000030           cmp     r4, #24.
+674   004240:003662           ble     PL
+675   004242:000207           rts     pc
+677                           ; ---- the interrupt handlers: wake the WAIT, nothing more ----
+679   004244:000002   IRET:   rti
+680   004246:000000   DEAD4:  halt                            ; trap 004: timeout / odd address
+681   004250:000000   DEAD10: halt                            ; trap 010: reserved instruction
+682   004252:000000   DEAD14: halt                            ; trap 014: BPT
+683   004254:000000   DEAD24: halt                            ; trap 024: IOT / EMT
+684   004256:000000   DEAD34: halt                            ; trap 034: TRAP / CALL
+686                           ; ---- data ----
+687                           ; Above the code (which ends below 03000) and far below the stack
+688                           ; (157770, growing down) and the I/O page (160000+).
+690                                   .=10000
+691                           TERM:   .BLKW 25.                       ; ОС terminal numbers (0 = none)
+692                           PEND:   .BLKW 25.                       ; the command awaiting acknowledgement
+693                           ST:     .BLKW 25.                       ; READY|OUTDN|UP|WANTC|WANTD
+694                           LEN:    .BLKW 25.                       ; characters typed in the open line
+695   010000:000000   SYSB:   .WORD   0                       ; sys_busy: 0 / 1 connect / 3 disc
+696   010002:000000   SYSLN:  .WORD   0
+697   010004:000000   SYSSRC: .WORD   0                       ; АБУФS source at posting time
+698   010006:000000   BHR:    .WORD   0                       ; our receiver count in АБУФH
+699   010010:000000   OLD0:   .WORD   0                       ; the previous LSTAT0/1
+700   010012:000000   OLD1:   .WORD   0
+701                           MBUSY:  .BYTE   15,12
+702                                   .ASCII  /DKS: line busy/
+703                                   .BYTE   15,12,0
+704                                   .EVEN
+705                           MNOTERM:
+706                                   .BYTE   15,12
+707                                   .ASCII  /DKS: no free terminal/
+708                                   .BYTE   15,12,0
+709                                   .EVEN
+710                           LBUF:   .BLKW 2880.                     ; 24 lines x 240 bytes of typing
+712                                   .END
+
+Ошибок нет.

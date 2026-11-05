@@ -1,0 +1,712 @@
+; dks_fw.mac - firmware of the ДКС terminal concentrator, stage B1.
+;
+; The СВЯЗЬ7 protocol engine of the Э-60, ported 1:1 from the C engine of
+; PDP11/pdp11_dks.c (dks_process, drain_bufh, dks_line_char and friends),
+; which in turn follows the reference BESM6/besm6_dks.c tables.
+; Assembled by PDP11/tests/gen_dks_fw.py ("листинговая сборка") into the
+; absolute-loader image PDP11/dks_fw.bin:
+;
+;       load PDP11/dks_fw.bin           ; code at 01000, vectors at 0300/0304
+;       go                              ; PC comes from the end block
+;
+; The device is set to SET DKS ENGINE=HOST, VECTOR=300, ADDRESS=17760540
+; (the register addresses below assume exactly that; autoconfiguration
+; must not move it).  The 32K-word ОЗУ of the Э-60 lives inside the
+; device (e60_mem) and is reached through the KADDR/KDATA window - the
+; same way КАДОПАМ reaches it in the real machine.  Everything the
+; engine writes there (rings, terminal areas) is exactly what the ОС
+; sees over the КАДОПАМ bridge.
+;
+; Structure (event-driven, single-threaded - no data races):
+;
+;       MAIN:   PROCESS; WAIT; repeat
+;
+; The interrupt handlers do nothing but wake the WAIT (both are RTI):
+; DKSRX fires while the received-data FIFO is non-empty, DKSATN on a
+; doorbell from the БЭСМ-6 (cell 077777 = 0400) or on a line state
+; change (LC).  PROCESS drains the FIFO, reacts to the line state and
+; runs the protocol state machine once per wake-up - the same "polled"
+; structure as the C engine, so the two stay 1:1 comparable.
+;
+; Subroutine convention (all subroutines keep R4/R5, clobber R0-R3):
+;       R4 = line number 1..24, R5 = its word index (R4 << 1)
+;
+; Requires EIS (MUL) - the Э-60 CPU (1801ВМ2) has it.  SOB is avoided
+; (the LSI-11 instruction set does not have it).
+
+; ---- Unibus registers: 22-bit 17760540 = kernel 0160540 ----
+
+CSR     = 160540                        ; control/status
+RBUF    = 160542                        ; received: line<<8|char, DV 040000
+TSEL    = 160544                        ; transmit line select
+TBUF    = 160546                        ; transmit buffer
+KADDR   = 160550                        ; ОЗУ window address; 0100000 = AI
+KDATA   = 160552                        ; ОЗУ window data
+KCTL    = 160554                        ; bits 0-2 channel, 0400 signal БЭСМ-6
+LST0    = 160556                        ; telnet lines 1..12 connected
+LST1    = 160560                        ; telnet lines 13..24 connected
+
+; ---- СВЯЗЬ7 constants (PDP11/pdp11_dks.h, octal word addresses) ----
+
+A_BUFS  = 140                           ; ring Э-60 -> БЭСМ-6
+A_BUFH  = 146                           ; ring БЭСМ-6 -> Э-60
+A_FOSS  = 154                           ; system request
+A_FOSH  = 157                           ; system reply
+AREAB   = 1000                          ; base of the terminal areas
+AREAS   = 1400                          ; area stride
+AREAIN  = 1210                          ; input buffer word offset in an area
+ABNOS   = 60                            ; abonent 48 (decimal) = the ОС
+CHAN2   = 2                             ; КРК channel of the window (DKS_CHAN)
+AI      = 100000                        ; KADDR auto-increment bit
+FLAG    = 20000                         ; area status flag 020000
+SIGNAL  = 400                           ; KCTL: "signal БЭСМ-6" (ПРП6)
+M3      = 177774                        ; ~3: keep the low 2 bits (ring mask)
+M37     = 177740                        ; ~037: keep 5 bits (line 1..24)
+M8      = 177400                        ; ~0377: keep the low byte
+M7      = 177600                        ; ~0177: KOI-7 (7-bit) characters
+MFLAG   = 157600                        ; ~FLAG, for BIC
+
+; ---- per-line state bits (ST table) ----
+
+READY   = 1                             ; the line finished a line, not sent
+OUTDN   = 2                             ; output printed, completion not sent
+UP      = 4                             ; the ОС has assigned a terminal
+WANTC   = 10                            ; telnet connect not yet requested
+WANTD   = 20                            ; telnet drop not yet requested
+
+; ---- interrupt vectors ----
+; The CPU traps (4, 10, 14, 24, 34) point at a HALT: an unexpected trap
+; stops the machine cleanly instead of running wild.  Everything else
+; that could interrupt (CLK, PTR, PTP, LPT, RHA, RK, DZ) is disabled in
+; the INI, so the DKSRX/DKSATN vectors at 0300/0304 are the only live
+; ones.
+
+        .ASECT
+        .=4
+        .WORD   DEAD4, 340              ; odd address / timeout
+        .=10
+        .WORD   DEAD10, 340             ; reserved instruction
+        .=14
+        .WORD   DEAD14, 340             ; BPT
+        .=24
+        .WORD   DEAD24, 340             ; IOT / EMT
+        .=34
+        .WORD   DEAD34, 340             ; TRAP / CALL
+        .=300
+        .WORD   IRET, 200               ; 0300 DKSRX: wake-up only
+        .WORD   IRET, 200               ; 0304 DKSATN: wake-up only
+
+; ---- code ----
+
+        .=1000
+START:  mov     #157770, sp             ; below the I/O page, above LBUF
+        clr     SYSB
+        clr     SYSLN
+        clr     SYSSRC
+        clr     BHR                     ; our receiver count in АБУФH
+        clr     OLD0
+        clr     OLD1
+        mov     #TERM, r0               ; TERM, PEND, ST, LEN: 4 x 25 words
+        mov     #100., r1
+CL1:    clr     (r0)+
+        dec     r1
+        bne     CL1
+        mov     #A_BUFS, r0             ; АБУФS: source = receiver = 0
+        jsr     pc, KSETA
+        clr     @#KDATA
+        mov     #A_BUFS+1, r0
+        jsr     pc, KSETA
+        clr     @#KDATA
+        mov     #A_BUFH+1, r0           ; АБУФH: receiver = 0 (source is the ОС)
+        jsr     pc, KSETA
+        clr     @#KDATA
+        mov     #2400, r2               ; AREA(1) = 1000 + 1 * 1400
+        mov     #1, r4
+AI1:    mov     r2, r0                  ; the header of the area, word by word
+        bis     #AI, r0
+        mov     r0, @#KADDR
+        clr     @#KDATA                 ; +0 STATUS0
+        clr     @#KDATA                 ; +1 STATUS1
+        clr     @#KDATA                 ; +2 CMD_IN
+        mov     r2, r0
+        add     #AREAIN, r0
+        asl     r0                      ; byte address of the input buffer
+        mov     r0, @#KDATA             ; +3 INBUF
+        clr     @#KDATA                 ; +4
+        clr     @#KDATA                 ; +5 CMD_OUT
+        clr     @#KDATA                 ; +6 OUTADDR
+        clr     @#KDATA                 ; +7 OUTLEN
+        add     #AREAS, r2
+        inc     r4
+        cmp     r4, #24.
+        ble     AI1
+        mov     #CHAN2, @#KCTL          ; the window is always channel 2
+        mov     #100, @#CSR             ; IE: the interrupts live on WAIT
+MAIN:   jsr     pc, PROCESS
+        wait
+        br      MAIN
+
+; ---- window access ----
+
+KSETA:  mov     r0, @#KADDR             ; random access: KADDR <- R0
+        rts     pc
+MEMRD:  mov     r0, @#KADDR             ; R0 = e60_mem[R0]
+        mov     @#KDATA, r0
+        rts     pc
+MEMWR:  mov     r0, @#KADDR             ; e60_mem[R0] <- R1
+        mov     r1, @#KDATA
+        rts     pc
+SIG:    mov     #SIGNAL+CHAN2, @#KCTL   ; pulse 0400 to the БЭСМ-6; the
+        rts     pc                      ; channel bits keep the window at 2
+
+; ---- e60_post (abonent in R0 -> R0 = 1 posted / 0 ring full) ----
+
+POST:   mov     r0, r2                  ; R2 = abonent
+        mov     #A_BUFS, r0
+        jsr     pc, MEMRD               ; R0 = source
+        inc     r0
+        bic     #M3, r0                 ; nxt = (source + 1) & 3
+        mov     r0, r1                  ; R1 = nxt
+        mov     #A_BUFS+1, r0
+        jsr     pc, MEMRD               ; R0 = receiver
+        cmp     r0, r1
+        beq     POFUL                   ; receiver caught up: ring full
+        mov     r1, -(sp)               ; save nxt (= the new source)
+        dec     r1
+        bic     #M3, r1                 ; source again
+        add     #A_BUFS+2, r1           ; address of the slot
+        mov     r1, r0
+        mov     r2, r1
+        jsr     pc, MEMWR               ; slot <- abonent
+        mov     (sp)+, r1
+        mov     #A_BUFS, r0
+        jsr     pc, MEMWR               ; source <- nxt
+        jsr     pc, SIG              ; ПРП6 on the БЭСМ-6 side
+        mov     #1, r0
+        rts     pc
+POFUL:  clr     r0
+        rts     pc
+
+; ---- character output ----
+; SENDC: char in R0 on line R1.  SENDS: string R0 on line R1.
+
+SENDC:  mov     r1, @#TSEL
+        mov     r0, @#TBUF
+        rts     pc
+SENDS:  mov     r1, @#TSEL
+SN1:    movb    (r0)+, r3
+        beq     SNX
+        mov     r3, @#TBUF
+        br      SN1
+SNX:    rts     pc
+
+; ---- typed character from the FIFO (port of dks_line_char) ----
+; RXTAKE: RBUF word in R0.  Local echo, editing, READY on CR/LF.
+; The character is dropped when the line has no terminal or the previous
+; input line is still pending (dks_line_can_input).
+
+RXTAKE: mov     r0, r2                  ; R2 = RBUF word
+        mov     r2, r1
+        swab    r1
+        bic     #M37, r1                ; R1 = line 1..24
+        bic     #M7, r2                 ; R2 = char, KOI-7
+        mov     r1, r5
+        asl     r5                      ; R5 = word index
+        tst     TERM(r5)
+        beq     RXX                     ; not connected to the ОС: drop
+        bit     #READY, ST(r5)
+        bne     RXX                     ; previous line pending: drop
+        cmp     #15, r2                 ; CR
+        beq     RXCR
+        cmp     #12, r2                 ; LF
+        beq     RXCR
+        cmp     #10, r2                 ; BS
+        beq     RXBS
+        cmp     #177, r2                ; DEL
+        beq     RXBS
+        cmp     #356, LEN(r5)           ; 238 (dec): INBUF_BYTES - 1
+        ble     RXX                     ; buffer full: drop
+        mov     r1, r3                  ; LBUF + (line-1) * 240 + len
+        mul     #240., r3               ; r3 is odd: the low word
+        add     #LBUF-240., r3
+        add     LEN(r5), r3
+        movb    r2, (r3)
+        inc     LEN(r5)
+        mov     r2, r0
+        jsr     pc, SENDC               ; echo
+        br      RXX
+RXCR:   bit     #READY, ST(r5)
+        bne     RXX                     ; the line is already waiting: the
+        mov     r1, @#TSEL              ; extra CR/LF of CR LF CR LF is
+        mov     #15, @#TBUF             ; ignored (the ОС reads the array
+        mov     #12, @#TBUF             ; before the next passin would
+        bis     #READY, ST(r5)          ; overwrite it)
+        br      RXX
+RXBS:   tst     LEN(r5)
+        beq     RXX
+        dec     LEN(r5)
+        mov     r1, @#TSEL              ; echo BS SP BS
+        mov     #10, @#TBUF
+        mov     #40, @#TBUF
+        mov     #10, @#TBUF
+RXX:    rts     pc
+
+; ---- line state change (port of dks_line_state) ----
+; Reads LSTAT0/1 (clears LC), diffs against OLD0/1, sets WANTC/WANTD.
+
+LSTATH: mov     @#LST0, r0
+        mov     @#LST1, r1              ; both reads clear LC
+        mov     #12., r3                ; 12 bits per register
+        mov     #1, r2                  ; the bit mask
+LH1:    mov     r3, r4
+        neg     r4
+        add     #13., r4                ; R4 = line 1..12
+        mov     r4, r5
+        asl     r5
+        bit     r2, OLD0
+        bne     LH2
+        bit     r2, r0
+        beq     LH3                     ; off -> off
+        br      LH4                     ; off -> on
+LH2:    bit     r2, r0
+        bne     LH3                     ; on -> on
+        bic     #WANTC, ST(r5)          ; on -> off
+        bit     #UP, ST(r5)
+        beq     LH3
+        bis     #WANTD, ST(r5)
+        br      LH3
+LH4:    bic     #WANTD, ST(r5)          ; off -> on
+        bis     #WANTC, ST(r5)
+LH3:    add     #12., r4                ; the same for line +12
+        mov     r4, r5
+        asl     r5
+        bit     r2, OLD1
+        bne     LH5
+        bit     r2, r1
+        beq     LH6
+        br      LH7
+LH5:    bit     r2, r1
+        bne     LH6
+        bic     #WANTC, ST(r5)
+        bit     #UP, ST(r5)
+        beq     LH6
+        bis     #WANTD, ST(r5)
+        br      LH6
+LH7:    bic     #WANTD, ST(r5)
+        bis     #WANTC, ST(r5)
+LH6:    asl     r2
+        dec     r3
+        bne     LH1
+        mov     r0, OLD0
+        mov     r1, OLD1
+        rts     pc
+
+; ---- AREA of line R4 -> R0 (clobbers R1) ----
+; MUL with an ODD register delivers the low word into it.
+
+AREAO:  mov     r4, r1
+        mul     #AREAS, r1              ; r1 is odd: the low word lands in r1
+        add     #AREAB, r1              ; AREA(n) = 1000 + n * 1400
+        mov     r1, r0
+        rts     pc
+
+; ---- check_ack: the ОС has taken the pending event? ----
+
+CHKACK: mov     PEND(r5), r1
+        beq     CKD
+        cmp     #4, r1
+        bne     CK1
+        jsr     pc, AREAO               ; STATUS0 flag gone?
+        jsr     pc, MEMRD
+        bit     #FLAG, r0
+        bne     CKD
+        clr     PEND(r5)
+        rts     pc
+CK1:    cmp     #5, r1
+        bne     CKD
+        jsr     pc, AREAO               ; STATUS1 flag gone?
+        inc     r0
+        jsr     pc, MEMRD
+        bit     #FLAG, r0
+        bne     CKD
+        clr     PEND(r5)
+CKD:    rts     pc
+
+; ---- post_line_event (line R4/R5, command in R0 -> R0 = 1 posted) ----
+
+POSTEV: mov     r0, r3                  ; R3 = command
+        jsr     pc, AREAO
+        mov     r0, r1                  ; R1 = area
+        mov     r3, PEND(r5)            ; optimistically (undone on failure)
+        mov     r1, r0
+        add     #2, r0                  ; CMD_IN
+        mov     r3, r1
+        jsr     pc, MEMWR
+        cmp     #4, r3
+        bne     PE1
+        mov     r1, r0                  ; STATUS0 |= FLAG
+        jsr     pc, MEMRD
+        bis     #FLAG, r0
+        mov     r0, -(sp)
+        mov     r1, r0
+        mov     0(sp), r1
+        jsr     pc, MEMWR
+        tst     (sp)+
+PE1:    mov     TERM(r5), r0
+        jsr     pc, POST
+        tst     r0
+        bne     PE2
+        clr     PEND(r5)                ; ring full: undo
+        jsr     pc, AREAO
+        add     #2, r0                  ; CMD_IN <- 0 again
+        clr     r1
+        jsr     pc, MEMWR
+        clr     r0
+        rts     pc
+PE2:    mov     #1, r0
+        rts     pc
+
+; ---- pass_input: the typed line into the area, post 4 ----
+
+PASSIN: jsr     pc, AREAO
+        add     #AREAIN, r0             ; the word address of the buffer
+        bis     #AI, r0
+        mov     r0, @#KADDR             ; auto-increment over the buffer
+        clr     r2                      ; R2 = i, byte counter (from 0)
+PI1:    cmp     r2, LEN(r5)
+        bgt     PI2                     ; i > len: done
+        clr     r3                      ; lo = (i < len) ? buf[i] : 0
+        cmp     r2, LEN(r5)
+        bge     PI4
+        mov     r4, r1
+        mul     #240., r1               ; r1 is odd: the low word
+        add     #LBUF-240., r1
+        add     r2, r1
+        movb    (r1), r3
+        bic     #M8, r3
+PI4:    mov     LEN(r5), r0             ; hi = (i+1 < len) ? buf[i+1] : 0
+        sub     r2, r0                  ; len - i
+        cmp     r0, #2
+        blt     PI5
+        mov     r4, r1
+        mul     #240., r1               ; r1 is odd: the low word
+        add     #LBUF-240., r1
+        add     r2, r1
+        inc     r1                      ; + i + 1
+        movb    (r1), r1
+        bic     #M8, r1
+        swab    r1                      ; the byte goes to bits 8-15
+        bis     r1, r3                  ; word = lo | hi << 8
+PI5:    mov     r3, @#KDATA             ; one word per access (AI advances)
+        add     #2, r2
+        br      PI1
+PI2:    mov     #4, r0                  ; EVENT_INPUT_READY
+        jsr     pc, POSTEV
+        tst     r0
+        beq     PID                     ; ring full: retry later
+        clr     LEN(r5)
+        bic     #READY, ST(r5)
+PID:    rts     pc
+
+; ---- start_line: fresh header of the area (port of start_line) ----
+
+STARTL: jsr     pc, AREAO
+        bis     #AI, r0
+        mov     r0, @#KADDR
+        clr     @#KDATA                 ; +0
+        clr     @#KDATA                 ; +1
+        clr     @#KDATA                 ; +2
+        mov     r4, r1                  ; INBUF again (starts in bytes)
+        mul     #AREAS, r1              ; r1 is odd: the low word
+        add     #AREAB+AREAIN, r1
+        asl     r1
+        mov     r1, @#KDATA             ; +3
+        clr     @#KDATA                 ; +4
+        clr     @#KDATA                 ; +5
+        clr     @#KDATA                 ; +6
+        clr     @#KDATA                 ; +7
+        clr     LEN(r5)
+        clr     PEND(r5)
+        bic     #READY+OUTDN, ST(r5)
+        rts     pc
+
+; ---- post_sys_request (line R4/R5, code 1 or 3 in R0) ----
+
+SYREQ:  mov     r0, r2                  ; R2 = code
+        jsr     pc, AREAO               ; R1 = AREA(n) (AREAO returns it in r1)
+        mov     r1, -(sp)               ; area, for АБФОСS+2 (byte address)
+        mov     #A_FOSS, r0             ; code
+        mov     r2, r1
+        jsr     pc, MEMWR
+        mov     #A_FOSS+1, r0           ; code 1: the line, else the terminal
+        cmp     #1, r2
+        bne     SR1
+        mov     r4, r1
+        br      SR2
+SR1:    mov     TERM(r5), r1
+SR2:    jsr     pc, MEMWR
+        cmp     #1, r2                  ; code 1: the byte address of the area
+        bne     SR3
+        mov     0(sp), r1
+        asl     r1
+        br      SR4
+SR3:    clr     r1
+SR4:    mov     #A_FOSS+2, r0
+        jsr     pc, MEMWR
+        mov     #A_BUFS, r0             ; sys_src = the source at posting time
+        jsr     pc, MEMRD
+        bic     #M3, r0
+        mov     r0, SYSSRC
+        mov     r2, -(sp)               ; the code: POST uses r2 for the abonent
+        mov     #ABNOS, r0              ; abonent 48 = the ОС
+        jsr     pc, POST
+        mov     (sp)+, r2               ; the code back (POST clobbered r2)
+        tst     (sp)+                   ; the area off the stack
+        tst     r0
+        beq     SRX                     ; ring full: not busy, retry later
+        mov     r2, SYSB
+        mov     r4, SYSLN
+SRX:    rts     pc
+
+; ---- take_output: the output array to the terminal (line R4/R5) ----
+
+TAKEOUT:
+        jsr     pc, AREAO
+        mov     r0, -(sp)               ; area saved
+        mov     r0, r1
+        add     #5, r0                  ; CMD_OUT
+        jsr     pc, MEMRD
+        cmp     #4, r0                  ; 4 or 5: take an array
+        beq     TO1
+        cmp     #5, r0
+        beq     TO1
+        br      TOX
+TO1:    mov     0(sp), r1
+        mov     r1, r0
+        add     #6, r0                  ; OUTADDR (byte address)
+        jsr     pc, MEMRD
+        asr     r0                      ; -> word address
+        mov     r0, r2                  ; R2 = source
+        mov     r1, r0
+        add     #7, r0                  ; OUTLEN
+        jsr     pc, MEMRD
+        mov     r0, r3                  ; R3 = length in words
+        mov     0(sp), r1
+        mov     r1, r0
+        add     #5, r0                  ; CMD_OUT <- 0 (taken)
+        clr     r1
+        jsr     pc, MEMWR
+        mov     r4, @#TSEL              ; the line, once
+TO2:    tst     r3
+        ble     TO3
+        mov     r2, r0
+        jsr     pc, MEMRD               ; the word of the array
+        mov     r0, r1
+        bit     #377, r0                ; low byte == 0: end
+        beq     TO3
+        mov     r1, r0
+        bic     #M7, r0
+        mov     r0, @#TBUF              ; low character
+        mov     r1, r0
+        swab    r0
+        bit     #377, r0                ; high byte == 0: end
+        beq     TO3
+        bic     #M7, r0
+        mov     r0, @#TBUF              ; high character
+        inc     r2
+        dec     r3                      ; one word consumed
+        br      TO2
+TO3:    bis     #OUTDN, ST(r5)          ; completion follows as command 5
+TOX:    tst     (sp)+
+        rts     pc
+
+; ---- drain_bufh: the entries the ОС posted + the connect reply ----
+
+DRAIN:  mov     #A_BUFH, r0
+        jsr     pc, MEMRD               ; source (the ОС side)
+        mov     r0, r1
+        mov     BHR, r2                 ; our receiver
+DR0:    cmp     r2, r1
+        beq     DRSY
+        mov     r2, r0
+        add     #A_BUFH+2, r0
+        jsr     pc, MEMRD               ; the abonent from the slot
+        mov     r0, -(sp)               ; abonent saved
+        inc     r2
+        bic     #M3, r2
+        mov     r2, BHR
+        mov     r2, r1
+        mov     #A_BUFH+1, r0
+        jsr     pc, MEMWR               ; receiver <- our count
+        mov     (sp)+, r0
+        beq     DR1                     ; abonent 0: not a line
+        cmp     r0, #24.                ; r0 > 24 (unsigned): the ОС, etc.
+        bhi     DR1
+        mov     r0, r4                  ; line abonent: print the array
+        mov     r4, r5
+        asl     r5
+        bit     #UP, ST(r5)             ; find_line: the line must be up
+        beq     DR1
+        jsr     pc, TAKEOUT
+DR1:    mov     #A_BUFH, r0             ; the ОС may have added entries
+        jsr     pc, MEMRD
+        mov     r0, r1
+        mov     BHR, r2
+        br      DR0
+DRSY:   cmp     #1, SYSB                ; waiting for the connect reply?
+        bne     DRX
+        mov     #A_FOSH, r0
+        jsr     pc, MEMRD
+        cmp     #2, r0                  ; +0 == 2: the reply is complete
+        bne     DRX
+        mov     #A_FOSH+1, r0
+        jsr     pc, MEMRD
+        mov     r0, r2                  ; terminal
+        mov     #A_FOSH+2, r0
+        jsr     pc, MEMRD
+        mov     r0, r3                  ; result
+        clr     r1
+        mov     #A_FOSH, r0
+        jsr     pc, MEMWR               ; the reply is consumed
+        clr     SYSB
+        mov     SYSLN, r4
+        mov     r4, r5
+        asl     r5
+        tst     r3
+        bne     DRErr
+        mov     r2, TERM(r5)            ; success: the terminal is ours
+        br      DRX
+DRErr:  mov     SYSLN, r1               ; the ОС refused
+        cmp     #1, r3
+        beq     DRE1
+        mov     #MNOTERM, r0
+        jsr     pc, SENDS
+        br      DRE2
+DRE1:   mov     #MBUSY, r0
+        jsr     pc, SENDS
+DRE2:   bic     #UP, ST(r5)
+DRX:    rts     pc
+
+; ---- disconnect completion: the ОС has read the ring (sys_busy = 3) ----
+
+PROC3:  cmp     #3, SYSB
+        bne     P3X
+        mov     #A_BUFS, r0
+        jsr     pc, MEMRD               ; source
+        sub     SYSSRC, r0
+        bic     #M3, r0                 ; posted
+        mov     r0, -(sp)
+        mov     #A_BUFS+1, r0
+        jsr     pc, MEMRD               ; receiver
+        sub     SYSSRC, r0
+        bic     #M3, r0                 ; taken
+        beq     P3X1
+        cmp     r0, 0(sp)
+        bhi     P3X1                    ; taken > posted: not yet
+        tst     (sp)+
+        clr     SYSB
+        mov     SYSLN, r4
+        mov     r4, r5
+        asl     r5
+        clr     TERM(r5)                ; the terminal is released
+        rts     pc
+P3X1:   tst     (sp)+
+P3X:    rts     pc
+
+; ---- PROCESS: one pass of the state machine ----
+
+PROCESS:
+        bit     #400, @#CSR             ; LC: the lines have changed
+        beq     PR0
+        jsr     pc, LSTATH
+PR0:    bit     #200, @#CSR             ; RR: the FIFO has characters
+        beq     PR1
+        mov     @#RBUF, r0              ; pops the FIFO
+        jsr     pc, RXTAKE
+        br      PR0
+PR1:    jsr     pc, DRAIN
+        jsr     pc, PROC3
+        mov     #1, r4
+PL:     mov     r4, r5
+        asl     r5
+        tst     SYSB
+        bne     PCOM
+        mov     ST(r5), r0
+        bit     #WANTD, r0
+        beq     PTRYC
+        bic     #WANTD, ST(r5)          ; disconnect: no reply is sent
+        tst     TERM(r5)
+        beq     PNEXT
+        mov     #3, r0
+        jsr     pc, SYREQ
+        br      PNEXT
+PTRYC:  bit     #WANTC, r0
+        beq     PCOM
+        bic     #WANTC, ST(r5)
+        jsr     pc, STARTL
+        bis     #UP, ST(r5)
+        mov     #1, r0
+        jsr     pc, SYREQ
+        tst     SYSB
+        bne     PNEXT                   ; posted: the reply will come
+        bic     #UP, ST(r5)             ; ring full: revert, try again
+        bis     #WANTC, ST(r5)
+        br      PNEXT
+PCOM:   tst     TERM(r5)
+        beq     PNEXT
+        jsr     pc, CHKACK
+        tst     PEND(r5)
+        bne     PNEXT                   ; the ОС has not taken the event yet
+        mov     ST(r5), r0
+        bit     #OUTDN, r0
+        beq     PTRYI
+        mov     #5, r0                  ; output done: post 5
+        jsr     pc, POSTEV
+        tst     r0
+        beq     PNEXT
+        bic     #OUTDN, ST(r5)
+        br      PNEXT
+PTRYI:  bit     #READY, r0
+        beq     PNEXT
+        jsr     pc, PASSIN              ; the finished line: post 4
+PNEXT:  inc     r4
+        cmp     r4, #24.
+        ble     PL
+        rts     pc
+
+; ---- the interrupt handlers: wake the WAIT, nothing more ----
+
+IRET:   rti
+DEAD4:  halt                            ; trap 004: timeout / odd address
+DEAD10: halt                            ; trap 010: reserved instruction
+DEAD14: halt                            ; trap 014: BPT
+DEAD24: halt                            ; trap 024: IOT / EMT
+DEAD34: halt                            ; trap 034: TRAP / CALL
+
+; ---- data ----
+; Above the code (which ends below 03000) and far below the stack
+; (157770, growing down) and the I/O page (160000+).
+
+        .=10000
+TERM:   .BLKW 25.                       ; ОС terminal numbers (0 = none)
+PEND:   .BLKW 25.                       ; the command awaiting acknowledgement
+ST:     .BLKW 25.                       ; READY|OUTDN|UP|WANTC|WANTD
+LEN:    .BLKW 25.                       ; characters typed in the open line
+SYSB:   .WORD   0                       ; sys_busy: 0 / 1 connect / 3 disc
+SYSLN:  .WORD   0
+SYSSRC: .WORD   0                       ; АБУФS source at posting time
+BHR:    .WORD   0                       ; our receiver count in АБУФH
+OLD0:   .WORD   0                       ; the previous LSTAT0/1
+OLD1:   .WORD   0
+MBUSY:  .BYTE   15,12
+        .ASCII  /DKS: line busy/
+        .BYTE   15,12,0
+        .EVEN
+MNOTERM:
+        .BYTE   15,12
+        .ASCII  /DKS: no free terminal/
+        .BYTE   15,12,0
+        .EVEN
+LBUF:   .BLKW 2880.                     ; 24 lines x 240 bytes of typing
+
+        .END
