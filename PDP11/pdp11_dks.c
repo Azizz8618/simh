@@ -1774,15 +1774,21 @@ fprintf (st, "   sim> SET DKS LINES=n                 set the number of lines (1
 fprintf (st, "   sim> SET DKS ENGINE=SIM|HOST         protocol engine: in C or in firmware\n");
 fprintf (st, "   sim> SET DKS TESTOS=OFF|ON|PROMPT    OS-side stub (stage A)\n");
 fprintf (st, "   sim> SET DKS BRIDGE=port             КАДОПАМ bridge server (stage B2)\n");
-fprintf (st, "   sim> SET DKS NOBRIDGE                close the bridge\n\n");
+fprintf (st, "   sim> SET DKS NOBRIDGE                close the bridge\n");
+fprintf (st, "   sim> SET DKS CHAN=k                  the КРК channel of this Э-60, 0-3 (stage C)\n");
+fprintf (st, "   sim> SET DKS ENCODING=KOI7|UTF8      terminal encoding (stage C)\n\n");
 fprintf (st, "The firmware reaches the 32K-word ОЗУ of the Э-60 through the KADDR/KDATA\n");
 fprintf (st, "window (bit 0100000 of KADDR is auto-increment); cell 077777 written with\n");
 fprintf (st, "0400 is the doorbell from the БЭСМ-6.  Writing KCTL with 0400|chan pulses\n");
 fprintf (st, "the «signal БЭСМ-6» line (ПРП6 on its side, the bridge sends an ATTN\n");
-fprintf (st, "frame).  Characters are KOI-7 (7 bits).\n\n");
+fprintf (st, "frame).  Characters are КОИ-7Н1 (7 bits); ENCODING=UTF8 spells the\n");
+fprintf (st, "Cyrillic half as UTF-8 for modern telnet clients.\n\n");
 fprintf (st, "The bridge (stage B2) exposes the ОЗУ Э-60 to a БЭСМ-6 simulator over\n");
-fprintf (st, "TCP: 8-byte frames, see PDP11/pdp11_dks.md §«КАДОПАМ bridge».  The\n");
-fprintf (st, "БЭСМ-6 side connects with SET DKS REMOTE=host:port (BESM6 simulator).\n\n");
+fprintf (st, "TCP: 8-byte frames, block transfers with the BULK_READ/BULK_WRITE\n");
+fprintf (st, "opcodes 05/06 (stage C); see PDP11/pdp11_dks.md §«КАДОПАМ bridge».\n");
+fprintf (st, "The БЭСМ-6 side connects with SET DKS REMOTE=host:port and may serve\n");
+fprintf (st, "several Э-60 with SET DKS CHANS=n (stage C, КРК channels 2..2+n-1,\n");
+fprintf (st, "ports p..p+n-1); a system request raises ПРП12 on the БЭСМ-6.\n\n");
 dks_help_attach (st, dptr, uptr, flag, cptr);
 return SCPE_OK;
     }
