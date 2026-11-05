@@ -148,7 +148,7 @@ static void dks_update_atni (void);
 t_stat dks_set_bridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_set_nobridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_bridge (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
-static void dks_sig_besm6 (void);
+static void dks_sig_besm6 (int sreq);
 static void dks_bridge_poll (void);
 static void testos_ring (void);
 t_stat dks_show_vec (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
@@ -329,17 +329,21 @@ static void dks_send_str (int n, const char *s)
 
 /* DEV: the reference raises ПРП6 on the БЭСМ-6 side (PRP |= DKS_PRP).
    Here the Э-60 signals through the device; the БЭСМ-6 sees the slot and
-   its ПРП6 comes from TESTOS or the bridge. */
-static void dks_host_atten (void)
+   its ПРП6 comes from TESTOS or the bridge.  A system request post also
+   raises ПРП12 (stage C): the frame flag tells the БЭСМ-6 to set
+   PRP_DKS_ATTN, which is what СВЯЗЬ7/Диспак wait for (нтерм7). */
+static void dks_host_atten (int sreq)
 {
-    sim_debug (DBG_RING, &dks_dev, "signal to БЭСМ-6 (ПРП6 on its side)\n");
-    dks_sig_besm6 ();
+    sim_debug (DBG_RING, &dks_dev, "signal to БЭСМ-6 (ПРП6 on its side)%s\n",
+               sreq? " + ПРП12": "");
+    dks_sig_besm6 (sreq);
     return;
     }
 
 /* Post an abonent number into the ring towards the БЭСМ-6.
+   sreq: the post is a system request (АБФОСН) -> ПРП12 on the БЭСМ-6.
    Returns 0 when the ring is full: the ОС has not caught up yet. */
-static int e60_post (int abonent)
+static int e60_post (int abonent, int sreq)
 {
     uint32 src = mem (A_BUFS) & RING_MASK;
     uint32 recv = mem (A_BUFS + 1) & RING_MASK;
@@ -349,7 +353,7 @@ static int e60_post (int abonent)
     set_mem (A_BUFS + 2 + src, abonent);
     set_mem (A_BUFS, (src + 1) & RING_MASK);
     sim_debug (DBG_RING, &dks_dev, "post %d (slot %d)\n", abonent, src);
-    dks_host_atten ();
+    dks_host_atten (sreq);
     return 1;
     }
 
@@ -437,7 +441,7 @@ static void post_sys_request (int n, int code)
     set_mem (A_FOSS + 1, code == 1 ? n : dks_line[n].term);
     set_mem (A_FOSS + 2, code == 1 ? a << 1 : 0);
     sys_src = mem (A_BUFS) & RING_MASK;
-    if (! e60_post (ABONENT_OS))
+    if (! e60_post (ABONENT_OS, 1))       /* a system request: + ПРП12 */
         return;
     sys_busy = code;
     sys_line = n;
@@ -475,7 +479,7 @@ static void post_line_event (int n, int cmd)
     set_mem (a + AR_CMD_IN, cmd);
     if (cmd == 4)
         set_mem (a + AR_STATUS0, mem (a + AR_STATUS0) | AR_FLAG);
-    if (! e60_post (dks_line[n].term)) {
+    if (! e60_post (dks_line[n].term, 0)) {
         set_mem (a + AR_CMD_IN, 0);
         return;
         }
@@ -787,8 +791,10 @@ static int dks_bridge_up (void)
 return (dks_bsock != INVALID_SOCKET);
 }
 
-/* Э-60 -> БЭСМ-6: "an entry waits in АБУФS" (ПРП6 on the БЭСМ-6 side). */
-static void dks_sig_besm6 (void)
+/* Э-60 -> БЭСМ-6: "an entry waits in АБУФS" (ПРП6 on the БЭСМ-6 side).
+   sreq (stage C): the entry is a system request -> the БЭСМ-6 also sets
+   ПРП12 (PRP_DKS_ATTN). */
+static void dks_sig_besm6 (int sreq)
 {
 uint8 f[8];
 
@@ -797,10 +803,12 @@ if (dks_bsock == INVALID_SOCKET)
 f[0] = BRIDGE_MAGIC_REQ;
 f[1] = BRIDGE_OP_ATTN;
 f[2] = DKS_CHAN;
-f[3] = f[4] = f[5] = f[6] = f[7] = 0;
+f[3] = sreq? 1: 0;
+f[4] = f[5] = f[6] = f[7] = 0;
 if (sim_write_sock (dks_bsock, (const char *) f, 8) == 8) {
     ++dks_nattn;
-    sim_debug (DBG_BRIDGE, &dks_dev, "bridge: -> ATTN\n");
+    sim_debug (DBG_BRIDGE, &dks_dev, "bridge: -> ATTN%s\n",
+               sreq? " +ПРП12": "");
     }
 return;
 }
@@ -1347,7 +1355,7 @@ t_stat dks_wr (int32 ldata, int32 PA, int32 access)
                                                        it must see the new
                                                        АБУФS entries now */
                 sim_activate (&dks_unit, 20);
-            dks_sig_besm6 ();                       /* and/or the БЭСМ-6 */
+            dks_sig_besm6 (0);                      /* and/or the БЭСМ-6 */
             }
         break;
 

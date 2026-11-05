@@ -86,6 +86,12 @@ check "C.8 HELLO echoed through the coalescing path" $([ "$N" -ge 2 ] && echo 0 
 # the only rejections must be the six C.5 error cases of part 1
 N=$(grep -c 'rejected' "$TMP/e60.log")
 check "C.9 no rejected bulk frames from the ОС" $([ "$N" = 6 ] && echo 0 || echo 1)
+# stage C: the connect system request posts with the SREQ flag -> ПРП12
+# on the БЭСМ-6; the later data post (the echo) stays plain ПРП6
+check "C.10 sysreq ATTN raises ПРП12 (БЭСМ-6 log)" \
+      "$(has "$(cat "$TMP/b6.log")" 'ATTN .ПРП 6. + ПРП12')"
+check "C.11 data ATTN stays plain ПРП6" \
+      "$(tr -d '\r' < "$TMP/b6.log" | grep -q 'ATTN .ПРП 6.$' && echo 0 || echo 1)"
 
 say ""
 say "passed: $PASS, failed: $FAIL"

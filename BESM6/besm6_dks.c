@@ -644,9 +644,16 @@ static int dks_remote_frame (int op, int addr, int32 *val, int in_xact)
         if (rfrm[1] == BRIDGE_OP_ATTN) {
             ++n_rattn;
             sim_debug (DBG_BRIDGE, &dks_dev,
-                       "bridge: <- ATTN (ПРП 6)\n");
+                       "bridge: <- ATTN (ПРП 6)%s\n",
+                       (rfrm[3] & 1)? " + ПРП12": "");
             sim_debug (DBG_IRQ, &dks_dev, "ПРП 6\n");
             PRP |= DKS_PRP;
+            if (rfrm[3] & 1) {          /* system request (stage C):
+                                           СВЯЗЬ7/Диспак wait for ПРП12
+                                           to run нтерм7 */
+                sim_debug (DBG_IRQ, &dks_dev, "ПРП 12\n");
+                PRP |= PRP_DKS_ATTN;
+                }
             return 0;
             }
         sim_debug (DBG_BRIDGE, &dks_dev,
