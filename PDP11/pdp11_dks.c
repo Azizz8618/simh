@@ -95,6 +95,8 @@ t_stat dks_svc (UNIT *uptr);
 t_stat dks_reset (DEVICE *dptr);
 t_stat dks_attach (UNIT *uptr, CONST char *cptr);
 t_stat dks_detach (UNIT *uptr);
+static int dks_line_can_input (int n);
+static void dks_line_char (int n, int c);
 t_stat dks_rd (int32 *data, int32 PA, int32 access);
 t_stat dks_wr (int32 data, int32 PA, int32 access);
 int32 dks_rxinta (void);
@@ -188,6 +190,492 @@ DEVICE dks_dev = {
     &dks_description                      /* description routine */
     };
 
+/* ===== Protocol engine (stage A: port of BESM6/besm6_dks.c) =====
+
+   The engine is the Э-60 side of the СВЯЗЬ7 protocol, ported 1:1 from the
+   reference (the ОС side): ring posts, terminal areas, system requests.
+   In the SIM mode (default) the device runs it itself; TESTOS emulates the
+   ОС side so the whole protocol closes in one process.  In the HOST mode
+   (stage B1) the engine is the Э-60 firmware executed by the CPU, and the
+   device only provides the hardware: the lines, the KADDR/KDATA window,
+   the doorbell and the interrupts.
+
+   Deviations from the reference are marked DEV: they all concern the
+   transport (telnet lines instead of the БЭСМ-6 TTY clock), not the
+   protocol: the signal to the БЭСМ-6 is a trace event here (the ПРП6
+   interrupt is raised on the БЭСМ-6 side, by TESTOS locally or by the
+   bridge in stage B2). */
+
+typedef struct dks_line {
+    int     up;                 /* the Э-60 sees the line as connected */
+    int     want_connect;       /* connect request not yet sent */
+    int     want_disconnect;
+    int     term;               /* ОС terminal number, 0 if none */
+    int     echo;
+    int     len;                /* characters in the line being typed */
+    char    buf[INBUF_BYTES];
+    int     line_ready;         /* line finished, not yet passed to the ОС */
+    int     pending;            /* 0, or the +2 command awaiting acknowledgement */
+    int     out_done;           /* output printed, completion not yet posted */
+    } DKS_LINE;
+
+static DKS_LINE dks_line[DKS_LINES + 1];
+
+static int os_polled = 0;       /* TESTOS: the ОС has read the channel status */
+static int sys_busy = 0;        /* 0 none, 1 connect (await reply), 3 disconnect */
+static int sys_line = 0;
+static uint32 sys_src = 0;      /* абуфs source count when it was posted */
+static uint32 bufh_recv = 0;    /* our receiver count in абуфh */
+
+static int testos_term_used[DKS_LINES + 1]; /* ОС terminal numbers in use */
+
+static int dks_enabled (void)
+{
+    return ! (dks_dev.flags & DEV_DIS);
+    }
+
+/* The ОС listens only after it has read the channel status.  TESTOS
+   emulates the ready ОС; with a real БЭСМ-6 the readiness arrives through
+   the bridge (stage B2). */
+static int os_ready (void)
+{
+    return os_polled;
+    }
+
+static uint32 mem (int addr)
+{
+    return e60_mem[cur_chan][addr & 077777];
+    }
+
+static void set_mem (int addr, uint32 val)
+{
+    e60_mem[cur_chan][addr & 077777] = val & 0177777;
+    }
+
+/* Output helpers into a telnet line (DEV: the reference uses vt_send/
+   vt_puts of besm6_tty.c; plain 7-bit output for now, the KOI-7/UTF-8
+   conversion is the stage C question B5). */
+static void dks_send_char (int n, uint32 sym)
+{
+    TMLN *lp = &dks_ldsc[n - 1];
+
+    if (lp->conn)
+        tmxr_putc_ln (lp, sym & 0177);
+    }
+
+static void dks_send_str (int n, const char *s)
+{
+    TMLN *lp = &dks_ldsc[n - 1];
+
+    if (lp->conn) {
+        tmxr_linemsg (lp, s);
+        tmxr_send_buffered_data (lp);
+        }
+    }
+
+/* DEV: the reference raises ПРП6 on the БЭСМ-6 side (PRP |= DKS_PRP).
+   Here the Э-60 signals through the device; the БЭСМ-6 sees the slot and
+   its ПРП6 comes from TESTOS or the bridge. */
+static void dks_host_atten (void)
+{
+    sim_debug (DBG_RING, &dks_dev, "signal to БЭСМ-6 (ПРП6 on its side)\n");
+    return;
+    }
+
+/* Post an abonent number into the ring towards the БЭСМ-6.
+   Returns 0 when the ring is full: the ОС has not caught up yet. */
+static int e60_post (int abonent)
+{
+    uint32 src = mem (A_BUFS) & RING_MASK;
+    uint32 recv = mem (A_BUFS + 1) & RING_MASK;
+
+    if (((src - recv) & RING_MASK) == RING_MASK)
+        return 0;
+    set_mem (A_BUFS + 2 + src, abonent);
+    set_mem (A_BUFS, (src + 1) & RING_MASK);
+    sim_debug (DBG_RING, &dks_dev, "post %d (slot %d)\n", abonent, src);
+    dks_host_atten ();
+    return 1;
+    }
+
+static int find_line (int e60_line)
+{
+    return (e60_line >= 1 && e60_line <= DKS_LINES && dks_line[e60_line].up) ?
+        e60_line : 0;
+    }
+
+/* Output array from the ОС: print it, then report completion. */
+static void take_output (int n)
+{
+    int a = AREA(n);
+    uint32 cmd = mem (a + AR_CMD_OUT);
+    uint32 addr = mem (a + AR_OUTADDR) >> 1;
+    uint32 len = mem (a + AR_OUTLEN);
+    uint32 i;
+
+    if (cmd != 4 && cmd != 5) {
+        sim_debug (DBG_RING, &dks_dev, "line %d: entry without command %o\n",
+                   n, cmd);
+        return;
+        }
+    set_mem (a + AR_CMD_OUT, 0);
+    sim_debug (DBG_RING, &dks_dev, "line %d: output cmd %o, %o words at %05o\n",
+               n, cmd, len, addr);
+    for (i = 0; i < len; ++i) {
+        uint32 w = mem (addr + i);
+
+        if ((w & 0377) == 0)
+            break;
+        dks_send_char (n, w & 0177);
+        if ((w >> 8 & 0377) == 0)
+            break;
+        dks_send_char (n, w >> 8 & 0177);
+        }
+    if (dks_ldsc[n - 1].conn)                       /* push it out now */
+        tmxr_send_buffered_data (&dks_ldsc[n - 1]);
+    dks_line[n].out_done = 1;
+    }
+
+/* Ring from the ОС: take every entry posted since the last doorbell. */
+static void drain_bufh (void)
+{
+    uint32 src = mem (A_BUFH) & RING_MASK;
+
+    while (bufh_recv != src) {
+        int abonent = mem (A_BUFH + 2 + bufh_recv);
+        int n;
+
+        bufh_recv = (bufh_recv + 1) & RING_MASK;
+        set_mem (A_BUFH + 1, bufh_recv);
+        sim_debug (DBG_RING, &dks_dev, "got %d\n", abonent);
+        n = find_line (abonent);
+        if (n)
+            take_output (n);
+        }
+    /* The reply to a connect request: абфосh+0 is written last. */
+    if (sys_busy == 1 && mem (A_FOSH) == 2) {
+        DKS_LINE *l = &dks_line[sys_line];
+        int term = mem (A_FOSH + 1);
+        int result = mem (A_FOSH + 2);
+
+        set_mem (A_FOSH, 0);
+        sys_busy = 0;
+        sim_debug (DBG_RING, &dks_dev,
+                   "line %d: connect reply term %d result %d\n",
+                   sys_line, term, result);
+        if (result == 0)
+            l->term = term;
+        else {
+            dks_send_str (sys_line, result == 1 ?
+                          "\r\nDKS: line busy\r\n" :
+                          "\r\nDKS: no free terminal\r\n");
+            l->up = 0;
+            }
+        }
+    }
+
+static void post_sys_request (int n, int code)
+{
+    int a = AREA(n);
+
+    set_mem (A_FOSS, code);
+    set_mem (A_FOSS + 1, code == 1 ? n : dks_line[n].term);
+    set_mem (A_FOSS + 2, code == 1 ? a << 1 : 0);
+    sys_src = mem (A_BUFS) & RING_MASK;
+    if (! e60_post (ABONENT_OS))
+        return;
+    sys_busy = code;
+    sys_line = n;
+    sim_debug (DBG_RING, &dks_dev, "line %d: system request %d\n", n, code);
+    }
+
+static void start_line (int n)
+{
+    int a = AREA(n), i;
+
+    for (i = 0; i < 8; ++i)
+        set_mem (a + i, 0);
+    set_mem (a + AR_INBUF, (a + AREA_INBUF) << 1);
+    dks_line[n].len = 0;
+    dks_line[n].line_ready = 0;
+    dks_line[n].pending = 0;
+    dks_line[n].out_done = 0;
+    }
+
+/* Is the ОС done with the last event of this line? */
+static void check_ack (int n)
+{
+    int a = AREA(n);
+
+    if (dks_line[n].pending == 4 && ! (mem (a + AR_STATUS0) & AR_FLAG))
+        dks_line[n].pending = 0;
+    else if (dks_line[n].pending == 5 && ! (mem (a + AR_STATUS1) & AR_FLAG))
+        dks_line[n].pending = 0;
+    }
+
+static void post_line_event (int n, int cmd)
+{
+    int a = AREA(n);
+
+    set_mem (a + AR_CMD_IN, cmd);
+    if (cmd == 4)
+        set_mem (a + AR_STATUS0, mem (a + AR_STATUS0) | AR_FLAG);
+    if (! e60_post (dks_line[n].term)) {
+        set_mem (a + AR_CMD_IN, 0);
+        return;
+        }
+    dks_line[n].pending = cmd;
+    }
+
+static void pass_input (int n)
+{
+    int a = AREA(n) + AREA_INBUF, i;
+    DKS_LINE *l = &dks_line[n];
+
+    for (i = 0; i <= l->len; i += 2) {
+        uint32 lo = i < l->len ? (unsigned char) l->buf[i] : 0;
+        uint32 hi = i + 1 < l->len ? (unsigned char) l->buf[i+1] : 0;
+
+        set_mem (a + i/2, lo | hi << 8);
+        }
+    post_line_event (n, 4);
+    if (l->pending == 4) {
+        sim_debug (DBG_RING, &dks_dev, "line %d: input %d chars\n", n, l->len);
+        l->len = 0;
+        l->line_ready = 0;
+        }
+    }
+
+/* Advance the Э-60 state machine; SIM engine only. */
+static void dks_process (void)
+{
+    int n;
+
+    if (! dks_enabled () || dks_engine != ENGINE_SIM)
+        return;
+    drain_bufh ();
+
+    /* A disconnect gets no reply: wait until the ОС has read the ring. */
+    if (sys_busy == 3) {
+        uint32 posted = (mem (A_BUFS) - sys_src) & RING_MASK;
+        uint32 taken = (mem (A_BUFS + 1) - sys_src) & RING_MASK;
+
+        if (taken != 0 && taken <= posted) {
+            sys_busy = 0;
+            dks_line[sys_line].term = 0;
+            }
+        }
+    for (n = 1; n <= DKS_LINES; ++n) {
+        DKS_LINE *l = &dks_line[n];
+
+        if (! sys_busy && l->want_disconnect) {
+            l->want_disconnect = 0;
+            if (l->term)
+                post_sys_request (n, 3);
+            l->up = 0;
+            continue;
+            }
+        if (! sys_busy && l->want_connect && os_ready ()) {
+            l->want_connect = 0;
+            start_line (n);
+            l->up = 1;
+            post_sys_request (n, 1);
+            if (! sys_busy) {
+                l->up = 0;
+                l->want_connect = 1;
+                }
+            continue;
+            }
+        if (! l->term)
+            continue;
+        check_ack (n);
+        if (l->pending)
+            continue;
+        if (l->out_done) {
+            post_line_event (n, 5);
+            if (l->pending)
+                l->out_done = 0;
+            }
+        else if (l->line_ready)
+            pass_input (n);
+        }
+    }
+
+/* Whether the line accepts another typed character now. */
+static int dks_line_can_input (int n)
+{
+    return dks_enabled () && dks_line[n].term && ! dks_line[n].line_ready;
+    }
+
+/* A character typed on the line (KOI-7): local editing and echo.
+   DEV: on Enter the reference echoes a bare newline; here CR LF keeps
+   telnet clients happy. */
+static void dks_line_char (int n, int c)
+{
+    DKS_LINE *l = &dks_line[n];
+
+    switch (c) {
+
+    case '\r':
+    case '\n':
+        if (l->echo)
+            dks_send_str (n, "\r\n");
+        l->line_ready = 1;
+        break;
+
+    case '\b':
+    case 0177:
+        if (l->len > 0) {
+            --l->len;
+            if (l->echo)
+                dks_send_str (n, "\b \b");
+            }
+        break;
+
+    default:
+        if (l->len >= INBUF_BYTES - 1)
+            break;
+        l->buf[l->len++] = c;
+        if (l->echo)
+            dks_send_char (n, c);
+        }
+    return;
+    }
+
+/* ===== TESTOS: the ОС-side stub (stage A) =====
+
+   Emulates just enough of СВЯЗЬ7 to close the protocol in one process:
+   reads the channel status, takes the abonents out of абуфs (48 = system
+   requests, 1..24 = terminal lines), allocates ОС terminal numbers,
+   answers through абфосh and, for lines, produces an output array and
+   rings the Э-60 (the doorbell). */
+
+static int testos_alloc_term (void)
+{
+    int t;
+
+    for (t = 1; t <= DKS_LINES; ++t) {
+        if (! testos_term_used[t]) {
+            testos_term_used[t] = 1;
+            return t;
+            }
+        }
+    return 0;
+    }
+
+static void testos_post_bufh (int abonent)
+{
+    uint32 src = mem (A_BUFH) & RING_MASK;
+
+    set_mem (A_BUFH + 2 + src, abonent);
+    set_mem (A_BUFH, (src + 1) & RING_MASK);
+    sim_debug (DBG_RING, &dks_dev, "TESTOS: post %d to абуфh (slot %d)\n",
+               abonent, src);
+    }
+
+/* Write a string as an output array and ring the Э-60 (DEV: ASCII text
+   for now, see the B5 question about KOI-7/UTF-8). */
+static void testos_output (int n, const char *str)
+{
+    int a = AREA(n);
+    int i, len = strlen (str), words = 0;
+
+    if (len > 2 * 01200)                        /* output array capacity */
+        len = 2 * 01200;
+    set_mem (a + AR_OUTADDR, (a + 8) << 1);
+    for (i = 0; i < len; i += 2) {
+        uint32 lo = str[i] & 0177;
+        uint32 hi = (i + 1 < len)? (str[i + 1] & 0177): 0;
+
+        set_mem (a + 8 + words++, lo | hi << 8);
+        }
+    set_mem (a + AR_OUTLEN, words);
+    set_mem (a + AR_CMD_OUT, 4);
+    set_mem (a + AR_STATUS1, mem (a + AR_STATUS1) | AR_FLAG);
+    sim_debug (DBG_RING, &dks_dev, "TESTOS: %d bytes out to line %d\n",
+               len, n);
+    testos_post_bufh (n);
+    sim_activate (&dks_unit, 20);               /* the doorbell */
+    }
+
+/* TESTOS=ON: send the typed line back as an output array. */
+static void testos_echo_back (int n)
+{
+    int a = AREA(n);
+    uint32 inaddr = mem (a + AR_INBUF) >> 1;
+    char buf[INBUF_BYTES + 1];
+    int i, len = 0;
+
+    for (i = 0; i < 01200; ++i) {
+        uint32 w = mem (inaddr + i);
+
+        if ((w & 0377) == 0)
+            break;
+        if (len < INBUF_BYTES)
+            buf[len++] = w & 0177;
+        if ((w >> 8 & 0377) == 0)
+            break;
+        if (len < INBUF_BYTES)
+            buf[len++] = w >> 8 & 0177;
+        }
+    buf[len] = 0;
+    sim_debug (DBG_RING, &dks_dev, "TESTOS: line %d input '%s'\n", n, buf);
+    testos_output (n, buf);
+    }
+
+static void testos_process (void)
+{
+    uint32 src = mem (A_BUFS) & RING_MASK;
+    uint32 recv = mem (A_BUFS + 1) & RING_MASK;
+
+    while (recv != src) {
+        int abonent = mem (A_BUFS + 2 + recv);
+
+        recv = (recv + 1) & RING_MASK;
+        set_mem (A_BUFS + 1, recv);             /* free the slot */
+        sim_debug (DBG_RING, &dks_dev, "TESTOS: take %d\n", abonent);
+        if (abonent == ABONENT_OS) {
+            int code = mem (A_FOSS);
+
+            if (code == SYSREQ_CONNECT) {
+                int ln = mem (A_FOSS + 1);
+                int term = testos_alloc_term ();
+
+                set_mem (A_FOSH, 2);
+                set_mem (A_FOSH + 1, term);
+                set_mem (A_FOSH + 2, term? 0: 2);
+                sim_debug (DBG_RING, &dks_dev,
+                           "TESTOS: connect line %d -> term %d result %d\n",
+                           ln, term, term? 0: 2);
+                if (term && dks_testos == TESTOS_PROMPT)
+                    testos_output (ln, "\r\nE60 DKS ready\r\nDKS> ");
+                }
+            else if (code == SYSREQ_DISCONNECT) {
+                int term = mem (A_FOSS + 1);
+
+                if (term >= 1 && term <= DKS_LINES)
+                    testos_term_used[term] = 0;
+                sim_debug (DBG_RING, &dks_dev,
+                           "TESTOS: disconnect term %d\n", term);
+                }
+            }
+        else if (abonent >= 1 && abonent <= DKS_LINES) {
+            int n = abonent;
+            int a = AREA(n);
+            uint32 cmd = mem (a + AR_CMD_IN);
+
+            if (cmd == 4) {                     /* input ready */
+                if (dks_testos == TESTOS_ON)
+                    testos_echo_back (n);
+                else                            /* PROMPT */
+                    testos_output (n, "\r\nDKS> ");
+                }
+            else if (cmd == 5)                  /* output done: acknowledge */
+                set_mem (a + AR_STATUS1, mem (a + AR_STATUS1) & ~AR_FLAG);
+            }
+        }
+    }
+
 /* Received data FIFO.  The interrupt is raised while IE && RR. */
 
 static int32 dks_fifo_cnt (void)
@@ -228,13 +716,24 @@ static void dks_fifo_put (int32 ln, int32 ch)
     return;
     }
 
-/* A character from a terminal: in this skeleton everything goes to the
-   hardware FIFO; the SIM engine (stage A) takes the characters directly. */
+/* A character from a terminal.  In the SIM mode the engine takes it
+   directly (local echo and line editing, like the reference); in the HOST
+   mode it goes to the hardware FIFO and raises the RX interrupt for the
+   firmware. */
 
 static void dks_rx_char (int n, int c)
 {
-    sim_debug (DBG_DATA, &dks_dev, "line %d <- %03o\n", n, c & RBUF_CHAR);
-    dks_fifo_put (n, c);
+    sim_debug (DBG_DATA, &dks_dev, "line %d <- %03o\n", n, c & 0377);
+    if (dks_engine == ENGINE_SIM) {
+        if (dks_line_can_input (n))
+            dks_line_char (n, c & 0177);        /* KOI-7 */
+        else
+            sim_debug (DBG_DATA, &dks_dev,
+                       "line %d: char %03o dropped, previous line pending\n",
+                       n, c & 0377);
+        }
+    else
+        dks_fifo_put (n, c);
     return;
     }
 
@@ -263,13 +762,15 @@ static void dks_mclr (void)
     return;
     }
 
-/* Line state bookkeeping: LSTAT0/1 bitmaps and the LC flag. */
+/* Line state bookkeeping: LSTAT0/1 bitmaps, the LC flag and the engine
+   connect/disconnect requests. */
 
 static void dks_line_state (int n, int connected)
 {
     uint16 *w = &dks_lstat[(n - 1) / 12];
     int bit = (n - 1) % 12;
     uint16 was = *w;
+    DKS_LINE *l = &dks_line[n];
 
     if (connected)
         *w |= (1 << bit);
@@ -280,6 +781,18 @@ static void dks_line_state (int n, int connected)
         dks_update_atni ();
         sim_debug (DBG_PROTO, &dks_dev, "line %d %s\n",
                    n, connected? "connected": "disconnected");
+        }
+    if (connected) {
+        l->want_disconnect = 0;
+        l->want_connect = 1;
+        l->echo = 1;
+        dks_ldsc[n - 1].rcve = 1;               /* enable the line for input */
+        dks_send_str (n, "Connected to DKS\r\n");
+        }
+    else {
+        l->want_connect = 0;
+        if (l->up)
+            l->want_disconnect = 1;
         }
     return;
     }
@@ -419,14 +932,18 @@ t_stat dks_wr (int32 ldata, int32 PA, int32 access)
         e60_mem[cur_chan][dks_kaddr & KADDR_MASK] = (uint16) data;
         sim_debug (DBG_KADOPAM, &dks_dev, "KDATA write [%o]%05o <- %06o\n",
                    cur_chan, dks_kaddr & KADDR_MASK, data);
-        if ((dks_kaddr & KADDR_MASK) == DOORBELL && (data & DOORBELL_RING)) {
-            sim_debug (DBG_IRQ, &dks_dev, "doorbell from БЭСМ-6\n");
-            if (dks_engine == ENGINE_HOST) {        /* stage B1: firmware reacts */
-                dks_csr |= DKS_CSR_ATN;
-                dks_update_atni ();
+        if ((dks_kaddr & KADDR_MASK) == DOORBELL) {
+            if (data & ~DOORBELL_RING)              /* diagnostic trace */
+                sim_debug (DBG_RING, &dks_dev, "doorbell %06o\n", data);
+            if (data & DOORBELL_RING) {
+                sim_debug (DBG_IRQ, &dks_dev, "doorbell from БЭСМ-6\n");
+                if (dks_engine == ENGINE_HOST) {    /* stage B1: firmware reacts */
+                    dks_csr |= DKS_CSR_ATN;
+                    dks_update_atni ();
+                    }
+                else
+                    sim_activate (&dks_unit, 20);   /* like the reference */
                 }
-            else
-                sim_activate (&dks_unit, 20);       /* like the reference */
             }
         if (dks_kaddr & KADDR_AI)                   /* auto-increment */
             dks_kaddr = (uint16) (KADDR_AI | ((dks_kaddr + 1) & KADDR_MASK));
@@ -478,7 +995,8 @@ t_stat dks_svc (UNIT *uptr)
             dks_line_state (ln + 1, TRUE);
         }
     for (n = 1; n <= dks_desc.lines; ++n) {         /* dropped connections */
-        if (dks_ldsc[n - 1].conn == 0)
+        if (dks_ldsc[n - 1].conn == 0 &&
+            (dks_lstat[(n - 1) / 12] & (1 << ((n - 1) % 12))))
             dks_line_state (n, FALSE);
         }
     tmxr_poll_rx (&dks_desc);                       /* poll input */
@@ -490,6 +1008,11 @@ t_stat dks_svc (UNIT *uptr)
             }
         }
     tmxr_poll_tx (&dks_desc);                       /* poll output */
+    if (dks_engine == ENGINE_SIM) {                 /* stage A: engine in C */
+        if (dks_testos != TESTOS_OFF)
+            testos_process ();                      /* ОС side of the protocol */
+        dks_process ();                             /* Э-60 side */
+        }
     sim_activate (uptr, dks_wait);
     return SCPE_OK;
     }
@@ -498,10 +1021,24 @@ t_stat dks_svc (UNIT *uptr)
 
 t_stat dks_reset (DEVICE *dptr)
 {
+    int n;
+
     dks_desc.dptr = dptr;
     dks_desc.uptr = &dks_unit;
     memset (e60_mem, 0, sizeof (e60_mem));
     cur_chan = DKS_CHAN;
+    sys_busy = 0;
+    sys_line = 0;
+    bufh_recv = 0;
+    os_polled = (dks_testos != TESTOS_OFF);         /* TESTOS emulates the ОС */
+    memset (testos_term_used, 0, sizeof (testos_term_used));
+    for (n = 1; n <= DKS_LINES; ++n) {              /* keep attached lines up */
+        int up = dks_line[n].up || dks_line[n].want_connect;
+
+        memset (&dks_line[n], 0, sizeof (dks_line[n]));
+        dks_line[n].echo = 1;
+        dks_line[n].want_connect = up;
+        }
     dks_mclr ();
     sim_cancel (&dks_unit);
     if (dks_unit.flags & UNIT_ATT)
