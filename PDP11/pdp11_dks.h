@@ -103,13 +103,13 @@
 
 /* DKS_CSR bits. */
 #define CSR_V_IE        6
-#define CSR_IE          0000100 /* interrupt enable (RW) */
-#define CSR_RR          0000200 /* receive ready: FIFO non-empty (RO) */
-#define CSR_LC          0000400 /* line change: LSTAT0/1 changed (RO, clr on read) */
-#define CSR_ATN         0001000 /* attention: doorbell seen (RO, clr on ack/MCLR) */
-#define CSR_MCLR        040000  /* master clear (write) */
-#define CSR_RW          CSR_IE
-#define CSR_MBZ         (CSR_RR | CSR_LC | CSR_ATN)
+#define DKS_CSR_IE          0000100 /* interrupt enable (RW) */
+#define DKS_CSR_RR          0000200 /* receive ready: FIFO non-empty (RO) */
+#define DKS_CSR_LC          0000400 /* line change: LSTAT0/1 changed (RO, clr on read) */
+#define DKS_CSR_ATN         0001000 /* attention: doorbell seen (RO, clr on ack/MCLR) */
+#define DKS_CSR_MCLR        040000  /* master clear (write) */
+#define DKS_CSR_RW          DKS_CSR_IE
+#define DKS_CSR_MBZ         (DKS_CSR_RR | DKS_CSR_LC | DKS_CSR_ATN)
 
 /* DKS_RBUF bits. */
 #define RBUF_CHAR       0000377
