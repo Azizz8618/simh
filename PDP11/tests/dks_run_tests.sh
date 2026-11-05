@@ -16,6 +16,12 @@ PORT=${2:-4000}
 DIR=$(cd "$(dirname "$0")" && pwd)
 TMP=$(mktemp -d)
 :
+
+# The INIs hardcode the telnet port 4000; substitute the requested one
+# into a temporary copy (no-op when PORT is the default).
+port_ini() { # port_ini <src> <dst>
+    sed "s/^attach dks [0-9][0-9]*/attach dks $PORT/" "$1" > "$2"
+}
 PASS=0; FAIL=0
 
 say() { printf '%s\n' "$*"; }
@@ -31,8 +37,9 @@ check() { # check <name> <result 0|1>
 }
 
 run_sim() { # run_sim <ini> <logfile> - start the sim over a held-open pipe
+    port_ini "$1" "$TMP/port.ini"
     rm -f "$TMP/fifo"; mkfifo "$TMP/fifo"
-    "$SIM" "$1" < "$TMP/fifo" > "$2" 2>&1 &
+    "$SIM" "$TMP/port.ini" < "$TMP/fifo" > "$2" 2>&1 &
     SIMPID=$!
     exec 3>"$TMP/fifo"
     sleep 1.5
@@ -80,7 +87,8 @@ stop_sim
 check "T12 stored AC"         "$(found "$TMP/prompt.log" 'input 2 chars')"
 
 say "== T8/window: firmware drives KADDR/KDATA (dks_firmware_test.ini) =="
-"$SIM" "$DIR/dks_firmware_test.ini" < /dev/null > "$TMP/fw.log" 2>&1
+port_ini "$DIR/dks_firmware_test.ini" "$TMP/fw.ini"
+"$SIM" "$TMP/fw.ini" < /dev/null > "$TMP/fw.log" 2>&1
 check "window write"          "$(found "$TMP/fw.log" 'KDATA write \[2\]05000 <- 012525')"
 check "window read (R0)"      "$(found "$TMP/fw.log" 'R0:.*012525')"
 check "AI write +0"           "$(found "$TMP/fw.log" 'KDATA write \[2\]50000 <- 000001')"
@@ -89,7 +97,8 @@ check "MEM examine (decimal)" "$(found "$TMP/fw.log" 'MEM\[20480\]:.*000001')"
 check "doorbell ring"         "$(found "$TMP/fw.log" 'doorbell from')"
 
 say "== T8: doorbell with extra diagnostic bits (dks_doorbell.ini) =="
-"$SIM" "$DIR/dks_doorbell.ini" < /dev/null > "$TMP/bell.log" 2>&1
+port_ini "$DIR/dks_doorbell.ini" "$TMP/bell.ini"
+"$SIM" "$TMP/bell.ini" < /dev/null > "$TMP/bell.log" 2>&1
 check "doorbell diagnostic"   "$(found "$TMP/bell.log" 'doorbell 000777')"
 check "doorbell ring"         "$(found "$TMP/bell.log" 'doorbell from')"
 

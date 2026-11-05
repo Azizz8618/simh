@@ -18,9 +18,19 @@
 P11=${1:-./BIN/pdp11}
 B6=${2:-./BIN/besm6}
 PORT=${3:-4000}
+BPORT=${BPORT:-4140}                            # the КАДОПАМ bridge port
 DIR=$(cd "$(dirname "$0")" && pwd)
 TMP=$(mktemp -d)
 PASS=0; FAIL=0
+
+# The INIs hardcode the telnet port 4000 and the bridge port 4140;
+# substitute the requested ones into a temporary copy.
+port_ini() { # port_ini <src> <dst>
+    sed -e "s/^attach dks [0-9][0-9]*/attach dks $PORT/" \
+        -e "s/^set dks bridge=[0-9][0-9]*/set dks bridge=$BPORT/" \
+        -e "s/^set dks remote=[^ \t]*/set dks remote=localhost:$BPORT/" \
+        "$1" > "$2"
+}
 
 say() { printf '%s\n' "$*"; }
 has() { printf '%s' "$1" | grep -q "$2" && echo 0 || echo 1; }
@@ -30,8 +40,9 @@ check() {
 }
 
 run_sim() { # run_sim <ini> <logfile> - start the sim over a held-open pipe
+    port_ini "$1" "$TMP/port.ini"
     rm -f "$TMP/fifo"; mkfifo "$TMP/fifo"
-    "$P11" "$1" < "$TMP/fifo" > "$2" 2>&1 &
+    "$P11" "$TMP/port.ini" < "$TMP/fifo" > "$2" 2>&1 &
     SIMPID=$!
     exec 3>"$TMP/fifo"
     sleep 1.5
@@ -83,7 +94,8 @@ check "B1.7 two prompts seen (greeting + reply)" $([ "$N" -ge 2 ] && echo 0 || e
 # ---- part 2: TESTOS=ON, editing and reconnection -----------------------
 say ""
 say "== B1: ENGINE=HOST + TESTOS=ON: editing, disconnect, reconnect =="
-sed 's/testos=prompt/testos=on/' "$DIR/dks_b1_fw.ini" > "$TMP/dks_b1_echo.ini"
+sed -e 's/testos=prompt/testos=on/' "$DIR/dks_b1_fw.ini" > "$TMP/dks_b1_on.src"
+port_ini "$TMP/dks_b1_on.src" "$TMP/dks_b1_echo.ini"
 run_sim "$TMP/dks_b1_echo.ini" "$TMP/fw2.log"
 
 OUT=$(tel 'AB\b\bCD\r\n')
@@ -103,7 +115,8 @@ check "B1.11 the second line is 'AC' after one erase" $([ "$N" -ge 1 ] && echo 0
 say ""
 say "== B1+B2: ENGINE=HOST + BRIDGE=4140 + the БЭСМ-6 ОС-заглушка =="
 run_sim "$DIR/dks_b2_e60_fw.ini" "$TMP/e60.log"
-"$B6" "$DIR/dks_b2_besm6.ini" > "$TMP/b6.log" 2>&1 &
+port_ini "$DIR/dks_b2_besm6.ini" "$TMP/dks_b2_besm6.port.ini"
+"$B6" "$TMP/dks_b2_besm6.port.ini" > "$TMP/b6.log" 2>&1 &
 B6PID=$!
 sleep 4
 

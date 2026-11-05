@@ -15,9 +15,19 @@
 P11=${1:-./BIN/pdp11}
 B6=${2:-./BIN/besm6}
 PORT=${3:-4000}
+BPORT=${BPORT:-4140}                            # the КАДОПАМ bridge port
 DIR=$(cd "$(dirname "$0")" && pwd)
 TMP=$(mktemp -d)
 PASS=0; FAIL=0
+
+# The INIs hardcode the telnet port 4000 and the bridge port 4140;
+# substitute the requested ones into a temporary copy.
+port_ini() { # port_ini <src> <dst>
+    sed -e "s/^attach dks [0-9][0-9]*/attach dks $PORT/" \
+        -e "s/^set dks bridge=[0-9][0-9]*/set dks bridge=$BPORT/" \
+        -e "s/^set dks remote=[^ \t]*/set dks remote=localhost:$BPORT/" \
+        "$1" > "$2"
+}
 
 say() { printf '%s\n' "$*"; }
 has() { printf '%s' "$1" | grep -q "$2" && echo 0 || echo 1; }
@@ -27,14 +37,16 @@ check() {
 }
 
 # ---- start the Э-60 over a held-open pipe -----------------------------
+port_ini "$DIR/dks_b2_e60.ini" "$TMP/dks_b2_e60.port.ini"
 rm -f "$TMP/fifo"; mkfifo "$TMP/fifo"
-"$P11" "$DIR/dks_b2_e60.ini" < "$TMP/fifo" > "$TMP/e60.log" 2>&1 &
+"$P11" "$TMP/dks_b2_e60.port.ini" < "$TMP/fifo" > "$TMP/e60.log" 2>&1 &
 P11PID=$!
 exec 3>"$TMP/fifo"
 sleep 1.5
 
 # ---- start the БЭСМ-6 with the ОС-заглушка ----------------------------
-"$B6" "$DIR/dks_b2_besm6.ini" > "$TMP/b6.log" 2>&1 &
+port_ini "$DIR/dks_b2_besm6.ini" "$TMP/dks_b2_besm6.port.ini"
+"$B6" "$TMP/dks_b2_besm6.port.ini" > "$TMP/b6.log" 2>&1 &
 B6PID=$!
 sleep 4
 
