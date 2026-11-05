@@ -101,7 +101,16 @@ static int os_polled;           /* КОНФУС has read the channel status */
    this mode: the engine lives on the Э-60 side.  The БЭСМ-6 keeps only
    its own state: os_polled, МПРП and ПРП6 (the interrupt arrives as an
    ATTN frame from the Э-60).  Frames: READ 01, WRITE 02, ATTN 03,
-   PING 04.  BULK_READ/BULK_WRITE (05/06) are the stage C. */
+   PING 04, BULK_READ 05, BULK_WRITE 06 (stage C).
+
+   Bulk frames carry cnt one-byte words:  the request is 8 + 2*cnt
+   bytes; BULK_READ answers 8 + 2*cnt, BULK_WRITE answers 8.  Bulk data
+   covers addresses 1..077776 only: cell 0 (channel select) and the
+   doorbell 077777 keep their single-frame side effects.  Consecutive
+   ascending 0132 writes are coalesced into BULK_WRITE frames (up to
+   BULK_MAX words); a read, cell 0, the doorbell or a non-adjacent
+   write flushes the buffer first, so the program order over the
+   bridge is preserved. */
 
 #define BRIDGE_MAGIC_REQ    0xD6
 #define BRIDGE_MAGIC_RSP    0xD7
@@ -109,6 +118,9 @@ static int os_polled;           /* КОНФУС has read the channel status */
 #define BRIDGE_OP_WRITE     02
 #define BRIDGE_OP_ATTN      03
 #define BRIDGE_OP_PING      04
+#define BRIDGE_OP_BREAD     05
+#define BRIDGE_OP_BWRITE    06
+#define BULK_MAX            64          /* words per bulk frame (stage C) */
 
 #define RS_DOWN         0       /* no socket, retry on the timer */
 #define RS_CONN         1       /* connect() in progress */
@@ -122,11 +134,21 @@ static time_t rlasttry;         /* last connect attempt, wall clock */
 static uint8 rfrm[8];           /* inbound frame accumulator */
 static int rfrm_n;
 static uint32 n_rreads, n_rwrites, n_rattn, n_rerr;     /* counters */
+static uint32 n_rbulk;          /* BULK_WRITE frames sent (stage C) */
+
+/* Write coalescing (stage C): consecutive ascending 0132 writes to the
+   same channel accumulate into one BULK_WRITE frame. */
+static int bulk_cnt;            /* words pending, 0 = buffer empty */
+static int bulk_addr;           /* address of the first pending word */
+static int bulk_chan;           /* channel of the pending words */
+static int32 bulk_buf[BULK_MAX];
+static time_t bulk_last;        /* last timed flush attempt (safety net) */
 
 static int dks_remote_connect (int force);
 static void dks_remote_drop (const char *why);
 static int dks_remote_xact (int op, int addr, int32 *val);
 static void dks_remote_poll (void);
+static void dks_bulk_flush (void);
 
 /* Pending system request: 0 none, 1 connect (await reply), 3 disconnect. */
 static int sys_busy;
@@ -173,6 +195,7 @@ REG dks_reg[] = {
     { DRDATA (BREAD, n_rreads, 32), PV_LEFT },
     { DRDATA (BWRITE, n_rwrites, 32), PV_LEFT },
     { DRDATA (BATTN, n_rattn, 32), PV_LEFT },
+    { DRDATA (BBULK, n_rbulk, 32), PV_LEFT },
     { DRDATA (BERR, n_rerr, 32), PV_LEFT },
     { 0 }
 };
@@ -210,8 +233,11 @@ static uint32 mem (int addr)
 {
     int32 val;
 
-    if (dks_remote && dks_remote_xact (BRIDGE_OP_READ, addr, &val) == 0)
-        return val & 0177777;
+    if (dks_remote) {
+        dks_bulk_flush ();
+        if (dks_remote_xact (BRIDGE_OP_READ, addr, &val) == 0)
+            return val & 0177777;
+        }
     return e60_mem[DKS_CHAN][addr & 077777];
 }
 
@@ -221,6 +247,7 @@ static void set_mem (int addr, uint32 val)
 
     e60_mem[DKS_CHAN][addr & 077777] = val & 0177777;
     if (dks_remote) {
+        dks_bulk_flush ();
         rc = (int32) (val & 0177777);
         dks_remote_xact (BRIDGE_OP_WRITE, addr, &rc);
     }
@@ -236,6 +263,8 @@ t_value dks_read (int addr)
     t_value val;
     int32 rv = 0;
 
+    if (dks_remote)
+        dks_bulk_flush ();              /* reads see all prior writes */
     if (addr == 0) {
         os_polled = 1;
         if (! dks_enabled ())
@@ -273,13 +302,30 @@ void dks_write (int addr, t_value acc)
     sim_debug (DBG_KADOPAM, &dks_dev, "0132: [%o]%05o <- %06o\n",
                cur_chan, addr, val);
     if (addr == 0) {
-        if (dks_remote)
+        if (dks_remote) {
+            dks_bulk_flush ();          /* channel switch: side effects */
             dks_remote_xact (BRIDGE_OP_WRITE, 0, &wv);
+            }
         cur_chan = val & 7;
         return;
     }
     if (dks_remote) {
-        dks_remote_xact (BRIDGE_OP_WRITE, addr, &wv);
+        if (addr == DOORBELL) {         /* the firmware reacts: flush first */
+            dks_bulk_flush ();
+            dks_remote_xact (BRIDGE_OP_WRITE, addr, &wv);
+            return;
+            }
+        /* Data write: coalesce ascending runs into BULK_WRITE frames. */
+        if (bulk_cnt > 0 && (bulk_chan != (int) (cur_chan & 3) ||
+                             addr != bulk_addr + bulk_cnt))
+            dks_bulk_flush ();          /* not adjacent: flush */
+        if (bulk_cnt == 0) {
+            bulk_chan = cur_chan & 3;
+            bulk_addr = addr;
+            }
+        bulk_buf[bulk_cnt++] = (int32) val;
+        if (bulk_cnt == BULK_MAX)
+            dks_bulk_flush ();
         return;
     }
     e60_mem[cur_chan & 3][addr] = val;
@@ -479,6 +525,17 @@ static void dks_process (void)
         return;
     if (dks_remote) {
         dks_remote_poll ();
+        /* Safety net: the protocol always flushes on reads, cell 0 and
+           the doorbell; the timed flush bounds the latency if a run
+           ever stalls with data buffered.  At most once a second. */
+        if (bulk_cnt) {
+            time_t now = time (NULL);
+
+            if (now != bulk_last) {
+                bulk_last = now;
+                dks_bulk_flush ();
+                }
+            }
         return;
     }
     drain_bufh ();
@@ -540,6 +597,7 @@ static void dks_remote_drop (const char *why)
         rsock = INVALID_SOCKET;
     }
     rfrm_n = 0;
+    bulk_cnt = 0;                   /* pending coalesced writes are lost */
     if (rstate == RS_UP)
         sim_debug (DBG_BRIDGE, &dks_dev, "bridge down: %s\n", why? why: "?");
     rstate = RS_DOWN;
@@ -635,6 +693,94 @@ static void dks_remote_poll (void)
             rfrm_n = 0;
             }
         }
+}
+
+/*
+ * Send the coalesced writes as one BULK_WRITE frame (stage C) and wait
+ * for the echo.  The buffer is dropped on any failure: the connection
+ * is gone or stale anyway.  No-op when the buffer is empty.
+ */
+static void dks_bulk_flush (void)
+{
+    uint8 req[8], pay[2*BULK_MAX];
+    int i, have, n;
+
+    if (bulk_cnt == 0 || ! dks_remote)
+        return;
+    bulk_last = time (NULL);
+    if (rstate != RS_UP) {                          /* nowhere to send */
+        bulk_cnt = 0;
+        return;
+        }
+    req[0] = BRIDGE_MAGIC_REQ;
+    req[1] = BRIDGE_OP_BWRITE;
+    req[2] = (uint8) bulk_chan;
+    req[3] = (uint8) (bulk_addr >> 8);
+    req[4] = (uint8) bulk_addr;
+    req[5] = (uint8) bulk_cnt;
+    req[6] = req[7] = 0;
+    for (i = 0; i < bulk_cnt; ++i) {
+        pay[2*i]     = (uint8) (bulk_buf[i] >> 8);
+        pay[2*i + 1] = (uint8) bulk_buf[i];
+        }
+    sim_debug (DBG_BRIDGE, &dks_dev,
+               "bridge: -> BULK_WRITE [%o]%05o x%d\n",
+               bulk_chan, bulk_addr, bulk_cnt);
+    for (have = 0; have < 8; ) {                    /* the header */
+        i = sim_write_sock (rsock, (const char *) req + have, 8 - have);
+        if (i <= 0) {
+            dks_remote_drop ("write error");
+            ++n_rerr;
+            return;
+            }
+        have += i;
+        }
+    for (have = 0; have < 2*bulk_cnt; ) {           /* the payload */
+        n = sim_write_sock (rsock, (const char *) pay + have,
+                            2*bulk_cnt - have);
+        if (n <= 0) {
+            dks_remote_drop ("write error");
+            ++n_rerr;
+            return;
+            }
+        have += n;
+        }
+    for (i = 0; i < 100; ++i) {                     /* bounded wait */
+        int spin;
+
+        for (spin = 0; spin < 200; ++spin) {
+            while ((n = sim_read_sock (rsock, (char *) rfrm + rfrm_n,
+                                       8 - rfrm_n)) > 0) {
+                rfrm_n += n;
+                if (rfrm_n == 8) {
+                    int match = (rfrm[0] == BRIDGE_MAGIC_RSP &&
+                                 rfrm[1] == (uint8) (BRIDGE_OP_BWRITE | 0x80) &&
+                                 rfrm[3] == (uint8) (bulk_addr >> 8) &&
+                                 rfrm[4] == (uint8) bulk_addr);
+
+                    rfrm_n = 0;
+                    if (match) {
+                        ++n_rbulk;
+                        bulk_cnt = 0;
+                        return;
+                        }
+                    dks_remote_frame (0, 0, NULL, FALSE);   /* ATTN etc. */
+                    }
+                }
+            if (n < 0)
+                break;
+            }
+        if (n < 0) {
+            dks_remote_drop ("read error");
+            ++n_rerr;
+            return;
+            }
+        sim_os_ms_sleep (1);
+        }
+    sim_debug (DBG_BRIDGE, &dks_dev,
+               "bridge: BULK_WRITE response timeout\n");
+    ++n_rerr;
+    bulk_cnt = 0;
 }
 
 /*

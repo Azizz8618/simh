@@ -109,14 +109,19 @@ static uint16 dks_kctl = 0;                             /* КАДОПАМ contro
 #define BRIDGE_OP_WRITE     02
 #define BRIDGE_OP_ATTN      03
 #define BRIDGE_OP_PING      04
+#define BRIDGE_OP_BREAD     05          /* bulk read: header + 2*cnt bytes */
+#define BRIDGE_OP_BWRITE    06          /* bulk write: header + payload */
+#define BRIDGE_BULK_MAX     255         /* count is one byte */
 
 static char dks_bridge_spec[CBUFSIZE] = "";             /* listening port */
 static SOCKET dks_lsock = INVALID_SOCKET;               /* master socket */
 static SOCKET dks_bsock = INVALID_SOCKET;               /* БЭСМ-6 client */
-static uint8 dks_bfrm[8];                               /* inbound frame */
+static uint8 dks_bfrm[8 + 2*BRIDGE_BULK_MAX];          /* inbound frame */
 static int32 dks_bn = 0;                                /* bytes accumulated */
+static int32 dks_bexp = 8;                              /* expected frame size */
 static uint32 dks_nreads = 0, dks_nwrites = 0,          /* frame counters */
-              dks_nattn = 0, dks_npings = 0, dks_nbad = 0;
+              dks_nattn = 0, dks_npings = 0, dks_nbad = 0,
+              dks_nbulk = 0;
 
 TMLN dks_ldsc[DKS_LINES];                               /* line descriptors */
 TMXR dks_desc = { DKS_LINES, NULL, 0, dks_ldsc };
@@ -172,6 +177,7 @@ REG dks_reg[] = {
     { ORDATAD (BATTN, dks_nattn, 32, "bridge ATTN frames sent"), PV_LEFT },
     { ORDATAD (BPING, dks_npings, 32, "bridge PING frames"), PV_LEFT },
     { ORDATAD (BBAD,  dks_nbad,  32, "bad bridge frames"), PV_LEFT },
+    { ORDATAD (BBULK, dks_nbulk, 32, "bridge BULK frames (stage C)"), PV_LEFT },
     { GRDATAD (LSTAT0, dks_lstat[0], DEV_RDX, 16, 0, "lines 1-12 connected") },
     { GRDATAD (LSTAT1, dks_lstat[1], DEV_RDX, 16, 0, "lines 13-24 connected") },
     { DRDATAD (TIME,  dks_wait,  24, "polling interval"), PV_LEFT },
@@ -764,6 +770,7 @@ if (dks_bsock != INVALID_SOCKET) {
     dks_bsock = INVALID_SOCKET;
     }
 dks_bn = 0;
+dks_bexp = 8;
 if (all && dks_lsock != INVALID_SOCKET) {
     sim_close_sock (dks_lsock);
     dks_lsock = INVALID_SOCKET;
@@ -798,11 +805,14 @@ if (sim_write_sock (dks_bsock, (const char *) f, 8) == 8) {
 return;
 }
 
-/* One complete request frame from the БЭСМ-6: execute and respond. */
+/* One complete request frame from the БЭСМ-6: execute and respond.
+   Bulk frames (05/06, stage C) carry cnt data words: 8 + 2*cnt bytes.
+   Bulk data covers addresses 1..077776 only: cell 0 (channel select)
+   and the doorbell 077777 keep their single-frame side effects. */
 static void dks_bridge_frame (const uint8 *req)
 {
-uint8 rsp[8];
-int32 op = req[1], chan = req[2] & 7;
+uint8 rsp[8 + 2*BRIDGE_BULK_MAX];
+int32 op = req[1], chan = req[2] & 3;               /* КРК: 4 канала */
 int32 addr = (req[3] << 8) | req[4];
 int32 val = (req[5] << 8) | req[6];
 
@@ -866,6 +876,77 @@ case BRIDGE_OP_PING:
     sim_debug (DBG_BRIDGE, &dks_dev, "bridge: PING\n");
     break;
 
+case BRIDGE_OP_BREAD: {                             /* bulk read (stage C) */
+    int32 cnt = req[5], i;
+
+    ++dks_nbulk;
+    if (cnt == 0 || addr == 0 || addr + cnt > 077777) {
+        sim_debug (DBG_BRIDGE, &dks_dev,
+                   "bridge: BULK_READ [%o]%05o x%d rejected\n",
+                   chan, addr, cnt);
+        cnt = 0;                                    /* error reply */
+        }
+    else {
+        sim_debug (DBG_BRIDGE, &dks_dev,
+                   "bridge: BULK_READ [%o]%05o x%d\n", chan, addr, cnt);
+        for (i = 0; i < cnt; ++i) {
+            int32 w = e60_mem[chan][addr + i];
+
+            rsp[8 + 2*i] = (w >> 8) & 0377;
+            rsp[9 + 2*i] = w & 0377;
+            }
+        }
+    rsp[0] = BRIDGE_MAGIC_RSP;
+    rsp[1] = op | 0x80;
+    rsp[2] = req[2];
+    rsp[3] = req[3];
+    rsp[4] = req[4];
+    rsp[5] = cnt;
+    rsp[6] = rsp[7] = 0;
+    if (sim_write_sock (dks_bsock, (const char *) rsp, 8 + 2*cnt) < 0)
+        sim_debug (DBG_BRIDGE, &dks_dev,
+                   "bridge: response write failed\n");
+    return;
+    }
+
+case BRIDGE_OP_BWRITE: {                            /* bulk write (stage C) */
+    int32 cnt = req[5], i;
+
+    ++dks_nbulk;
+    if (cnt == 0 || addr == 0 || addr + cnt > 077777) {
+        sim_debug (DBG_BRIDGE, &dks_dev,
+                   "bridge: BULK_WRITE [%o]%05o x%d rejected\n",
+                   chan, addr, cnt);
+        cnt = 0;
+        }
+    else {
+        sim_debug (DBG_BRIDGE, &dks_dev,
+                   "bridge: BULK_WRITE [%o]%05o x%d\n", chan, addr, cnt);
+        for (i = 0; i < cnt; ++i) {
+            int32 a = addr + i, w = (req[8 + 2*i] << 8) | req[9 + 2*i];
+
+            e60_mem[chan][a] = (uint16) w;
+            if (chan == DKS_CHAN && a >= AREA_BASE &&
+                a < AREA (DKS_LINES + 1) && (a - AREA_BASE) % AREA_SIZE < 8)
+                sim_debug (DBG_RING, &dks_dev,
+                           "line %d area+%d <- %06o\n",
+                           (a - AREA_BASE) / AREA_SIZE,
+                           (a - AREA_BASE) % AREA_SIZE, w);
+            }
+        }
+    rsp[0] = BRIDGE_MAGIC_RSP;
+    rsp[1] = op | 0x80;
+    rsp[2] = req[2];
+    rsp[3] = req[3];
+    rsp[4] = req[4];
+    rsp[5] = cnt;
+    rsp[6] = rsp[7] = 0;
+    if (sim_write_sock (dks_bsock, (const char *) rsp, 8) < 0)
+        sim_debug (DBG_BRIDGE, &dks_dev,
+                   "bridge: response write failed\n");
+    return;
+    }
+
 default:                                            /* unknown op */
     ++dks_nbad;
     sim_debug (DBG_BRIDGE, &dks_dev, "bridge: bad op %o\n", op);
@@ -903,7 +984,7 @@ if (dks_lsock != INVALID_SOCKET) {
 if (dks_bsock == INVALID_SOCKET)
     return;
 while ((n = sim_read_sock (dks_bsock, (char *) dks_bfrm + dks_bn,
-                           8 - dks_bn)) != 0) {
+                           dks_bexp - dks_bn)) != 0) {
     if (n < 0) {                                    /* connection lost */
         sim_debug (DBG_BRIDGE, &dks_dev,
                    "bridge: БЭСМ-6 disconnected\n");
@@ -911,7 +992,13 @@ while ((n = sim_read_sock (dks_bsock, (char *) dks_bfrm + dks_bn,
         return;
         }
     dks_bn += n;
-    if (dks_bn == 8) {
+    if (dks_bexp == 8 && dks_bn >= 6 &&
+        dks_bfrm[1] == BRIDGE_OP_BWRITE)
+        dks_bexp = 8 + 2 * dks_bfrm[5];             /* + payload */
+    else if (dks_bexp == 8 && dks_bn >= 6 &&
+             dks_bfrm[1] == BRIDGE_OP_BREAD)
+        dks_bexp = 8;                   /* the reply carries the data */
+    if (dks_bn == dks_bexp) {
         if (dks_bfrm[0] == BRIDGE_MAGIC_REQ)
             dks_bridge_frame (dks_bfrm);
         else {
@@ -920,6 +1007,7 @@ while ((n = sim_read_sock (dks_bsock, (char *) dks_bfrm + dks_bn,
                        "bridge: bad magic %02x, frame dropped\n", dks_bfrm[0]);
             }
         dks_bn = 0;
+        dks_bexp = 8;
         }
     }
 return;

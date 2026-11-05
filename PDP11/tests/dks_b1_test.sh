@@ -123,23 +123,7 @@ sleep 4
 OUT=$(tel 'HELLO\r\n')
 echo "$OUT" | head -5 > "$TMP/tel3.txt"
 
-check "B1B2.1 bridge client accepted" \
-      "$(has "$(cat "$TMP/e60.log")" 'bridge: client .* connected')"
-check "B1B2.2 bridge up (БЭСМ-6 log)" \
-      "$(has "$(cat "$TMP/b6.log")" 'bridge up')"
-check "B1B2.3 channel status read 002000 over the bridge" \
-      "$(has "$(cat "$TMP/b6.log")" '032: \[[0-2]\]00000 -> 002000')"
-check "B1B2.4 connect reply reached the firmware" \
-      "$(has "$(cat "$TMP/e60.log")" 'doorbell from БЭСМ-6')"
-N=$(printf '%s' "$OUT" | grep -c HELLO)
-check "B1B2.5 HELLO echoed locally and by the ОС" $([ "$N" -ge 2 ] && echo 0 || echo 1)
-check "B1B2.6 ПРП6 by ATTN frame (БЭСМ-6 log)" \
-      "$(has "$(cat "$TMP/b6.log")" 'ATTN .ПРП 6.')"
-# the ОС-заглушка commands the output array: [AREA(1)+5] <- 4 = 02405
-check "B1B2.7 output array commanded through the ОС" \
-      "$(has "$(cat "$TMP/e60.log")" 'WRITE \[2\]02405 <- 000004')"
-
-# ---- shutdown ---------------------------------------------------------
+# ---- shutdown: the logs are block-buffered, flush them first -----------
 printf '\005' >&3
 printf 'detach dks\nquit\n' >&3
 i=0
@@ -152,6 +136,24 @@ exec 3>&-
 kill $SIMPID $B6PID 2>/dev/null
 wait $SIMPID $B6PID 2>/dev/null
 sleep 0.3
+
+check "B1B2.1 bridge client accepted" \
+      "$(has "$(cat "$TMP/e60.log")" 'bridge: client .* connected')"
+check "B1B2.2 bridge up (БЭСМ-6 log)" \
+      "$(has "$(cat "$TMP/b6.log")" 'bridge up')"
+check "B1B2.3 channel status read 002000 over the bridge" \
+      "$(has "$(cat "$TMP/b6.log")" '032: \[[0-2]\]00000 -> 002000')"
+check "B1B2.4 connect reply reached the firmware" \
+      "$(has "$(cat "$TMP/e60.log")" 'doorbell from БЭСМ-6')"
+N=$(printf '%s' "$OUT" | grep -c HELLO)
+check "B1B2.5 HELLO echoed locally and by the ОС" $([ "$N" -ge 2 ] && echo 0 || echo 1)
+check "B1B2.6 ПРП6 by ATTN frame (БЭСМ-6 log)" \
+      "$(has "$(cat "$TMP/b6.log")" 'ATTN .ПРП 6.')"
+# the ОС-заглушка commands the output array: [AREA(1)+5] <- 4 = 02405.
+# The command word may arrive as a coalesced BULK_WRITE (stage C), so
+# check the area-write trace, which both single and bulk writes emit.
+check "B1B2.7 output array commanded through the ОС" \
+      "$(has "$(cat "$TMP/e60.log")" 'line 1 area+5 <- 000004')"
 
 say ""
 say "passed: $PASS, failed: $FAIL"

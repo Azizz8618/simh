@@ -53,6 +53,22 @@ sleep 4
 OUT=$(printf 'HELLO\r\n' | python3 "$DIR/dks_telnet_test.py" 127.0.0.1 "$PORT" 10)
 echo "$OUT" | head -5 > "$TMP/telnet.txt"
 
+# ---- shutdown: the logs are block-buffered, flush them first -----------
+# Graceful: Ctrl-E stops the CPU, QUIT exits; the process must exit by
+# itself so that the buffered stdout (the debug log) reaches the file.
+printf '\005' >&3                                  # Ctrl-E: stop the CPU
+printf 'detach dks\nquit\n' >&3
+i=0
+while [ $i -lt 20 ]; do                            # up to 10 s
+    kill -0 $P11PID 2>/dev/null || break
+    sleep 0.5
+    i=$((i+1))
+    done
+exec 3>&-
+kill $P11PID $B6PID 2>/dev/null                    # the Э-60 should be gone
+wait $P11PID $B6PID 2>/dev/null
+sleep 0.3                                          # tail of the flush
+
 check "B2.1 bridge client accepted (Э-60 log)" \
       "$(has "$(cat "$TMP/e60.log")" 'bridge: client .* connected')"
 check "B2.2 bridge up (БЭСМ-6 log)" \
@@ -71,22 +87,6 @@ check "B2.8 doorbell delivered to the Э-60" \
       "$(has "$(cat "$TMP/e60.log")" 'doorbell from БЭСМ-6')"
 check "B2.9 output array went through the ОС" \
       "$(has "$(cat "$TMP/e60.log")" 'output cmd 4')"
-
-# ---- shutdown ---------------------------------------------------------
-# Graceful: Ctrl-E stops the CPU, QUIT exits; the process must exit by
-# itself so that the buffered stdout (the debug log) reaches the file.
-printf '\005' >&3                                  # Ctrl-E: stop the CPU
-printf 'detach dks\nquit\n' >&3
-i=0
-while [ $i -lt 20 ]; do                            # up to 10 s
-    kill -0 $P11PID 2>/dev/null || break
-    sleep 0.5
-    i=$((i+1))
-    done
-exec 3>&-
-kill $P11PID $B6PID 2>/dev/null                    # the Э-60 should be gone
-wait $P11PID $B6PID 2>/dev/null
-sleep 0.3                                          # tail of the flush
 
 say ""
 say "passed: $PASS, failed: $FAIL"
