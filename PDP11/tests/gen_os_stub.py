@@ -131,6 +131,7 @@ PROGRAM = [
     (None,      'atx V_SP',         'xta V_RECV'),      # recv += count
     (None,      'arx V_CNT',        'aax D_RMASK'),
     (None,      'atx V_RECV',       '0 132 141'),       # освободить слоты
+    (None,      'xta D_BELL',       '17 132 0'),        # звонок: слоты взяты
 
     ('L_SLOT',  'xta V_CNT',        ''),                # ещё есть?
     (None,      'по L_MAIN',        'пб L_DEC'),
@@ -157,6 +158,7 @@ PROGRAM = [
     (None,      '0 132 160',        ''),                # АБФОСH+1 <- терм (= линия)
     (None,      'xta D_ZERO',       '0 132 161'),       # АБФОСH+2 <- 0
     (None,      'xta D_MARK',       '0 132 157'),       # АБФОСH+0 <- 2  ПОСЛЕДНЕЙ
+    (None,      'xta D_BELL',       '17 132 0'),        # звонок: у ОС ответ
     (None,      'пб L_SLOT',        'пб L_SLOT'),
 
     # --- событие линии ---
@@ -179,6 +181,7 @@ PROGRAM = [
     ('L_OUTDONE', 'мод V_AREA',     'э32 1'),
     (None,      'сд D_SH24',        'aax D_CFLAG'),
     (None,      'мод V_AREA',       '0 132 1'),
+    (None,      'xta D_BELL',       '17 132 0'),        # звонок: флаг снят
     (None,      'пб L_SLOT',        'пб L_SLOT'),
 
     # ввод готов: ACK статуса 0, эхо массива, АБУФH, звонок
