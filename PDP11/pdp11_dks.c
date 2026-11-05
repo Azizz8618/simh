@@ -72,8 +72,9 @@
 
 #define DKS_FIFO_SIZE   512                             /* received data FIFO */
 
-/* ОЗУ Э-60, one bank per КРК channel; only channel DKS_CHAN is backed. */
+/* ОЗУ Э-60, one bank per КРК channel; only dks_chan is backed here. */
 static uint16 e60_mem[4][32768];
+static int32 dks_chan = DKS_CHAN;                       /* КРК channel of this Э-60 */
 static uint32 cur_chan = DKS_CHAN;                      /* window channel */
 
 static uint16 dks_csr = 0;                              /* control/status */
@@ -139,6 +140,8 @@ int32 dks_atninta (void);
 t_stat dks_setnl (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_set_engine (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_engine (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+t_stat dks_set_chan (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_show_chan (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat dks_set_testos (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_testos (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat dks_set_log (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
@@ -205,6 +208,9 @@ MTAB dks_mod[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "ENGINE", "ENGINE=SIM|HOST",
         &dks_set_engine, &dks_show_engine, NULL,
         "Protocol engine: SIM (in C, stage A) or HOST (in firmware, stage B1)" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "CHAN", "CHAN=k",
+        &dks_set_chan, &dks_show_chan, NULL,
+        "The КРК channel of this Э-60 instance, 0-3 (stage C, default 2)" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "TESTOS", "TESTOS=OFF|ON|PROMPT",
         &dks_set_testos, &dks_show_testos, NULL,
         "OS-side stub for stage A: echo loop, prompt dialog, or off" },
@@ -802,7 +808,7 @@ if (dks_bsock == INVALID_SOCKET)
     return;
 f[0] = BRIDGE_MAGIC_REQ;
 f[1] = BRIDGE_OP_ATTN;
-f[2] = DKS_CHAN;
+f[2] = dks_chan;
 f[3] = sreq? 1: 0;
 f[4] = f[5] = f[6] = f[7] = 0;
 if (sim_write_sock (dks_bsock, (const char *) f, 8) == 8) {
@@ -834,8 +840,9 @@ switch (op) {
 
 case BRIDGE_OP_READ:                                /* КАДОПАМ 032 */
     ++dks_nreads;
-    if (addr == 0)                                  /* channel status */
-        val = DKS_STATUS;
+    if (addr == 0)                                  /* channel status:
+                                                       this instance's bit */
+        val = 0400 << dks_chan;
     else if (addr == 2)                             /* номнпр */
         val = NOMNPR;
     else
@@ -854,7 +861,7 @@ case BRIDGE_OP_WRITE:                               /* КАДОПАМ 0132 */
         break;
         }
     e60_mem[chan][addr] = (uint16) val;
-    if (chan == DKS_CHAN && addr == DOORBELL) {     /* the БЭСМ-6 rings */
+    if (chan == dks_chan && addr == DOORBELL) {     /* the БЭСМ-6 rings */
         if (val & ~DOORBELL_RING)
             sim_debug (DBG_RING, &dks_dev, "doorbell %06o\n", val);
         if (val & DOORBELL_RING) {
@@ -867,7 +874,7 @@ case BRIDGE_OP_WRITE:                               /* КАДОПАМ 0132 */
                 sim_activate (&dks_unit, 20);       /* like the reference */
             }
         }
-    else if (chan == DKS_CHAN &&
+    else if (chan == dks_chan &&
              addr >= AREA_BASE && addr < AREA (DKS_LINES + 1) &&
              (addr - AREA_BASE) % AREA_SIZE < 8)
         sim_debug (DBG_RING, &dks_dev, "line %d area+%d <- %06o\n",
@@ -934,7 +941,7 @@ case BRIDGE_OP_BWRITE: {                            /* bulk write (stage C) */
             int32 a = addr + i, w = (req[8 + 2*i] << 8) | req[9 + 2*i];
 
             e60_mem[chan][a] = (uint16) w;
-            if (chan == DKS_CHAN && a >= AREA_BASE &&
+            if (chan == dks_chan && a >= AREA_BASE &&
                 a < AREA (DKS_LINES + 1) && (a - AREA_BASE) % AREA_SIZE < 8)
                 sim_debug (DBG_RING, &dks_dev,
                            "line %d area+%d <- %06o\n",
@@ -1236,7 +1243,7 @@ t_stat dks_rd (int32 *data, int32 PA, int32 access)
         break;
 
     case 06:                                        /* KCTL */
-        *data = DKS_STATUS | (int32) (cur_chan & KCTL_M_CHAN);
+        *data = (0400 << dks_chan) | (int32) (cur_chan & KCTL_M_CHAN);
         break;
 
     case 07:                                        /* LSTAT0/1 */
@@ -1429,8 +1436,8 @@ t_stat dks_reset (DEVICE *dptr)
     dks_desc.dptr = dptr;
     dks_desc.uptr = &dks_unit;
     memset (e60_mem, 0, sizeof (e60_mem));
-    cur_chan = DKS_CHAN;
-    dks_kctl = DKS_CHAN;
+    cur_chan = dks_chan;
+    dks_kctl = dks_chan;
     sys_busy = 0;
     sys_line = 0;
     bufh_recv = 0;
@@ -1524,6 +1531,30 @@ t_stat dks_set_engine (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 t_stat dks_show_engine (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
 {
     fprintf (st, "engine=%s", (dks_engine == ENGINE_SIM)? "SIM": "HOST");
+    return SCPE_OK;
+    }
+
+/* SET CHAN=k: the КРК channel of this Э-60 instance (0-3).  Several
+   Э-60 simulators (stage C multi-channel) each claim their own channel;
+   the default is 2, the channel of the reference ДКС. */
+t_stat dks_set_chan (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+    t_stat r;
+    int32 k;
+
+    if (cptr == NULL || *cptr == 0)
+        return SCPE_ARG;
+    k = (int32) get_uint (cptr, 8, 3, &r);
+    if (r != SCPE_OK)
+        return r;
+    dks_chan = k;
+    cur_chan = k;
+    return SCPE_OK;
+    }
+
+t_stat dks_show_chan (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+    fprintf (st, "chan=%o", dks_chan);
     return SCPE_OK;
     }
 
