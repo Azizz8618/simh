@@ -418,6 +418,18 @@ static void drain_bufh (void)
         int abonent = mem (A_BUFH + 2 + bufh_recv);
         int n;
 
+        if (abonent == 0) {
+            /* The ОС advances the ring pointer before writing the slot
+               cell (observed with СВЯЗЬ7).  This drain runs between
+               guest instructions, so it can observe the advanced
+               pointer with the slot write of the same notification not
+               done yet; 0 is never a valid abonent - defer the entry
+               to a later tick instead of losing it. */
+            sim_debug (DBG_RING, &dks_dev,
+                       "ring slot %d: entry not posted yet\n",
+                       (int) bufh_recv);
+            break;
+        }
         bufh_recv = (bufh_recv + 1) & RING_MASK;
         set_mem (A_BUFH + 1, bufh_recv);
         sim_debug (DBG_RING, &dks_dev, "got %d\n", abonent);

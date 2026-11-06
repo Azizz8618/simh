@@ -465,6 +465,20 @@ static void drain_bufh (void)
         int abonent = mem (A_BUFH + 2 + bufh_recv);
         int n;
 
+        if (abonent == 0) {
+            /* The ОС advances the ring pointer before writing the slot
+               cell.  Over the КАДОПАМ bridge the pointer update can
+               arrive one TCP frame ahead of the slot, and this polling
+               drain would then read the stale 0 and lose the
+               notification (the real one gets skipped when it lands).
+               0 is never a valid abonent: defer the entry to a later
+               tick - the doorbell that completes the post wakes us
+               again, and by then the slot has crossed. */
+            sim_debug (DBG_RING, &dks_dev,
+                       "ring slot %d: entry not posted yet\n",
+                       (int) bufh_recv);
+            break;
+            }
         bufh_recv = (bufh_recv + 1) & RING_MASK;
         set_mem (A_BUFH + 1, bufh_recv);
         sim_debug (DBG_RING, &dks_dev, "got %d\n", abonent);
