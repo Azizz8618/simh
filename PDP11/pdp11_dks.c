@@ -1065,7 +1065,8 @@ int32 n;
 
 if (dks_lsock != INVALID_SOCKET) {
     char *connectaddr = NULL;
-    SOCKET newsock = sim_accept_conn (dks_lsock, &connectaddr);
+    SOCKET newsock = sim_accept_conn_ex (dks_lsock, &connectaddr,
+                                        SIM_SOCK_OPT_NODELAY);
 
     if (newsock != INVALID_SOCKET) {
         if (dks_bsock != INVALID_SOCKET) {          /* replace the stale one */

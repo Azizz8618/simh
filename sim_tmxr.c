@@ -1135,7 +1135,7 @@ if (mp->master) {
         mp->ring_ipad = NULL;
         }
     else
-        newsock = sim_accept_conn_ex (mp->master, &address, (mp->packet ? SIM_SOCK_OPT_NODELAY : 0));/* poll connect */
+        newsock = sim_accept_conn_ex (mp->master, &address, SIM_SOCK_OPT_NODELAY);/* poll connect */
 
     if (newsock != INVALID_SOCKET) {                    /* got a live one? */
         snprintf (msg, sizeof (msg) - 1, "tmxr_poll_conn() - Connection from %s", address);
@@ -1326,7 +1326,7 @@ for (i = 0; i < mp->lines; i++) {                       /* check each line in se
                 break;
             case 1:
                 if (lp->master) {                                   /* Check for a pending Telnet/tcp connection */
-                    while (INVALID_SOCKET != (newsock = sim_accept_conn_ex (lp->master, &address, (lp->packet ? SIM_SOCK_OPT_NODELAY : 0)))) {/* got a live one? */
+                    while (INVALID_SOCKET != (newsock = sim_accept_conn_ex (lp->master, &address, SIM_SOCK_OPT_NODELAY))) {/* got a live one? */
                         char *sockname, *peername;
 
                         sim_getnames_sock (newsock, &sockname, &peername);
@@ -1407,7 +1407,7 @@ for (i = 0; i < mp->lines; i++) {                       /* check each line in se
         snprintf (msg, sizeof (msg) - 1, "tmxr_poll_conn() - establishing outgoing connection to: %s", lp->destination);
         tmxr_debug_connect_line (lp, msg);
         lp->connecting = sim_connect_sock_ex (lp->datagram ? lp->port : NULL, lp->destination, "localhost", NULL, (lp->datagram ? SIM_SOCK_OPT_DATAGRAM : 0)  |
-                                                                                                                  (lp->mp->packet ? SIM_SOCK_OPT_NODELAY : 0));
+                                                                                                                  SIM_SOCK_OPT_NODELAY);
         }
 
     }
@@ -1478,7 +1478,7 @@ if ((lp->destination) && (!lp->serport)) {
         sprintf (msg, "tmxr_reset_ln_ex() - connecting to %s", lp->destination);
         tmxr_debug_connect_line (lp, msg);
         lp->connecting = sim_connect_sock_ex (lp->datagram ? lp->port : NULL, lp->destination, "localhost", NULL, (lp->datagram ? SIM_SOCK_OPT_DATAGRAM : 0) |
-                                                                                                                  (lp->packet ? SIM_SOCK_OPT_NODELAY : 0));
+                                                                                                                  SIM_SOCK_OPT_NODELAY);
         }
     }
 tmxr_init_line (lp);                                /* initialize line state */
@@ -1942,7 +1942,7 @@ if (lp->mp && lp->modem_control) {                  /* This API ONLY works on mo
                 sprintf (msg, "tmxr_set_get_modem_bits() - establishing outgoing connection to: %s", lp->destination);
                 tmxr_debug_connect_line (lp, msg);
                 lp->connecting = sim_connect_sock_ex (lp->datagram ? lp->port : NULL, lp->destination, "localhost", NULL, (lp->datagram ? SIM_SOCK_OPT_DATAGRAM : 0) |
-                                                                                                                          (lp->packet ? SIM_SOCK_OPT_NODELAY : 0));
+                                                                                                                          SIM_SOCK_OPT_NODELAY);
                 }
             }
         }
@@ -3235,7 +3235,7 @@ while (*tptr) {
                             return sim_messagef (SCPE_ARG, "Unexpected specifier: %s\n", eptr);
                 }
             sock = sim_connect_sock_ex (NULL, hostport, "localhost", NULL, (datagram ? SIM_SOCK_OPT_DATAGRAM : 0) |
-                                                                           (packet ? SIM_SOCK_OPT_NODELAY : 0));
+                                                                           SIM_SOCK_OPT_NODELAY);
             if (sock != INVALID_SOCKET)
                 sim_close_sock (sock);
             else
@@ -3356,7 +3356,7 @@ while (*tptr) {
         if ((listen[0]) && (!datagram)) {
             sock = sim_master_sock_ex (listen, &r,          /* make master socket */
                                        ((sim_switches & SWMASK ('U')) ? SIM_SOCK_OPT_REUSEADDR : 0) |
-                                       (mp->packet ? SIM_SOCK_OPT_NODELAY : 0)                      |
+                                       SIM_SOCK_OPT_NODELAY                      |
                                        SIM_SOCK_OPT_SET_BACKLOG(listenbacklog));
 
             if (r)
@@ -3456,7 +3456,7 @@ while (*tptr) {
                     }
                 lp->packet = packet;
                 sock = sim_connect_sock_ex (datagram ? listen : NULL, hostport, "localhost", NULL, (datagram ? SIM_SOCK_OPT_DATAGRAM : 0) |
-                                                                                                   (packet ? SIM_SOCK_OPT_NODELAY : 0));
+                                                                                                   SIM_SOCK_OPT_NODELAY);
                 if (sock != INVALID_SOCKET) {
                     _mux_detach_line (lp, FALSE, TRUE);
                     lp->destination = (char *)malloc(1+strlen(hostport));
@@ -3602,7 +3602,7 @@ while (*tptr) {
                 lp->backlog = mp->backlog;
             sock = sim_master_sock_ex (listen, &r,          /* make master socket */
                                        ((sim_switches & SWMASK ('U')) ? SIM_SOCK_OPT_REUSEADDR : 0) |
-                                       (lp->packet ? SIM_SOCK_OPT_NODELAY : 0)                      |
+                                       SIM_SOCK_OPT_NODELAY                      |
                                        SIM_SOCK_OPT_SET_BACKLOG(lp->backlog));
             if (r)
                 return sim_messagef (SCPE_ARG, "Invalid Listen Specification: %s\n", listen);
@@ -3652,7 +3652,7 @@ while (*tptr) {
                             return sim_messagef (SCPE_ARG, "Missing listen port for Datagram socket\n");
                         }
                     sock = sim_connect_sock_ex (datagram ? listen : NULL, hostport, "localhost", NULL, (datagram ? SIM_SOCK_OPT_DATAGRAM : 0) |
-                                                                                                       (packet ? SIM_SOCK_OPT_NODELAY : 0));
+                                                                                                       SIM_SOCK_OPT_NODELAY);
                     if (sock != INVALID_SOCKET) {
                         _mux_detach_line (lp, FALSE, TRUE);
                         lp->destination = (char *)malloc(1+strlen(hostport));

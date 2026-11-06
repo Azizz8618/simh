@@ -662,7 +662,8 @@ static int dks_remote_connect (int idx, int force)
             return 0;
         rlasttry[idx] = now;
         dks_remote_spec_of (idx, spec);
-        rsocks[idx] = sim_connect_sock_ex (NULL, spec, NULL, NULL, 0);
+        rsocks[idx] = sim_connect_sock_ex (NULL, spec, NULL, NULL,
+                                    SIM_SOCK_OPT_NODELAY);   /* interactive */
         if (rsocks[idx] == INVALID_SOCKET)
             return 0;
         rst[idx] = RS_CONN;
