@@ -158,6 +158,7 @@ static int sys_busy;
 static int sys_line;
 static uint32 sys_src;          /* абуфs source count when it was posted */
 static uint32 bufh_recv;        /* our receiver count in абуфh */
+static uint32 bufh_bell;        /* абуфh head as of the last doorbell */
 
 static struct dks_line {
     int     up;                 /* the Э-60 sees the line as connected */
@@ -340,8 +341,12 @@ void dks_write (int addr, t_value acc)
     if (addr == DOORBELL) {
         if (val & ~DOORBELL_RING)
             sim_debug (DBG_RING, &dks_dev, "doorbell %06o\n", val);
-        if (val & DOORBELL_RING)
+        if (val & DOORBELL_RING) {
+            /* The head write of the post is already in the ОЗУ (the
+               store above) - the post is complete, sample the head. */
+            bufh_bell = mem (A_BUFH) & RING_MASK;
             sim_activate (&dks_unit, 20);
+            }
     } else if (addr >= AREA_BASE && addr < AREA(DKS_LINES + 1) &&
                (addr - AREA_BASE) % AREA_SIZE < 8) {
         sim_debug (DBG_RING, &dks_dev, "line %d area+%d <- %06o\n",
@@ -408,23 +413,29 @@ static void take_output (int n)
 }
 
 /*
- * Ring from the OS: take every entry posted since the last doorbell.
+ * Ring from the OS: take every entry posted up to the last doorbell.
+ *
+ * The ОС advances the ring head BEFORE writing the slot cell
+ * (observed with СВЯЗЬ7); a drain that polls the live head can run in
+ * between and read whatever the slot still held: 0, or - once the
+ * ring has wrapped - the stale abonent of the previous cycle
+ * (observed over the bridge: slot 0 still held 48 from the system
+ * reply, a phantom entry was consumed and the real output post was
+ * skipped for good).  The doorbell completes a post, so the head is
+ * sampled AT the doorbell, like the real firmware that sleeps until
+ * rung.
  */
 static void drain_bufh (void)
 {
-    uint32 src = mem (A_BUFH) & RING_MASK;
+    uint32 src = bufh_bell;
 
     while (bufh_recv != src) {
         int abonent = mem (A_BUFH + 2 + bufh_recv);
         int n;
 
         if (abonent == 0) {
-            /* The ОС advances the ring pointer before writing the slot
-               cell (observed with СВЯЗЬ7).  This drain runs between
-               guest instructions, so it can observe the advanced
-               pointer with the slot write of the same notification not
-               done yet; 0 is never a valid abonent - defer the entry
-               to a later tick instead of losing it. */
+            /* Belt and suspenders: a post is never complete without
+               its doorbell, but a 0 slot still means "not landed". */
             sim_debug (DBG_RING, &dks_dev,
                        "ring slot %d: entry not posted yet\n",
                        (int) bufh_recv);
@@ -1044,6 +1055,7 @@ t_stat dks_reset (DEVICE *dptr)
     os_polled = 0;
     sys_busy = 0;
     bufh_recv = 0;
+    bufh_bell = 0;
     dks_remote_drop (-1);           /* the bridge is re-established on demand */
     for (n = 1; n <= DKS_LINES; ++n) {
         int up = line[n].up || line[n].want_connect;

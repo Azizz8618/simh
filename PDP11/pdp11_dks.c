@@ -294,6 +294,7 @@ static int sys_busy = 0;        /* 0 none, 1 connect (await reply), 3 disconnect
 static int sys_line = 0;
 static uint32 sys_src = 0;      /* абуфs source count when it was posted */
 static uint32 bufh_recv = 0;    /* our receiver count in абуфh */
+static uint32 bufh_bell = 0;    /* абуфh head as of the last doorbell */
 
 static int testos_term_used[DKS_LINES + 1]; /* ОС terminal numbers in use */
 
@@ -456,24 +457,29 @@ static void take_output (int n)
     dks_line[n].out_done = 1;
     }
 
-/* Ring from the ОС: take every entry posted since the last doorbell. */
+/* Ring from the ОС: take every entry posted up to the last doorbell.
+
+   The ОС advances the ring head BEFORE writing the slot cell
+   (observed with СВЯЗЬ7), and over the КАДОПАМ bridge the head update
+   arrives one TCP frame ahead of the slot.  A drain that polls the
+   live head can then run in between and read whatever the slot still
+   held: 0, or - once the ring has wrapped - the STALE abonent of the
+   previous cycle (observed: slot 0 still held 48 from the system
+   reply, the drain consumed a phantom and the real output post was
+   skipped for good - the terminal went silent after four exchanges).
+   The doorbell completes a post, so the head is sampled AT the
+   doorbell, exactly like the real firmware that sleeps until rung. */
 static void drain_bufh (void)
 {
-    uint32 src = mem (A_BUFH) & RING_MASK;
+    uint32 src = bufh_bell;
 
     while (bufh_recv != src) {
         int abonent = mem (A_BUFH + 2 + bufh_recv);
         int n;
 
         if (abonent == 0) {
-            /* The ОС advances the ring pointer before writing the slot
-               cell.  Over the КАДОПАМ bridge the pointer update can
-               arrive one TCP frame ahead of the slot, and this polling
-               drain would then read the stale 0 and lose the
-               notification (the real one gets skipped when it lands).
-               0 is never a valid abonent: defer the entry to a later
-               tick - the doorbell that completes the post wakes us
-               again, and by then the slot has crossed. */
+            /* Belt and suspenders: a post is never complete without
+               its doorbell, but a 0 slot still means "not landed". */
             sim_debug (DBG_RING, &dks_dev,
                        "ring slot %d: entry not posted yet\n",
                        (int) bufh_recv);
@@ -716,8 +722,14 @@ static void testos_ring (void)
         dks_csr |= DKS_CSR_ATN;
         dks_update_atni ();
         }
-    else
+    else {
+        /* The TESTOS ОС completes its post with the doorbell, like the
+           real СВЯЗЬ7: the cell write is what the firmware would see,
+           the snapshot is what drain_bufh consumes up to. */
+        set_mem (DOORBELL, DOORBELL_RING);
+        bufh_bell = mem (A_BUFH) & RING_MASK;
         sim_activate (&dks_unit, 20);               /* like the reference */
+        }
     }
 
 /* Write a string as an output array and ring the Э-60 (DEV: ASCII text
@@ -935,6 +947,9 @@ case BRIDGE_OP_WRITE:                               /* КАДОПАМ 0132 */
             sim_debug (DBG_RING, &dks_dev, "doorbell %06o\n", val);
         if (val & DOORBELL_RING) {
             sim_debug (DBG_IRQ, &dks_dev, "doorbell from БЭСМ-6\n");
+            /* The head write of the post crossed before (TCP frame
+               order); the post is complete - sample the head. */
+            bufh_bell = mem (A_BUFH) & RING_MASK;
             if (dks_engine == ENGINE_HOST) {        /* firmware reacts */
                 dks_csr |= DKS_CSR_ATN;
                 dks_update_atni ();
@@ -1403,6 +1418,9 @@ t_stat dks_wr (int32 ldata, int32 PA, int32 access)
                 sim_debug (DBG_RING, &dks_dev, "doorbell %06o\n", data);
             if (data & DOORBELL_RING) {
                 sim_debug (DBG_IRQ, &dks_dev, "doorbell from БЭСМ-6\n");
+                /* The head of the post is already in the ОЗУ (the
+                   store above) - the post is complete, sample it. */
+                bufh_bell = mem (A_BUFH) & RING_MASK;
                 if (dks_engine == ENGINE_HOST) {    /* stage B1: firmware reacts */
                     dks_csr |= DKS_CSR_ATN;
                     dks_update_atni ();
@@ -1551,6 +1569,7 @@ t_stat dks_reset (DEVICE *dptr)
     sys_busy = 0;
     sys_line = 0;
     bufh_recv = 0;
+    bufh_bell = 0;
     os_polled = (dks_testos != TESTOS_OFF);         /* TESTOS emulates the ОС */
     memset (testos_term_used, 0, sizeof (testos_term_used));
     dks_bridge_close (FALSE);                       /* drop the client, keep listening */
