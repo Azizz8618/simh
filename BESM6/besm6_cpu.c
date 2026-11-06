@@ -2003,11 +2003,55 @@ t_stat sim_instr (void)
  * and matching the available software binaries.
  * Some installations used 50 Hz with a modified OS
  * for a better user time/system time ratio.
+ *
+ * SET CLK SPEED=n runs the whole model n times faster than wall
+ * time: the CPU budget per wall second, the 250 Hz timer, the
+ * slow clock and the OS scheduling quanta all scale together, so
+ * the model-time behaviour of the OS is unchanged - only the
+ * model-to-wall mapping moves.  A terminal query that takes ~110
+ * ms of OS work at real-time speed finishes in ~110/n ms of wall
+ * time.  Time-of-day and job accounting advance n times faster
+ * relative to the wall clock.
  */
+static int clk_mult = 1;                /* model-time multiplier */
+
+extern UNIT clocks[];                   /* defined below fast_clk */
+
+t_stat clk_set_speed (UNIT *u, int32 val, CONST char *cptr, void *desc)
+{
+    t_stat r;
+    int32 n;
+
+    if (cptr == NULL || *cptr == 0)
+        return SCPE_ARG;
+    n = (int32) get_uint (cptr, 10, 16, &r);
+    if (r != SCPE_OK || n < 1)
+        return SCPE_ARG;
+    clk_mult = (int) n;
+    /* Re-init the calibration so the new pace starts on the next tick. */
+    tmr_poll = sim_rtcn_init (clocks[0].wait, 0);
+    return SCPE_OK;
+}
+
+t_stat clk_show_speed (FILE *st, UNIT *u, int32 val, CONST void *desc)
+{
+    fprintf (st, "speed=%d%s", clk_mult,
+             clk_mult == 1 ? " (real time)" : " (overclocked)");
+    return SCPE_OK;
+}
+
+MTAB clk_mtab[] = {
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "SPEED", "SPEED=n",
+      &clk_set_speed, &clk_show_speed, NULL,
+      "Model-time multiplier 1-16: run the machine n times faster than the wall clock" },
+    { 0 }
+};
+
 t_stat fast_clk (UNIT * this)
 {
     static unsigned counter;
     static unsigned tty_counter;
+    int tps = CLK_TPS * clk_mult;
 
     ++counter;
     ++tty_counter;
@@ -2033,14 +2077,14 @@ t_stat fast_clk (UNIT * this)
     /* Baudot TTYs are synchronised to the main timer rather than the
      * serial line clock. Their baud rate is 50.
      */
-    if (tty_counter == CLK_TPS/50) {
+    if (tty_counter == (unsigned)(CLK_TPS/50)) {
         tt_print();
         tt_receive();
         tty_counter = 0;
     }
 
-    tmr_poll = sim_rtcn_calb (CLK_TPS, 0);              /* calibrate clock */
-    return sim_activate_after (this, 1000000/CLK_TPS);  /* reactivate unit */
+    tmr_poll = sim_rtcn_calb (tps, 0);                  /* calibrate clock */
+    return sim_activate_after (this, 1000000/tps);      /* reactivate unit */
 }
 
 UNIT clocks[] = {
@@ -2061,7 +2105,7 @@ t_stat clk_reset (DEVICE * dev)
 }
 
 DEVICE clock_dev = {
-    "CLK", clocks, NULL, NULL,
+    "CLK", clocks, NULL, clk_mtab,
     1, 0, 0, 0, 0, 0,
     NULL, NULL, &clk_reset,
     NULL, NULL, NULL, NULL,
