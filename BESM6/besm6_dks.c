@@ -565,6 +565,11 @@ static void dks_process (void)
                 dks_bulk_flush ();
                 }
             }
+        /* A display channel is a real-time device: poll the bridge at
+           1 ms wall resolution with our own unit instead of riding the
+           terminal tick (up to 4 ms when the terminals are idle).  The
+           unit self-perpetuates; the terminal tick only re-arms it. */
+        sim_activate_after (&dks_unit, 1000);
         return;
     }
     drain_bufh ();
@@ -617,6 +622,24 @@ static void dks_process (void)
 /*
  * ===== REMOTE bridge client (stage B2) =====
  */
+
+/* Block until the socket has inbound data or the timeout expires.
+   Returns 1 readable, 0 timeout, -1 error.  The transaction loop uses
+   this to wake the instant the Э-60 answers: no sleep-granularity
+   latency on the bridge (a display channel is a real-time device). */
+static int dks_sock_wait (SOCKET s, int ms)
+{
+    fd_set fds;
+    struct timeval tv;
+    int r;
+
+    FD_ZERO (&fds);
+    FD_SET (s, &fds);
+    tv.tv_sec = ms / 1000;
+    tv.tv_usec = (ms % 1000) * 1000;
+    r = select ((int) s + 1, &fds, NULL, NULL, &tv);
+    return r;
+}
 
 /* Close socket idx (or all, idx < 0); the mode stays on, reconnection
    is by the timer. */
@@ -830,35 +853,31 @@ static void dks_bulk_flush (void)
         have += n;
         }
     for (i = 0; i < 100; ++i) {                     /* bounded wait */
-        int spin;
+        int n;
 
-        for (spin = 0; spin < 200; ++spin) {
-            while ((n = sim_read_sock (s, (char *) f + *fn, 8 - *fn)) > 0) {
-                *fn += n;
-                if (*fn == 8) {
-                    int match = (f[0] == BRIDGE_MAGIC_RSP &&
-                                 f[1] == (uint8) (BRIDGE_OP_BWRITE | 0x80) &&
-                                 f[3] == (uint8) (bulk_addr >> 8) &&
-                                 f[4] == (uint8) bulk_addr);
+        while ((n = sim_read_sock (s, (char *) f + *fn, 8 - *fn)) > 0) {
+            *fn += n;
+            if (*fn == 8) {
+                int match = (f[0] == BRIDGE_MAGIC_RSP &&
+                             f[1] == (uint8) (BRIDGE_OP_BWRITE | 0x80) &&
+                             f[3] == (uint8) (bulk_addr >> 8) &&
+                             f[4] == (uint8) bulk_addr);
 
-                    *fn = 0;
-                    if (match) {
-                        ++n_rbulk;
-                        bulk_cnt = 0;
-                        return;
-                        }
-                    dks_remote_frame (f, 0, 0, NULL, FALSE);   /* ATTN etc. */
+                *fn = 0;
+                if (match) {
+                    ++n_rbulk;
+                    bulk_cnt = 0;
+                    return;
                     }
+                dks_remote_frame (f, 0, 0, NULL, FALSE);   /* ATTN etc. */
                 }
-            if (n < 0)
-                break;
             }
         if (n < 0) {
             dks_remote_drop (idx);
             ++n_rerr;
             return;
             }
-        sim_os_ms_sleep (1);
+        dks_sock_wait (s, 1);          /* wake when the echo lands */
         }
     sim_debug (DBG_BRIDGE, &dks_dev,
                "bridge: BULK_WRITE response timeout (%s)\n", spec);
@@ -934,34 +953,30 @@ static int dks_remote_xact (int op, int addr, int32 *val)
         have += i;
         }
     for (i = 0; i < 100; ++i) {                     /* bounded wait, ~100 ms */
-        int n, spin;
+        int n;
 
-        for (spin = 0; spin < 200; ++spin) {
-            while ((n = sim_read_sock (s, (char *) f + *fn, 8 - *fn)) > 0) {
-                *fn += n;
-                if (*fn == 8) {
-                    int32 v = 0;
+        while ((n = sim_read_sock (s, (char *) f + *fn, 8 - *fn)) > 0) {
+            *fn += n;
+            if (*fn == 8) {
+                int32 v = 0;
 
-                    *fn = 0;
-                    if (dks_remote_frame (f, op, addr, &v, TRUE)) {
-                        *val = v;
-                        if (op == BRIDGE_OP_READ)
-                            ++n_rreads;
-                        else
-                            ++n_rwrites;
-                        return 0;
-                        }
+                *fn = 0;
+                if (dks_remote_frame (f, op, addr, &v, TRUE)) {
+                    *val = v;
+                    if (op == BRIDGE_OP_READ)
+                        ++n_rreads;
+                    else
+                        ++n_rwrites;
+                    return 0;
                     }
                 }
-            if (n < 0)
-                break;
             }
         if (n < 0) {
             dks_remote_drop (idx);
             ++n_rerr;
             return -1;
             }
-        sim_os_ms_sleep (1);        /* let the Э-60 process answer */
+        dks_sock_wait (s, 1);          /* wake when the Э-60 answers */
         }
     sim_debug (DBG_BRIDGE, &dks_dev,
                "bridge: response timeout (%s)\n", spec);
