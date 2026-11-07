@@ -70,10 +70,21 @@
 #include "sim_sock.h"
 #include "sim_tmxr.h"
 
+#if !defined(_WIN32) && !defined(DKS_NO_SHMEM)
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#define USE_DKS_SHMEM 1
+#endif
+
 #define DKS_FIFO_SIZE   512                             /* received data FIFO */
 
-/* ОЗУ Э-60, one bank per КРК channel; only dks_chan is backed here. */
-static uint16 e60_mem[4][32768];
+/* ОЗУ Э-60, one bank per КРК channel; only dks_chan is backed here.
+   The rows live in the static block until SHMEM replaces the row of
+   this Э-60 with the shared mapping (REG MEM follows the pointer). */
+static uint16 e60_local[4][32768];
+static uint16 *e60_mem[4] = { e60_local[0], e60_local[1],
+                              e60_local[2], e60_local[3] };
 static int32 dks_chan = DKS_CHAN;                       /* КРК channel of this Э-60 */
 static uint32 cur_chan = DKS_CHAN;                      /* window channel */
 static int dks_utf8 = 0;                /* ENCODING: 0 = raw КОИ-7Н1 */
@@ -117,6 +128,48 @@ static uint16 dks_kctl = 0;                             /* КАДОПАМ contro
 #define BRIDGE_OP_BWRITE    06          /* bulk write: header + payload */
 #define BRIDGE_BULK_MAX     255         /* count is one byte */
 
+/* ===== SHMEM mode: the ОЗУ Э-60 as a POSIX shared memory object =====
+
+   With SET DKS SHMEM=<имя> this Э-60 creates the segment <имя> and its
+   ОЗУ row (dks_chan) becomes the shared bytes: the БЭСМ-6 maps the
+   same segment (SET DKS SHMEM=<имя> there, client i -> <имя><i>) and
+   every 032/0132 on its side is a direct memory access - КАДОПАМ
+   without a network.  The hardware signals stay signals: the doorbell
+   (БЭСМ-6 -> Э-60) and ATTN (Э-60 -> БЭСМ-6) are monotonic counters in
+   the control block, polled by the device service (1 ms wall cadence,
+   as the bridge after the 0023 patch).  The firmware sees no
+   difference: its KADDR/KDATA window lands in the same shared words.
+
+   The struct MUST stay in sync with BESM6/besm6_dks.c. */
+
+struct dks_shm_ctl {
+    uint32 magic;           /* DKS_SHM_MAGIC */
+    uint32 version;         /* DKS_SHM_VERSION */
+    uint32 ready;           /* this Э-60 is alive (cell 0 bit) */
+    uint32 e60_chan;        /* its КРК channel */
+    uint32 bell_seq;        /* doorbell counter, БЭСМ-6 -> Э-60 */
+    uint32 bell_val;        /* the last doorbell value */
+    uint32 attn_seq;        /* ATTN counter, Э-60 -> БЭСМ-6 */
+    uint32 attn_sreq;       /* the last ATTN: system request flag */
+    uint32 attn_chan;       /* the last ATTN: КРК channel */
+    int32  pid_e60;         /* diagnostics */
+    int32  pid_besm6;
+    uint32 spare[5];
+};
+
+#define DKS_SHM_MAGIC       0x444B5348  /* "DKSH" */
+#define DKS_SHM_VERSION     1
+#define DKS_SHM_CTL_BYTES   64          /* fixed row offset */
+#define DKS_SHM_ROW_WORDS   32768
+#define DKS_SHM_SEG_BYTES   (DKS_SHM_CTL_BYTES + DKS_SHM_ROW_WORDS * 2)
+
+#ifdef USE_DKS_SHMEM
+static void *shm_base = NULL;               /* mmap base */
+static struct dks_shm_ctl *shm_ctl = NULL;
+static uint32 shm_bell_seen = 0;
+static char shm_name[CBUFSIZE] = "";        /* segment name, for unlink */
+#endif
+
 static char dks_bridge_spec[CBUFSIZE] = "";             /* listening port */
 static SOCKET dks_lsock = INVALID_SOCKET;               /* master socket */
 static SOCKET dks_bsock = INVALID_SOCKET;               /* БЭСМ-6 client */
@@ -156,6 +209,12 @@ static void dks_update_atni (void);
 t_stat dks_set_bridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_set_nobridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_bridge (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+#ifdef USE_DKS_SHMEM
+t_stat dks_set_shmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_set_noshmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_show_shmem (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+static void dks_shmem_doorbell (void);
+#endif
 static void dks_sig_besm6 (int sreq);
 static void dks_bridge_poll (void);
 static void testos_ring (void);
@@ -189,7 +248,10 @@ REG dks_reg[] = {
     { GRDATAD (LSTAT0, dks_lstat[0], DEV_RDX, 16, 0, "lines 1-12 connected") },
     { GRDATAD (LSTAT1, dks_lstat[1], DEV_RDX, 16, 0, "lines 13-24 connected") },
     { DRDATAD (TIME,  dks_wait,  24, "polling interval"), PV_LEFT },
-    { BRDATA (MEM, e60_mem[DKS_CHAN], DEV_RDX, 16, 32768) },
+    /* The static backing: in SHMEM mode the shared row lives in the
+       mapping and is not visible through this register (SHOW DKS SHMEM
+       tells the mode; the firmware works with the shared words). */
+    { BRDATA (MEM, e60_local[DKS_CHAN], DEV_RDX, 16, 32768) },
     { GRDATA (DEVADDR, dks_dib.ba, DEV_RDX, 32, 0), REG_HRO },
     { GRDATA (DEVVEC, dks_dib.vec, DEV_RDX, 16, 0), REG_HRO },
     { NULL }
@@ -227,6 +289,14 @@ MTAB dks_mod[] = {
         "КАДОПАМ bridge server: TCP port for the БЭСМ-6 (stage B2)" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, NULL, "NOBRIDGE",
         &dks_set_nobridge, NULL, NULL, "Close the КАДОПАМ bridge" },
+#ifdef USE_DKS_SHMEM
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "SHMEM", "SHMEM=<имя>",
+        &dks_set_shmem, &dks_show_shmem, NULL,
+        "Publish the ОЗУ Э-60 as POSIX shared memory for the БЭСМ-6: "
+        "direct access, no network" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, NULL, "NOSHMEM",
+        &dks_set_noshmem, NULL, NULL, "Unmap and remove the shared ОЗУ" },
+#endif
     { MTAB_XTD|MTAB_VDV|MTAB_NC, 0, NULL, "LOG=n=file",
         &dks_set_log, NULL, &dks_desc, "Enables logging on designated line" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, NULL, "NOLOG=n",
@@ -875,7 +945,11 @@ return;
    posts to the real ОС across the bridge. */
 static int dks_bridge_up (void)
 {
-return (dks_bsock != INVALID_SOCKET);
+#ifdef USE_DKS_SHMEM
+    return (dks_bsock != INVALID_SOCKET) || shm_ctl != NULL;
+#else
+    return (dks_bsock != INVALID_SOCKET);
+#endif
 }
 
 /* Э-60 -> БЭСМ-6: "an entry waits in АБУФS" (ПРП6 on the БЭСМ-6 side).
@@ -885,6 +959,18 @@ static void dks_sig_besm6 (int sreq)
 {
 uint8 f[8];
 
+#ifdef USE_DKS_SHMEM
+if (shm_ctl != NULL) {
+    shm_ctl->attn_sreq = sreq? 1: 0;
+    shm_ctl->attn_chan = dks_chan;
+    __sync_synchronize ();          /* the payload precedes the counter */
+    ++shm_ctl->attn_seq;            /* the bell of the КРК */
+    ++dks_nattn;
+    sim_debug (DBG_BRIDGE, &dks_dev, "shmem: -> ATTN%s\n",
+               sreq? " +ПРП12": "");
+    return;
+    }
+#endif
 if (dks_bsock == INVALID_SOCKET)
     return;
 f[0] = BRIDGE_MAGIC_REQ;
@@ -1141,9 +1227,108 @@ return SCPE_OK;
 
 t_stat dks_set_nobridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
+#ifdef USE_DKS_SHMEM
+dks_set_noshmem (uptr, 0, NULL, NULL);
+#endif
 dks_bridge_close (TRUE);
 return SCPE_OK;
 }
+
+#ifdef USE_DKS_SHMEM
+/* Create (or re-attach to) the shared segment and publish the ОЗУ row
+   of dks_chan.  A stale segment from a previous run is re-initialized
+   only when the magic/channel do not match; the counters survive so
+   that a reconnecting БЭСМ-6 sees no phantom signals. */
+t_stat dks_set_shmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+char gbuf[CBUFSIZE];
+int fd;
+void *base;
+struct dks_shm_ctl *ctl;
+
+if (cptr == NULL || *cptr == 0)
+    return SCPE_ARG;
+if (dks_dev.flags & DEV_DIS)
+    return SCPE_UDIS;
+cptr = get_glyph (cptr, gbuf, 0);
+if (*cptr != 0)
+    return SCPE_2MARG;
+if (gbuf[0] != '/')
+    return sim_messagef (SCPE_ARG,
+        "SHMEM: a POSIX shm name starting with '/' is expected, e.g. /dks0\n");
+dks_set_nobridge (uptr, 0, NULL, NULL);
+fd = shm_open (gbuf, O_CREAT | O_RDWR, 0666);
+if (fd < 0)
+    return sim_messagef (SCPE_OPENERR, "SHMEM: cannot create %s\n", gbuf);
+if (ftruncate (fd, DKS_SHM_SEG_BYTES) != 0) {
+    close (fd);
+    return sim_messagef (SCPE_OPENERR, "SHMEM: cannot size %s\n", gbuf);
+    }
+base = mmap (NULL, DKS_SHM_SEG_BYTES, PROT_READ | PROT_WRITE,
+             MAP_SHARED, fd, 0);
+close (fd);
+if (base == MAP_FAILED)
+    return SCPE_OPENERR;
+ctl = (struct dks_shm_ctl *) base;
+if (ctl->magic != DKS_SHM_MAGIC || ctl->version != DKS_SHM_VERSION ||
+    ctl->e60_chan != (uint32) dks_chan) {
+    memset (ctl, 0, DKS_SHM_CTL_BYTES);
+    ctl->magic = DKS_SHM_MAGIC;
+    ctl->version = DKS_SHM_VERSION;
+    ctl->e60_chan = (uint32) dks_chan;
+    }
+shm_base = base;
+shm_ctl = ctl;
+shm_bell_seen = ctl->bell_seq;
+ctl->pid_e60 = (int32) getpid ();
+ctl->ready = 1;
+strncpy (shm_name, gbuf, sizeof (shm_name) - 1);
+shm_name[sizeof (shm_name) - 1] = '\0';
+e60_mem[dks_chan] = (uint16 *) ((char *) base + DKS_SHM_CTL_BYTES);
+sim_messagef (SCPE_OK, "SHMEM: ОЗУ Э-60 published as %s (канал %o)\n",
+              gbuf, dks_chan);
+return SCPE_OK;
+}
+
+t_stat dks_set_noshmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+if (shm_base != NULL) {
+    /* The row returns to the static backing before the mapping dies. */
+    e60_mem[dks_chan] = e60_local[dks_chan];
+    memset (e60_local[dks_chan], 0, sizeof (e60_local[dks_chan]));
+    munmap (shm_base, DKS_SHM_SEG_BYTES);
+    }
+shm_base = NULL;
+shm_ctl = NULL;
+if (shm_name[0] != '\0') {
+    shm_unlink (shm_name);              /* this side created the segment */
+    shm_name[0] = '\0';
+    }
+return SCPE_OK;
+}
+
+t_stat dks_show_shmem (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+if (shm_ctl == NULL)
+    fprintf (st, "shmem=off");
+else
+    fprintf (st, "shmem=(канал %o, ready=%u)", dks_chan, shm_ctl->ready);
+return SCPE_OK;
+}
+
+/* The БЭСМ-6 rang: the ring entry is already in the shared ОЗУ, the
+   counter bump is the doorbell.  Same reaction as the bridge frame. */
+static void dks_shmem_doorbell (void)
+{
+bufh_bell = mem (A_BUFH) & RING_MASK;       /* the post is complete */
+if (dks_engine == ENGINE_HOST) {
+    dks_csr |= DKS_CSR_ATN;
+    dks_update_atni ();
+    }
+else
+    sim_activate (&dks_unit, 20);           /* like the reference */
+}
+#endif /* USE_DKS_SHMEM */
 
 t_stat dks_show_bridge (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
 {
@@ -1549,6 +1734,17 @@ t_stat dks_svc (UNIT *uptr)
         testos_process ();
     if (dks_engine == ENGINE_SIM)                       /* stage A: engine in C */
         dks_process ();
+#ifdef USE_DKS_SHMEM
+    if (shm_ctl != NULL) {
+        shm_ctl->ready = 1;                             /* the ДКС is alive */
+        if (shm_ctl->bell_seq != shm_bell_seen) {
+            shm_bell_seen = shm_ctl->bell_seq;
+            __sync_synchronize ();      /* the ring entry precedes the counter */
+            sim_debug (DBG_IRQ, &dks_dev, "doorbell from БЭСМ-6\n");
+            dks_shmem_doorbell ();
+            }
+        }
+#endif
     dks_bridge_poll ();                                 /* stage B2 */
     sim_activate (uptr, dks_wait);
     return SCPE_OK;
@@ -1562,7 +1758,13 @@ t_stat dks_reset (DEVICE *dptr)
 
     dks_desc.dptr = dptr;
     dks_desc.uptr = &dks_unit;
-    memset (e60_mem, 0, sizeof (e60_mem));
+    {
+        int k;
+
+        for (k = 0; k < 4; ++k)
+            if (e60_mem[k] != NULL)
+                memset (e60_mem[k], 0, 32768 * sizeof (uint16));
+        }
     cur_chan = dks_chan;
     dks_kctl = dks_chan;
     memset (utf8_acc, 0, sizeof (utf8_acc));

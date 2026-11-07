@@ -46,6 +46,13 @@
 #include "sim_sock.h"
 #include "sim_tmxr.h"
 
+#if !defined(_WIN32) && !defined(DKS_NO_SHMEM)
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#define USE_DKS_SHMEM 1
+#endif
+
 #define DKS_CHAN        2                       /* КРК channel of our Э-60 */
 #define DKS_PRP         PRP_DKS_CHAN(DKS_CHAN)  /* its interrupt, ПРП 6 */
 #define DKS_STATUS      (0400 << DKS_CHAN)      /* cell 0: channel present */
@@ -122,6 +129,60 @@ static int os_polled;           /* КОНФУС has read the channel status */
 #define BRIDGE_OP_BWRITE    06
 #define BULK_MAX            64          /* words per bulk frame (stage C) */
 
+/* ===== SHMEM mode: direct access to the ОЗУ Э-60 =====
+
+   With SET DKS SHMEM=<имя> the ОЗУ of the Э-60 is a POSIX shared memory
+   object: this process maps the very bytes the Э-60 firmware works
+   with, and every 032/0132 is a memory access - КАДОПАМ without a
+   network and without frames.  The two hardware signals cross the same
+   way as on the КРК: the doorbell 077777 (БЭСМ-6 -> Э-60) and ATTN
+   (Э-60 -> БЭСМ-6, ПРП6/ПРП12) are monotonic sequence counters in the
+   control block at the head of the segment, polled by the 1 ms device
+   service (the same cadence as the TCP bridge, minus the stack).
+
+   Layout of one segment, 65600 bytes (the Э-60 creates it, SET DKS
+   SHMEM=<имя> on the PDP-11 side; its КРК channel is recorded in the
+   ctl):
+
+        offset 0    struct dks_shm_ctl
+        offset 64   ОЗУ row: 32768 uint16 words (the КАДОПАМ window)
+
+   This side maps the segment of client i as <имя><i> into the КРК
+   channel DKS_CHAN+i (SET DKS CHANS=n picks n of them) and retries
+   once a second until the magic appears.  Cell 0 reports the ready
+   channels.  The struct MUST stay in sync with PDP11/pdp11_dks.c. */
+
+struct dks_shm_ctl {
+    uint32 magic;           /* DKS_SHM_MAGIC */
+    uint32 version;         /* DKS_SHM_VERSION */
+    uint32 ready;           /* the Э-60 is alive (cell 0 bit) */
+    uint32 e60_chan;        /* its КРК channel */
+    uint32 bell_seq;        /* doorbell counter, БЭСМ-6 -> Э-60 */
+    uint32 bell_val;        /* the last doorbell value */
+    uint32 attn_seq;        /* ATTN counter, Э-60 -> БЭСМ-6 */
+    uint32 attn_sreq;       /* the last ATTN: system request flag */
+    uint32 attn_chan;       /* the last ATTN: КРК channel */
+    int32  pid_e60;         /* diagnostics */
+    int32  pid_besm6;
+    uint32 spare[5];
+};
+
+#define DKS_SHM_MAGIC       0x444B5348  /* "DKSH" */
+#define DKS_SHM_VERSION     1
+#define DKS_SHM_CTL_BYTES   64          /* fixed row offset */
+#define DKS_SHM_ROW_WORDS   32768
+#define DKS_SHM_SEG_BYTES   (DKS_SHM_CTL_BYTES + DKS_SHM_ROW_WORDS * 2)
+
+#ifdef USE_DKS_SHMEM
+static int dks_shmem;                       /* SHMEM mode is on */
+static char dks_shmem_spec[CBUFSIZE] = "";  /* base name, e.g. "/dks" */
+static void *shm_base[4];                   /* mmap base, per client */
+static struct dks_shm_ctl *shm_ctl[4];
+static uint16 *shm_row[4];                  /* the ОЗУ row: base + 64 */
+static uint32 shm_bell_seen[4], shm_attn_seen[4];
+static time_t shm_lasttry[4];               /* one open attempt a second */
+#endif
+
 #define RS_DOWN         0       /* no socket, retry on the timer */
 #define RS_CONN         1       /* connect() in progress */
 #define RS_UP           2       /* established */
@@ -152,6 +213,16 @@ static int dks_remote_xact (int op, int addr, int32 *val);
 static void dks_remote_poll (void);
 static void dks_bulk_flush (void);
 static int32 dks_chan_status (void);
+#ifdef USE_DKS_SHMEM
+static void dks_shmem_poll (void);
+static int32 dks_shm_status (void);
+static void dks_shmem_unmap (int idx);
+static int dks_shm_open (int idx, int force);
+t_stat dks_set_shmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_set_noshmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_show_shmem (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+#endif
+static void dks_raise_prp (const char *tag, int chan, int sreq);
 
 /* Pending system request: 0 none, 1 connect (await reply), 3 disconnect. */
 static int sys_busy;
@@ -195,6 +266,15 @@ MTAB dks_mtab[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, NULL, "LOCAL",
         &dks_set_local, NULL, NULL,
         "Turn the bridge off: the ОЗУ Э-60 is emulated locally again" },
+#ifdef USE_DKS_SHMEM
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "SHMEM", "SHMEM=<имя>",
+        &dks_set_shmem, &dks_show_shmem, NULL,
+        "Direct access to the ОЗУ Э-60 via POSIX shared memory: no "
+        "network, every 032/0132 is a memory access" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, NULL, "NOSHMEM",
+        &dks_set_noshmem, NULL, NULL,
+        "Turn the shared-memory mode off: back to the local ОЗУ" },
+#endif
     { 0 }
 };
 
@@ -243,6 +323,15 @@ static uint32 mem (int addr)
 {
     int32 val;
 
+#ifdef USE_DKS_SHMEM
+    if (dks_shmem) {
+        int idx = (int) (cur_chan & 3) - DKS_CHAN;
+
+        if (idx >= 0 && idx < 4 && shm_row[idx])
+            return shm_row[idx][addr & 077777];
+        return 0;
+    }
+#endif
     if (dks_remote) {
         dks_bulk_flush ();
         if (dks_remote_xact (BRIDGE_OP_READ, addr, &val) == 0)
@@ -255,6 +344,15 @@ static void set_mem (int addr, uint32 val)
 {
     int32 rc;
 
+#ifdef USE_DKS_SHMEM
+    if (dks_shmem) {
+        int idx = (int) (cur_chan & 3) - DKS_CHAN;
+
+        if (idx >= 0 && idx < 4 && shm_row[idx])
+            shm_row[idx][addr & 077777] = (uint16) (val & 0177777);
+        return;
+    }
+#endif
     e60_mem[DKS_CHAN][addr & 077777] = val & 0177777;
     if (dks_remote) {
         dks_bulk_flush ();
@@ -281,6 +379,10 @@ t_value dks_read (int addr)
             val = 0;
         else if (dks_remote)
             val = (t_value) dks_chan_status ();   /* live clients, no RTT */
+#ifdef USE_DKS_SHMEM
+        else if (dks_shmem)
+            val = (t_value) dks_shm_status ();    /* ready Э-60, no RTT */
+#endif
         else
             val = DKS_STATUS;
     }
@@ -291,6 +393,14 @@ t_value dks_read (int addr)
         val = dks_remote_xact (BRIDGE_OP_READ, addr, &rv) ?
             0 : (t_value) rv;
     }
+#ifdef USE_DKS_SHMEM
+    else if (dks_shmem) {
+        int idx = (int) (cur_chan & 3) - DKS_CHAN;
+
+        val = (idx >= 0 && idx < 4 && shm_row[idx]) ?
+            shm_row[idx][addr] : 0;
+    }
+#endif
     else
         val = e60_mem[cur_chan & 3][addr];
     sim_debug (DBG_KADOPAM, &dks_dev, "032: [%o]%05o -> %06o\n",
@@ -335,6 +445,25 @@ void dks_write (int addr, t_value acc)
             dks_bulk_flush ();
         return;
     }
+#ifdef USE_DKS_SHMEM
+    if (dks_shmem) {
+        int idx = (int) (cur_chan & 3) - DKS_CHAN;
+        uint16 *row = (idx >= 0 && idx < 4) ? shm_row[idx] : NULL;
+        struct dks_shm_ctl *ctl = (idx >= 0 && idx < 4) ? shm_ctl[idx] : NULL;
+
+        if (row)
+            row[addr] = (uint16) val;   /* direct: the shared bytes */
+        if (addr == DOORBELL && ctl && (val & DOORBELL_RING)) {
+            /* The ring entry above is already visible to the Э-60
+               (barrier); the counter bump is the doorbell itself. */
+            __sync_synchronize ();
+            ctl->bell_val = val;
+            ++ctl->bell_seq;
+            sim_debug (DBG_RING, &dks_dev, "doorbell %06o (shmem)\n", val);
+            }
+        return;
+        }
+#endif
     e60_mem[cur_chan & 3][addr] = val;
     if (! dks_enabled () || cur_chan != DKS_CHAN)
         return;
@@ -552,6 +681,15 @@ static void dks_process (void)
 
     if (! dks_enabled ())
         return;
+#ifdef USE_DKS_SHMEM
+    if (dks_shmem) {
+        dks_shmem_poll ();
+        /* Same wall cadence as the bridge: the signals are sequence
+           counters polled by this 1 ms service. */
+        sim_activate_after (&dks_unit, 1000);
+        return;
+    }
+#endif
     if (dks_remote) {
         dks_remote_poll ();
         /* Safety net: the protocol always flushes on reads, cell 0 and
@@ -711,26 +849,32 @@ static int dks_remote_connect (int idx, int force)
  * by the transaction loop.  Returns 1 when a response was consumed and
  * stored into *val.
  */
+
+/* ПРП6 (+ ПРП12 for a system request) from an inbound ATTN. */
+static void dks_raise_prp (const char *tag, int chan, int sreq)
+{
+    static const char prp_name[4] = { 8, 7, 6, 5 };
+
+    ++n_rattn;
+    sim_debug (DBG_BRIDGE, &dks_dev,
+               "%s: <- ATTN (ПРП %d)%s\n",
+               tag, prp_name[chan], sreq? " + ПРП12": "");
+    sim_debug (DBG_IRQ, &dks_dev, "ПРП %d\n", prp_name[chan]);
+    PRP |= PRP_DKS_CHAN (chan);
+    if (sreq) {              /* system request (stage C):
+                                СВЯЗЬ7/Диспак wait for ПРП12
+                                to run нтерм7 */
+        sim_debug (DBG_IRQ, &dks_dev, "ПРП 12\n");
+        PRP |= PRP_DKS_ATTN;
+        }
+}
+
 static int dks_remote_frame (uint8 *f, int op, int addr, int32 *val,
                              int in_xact)
 {
     if (f[0] == BRIDGE_MAGIC_REQ) {              /* Э-60 -> БЭСМ-6 */
         if (f[1] == BRIDGE_OP_ATTN) {
-            static const char prp_name[4] = { 8, 7, 6, 5 };
-            int chan = f[2] & 3;
-
-            ++n_rattn;
-            sim_debug (DBG_BRIDGE, &dks_dev,
-                       "bridge: <- ATTN (ПРП %d)%s\n",
-                       prp_name[chan], (f[3] & 1)? " + ПРП12": "");
-            sim_debug (DBG_IRQ, &dks_dev, "ПРП %d\n", prp_name[chan]);
-            PRP |= PRP_DKS_CHAN (chan);
-            if (f[3] & 1) {          /* system request (stage C):
-                                        СВЯЗЬ7/Диспак wait for ПРП12
-                                        to run нтерм7 */
-                sim_debug (DBG_IRQ, &dks_dev, "ПРП 12\n");
-                PRP |= PRP_DKS_ATTN;
-                }
+            dks_raise_prp ("bridge", f[2] & 3, f[3] & 1);
             return 0;
             }
         sim_debug (DBG_BRIDGE, &dks_dev,
@@ -1005,6 +1149,10 @@ t_stat dks_set_remote (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
         return SCPE_ARG;
     if (dks_remote_parse (cptr))
         return SCPE_ARG;
+#ifdef USE_DKS_SHMEM
+    dks_shmem_unmap (-1);
+    dks_shmem = 0;
+#endif
     dks_remote_drop (-1);
     dks_remote = 1;
     return SCPE_OK;
@@ -1039,10 +1187,152 @@ t_stat dks_show_chans (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
 
 t_stat dks_set_local (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
+#ifdef USE_DKS_SHMEM
+    dks_shmem_unmap (-1);
+    dks_shmem = 0;
+#endif
     dks_remote_drop (-1);
     dks_remote = 0;
     return SCPE_OK;
 }
+
+#ifdef USE_DKS_SHMEM
+/*
+ * ===== SHMEM transport (the direct access to the ОЗУ Э-60) =====
+ */
+
+/* Map the segment of client idx (<имя><idx>).  One attempt a second
+   until the Э-60 creates it; magic, version and channel are checked. */
+static int dks_shm_open (int idx, int force)
+{
+    char path[CBUFSIZE];
+    time_t now = time (NULL);
+    int fd;
+    void *base;
+    struct dks_shm_ctl *ctl;
+
+    if (shm_ctl[idx])
+        return 1;
+    if (! force && now == shm_lasttry[idx])
+        return 0;
+    shm_lasttry[idx] = now;
+    snprintf (path, sizeof (path), "%s%d", dks_shmem_spec, idx);
+    fd = shm_open (path, O_RDWR, 0);
+    if (fd < 0)
+        return 0;
+    base = mmap (NULL, DKS_SHM_SEG_BYTES, PROT_READ | PROT_WRITE,
+                 MAP_SHARED, fd, 0);
+    close (fd);
+    if (base == MAP_FAILED)
+        return 0;
+    ctl = (struct dks_shm_ctl *) base;
+    if (ctl->magic != DKS_SHM_MAGIC || ctl->version != DKS_SHM_VERSION ||
+        (int) ctl->e60_chan != DKS_CHAN + idx) {
+        munmap (base, DKS_SHM_SEG_BYTES);
+        return 0;
+        }
+    shm_base[idx] = base;
+    shm_ctl[idx] = ctl;
+    shm_row[idx] = (uint16 *) ((char *) base + DKS_SHM_CTL_BYTES);
+    shm_bell_seen[idx] = ctl->bell_seq;         /* no phantom doorbell */
+    shm_attn_seen[idx] = ctl->attn_seq;         /* no phantom ПРП */
+    ctl->pid_besm6 = (int32) getpid ();
+    sim_debug (DBG_BRIDGE, &dks_dev, "shmem: mapped %s (канал %d)\n",
+               path, DKS_CHAN + idx);
+    return 1;
+}
+
+/* Unmap idx (or all, idx < 0); the mode stays on, the mapping is
+   retried by the service. */
+static void dks_shmem_unmap (int idx)
+{
+    int i, lo = (idx >= 0)? idx: 0, hi = (idx >= 0)? idx + 1: 4;
+
+    for (i = lo; i < hi; ++i) {
+        if (shm_base[i] != NULL) {
+            munmap (shm_base[i], DKS_SHM_SEG_BYTES);
+            sim_debug (DBG_BRIDGE, &dks_dev, "shmem: unmapped %s%d\n",
+                       dks_shmem_spec, i);
+            }
+        shm_base[i] = NULL;
+        shm_ctl[i] = NULL;
+        shm_row[i] = NULL;
+        }
+}
+
+/* Poll the control blocks from dks_process: map missing segments,
+   raise ПРП6/ПРП12 on a new ATTN counter. */
+static void dks_shmem_poll (void)
+{
+    int i;
+
+    for (i = 0; i < dks_nchan; ++i) {
+        struct dks_shm_ctl *ctl = shm_ctl[i];
+
+        if (ctl == NULL) {
+            dks_shm_open (i, FALSE);
+            continue;
+            }
+        if (ctl->attn_seq != shm_attn_seen[i]) {
+            shm_attn_seen[i] = ctl->attn_seq;
+            __sync_synchronize ();      /* the payload precedes the counter */
+            dks_raise_prp ("shmem", (int) (ctl->attn_chan & 3),
+                           (int) (ctl->attn_sreq & 1));
+            }
+        }
+}
+
+/* Cell 0 in SHMEM mode: the ready Э-60 of the mapped segments. */
+static int32 dks_shm_status (void)
+{
+    int32 val = 0;
+    int i;
+
+    for (i = 0; i < dks_nchan; ++i)
+        if (shm_ctl[i] != NULL && shm_ctl[i]->ready)
+            val |= 0400 << (DKS_CHAN + i);
+    return val;
+}
+
+t_stat dks_set_shmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+    if (cptr == NULL || *cptr == 0)
+        return SCPE_ARG;
+    if (cptr[0] != '/')
+        return sim_messagef (SCPE_ARG,
+            "SHMEM: a POSIX shm name starting with '/' is expected, "
+            "e.g. /dks\n");
+    strncpy (dks_shmem_spec, cptr, CBUFSIZE - 1);
+    dks_shmem_spec[CBUFSIZE - 1] = '\0';
+    dks_remote_drop (-1);
+    dks_remote = 0;
+    dks_shmem = 1;                  /* segments are mapped by the service */
+    return SCPE_OK;
+}
+
+t_stat dks_set_noshmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+    dks_shmem_unmap (-1);
+    dks_shmem = 0;
+    return SCPE_OK;
+}
+
+t_stat dks_show_shmem (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+    if (! dks_shmem)
+        fprintf (st, "shmem=off");
+    else {
+        int i, n = 0;
+
+        fprintf (st, "shmem=%s chans=%d", dks_shmem_spec, dks_nchan);
+        for (i = 0; i < dks_nchan; ++i)
+            if (shm_ctl[i] != NULL)
+                ++n;
+        fprintf (st, " (mapped %d/%d)", n, dks_nchan);
+        }
+    return SCPE_OK;
+}
+#endif /* USE_DKS_SHMEM */
 
 t_stat dks_show_remote (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
 {
