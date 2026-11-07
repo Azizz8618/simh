@@ -44,9 +44,9 @@ fi
 # --- 2. Очистка логов (правило Л2) ---
 if [ "$KEEP_LOGS" -eq 0 ]; then
     rm -f "$PROJECT_ROOT/debug.txt" "$PROJECT_ROOT/log.txt" \
-          "$OSZAGR/debug.txt" "$OSZAGR/log.txt" \
+          "$OSZAGR/debug.txt" "$OSZAGR/logs/log.txt" \
           "$OSZAGR/logs/debug_"*.log \
-          "$OSZAGR/1[0-9]"
+          "$OSZAGR/logs"/1[0-9] "$OSZAGR/logs"/20
     echo "✓ Логи очищены"
 else
     echo "Логи сохранены (--keep-logs)"

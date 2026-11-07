@@ -5,7 +5,7 @@
 SESSION="besm6"
 PROJECT_ROOT="/home/azizz/Yandex.Disk/simh/BESM6"
 OSZAGR="$PROJECT_ROOT/OSZAGR"
-LOG_FILE="$OSZAGR/log.txt"
+LOG_FILE="$OSZAGR/logs/log.txt"
 cd "$PROJECT_ROOT"
 S=/tmp/t133_status.txt
 echo "$(date '+%H:%M:%S') watcher started" > $S

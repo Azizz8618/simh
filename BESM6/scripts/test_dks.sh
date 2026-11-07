@@ -52,9 +52,9 @@ sleep 1
 
 # --- 2. Очистка логов (правило Л1) ---
 rm -f "$PROJECT_ROOT/debug.txt" "$PROJECT_ROOT/log.txt" \
-      "$OSZAGR/debug.txt" "$OSZAGR/log.txt" \
+      "$OSZAGR/debug.txt" "$OSZAGR/logs/log.txt" \
       "$OSZAGR/logs/debug_"*.log \
-      "$OSZAGR/1[0-9]"
+      "$OSZAGR/logs"/1[0-9] "$OSZAGR/logs"/20
 
 # --- 3. Запуск через tmux ---
 echo "Запускаю эмулятор в tmux-сессии..."
