@@ -1252,7 +1252,8 @@ if ((bits_to_set & ~(TMXR_MDM_OUTGOING)) ||         /* Assure only settable bits
 if (bits_to_set) {
     bits = ((bits_to_set&TMXR_MDM_DTR) ? TIOCM_DTR : 0) |
            ((bits_to_set&TMXR_MDM_RTS) ? TIOCM_RTS : 0);
-    if (ioctl (port->port, TIOCMBIS, &bits)) {      /* set the desired bits */
+    if (ioctl (port->port, TIOCMBIS, &bits) &&      /* set the desired bits */
+        (errno != ENOTTY)) {                        /* PTY: no modem lines */
         sim_error_serial ("ioctl", errno);          /* report unexpected error */
         return SCPE_IOERR;                          /* return failure status */
         }
@@ -1260,13 +1261,16 @@ if (bits_to_set) {
 if (bits_to_clear) {
     bits = ((bits_to_clear&TMXR_MDM_DTR) ? TIOCM_DTR : 0) |
            ((bits_to_clear&TMXR_MDM_RTS) ? TIOCM_RTS : 0);
-    if (ioctl (port->port, TIOCMBIC, &bits)) {      /* clear the desired bits */
+    if (ioctl (port->port, TIOCMBIC, &bits) &&      /* clear the desired bits */
+        (errno != ENOTTY)) {                        /* PTY: no modem lines */
         sim_error_serial ("ioctl", errno);          /* report unexpected error */
         return SCPE_IOERR;                          /* return failure status */
         }
     }
 if (incoming_bits) {
-    if (ioctl (port->port, TIOCMGET, &bits)) {      /* get the modem bits */
+    bits = 0;
+    if (ioctl (port->port, TIOCMGET, &bits) &&      /* get the modem bits */
+        (errno != ENOTTY)) {                        /* PTY: no modem lines */
         sim_error_serial ("ioctl", errno);          /* report unexpected error */
         return SCPE_IOERR;                          /* return failure status */
         }
