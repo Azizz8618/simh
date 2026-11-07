@@ -101,6 +101,8 @@ static uint16 dks_fifo[DKS_FIFO_SIZE];                  /* (line<<8)|char */
 static int32 fifo_in = 0, fifo_out = 0;
 
 static int32 dks_wait = 1000;                           /* polling interval */
+static int32 dks_pollmax = 0;                           /* adaptive quiet poll cap, ms; 0 = off */
+static int32 dks_quiet = 0;                             /* consecutive quiet service ticks */
 static int32 dks_engine = ENGINE_SIM;                   /* protocol engine */
 static int32 dks_testos = TESTOS_PROMPT;                /* OS stub mode */
 static uint16 dks_kctl = 0;                             /* КАДОПАМ control shadow */
@@ -205,6 +207,8 @@ t_stat dks_show_testos (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat dks_set_log (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_set_nolog (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_log (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+t_stat dks_set_pollmax (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_show_pollmax (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 static void dks_update_atni (void);
 t_stat dks_set_bridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_set_nobridge (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
@@ -248,6 +252,7 @@ REG dks_reg[] = {
     { GRDATAD (LSTAT0, dks_lstat[0], DEV_RDX, 16, 0, "lines 1-12 connected") },
     { GRDATAD (LSTAT1, dks_lstat[1], DEV_RDX, 16, 0, "lines 13-24 connected") },
     { DRDATAD (TIME,  dks_wait,  24, "polling interval"), PV_LEFT },
+    { DRDATAD (POLLMAX, dks_pollmax, 24, "adaptive quiet poll cap, ms (0 = off)"), PV_LEFT },
     /* The static backing: in SHMEM mode the shared row lives in the
        mapping and is not visible through this register (SHOW DKS SHMEM
        tells the mode; the firmware works with the shared words). */
@@ -284,6 +289,11 @@ MTAB dks_mod[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "TESTOS", "TESTOS=OFF|ON|PROMPT",
         &dks_set_testos, &dks_show_testos, NULL,
         "OS-side stub for stage A: echo loop, prompt dialog, or off" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "POLLMAX", "POLLMAX=n",
+        &dks_set_pollmax, &dks_show_pollmax, NULL,
+        "Stretch the service when the ДКС is quiet: 1,1,2,2,4,4... ms up to"
+        " n; the first event after an idle stretch waits up to n-1 ms"
+        " (0 = the fixed TIME interval; pair with SET CPU IDLE + WAIT)" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "BRIDGE", "BRIDGE=port",
         &dks_set_bridge, &dks_show_bridge, NULL,
         "КАДОПАМ bridge server: TCP port for the БЭСМ-6 (stage B2)" },
@@ -1330,6 +1340,38 @@ else
 }
 #endif /* USE_DKS_SHMEM */
 
+/* Adaptive polling: SET DKS POLLMAX=n (ms).  When the ДКС is quiet -
+   no telnet traffic, no state in flight, no doorbell - the service
+   stretches 1,1,2,2,4,4,8,8... ms up to n.  The first event after an
+   idle stretch waits up to n-1 ms; an ATTN-flags read costs nanoseconds
+   in SHMEM mode, so the wakeups, not the reads, are the cost.  Pair
+   with SET CPU IDLE and a WAIT idle loop (the CPU sleeps, the service
+   is what wakes it).  0 restores the fixed TIME interval. */
+
+t_stat dks_set_pollmax (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+t_stat r;
+int32 n;
+
+if (cptr == NULL || *cptr == 0)
+    return SCPE_ARG;
+n = (int32) get_uint (cptr, 10, 1000, &r);
+if (r != SCPE_OK)
+    return r;
+dks_pollmax = n;
+dks_quiet = 0;
+return SCPE_OK;
+}
+
+t_stat dks_show_pollmax (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+if (dks_pollmax > 0)
+    fprintf (st, "pollmax=%d ms", dks_pollmax);
+else
+    fprintf (st, "pollmax=off (TIME=%d)\n", dks_wait);
+return SCPE_OK;
+}
+
 t_stat dks_show_bridge (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
 {
 if (dks_lsock == INVALID_SOCKET)
@@ -1670,20 +1712,26 @@ int32 dks_atninta (void)
 t_stat dks_svc (UNIT *uptr)
 {
     int32 ln, n, c;
+    int act = 0;                                    /* traffic: keep the fast cadence */
 
     if (uptr->flags & UNIT_ATT) {
         while ((ln = tmxr_poll_conn (&dks_desc)) >= 0) {/* new connections */
-            if (ln < dks_desc.lines)
+            if (ln < dks_desc.lines) {
                 dks_line_state (ln + 1, TRUE);
+                act = 1;
+                }
             }
         for (n = 1; n <= dks_desc.lines; ++n) {         /* dropped connections */
             if (dks_ldsc[n - 1].conn == 0 &&
-                (dks_lstat[(n - 1) / 12] & (1 << ((n - 1) % 12))))
+                (dks_lstat[(n - 1) / 12] & (1 << ((n - 1) % 12)))) {
                 dks_line_state (n, FALSE);
+                act = 1;
+                }
             }
         tmxr_poll_rx (&dks_desc);                       /* poll input */
         for (n = 1; n <= dks_desc.lines; ++n) {
             while ((c = tmxr_getc_ln (&dks_ldsc[n - 1])) != 0) {
+                act = 1;
                 if (c & SCPE_BREAK)
                     continue;
                 c &= 0377;
@@ -1727,13 +1775,32 @@ t_stat dks_svc (UNIT *uptr)
                 }
             }
         tmxr_poll_tx (&dks_desc);                       /* poll output */
+        for (n = 1; n <= dks_desc.lines; ++n) {
+            if (tmxr_tqln (&dks_ldsc[n - 1]) ||         /* queued output */
+                tmxr_rqln (&dks_ldsc[n - 1]))           /* unread input */
+                act = 1;
+            }
         }
     /* The ОС-side stub runs with both engines: in HOST (stage B1) it is
        the only counterpart of the firmware. */
-    if (dks_testos != TESTOS_OFF)
+    if (dks_testos != TESTOS_OFF) {
         testos_process ();
-    if (dks_engine == ENGINE_SIM)                       /* stage A: engine in C */
+        act = 1;                            /* the stub: keep the cadence */
+        }
+    if (dks_engine == ENGINE_SIM) {                     /* stage A: engine in C */
+        int k;
+
         dks_process ();
+        for (k = 1; k <= DKS_LINES && ! act; ++k) {
+            struct dks_line *l = &dks_line[k];
+
+            if (l->want_connect || l->want_disconnect ||
+                l->line_ready || l->pending || l->out_done)
+                act = 1;                    /* state in flight */
+            }
+        if (sys_busy)
+            act = 1;
+        }
 #ifdef USE_DKS_SHMEM
     if (shm_ctl != NULL) {
         shm_ctl->ready = 1;                             /* the ДКС is alive */
@@ -1742,10 +1809,31 @@ t_stat dks_svc (UNIT *uptr)
             __sync_synchronize ();      /* the ring entry precedes the counter */
             sim_debug (DBG_IRQ, &dks_dev, "doorbell from БЭСМ-6\n");
             dks_shmem_doorbell ();
+            act = 1;
             }
         }
 #endif
     dks_bridge_poll ();                                 /* stage B2 */
+    if (dks_pollmax > 0 && shm_ctl != NULL &&
+        dks_bsock == INVALID_SOCKET && dks_lsock == INVALID_SOCKET) {
+        /* Adaptive cadence in SHMEM mode only: the bridge and the
+           firmware keep the instruction-counted TIME (their tests
+           depend on it), the quiet SHMEM service is wall time. */
+        if (act) {
+            dks_quiet = 0;
+            sim_activate_after (uptr, 1000);
+            }
+        else {
+            int32 ms;
+
+            ++dks_quiet;
+            ms = (dks_quiet >= 10)? dks_pollmax: 1 << (dks_quiet / 2);
+            if (ms > dks_pollmax)
+                ms = dks_pollmax;
+            sim_activate_after (uptr, ms * 1000);
+            }
+        return SCPE_OK;
+        }
     sim_activate (uptr, dks_wait);
     return SCPE_OK;
     }
@@ -1784,6 +1872,7 @@ t_stat dks_reset (DEVICE *dptr)
         dks_line[n].want_connect = up;
         }
     dks_mclr ();
+    dks_quiet = 0;
     sim_cancel (&dks_unit);
     if ((dks_unit.flags & UNIT_ATT) || dks_lsock != INVALID_SOCKET)
         sim_activate (&dks_unit, dks_wait);

@@ -176,6 +176,8 @@ struct dks_shm_ctl {
 #ifdef USE_DKS_SHMEM
 static int dks_shmem;                       /* SHMEM mode is on */
 static char dks_shmem_spec[CBUFSIZE] = "";  /* base name, e.g. "/dks" */
+static int32 dks_shmpoll = 0;               /* adaptive quiet poll cap, ms; 0 = off */
+static int32 dks_shm_quiet = 0;             /* consecutive quiet polls */
 static void *shm_base[4];                   /* mmap base, per client */
 static struct dks_shm_ctl *shm_ctl[4];
 static uint16 *shm_row[4];                  /* the ОЗУ row: base + 64 */
@@ -214,13 +216,15 @@ static void dks_remote_poll (void);
 static void dks_bulk_flush (void);
 static int32 dks_chan_status (void);
 #ifdef USE_DKS_SHMEM
-static void dks_shmem_poll (void);
+static int dks_shmem_poll (void);
 static int32 dks_shm_status (void);
 static void dks_shmem_unmap (int idx);
 static int dks_shm_open (int idx, int force);
 t_stat dks_set_shmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_set_noshmem (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 t_stat dks_show_shmem (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+t_stat dks_set_shmpoll (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+t_stat dks_show_shmpoll (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 #endif
 static void dks_raise_prp (const char *tag, int chan, int sreq);
 
@@ -274,6 +278,11 @@ MTAB dks_mtab[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, NULL, "NOSHMEM",
         &dks_set_noshmem, NULL, NULL,
         "Turn the shared-memory mode off: back to the local ОЗУ" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "SHMPOLL", "SHMPOLL=n",
+        &dks_set_shmpoll, &dks_show_shmpoll, NULL,
+        "Stretch the ATTN poll when quiet: 1,1,2,2,4,4... ms up to n; the"
+        " ATTN counter is read in nanoseconds, so only the wakeups cost"
+        " (0 = the fixed 1 ms; the price is up to n-1 ms of ATTN latency)" },
 #endif
     { 0 }
 };
@@ -281,6 +290,9 @@ MTAB dks_mtab[] = {
 REG dks_reg[] = {
     { ORDATA (CHAN, cur_chan, 3) },
     { DRDATA (CHANS, dks_nchan, 8), PV_LEFT },
+#ifdef USE_DKS_SHMEM
+    { DRDATA (SHMPOLL, dks_shmpoll, 24), PV_LEFT },
+#endif
     { BRDATA (MEM, e60_mem[DKS_CHAN], 8, 16, 32768) },
     { DRDATA (BREAD, n_rreads, 32), PV_LEFT },
     { DRDATA (BWRITE, n_rwrites, 32), PV_LEFT },
@@ -683,10 +695,26 @@ static void dks_process (void)
         return;
 #ifdef USE_DKS_SHMEM
     if (dks_shmem) {
-        dks_shmem_poll ();
+        int attn = dks_shmem_poll ();
+
         /* Same wall cadence as the bridge: the signals are sequence
-           counters polled by this 1 ms service. */
-        sim_activate_after (&dks_unit, 1000);
+           counters polled by this 1 ms service.  SHMPOLL=n stretches
+           the poll up to n ms while no counter moves - the read costs
+           nanoseconds, the wakeup is what costs CPU. */
+        if (dks_shmpoll > 0 && attn == 0) {
+            int32 ms;
+
+            ++dks_shm_quiet;
+            ms = (dks_shm_quiet >= 10)? dks_shmpoll:
+                                        1 << (dks_shm_quiet / 2);
+            if (ms > dks_shmpoll)
+                ms = dks_shmpoll;
+            sim_activate_after (&dks_unit, ms * 1000);
+            }
+        else {
+            dks_shm_quiet = 0;
+            sim_activate_after (&dks_unit, 1000);
+            }
         return;
     }
 #endif
@@ -1261,16 +1289,20 @@ static void dks_shmem_unmap (int idx)
 }
 
 /* Poll the control blocks from dks_process: map missing segments,
-   raise ПРП6/ПРП12 on a new ATTN counter. */
-static void dks_shmem_poll (void)
+   raise ПРП6/ПРП12 on a new ATTN counter.  Returns the number of
+   channels that showed activity (a new ATTN or a segment newly
+   mapped) - the adaptive poll resets on it. */
+static int dks_shmem_poll (void)
 {
-    int i;
+    int i, attn = 0;
 
     for (i = 0; i < dks_nchan; ++i) {
         struct dks_shm_ctl *ctl = shm_ctl[i];
 
         if (ctl == NULL) {
             dks_shm_open (i, FALSE);
+            if (shm_ctl[i] != NULL)
+                ++attn;
             continue;
             }
         if (ctl->attn_seq != shm_attn_seen[i]) {
@@ -1278,8 +1310,10 @@ static void dks_shmem_poll (void)
             __sync_synchronize ();      /* the payload precedes the counter */
             dks_raise_prp ("shmem", (int) (ctl->attn_chan & 3),
                            (int) (ctl->attn_sreq & 1));
+            ++attn;
             }
         }
+    return attn;
 }
 
 /* Cell 0 in SHMEM mode: the ready Э-60 of the mapped segments. */
@@ -1332,6 +1366,36 @@ t_stat dks_show_shmem (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
         }
     return SCPE_OK;
 }
+
+/* Adaptive ATTN polling: SET DKS SHMPOLL=n (ms).  While no ATTN counter
+   moves and no segment is being mapped, the poll stretches
+   1,1,2,2,4,4,8,8... ms up to n; any activity snaps it back to 1 ms.
+   The ctl read itself is nanoseconds in SHMEM mode - the wakeups are
+   the cost, and n-1 ms of extra ATTN latency is the price. */
+
+t_stat dks_set_shmpoll (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+    t_stat r;
+    int32 n;
+
+    if (cptr == NULL || *cptr == 0)
+        return SCPE_ARG;
+    n = (int32) get_uint (cptr, 10, 1000, &r);
+    if (r != SCPE_OK)
+        return r;
+    dks_shmpoll = n;
+    dks_shm_quiet = 0;
+    return SCPE_OK;
+}
+
+t_stat dks_show_shmpoll (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+    if (dks_shmpoll > 0)
+        fprintf (st, "shmpoll=%d ms", dks_shmpoll);
+    else
+        fprintf (st, "shmpoll=off (fixed 1 ms)");
+    return SCPE_OK;
+}
 #endif /* USE_DKS_SHMEM */
 
 t_stat dks_show_remote (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
@@ -1363,6 +1427,9 @@ t_stat dks_reset (DEVICE *dptr)
     bufh_recv = 0;
     bufh_bell = 0;
     dks_remote_drop (-1);           /* the bridge is re-established on demand */
+#ifdef USE_DKS_SHMEM
+    dks_shm_quiet = 0;
+#endif
     for (n = 1; n <= DKS_LINES; ++n) {
         int up = line[n].up || line[n].want_connect;
         memset (&line[n], 0, sizeof (line[n]));
