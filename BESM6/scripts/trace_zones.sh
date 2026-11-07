@@ -11,7 +11,7 @@
 
 set -e
 BESM6_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-RE_DISPAK="$HOME/Yandex.Disk/re_dispak/re-dispak"
+RE_DISPAK="$HOME/Yandex.Disk/re-dispak"
 TRACE_ANALYZER="$RE_DISPAK/trace_analyze.pl"
 
 TRACE_FILE=""

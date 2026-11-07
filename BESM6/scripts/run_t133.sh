@@ -20,7 +20,7 @@ set -e
 BESM6_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 OSZAGR="$BESM6_DIR/OSZAGR"
 UVU="$BESM6_DIR/UVU"
-RE_DISPAK="$HOME/Yandex.Disk/re_dispak/re-dispak"
+RE_DISPAK="$HOME/Yandex.Disk/re-dispak"
 TEST_INI="$UVU/t133_min.dubna.ini"
 SESSION="besm6"
 WAIT_BOOT=30
@@ -45,7 +45,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-DUMP_FILE="$OSZAGR/$PULT_VAL"
+DUMP_FILE="$OSZAGR/logs/$PULT_VAL"
 TRACE_FILE="/tmp/tr${PULT_VAL}.txt"
 
 log() { echo "[$(date +%H:%M:%S)] $*"; }
@@ -55,7 +55,7 @@ if [[ "$FRESH" -eq 1 ]]; then
     log "Останавливаю эмулятор..."
     pkill -9 -f besm6 2>/dev/null || true
     sleep 2
-    rm -rf "$OSZAGR/logs/" "$OSZAGR/debug.txt" "$OSZAGR/log.txt"
+    rm -f "$OSZAGR/logs/1[0-9]" "$OSZAGR/logs/20" "$OSZAGR/logs/log.txt" "$OSZAGR/debug.txt"
     tmux kill-session -t "$SESSION" 2>/dev/null || true
     sleep 1
     log "Запускаю эмулятор (dispak.ini)..."
@@ -67,7 +67,7 @@ fi
 
 if ! tmux has-session -t "$SESSION" 2>/dev/null; then
     log "Сессия $SESSION не найдена — запускаю эмулятор..."
-    rm -rf "$OSZAGR/logs/" "$OSZAGR/debug.txt" "$OSZAGR/log.txt"
+    rm -f "$OSZAGR/logs/1[0-9]" "$OSZAGR/logs/20" "$OSZAGR/logs/log.txt" "$OSZAGR/debug.txt"
     tmux new-session -d -s "$SESSION" \
         "cd $OSZAGR && $BESM6_DIR/../BIN/besm6 dispak.ini"
     log "Жду загрузку ОС (${WAIT_BOOT} сек)..."
@@ -143,14 +143,14 @@ tail -20 "$OSZAGR/logs/debug_dks.log" 2>/dev/null || echo "(нет debug_dks.log
 log ""
 
 log "── log.txt (хвост, без physobm) ──"
-tail -30 "$OSZAGR/log.txt" 2>/dev/null | grep -av 'physobm' || echo "(нет log.txt)"
+tail -30 "$OSZAGR/logs/log.txt" 2>/dev/null | grep -av 'physobm' || echo "(нет log.txt)"
 log ""
 
 log "── Анализ: команды КК 26 (КАДОПАМ) ──"
-if [[ -f "$OSZAGR/log.txt" ]]; then
-    KDP=$(grep -ac 'kk26.*KDP\|KDP\|kadopam\|cmd_026' "$OSZAGR/log.txt" 2>/dev/null || echo 0)
-    PRP=$(grep -ac 'PRP\|\u041f\u0420\u041f\|prp' "$OSZAGR/log.txt" 2>/dev/null || echo 0)
-    MPRP=$(grep -ac 'MPRP\|\u041c\u041f\u0420\u041f\|mprp' "$OSZAGR/log.txt" 2>/dev/null || echo 0)
+if [[ -f "$OSZAGR/logs/log.txt" ]]; then
+    KDP=$(grep -ac 'kk26.*KDP\|KDP\|kadopam\|cmd_026' "$OSZAGR/logs/log.txt" 2>/dev/null || echo 0)
+    PRP=$(grep -ac 'PRP\|\u041f\u0420\u041f\|prp' "$OSZAGR/logs/log.txt" 2>/dev/null || echo 0)
+    MPRP=$(grep -ac 'MPRP\|\u041c\u041f\u0420\u041f\|mprp' "$OSZAGR/logs/log.txt" 2>/dev/null || echo 0)
     log "  КАДОПАМ-операций (KDP/kadopam): $KDP"
     log "  ПРП (прерывания):               $PRP"
     log "  МПРП (маска прерываний):        $MPRP"
@@ -211,7 +211,7 @@ if [[ "$DO_TRACE" -eq 1 ]]; then
     if [ ! -f "$DUMP_FILE" ]; then
         log "  ⚠ Файл дампа $DUMP_FILE не создан"
         log "  Файлы в OSZAGR:"
-        ls -la "$OSZAGR"/1[0-9] 2>/dev/null || log "  (нет дампов)"
+        ls -la "$OSZAGR"/logs 2>/dev/null || log "  (нет дампов)"
     else
         DUMP_SIZE=$(stat -c%s "$DUMP_FILE" 2>/dev/null || echo 0)
         log "  ✓ Дамп: $DUMP_FILE ($DUMP_SIZE байт)"

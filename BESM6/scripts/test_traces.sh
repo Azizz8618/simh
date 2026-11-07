@@ -13,7 +13,7 @@
 set -e
 BESM6_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 OSZAGR="$BESM6_DIR/OSZAGR"
-RE_DISPAK="$HOME/Yandex.Disk/re_dispak/re-dispak"
+RE_DISPAK="$HOME/Yandex.Disk/re-dispak"
 SESSION="besm6"
 
 # --- Параметры по умолчанию ---
@@ -32,7 +32,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-DUMP_FILE="$OSZAGR/$PULT_VAL"
+DUMP_FILE="$OSZAGR/logs/$PULT_VAL"
 TRACE_FILE="/tmp/tr${PULT_VAL}.txt"
 
 log() { echo "[$(date +%H:%M:%S)] $*"; }
@@ -42,9 +42,9 @@ if [[ "${FRESH:-0}" == "1" ]]; then
     log "Останавливаю эмулятор..."
     pkill -9 -f besm6 2>/dev/null || true
     sleep 2
-    rm -f "$OSZAGR/debug.txt" "$OSZAGR/log.txt" \
+    rm -f "$OSZAGR/logs/log.txt" "$OSZAGR/debug.txt" \
           "$OSZAGR/logs/debug_"*.log \
-          "$OSZAGR/1[0-9]"
+          "$OSZAGR/logs"/1[0-9] "$OSZAGR/logs"/20
     tmux kill-session -t "$SESSION" 2>/dev/null || true
     sleep 1
 
@@ -58,9 +58,9 @@ fi
 # --- Проверка: ОС загружена? ---
 if ! tmux has-session -t "$SESSION" 2>/dev/null; then
     log "Сессия $SESSION не найдена — запускаю эмулятор..."
-    rm -f "$OSZAGR/debug.txt" "$OSZAGR/log.txt" \
+    rm -f "$OSZAGR/logs/log.txt" "$OSZAGR/debug.txt" \
           "$OSZAGR/logs/debug_"*.log \
-          "$OSZAGR/1[0-9]"
+          "$OSZAGR/logs"/1[0-9] "$OSZAGR/logs"/20
     tmux new-session -d -s "$SESSION" \
         "cd $OSZAGR && $BESM6_DIR/../BIN/besm6 dispak.ini"
     log "Жду загрузку ОС (30 сек)..."
@@ -81,7 +81,7 @@ sleep 3
 if [ ! -f "$DUMP_FILE" ]; then
     log "ОШИБКА: файл дампа $DUMP_FILE не создан"
     log "Размеры файлов в OSZAGR:"
-    ls -la "$OSZAGR"/1[0-9] 2>/dev/null || log "(нет дампов)"
+    ls -la "$OSZAGR/logs" 2>/dev/null || log "(нет дампов)"
     exit 1
 fi
 log "Дамп $DUMP_FILE создан ($(stat -c%s "$DUMP_FILE") байт)"

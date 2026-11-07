@@ -6,7 +6,7 @@
 # заданном переменной окружения BESM6_PATH.
 #
 # Конфигурации ГЕНС (.b6) находятся в:
-#   ~/Yandex.Disk/re_dispak/re-dispak/gens/
+#   ~/Yandex.Disk/re-dispak/gens/
 #
 # Использование:
 #   ./scripts/gens.sh status            — проверить BESM6_PATH и диск 2053
@@ -21,7 +21,7 @@
 set -e
 
 PROJECT_ROOT="/home/azizz/Yandex.Disk/simh/BESM6"
-GENS_DIR="/home/azizz/Yandex.Disk/re_dispak/re-dispak/gens"
+GENS_DIR="/home/azizz/Yandex.Disk/re-dispak/gens"
 BACKUP_DIR="$PROJECT_ROOT/scripts/.gens_backups"
 DISK_NUM=2053
 LOG_FILE="/tmp/gens_run.log"

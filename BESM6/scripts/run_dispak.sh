@@ -7,7 +7,7 @@ EMULATOR="../../BIN/besm6"
 CONFIG="dispak.ini"
 
 # Порты терминалов (из dispak.ini)
-TTY1_PORT=4202  # Тип 1 — операторская консоль
+TTY1_PORT=4198  # Тип 1 — операторская консоль (КВУ, из dispak.ini: Line=1,4198)
 
 show_usage() {
     echo ""

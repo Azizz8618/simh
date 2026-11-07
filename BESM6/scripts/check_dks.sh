@@ -22,7 +22,7 @@
 SESSION="besm6"
 PROJECT_ROOT="/home/azizz/Yandex.Disk/simh/BESM6"
 OSZAGR="$PROJECT_ROOT/OSZAGR"
-RE_DISPAK="$HOME/Yandex.Disk/re_dispak/re-dispak"
+RE_DISPAK="$HOME/Yandex.Disk/re-dispak"
 # Основной источник: per-subsystem лог
 DKS_LOG="$OSZAGR/logs/debug_dks.log"
 # Fallback
@@ -119,7 +119,7 @@ if [ "$TRACE_MODE" -eq 1 ] && [ $FAIL -gt 0 ]; then
     fi
 
     PULT_VAL=12
-    DUMP_FILE="$OSZAGR/$PULT_VAL"
+    DUMP_FILE="$OSZAGR/logs/$PULT_VAL"
     TRACE_FILE="/tmp/tr${PULT_VAL}.txt"
 
     echo "Step 1: Ctrl+G -> sim>"
