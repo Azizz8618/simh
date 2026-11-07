@@ -19,7 +19,7 @@
 set -u
 
 PROJECT_ROOT="/home/azizz/Yandex.Disk/simh/BESM6"
-GENS_DIR="/home/azizz/Yandex.Disk/re_dispak/re-dispak/gens"
+GENS_DIR="/home/azizz/Yandex.Disk/re-dispak/gens"
 GENS_FILE="$GENS_DIR/gens_exp.b6"
 BIN="$PROJECT_ROOT/../BIN/besm6"
 PORT=4199
@@ -27,7 +27,7 @@ PASS=0
 FAIL=0
 
 # INI-файл — аргумент или по умолчанию
-INI_FILE="${1:-$PROJECT_ROOT/test_dks_term.ini}"
+INI_FILE="${1:-$PROJECT_ROOT/OSZAGR/test_dks_term.ini}"
 INI_BASENAME="$(basename "$INI_FILE")"
 
 # ДИНАМИЧЕСКИ определяем пути debug/log из самого INI

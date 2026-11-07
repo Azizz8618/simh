@@ -54,7 +54,7 @@ EOF
 # ОЗУ Э-60.  Start from test_dks.ini, point the ДКС lines at the bridge.
 sed -e "s/^set dks enable/set dks enable\\
 set dks remote=localhost:$BPORT\\
-set dks chans=1/" "$DIR/test_dks.ini" > "$TMP/dispak.ini"
+set dks chans=1/" "$DIR/../OSZAGR/test_dks.ini" > "$TMP/dispak.ini"
 
 "$P11" "$TMP/e60.ini" > "$TMP/e60.log" 2>&1 &
 P11PID=$!
