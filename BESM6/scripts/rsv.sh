@@ -3,8 +3,9 @@
 #
 # По COMMANDS.md §9.1:
 #   1. Создать каталог с меткой времени в config_backup/
-#   2. Скопировать файлы проекта (.clinerules, AGENTS.md, COMMANDS.md,
-#      GENS_AGENTS.md, TEAM_AGENTS.md; README.md если есть)
+#   2. Скопировать файлы проекта (.clinerules, README/AGENTS.md,
+#      README/COMMANDS.md, README/GENS_AGENTS.md, README/TEAM_AGENTS.md;
+#      README/README.md если есть)
 #   3. Скопировать глобальный ~/.clinerules -> global_.clinerules
 #   4. Скопировать глобальные каталоги (~/.cline/skills, ~/.cline/cache,
 #      ~/.vscode) — без runtime-данных ~/.cline/data
@@ -17,7 +18,7 @@ set -e
 
 PROJECT_ROOT="/home/azizz/Yandex.Disk/simh/BESM6"
 BACKUP_ROOT="/home/azizz/Yandex.Disk/config_backup"
-PROJECT_FILES=(.clinerules AGENTS.md COMMANDS.md GENS_AGENTS.md TEAM_AGENTS.md README.md)
+PROJECT_FILES=(.clinerules README/AGENTS.md README/COMMANDS.md README/GENS_AGENTS.md README/TEAM_AGENTS.md README/README.md)
 COMMIT_MSG="Обновлены конфигурационные файлы и скрипты"
 
 cd "$PROJECT_ROOT"
@@ -75,7 +76,7 @@ echo "✓ Резервная копия создана: $BACKUP_DIR"
 # 5. git commit (только по РЗВ)
 echo ""
 echo "=== git commit ==="
-git add scripts/*.sh .clinerules AGENTS.md TEAM_AGENTS.md GENS_AGENTS.md COMMANDS.md 2>/dev/null || true
+git add scripts/*.sh .clinerules README/AGENTS.md README/TEAM_AGENTS.md README/GENS_AGENTS.md README/COMMANDS.md 2>/dev/null || true
 if git diff --cached --quiet; then
     echo "  Нет изменений для коммита"
 else

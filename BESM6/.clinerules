@@ -584,7 +584,7 @@ CONTEXT_MANIFEST:
 # - scripts/gen_map.awk — awk-парсер C-файлов (вызывается gen_code_map.sh)
 
 # Команда добавления файлов (выполнять сразу после изменения):
-#   git add .clinerules AGENTS.md TEAM_AGENTS.md GENS_AGENTS.md
+#   git add .clinerules README/AGENTS.md README/TEAM_AGENTS.md README/GENS_AGENTS.md
 
 # Команда добавления скриптов (выполнять после создания скрипта):
 #   git add scripts/*.sh scripts/*.awk

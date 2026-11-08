@@ -47,7 +47,7 @@ stops at the first failure.
 
 - **`.b6`** — a textual BESM-6 memory image (address lines `в`, octal words `с`,
   instructions `к`, start address `п`). Loaded by `load`. See the main
-  [BESM6/README.md](../README.md) for the format and `dump` command.
+  [BESM6/README/README.md](../README/README.md) for the format and `dump` command.
 - **`aout/hello`** — a binary `a.out` executable produced by the BESM-6 Unix
   cross toolchain (`b6as`/`b6ld`); `load` auto-detects the `BESM` magic. The
   `aout/` directory keeps the source (`hello.s`), a disassembly (`hello.dis`)
