@@ -396,7 +396,7 @@ ifneq (3,${SIM_MAJOR})
 # Platform Pkg Names  COMPILER PCAP          VDE            PCRE         EDITLINE      SDL               PNG            ZLIB       SDL_TTF           GMAKE GPIO CURL  BUILD-TOOL
   PKGS_SRC_HOMEBREW   = -        -             vde            pcre         libedit       sdl2              libpng         zlib       sdl2_ttf          make  -            -     -
   PKGS_SRC_MACPORTS   = -        -             vde2           pcre         libedit       libsdl2           libpng         zlib       libsdl2_ttf       gmake -            -     -
-  PKGS_SRC_APT        = gcc      libpcap-dev   libvdeplug-dev libpcre3-dev libedit-dev   libsdl2-dev       libpng-dev     -          libsdl2-ttf-dev   -     libgpiod-dev curl  build-essential:/usr/share/build-essential
+  PKGS_SRC_APT        = gcc      libpcap-dev   libvdeplug-dev libpcre3-dev libedit-dev   libsdl2-dev       libpng-dev     -          libsdl2-ttf-dev   -     libgpiod-dev curl  build-essential:/home/azizz
   PKGS_SRC_YUM        = gcc      libpcap-devel -              pcre-devel   libedit-devel SDL2-devel        libpng-devel   zlib-devel SDL2_ttf-devel    -     -            -     -
   PKGS_SRC_DNF        = gcc      libpcap-devel -              pcre-devel   libedit-devel SDL2-devel        libpng-devel   zlib-devel SDL2_ttf-devel    -     -            -     -
   PKGS_SRC_ZYPPER     = gcc-c++  libpcap-devel -              -            libedit-devel sdl2-compat-devel libpng16-devel zlib-devel SDL2_ttf-devel    make  -            -     -

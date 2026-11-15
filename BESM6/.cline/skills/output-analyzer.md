@@ -12,7 +12,7 @@
 
 ### 1. `trace_analyze.pl` — Perl-анализатор трассы
 
-**Расположение:** `~/Yandex.Disk/re_dispak/re-dispak/trace_analyze.pl`
+**Расположение:** `~/Yandex.Disk/re-dispak/trace_analyze.pl`
 
 **Формат входной трассы** (touched.pl output):
 ```
@@ -50,7 +50,7 @@ perl trace_analyze.pl --labels-dir <path> [опции] <trace.txt>
 
 ### 3. `acpu_analyze.pl` — Анализ подвала АЦПУ
 
-**Расположение:** `~/Yandex.Disk/re_dispak/re-dispak/acpu_analyze.pl`
+**Расположение:** `~/Yandex.Disk/re-dispak/acpu_analyze.pl`
 
 Разбирает «подвал» распечатки АЦПУ — блок информации ОС ДИСПАК внизу каждой страницы вывода.
 
@@ -130,7 +130,7 @@ perl acpu_analyze.pl <output.txt> --devices    # только устройств
 ./scripts/run_t133.sh --trace --acpu --check --pult 12
 
 # 2. Только анализ АЦПУ-подвала (без прогона)
-cd ~/Yandex.Disk/re_dispak/re-dispak
+cd ~/Yandex.Disk/re-dispak
 perl acpu_analyze.pl ~/Yandex.Disk/simh/BESM6/ACPU/output.txt
 perl acpu_analyze.pl ~/Yandex.Disk/simh/BESM6/ACPU/output.txt --errors
 perl acpu_analyze.pl ~/Yandex.Disk/simh/BESM6/ACPU/output.txt --resources
@@ -225,7 +225,7 @@ perl acpu_analyze.pl output.txt --devices
 
 ## Правила
 
-1. Листинги `.lst` должны находиться в `~/Yandex.Disk/re_dispak/re-dispak/`
+1. Листинги `.lst` должны находиться в `~/Yandex.Disk/re-dispak/`
 2. Трасса формируется `touched.pl` из dump-файлов ОС ДИСПАК
 3. Метки `???` означают адрес внутри модуля, не являющийся точкой входа
 4. Зоны помимо 0676/0677 не имеют листингов — адреса остаются числовыми

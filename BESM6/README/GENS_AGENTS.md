@@ -18,7 +18,7 @@
 
 | Путь | Содержимое |
 |------|------------|
-| `~/Yandex.Disk/re_dispak/re-dispak/gens/` | Примеры конфигураций (.b6 файлы) |
+| `~/Yandex.Disk/re-dispak/gens/` | Примеры конфигураций (.b6 файлы) |
 | `~/Yandex.Disk/simh/BESM6/dispak.ini` | INI-файл эмулятора |
 
 **Файлы конфигураций:**
@@ -195,21 +195,21 @@ ATTACH tty11 4011
 
 ```bash
 # Список конфигураций
-ls -la ~/Yandex.Disk/re_dispak/re-dispak/gens/*.b6
+ls -la ~/Yandex.Disk/re-dispak/gens/*.b6
 
 # Просмотр терминалов
-grep "ТЕРМ\|^ТТ" ~/Yandex.Disk/re_dispak/re-dispak/gens/gens.b6
+grep "ТЕРМ\|^ТТ" ~/Yandex.Disk/re-dispak/gens/gens.b6
 ```
 
 ### 7.2. Создание новой конфигурации
 
 ```bash
 # Копирование шаблона
-cp ~/Yandex.Disk/re_dispak/re-dispak/gens/gens.b6 \
-   ~/Yandex.Disk/re_dispak/re-dispak/gens/gens_custom.b6
+cp ~/Yandex.Disk/re-dispak/gens/gens.b6 \
+   ~/Yandex.Disk/re-dispak/gens/gens_custom.b6
 
 # Редактирование
-nano ~/Yandex.Disk/re_dispak/re-dispak/gens/gens_custom.b6
+nano ~/Yandex.Disk/re-dispak/gens/gens_custom.b6
 ```
 
 **Проверка синтаксиса:**
@@ -235,7 +235,7 @@ besmtool list
 #### Ручной запуск
 
 ```bash
-cd ~/Yandex.Disk/re_dispak/re-dispak/gens
+cd ~/Yandex.Disk/re-dispak/gens
 dispak --path="$BESM6_PATH" gens_exp.b6
 ```
 
@@ -350,10 +350,10 @@ ATTACH tty3 4003
 
 ```bash
 # Список всех конфигураций
-ls ~/Yandex.Disk/re_dispak/re-dispak/gens/*.b6
+ls ~/Yandex.Disk/re-dispak/gens/*.b6
 
 # Поиск терминалов
-grep -E "^(ТТ|ТЕРМ)" ~/Yandex.Disk/re_dispak/re-dispak/gens/*.b6
+grep -E "^(ТТ|ТЕРМ)" ~/Yandex.Disk/re-dispak/gens/*.b6
 
 # Сравнение конфигураций
 diff gens/gens.b6 gens/gens_rab.b6
@@ -411,10 +411,10 @@ diff gens/gens.b6 gens/gens_rab.b6
 
 | Объект | Путь |
 |--------|------|
-| Конфигурации ГЕНС | `~/Yandex.Disk/re_dispak/re-dispak/gens/` |
+| Конфигурации ГЕНС | `~/Yandex.Disk/re-dispak/gens/` |
 | INI эмулятора | `~/Yandex.Disk/simh/BESM6/dispak.ini` |
 | Образы дисков | `~/Yandex.Disk/simh/BESM6/disks/` |
-| Документация ДКС | `~/Yandex.Disk/re_dispak/re-dispak/RUKDKS` |
+| Документация ДКС | `~/Yandex.Disk/re-dispak/RUKDKS` |
 | Скрипт ГЕНС | `~/Yandex.Disk/simh/BESM6/scripts/gens.sh` |
 | Резервные копии диска 2053 | `~/Yandex.Disk/simh/BESM6/scripts/.gens_backups/` |
 
@@ -424,5 +424,5 @@ diff gens/gens.b6 gens/gens_rab.b6
 
 - `AGENTS.md` — общее руководство по эмулятору
 - `TEAM_AGENTS.md` — координация агентов
-- `~/Yandex.Disk/re_dispak/re-dispak/AGENTS.md` — анализ ОС Диспак
+- `~/Yandex.Disk/re-dispak/AGENTS.md` — анализ ОС Диспак
 
