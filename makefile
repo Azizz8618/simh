@@ -2157,7 +2157,7 @@ HP2100 = ${HP2100D}/hp2100_baci.c ${HP2100D}/hp2100_cpu.c \
         ${HP2100D}/hp2100_lpt.c ${HP2100D}/hp2100_mc.c \
         ${HP2100D}/hp2100_mem.c ${HP2100D}/hp2100_mpx.c \
         ${HP2100D}/hp2100_ms.c ${HP2100D}/hp2100_mt.c \
-        ${HP2100D}/hp2100_mux.c ${HP2100D}/hp2100_pif.c \
+        ${HP2100D}/hp2100_mux.c ${HP2100D}/hp2100_pif.c ${HP2100D}/hp2100_sm2k.c \
         ${HP2100D}/hp2100_pt.c ${HP2100D}/hp2100_sys.c \
         ${HP2100D}/hp2100_tbg.c ${HP2100D}/hp2100_tty.c
 HP2100_OPT = -DHAVE_INT64 -I ${HP2100D}

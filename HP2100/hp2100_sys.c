@@ -153,7 +153,8 @@ extern DEVICE mpx_dev;                          /* Eight-Channel Asynchronous Mu
 extern DEVICE msd_dev, msc_dev;                 /* 7970B/E Magnetic Tape Drive */
 extern DEVICE mtd_dev, mtc_dev;                 /* 3030 Magnetic Tape Drive */
 extern DEVICE muxl_dev, muxu_dev, muxc_dev;     /* Sixteen-Channel Asynchronous Multiplexer */
-extern DEVICE pif_dev;                          /* Privileged Interrupt Fence */
+extern DEVICE pif_dev;
+extern DEVICE sm2k_dev;                          /* SM-2 2K line controller */
 extern DEVICE ptp_dev;                          /* Paper Tape Punch */
 extern DEVICE ptr_dev;                          /* Paper Tape Reader */
 extern DEVICE tbg_dev;                          /* Time Base Generator */
@@ -1956,6 +1957,7 @@ DEVICE *sim_devices [] = {                      /* an array of pointers to the s
     &mtc_dev,  &mtd_dev,                        /*   3030 Magnetic Tape Drive */
     &muxu_dev, &muxl_dev, &muxc_dev,            /*   12920A Sixteen-Channel Asynchronous Multiplexer */
     &pif_dev,                                   /*   12620A/12936A Privileged Interrupt Fence */
+    &sm2k_dev,                                  /*   SM-2 2K line controller */
     &ptp_dev,                                   /*   2895 Paper Tape Punch */
     &ptr_dev,                                   /*   2748 Paper Tape Reader */
     &tbg_dev,                                   /*   Time Base Generator */

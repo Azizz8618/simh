@@ -9,6 +9,7 @@ OUT=/tmp/sm2-stage2-test.out
 OUT3=/tmp/sm2-stage3-test.out
 OUT4=/tmp/sm2-stage4-test.out
 OUT5=/tmp/sm2-stage5-test.out
+OUT6=/tmp/sm2-stage6-test.out
 
 [ -x "$BIN" ] || { echo "СТОП: нет $BIN" >&2; exit 1; }
 
@@ -16,6 +17,7 @@ OUT5=/tmp/sm2-stage5-test.out
 "$BIN" < HP2100/tests/sm2_stage3_test.ini > "$OUT3" 2>&1
 "$BIN" < HP2100/tests/sm2_stage4_test.ini > "$OUT4" 2>&1
 "$BIN" < HP2100/tests/sm2_stage5_test.ini > "$OUT5" 2>&1
+"$BIN" < HP2100/tests/sm2_stage6_test.ini > "$OUT6" 2>&1
 
 fail=0
 check () {
@@ -70,8 +72,14 @@ else
     echo "ОШИБКА СМ-2: таблица векторов" >&2; fail=1
 fi
 
+if grep -q 'SM2KD:\s*054321' "$OUT6" && grep -q 'SM2KF:\s*1' "$OUT6"; then
+    echo "ОК   СМ-2: контроллер 2К принял данные и поднял флаг"
+else
+    echo "ОШИБКА СМ-2: контроллер 2К" >&2; fail=1
+fi
+
 if [ "$fail" = 0 ]; then
-    echo 'ИТОГО: все проверки этапов 2-5 пройдены'
+    echo 'ИТОГО: все проверки этапов 2-6 пройдены'
 else
     echo 'ИТОГО: есть расхождения' >&2
     exit 1
