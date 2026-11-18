@@ -20,6 +20,11 @@
 #define SM2_ADDR_BITS       17           /* абсолютный адрес */
 #define SM2_WORD_BITS       16
 #define SM2_SKIP_STEP       2            /* пропуск: РНК += 2 (не 1) */
+#define SM2_LA_MASK         0x1FFFFu     /* 17-разрядный абсолютный адрес */
+#define SM2_RB1_SHIFT       9            /* база пользователя: блоки по 512 слов */
+#define SM2_RB2_SHIFT       15           /* привилегированная база: кучи по 32К */
+#define SM2_INDEX_MASK      0000060u     /* разряды 5,6 = индексная адресация */
+#define SM2_INDEX_OFF_MASK  0000777u     /* разряды 7-15: смещение */
 
 /*--- 2. Регистры и слово состояния ----------------------------*/
 #define SM2_PSW_BITS        32           /* ССП */

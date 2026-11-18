@@ -1158,6 +1158,14 @@ static uint32    indirect_limit   = 16;         /* the indirect chain length lim
 static t_bool    is_1000          = FALSE;      /* TRUE if the CPU is a 1000 M/E/F-Series */
 static t_bool    is_sm2           = FALSE;      /* TRUE if the CPU is a Soviet SM-2/SM-2M */
 static uint32    sm2_rav          = 0;          /* SM-2 register of return address (РАВ) */
+static uint32    sm2_rb1          = 0;          /* РБ1: база непривилегированного состояния */
+static uint32    sm2_rb2          = 0;          /* РБ2: база привилегированного состояния */
+static uint32    sm2_rng          = 0;          /* РНГ: нижняя граница памяти */
+static uint32    sm2_rvg          = 0;          /* РВГ: верхняя граница памяти */
+static uint32    sm2_ri1          = 0;          /* РИ1 (X), бит 0 = автоиндекс */
+static uint32    sm2_ri2          = 0;          /* РИ2 (Y), бит 0 = автоиндекс */
+static t_bool    sm2_priv         = TRUE;       /* TRUE if privileged state (ТС = 0) */
+#define SM2_ADDR_MASK   (is_sm2 ? SM2_LA_MASK : LA_MASK)
 static t_bool    mp_is_present    = FALSE;      /* TRUE if Memory Protect is present */
 static uint32    last_select_code = 0;          /* the last select code sent over the I/O backplane */
 static HP_WORD   saved_MR         = 0;          /* the M-register value between SCP commands */
@@ -1368,6 +1376,13 @@ static REG cpu_reg [] = {
     { FLDATA (IS1000,  is_1000,                             0),                       REG_HRO           },
     { FLDATA (ISSM2,   is_sm2,                              0),                       REG_HRO           },
     { ORDATA (RAV,     sm2_rav,                      16),                               REG_HRO           },
+    { ORDATA (RB1,     sm2_rb1,                      16),                                                 },
+    { ORDATA (RB2,     sm2_rb2,                      16),                                                 },
+    { ORDATA (RNG,     sm2_rng,                      16),                                                 },
+    { ORDATA (RVG,     sm2_rvg,                      16),                                                 },
+    { ORDATA (RI1,     sm2_ri1,                      16),                                                 },
+    { ORDATA (RI2,     sm2_ri2,                      16),                                                 },
+    { FLDATA (SM2PRIV, sm2_priv,                      0),                                                 },
     { ORDATA (INTREQ,  interrupt_request,           6),                               REG_HRO           },
     { ORDATA (LASTSC,  last_select_code,            6),                               REG_HRO           },
 
@@ -4630,7 +4645,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
                 sm2_rav = PR;                           /*   address in the РАВ register */
 
             PCQ_ENTRY;                                  /* save P in the queue */
-            PR = MR + 1 & LA_MASK;                      /*   and jump to the word after the target address */
+            PR = MR + 1 & SM2_ADDR_MASK;                /*   and jump to the word after the target address */
             }
         break;
 
@@ -4702,7 +4717,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
             WriteW (MR, data);                          /*     and write it back */
 
             if (data == 0)                              /* if the value rolled over to zero */
-                PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* then increment P */
+                PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & SM2_ADDR_MASK;  /* then increment P */
             }
         break;
 
@@ -4757,7 +4772,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
 
         if (status == SCPE_OK)                          /* if the address resolved */
             if (AR != ReadW (MR))                       /*   then if the accumulator and memory differ */
-                PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* then increment P */
+                PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & SM2_ADDR_MASK;  /* then increment P */
         break;
 
 
@@ -4769,7 +4784,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
 
         if (status == SCPE_OK)                          /* if the address resolved */
             if (BR != ReadW (MR))                       /*   then if the accumulator and memory differ */
-                PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* then increment P */
+                PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & SM2_ADDR_MASK;  /* then increment P */
         break;
 
 
@@ -4873,7 +4888,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
             skip = 1;                                   /*   then skip the next instruction unconditionally */
 
         ABREG [ab_selector] = data;                     /* store the result in the selected register */
-        PR = PR + skip * (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* skip if indicated */
+        PR = PR + skip * (is_sm2 ? SM2_SKIP_STEP : 1) & SM2_ADDR_MASK;  /* skip if indicated */
         break;
 
 
@@ -4890,7 +4905,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
             E = 0;                                      /*   then clear E */
 
         if (IR & SRG_SLx && (data & LSB) == 0)          /* if SLx is enabled and the LSB is clear */
-            PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* then skip the next instruction */
+            PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & SM2_ADDR_MASK;  /* then skip the next instruction */
 
         ABREG [ab_selector] = srg_uop (data, SRG2 (IR));    /* do the second shift and set the accumulator */
         break;
@@ -4953,8 +4968,58 @@ return status;                                          /* return the execution 
    the MR register.
 */
 
+/* Address translation for the Soviet SM-2/2M.
+   Builds a 17-bit absolute address from the 15-bit relative address,
+   base registers РБ1/РБ2 and index registers РИ1/РИ2. */
+static t_stat sm2_mrg_address (void)
+{
+uint32 rel, off, idx, regno;
+
+if ((IR & SM2_INDEX_MASK) == SM2_INDEX_MASK) {     /* index/autoindex mode */
+    regno = (IR & 1) != 0;                          /* bit 0 selects РИ1/РИ2 */
+    idx = regno ? sm2_ri2 : sm2_ri1;
+    off = (IR >> 7) & SM2_INDEX_OFF_MASK;           /* bits 7-15 */
+    if (off & 0000400u)                             /* sign-extend the 9-bit offset */
+        off |= ~SM2_INDEX_OFF_MASK;
+    rel = (idx & ~1u) + off;                        /* add offset to index value */
+    if (idx & 1) {                                  /* if autoindexing */
+        rel = (rel + off) | 1u;                     /*   then advance index by the same offset */
+        if (regno) sm2_ri2 = rel; else sm2_ri1 = rel;
+        }
+    rel = rel & SM2_LA_MASK;
+    }
+else {                                              /* direct/current page */
+    if (IR & IR_CP)                                 /* current page */
+        rel = IR & (IR_IND | IR_OFFSET) | MR & MR_PAGE;
+    else                                            /* zero page */
+        rel = IR & (IR_IND | IR_OFFSET);
+    }
+
+MR = rel & SM2_LA_MASK;
+
+if (MR & IR_IND) {                                  /* if indirect */
+    uint32 level = 0;
+    while ((MR & IR_IND) && level++ <= indirect_limit) {
+        MR = ReadW (MR & SM2_LA_MASK);
+        }
+    if (MR & IR_IND)                                /* if the chain did not terminate */
+        return STOP_INDIR;
+    }
+
+if (sm2_priv)                                       /* privileged: base РБ2 */
+    MR = MR + (sm2_rb2 << SM2_RB2_SHIFT) & SM2_LA_MASK;
+else                                                /* user: base РБ1 */
+    MR = MR + (sm2_rb1 << SM2_RB1_SHIFT) & SM2_LA_MASK;
+
+return SCPE_OK;
+}
+
+
 static t_stat mrg_address (void)
 {
+if (is_sm2)                                             /* SM-2 uses 17-bit addressing */
+    return sm2_mrg_address ();
+
 if (IR & IR_CP)                                         /* if the instruction specifies the current page */
     MR = IR & (IR_IND | IR_OFFSET) | MR & MR_PAGE;      /*   then merge the current page and the instruction offset */
 else                                                    /* otherwise */
