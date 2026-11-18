@@ -1164,6 +1164,8 @@ static uint32    sm2_rng          = 0;          /* РНГ: нижняя гран
 static uint32    sm2_rvg          = 0;          /* РВГ: верхняя граница памяти */
 uint32    sm2_ri1          = 0;          /* РИ1 (X), бит 0 = автоиндекс */
 uint32    sm2_ri2          = 0;          /* РИ2 (Y), бит 0 = автоиндекс */
+uint32    sm2_usp          = 0;          /* УСП: слово состояния прерываний */
+uint32    sm2_vec_base     = 0;          /* база таблицы векторов СМ-2 */
 static t_bool    sm2_priv         = TRUE;       /* TRUE if privileged state (ТС = 0) */
 #define SM2_ADDR_MASK   (is_sm2 ? SM2_LA_MASK : LA_MASK)
 static t_bool    mp_is_present    = FALSE;      /* TRUE if Memory Protect is present */
@@ -1383,6 +1385,8 @@ static REG cpu_reg [] = {
     { ORDATA (RI1,     sm2_ri1,                      16),                                                 },
     { ORDATA (RI2,     sm2_ri2,                      16),                                                 },
     { FLDATA (SM2PRIV, sm2_priv,                      0),                                                 },
+    { ORDATA (USP,     sm2_usp,                      16),                                                 },
+    { ORDATA (SM2VEC,  sm2_vec_base,                 16),                                                 },
     { ORDATA (INTREQ,  interrupt_request,           6),                               REG_HRO           },
     { ORDATA (LASTSC,  last_select_code,            6),                               REG_HRO           },
 
@@ -2132,7 +2136,12 @@ while (status == SCPE_OK) {                             /* execute until simulat
         if (CIR != MPPE)                                /* if the MP is not interrupting */
             io_assert (iot [MPPE].devptr, ioa_IAK);     /*   then notify MP of the IAK too */
 
-        IR = ReadF (CIR);                               /* fetch the trap cell instruction */
+        if (is_sm2) {                                   /* SM-2: vector table + УСП */
+            sm2_usp = (CIR & SM2_USP_VECTOR_MASK) | SM2_USP_SREQ_FLAG;
+            IR = ReadF ((CIR + sm2_vec_base) & SM2_VEC_BASE_MASK);
+            }
+        else                                            /* HP: trap cell = select code */
+            IR = ReadF (CIR);                           /* fetch the trap cell instruction */
         }
 
     else {                                              /* otherwise this is a normal instruction execution */
@@ -2855,7 +2864,8 @@ else {                                                  /* otherwise the slot is
         }
 
     if (outbound.signals & ioIRQ)                       /* if the interrupt request signal is present */
-        interrupt_request = select_code;                /*   then indicate that the select code is interrupting */
+        interrupt_request = is_sm2 ? (select_code & SM2_USP_VECTOR_MASK)   /* SM-2: vector by select code */
+                                   : select_code;      /* HP: select code itself */
 
     else if (previous_holdoff & ~priority_holdoff_set [sc_rank] & sc_bit)   /* otherwise if priority is newly asserted */
         interrupt_request = io_poll_interrupts (interrupt_system);          /*   then check interrupt requests */

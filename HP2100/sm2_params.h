@@ -111,3 +111,8 @@
 #define SM2_OP_LSL          000002u
 #define SM2_OP_RRR          000014u
 #define SM2_OP_RRL          000004u
+
+/*--- 10. УСП и таблица векторов --------------------------------*/
+#define SM2_USP_VECTOR_MASK 0177u           /* номер вектора в УСП */
+#define SM2_USP_SREQ_FLAG   0200u           /* бит системного запроса */
+#define SM2_VEC_BASE_MASK   0x1FFFFu        /* маска адреса векторной ячейки */
