@@ -939,6 +939,7 @@
 #include "hp2100_defs.h"
 #include "hp2100_cpu.h"
 #include "hp2100_cpu_dmm.h"
+#include "sm2_params.h"
 
 
 
@@ -1024,11 +1025,11 @@
      U = Extended Arithmetic Unit is present
 */
 
-#define UNIT_MODEL_SHIFT    (UNIT_V_UF + 0)     /* bits 0- 3: CPU model (OPTION_ID value) */
-#define UNIT_OPTION_SHIFT   (UNIT_V_UF + 4)     /* bits 4-15: CPU options installed */
+#define UNIT_MODEL_SHIFT    (UNIT_V_UF + 0)     /* bits 0- 4: CPU model (OPTION_ID value) */
+#define UNIT_OPTION_SHIFT   (UNIT_V_UF + 5)     /* bits 5-15: CPU options installed */
 
-#define UNIT_MODEL_MASK     0000017u            /* model ID mask */
-#define UNIT_OPTION_MASK    0003777u            /* option ID mask */
+#define UNIT_MODEL_MASK     0000037u            /* model ID mask, 4 bits */
+#define UNIT_OPTION_MASK    0001777u            /* option ID mask */
 
 #define UNIT_MODEL_FIELD    (UNIT_MODEL_MASK  << UNIT_MODEL_SHIFT)
 #define UNIT_OPTION_FIELD   (UNIT_OPTION_MASK << UNIT_OPTION_SHIFT)
@@ -1047,6 +1048,8 @@
 #define UNIT_1000_M         (Option_1000_M << UNIT_MODEL_SHIFT)
 #define UNIT_1000_E         (Option_1000_E << UNIT_MODEL_SHIFT)
 #define UNIT_1000_F         (Option_1000_F << UNIT_MODEL_SHIFT)
+#define UNIT_SM2            (Option_SM2    << UNIT_MODEL_SHIFT)
+#define UNIT_SM2M           (Option_SM2M   << UNIT_MODEL_SHIFT)
 
 /* Unit options */
 
@@ -1217,6 +1220,16 @@ static const FEATURE_TABLE cpu_features [] = {          /* CPU features indexed 
     UNIT_PFAIL | UNIT_DMA | UNIT_MP     | UNIT_DMS |
     UNIT_VIS   | UNIT_DS  | UNIT_SIGNAL | UNIT_EMA_VMA,
     1024 * 1024
+    },
+
+  { UNIT_SM2,                                           /*   Option_SM2 */
+    0,
+    SM2_MEM_MAX_WORDS
+    },
+
+  { UNIT_SM2M,                                          /*   Option_SM2M */
+    0,
+    SM2_MEM_MAX_WORDS
     }
   };
 
@@ -1396,6 +1409,8 @@ static MTAB cpu_mod [] = {
     { UNIT_MODEL_FIELD, UNIT_1000_F, "",           "1000-F",     &set_model,    &show_model, (void *) "1000-F" },
 #endif
 
+    { UNIT_MODEL_FIELD, UNIT_SM2,    "",           "SM2",        &set_model,    &show_model, (void *) "SM2"    },
+    { UNIT_MODEL_FIELD, UNIT_SM2M,   "",           "SM2M",       &set_model,    &show_model, (void *) "SM2M"   },
     { UNIT_MODEL_FIELD, UNIT_1000_M, NULL,         "21MX-M",     &set_model,    &show_model, (void *) "1000-M" },
     { UNIT_MODEL_FIELD, UNIT_1000_E, NULL,         "21MX-E",     &set_model,    &show_model, (void *) "1000-E" },
 

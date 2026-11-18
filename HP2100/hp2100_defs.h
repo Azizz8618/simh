@@ -848,6 +848,8 @@ typedef enum {                                  /* CPU option identifiers */
     Option_1000_M,                              /*   model 1000 M-Series CPU */
     Option_1000_E,                              /*   model 1000 E-Series CPU */
     Option_1000_F,                              /*   model 1000 F-Series CPU */
+    Option_SM2,                                 /*   Soviet SM-2 CPU */
+    Option_SM2M,                                /*   Soviet SM-2M CPU */
     Option_BASE,                                /*   Base Set firmware */
     Option_EAU,                                 /*   Extended Arithmetic Unit hardware or firmware */
     Option_FP,                                  /*   Floating Point hardware or firmware */
@@ -882,7 +884,9 @@ typedef enum {                                  /* CPU options currently install
     CPU_VMAOS  = (1u << Option_VMAOS),          /*   RTE-6/VM VMA and OS firmware */
     CPU_VIS    = (1u << Option_VIS),            /*   Vector Instruction Set firmware */
     CPU_SIGNAL = (1u << Option_SIGNAL),         /*   SIGNAL/1000 firmware */
-    CPU_DS     = (1u << Option_DS)              /*   Distributed Systems firmware */
+    CPU_DS     = (1u << Option_DS),             /*   Distributed Systems firmware */
+    CPU_SM2    = (1u << Option_SM2),            /*   Soviet SM-2 CPU */
+    CPU_SM2M   = (1u << Option_SM2M)            /*   Soviet SM-2M CPU */
     } CPU_OPTION;
 
 #define CPU_OPTION_SET      CPU_OPTION          /* a set of CPU_OPTIONs */
@@ -893,7 +897,8 @@ typedef enum {                                  /* CPU options currently install
 #define CPU_21XX            (CPU_2116 | CPU_2115 | CPU_2114 | CPU_2100)
 #define CPU_1000_E_F        (CPU_1000_E | CPU_1000_F)
 #define CPU_1000            (CPU_1000_M | CPU_1000_E | CPU_1000_F)
-#define CPU_ALL             (CPU_211X | CPU_2100 | CPU_1000)
+#define CPU_SM2_SERIES      (CPU_SM2 | CPU_SM2M)
+#define CPU_ALL             (CPU_211X | CPU_2100 | CPU_1000 | CPU_SM2_SERIES)
 
 #define CPU_MODEL_MASK      CPU_ALL             /* a mask for just the CPU model bits */
 #define CPU_OPTION_MASK     (~CPU_ALL)          /* a mask for just the option bits */
