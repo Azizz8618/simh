@@ -110,6 +110,7 @@
 #include <stdlib.h>
 
 #include "hp2100_defs.h"
+#include "sm2_params.h"
 #include "hp2100_cpu.h"
 #include "hp2100_cpu_dmm.h"
 
@@ -2892,11 +2893,54 @@ return SCPE_OK;                                         /* return the display re
        micro-ops table.
 */
 
+/* Расширенные команды СМ-2М (кодировка объявлена в sm2_params.h, GAP). */
+static const OP_DESC sm2_desc = {
+    SM2_OPCODE_MASK,                            /*   opcode mask */
+    0u,                                         /*   opcode shift */
+    AB_UNUSED,                                  /*   A/B-register selector */
+    CPU_SM2_SERIES                              /*   applicable feature flags */
+    };
+
+static const OP_TABLE sm2_ops = {
+    { "DLD",  SM2_OP_DLD, opNone },
+    { "DST",  SM2_OP_DST, opNone },
+    { "MPY",  SM2_OP_MPY, opNone },
+    { "DIV",  SM2_OP_DIV, opNone },
+    { "LDX",  SM2_OP_LDX, opNone },
+    { "LDY",  SM2_OP_LDY, opNone },
+    { "STX",  SM2_OP_STX, opNone },
+    { "STY",  SM2_OP_STY, opNone },
+    { "LBN",  SM2_OP_LBN, opNone },
+    { "LBP",  SM2_OP_LBP, opNone },
+    { "FAD",  SM2_OP_FAD, opNone },
+    { "FSB",  SM2_OP_FSB, opNone },
+    { "FMP",  SM2_OP_FMP, opNone },
+    { "FDV",  SM2_OP_FDV, opNone },
+    { "TAS",  SM2_OP_TAS, opNone },
+    { "FIX",  SM2_OP_FIX, opNone },
+    { "FLT",  SM2_OP_FLT, opNone },
+    { "ASR",  SM2_OP_ASR, opNone },
+    { "ASL",  SM2_OP_ASL, opNone },
+    { "LSR",  SM2_OP_LSR, opNone },
+    { "LSL",  SM2_OP_LSL, opNone },
+    { "RRR",  SM2_OP_RRR, opNone },
+    { "RRL",  SM2_OP_RRL, opNone }
+    };
+
 t_stat fprint_cpu (FILE *ofile, t_addr addr, t_value *val, uint32 radix, SYMBOL_SOURCE source)
 {
 const  t_value opcode = val [0];                        /* the instruction opcode */
 t_bool separator = FALSE;                               /* TRUE if a separator between multiple ops is needed */
 t_stat status    = SCPE_ARG;                            /* initial return status is "invalid opcode" */
+
+if (cpu_configuration & CPU_SM2_SERIES) {        /* if an SM-2 model is selected */
+    size_t i;
+    for (i = 0; i < sizeof (sm2_ops) / sizeof (sm2_ops [0]); i++)
+        if (sm2_ops [i].opcode == opcode) {     /*   linear search: sparse opcode field */
+            fprintf (ofile, "%s", sm2_ops [i].mnemonic);
+            return SCPE_OK;
+            }
+    }
 
 if (MRGOP (opcode)) {                                   /* if this is an MRG instruction */
     if (source == Device_Symbol)                        /*   then if the offset must be relative */

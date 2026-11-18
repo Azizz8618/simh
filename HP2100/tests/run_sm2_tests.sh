@@ -10,6 +10,7 @@ OUT3=/tmp/sm2-stage3-test.out
 OUT4=/tmp/sm2-stage4-test.out
 OUT5=/tmp/sm2-stage5-test.out
 OUT6=/tmp/sm2-stage6-test.out
+OUT7=/tmp/sm2-stage7-test.out
 
 [ -x "$BIN" ] || { echo "СТОП: нет $BIN" >&2; exit 1; }
 
@@ -18,6 +19,7 @@ OUT6=/tmp/sm2-stage6-test.out
 "$BIN" < HP2100/tests/sm2_stage4_test.ini > "$OUT4" 2>&1
 "$BIN" < HP2100/tests/sm2_stage5_test.ini > "$OUT5" 2>&1
 "$BIN" < HP2100/tests/sm2_stage6_test.ini > "$OUT6" 2>&1
+printf "SET CPU SM2\nDEPOSIT 100 001104\nEXAMINE -M 100\nDEPOSIT 100 000100\nEXAMINE -M 100\nEXIT\n" | "$BIN" > "$OUT7" 2>&1
 
 fail=0
 check () {
@@ -78,8 +80,14 @@ else
     echo "ОШИБКА СМ-2: контроллер 2К" >&2; fail=1
 fi
 
+if grep -q 'LDX' "$OUT7" && grep -q 'MPY' "$OUT7"; then
+    echo "ОК   СМ-2: дизассемблер показывает LDX и MPY"
+else
+    echo "ОШИБКА СМ-2: дизассемблер" >&2; fail=1
+fi
+
 if [ "$fail" = 0 ]; then
-    echo 'ИТОГО: все проверки этапов 2-6 пройдены'
+    echo 'ИТОГО: все проверки этапов 2-7 пройдены'
 else
     echo 'ИТОГО: есть расхождения' >&2
     exit 1
