@@ -2148,7 +2148,7 @@ HP2100 = ${HP2100D}/hp2100_baci.c ${HP2100D}/hp2100_cpu.c \
         ${HP2100D}/hp2100_cpu0.c ${HP2100D}/hp2100_cpu1.c \
         ${HP2100D}/hp2100_cpu2.c ${HP2100D}/hp2100_cpu3.c \
         ${HP2100D}/hp2100_cpu4.c ${HP2100D}/hp2100_cpu5.c \
-        ${HP2100D}/hp2100_cpu6.c ${HP2100D}/hp2100_cpu7.c \
+        ${HP2100D}/hp2100_cpu6.c ${HP2100D}/hp2100_cpu7.c ${HP2100D}/hp2100_cpu8.c \
         ${HP2100D}/hp2100_di.c ${HP2100D}/hp2100_di_da.c \
         ${HP2100D}/hp2100_disclib.c ${HP2100D}/hp2100_dma.c \
         ${HP2100D}/hp2100_dp.c ${HP2100D}/hp2100_dq.c \

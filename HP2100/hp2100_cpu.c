@@ -1156,14 +1156,14 @@ static uint32    exec_match       = D16_UMAX;   /* the current instruction execu
 static uint32    indirect_limit   = 16;         /* the indirect chain length limit */
 
 static t_bool    is_1000          = FALSE;      /* TRUE if the CPU is a 1000 M/E/F-Series */
-static t_bool    is_sm2           = FALSE;      /* TRUE if the CPU is a Soviet SM-2/SM-2M */
+t_bool    is_sm2           = FALSE;      /* TRUE if the CPU is a Soviet SM-2/SM-2M */
 static uint32    sm2_rav          = 0;          /* SM-2 register of return address (РАВ) */
-static uint32    sm2_rb1          = 0;          /* РБ1: база непривилегированного состояния */
-static uint32    sm2_rb2          = 0;          /* РБ2: база привилегированного состояния */
+uint32    sm2_rb1          = 0;          /* РБ1: база непривилегированного состояния */
+uint32    sm2_rb2          = 0;          /* РБ2: база привилегированного состояния */
 static uint32    sm2_rng          = 0;          /* РНГ: нижняя граница памяти */
 static uint32    sm2_rvg          = 0;          /* РВГ: верхняя граница памяти */
-static uint32    sm2_ri1          = 0;          /* РИ1 (X), бит 0 = автоиндекс */
-static uint32    sm2_ri2          = 0;          /* РИ2 (Y), бит 0 = автоиндекс */
+uint32    sm2_ri1          = 0;          /* РИ1 (X), бит 0 = автоиндекс */
+uint32    sm2_ri2          = 0;          /* РИ2 (Y), бит 0 = автоиндекс */
 static t_bool    sm2_priv         = TRUE;       /* TRUE if privileged state (ТС = 0) */
 #define SM2_ADDR_MASK   (is_sm2 ? SM2_LA_MASK : LA_MASK)
 static t_bool    mp_is_present    = FALSE;      /* TRUE if Memory Protect is present */
@@ -4604,8 +4604,15 @@ return SCPE_OK;                                         /*   and report success 
        and SZA,RSS/SZB,RSS) are independent.
 */
 
+extern t_bool sm2_ext_instruction (t_stat *status);
+
 static t_stat machine_instruction (t_bool int_ack, uint32 *idle_save)
 {
+t_stat ext_status;
+
+if (is_sm2 && sm2_ext_instruction (&ext_status)) {     /* SM-2 extension instruction */
+    return ext_status;
+    }
 uint32  ab_selector, result, skip;
 HP_WORD data;
 t_bool  rss;

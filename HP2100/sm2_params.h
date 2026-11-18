@@ -81,3 +81,33 @@
 #define SM2_BASELINE_MEM    32u*1024u
 
 #endif /* SM2_PARAMS_H */
+
+/*--- 9. Рабочая кодировка расширенных команд (GAP: точная битовая
+ *     раскладка в источнике отсутствует; значения взяты из таблицы
+ *     кодов Савватеева и объявлены здесь, чтобы править в одном месте) --*/
+#define SM2_OPCODE_MASK     0177777u
+#define SM2_OP_DLD          001100u
+#define SM2_OP_DST          001200u
+#define SM2_OP_MPY          000100u
+#define SM2_OP_DIV          000200u
+#define SM2_OP_LDX          001104u
+#define SM2_OP_LDY          001105u
+#define SM2_OP_STX          001204u
+#define SM2_OP_STY          001205u
+#define SM2_OP_STW          001206u
+#define SM2_OP_LDW          001106u
+#define SM2_OP_LBN          001101u
+#define SM2_OP_LBP          001102u
+#define SM2_OP_FAD          001400u
+#define SM2_OP_FSB          001410u
+#define SM2_OP_FMP          001420u
+#define SM2_OP_FDV          001430u
+#define SM2_OP_TAS          001107u
+#define SM2_OP_FIX          0105100u
+#define SM2_OP_FLT          0105120u
+#define SM2_OP_ASR          000011u
+#define SM2_OP_ASL          000001u
+#define SM2_OP_LSR          000012u
+#define SM2_OP_LSL          000002u
+#define SM2_OP_RRR          000014u
+#define SM2_OP_RRL          000004u
