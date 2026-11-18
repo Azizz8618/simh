@@ -1156,6 +1156,8 @@ static uint32    exec_match       = D16_UMAX;   /* the current instruction execu
 static uint32    indirect_limit   = 16;         /* the indirect chain length limit */
 
 static t_bool    is_1000          = FALSE;      /* TRUE if the CPU is a 1000 M/E/F-Series */
+static t_bool    is_sm2           = FALSE;      /* TRUE if the CPU is a Soviet SM-2/SM-2M */
+static uint32    sm2_rav          = 0;          /* SM-2 register of return address (РАВ) */
 static t_bool    mp_is_present    = FALSE;      /* TRUE if Memory Protect is present */
 static uint32    last_select_code = 0;          /* the last select code sent over the I/O backplane */
 static HP_WORD   saved_MR         = 0;          /* the M-register value between SCP commands */
@@ -1364,6 +1366,8 @@ static REG cpu_reg [] = {
     { BRDATA (ROMS,    loader_rom,           8,    32,                 4),            REG_HRO           },
 
     { FLDATA (IS1000,  is_1000,                             0),                       REG_HRO           },
+    { FLDATA (ISSM2,   is_sm2,                              0),                       REG_HRO           },
+    { ORDATA (RAV,     sm2_rav,                      16),                               REG_HRO           },
     { ORDATA (INTREQ,  interrupt_request,           6),                               REG_HRO           },
     { ORDATA (LASTSC,  last_select_code,            6),                               REG_HRO           },
 
@@ -3853,6 +3857,8 @@ if (result == SCPE_OK) {                                /* if the change succeed
     else                                                /* otherwise */
         meu_configure (ME_Disabled);                    /*   disable the MEM and mapping */
 
+    is_sm2 = (TO_CPU_MODEL (new_model) & CPU_SM2_SERIES) != 0;  /* SM-2 model flag */
+
     if (cpu_configuration & CPU_1000) {                 /* if the CPU is a 1000-series machine */
         is_1000 = TRUE;                                 /*   then set the model index */
         mem_end = mem_size;                             /* memory is not reserved for the loader  */
@@ -4620,6 +4626,9 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
 
             WriteW (MR, PR);                            /* store P into the target memory address */
 
+            if (is_sm2)                                 /* SM-2 also saves the return */
+                sm2_rav = PR;                           /*   address in the РАВ register */
+
             PCQ_ENTRY;                                  /* save P in the queue */
             PR = MR + 1 & LA_MASK;                      /*   and jump to the word after the target address */
             }
@@ -4693,7 +4702,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
             WriteW (MR, data);                          /*     and write it back */
 
             if (data == 0)                              /* if the value rolled over to zero */
-                PR = PR + 1 & LA_MASK;                  /*   then increment P */
+                PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* then increment P */
             }
         break;
 
@@ -4748,7 +4757,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
 
         if (status == SCPE_OK)                          /* if the address resolved */
             if (AR != ReadW (MR))                       /*   then if the accumulator and memory differ */
-                PR = PR + 1 & LA_MASK;                  /*     then increment P */
+                PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* then increment P */
         break;
 
 
@@ -4760,7 +4769,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
 
         if (status == SCPE_OK)                          /* if the address resolved */
             if (BR != ReadW (MR))                       /*   then if the accumulator and memory differ */
-                PR = PR + 1 & LA_MASK;                  /*     then increment P */
+                PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* then increment P */
         break;
 
 
@@ -4864,7 +4873,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
             skip = 1;                                   /*   then skip the next instruction unconditionally */
 
         ABREG [ab_selector] = data;                     /* store the result in the selected register */
-        PR = PR + skip & LA_MASK;                       /*   and skip the next instruction if indicated */
+        PR = PR + skip * (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* skip if indicated */
         break;
 
 
@@ -4881,7 +4890,7 @@ switch (UPPER_BYTE (IR)) {                              /* dispatch on bits 15-8
             E = 0;                                      /*   then clear E */
 
         if (IR & SRG_SLx && (data & LSB) == 0)          /* if SLx is enabled and the LSB is clear */
-            PR = PR + 1 & LA_MASK;                      /*   then skip the next instruction */
+            PR = PR + (is_sm2 ? SM2_SKIP_STEP : 1) & LA_MASK;  /* then skip the next instruction */
 
         ABREG [ab_selector] = srg_uop (data, SRG2 (IR));    /* do the second shift and set the accumulator */
         break;

@@ -19,6 +19,7 @@
 #define SM2_CUBE_WORDS      32u*1024u
 #define SM2_ADDR_BITS       17           /* абсолютный адрес */
 #define SM2_WORD_BITS       16
+#define SM2_SKIP_STEP       2            /* пропуск: РНК += 2 (не 1) */
 
 /*--- 2. Регистры и слово состояния ----------------------------*/
 #define SM2_PSW_BITS        32           /* ССП */
