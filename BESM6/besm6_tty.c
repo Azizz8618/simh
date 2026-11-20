@@ -1188,6 +1188,87 @@ void vt_cmd_exec (int num)
 }
 
 /*
+ * Key reports are ESC sequences whose length depends on the key: arrows are
+ * ESC [ A..D, Tab is a bare 0x09, and a mouse wheel is ESC [ Mxyz (X10) or
+ * ESC [ <n;n;nM (SGR).  A telnet line can split one report across polls, so
+ * the decoder keeps its state per line and consumes each report whole;
+ * otherwise its trailing bytes would be typed into the command line.
+ */
+enum {
+    VT_ESC_NONE, VT_ESC_START, VT_ESC_CSI, VT_ESC_CSI_PARAMS,
+    VT_ESC_MOUSE_X10, VT_ESC_MOUSE_SGR, VT_ESC_SS3
+};
+
+static int vt_esc_state [LINES_MAX+1];
+static int vt_esc_mouse_count [LINES_MAX+1];
+
+/* Socket input is tagged TMXR_VALID, input injected by `send TTY:n,"..."' is
+ * tagged SCPE_KFLAG (see vt_getc()).  Accept both and return the bare byte. */
+static int vt_esc_getc (TMLN *t)
+{
+    int c = tmxr_getc_ln (t);
+
+    if (! (c & (TMXR_VALID | SCPE_KFLAG)))
+        return -1;
+    return c & 0377;
+}
+
+static void vt_cmd_erase_line (int num)
+{
+    TMLN *t = &tty_line [num];
+    char *cbuf = vt_cbuf [num], *cp = vt_cptr [num];
+
+    while (cp > cbuf) {
+        --cp;
+        if (! (*cp & 0x80))
+            tmxr_linemsg (t, "\b \b");
+    }
+    vt_cptr[num] = cbuf;
+}
+
+/* Complete the command word at the end of the line to the longest common
+ * prefix of all matching commands. */
+static void vt_cmd_complete (int num)
+{
+    TMLN *t = &tty_line [num];
+    char *cbuf = vt_cbuf [num];
+    CTAB *c;
+    const char *match = NULL;
+    int len, common = 0, end, i;
+
+    end = strlen (cbuf);
+    if (vt_cptr[num] != cbuf + end)
+        return;                                 /* complete at end of line only */
+    for (len = 0; (len < end) && !sim_isspace (cbuf[len]); len++)
+        ;
+    if (len == 0)
+        return;
+    for (c = cmd_table; c->name; c++) {
+        if (strncasecmp (c->name, cbuf, len))
+            continue;
+        if (! match) {
+            match = c->name;
+            common = strlen (match);
+            }
+        else {
+            for (i = 0; match[i] && (match[i] == c->name[i]); i++)
+                ;
+            if (i < common)
+                common = i;
+            }
+        }
+    if ((! match) || (common <= len) || (end + common - len >= CBUFSIZE - 1))
+        return;
+    for (i = end; i > len; i--)
+        tmxr_linemsg (t, "\b \b");
+    memmove (cbuf + common, cbuf + len, end - len + 1);
+    memcpy (cbuf, match, common);
+    for (i = len; i < common; i++)
+        tmxr_putc_ln (t, cbuf[i]);
+    vt_cptr[num] = cbuf + common;
+}
+
+/*
  * Command line interface mode.
  */
 void vt_cmd_loop (int num, int c)
@@ -1198,63 +1279,149 @@ void vt_cmd_loop (int num, int c)
     cbuf = vt_cbuf [num];
     cptr = &vt_cptr [num];
 
-    switch (c) {
-    case '\r':
-    case '\n':
-        tmxr_linemsg (t, "\r\n");
-        if (*cptr <= cbuf) {
-            /* An empty line - returning to terminal emulation. */
-            tty_unit[num].flags &= ~TTY_CMDLINE_MASK;
-            break;
-        }
-        /* Executing. */
-        **cptr = 0;
-        vt_cmd_exec (num);
-        tmxr_linemsg (t, "sim>");
-        *cptr = vt_cbuf[num];
-        break;
-    case '\b':
-    case 0177:
-        /* Backspace. */
-        if (*cptr <= cbuf)
-            break;
-        tmxr_linemsg (t, "\b \b");
-        while (*cptr > cbuf) {
-            --*cptr;
-            if (! (**cptr & 0x80))
-                break;
-        }
-        break;
-    case 'U' & 037:
-        /* Erase line. */
-        erase_line:     while (*cptr > cbuf) {
-            --*cptr;
-            if (! (**cptr & 0x80))
-                tmxr_linemsg (t, "\b \b");
-        }
-        break;
-    case 033:
-        /* Escape [ X. */
-        if (tmxr_getc_ln (t) != '[' + TMXR_VALID)
-            break;
-        switch (tmxr_getc_ln (t) - TMXR_VALID) {
-        case 'A': /* Up arrow */
-            if (*cptr <= cbuf) {
-                *cptr = cbuf + strlen (cbuf);
-                if (*cptr > cbuf)
-                    tmxr_linemsg (t, cbuf);
+    for (;;) {
+        switch (vt_esc_state[num]) {
+        case VT_ESC_NONE:
+            if (c == 033) {
+                vt_esc_state[num] = VT_ESC_START;
+                return;
             }
+            switch (c) {
+            case '\r':
+            case '\n':
+                tmxr_linemsg (t, "\r\n");
+                if (*cptr <= cbuf) {
+                    /* An empty line - returning to terminal emulation. */
+                    tty_unit[num].flags &= ~TTY_CMDLINE_MASK;
+                    vt_esc_state[num] = VT_ESC_NONE;
+                    return;
+                }
+                /* Executing. */
+                **cptr = 0;
+                vt_cmd_exec (num);
+                tmxr_linemsg (t, "sim>");
+                *cptr = vt_cbuf[num];
+                return;
+            case '\b':
+            case 0177:
+                /* Backspace. */
+                if (*cptr <= cbuf)
+                    return;
+                tmxr_linemsg (t, "\b \b");
+                while (*cptr > cbuf) {
+                    --*cptr;
+                    if (! (**cptr & 0x80))
+                        break;
+                }
+                return;
+            case 'U' & 037:
+                /* Erase line. */
+                vt_cmd_erase_line (num);
+                return;
+            case '\t':
+                /* Tab. */
+                vt_cmd_complete (num);
+                return;
+            default:
+                if (c < ' ' || *cptr > cbuf+CBUFSIZE-5)
+                    return;
+                *(*cptr)++ = c;
+                tmxr_putc_ln (t, c);
+                return;
+            }
+        case VT_ESC_START:
+            vt_esc_state[num] = VT_ESC_NONE;
+            if (c == '[')
+                vt_esc_state[num] = VT_ESC_CSI;
+            else if (c == 'O')
+                vt_esc_state[num] = VT_ESC_SS3;
             break;
-        case 'B': /* Down arrow */
-            goto erase_line;
+        case VT_ESC_CSI:
+            if (c == 'M') {                     /* X10 mouse: 3 data bytes */
+                vt_esc_state[num] = VT_ESC_MOUSE_X10;
+                vt_esc_mouse_count[num] = 0;
+                }
+            else if (c == '<') {                /* SGR mouse: up to M or m */
+                vt_esc_state[num] = VT_ESC_MOUSE_SGR;
+                }
+            else {
+                vt_esc_state[num] = VT_ESC_CSI_PARAMS;
+                continue;                       /* reprocess c as a parameter */
+                }
+            break;
+        case VT_ESC_CSI_PARAMS:
+            if (c >= 0x40 && c <= 0x7e) {       /* final byte */
+                vt_esc_state[num] = VT_ESC_NONE;
+                switch (c) {
+                case 'A':                       /* Up arrow */
+                case 'H':                       /* Home */
+                    if (*cptr <= cbuf) {
+                        *cptr = cbuf + strlen (cbuf);
+                        if (*cptr > cbuf)
+                            tmxr_linemsg (t, cbuf);
+                    }
+                    break;
+                case 'B':                       /* Down arrow */
+                    vt_cmd_erase_line (num);
+                    break;
+                case 'C':                       /* Right arrow */
+                    if (*cptr < cbuf + strlen (cbuf)) {
+                        tmxr_putc_ln (t, **cptr);
+                        ++*cptr;
+                    }
+                    break;
+                case 'D':                       /* Left arrow */
+                    if (*cptr > cbuf) {
+                        --*cptr;
+                        tmxr_linemsg (t, "\b");
+                    }
+                    break;
+                case 'Z':                       /* Shift-Tab */
+                    vt_cmd_complete (num);
+                    break;
+                }
+                return;
+            }
+            break;                              /* parameter or intermediate byte */
+        case VT_ESC_MOUSE_X10:
+            if (++vt_esc_mouse_count[num] >= 3)
+                vt_esc_state[num] = VT_ESC_NONE;
+            break;
+        case VT_ESC_MOUSE_SGR:
+            if ((c == 'M') || (c == 'm'))
+                vt_esc_state[num] = VT_ESC_NONE;
+            break;
+        case VT_ESC_SS3:
+            vt_esc_state[num] = VT_ESC_NONE;
+            switch (c) {
+            case 'A':                           /* Up arrow */
+                if (*cptr <= cbuf) {
+                    *cptr = cbuf + strlen (cbuf);
+                    if (*cptr > cbuf)
+                        tmxr_linemsg (t, cbuf);
+                }
+                break;
+            case 'B':                           /* Down arrow */
+                vt_cmd_erase_line (num);
+                break;
+            case 'C':                           /* Right arrow */
+                if (*cptr < cbuf + strlen (cbuf)) {
+                    tmxr_putc_ln (t, **cptr);
+                    ++*cptr;
+                }
+                break;
+            case 'D':                           /* Left arrow */
+                if (*cptr > cbuf) {
+                    --*cptr;
+                    tmxr_linemsg (t, "\b");
+                }
+                break;
+            }
+            return;
         }
-        break;
-    default:
-        if (c < ' ' || *cptr > cbuf+CBUFSIZE-5)
-            break;
-        *(*cptr)++ = c;
-        tmxr_putc_ln (t, c);
-        break;
+        c = vt_esc_getc (t);                    /* next byte of the report */
+        if (c < 0)
+            return;
     }
 }
 
@@ -1322,6 +1489,7 @@ int vt_getc (int num)
             tty_unit[num].flags |= TTY_CMDLINE_MASK;
             tmxr_linemsg (t, "sim>");
             vt_cptr[num] = vt_cbuf[num];
+            vt_esc_state[num] = VT_ESC_NONE;
             return -1;
         }
     } else {

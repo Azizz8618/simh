@@ -11427,6 +11427,53 @@ return read_line_p (NULL, cptr, size, stream);
 #define EDIT_DEFAULT_LIB "libedit."
 #endif /* defined(_WIN32) */
 
+#if defined(SIM_DLOPEN_EXTENSION)
+/* libedit has no key binding for terminal mouse reports (X10: ESC [ Mxyz,
+ * SGR: ESC [ <n;n;nM), so their parameters are typed into the command line.
+ * rl_getc_function must be installed before the first readline() call. */
+static int sim_rl_pending[8];
+static int sim_rl_pfirst, sim_rl_plast;
+
+static int sim_rl_mouse_getc (FILE *stream)
+{
+    int c, c2, c3, i;
+
+    for (;;) {
+        if (sim_rl_pfirst < sim_rl_plast)
+            return sim_rl_pending[sim_rl_pfirst++];
+        c = fgetc (stream);
+        if (c != 033)
+            return c;
+        c2 = fgetc (stream);
+        if (c2 != '[') {
+            sim_rl_pending[0] = 033;
+            sim_rl_pending[1] = c2;
+            sim_rl_pfirst = 0;
+            sim_rl_plast = 2;
+            return sim_rl_pending[sim_rl_pfirst++];
+        }
+        c3 = fgetc (stream);
+        if (c3 == '<') {                        /* SGR 1006 mouse report */
+            do {
+                c3 = fgetc (stream);
+            } while ((c3 >= 0) && (c3 != 'M') && (c3 != 'm'));
+            continue;
+        }
+        if (c3 == 'M') {                        /* X10 mouse report */
+            for (i = 0; i < 3; i++)
+                (void)fgetc (stream);
+            continue;
+        }
+        sim_rl_pending[0] = 033;                /* an ordinary CSI sequence */
+        sim_rl_pending[1] = '[';
+        sim_rl_pending[2] = c3;
+        sim_rl_pfirst = 0;
+        sim_rl_plast = 3;
+        return sim_rl_pending[sim_rl_pfirst++];
+    }
+}
+#endif /* defined(SIM_DLOPEN_EXTENSION) */
+
 char *read_line_p (const char *prompt, char *cptr, int32 size, FILE *stream)
 {
 static int initialized = 0;
@@ -11453,18 +11500,34 @@ if (prompt && (!initialized)) {
 #else /* !defined(HAVE_LIBEDIT) */
 #if defined(SIM_DLOPEN_EXTENSION)
     if (!p_readline) {   /* libedit not available at compile time, try OS shared object? */
-        void *handle;
+        /* Most distributions install libedit only under a versioned soname, so
+         * the unversioned name alone leaves the sim> prompt without line editing. */
+        static const char *const libnames[] = {
+            EDIT_DEFAULT_LIB __STR(SIM_DLOPEN_EXTENSION),
+            EDIT_DEFAULT_LIB __STR(SIM_DLOPEN_EXTENSION) ".3",
+            EDIT_DEFAULT_LIB __STR(SIM_DLOPEN_EXTENSION) ".2"
+            };
+        void *handle = NULL;
+        int i;
 
-        handle = dlopen(EDIT_DEFAULT_LIB __STR(SIM_DLOPEN_EXTENSION), RTLD_NOW|RTLD_GLOBAL);
-        if (!handle)
-            handle = dlopen(EDIT_DEFAULT_LIB __STR(SIM_DLOPEN_EXTENSION) ".2", RTLD_NOW|RTLD_GLOBAL);
+        for (i = 0; (!handle) && (i < (int)(sizeof(libnames)/sizeof(libnames[0]))); i++)
+            handle = dlopen(libnames[i], RTLD_NOW|RTLD_GLOBAL);
         if (handle) {
+            int *version = (int *)dlsym(handle, "rl_readline_version");
+
             p_readline = (readline_func)((size_t)dlsym(handle, "readline"));
             p_add_history = (add_history_func)((size_t)dlsym(handle, "add_history"));
             p_free_line = (free_line_func)((size_t)dlsym(handle, "rl_free"));
             if (p_free_line == NULL)
                 p_free_line = (free_line_func)&free;
-            sim_editline_version = *((int *)dlsym(handle, "rl_readline_version"));
+            if (version)
+                sim_editline_version = *version;
+            if (p_readline) {
+                void **getc_slot = (void **)dlsym (handle, "rl_getc_function");
+
+                if (getc_slot)
+                    *getc_slot = (void *)sim_rl_mouse_getc;
+                }
             sim_editline_dlopened = TRUE;
             }
         }
