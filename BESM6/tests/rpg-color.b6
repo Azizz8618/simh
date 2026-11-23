@@ -1,0 +1,90 @@
+ШИФР 410300 ЗС5^
+ДИС 41(2148)^
+ОЗУ 32^АЦП 32^
+ЕЕВ1А3
+*NAME RPGCOLOR
+*TRANS:FOREX3*,,411550
+      PROGRAM RPGCOLOR
+C    Six-colour wide-roll figure for the RPG test.
+C     GENS configuration for a real RPG run: "РПГ БЭСМ" (ТРАКТЫ 34 and 36).
+C     Y is across the roll; 4500 steps at 0.125 mm is 56.25 cm, within
+C     the historical 68 cm wide roll.  ПАРАМ3/ПАРАМ4 select 6 colours and
+C     the wide roll in GP1; the runner sets model flags for the same.
+C     X, Y, P, DX, DY are the single source of the figure; run-rpg.py
+C     reads them and feeds the resulting УК frame bytes to PL1 at 0171.
+      INTEGER FRAME(64), X(12), Y(12), P(12), DX(12), DY(12), I, J
+      COMMON /PDEVXY/ FRAME
+      X(1)=10
+      Y(1)=500
+      P(1)=0
+      DX(1)=0
+      DY(1)=500
+      X(2)=10
+      Y(2)=500
+      P(2)=1
+      DX(2)=6
+      DY(2)=0
+      X(3)=10
+      Y(3)=1300
+      P(3)=0
+      DX(3)=0
+      DY(3)=800
+      X(4)=10
+      Y(4)=1300
+      P(4)=2
+      DX(4)=6
+      DY(4)=0
+      X(5)=10
+      Y(5)=2100
+      P(5)=0
+      DX(5)=0
+      DY(5)=800
+      X(6)=10
+      Y(6)=2100
+      P(6)=3
+      DX(6)=6
+      DY(6)=0
+      X(7)=10
+      Y(7)=2900
+      P(7)=0
+      DX(7)=0
+      DY(7)=800
+      X(8)=10
+      Y(8)=2900
+      P(8)=4
+      DX(8)=6
+      DY(8)=0
+      X(9)=10
+      Y(9)=3700
+      P(9)=0
+      DX(9)=0
+      DY(9)=800
+      X(10)=10
+      Y(10)=3700
+      P(10)=5
+      DX(10)=6
+      DY(10)=0
+      X(11)=10
+      Y(11)=4500
+      P(11)=0
+      DX(11)=0
+      DY(11)=800
+      X(12)=10
+      Y(12)=4500
+      P(12)=6
+      DX(12)=6
+      DY(12)=0
+      DO 20 J = 1, 12
+         DO 10 I = 1, 64
+   10    FRAME(I) = 0
+         FRAME(1) = X(J)
+         FRAME(2) = Y(J)
+         FRAME(3) = P(J)
+   20 CONTINUE
+      PRINT 900
+  900 FORMAT(' 12 6 6 4500 12345')
+      END
+*EXECUTE
+*END FILE
+``````
+ЕКОНЕЦ

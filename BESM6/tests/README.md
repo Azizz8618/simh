@@ -113,6 +113,44 @@ with inline MADLEN `PDEV`. Golden `plot.dat`, `benson.out` and `benson.svg`
 are kept in `gp-fig-golden/` with their SHA256 values and geometry in
 `gp-fig-golden/EXPECTED.md`. They are etalons only, not inputs to the runner.
 
+## Wide six-colour RPG on the PL channel
+
+The РПГ (VNIIEF roll plotter) is a different device from the БЕНСОН: it is
+driven by УК bytes on `0170`/`0171`, not by ЭК `1210/1211` and ГРП 18.
+Its standalone acceptance test is:
+
+```sh
+SIMH_BIN=/path/to/besm6-with-rpg python3 BESM6/tests/run-rpg.py
+```
+
+`SIMH_BIN` must point at a simulator built with `set pl1 rpg`,
+`set pl1 rpg-wide`, `set pl1 rpg-6color` and `set pl1 rpg-step=...`.
+`04170..04173` must return 0 instead of `STOP_UNIMPLEMENTED`. The runner
+uses `rpg-line.b6` for a short two-colour figure and `rpg-color.b6` for six
+strokes on the historical 68 cm roll. Both decks define X/Y/P/DX/DY arrays;
+`run-rpg.py` reads them, starts SIMH in an isolated tmux session, loads
+`rpg-stream.b6` and emits every УК byte with `d ACC` / `d PC 077700` /
+`go`, followed by `step 500000` on a branch stub so that simulated time
+advances and PL1 becomes ready again. `go` is used because SIMH `run`
+resets the machine and clears ACC. The guest instruction is УВВ `0171`,
+so the bytes really pass through PL1. The explicit completion marker is
+`show pl1 rpg`: the runner requires the exact УК and stroke counts and
+`no jam`. The default harness is `bare` (no DISPAK boot), because the
+current DISPAK build loops on the unrelated ГРП 18 interrupt and never
+finishes a card job. Use `--harness deck` to boot DISPAK, feed the deck on
+`vu0` and wait for `КОНЕЦ ЗАДАЧИ` or the deck's ACPU marker; the RPG checks
+run in both harnesses.
+`RPG_STEP` (default `0.125` mm), `RPG_SPIN`, `RPG_MODES`, `RUNS` and
+`TIMEOUT` override the defaults; the
+colour mode is repeated three times and the `rpg.svg` SHA256 values must
+match. All scratch files stay in `/var/tmp/rpg-*`. This test is not part of
+`besm6_test.ini`.
+
+The historical protocol is not fully restored. Six colours and the 68 cm
+roll come from `gp1.be`/`gp4.be`; the pen-field encoding in the runner is an
+explicit hypothesis. `rpg-golden/EXPECTED.md` records the pending SHA256
+values and the computed geometry etalons `rpg-line.svg` and `rpg-color.svg`.
+
 ## Fixture formats
 
 - **`.b6`** — a textual BESM-6 memory image (address lines `в`, octal words `с`,

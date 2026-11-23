@@ -27,6 +27,9 @@
  * authorization from Leonid Broukhis and Serge Vakulenko.
  */
 #include "besm6_defs.h"
+#include "besm6_rpg.h"
+#include <stdlib.h>
+#include <string.h>
 
 t_stat pl_event (UNIT *u);
 
@@ -51,15 +54,160 @@ t_stat pl_reset (DEVICE *dptr);
 t_stat pl_attach (UNIT *uptr, CONST char *cptr);
 t_stat pl_detach (UNIT *uptr);
 
+static t_stat pl_set_rpg (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    rpg_enable (1);
+    return SCPE_OK;
+}
+
+static t_stat pl_set_norpg (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    rpg_finish ();
+    rpg_enable (0);
+    return SCPE_OK;
+}
+
+static t_stat pl_show_rpg (FILE *st, UNIT *u, int32 v, CONST void *d)
+{
+    fprintf (st, "%s, %u УК, %u strokes, %s",
+             rpg_is_enabled () ? "on" : "off", rpg_uk_count (),
+             rpg_stroke_count (), rpg_jam () ? "jam" : "no jam");
+    return SCPE_OK;
+}
+
+static t_stat pl_set_rpg_wide (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    rpg_set_wide (1);
+    return SCPE_OK;
+}
+
+static t_stat pl_set_rpg_normal (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    rpg_set_wide (0);
+    return SCPE_OK;
+}
+
+static t_stat pl_show_rpg_wide (FILE *st, UNIT *u, int32 v, CONST void *d)
+{
+    fprintf (st, "%s", rpg_is_wide () ? "68 cm" : "34 cm");
+    return SCPE_OK;
+}
+
+static t_stat pl_set_rpg_6colour (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    rpg_set_sixcolor (1);
+    return SCPE_OK;
+}
+
+static t_stat pl_set_rpg_3colour (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    rpg_set_sixcolor (0);
+    return SCPE_OK;
+}
+
+static t_stat pl_show_rpg_6colour (FILE *st, UNIT *u, int32 v, CONST void *d)
+{
+    fprintf (st, "%s", rpg_is_sixcolor () ? "6 (hypothesis)" : "3");
+    return SCPE_OK;
+}
+
+static t_stat pl_set_rpg_step (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    if (cp == NULL)
+        return SCPE_ARG;
+    if (strcmp (cp, "0.0625") == 0 || strcmp (cp, "625") == 0)
+        rpg_set_fine_step (1);
+    else if (strcmp (cp, "0.125") == 0 || strcmp (cp, "125") == 0)
+        rpg_set_fine_step (0);
+    else
+        return SCPE_ARG;
+    return SCPE_OK;
+}
+
+static t_stat pl_show_rpg_step (FILE *st, UNIT *u, int32 v, CONST void *d)
+{
+    fprintf (st, "%s mm", rpg_is_fine_step () ? "0.0625" : "0.125");
+    return SCPE_OK;
+}
+
+static t_stat pl_set_rpg_autoproll (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    rpg_set_autoproll (1);
+    return SCPE_OK;
+}
+
+static t_stat pl_set_rpg_noautoproll (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    rpg_set_autoproll (0);
+    return SCPE_OK;
+}
+
+static t_stat pl_show_rpg_autoproll (FILE *st, UNIT *u, int32 v, CONST void *d)
+{
+    fprintf (st, "%s", rpg_has_autoproll () ? "on" : "off");
+    return SCPE_OK;
+}
+
+/* Test hook: feed octal УК bytes straight into the decoder from an ini. */
+static t_stat pl_set_rpg_uk (UNIT *u, int32 v, CONST char *cp, void *d)
+{
+    char *p, *end;
+
+    if (! rpg_is_enabled () || cp == NULL)
+        return SCPE_ARG;
+    p = (char *) cp;
+    while (*p == '"' || *p == '\'')
+        p++;
+    while (*p) {
+        unsigned long b = strtoul (p, &end, 8);
+        if (end == p || b > 0377)
+            return SCPE_ARG;
+        rpg_uk ((uint8_t) b);
+        p = end;
+        while (*p == ',' || *p == ' ' || *p == '\t' ||
+               *p == '"' || *p == '\'')
+            p++;
+    }
+    return SCPE_OK;
+}
+
+MTAB pl_mod[] = {
+    /* MATCH_CMD() matches a typed prefix, so the short names come first. */
+    { MTAB_XTD|MTAB_VUN, 0, "RPG", "RPG", &pl_set_rpg,
+      &pl_show_rpg, NULL, "Route 0170/0171 bytes to the RПГ decoder" },
+    { MTAB_XTD|MTAB_VUN, 0, NULL, "NORPG", &pl_set_norpg,
+      NULL, NULL, "Send 0170/0171 bytes to the PL file again" },
+    { MTAB_XTD|MTAB_VUN, 0, NULL, "RPG-WIDE", &pl_set_rpg_wide,
+      &pl_show_rpg_wide, NULL, "RПГ: 68 cm roll (5440 steps)" },
+    { MTAB_XTD|MTAB_VUN, 0, NULL, "RPG-NORMAL", &pl_set_rpg_normal,
+      NULL, NULL, "RПГ: 34 cm roll (2720 steps)" },
+    { MTAB_XTD|MTAB_VUN, 0, NULL, "RPG-6COLOR", &pl_set_rpg_6colour,
+      &pl_show_rpg_6colour, NULL, "RПГ: six-colour mode (mapping is a hypothesis)" },
+    { MTAB_XTD|MTAB_VUN, 0, NULL, "RPG-3COLOR", &pl_set_rpg_3colour,
+      NULL, NULL, "RПГ: three-colour mode" },
+    { MTAB_XTD|MTAB_VUN|MTAB_NC, 0, "RPG-STEP", "RPG-STEP",
+      &pl_set_rpg_step, &pl_show_rpg_step, NULL,
+      "RПГ: step 0.125 or 0.0625 mm (rpg-step=0.0625)" },
+    { MTAB_XTD|MTAB_VUN, 0, NULL, "RPG-AUTOPROLL", &pl_set_rpg_autoproll,
+      &pl_show_rpg_autoproll, NULL, "RПГ: auto paper feed at the end" },
+    { MTAB_XTD|MTAB_VUN, 0, NULL, "RPG-NOAUTOPROLL",
+      &pl_set_rpg_noautoproll, NULL, NULL, "RПГ: no auto paper feed" },
+    { MTAB_XTD|MTAB_VUN|MTAB_QUOTE, 0, NULL, "RPG-UK", &pl_set_rpg_uk,
+      NULL, NULL, "RПГ: feed octal УК bytes to the decoder (test hook)" },
+    { 0 }
+};
+
 DEVICE pl_dev = {
-    "PL", pl_unit, NULL, NULL,
+    "PL", pl_unit, NULL, pl_mod,
     2, 8, 19, 1, 8, 50,
     NULL, NULL, &pl_reset, NULL, &pl_attach, &pl_detach,
-    NULL, DEV_DISABLE | DEV_DEBUG
+    NULL, DEV_DISABLE | DEV_DEBUG, 0, rpg_deb
 };
 
 t_stat pl_reset (DEVICE *dptr)
 {
+    rpg_finish ();
+    rpg_reset ();
     sim_cancel (&pl_unit[0]);
     sim_cancel (&pl_unit[1]);
     CLR_RDY2(PL1_READY | PL2_READY);
@@ -90,6 +238,8 @@ t_stat pl_attach (UNIT *u, CONST char *cptr)
 t_stat pl_detach (UNIT *u)
 {
     int num = u - pl_unit;
+    if (num == 1 && rpg_is_enabled ())
+        rpg_finish ();
     CLR_RDY2(PL1_READY >> num);
     if (pl_dev.dctrl)
         besm6_debug("detach READY2 := %08o", READY2);
@@ -106,7 +256,11 @@ void pl_control (int num, uint32 cmd)
             besm6_debug("<<< PL80-%d not ready", num);
         return;
     }
-    putc(cmd & 0xff, f);
+    /* РПГ-1 is PL1 (0171), PRP 15, not the pl0 punchtape channel. */
+    if (rpg_is_enabled () && num == 1)
+        rpg_uk ((uint8_t) (cmd & 0xff));
+    else
+        putc(cmd & 0xff, f);
     PRP &= ~(PRP_PTAPE1_PUNCH >> num);
     CLR_RDY2(PL1_READY >> num);
     sim_activate_after(u, PL_RATE);

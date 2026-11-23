@@ -52,6 +52,7 @@
  */
 #include "besm6_defs.h"
 #include "besm6_gp.h"
+#include "besm6_rpg.h"
 
 
 t_value memory [MEMSIZE];
@@ -874,9 +875,8 @@ static uint32 readmap[32768], writemap[32768];
         ACC = pi_read (Aex & 7);
         break;
     case 04170: case 04171: case 04172: case 04173:
-        /* TODO: считывание контрольного кода
-         * строки перфоленты */
-        longjmp (cpu_halt, STOP_UNIMPLEMENTED);
+        /* РПГ на канале ПЛ: ненулевой ответ означает затор пера. */
+        ACC = rpg_jam ();
         break;
     case 04174: case 04175:
         /* Считывание кода с пульта оператора */

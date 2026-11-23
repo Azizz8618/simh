@@ -1,0 +1,20 @@
+; rpg-stream.b6 -- guest stubs used by run-rpg.py.
+;
+; 077700: emit one UK byte on PL1 through УВВ 0171 (the real RPG
+; channel), then stop.  The runner deposits the byte into ACC with
+; `d ACC`, sets PC with `d PC 077700` and continues with `go`.  SIMH's
+; `run` command would reset the machine and clear ACC, so `go` is used.
+;
+; 077720: unconditional branch pair.  After a byte is punched, PL
+; clears READY2 for 12.5 ms of simulated time.  The runner points PC
+; here and executes `step N` so that simulated time advances and
+; pl_event() reasserts READY2 before the next byte.  No GP device is
+; involved.
+;
+; Both areas are free in the booted DISPAK image (see gp-fig-handler).
+
+в 077700
+к увв 171, стоп
+
+в 077720
+к пб 077720, пб 077720

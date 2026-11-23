@@ -1,0 +1,48 @@
+ШИФР 410300 ЗС5^
+ДИС 41(2148)^
+ОЗУ 32^АЦП 32^
+ЕЕВ1А3
+*NAME RPGLINE
+*TRANS:FOREX3*,,411550
+      PROGRAM RPGLINE
+C    Simple figure for the wide six-colour RPG test.
+C     GENS configuration for a real RPG run: "РПГ БЭСМ" (ТРАКТЫ 34 and 36).
+C     FRAME(1..3) is the GP4 frame input: X, Y, pen.
+C     X, Y, P, DX, DY are the single source of the figure; run-rpg.py
+C     reads them and feeds the resulting UK bytes to PL1 at 0171.
+      INTEGER FRAME(64), X(4), Y(4), P(4), DX(4), DY(4), I, J
+      COMMON /PDEVXY/ FRAME
+      X(1)=10
+      Y(1)=10
+      P(1)=0
+      DX(1)=10
+      DY(1)=10
+      X(2)=20
+      Y(2)=10
+      P(2)=1
+      DX(2)=8
+      DY(2)=0
+      X(3)=28
+      Y(3)=10
+      P(3)=1
+      DX(3)=0
+      DY(3)=6
+      X(4)=28
+      Y(4)=16
+      P(4)=2
+      DX(4)=-6
+      DY(4)=0
+      DO 20 J = 1, 4
+         DO 10 I = 1, 64
+   10    FRAME(I) = 0
+         FRAME(1) = X(J)
+         FRAME(2) = Y(J)
+         FRAME(3) = P(J)
+   20 CONTINUE
+      PRINT 900
+  900 FORMAT(' 4 2 8 6 12345')
+      END
+*EXECUTE
+*END FILE
+``````
+ЕКОНЕЦ
