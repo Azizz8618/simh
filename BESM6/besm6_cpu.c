@@ -751,7 +751,7 @@ static uint32 readmap[32768], writemap[32768];
         break;
     case 01210: case 01211: case 01215: case 01216: case 01217:
         /* ЭК совместимости со стендом dispak/niti (extra.c). */
-        gp_extra (Aex & 04377, ACC, &ACC);
+        gp_extra (Aex & 07777, ACC, &ACC);
         break;
     case 0174: case 0175:
         /* Выдача кода в пульт оператора */
@@ -1516,6 +1516,16 @@ void cpu_one_inst ()
     case 0210:                                      /* э21 */
     stop_as_extracode:
             Aex = ADDR (addr + M[reg]);
+            /* ЭК 050 is a user-mode call; dispatch GP subfunctions before
+             * the vector trap so УВВ 033 stays supervisor-only. */
+            if (opcode == 050 && gp_user_compat_enabled () &&
+                gp_extra_compat_addr (Aex)) {
+                gp_extra (Aex & 07777, ACC, &ACC);
+                if (Aex & 04000)
+                    RAU = SET_LOGICAL (RAU);
+                delay = MEAN_TIME (3, 8);
+                break;
+            }
             if (! sim_deb && sim_log && cpu_dev.dctrl && opcode != 075) {
                 /* Если включен console log и cpu debug,
                  * но нет console debug, то печатаем только экстракоды.

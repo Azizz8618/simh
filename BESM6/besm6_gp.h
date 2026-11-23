@@ -31,4 +31,8 @@ t_value gp_read (void);
 void gp_data_write (t_value acc);
 void gp_extra (int addr, t_value acc, t_value *acc_out);
 
+/* Opt-in user-mode ЭК 50 compatibility (dispak B2 path). */
+int gp_user_compat_enabled (void);
+int gp_extra_compat_addr (int addr);
+
 #endif /* BESM6_GP_H */

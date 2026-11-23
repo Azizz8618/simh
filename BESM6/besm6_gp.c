@@ -48,6 +48,30 @@
 #include "besm6_gp.h"
 #include "besm6_gp_decoder.h"
 
+/* Tyurin 1985, ch. 2.4: ЭК 050 is the user-mode interface to the system.
+ * The dpkg stand handles 01210/01211 inside e50() without a supervisor
+ * check.  BESM6_NITI_USER opts into the same behaviour for GP subfunctions;
+ * by default the guest operating system receives ЭК 050 normally. */
+int
+gp_user_compat_enabled (void)
+{
+        static int v = -1;
+        if (v < 0)
+                v = getenv ("BESM6_NITI_USER") != NULL;
+        return v;
+}
+
+int
+gp_extra_compat_addr (int addr)
+{
+        switch (addr & 07777) {
+        case 01210: case 01211: case 01215: case 01216: case 01217:
+                return 1;
+        default:
+                return 0;
+        }
+}
+
 #define DBG_REG         001     /* register and ЭК accesses */
 #define DBG_IRQ         002     /* 18Р entry and vector dispatch */
 #define DBG_FRAME       004     /* 64-word frame hand-off */
@@ -260,7 +284,7 @@ void gp_interrupt (void)
     GRP &= ~GRP_GP;                 /* ГАШРП1 для 18Р */
     ++gp_irqs;
 
-    vector = memory[GP_VECTOR_CELL] & BITS(15);
+    vector = mmu_load (GP_VECTOR_CELL) & BITS(15);
     if (vector != 0) {
         /* пб обвнп1-1(М16) with M16 = 49 - 18 = 31. */
         PC = vector;
@@ -346,7 +370,7 @@ void gp_extra (int addr, t_value acc, t_value *acc_out)
         unsigned i;
 
         for (i = 0; i < GP_WORDS; ++i)
-            gp_buf[i] = (uint64_t) memory[(base + i) & BITS(15)];
+            gp_buf[i] = (uint64_t) mmu_load ((base + i) & BITS(15));
         gp_word_count = GP_WORDS;
         gp_read_idx = 0;
         gp_words += GP_WORDS;
@@ -381,13 +405,13 @@ void gp_extra (int addr, t_value acc, t_value *acc_out)
     case 01216:
         if (sub == 0) {
             if (acc_out != NULL)
-                *acc_out = (t_value) (memory[GP_VECTOR_CELL] & BITS(15));
+                *acc_out = (t_value) (mmu_load (GP_VECTOR_CELL) & BITS(15));
             sim_debug (DBG_REG, &gp_dev, "ЭК 01216: vector = %05o\n", arg);
         } else if (sub == 1) {
-            memory[GP_VECTOR_CELL] = (t_value) (arg & BITS(15));
+            mmu_store (GP_VECTOR_CELL, (t_value) (arg & BITS(15)));
             sim_debug (DBG_REG, &gp_dev, "ЭК 01216: vector <- %05o\n", arg);
         } else if (sub == 2) {
-            memory[GP_VECTOR_CELL] = 0;
+            mmu_store (GP_VECTOR_CELL, 0);
             sim_debug (DBG_REG, &gp_dev, "ЭК 01216: vector cleared\n");
         }
         break;
