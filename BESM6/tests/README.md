@@ -82,6 +82,32 @@ line with `set gp testirq` and checks the SIMH debug log for the full chain:
 `set gp testirq`; `SIMH_BIN` can override a stale `BIN/besm6`. It is not part of
 `besm6_test.ini` because it needs a full DISPAK boot.
 
+The same honest interrupt path is exercised with a real Fortran figure:
+
+```sh
+python3 BESM6/tests/run-gp-fig.py
+```
+
+`gp-fig-deck.b6` fills `COMMON /PDEVXY/ FRAME(64)` and an `ALL(64,14)` table
+with an octagon plus a bounding rectangle (14 frames, 12 pen-down strokes).
+DISPAK clears the user area at job end, so the runner reads the `X`/`Y`/`P`
+arrays from the deck source and re-materializes the same tagged FOREX frames
+as a `.b6` image at `040160₈`.  It loads `gp-fig-handler.b6` at `077700₈`,
+points `04023₈` at `077710₈`, patches `01457₈`/`01460₈`, raises the 18Р line
+and lets the OS run `ВНУПР -> 04023 -> выпр`.  The guest handler streams each
+64-word frame to `УВВ 0172` (`gp_data_write()`), so `benson_frame()` is called
+inside the interrupt; a done flag absorbs the extra line the stream raises.
+`ЭК 01211` is deliberately not used: `cmd_033()` masks its address with
+`04377₈`, making the `01210`/`01211` case labels unreachable in this build.
+The `ВЫПР` trace from `077747₈` proves the guest handler really returned.
+
+The runner checks the ACPU marker, the 14 frame deliveries, the three golden
+SHA256 values (`plot.dat`, `benson.out`, `benson.svg`) and the 13 SVG paths.
+`SIMH_BIN` must point at a simulator built with the `set gp testirq` MTAB
+entry and the GP sources; the shared `BIN/besm6` may be stale.  All scratch
+files stay in `/var/tmp/gp-fig-*`.  Like the two tests above, this one is not
+part of `besm6_test.ini`.
+
 ## Fixture formats
 
 - **`.b6`** — a textual BESM-6 memory image (address lines `в`, octal words `с`,

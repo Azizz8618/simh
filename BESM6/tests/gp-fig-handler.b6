@@ -1,0 +1,49 @@
+; gp-fig-handler.b6 -- guest handler for the honest GRP 18 plotter path.
+;
+; Installed at 077710 through the обвнп1+30 vector cell 04023.  The runner
+; patches 077701 (frame count) and 077702 (base of the Fortran frame table)
+; before raising the 18Р line with `set gp testirq`.  The CPU enters ВНУПР at
+; 0500, DISPAK clears ГРП and dispatches through M[04023] to this handler.
+;
+; Each 64-word frame is streamed to УВВ 0172, i.e. gp_data_write(), the device
+; path that really calls benson_frame() after 64 words.  The done flag at
+; 077700 makes the second entry a no-op: the stream raises the line again on
+; its own, DISPAK clears it and выпр returns without a third one.  No decoder
+; call is made from the host.
+;
+; 077700..077750 are free words above the booted DISPAK image, clear of the
+; switch-register area.  The runner saves and restores the live PC around
+; `load`, because loading resets it.
+
+в 077700
+с 0                     ; 077700: done flag
+с 0                     ; 077701: frame count, patched by the runner
+с 0                     ; 077702: frame table base, patched by the runner
+с 0000000000000100      ; 077703: step, 64 decimal words = 0100 octal
+с 0000000000000001      ; 077704: constant 1
+с 0                     ; 077705: end address of the current frame
+с 0                     ; 077706: current word address
+
+в 077710
+к сч 077700, пе 077747   ; 077710: ACC = done; if set, leave
+к сч 077704, зп 077700   ; done := 1
+
+в 077720
+к сч 077701, по 077747   ; 077720: ACC = count; if zero, leave
+к сч 077702, зп 077706   ; current := frame base
+к сч 077702, сл 077703   ; ACC := base + 64
+к зп 077705, зп 0        ; end := base + 64; right half is a no-op
+
+в 077730
+к сч 077706, уи 11       ; 077730: м11 := current word address
+к сч 0(11), увв 172      ; word from M[м11] to БЕНСОН
+к сч 077706, сл 077704   ; ACC := current + 1
+к зп 077706, сч 077706   ; current := ACC; ACC := current
+к вч 077705, пе 077730   ; if current < end, next word
+к сч 077702, сл 077703   ; base := base + 64
+к зп 077702, сч 077701   ; ACC := count
+к вч 077704, зп 077701   ; count := count - 1
+к пб 077720, зп 0        ; next frame
+
+в 077747
+к выпр(3), стоп
