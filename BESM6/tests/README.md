@@ -59,6 +59,13 @@ the SHA256 of `plot.dat`, `benson.out` and `benson.svg` plus the 10 SVG paths.
 `SIMH_BIN` and `NITI_2348` override the binary and the disk image; all scratch
 files stay in `/var/tmp`. This test is not part of `besm6_test.ini`.
 
+The runner patches two DISPAK constants in memory before injecting the line:
+`ПОДПРГ` at `01457₈` gains bit 18, and `ГАШРП1` at `01460₈` loses it. In the
+stock OS these constants keep 18 out of the internal mask and preserve it in
+the clear mask, so the ГРП line is never cleared and ВНУПР loops. With the
+patch the trace shows entry at `0500₈`, dispatch through `M[04023]`, the
+handler at `077700₈`, GRP clear and `выпр`.
+
 The GRP 18 interrupt path has its own standalone runner:
 
 ```sh

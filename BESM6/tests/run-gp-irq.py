@@ -209,6 +209,14 @@ def main():
         send("d %o %016o" % (VECTOR_CELL, new_word))
         time.sleep(0.3)
 
+        # disp70 constants at 01457/01460 omit bit 18 from ПОДПРГ and
+        # preserve it in ГАШРП1.  Patch both so ВНУПР takes the internal
+        # path and clears the line, as the GRP18 handler expects.
+        send("d 01457 0000000036774000")
+        time.sleep(0.3)
+        send("d 01460 7777777701003000")
+        time.sleep(0.3)
+
         # Isolate bit 18 so DISPAK does not service an unrelated source first.
         send("d GRP 0")
         time.sleep(0.3)
