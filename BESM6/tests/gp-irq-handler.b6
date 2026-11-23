@@ -1,0 +1,16 @@
+; gp-irq-handler.b6 -- guest handler for the BENSON internal interrupt.
+;
+; GRP bit 18 is an INTERNAL interrupt: the CPU enters ВНУПР at 0500, DISPAK
+; reads ГРП, clears what it can with РЕГ '037' and dispatches through the
+; обвнп1+30 vector cell at 04023.  run-gp-irq.py sets the low 15 bits of that
+; cell to 077700, so either a command fetch from 04023 or a vector read
+; through ЭК 01216 reaches this word.
+;
+; 077700 is a free word in the booted NITI 2348 DISPAK image, above the OS
+; code and clear of the switch-register area.  No 'п' line: the runner saves
+; and restores the live DISPAK PC around `load`.
+;
+; выпр(3) returns through M[033] = IRET saved by op_int_1().  The right half
+; is a harmless stop, reached only if the return is not taken.
+в 77700
+к выпр(3), стоп

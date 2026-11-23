@@ -44,6 +44,37 @@ stops at the first failure.
 | `au_uu.ini`   | `pprog08.b6`, `drum20.bin` | The same program as the arithmetic/control-unit test (switch register 5 = 2). |
 | `gp.ini`      | built from `../besm6_gp_decoder.c` | Offline decoder test: feeds the two golden C1-line frames (10,10) and (110,110), checks SHA256 of `plot.dat`, `benson.out` and `benson.svg` and that the SVG has exactly two paths. Compiles under `/var/tmp/besm6-gp-test`; no repository files are written. |
 
+The full plotter acceptance test is standalone, because it boots the DISPAK OS
+and feeds a card deck instead of loading a memory image:
+
+```sh
+python3 BESM6/tests/run-gp-star.py
+```
+
+It runs `gp-star.b6`, a Fortran program that draws a ten-vertex star through
+`ЭК 50 1210/1211` (inline MADLEN `PDEV`, FOREX 3 compiler from disk 2148).
+The runner boots SIMH with an isolated tmux socket, sets `BESM6_NITI_USER=1`
+for the user-mode ЭК 050 compatibility hook, checks the ACPU marker and compares
+the SHA256 of `plot.dat`, `benson.out` and `benson.svg` plus the 10 SVG paths.
+`SIMH_BIN` and `NITI_2348` override the binary and the disk image; all scratch
+files stay in `/var/tmp`. This test is not part of `besm6_test.ini`.
+
+The GRP 18 interrupt path has its own standalone runner:
+
+```sh
+python3 BESM6/tests/run-gp-irq.py
+```
+
+It boots DISPAK in an isolated tmux session, loads `gp-irq-handler.b6` at
+`077700`, points the `обвнп1+30` vector cell `04023` at that handler, raises the
+line with `set gp testirq` and checks the SIMH debug log for the full chain:
+`18Р line raised`, `TRACE GRP18 -> op_int_1 0500`, optionally
+`TRACE РЕГ 037 GRP clear`, and `TRACE ВЫПР interrupt return`. It prints
+`PASS: gp-irq` only when the OS entered the internal interrupt through
+`ВНУПР` and returned. Like `run-gp-star.py`, it needs a binary built with
+`set gp testirq`; `SIMH_BIN` can override a stale `BIN/besm6`. It is not part of
+`besm6_test.ini` because it needs a full DISPAK boot.
+
 ## Fixture formats
 
 - **`.b6`** — a textual BESM-6 memory image (address lines `в`, octal words `с`,

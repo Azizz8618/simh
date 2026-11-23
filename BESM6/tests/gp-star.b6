@@ -1,0 +1,56 @@
+ШИФР 410300 ЗС5^
+ДИС 41(2148)^
+ОЗУ 32^АЦП 32^
+ЕЕВ1А3
+*NAME GPSTAR
+*ASSEMBLER
+  PDEV:,NAME,PDEV
+      1,VTM,
+      ,ATI,11
+      ,STX,
+      ,ITA,11
+      ,*50,1210B
+      ,ITA,11
+      ,*50,1211B
+      13,UJ,
+      ,END,
+*TRANS:FOREX3*,,411550
+      PROGRAM GPSTAR
+      INTEGER FRAME(64), X(10), Y(10), I, J
+      COMMON /PDEVXY/ FRAME
+      EXTERNAL PDEV
+      X(1)=300
+      X(2)=347
+      X(3)=490
+      X(4)=376
+      X(5)=418
+      X(6)=300
+      X(7)=182
+      X(8)=224
+      X(9)=110
+      X(10)=253
+      Y(1)=100
+      Y(2)=235
+      Y(3)=238
+      Y(4)=325
+      Y(5)=462
+      Y(6)=380
+      Y(7)=462
+      Y(8)=325
+      Y(9)=238
+      Y(10)=235
+      DO 20 J = 1, 10
+         DO 10 I = 4, 64
+   10    FRAME(I) = 0
+         FRAME(1) = X(J)
+         FRAME(2) = Y(J)
+         FRAME(3) = 1
+         CALL PDEV(FRAME(1))
+   20 CONTINUE
+      PRINT 900
+  900 FORMAT(' GPSTAR: 10 FRAMES DONE')
+      END
+*EXECUTE
+*END FILE
+``````
+ЕКОНЕЦ

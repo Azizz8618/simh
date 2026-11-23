@@ -10,12 +10,6 @@
 /* 64-word frame assembled before the decoder is called. */
 #define GP_WORDS 64
 
-/* Guest context saved on interrupt entry, as ВНУПР does (disp70.be:982-993). */
-void gp_save_context (void);
-
-/* 18Р entry: save context, call op_int_1(), clear 18Р, dispatch the vector. */
-void gp_interrupt (void);
-
 /* Device reset, needed by the SIMH device table. */
 t_stat gp_reset (DEVICE *dptr);
 
@@ -31,8 +25,8 @@ t_value gp_read (void);
 void gp_data_write (t_value acc);
 void gp_extra (int addr, t_value acc, t_value *acc_out);
 
-/* Opt-in user-mode ЭК 50 compatibility (dispak B2 path). */
-int gp_user_compat_enabled (void);
-int gp_extra_compat_addr (int addr);
+/* Trace points on the guest interrupt path (set gp debug=IRQ). */
+void gp_trace_irq (const char *event, t_value a, t_value b, t_value c);
+
 
 #endif /* BESM6_GP_H */

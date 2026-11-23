@@ -553,11 +553,13 @@ static void cmd_002 ()
     case 036:
         /* Запись в маску главного регистра прерываний */
         MGRP = ACC;
+        gp_trace_irq ("РЕГ 036 MGRP", ACC, MGRP, 0);
         break;
     case 037:
         /* Clearing the main interrupt register: */
         /* it is impossible to clear wired (stateless) bits this way */
         GRP &= ACC | GRP_WIRED_BITS;
+        gp_trace_irq ("РЕГ 037 GRP clear", ACC, GRP, MGRP);
         break;
     case 64: case 65: case 66: case 67: case 68: case 69: case 70: case 71:
     case 72: case 73: case 74: case 75: case 76: case 77: case 78: case 79:
@@ -1516,16 +1518,6 @@ void cpu_one_inst ()
     case 0210:                                      /* э21 */
     stop_as_extracode:
             Aex = ADDR (addr + M[reg]);
-            /* ЭК 050 is a user-mode call; dispatch GP subfunctions before
-             * the vector trap so УВВ 033 stays supervisor-only. */
-            if (opcode == 050 && gp_user_compat_enabled () &&
-                gp_extra_compat_addr (Aex)) {
-                gp_extra (Aex & 07777, ACC, &ACC);
-                if (Aex & 04000)
-                    RAU = SET_LOGICAL (RAU);
-                delay = MEAN_TIME (3, 8);
-                break;
-            }
             if (! sim_deb && sim_log && cpu_dev.dctrl && opcode != 075) {
                 /* Если включен console log и cpu debug,
                  * но нет console debug, то печатаем только экстракоды.
@@ -1677,6 +1669,7 @@ void cpu_one_inst ()
         break;
     case 0320:                                      /* выпр, iret */
         Aex = addr;
+        gp_trace_irq ("ВЫПР interrupt return", PC, M[(reg & 3) | 030], M[SPSW]);
         if (! IS_SUPERVISOR (RUU)) {
             longjmp (cpu_halt, STOP_BADCMD);
         }
@@ -2000,15 +1993,12 @@ t_stat sim_instr (void)
             redraw_panel = 0;
         }
 
-        /*
-         * 18Р is an INTERNAL interrupt (ВНУПР, entry 0500₈), so it is
-         * already masked by МГРП like every other ГРП bit.  Check it before
-         * the external path: gp_interrupt() dispatches through the guest
-         * vector M[04023] when ДУДКА has replaced обвнп1+30.
-         */
+        /* 18Р is an INTERNAL interrupt: ВНУПР at 0500₈.  The guest OS reads
+         * ГРП, clears the bit and dispatches through обвнп1+30 itself. */
         if (! iintr && ! (RUU & RUU_RIGHT_INSTR) &&
             ! (M[PSW] & PSW_INTR_DISABLE) && (GRP & MGRP & GRP_GP)) {
-            gp_interrupt ();
+            gp_trace_irq ("GRP18 -> op_int_1 0500", GRP, MGRP, PC);
+            op_int_1 ("БЕНСОН: ГРП разряд 18");
         }
 
         if (PRP & MPRP) {

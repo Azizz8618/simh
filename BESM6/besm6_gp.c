@@ -48,32 +48,8 @@
 #include "besm6_gp.h"
 #include "besm6_gp_decoder.h"
 
-/* Tyurin 1985, ch. 2.4: ЭК 050 is the user-mode interface to the system.
- * The dpkg stand handles 01210/01211 inside e50() without a supervisor
- * check.  BESM6_NITI_USER opts into the same behaviour for GP subfunctions;
- * by default the guest operating system receives ЭК 050 normally. */
-int
-gp_user_compat_enabled (void)
-{
-        static int v = -1;
-        if (v < 0)
-                v = getenv ("BESM6_NITI_USER") != NULL;
-        return v;
-}
-
-int
-gp_extra_compat_addr (int addr)
-{
-        switch (addr & 07777) {
-        case 01210: case 01211: case 01215: case 01216: case 01217:
-                return 1;
-        default:
-                return 0;
-        }
-}
-
 #define DBG_REG         001     /* register and ЭК accesses */
-#define DBG_IRQ         002     /* 18Р entry and vector dispatch */
+#define DBG_IRQ         002     /* 18Р line raised */
 #define DBG_FRAME       004     /* 64-word frame hand-off */
 
 /* Machine state of the plotter. */
@@ -101,6 +77,9 @@ t_stat gp_reset (DEVICE *dptr);
 t_stat gp_attach (UNIT *uptr, CONST char *cptr);
 t_stat gp_detach (UNIT *uptr);
 
+/* Defined below the device table; the SET handler below calls it. */
+static void gp_raise_irq (void);
+
 UNIT gp_unit = { UDATA (NULL, UNIT_ATTABLE, 0) };
 
 REG gp_reg[] = {
@@ -124,7 +103,7 @@ REG gp_reg[] = {
 
 DEBTAB gp_deb[] = {
     { "REG",   DBG_REG,   "0172/0173, РЕГ 034/240 and ЭК 012xx accesses" },
-    { "IRQ",   DBG_IRQ,   "18Р entry, saved context and vector dispatch" },
+    { "IRQ",   DBG_IRQ,   "18Р line raised (guest ВНУПР dispatches it)" },
     { "FRAME", DBG_FRAME, "64-word frame passed to the decoder" },
     { NULL, 0 }
 };
@@ -185,6 +164,12 @@ static t_stat gp_show_plot (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
     return SCPE_OK;
 }
 
+static t_stat gp_set_testirq (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+    gp_raise_irq ();
+    return SCPE_OK;
+}
+
 MTAB gp_mod[] = {
     { MTAB_XTD|MTAB_VDV, 0, "TV67", "TV67", &gp_set_tv67, &gp_show_tv67, NULL,
       "Enable ГРП bit 18 (internal interrupt from БЕНСОН)" },
@@ -192,6 +177,8 @@ MTAB gp_mod[] = {
       "Disable ГРП bit 18" },
     { MTAB_XTD|MTAB_VDV, 0, "PLOT", "PLOT", &gp_set_plot, &gp_show_plot, NULL,
       "Keep benson.out along with benson.svg [аналог NASA, БЕНСОН-501]" },
+    { MTAB_XTD|MTAB_VDV, 0, NULL, "TESTIRQ", &gp_set_testirq, NULL, NULL,
+      "Raise GRP bit 18 for interrupt-path testing (guest ВНУПР handles it)" },
     { MTAB_XTD|MTAB_VDV, 0, NULL, "NOPLOT", &gp_set_noplot, NULL, NULL,
       "Do not keep benson.out" },
     { 0 }
@@ -262,41 +249,15 @@ static void gp_deliver_frame (void)
 static void gp_raise_irq (void)
 {
     GRP |= GRP_GP;
+    sim_debug (DBG_IRQ, &gp_dev, "18Р line raised: GRP=%08llo MGRP=%08llo\n",
+               (unsigned long long) GRP, (unsigned long long) MGRP);
 }
 
-void gp_save_context (void)
+void gp_trace_irq (const char *event, t_value a, t_value b, t_value c)
 {
-    /* ВНУПР: РК, И17, РМР, И16, И15, И20. */
-    gp_rk  = RK;
-    gp_m17 = M[017];
-    gp_rmr = RMR;
-    gp_m16 = M[016];
-    gp_m15 = M[015];
-    gp_m20 = M[020];
-}
-
-void gp_interrupt (void)
-{
-    t_value vector;
-
-    gp_save_context ();
-    op_int_1 ("БЕНСОН: ГРП разряд 18");
-    GRP &= ~GRP_GP;                 /* ГАШРП1 для 18Р */
-    ++gp_irqs;
-
-    vector = mmu_load (GP_VECTOR_CELL) & BITS(15);
-    if (vector != 0) {
-        /* пб обвнп1-1(М16) with M16 = 49 - 18 = 31. */
-        PC = vector;
-        sim_debug (DBG_IRQ, &gp_dev, "18Р: PC <- M[04023] = %05o, "
-                   "RK=%05o M17=%05o M16=%05o M15=%05o M20=%05o RMR=%08llo\n",
-                   PC, gp_rk, gp_m17, gp_m16, gp_m15, gp_m20,
-                   (unsigned long long) gp_rmr);
-    } else {
-        sim_debug (DBG_IRQ, &gp_dev, "18Р: PC <- 0500 (vector cell is zero), "
-                   "RK=%05o M17=%05o M16=%05o M15=%05o M20=%05o\n",
-                   gp_rk, gp_m17, gp_m16, gp_m15, gp_m20);
-    }
+    sim_debug (DBG_IRQ, &gp_dev, "TRACE %s: a=%08llo b=%08llo c=%08llo\n",
+               event, (unsigned long long) a, (unsigned long long) b,
+               (unsigned long long) c);
 }
 
 /* РЕГ '34': six words in ВХОД, nine in the initial mask load.
@@ -410,6 +371,7 @@ void gp_extra (int addr, t_value acc, t_value *acc_out)
         } else if (sub == 1) {
             mmu_store (GP_VECTOR_CELL, (t_value) (arg & BITS(15)));
             sim_debug (DBG_REG, &gp_dev, "ЭК 01216: vector <- %05o\n", arg);
+            gp_trace_irq ("vector 04023 write", arg, mmu_load (GP_VECTOR_CELL), 0);
         } else if (sub == 2) {
             mmu_store (GP_VECTOR_CELL, 0);
             sim_debug (DBG_REG, &gp_dev, "ЭК 01216: vector cleared\n");
