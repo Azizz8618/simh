@@ -51,6 +51,7 @@
  * 13) A lot of comments in Russian (UTF-8).
  */
 #include "besm6_defs.h"
+#include "besm6_gp.h"
 
 
 t_value memory [MEMSIZE];
@@ -302,6 +303,7 @@ DEVICE *sim_devices[] = {
     &tty_dev,       /* терминалы - телетайпы, видеотоны, "Консулы" */
     &dks_dev,       /* КАДОПАМ и ДКС */
     &osa_dev,       /* АС-6: связь с ЕС ЭВМ (ОСА) */
+    &gp_dev,        /* БЕНСОН: графопостроитель, ГРП разряд 18 */
     0
 };
 
@@ -543,6 +545,11 @@ static void cmd_002 ()
         /* Запись в регистры защиты */
         mmu_setprotection (Aex & 3, ACC);
         break;
+    case 034:
+        /* РЕГ '34': ДУДКА пишет маски ПРП/ГРП (Six words in ВХОД).
+         * Это не команда устройству: rukava.be:404,536. */
+        gp_config_write (ACC);
+        break;
     case 036:
         /* Запись в маску главного регистра прерываний */
         MGRP = ACC;
@@ -581,6 +588,10 @@ static void cmd_002 ()
     case 0237:
         /* Чтение главного регистра прерываний */
         ACC = GRP;
+        break;
+    case 0240:
+        /* РЕГ '240': очередное слово от БЕНСОНа на сумматор (dudka.be:265). */
+        ACC = gp_data_read ();
         break;
     default:
         if ((Aex & 0340) == 0140) {
@@ -716,11 +727,7 @@ static uint32 readmap[32768], writemap[32768];
     case 0153:
         /* гашение аппаратуры сопряжения с терминалами */
         mux_clear ();           /* ACC is ignored */
-        memory[077023] = SET_PARITY(1LL<<47, PARITY_NUMBER);
-        memory[076774] = SET_PARITY(00101010101010101LL, PARITY_NUMBER);
-        /* With КАДОПАМ there is no mux, and ПРП 6 belongs to КРК channel 2. */
-        if (dks_dev.flags & DEV_DIS)
-            MPRP |= 040;
+        /* ШКАС/АСОТ and МПРП E7|E6: OS (ГЕНС1) owns them; do not poke. */
         break;
     case 0154: case 0155:
         /*
@@ -739,7 +746,12 @@ static uint32 readmap[32768], writemap[32768];
         pl_control (Aex & 1, (uint32) ACC & BITS(8));
         break;
     case 0172: case 0173:
-        besm6_debug(">>> Potential plotter output: %03o", (uint32) ACC & BITS(8));
+        /* БЕНСОН: очередное слово данных [аналог NASA, БЕНСОН-501]. */
+        gp_data_write (ACC);
+        break;
+    case 01210: case 01211: case 01215: case 01216: case 01217:
+        /* ЭК совместимости со стендом dispak/niti (extra.c). */
+        gp_extra (Aex & 04377, ACC, &ACC);
         break;
     case 0174: case 0175:
         /* Выдача кода в пульт оператора */
@@ -1976,6 +1988,17 @@ t_stat sim_instr (void)
             /* Periodic panel redraw is not forcing */
             besm6_draw_panel(0);
             redraw_panel = 0;
+        }
+
+        /*
+         * 18Р is an INTERNAL interrupt (ВНУПР, entry 0500₈), so it is
+         * already masked by МГРП like every other ГРП bit.  Check it before
+         * the external path: gp_interrupt() dispatches through the guest
+         * vector M[04023] when ДУДКА has replaced обвнп1+30.
+         */
+        if (! iintr && ! (RUU & RUU_RIGHT_INSTR) &&
+            ! (M[PSW] & PSW_INTR_DISABLE) && (GRP & MGRP & GRP_GP)) {
+            gp_interrupt ();
         }
 
         if (PRP & MPRP) {

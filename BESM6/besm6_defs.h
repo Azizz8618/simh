@@ -147,6 +147,7 @@ extern DEVICE printer_dev;
 extern DEVICE tty_dev;
 extern DEVICE dks_dev;
 extern DEVICE osa_dev;
+extern DEVICE gp_dev;           /* БЕНСОН: графопостроитель, ГРП разряд 18 */
 extern DEVICE fs_dev;
 extern DEVICE pl_dev;
 extern DEVICE vu_dev;
@@ -390,6 +391,24 @@ int dks_busy (void);
  */
 void osa_write (int reg, t_value acc);
 t_value osa_read (int reg);
+
+/*
+ * БЕНСОН: графопостроитель НИТИ.  18-й разряд ГРП - ВНУТРЕННЕЕ прерывание.
+ * Вектор обработчика лежит в обвнп1+30 = 04023₈, M16 = 49 - r = 31.
+ */
+#define GRP_GP          BBIT(18)        /* внутренний разряд, не ПРП */
+#define MGRP_GP         BBIT(18)
+#define GP_VECTOR_BASE  03765
+#define GP_VECTOR_OFFSET 036            /* 30 dec = 36 oct */
+#define GP_VECTOR_CELL  04023
+
+void gp_write (t_value acc);
+t_value gp_read (void);
+t_stat gp_reset (DEVICE *dptr);
+
+/* Internal interrupt operations, declared here for the GP device. */
+void op_int_1 (const char *msg);
+void op_int_2 (void);
 
 /*
  * Ввод с перфоленты.

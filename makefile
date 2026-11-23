@@ -2471,8 +2471,10 @@ BESM6 = ${BESM6D}/besm6_cpu.c ${BESM6D}/besm6_sys.c ${BESM6D}/besm6_mmu.c \
         ${BESM6D}/besm6_arith.c ${BESM6D}/besm6_disk.c ${BESM6D}/besm6_drum.c \
         ${BESM6D}/besm6_tty.c ${BESM6D}/besm6_dks.c ${BESM6D}/besm6_osa.c ${BESM6D}/besm6_panel.c ${BESM6D}/besm6_printer.c \
         ${BESM6D}/besm6_pl.c ${BESM6D}/besm6_mg.c ${BESM6D}/besm6_trace.c \
-        ${BESM6D}/besm6_punch.c ${BESM6D}/besm6_punchcard.c ${BESM6D}/besm6_vu.c
-BESM6_OPT = -I ${BESM6D} -DUSE_INT64 $(VIDEO_TTF_OPT)
+        ${BESM6D}/besm6_punch.c ${BESM6D}/besm6_punchcard.c ${BESM6D}/besm6_vu.c \
+        ${BESM6D}/besm6_gp.c ${BESM6D}/besm6_gp_decoder.c \
+        ${BESM6D}/plotter_bridge.cpp ${BESM6D}/plotter.cpp
+BESM6_OPT = -I ${BESM6D} -DUSE_INT64 $(VIDEO_TTF_OPT) -lstdc++
 
 SVSD = ${SIMHD}/SVS
 SVS = ${SVSD}/svs_cpu.c ${SVSD}/svs_sys.c ${SVSD}/svs_mmu.c \
@@ -3245,7 +3247,7 @@ else # end of primary make recipies
   #    TEST_NAME - the name of the simulator test script (when not simply named <simulator-name>_test.ini)
   #    ALTNAME   - an optional alternate name for the current simulator target
   
-  override DEPS := $(filter %.c,$(DEPS))  # only worry about building C source modules
+  override DEPS := $(filter %.c %.cpp,$(DEPS))  # build C and C++ source modules
 
   ifeq (,$(OPTS))
     $(error ERROR ***  Missing build options.)
@@ -3318,6 +3320,13 @@ $(BLDDIR)/%.o : $(word 1,$(DIRS))/%.c
 	@echo $(if $(SHOWTARGET),$(subst BIN/$(OSTYPE)-build/,,$(@D)),) Compiling $<
   endif
 	$(CC) -c $< -o $@ ${OPTS}
+
+$(BLDDIR)/%.o : $(word 1,$(DIRS))/%.cpp
+	-@$(MKDIR) $(call pathfix,$(dir $@))
+  ifeq (1,$(QUIET))
+	@echo $(if $(SHOWTARGET),$(subst BIN/$(OSTYPE)-build/,,$(@D)),) Compiling $<
+  endif
+	$(subst -std=gnu99,,$(CC)) -std=gnu++11 -c $< -o $@ ${OPTS}
 
 $(BLDDIR)/%.o : $(word 1,$(DIRS))/*/%.c
 	-@$(MKDIR) $(call pathfix,$(dir $@))

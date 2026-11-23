@@ -188,6 +188,10 @@ This is the real I/O instruction. `cmd_033()` at [besm6_cpu.c:595](besm6_cpu.c#L
 | `050`–`057` | Printer 2 hammers | `printer_hammer()` | Bits 1–16: hammer solenoids. |
 | `070` | ES printer | — | Ignored; the ES printer is not connected. |
 | `0100`–`0137` | Tape transport control | `mg_ctl()` | Movement command; unit = `Aex - 0100`. |
+| `01210`, `01217` | ЭК: select НИТИ plotter scheme | `gp_extra()` | Compatibility hook from the dispak stand; argument in the low half. |
+| `01211` | ЭК: accept a 64-word frame | `gp_extra()` | `M[ACC]` is the first of 64 words; the frame is handed to the decoder [аналог NASA, БЕНСОН-501]. |
+| `01215` | ЭК: ТВ67 / ТВ67А | `gp_extra()` | Subfunction in the left half: 0 sets `MGRP` bit 18, 1 clears it, 2 raises 18Р as a test hook. |
+| `01216` | ЭК: guest interrupt vector | `gp_extra()` | Subfunction in the left half: 0 reads, 1 writes, 2 clears `M[04023]`. |
 | `0140` | Telegraph channel register | `tty_send()` | Bits 1–24: one bit per terminal line. |
 | `0141` | Tape formatting | `mg_format()` | Bits 1–2: formatting mode. |
 | `0142` | simulate ПРП interrupts | — | **Unimplemented.** |
@@ -198,7 +202,7 @@ This is the real I/O instruction. `cmd_033()` at [besm6_cpu.c:595](besm6_cpu.c#L
 | `0154`, `0155` | Card punch 1 / 2 — motor | `pi_control()` | Bits 1 and 4 (`ACC & 011`): run, cull. |
 | `0160`–`0167` | Card punch — solenoids | `pi_write()` | Bits 1–20: punch solenoids for group `Aex & 7`. |
 | `0170`, `0171` | Punch-tape punch 1 / 2 | `pl_control()` | Bits 1–8: one punched frame. |
-| `0172`, `0173` | plotter | — | Debug output only; the plotter is not modelled. |
+| `0172`, `0173` | БЕНСОН data word | `gp_data_write()` | One 48-bit word into the 64-word frame; raises the **internal** ГРП bit 18. After 64 words `benson_frame()` decodes the frame [аналог NASA, БЕНСОН-501]. |
 | `0174`, `0175` | Consul typewriter 1 / 2 | `consul_print()` | Bits 1–8: one character. |
 | `0177` | ГПВЦ display board (табло) | — | Bits 1–24: the displayed value. |
 
@@ -236,6 +240,23 @@ This is the real I/O instruction. `cmd_033()` at [besm6_cpu.c:595](besm6_cpu.c#L
 > реализовано*) and halts. These are real hardware features — mostly the "wired program" (запаянная
 > программа) bootstrap paths and the exchange-simulation diagnostics — that no supported software
 > exercises.
+
+### БЕНСОН: the internal interrupt on ГРП bit 18
+
+The plotter line is **not** on ПРП and **not** an external `ОБВНПР` request. It is the 18th bit of the
+main interrupt register ГРП, an **internal** interrupt (`ВНУПР`, entry `0500₈`). The CPU checks it in
+the main loop after the `GRP & MGRP` mask and before the external path. `ТВ67` (ЭК `01215`, subfunction 0)
+sets `MGRP` bit 18; `ТВ67А` (subfunction 1) clears it. On entry the simulator saves the guest context
+`РК, M17, РМР, M16, M15, M20` in the GP device, clears bit 18 with `GRP &= ~GRP_GP`, and calls the
+standard internal interrupt operation, which sets `PC = 0500₈`. When `M[04023]` is nonzero, `PC` is
+taken from that cell instead: this is the simulator's equivalent of `пб обвнп1-1(М16)` for `r = 18`
+(`M16 = 49 - r = 31`, `03765₈ + 36₈ = 04023₈`). With a zero vector cell the standard entry at
+`0500₈` is used.
+
+`attach gp0 <file>` captures the raw 64-word frames; `set gp plot=on` also keeps `benson.out`
+[аналог NASA, БЕНСОН-501]. `detach gp0` and simulator exit finish the renderer and rename
+`calcomp.svg` to `benson.svg`. The decoded command names are an analogue of the NASA TM-76182
+command set, **not** a proved НИТИ protocol; the format of the 16-bit БЕНСОН elements was not found.
 
 ### Service words in low memory
 
