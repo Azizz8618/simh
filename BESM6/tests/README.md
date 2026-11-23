@@ -108,6 +108,11 @@ entry and the GP sources; the shared `BIN/besm6` may be stale.  All scratch
 files stay in `/var/tmp/gp-fig-*`.  Like the two tests above, this one is not
 part of `besm6_test.ini`.
 
+The readable Fortran source is `gp-fig.f77`; the card deck is `gp-fig-deck.b6`
+with inline MADLEN `PDEV`. Golden `plot.dat`, `benson.out` and `benson.svg`
+are kept in `gp-fig-golden/` with their SHA256 values and geometry in
+`gp-fig-golden/EXPECTED.md`. They are etalons only, not inputs to the runner.
+
 ## Fixture formats
 
 - **`.b6`** — a textual BESM-6 memory image (address lines `в`, octal words `с`,

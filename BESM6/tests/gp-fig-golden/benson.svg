@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" baseProfile="full" version="1.1" width="4502" height="7001" viewBox="0 0 4502 7001">
+<g fill="none" stroke="black" stroke-linecap="round" stroke-width="1">
+<path d="M 1 7000 3200 7000 3200 3250"/>
+<path d="M 3200 3250 3060 3250 3060 2240"/>
+<path d="M 3060 2240 2500 2240 2500 1750"/>
+<path d="M 2500 1750 1940 1750 1940 2240"/>
+<path d="M 1940 2240 1800 2240 1800 3250"/>
+<path d="M 1800 3250 1940 3250 1940 4260"/>
+<path d="M 1940 4260 2500 4260 2500 4750"/>
+<path d="M 2500 4750 3060 4750 3060 4260"/>
+<path d="M 3060 4260 3200 4260 3200 3250"/>
+<path d="M 500 6500 4500 6500"/>
+<path d="M 4500 6500 4500 0"/>
+<path d="M 4500 0 500 0"/>
+<path d="M 500 0 500 6500"/>
+</g>
+</svg>
