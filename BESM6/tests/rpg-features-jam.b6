@@ -1,0 +1,8 @@
+; rpg-features-jam.b6 -- guest stub for the RPG jam status read test.
+;
+; 077700: УВВ 4170 reads the RPG jam register (address 04170) into ACC,
+; then stops.  The runner points PC at 077700 with `d PC 077700`, executes
+; `go`, and examines ACC with `ex ACC`.  No DISPAK image is loaded.
+
+в 077700
+к увв 4170, стоп
