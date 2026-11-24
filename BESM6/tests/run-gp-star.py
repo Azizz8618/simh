@@ -23,7 +23,8 @@ from pathlib import Path
 
 SIMH = Path(__file__).resolve().parents[1]
 BASE_INI = SIMH / "OSZAGR/dispak.ini"
-DECK = Path(__file__).resolve().parent / "gp-star.b6"
+DECK = Path(os.environ.get("GPSTAR_DECK",
+                          str(Path(__file__).resolve().parent / "gp-star.b6")))
 EMU = Path(os.environ.get("SIMH_BIN", str(SIMH / "BIN/besm6")))
 DISK = Path(os.environ.get("NITI_2348", str(Path.home() / ".besm6/2348")))
 BOOT = re.compile(r"[ДD]ATA:")
@@ -152,23 +153,54 @@ def main():
             if re.search(r"sim>\s*$", pane(history=20)):
                 break
             time.sleep(0.5)
-        for cmd in ("at vu0 %s" % DECK, "d 6 1", "d 5 10", "set cpu req"):
-            send(cmd)
-            time.sleep(0.7)
-        send("go")
-        deadline = time.time() + a.timeout
+        # DISPAK stages one job ahead and a stale КЗ(...) from a system
+        # task is still in the pane.  Wait for OUR ACPU marker only, and
+        # reset the ACPU files before each submission so a stale listing
+        # cannot be mistaken for this job.
+        def acpu_has_marker():
+            for name in ("output.txt", "output1.txt"):
+                p = work / name
+                if p.exists() and ACPU_MARKER in p.read_text(
+                        encoding="utf-8", errors="replace"):
+                    return True
+            return False
+
+        def wait_sim():
+            tmux(env, "send-keys", "-t", session, "C-g", check=False)
+            for _ in range(20):
+                if re.search(r"sim>\s*$", pane(history=20)):
+                    return
+                time.sleep(0.5)
+
+        def reset_acpu():
+            for cmd in ("detach prn0", "detach prn1",
+                        "attach -n prn0 %s" % (work / "output.txt"),
+                        "attach -n prn1 %s" % (work / "output1.txt")):
+                send(cmd)
+                time.sleep(0.3)
+
         finished = False
-        while time.time() < deadline:
-            text = pane()
-            if DONE.search(text):
-                finished = True
+        for attempt in range(3):
+            wait_sim()
+            reset_acpu()
+            for cmd in ("at vu0 %s" % DECK, "d 6 1", "d 5 10",
+                        "set cpu req"):
+                send(cmd)
+                time.sleep(0.6)
+            send("go")
+            deadline = time.time() + a.timeout
+            while time.time() < deadline:
+                if acpu_has_marker():
+                    finished = True
+                    break
+                if pane().rstrip().endswith("sim>"):
+                    send("go")
+                time.sleep(0.8)
+            if finished:
                 break
-            if text.rstrip().endswith("sim>"):
-                send("go")
-            time.sleep(1.5)
         (work / "console.txt").write_text(pane(), encoding="utf-8")
         if not finished:
-            print("FAIL: job did not finish", flush=True)
+            print("FAIL: own ACPU marker not seen", flush=True)
             ok = False
     finally:
         tmux(env, "kill-session", "-t", session, check=False)
