@@ -260,33 +260,51 @@ def main():
             send(cmd)
             time.sleep(1.5)
 
-        # Feed the Fortran deck on vu0, exactly as run-gp-star.py does.
-        tmux(env, "send-keys", "-t", session, "C-g")
-        for _ in range(20):
-            if re.search(r"sim>\s*$", pane(history=20)):
-                break
-            time.sleep(0.5)
-        for cmd in ("at vu0 %s" % DECK, "d 6 1", "d 5 10", "set cpu req"):
-            send(cmd)
-            time.sleep(0.7)
-        send("go")
-
-        deadline = time.time() + a.timeout
-        ready = False
-        while time.time() < deadline:
-            text = pane()
-            acpu_now = []
+        # DISPAK stages one job ahead.  The first submission can run a
+        # leftover deck while ours waits in the queue, so resubmit until
+        # our own ACPU marker is printed.  Reset ACPU files before the
+        # final submission to avoid accepting a stale listing.
+        def acpu_has_marker():
             for name in ("output.txt", "output1.txt"):
                 p = work / name
-                if p.exists():
-                    acpu_now.append(p.read_text(encoding="utf-8",
-                                                errors="replace"))
-            if any(ACPU_MARKER in t for t in acpu_now):
-                ready = True
+                if p.exists() and ACPU_MARKER in p.read_text(
+                        encoding="utf-8", errors="replace"):
+                    return True
+            return False
+
+        def wait_sim():
+            tmux(env, "send-keys", "-t", session, "C-g", check=False)
+            for _ in range(20):
+                if re.search(r"sim>\s*$", pane(history=20)):
+                    return
+                time.sleep(0.5)
+
+        def reset_acpu():
+            for cmd in ("detach prn0", "detach prn1",
+                        "attach -n prn0 %s" % (work / "output.txt"),
+                        "attach -n prn1 %s" % (work / "output1.txt")):
+                send(cmd)
+                time.sleep(0.3)
+
+        ready = False
+        for attempt in range(3):
+            wait_sim()
+            reset_acpu()
+            for cmd in ("at vu0 %s" % DECK, "d 6 1", "d 5 10",
+                        "set cpu req"):
+                send(cmd)
+                time.sleep(0.6)
+            send("go")
+            deadline = time.time() + a.timeout
+            while time.time() < deadline:
+                if acpu_has_marker():
+                    ready = True
+                    break
+                if pane().rstrip().endswith("sim>"):
+                    send("go")
+                time.sleep(0.8)
+            if ready:
                 break
-            if text.rstrip().endswith("sim>"):
-                send("go")
-            time.sleep(1.0)
         # The deck ends in a self-loop, so its data area survives while we
         # take over with the interrupt.  Give the program time to fill it.
         time.sleep(3)
@@ -302,13 +320,17 @@ def main():
             time.sleep(0.5)
 
         # `load` resets PC to 1, so save and restore the live DISPAK PC.
-        send("ex PC")
-        time.sleep(0.4)
-        pc_line = last_match(pane(), re.compile(r"PC:\s+[0-7]+"))
-        if not pc_line:
+        pc = None
+        for _ in range(10):
+            send("ex PC")
+            time.sleep(0.3)
+            line = last_match(pane(), re.compile(r"PC:\s+[0-7]+"))
+            if line:
+                pc = re.search(r"PC:\s+([0-7]+)", line).group(1)
+                break
+        if not pc:
             print("FAIL: gp-fig, cannot read PC", flush=True)
             return 1
-        pc = re.search(r"([0-7]+)", pc_line.split(":", 1)[1]).group(1)
 
         x, y, p = parse_figure()
         frame_image = make_frame_image(work, x, y, p)
@@ -321,9 +343,13 @@ def main():
         time.sleep(0.3)
 
         # Preserve the обвнп1+30 command word, change only its 15-bit address.
-        send("ex %o" % VECTOR_CELL)
-        time.sleep(0.4)
-        cell = last_match(pane(), TRACE_AREA)
+        cell = None
+        for _ in range(10):
+            send("ex %o" % VECTOR_CELL)
+            time.sleep(0.3)
+            cell = last_match(pane(), TRACE_AREA)
+            if cell:
+                break
         if not cell:
             print("FAIL: gp-fig, cannot read vector cell 04023", flush=True)
             return 1

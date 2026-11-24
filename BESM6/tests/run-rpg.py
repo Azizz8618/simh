@@ -15,7 +15,10 @@ The simulator must be built with `set pl1 rpg`, `set pl1 rpg-wide`,
 `set pl1 rpg-6color` and `set pl1 rpg-step=...`.  SIMH_BIN overrides the
 binary.  The default harness is bare: no DISPAK boot, with the explicit
 `show pl1 rpg` marker as proof.  `--harness deck` boots DISPAK and feeds
-the card deck on vu0 as well.  All scratch files stay under /var/tmp.
+the card deck on vu0 as well.  DISPAK stages one job ahead, so the deck
+harness resubmits until its own marker is printed in the ACPU listing and
+then checks that listing for a clean job end.  All scratch files stay under
+/var/tmp.
 This test is not part of besm6_test.ini.
 
 Historical protocol is not fully restored.  The six-colour pen-field
@@ -198,6 +201,12 @@ def uk_bytes(figure):
     return result
 
 
+def printed_marker(text, marker):
+    """Only a whole ACPU output line counts, not a FORMAT source listing."""
+    return re.search(r"(?m)^[ \t]*" + re.escape(marker) + r"[ \t]*$",
+                     text) is not None
+
+
 def golden_values(mode):
     values = {}
     if GOLDEN.exists():
@@ -262,33 +271,50 @@ def run_once(mode, cfg, a, step):
             tmux(env, "send-keys", "-t", session, "C-g")
             wait_for(lambda h=20: pane(history=h), time.time() + 15,
                      lambda t: bool(PROMPT.search(t)), interval=0.3)
-            for cmd in ("at vu0 %s" % cfg["deck"], "d 6 1", "d 5 10",
-                        "set cpu req"):
-                send(cmd)
-                time.sleep(0.7)
-            send("go")
-            time.sleep(2)
 
-            deadline = time.time() + a.timeout
-
-            def job_done(text):
-                if DONE.search(text):
-                    return True
+            def acpu_has_marker():
                 for name in ("output.txt", "output1.txt"):
                     p = work / name
-                    if p.exists() and cfg["marker"] in p.read_text(
-                            encoding="utf-8", errors="replace"):
+                    if p.exists() and printed_marker(
+                            p.read_text(encoding="utf-8", errors="replace"),
+                            cfg["marker"]):
                         return True
                 return False
 
-            while time.time() < deadline:
-                text = pane()
-                if job_done(text):
-                    done = True
+            def reset_acpu():
+                # A queued deck from an earlier test may have printed its
+                # own diagnostic.  Start the next submission with empty
+                # ACPU files so the final listing belongs only to our deck.
+                for cmd in ("detach prn0", "detach prn1",
+                            "attach -n prn0 %s" % (work / "output.txt"),
+                            "attach -n prn1 %s" % (work / "output1.txt")):
+                    send(cmd)
+                    time.sleep(0.3)
+
+            # DISPAK stages one job ahead: the first submission can run a
+            # leftover deck from an earlier test while ours waits in the
+            # queue.  Resubmit until our own ACPU marker appears.
+            for attempt in range(3):
+                for cmd in ("at vu0 %s" % cfg["deck"], "d 6 1",
+                            "d 5 10", "set cpu req"):
+                    send(cmd)
+                    time.sleep(0.6)
+                send("go")
+                deadline = time.time() + a.timeout
+                while time.time() < deadline:
+                    text = pane()
+                    if acpu_has_marker():
+                        done = True
+                        break
+                    if PROMPT.search(text):
+                        send("go")
+                    time.sleep(0.8)
+                if done:
                     break
-                if PROMPT.search(text):
-                    send("go")
-                time.sleep(1.0)
+                tmux(env, "send-keys", "-t", session, "C-g", check=False)
+                wait_for(lambda h=20: pane(history=h), time.time() + 15,
+                         lambda t: bool(PROMPT.search(t)), interval=0.3)
+                reset_acpu()
             if not done:
                 print("note: rpg-%s, deck job marker not seen; using the "
                       "explicit RPG model marker" % mode, flush=True)
@@ -319,10 +345,10 @@ def run_once(mode, cfg, a, step):
             send("echo %s" % token)
             send("go")
             waited = wait_for(lambda h=20: pane(history=h),
-                              time.time() + 2,
+                              time.time() + max(10, a.timeout),
                               lambda t: token in t and
                               bool(PROMPT.search(t)),
-                              interval=0.05)
+                              interval=0.1)
             if waited is None:
                 tmux(env, "send-keys", "-t", session, "C-g", check=False)
                 print("FAIL: rpg-%s, emit stub did not stop on %03o" %
@@ -377,14 +403,22 @@ def run_once(mode, cfg, a, step):
         p = work / name
         if p.exists():
             acpu.append(p.read_text(encoding="utf-8", errors="replace"))
-    result["acpu_marker"] = any(cfg["marker"] in text for text in acpu)
+    result["acpu_marker"] = any(printed_marker(text, cfg["marker"])
+                                for text in acpu)
     console = result["console"].read_text(
         encoding="utf-8", errors="replace") if result["console"].exists() else ""
     if a.harness == "deck":
-        if not (result["acpu_marker"] or cfg["marker"] in console or
-                "КОНЕЦ ЗАДАЧИ" in console):
-            print("note: rpg-%s, deck marker not in ACPU/console" % mode,
+        if not result["acpu_marker"]:
+            print("FAIL: rpg-%s, deck marker not in ACPU" % mode, flush=True)
+            result["ok"] = False
+        if any("ЗАПРЕЩ.ЭКСТРАКОД" in text for text in acpu):
+            print("FAIL: rpg-%s, forbidden extrACode in ACPU" % mode,
                   flush=True)
+            result["ok"] = False
+        if not any("КОНЕЦ ЗАДАЧИ" in text for text in acpu):
+            print("FAIL: rpg-%s, no КОНЕЦ ЗАДАЧИ in ACPU" % mode,
+                  flush=True)
+            result["ok"] = False
 
     # Explicit completion marker from the RPG model itself.
     marker = re.search(r"(\d+) УК, (\d+) strokes, no jam", console)

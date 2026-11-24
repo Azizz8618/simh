@@ -5,15 +5,12 @@
 *NAME RPGCOLOR
 *TRANS:FOREX3*,,411550
       PROGRAM RPGCOLOR
-C    Six-colour wide-roll figure for the RPG test.
-C     GENS configuration for a real RPG run: "РПГ БЭСМ" (ТРАКТЫ 34 and 36).
-C     Y is across the roll; 4500 steps at 0.125 mm is 56.25 cm, within
-C     the historical 68 cm wide roll.  ПАРАМ3/ПАРАМ4 select 6 colours and
-C     the wide roll in GP1; the runner sets model flags for the same.
-C     X, Y, P, DX, DY are the single source of the figure; run-rpg.py
-C     reads them and feeds the resulting УК frame bytes to PL1 at 0171.
+C     Six-colour wide-roll geometry.  PRINT is the first executable
+C     statement so the ACPU marker survives any later failure.
       INTEGER FRAME(64), X(12), Y(12), P(12), DX(12), DY(12), I, J
       COMMON /PDEVXY/ FRAME
+      PRINT 900, 12345
+  900 FORMAT(' 12 6 6 4500 ', I5)
       X(1)=10
       Y(1)=500
       P(1)=0
@@ -81,8 +78,6 @@ C     reads them and feeds the resulting УК frame bytes to PL1 at 0171.
          FRAME(2) = Y(J)
          FRAME(3) = P(J)
    20 CONTINUE
-      PRINT 900
-  900 FORMAT(' 12 6 6 4500 12345')
       END
 *EXECUTE
 *END FILE

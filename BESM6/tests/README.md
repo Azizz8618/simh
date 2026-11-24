@@ -133,13 +133,18 @@ strokes on the historical 68 cm roll. Both decks define X/Y/P/DX/DY arrays;
 `go`, followed by `step 500000` on a branch stub so that simulated time
 advances and PL1 becomes ready again. `go` is used because SIMH `run`
 resets the machine and clears ACC. The guest instruction is УВВ `0171`,
-so the bytes really pass through PL1. The explicit completion marker is
+so the bytes really pass through PL1. The host only deposits the byte into
+ACC and points PC at the stub; the channel write itself is the guest `УВВ
+0171`, not an `rpg-uk` smoke hook. The explicit completion marker is
 `show pl1 rpg`: the runner requires the exact УК and stroke counts and
-`no jam`. The default harness is `bare` (no DISPAK boot), because the
-current DISPAK build loops on the unrelated ГРП 18 interrupt and never
-finishes a card job. Use `--harness deck` to boot DISPAK, feed the deck on
-`vu0` and wait for `КОНЕЦ ЗАДАЧИ` or the deck's ACPU marker; the RPG checks
-run in both harnesses.
+`no jam`. The default harness is `bare` (no DISPAK boot). Use
+`--harness deck` to boot DISPAK and feed the deck on `vu0`. DISPAK stages one
+job ahead, so the first submission can print a leftover deck from another
+test; the runner resubmits until it sees the marker printed by its own deck
+and restarts the ACPU files for the final listing. It then requires the
+marker as a whole ACPU output line, a `КОНЕЦ ЗАДАЧИ` for шифр
+`410300000000`, and no `ЗАПРЕЩ.ЭКСТРАКОД` in the listing. The RPG checks run
+in both harnesses.
 `RPG_STEP` (default `0.125` mm), `RPG_SPIN`, `RPG_MODES`, `RUNS` and
 `TIMEOUT` override the defaults; the
 colour mode is repeated three times and the `rpg.svg` SHA256 values must
