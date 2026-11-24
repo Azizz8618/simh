@@ -145,6 +145,19 @@ and restarts the ACPU files for the final listing. It then requires the
 marker as a whole ACPU output line, a `КОНЕЦ ЗАДАЧИ` for шифр
 `410300000000`, and no `ЗАПРЕЩ.ЭКСТРАКОД` in the listing. The RPG checks run
 in both harnesses.
+
+`--harness native` is an additional, explicitly non-injecting harness. It
+boots DISPAK with `pl1` in RPG mode, submits `rpg-native-line.b6` (the
+`РПГ БЭСМ` generation card plus a Fortran `MOVE1` call from `*LIBRARY:22`)
+and waits for ГП1 to issue УВВ `0171` by itself. No `d ACC`, `d PC` or
+`rpg-stream.b6` is used there. This harness currently reports FAIL:
+the generation card is an unknown job-passport entry (autonomous `dispak`:
+`Unknown passport entry: РПГ БЭСМ`), and the library 22 chain emits
+`ЭК 1210/1211` (the БЕНСОН path), which DISPAK rejects with
+`ЗАПРЕЩ.ЭКСТРАКОД`. `show pl1 rpg` stays at `0 УК`, so
+host-side byte injection through `d ACC`/`d PC` remains the only working
+route in these tests. The source quotes and the full run log are in
+`rpg-golden/NATIVE-BLOCKED.md`.
 `RPG_STEP` (default `0.125` mm), `RPG_SPIN`, `RPG_MODES`, `RUNS` and
 `TIMEOUT` override the defaults; the
 colour mode is repeated three times and the `rpg.svg` SHA256 values must

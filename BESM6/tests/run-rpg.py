@@ -17,8 +17,15 @@ binary.  The default harness is bare: no DISPAK boot, with the explicit
 `show pl1 rpg` marker as proof.  `--harness deck` boots DISPAK and feeds
 the card deck on vu0 as well.  DISPAK stages one job ahead, so the deck
 harness resubmits until its own marker is printed in the ACPU listing and
-then checks that listing for a clean job end.  All scratch files stay under
-/var/tmp.
+then checks that listing for a clean job end.  `--harness native` boots
+DISPAK with `pl1` attached in RPG mode, submits `rpg-native-line.b6`
+(the `РПГ БЭСМ` generation card, an inline library 22 secondary-catalogue
+shim and native GRAFOR calls) and waits for
+ГП1 to issue УВВ 0171 by itself.  No bytes are deposited into ACC and no
+guest stub is loaded in that harness.  As documented in
+`rpg-golden/NATIVE-BLOCKED.md`, that path is currently BLOCKED: the runner
+reports FAIL rather than pretending ГП1 issued the bytes.  All scratch
+files stay under /var/tmp.
 This test is not part of besm6_test.ini.
 
 Historical protocol is not fully restored.  The six-colour pen-field
@@ -44,6 +51,8 @@ EMU = Path(os.environ.get("SIMH_BIN", str(SIMH / "BIN/besm6")))
 DISK = Path(os.environ.get("NITI_2348", str(Path.home() / ".besm6/2348")))
 COMPILER = Path("/usr/local/share/besm6/2148")
 STREAM = TESTS / "rpg-stream.b6"
+NATIVE_DECK = TESTS / "rpg-native-line.b6"
+NATIVE_LIB22 = TESTS / "rpg-native-lib22.b6"
 GOLDEN = TESTS / "rpg-golden/EXPECTED.md"
 BOOT = re.compile(r"[ДD]ATA:")
 DONE = re.compile(r"КОНЕЦ ЗАДАЧИ|[КK]З\s*\(|12345")
@@ -69,6 +78,16 @@ MODES = {
         "roll": "680mm",
         "wide": True,
         "six": True,
+    },
+    "native": {
+        "deck": NATIVE_DECK,
+        "marker": "4 2 8 6 12345",
+        "paths": 1,
+        "colors": 1,
+        "palette": {"black"},
+        "roll": "340mm",
+        "wide": False,
+        "six": False,
     },
 }
 
@@ -108,7 +127,7 @@ def make_ini(work, harness):
         ini = work / "simh.ini"
         ini.write_text("\n".join([
             "load %s" % STREAM,
-            "set pl debug=UK,GEOM,SVG",
+            "set pl1 debug=UK,GEOM,SVG",
             "set debug %s" % (work / "debug.log"),
         ]) + "\n", encoding="utf-8")
         return ini
@@ -141,7 +160,7 @@ def make_ini(work, harness):
             continue
         out.append(line)
     out += [
-        "set pl debug=UK,GEOM,SVG",
+        "set pl1 debug=UK,GEOM,SVG",
         "set debug %s" % (work / "debug.log"),
     ]
     ini = work / "simh.ini"
@@ -233,7 +252,10 @@ def run_once(mode, cfg, a, step):
     ini = make_ini(work, a.harness)
     env = dict(os.environ, TMUX_TMPDIR=str(work / "tmux"))
     session = "rpg-%s-%d" % (mode, os.getpid())
-    bytes_out = uk_bytes(parse_figure(cfg["deck"]))
+    # The native harness has no host-side byte list: every УК must come
+    # from ГП1 in the guest.
+    bytes_out = ([] if a.harness == "native" else
+                 uk_bytes(parse_figure(cfg["deck"])))
     print("mode=%s work=%s bytes=%d" % (mode, work, len(bytes_out)),
           flush=True)
     tmux(env, "new-session", "-d", "-s", session, "-x", "200", "-y", "50",
@@ -281,15 +303,38 @@ def run_once(mode, cfg, a, step):
                         return True
                 return False
 
+            def acpu_text():
+                return "\n".join(
+                    p.read_text(encoding="utf-8", errors="replace")
+                    for name in ("output.txt", "output1.txt")
+                    for p in (work / name,) if p.exists())
+
             def reset_acpu():
                 # A queued deck from an earlier test may have printed its
                 # own diagnostic.  Start the next submission with empty
                 # ACPU files so the final listing belongs only to our deck.
+                # Only touch devices at the SIMH prompt: while the OS runs
+                # these words would be read as operator directives.
+                tmux(env, "send-keys", "-t", session, "C-g", check=False)
+                wait_for(lambda h=20: pane(history=h), time.time() + 15,
+                         lambda t: bool(PROMPT.search(t)), interval=0.3)
                 for cmd in ("detach prn0", "detach prn1",
                             "attach -n prn0 %s" % (work / "output.txt"),
                             "attach -n prn1 %s" % (work / "output1.txt")):
                     send(cmd)
                     time.sleep(0.3)
+
+            if a.harness == "native":
+                # Attach the PL channel to the RPG model before the job
+                # runs.  Only the device mode is set; no УК is deposited.
+                for cmd in ("attach pl1 %s" % (work / "run/pl1.dat"),
+                            "set pl1 rpg",
+                            "set pl1 rpg-step=%s" % step):
+                    send(cmd)
+                    time.sleep(0.4)
+                # The secondary-catalogue entries are assembled inline in
+                # rpg-native-line.b6; no separate PERSO job is needed.
+                print("shim: inline in native deck", flush=True)
 
             # DISPAK stages one job ahead: the first submission can run a
             # leftover deck from an earlier test while ours waits in the
@@ -311,6 +356,8 @@ def run_once(mode, cfg, a, step):
                     time.sleep(0.8)
                 if done:
                     break
+                (work / ("acpu-attempt-%d.txt" % attempt)).write_text(
+                    acpu_text(), encoding="utf-8")
                 tmux(env, "send-keys", "-t", session, "C-g", check=False)
                 wait_for(lambda h=20: pane(history=h), time.time() + 15,
                          lambda t: bool(PROMPT.search(t)), interval=0.3)
@@ -319,24 +366,55 @@ def run_once(mode, cfg, a, step):
                 print("note: rpg-%s, deck job marker not seen; using the "
                       "explicit RPG model marker" % mode, flush=True)
 
+            if a.harness == "native" and not done:
+                # The generation card in rpg-native-line.b6 is rejected by
+                # the job reader (ЧУЖ СЛ).  Run its twin without that card
+                # to show what the native library 22 chain actually does.
+                for cmd in ("at vu0 %s" % NATIVE_LIB22, "d 6 1",
+                            "d 5 10", "set cpu req"):
+                    send(cmd)
+                    time.sleep(0.6)
+                send("go")
+                deadline = time.time() + a.timeout
+                while time.time() < deadline:
+                    if "КОНЕЦ ЗАДАЧИ" in acpu_text():
+                        break
+                    if PROMPT.search(pane()):
+                        send("go")
+                    time.sleep(0.8)
+                lib22 = acpu_text()
+                (work / "acpu-lib22.txt").write_text(lib22, encoding="utf-8")
+                for key in ("ОТСУТСТВУЕТ", "ЗАПРЕЩ.ЭКСТРАКОД",
+                            "1210В", "1211В"):
+                    hits = [ln.strip() for ln in lib22.splitlines()
+                            if key in ln]
+                    if hits:
+                        print("lib22 %s: %s" % (key, " | ".join(hits[:3])),
+                              flush=True)
+                if "ЧУЖ" in pane():
+                    print("native: generation card rejected (ЧУЖ СЛ)",
+                          flush=True)
+
             tmux(env, "send-keys", "-t", session, "C-g")
             wait_for(lambda h=20: pane(history=h), time.time() + 15,
                      lambda t: bool(PROMPT.search(t)), interval=0.3)
 
-            # The guest is stopped, so mask interrupts and drive the PL
-            # channel from the host.  No GP/BENSON device is involved.
-            for cmd in ("d MPRP 0", "d MGRP 0", "load %s" % STREAM):
+            if a.harness != "native":
+                # The guest is stopped, so mask interrupts and drive the PL
+                # channel from the host.  No GP/BENSON device is involved.
+                for cmd in ("d MPRP 0", "d MGRP 0", "load %s" % STREAM):
+                    send(cmd)
+                    time.sleep(0.4)
+
+        if a.harness != "native":
+            send("attach pl1 %s" % (work / "run/pl1.dat"))
+            time.sleep(0.4)
+            for cmd in (["set pl1 rpg"] +
+                        (["set pl1 rpg-wide"] if cfg["wide"] else []) +
+                        (["set pl1 rpg-6color"] if cfg["six"] else []) +
+                        ["set pl1 rpg-step=%s" % step]):
                 send(cmd)
                 time.sleep(0.4)
-
-        send("attach pl1 %s" % (work / "run/pl1.dat"))
-        time.sleep(0.4)
-        for cmd in (["set pl1 rpg"] +
-                    (["set pl1 rpg-wide"] if cfg["wide"] else []) +
-                    (["set pl1 rpg-6color"] if cfg["six"] else []) +
-                    ["set pl1 rpg-step=%s" % step]):
-            send(cmd)
-            time.sleep(0.4)
 
         for index, value in enumerate(bytes_out):
             token = "RPG%03d" % (index * 512 + value)
@@ -369,7 +447,9 @@ def run_once(mode, cfg, a, step):
                 ok = False
                 break
 
-        show_token = "RPGMARK%03d" % len(bytes_out)
+        show_token = ("NATIVEMARK%03d" if a.harness == "native" else
+                      "RPGMARK%03d") % (len(bytes_out) if
+                                        a.harness != "native" else 0)
         send("echo %s" % show_token)
         send("show pl1 rpg")
         wait_for(lambda h=20: pane(history=h), time.time() + 15,
@@ -407,7 +487,7 @@ def run_once(mode, cfg, a, step):
                                 for text in acpu)
     console = result["console"].read_text(
         encoding="utf-8", errors="replace") if result["console"].exists() else ""
-    if a.harness == "deck":
+    if a.harness in ("deck", "native"):
         if not result["acpu_marker"]:
             print("FAIL: rpg-%s, deck marker not in ACPU" % mode, flush=True)
             result["ok"] = False
@@ -420,13 +500,21 @@ def run_once(mode, cfg, a, step):
                   flush=True)
             result["ok"] = False
 
-    # Explicit completion marker from the RPG model itself.
+    # Explicit completion marker from the RPG model itself.  In the native
+    # harness the host deposits no bytes, so a positive count is the proof
+    # that ГП1 issued УВВ 0171 on its own.
     marker = re.search(r"(\d+) УК, (\d+) strokes, no jam", console)
     if marker:
         got_uk, got_strokes = map(int, marker.groups())
+        result["uk"] = got_uk
         print("model marker: %d УК, %d strokes" % (got_uk, got_strokes),
               flush=True)
-        if got_uk != len(bytes_out) or got_strokes != cfg["paths"]:
+        if a.harness == "native":
+            if got_uk == 0:
+                print("FAIL: rpg-%s, no guest-issued УК (ГП1 silent)" % mode,
+                      flush=True)
+                result["ok"] = False
+        elif got_uk != len(bytes_out) or got_strokes != cfg["paths"]:
             print("FAIL: rpg-%s, bad model marker" % mode, flush=True)
             result["ok"] = False
     else:
@@ -509,10 +597,18 @@ def main():
     ap.add_argument("--spin", type=int,
                     default=int(os.environ.get("RPG_SPIN", "500000")))
     ap.add_argument("--harness", default=os.environ.get("RPG_HARNESS", "bare"),
-                    choices=("bare", "deck"))
+                    choices=("bare", "deck", "native"))
     a = ap.parse_args()
 
-    for p in (EMU, BASE_INI, STREAM, DISK, COMPILER):
+    if a.harness == "native":
+        # DISPAK stages one job ahead.  A short timeout interleaves the
+        # two diagnostic submissions and hides the library 22 listing.
+        a.timeout = max(a.timeout, 45)
+
+    required = [EMU, BASE_INI, STREAM, DISK, COMPILER]
+    if a.harness == "native":
+        required += [NATIVE_DECK, NATIVE_LIB22]
+    for p in required:
         if not p.exists():
             print("FAIL: rpg, missing %s" % p, file=sys.stderr)
             return 2

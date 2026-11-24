@@ -1,0 +1,47 @@
+ШИФР 410300 ЗС5^
+ДИС 41(2148)^
+ОЗУ 32^АЦП 32^
+ЕЕВ1А3
+*NAME RPGNLIB
+*ASSEMBLER
+ PLOT: ,NАМЕ,PLOT
+ 1, VTM,
+ BUFPL: ,BSS,64
+ ,*50,1210B
+ ,*50,1211B
+ 13, UJ,
+ ,END,
+ MOVE: ,NАМЕ,MOVE
+ PLOT: ,SUBP,
+ 13,VJM,PLOT
+ 13, UJ,
+ ,END,
+ RDB: ,NАМЕ,RDB
+ 13, UJ,
+ ,END,
+ ENDPG: ,NАМЕ,ENDPG
+ 13, UJ,
+ ,END,
+ PAGE: ,NАМЕ,PAGE
+ 13, UJ,
+ ,END,
+*TRANS:FOREX3*,,411550
+      PROGRAM RPGNLIB
+C     Diagnostic twin of rpg-native-line.b6 without the generation
+C     card, so the library 22 chain can be observed past card checking.
+      INTEGER N
+      REAL X(2), Y(2)
+      N = 2
+      X(1) = 10.0
+      Y(1) = 10.0
+      X(2) = 110.0
+      Y(2) = 110.0
+      PRINT 900, 12345
+  900 FORMAT(' 4 2 8 6 ', I5)
+      CALL MOVE1(N, X, Y)
+      END
+*LIBRARY:22
+*EXECUTE
+*END FILE
+``````
+ЕКОНЕЦ
