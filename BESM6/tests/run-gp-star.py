@@ -22,7 +22,8 @@ import time
 from pathlib import Path
 
 SIMH = Path(__file__).resolve().parents[1]
-BASE_INI = SIMH / "OSZAGR/dispak.ini"
+BASE_INI = Path(os.environ.get("GPSTAR_BASE_INI",
+                               str(SIMH / "OSZAGR/dispak.ini")))
 DECK = Path(os.environ.get("GPSTAR_DECK",
                           str(Path(__file__).resolve().parent / "gp-star.b6")))
 EMU = Path(os.environ.get("SIMH_BIN", str(SIMH / "BIN/besm6")))
