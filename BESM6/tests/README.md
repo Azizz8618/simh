@@ -37,8 +37,10 @@ working **md07** image; a commented md00 or a stale `MD/2253` makes boot stop
 at `>>> MUX: clear, PRP = 01400` and the runner reports
 `no ДATA: boot marker`. All four runners now pin md00 to
 `/usr/local/share/besm6/2053` and md07 to `BESM6/backup/2253`; the test disk
-is attached to md45. `run-rpg-features.py` drives SIMH directly and does not
-boot DISPAK.
+is attached to md45. SIMH does not expand `~` in `attach` paths, so all
+read/write images (including drum and md units) are copied into the work
+directory as `img-*`; `run-rpg.py` now does this like the other runners.
+`run-rpg-features.py` drives SIMH directly and does not boot DISPAK.
 
 ## The tests
 
