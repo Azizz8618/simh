@@ -30,6 +30,16 @@ cd BESM6/tests
 turn. A sub-test's `exit 1` terminates the simulator immediately, so the run
 stops at the first failure.
 
+The Python acceptance runners (`run-gp-irq.py`, `run-gp-fig.py`,
+`run-gp-star.py`, `run-rpg.py`) build their own `simh.ini` from
+`OSZAGR/dispak.ini`. DISPAK boot needs **md00** with a bootable 2053 and a
+working **md07** image; a commented md00 or a stale `MD/2253` makes boot stop
+at `>>> MUX: clear, PRP = 01400` and the runner reports
+`no ДATA: boot marker`. All four runners now pin md00 to
+`/usr/local/share/besm6/2053` and md07 to `BESM6/backup/2253`; the test disk
+is attached to md45. `run-rpg-features.py` drives SIMH directly and does not
+boot DISPAK.
+
 ## The tests
 
 | Test          | Fixture             | Checks |
