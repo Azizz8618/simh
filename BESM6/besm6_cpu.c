@@ -1518,6 +1518,12 @@ void cpu_one_inst ()
     case 0210:                                      /* э21 */
     stop_as_extracode:
             Aex = ADDR (addr + M[reg]);
+            if (sim_log && opcode == 050 && Aex >= 01200 && Aex <= 01237) {
+                fprintf (sim_log,
+                    "*** TRACE GP-EK050 PC=%05o Aex=%05o ACC=%016o "
+                    "M3=%05o M16=%05o\n", PC, Aex, (unsigned) ACC,
+                    (unsigned) M[3], (unsigned) M[16]);
+            }
             if (! sim_deb && sim_log && cpu_dev.dctrl && opcode != 075) {
                 /* Если включен console log и cpu debug,
                  * но нет console debug, то печатаем только экстракоды.

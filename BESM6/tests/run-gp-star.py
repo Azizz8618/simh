@@ -97,6 +97,8 @@ def make_ini(work):
         "set gp debug",
         "set debug %s" % (work / "debug.log"),
     ]
+    if os.environ.get("GPSTAR_CPU_DEBUG"):
+        out += ["set cpu debug", "set console log=%s" % (work / "cpu.log")]
     ini = work / "simh.ini"
     ini.write_text("\n".join(out) + "\n", encoding="utf-8")
     return ini
