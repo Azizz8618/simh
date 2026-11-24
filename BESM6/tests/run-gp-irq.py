@@ -71,8 +71,14 @@ def make_ini(work):
         if "attach -e md41 " in line:
             out.append("attach -e md41 %s" % compiler)
             continue
-        if "attach -e md45 " in line:
+        if re.match(r"\s*;?\s*attach\s+-e\s+md00\s+", line):
+            out.append("attach -e md00 /usr/local/share/besm6/2053")
+            continue
+        if re.match(r"\s*attach\s+-e\s+md45\s+", line):
             out.append("attach -e md45 %s" % disk)
+            continue
+        if re.match(r"\s*attach\s+-e\s+md07\s+", line):
+            out.append("attach -e md07 %s" % (SIMH / "backup/2253"))
             continue
         if "attach -n prn0 " in line:
             out.append("attach -n prn0 %s" % (work / "output.txt"))
