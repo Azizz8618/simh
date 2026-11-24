@@ -164,6 +164,23 @@ def make_ini(work, harness):
         if "attach -n prn1 " in line:
             out.append("attach -n prn1 %s" % (work / "output1.txt"))
             continue
+        # READ/WRITE images are copied so a full DISPAK boot never dirties
+        # the repository; the base ini's "~" paths are not expanded by SIMH.
+        am = re.match(r"^(\s*attach\s+.*?\s+)(\S+)\s*$", line)
+        if am and not re.search(r"\s-r\s", line):
+            token = am.group(2)
+            if token.startswith("~/Yandex.Disk/simh/"):
+                src = Path.home() / token[2:]
+            elif token.startswith(str(SIMH)):
+                src = Path(token)
+            else:
+                src = None
+            if src and src.is_file():
+                dst = work / ("img-" + src.name)
+                if not dst.exists():
+                    shutil.copy2(src, dst)
+                out.append(am.group(1) + str(dst))
+                continue
         out.append(line)
     out += [
         "set pl1 debug=UK,GEOM,SVG",
