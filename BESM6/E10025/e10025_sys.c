@@ -139,6 +139,18 @@ extern DEVICE mb_dev;
 extern REG cpu_reg[];
 extern int32 saved_PC;
 
+/* Boot setup for the reused simh PDP-11 disk boot ROMs. The prototype and
+   semantics come from pdp11_cpu.c: saved_PC = pc, PSW = 000340. E10025 keeps
+   a separate R[7], which sim_instr fetches directly, so both are set. The PSW
+   helper keeps the cached pm/cm/ipl state in sync. */
+void cpu_set_boot (int32 pc)
+{
+saved_PC = pc & 0177777;
+R[7] = saved_PC;
+e10025_put_psw (0340);
+return;
+}
+
 /* SCP data structures and interface routines
 
    sim_name             simulator name string
@@ -168,6 +180,8 @@ DEVICE *sim_devices[] = {
     &chan_dev,
     &dma_dev,
     &dks_dev,
+    &rk_dev,
+    &rl_dev,
     NULL
     };
 
