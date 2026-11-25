@@ -39,6 +39,42 @@ expect_no_grep () {
   fi
 }
 
+expect_fixed () {
+  local out=$1 text=$2 label=$3
+  if ! printf '%s\n' "$out" | grep -Fq -- "$text"; then
+    echo "FAIL: $label (expected '$text')" >&2
+    printf '%s\n' "$out" >&2
+    exit 1
+  fi
+}
+
+expect_eq () {
+  local got=$1 want=$2 label=$3
+  if [ "$got" != "$want" ]; then
+    echo "FAIL: $label (got '$got', expected '$want')" >&2
+    exit 1
+  fi
+}
+
+# Phase/opcode journal (book 4, variant B). Durations printed in the journal
+# are historical book-4 values, not host delays or simulator clock ticks.
+debug_log=$(mktemp)
+trap 'rm -f "$debug_log"' EXIT
+
+run_sim_debug () {
+  : > "$debug_log"
+  printf '%s\n' "set debug $debug_log" 'set CHAN debug' "$@" 'exit' | "$sim" 2>&1
+}
+
+reg_val () {
+  local out=$1 name=$2 nth=${3:-1}
+  printf '%s\n' "$out" | sed -n "s/.*$name:[[:space:]]*//p" | sed -n "${nth}p"
+}
+
+journal_line () {
+  grep "CHAN JOURNAL: cycle op=$1 " "$debug_log" | head -1
+}
+
 # 1. Baseline data path and counters. No CHAN IPL override: arbitration now
 # follows the PSW, not a synthetic static level.
 out=$(run_sim \
@@ -170,5 +206,129 @@ expect_no_grep "$here/e10025_chan.c" 'int_vec\[level\]\[1\]' 'BR does not take C
 expect_no_grep "$here/e10025_chan.c" 'int_vec\[7\]\[0\]' 'DMA does not overwrite PIRQ7 slot'
 expect_grep "$here/e10025_cpu.c" 'br_arbitrate' 'arbitration recomputed from PSW'
 expect_no_grep "$here/e10025_cpu.c" 'chan_ack_interrupt' 'no double acknowledge'
+
+# 8. One ВВОД (opcode 00): exact phase order, cycle count +1, no error and no
+# timeout increase. The journal is a logical record; its durations are the
+# historical book-4 values and are not host nanoseconds or simulator ticks.
+out=$(run_sim_debug \
+  'deposit 8192 012525' \
+  'examine CHAN CYCLES' 'examine CHAN ERRORS' 'examine CHAN TIMEOUT' \
+  'set CHAN CYCLE=00:020000' \
+  'examine CHAN CYCLES' 'examine CHAN ERRORS' 'examine CHAN TIMEOUT' \
+  'examine CHAN DATA')
+printf '%s\n' "$out" | grep -E 'CYCLES:|ERRORS:|TIMEOUT:|DATA:'
+before=$(reg_val "$out" CYCLES 1)
+after=$(reg_val "$out" CYCLES 2)
+if [ $((10#$after)) -ne $((10#$before + 1)) ]; then
+  echo "FAIL: ВВОД increments CYCLES by one ($before -> $after)" >&2
+  exit 1
+fi
+expect_eq "$(reg_val "$out" ERRORS 2)" '00000000000' 'ВВОД leaves ERRORS unchanged'
+expect_eq "$(reg_val "$out" TIMEOUT 2)" '00000000000' 'ВВОД leaves TIMEOUT unchanged'
+line=$(journal_line 00)
+printf '%s\n' "$line"
+expect_out "$line" '^DBG\(.*\)> CHAN JOURNAL: cycle ' 'journal uses SIMH debug output'
+expect_fixed "$line" 'op=00 addr=020000 adr00=0' 'ВВОД opcode, address and ADR00'
+expect_fixed "$line" 'phases=ADDRESS,SA,WAIT_SACK,STROBE,RELEASE,CLEANUP,IDLE' \
+  'exact ВВОД phase order'
+expect_fixed "$line" 'result=OK' 'ВВОД has no ERROR phase'
+expect_fixed "$line" 'historical_book4_ns=150/75/75/75 repeat=450 full=525 timeout_us=15000' \
+  'book-4 durations are labeled historical'
+expect_fixed "$line" 'not host ns or simulator clocks' 'durations are not host or simulator time'
+if printf '%s\n' "$line" | grep -q 'ERROR'; then
+  echo 'FAIL: ВВОД journal contains ERROR' >&2
+  exit 1
+fi
+
+# 9. One ВЫВОД (opcode 10): same phase order, opcode 10 and the written word.
+out=$(run_sim_debug \
+  'deposit 8192 000000' \
+  'set CHAN CYCLE=10:020000:012525' \
+  'examine 8192' 'examine CHAN CYCLES' 'examine CHAN ERRORS')
+printf '%s\n' "$out" | grep -E '8192:|CYCLES:|ERRORS:'
+expect_out "$out" '8192:.*012525' 'ВЫВОД word stored in memory'
+expect_eq "$(reg_val "$out" CYCLES 1)" '00000000001' 'ВЫВОД counts one cycle'
+expect_eq "$(reg_val "$out" ERRORS 1)" '00000000000' 'ВЫВОД has no error'
+line=$(journal_line 10)
+printf '%s\n' "$line"
+expect_fixed "$line" 'op=10 addr=020000 adr00=0' 'ВЫВОД opcode and address'
+expect_fixed "$line" 'phases=ADDRESS,SA,WAIT_SACK,STROBE,RELEASE,CLEANUP,IDLE' \
+  'exact ВЫВОД phase order'
+
+# 10. Four book-4 codes and ADR00 byte selection for 11 (ВЫВОДБ). Both the
+# memory path and the I/O-page path must select the low byte for an even
+# address and the high byte for an odd address.
+out=$(run_sim_debug \
+  'deposit 8192 000000' \
+  'set CHAN CYCLE=00:020000' \
+  'set CHAN CYCLE=01:020000' \
+  'set CHAN CYCLE=10:020000:012525' \
+  'set CHAN CYCLE=11:020001:000011')
+printf '%s\n' "$out" | grep -E 'CHAN JOURNAL' >/dev/null
+for op in 00 01 10 11; do
+  expect_fixed "$(journal_line "$op")" "op=$op " "book-4 opcode $op journaled"
+done
+
+out=$(run_sim_debug \
+  'deposit 8192 000000' \
+  'set CHAN CYCLE=11:020000:000011' 'examine 8192' \
+  'set CHAN CYCLE=11:020001:012525' 'examine 8192')
+printf '%s\n' "$out" | grep -E '8192:'
+mapfile -t words < <(printf '%s\n' "$out" | sed -n 's/.*8192:[[:space:]]*//p')
+expect_eq "${words[0]:-}" '000011' 'ВЫВОДБ even address changes low byte only'
+expect_eq "${words[1]:-}" '052411' 'ВЫВОДБ odd address changes high byte only'
+
+out=$(run_sim_debug \
+  'set DMA DATA=000000' \
+  'set CHAN CYCLE=11:017777502:000022' 'examine DMA DAT' \
+  'set CHAN CYCLE=11:017777503:000033' 'examine DMA DAT')
+printf '%s\n' "$out" | grep -E 'DAT:'
+mapfile -t regs < <(printf '%s\n' "$out" | sed -n 's/.*DAT:[[:space:]]*//p')
+expect_eq "${regs[0]:-}" '0012' 'ВЫВОДБ I/O page even address changes low byte'
+expect_eq "${regs[1]:-}" '1B12' 'ВЫВОДБ I/O page odd address changes high byte'
+expect_fixed "$(grep 'CHAN JOURNAL: cycle op=11 addr=777503' "$debug_log" | head -1)" \
+  'adr00=1' 'ВЫВОДБ odd address sets ADR00'
+
+# 11. ВВОДП (opcode 01) is journaled with its following code and address, but
+# the next-cycle pair is not enforced by default: ERRORS must stay zero even
+# when the following code is 00 at a different address.
+out=$(run_sim_debug \
+  'deposit 8192 000000' \
+  'set CHAN CYCLE=01:020000' \
+  'set CHAN CYCLE=10:020000:012525' \
+  'set CHAN CYCLE=01:020002' \
+  'set CHAN CYCLE=00:020004' \
+  'examine CHAN ERRORS' 'examine CHAN TIMEOUT')
+printf '%s\n' "$out" | grep -E 'ERRORS:|TIMEOUT:'
+expect_fixed "$(journal_line 01)" 'vbo_next=pending' 'ВВОДП journal marks soft pair'
+mapfile -t pairs < <(grep 'CHAN JOURNAL: vbo_pair' "$debug_log")
+expect_fixed "${pairs[0]:-}" 'vbo_pair op=01 addr=020000 next=10@020000' \
+  'next code after ВВОДП is 10 at the same address'
+next_code=$(printf '%s\n' "${pairs[0]:-}" | sed -n 's/.*next=\([0-9][0-9]\)@.*/\1/p')
+case "$next_code" in
+  10|11) ;;
+  *) echo "FAIL: next code after ВВОДП is $next_code, expected 10 or 11" >&2; exit 1 ;;
+esac
+expect_fixed "${pairs[1]:-}" 'vbo_pair op=01 addr=020002 next=00@020004' \
+  'unpaired ВВОДП is journaled without enforcement'
+expect_eq "$(reg_val "$out" ERRORS 1)" '00000000000' 'ВВОДП pair is not enforced'
+expect_eq "$(reg_val "$out" TIMEOUT 1)" '00000000000' 'ВВОДП leaves TIMEOUT unchanged'
+
+# 12. DMA: exactly WC cycles with opcode 10 and addresses AP, AP+2, ...
+out=$(run_sim_debug \
+  'set DMA AP=020000' 'set DMA WC=3' 'set DMA DATA=012525' 'set DMA GO' \
+  'examine CHAN CYCLES' 'examine CHAN ERRORS' 'examine CHAN TIMEOUT')
+printf '%s\n' "$out" | grep -E 'CYCLES:|ERRORS:|TIMEOUT:'
+expect_out "$out" 'CYCLES:.*00000000003' 'DMA journal cycle count matches WC'
+expect_out "$out" 'ERRORS:.*00000000000' 'DMA journal reports no errors'
+expect_out "$out" 'TIMEOUT:.*00000000000' 'DMA leaves TIMEOUT unchanged'
+mapfile -t addrs < <(grep 'CHAN JOURNAL: cycle op=10' "$debug_log" | \
+  sed -n 's/.* addr=\([0-7]*\).*/\1/p')
+expect_eq "${#addrs[@]}" 3 'DMA journal has exactly WC cycle lines'
+expect_eq "${addrs[0]:-}" '020000' 'DMA first journal address is AP'
+expect_eq "${addrs[1]:-}" '020002' 'DMA second journal address is AP+2'
+expect_eq "${addrs[2]:-}" '020004' 'DMA third journal address is AP+4'
+non10=$(grep 'CHAN JOURNAL: cycle op=' "$debug_log" | grep -vc 'op=10 ')
+expect_eq "$non10" 0 'DMA journal contains only opcode 10'
 
 echo 'PASS: E10025 channel DMA/BR arbitration'

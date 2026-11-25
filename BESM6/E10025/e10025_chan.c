@@ -31,6 +31,7 @@ extern int32 int_vec[IPL_HLVL][32];
 extern int32 (*int_ack[IPL_HLVL][32]) (void);
 extern int32 ipl;
 extern int32 PSW;
+extern DEVICE chan_dev;
 
 static t_stat chan_set_br_req (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat chan_set_br_vec (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
@@ -40,19 +41,26 @@ static t_stat dma_go (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat dma_set_dat (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat dma_set_ap (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat dma_set_wc (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
-static t_stat dma_go (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static t_stat chan_set_cycle (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 
 /* Channel cycle phases, book 4 sections 6.2-6.6 (PDF pp.25-31).
-   Real delays (150/75/75/75 ns, 15 us timeout) are abstracted as states. */
+   The numbers 150/75/75/75 ns, 450 ns repeat, 525 ns full cycle and the
+   15 us timeout are historical book-4 durations. They are logical values in
+   this model: not host delays and not simulator clock ticks. */
 enum {
     CH_IDLE = 0, CH_ADDRESS = 1, CH_SA = 2, CH_WAIT_SACK = 3,
     CH_STROBE = 4, CH_RELEASE = 5, CH_CLEANUP = 6, CH_ERROR = 7
     };
 
-#define CH_OP_IN      0                                 /* ВВОД */
-#define CH_OP_OUT     1                                 /* ВЫВОД */
+#define CH_OP_IN      00                                /* ВВОД, word input */
+#define CH_OP_INP     01                                /* ВВОДП, journaled only */
+#define CH_OP_OUT     010                               /* ВЫВОД, word output */
+#define CH_OP_OUTB    011                               /* ВЫВОДБ, ADR00 byte output */
 #define CH_BRS        0370                              /* BR request bits 7..4 */
 #define BR_INT        (1u << 31)                        /* synthetic BR slot, never bit 1 */
+#define CH_DEB_JOURNAL 1                                /* phase and opcode journal */
+#define CH_JPHASES    8                                 /* seven phases plus ERROR */
+#define CH_JCYCLES    8                                 /* last cycles kept in journal */
 
 static struct {
     int32 state;
@@ -63,53 +71,152 @@ static struct {
     int32 errors;
     int32 timeouts;
     int32 last_op;
+    int32 adr00;                                        /* ADR00 byte select */
     } chan;
+
+/* Journal of the last cycles. The ВВОДП pair is recorded as diagnostic
+   information only: no strict next-cycle check is enforced by default. */
+static struct {
+    int32 op;
+    int32 addr;
+    int32 adr00;
+    int32 nphase;
+    int32 phase[CH_JPHASES];
+    int32 ok;
+    int32 next_op;
+    int32 next_addr;
+    } chan_journal[CH_JCYCLES];
+static int32 chan_jnext = 0;
+static int32 chan_jused = 0;
+
+static DEBTAB chan_debug[] = {
+    {"JOURNAL", CH_DEB_JOURNAL, "channel phase and opcode journal"},
+    {0}
+    };
 
 static int32 br_req = 0;                                /* synthetic BR7..BR4 */
 static int32 br_grant = 0;
 static int32 br_vec = 0060;
 
+static const char *chan_phase_name (int32 phase)
+{
+static const char *const names[8] = {
+    "IDLE", "ADDRESS", "SA", "WAIT_SACK", "STROBE", "RELEASE", "CLEANUP", "ERROR"
+    };
+return ((phase >= 0) && (phase < 8))? names[phase]: "UNKNOWN";
+}
+
+/* Store one completed cycle and, when debugging is enabled, print it. */
+static void chan_journal_record (int32 *phase, int32 nphase, int32 ok)
+{
+char phases[128] = "";
+const char *pair = "--";
+int32 cur = 0, i, j;
+int32 newest = (chan_jnext + CH_JCYCLES - 1) % CH_JCYCLES;
+
+if ((chan_jused > 0) && (chan_journal[newest].op == CH_OP_INP) &&
+    (chan_journal[newest].next_op < 0)) {
+    chan_journal[newest].next_op = chan.last_op;
+    chan_journal[newest].next_addr = chan.addr;
+    sim_debug (CH_DEB_JOURNAL, &chan_dev,
+               "vbo_pair op=01 addr=%06o next=%02o@%06o "
+               "(diagnostic only, not enforced)\n",
+               chan_journal[newest].addr, chan_journal[newest].next_op,
+               chan_journal[newest].next_addr);
+    }
+j = 0;
+for (i = 0; i < nphase; i++) {
+    const char *name = chan_phase_name (phase[i]);
+    int32 len = strlen (name) + ((i > 0)? 1: 0);
+    if ((j + len + 1) < (int32) sizeof (phases)) {
+        if (i > 0)
+            phases[j++] = ',';
+        strcpy (&phases[j], name);
+        j += strlen (name);
+        }
+    }
+chan_journal[chan_jnext].op = chan.last_op;
+chan_journal[chan_jnext].addr = chan.addr;
+chan_journal[chan_jnext].adr00 = chan.adr00;
+chan_journal[chan_jnext].nphase = nphase;
+chan_journal[chan_jnext].ok = ok;
+chan_journal[chan_jnext].next_op = -1;
+chan_journal[chan_jnext].next_addr = 0;
+for (i = 0; i < nphase; i++)
+    chan_journal[chan_jnext].phase[i] = phase[i];
+if (chan_journal[chan_jnext].op == CH_OP_INP)
+    pair = "pending";                                   /* soft pair, never enforced */
+chan_jnext = (chan_jnext + 1) % CH_JCYCLES;
+if (chan_jused < CH_JCYCLES)
+    chan_jused++;
+cur = (chan_jnext + CH_JCYCLES - 1) % CH_JCYCLES;
+sim_debug (CH_DEB_JOURNAL, &chan_dev,
+           "cycle op=%02o addr=%06o adr00=%d phases=%s result=%s vbo_next=%s "
+           "historical_book4_ns=150/75/75/75 repeat=450 full=525 timeout_us=15000 "
+           "(book-4 historical values, not host ns or simulator clocks)\n",
+           chan_journal[cur].op, chan_journal[cur].addr,
+           chan_journal[cur].adr00, phases, ok? "OK": "ERROR", pair);
+}
+
+#define CH_PHASE(p) do { chan.state = (p); \
+                         if (nphase < CH_JPHASES) phase[nphase++] = (p); \
+                         } while (0)
+
 /* Run one complete channel cycle. Returns data for input cycles. */
 static int32 chan_run_cycle (int32 pa, int32 op, int32 data, int32 byte)
 {
 int32 result = 0, stat = SCPE_OK;
-
+int32 phase[CH_JPHASES], nphase = 0;
+int32 is_byte = byte || (op == CH_OP_OUTB);
+int32 is_input = (op == CH_OP_IN) || (op == CH_OP_INP);
 uint32 bank = ((uint32) pa) & ~((uint32) CH_ADDRMASK);
+
 chan.cycles++;
 chan.last_op = op;
+chan.op = op;
 chan.addr = pa & CH_ADDRMASK;
+chan.adr00 = chan.addr & 1;
 chan.data = data & DMASK;
-chan.state = CH_ADDRESS;                                /* address + opcode on bus */
+CH_PHASE (CH_ADDRESS);                                  /* address + opcode on bus */
 if ((bank != 0) && (bank != (uint32) CH_IOBANK)) {
-    chan.state = CH_ERROR;
+    CH_PHASE (CH_ERROR);
     chan.errors++;
+    chan_journal_record (phase, nphase, 0);
     return 0;
     }
-chan.state = CH_SA;                                     /* СА asserted */
-chan.state = CH_WAIT_SACK;                              /* wait for СП */
+CH_PHASE (CH_SA);                                       /* СА asserted */
+CH_PHASE (CH_WAIT_SACK);                                /* wait for СП */
 if (chan.addr >= CH_IOBASE) {
     uint32 pa22 = ((uint32) chan.addr) | ((uint32) CH_IOBANK);
-    if (op == CH_OP_IN) {
+    if (is_input) {
         stat = iopageR (&result, pa22, READ);
-        if ((stat == SCPE_OK) && byte)
-            result = (chan.addr & 1)? ((result >> 8) & 0377): (result & 0377);
+        if ((stat == SCPE_OK) && is_byte)
+            result = chan.adr00? ((result >> 8) & 0377): (result & 0377);
+        }
+    else if (is_byte && chan.adr00 && (op == CH_OP_OUTB)) {
+        int32 cur = 0;
+        stat = iopageR (&cur, pa22 & ~1, READ);         /* merge high byte by АDR00 */
+        if (stat == SCPE_OK) {
+            cur = (cur & 0377) | ((data & 0377) << 8);
+            stat = iopageW (cur, pa22 & ~1, WRITE);
+            }
         }
     else
-        stat = iopageW (data & (byte? 0377: DMASK), pa22,
-                        byte? WRITEB: WRITE);
+        stat = iopageW (data & (is_byte? 0377: DMASK), pa22,
+                        is_byte? WRITEB: WRITE);
     }
 else if ((uint32) chan.addr < MEMSIZE) {
     int32 idx = chan.addr >> 1;
-    if (byte) {
-        if (op == CH_OP_IN)
-            result = (chan.addr & 1) ? ((M[idx] >> 8) & 0377) : (M[idx] & 0377);
-        else if (chan.addr & 1)
+    if (is_byte) {
+        if (is_input)
+            result = chan.adr00? ((M[idx] >> 8) & 0377): (M[idx] & 0377);
+        else if (chan.adr00)
             M[idx] = (M[idx] & 0377) | ((data & 0377) << 8);
         else
             M[idx] = (M[idx] & 0177400) | (data & 0377);
         }
     else {
-        if (op == CH_OP_IN)
+        if (is_input)
             result = M[idx];
         else
             M[idx] = data & DMASK;
@@ -120,16 +227,20 @@ else
 if (stat != SCPE_OK) {
     chan.timeouts++;
     chan.errors++;
-    chan.state = CH_ERROR;
+    CH_PHASE (CH_ERROR);
+    chan_journal_record (phase, nphase, 0);
     return 0;
     }
-chan.state = CH_STROBE;                                 /* strobe data, drop СА */
-chan.state = CH_RELEASE;                                /* hold address 75 ns */
-chan.state = CH_CLEANUP;                                /* passive drops СП */
-chan.state = CH_IDLE;
+CH_PHASE (CH_STROBE);                                   /* strobe data, drop СА */
+CH_PHASE (CH_RELEASE);                                  /* hold address 75 ns */
+CH_PHASE (CH_CLEANUP);                                  /* passive drops СП */
+CH_PHASE (CH_IDLE);
 chan.data = result & DMASK;
+chan_journal_record (phase, nphase, 1);
 return result;
 }
+
+#undef CH_PHASE
 
 int32 chan_read_io (int32 pa, int32 byte)
 {
@@ -210,6 +321,8 @@ static MTAB chan_mod[] = {
       &chan_set_br_req, NULL, NULL, "inject BR7..BR4 request" },
     { MTAB_XTD|MTAB_VDV, 0, "BRVEC", "BRVEC",
       &chan_set_br_vec, NULL, NULL, "synthetic BR vector" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "CYCLE", "CYCLE",
+      &chan_set_cycle, NULL, NULL, "cycle opcode:address[:data] (octal)" },
     { 0 }
     };
 
@@ -218,6 +331,8 @@ static t_stat chan_reset (DEVICE *dptr)
 int32 level;
 
 memset (&chan, 0, sizeof (chan));
+memset (&chan_journal, 0, sizeof (chan_journal));
+chan_jnext = chan_jused = 0;
 br_req = br_grant = 0;
 br_vec = 0060;
 for (level = 4; level <= 7; level++)
@@ -230,7 +345,7 @@ DEVICE chan_dev = {
     1, 10, 18, 0, 8, 8,
     NULL, NULL, &chan_reset,
     NULL, NULL, NULL, NULL,
-    0, 0, NULL,
+    DEV_DEBUG, 0, chan_debug,
     NULL, NULL, NULL, NULL, NULL
     };
 
@@ -375,6 +490,25 @@ if (dma_error)
     dma_csr |= 0100000;
 /* Vector and ack come from dma_dib at [7][1]; leave PIRQ7 [7][0] alone. */
 int_req[7] |= (1u << 1);
+return SCPE_OK;
+}
+
+/* Inject one channel cycle with a book-4 opcode (00/01/10/11). Address and
+   data are octal; codes 10/11 use the optional data argument. */
+static t_stat chan_set_cycle (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+int32 op = -1, addr = 0, data = 0, n;
+
+if (cptr == NULL)
+    return SCPE_ARG;
+n = sscanf (cptr, "%o:%o:%o", &op, &addr, &data);
+if ((n < 2) || ((op != CH_OP_IN) && (op != CH_OP_INP) &&
+                (op != CH_OP_OUT) && (op != CH_OP_OUTB)))
+    return sim_messagef (SCPE_ARG, "CHAN CYCLE expects opcode:address[:data] in octal (00/01/10/11)\n");
+addr &= CH_ADDRMASK;
+if (addr >= CH_IOBASE)
+    addr |= (int32) CH_IOBANK;
+chan_run_cycle (addr, op, data, (op == CH_OP_OUTB)? 1: 0);
 return SCPE_OK;
 }
 
