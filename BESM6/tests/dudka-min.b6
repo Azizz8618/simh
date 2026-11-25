@@ -1,0 +1,24 @@
+ШИФР 410300 ЗС5^
+ДИС 41(2148)^
+ОЗУ 32^АЦП 32^
+ЕЕВ1А3
+*NAME DUDKMIN
+*ASSEMBLER
+  PK:,NAME,PK
+      3,VTM,71717B
+      ,*50,1216B
+      ,*62,0B
+      ,END,
+*TRANS:FOREX3*,,411550
+      PROGRAM DUDKMIN
+      INTEGER I
+      DO 20 J = 1, 40
+         PRINT 900
+  900 FORMAT(' KADR DUDKI 0000 0000 0000 0000 0000')
+   20 CONTINUE
+      CALL PK(I)
+      END
+*EXECUTE
+*END FILE
+``````
+ЕКОНЕЦ

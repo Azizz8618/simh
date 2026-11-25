@@ -54,10 +54,26 @@ def sha256(path):
     return h.hexdigest()
 
 
+def _disk(name):
+    """Locate a system disk: env override, /usr/local/share, workspace."""
+    env = os.environ.get("GPSTAR_SYS_%s" % name)
+    if env:
+        return Path(env)
+    for base in ("/usr/local/share/besm6",
+                 "/home/z/my-project/disks",
+                 "/home/z/my-project/repos/aesc-crypto-projects/disks"):
+        p = Path(base) / name
+        if p.exists():
+            return p
+    return Path("/usr/local/share/besm6/%s" % name)
+
+
 def make_ini(work):
     (work / "run").mkdir(parents=True)
     (work / "tmux").mkdir()
-    sys2048 = Path("/usr/local/share/besm6/2148")
+    sys2048 = _disk("2148")
+    sys2053 = _disk("2053")
+    md07 = _disk("2253")
     disk = work / "2048"
     shutil.copy2(DISK, disk)
     compiler = work / "2148"
@@ -77,13 +93,13 @@ def make_ini(work):
             out.append("attach -e md41 %s" % compiler)
             continue
         if re.match(r"\s*;?\s*attach\s+-e\s+md00\s+", line):
-            out.append("attach -e md00 /usr/local/share/besm6/2053")
+            out.append("attach -e md00 %s" % sys2053)
             continue
         if re.match(r"\s*attach\s+-e\s+md45\s+", line):
             out.append("attach -e md45 %s" % disk)
             continue
         if re.match(r"\s*attach\s+-e\s+md07\s+", line):
-            out.append("attach -e md07 %s" % (SIMH / "backup/2253"))
+            out.append("attach -e md07 %s" % md07)
             continue
         if "attach -n prn0 " in line:
             out.append("attach -n prn0 %s" % (work / "output.txt"))

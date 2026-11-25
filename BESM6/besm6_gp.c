@@ -73,12 +73,33 @@ static int      gp_finished;            /* benson_finish() already called */
 static uint32   gp_rk, gp_m17, gp_m16, gp_m15, gp_m20;
 static t_value  gp_rmr;
 
+/*
+ * НИТИ (БЕНСОН-501) line state.  The guest enables the interface with
+ * УВВ '155 (bit 22, benson.be:116-117), then feeds each 16-bit element
+ * as two bytes: '164 (low) and '165 (high) (benson.be:72,80,266,270).
+ * On every completed element the device raises 18Р; ДУДКА reads the
+ * element back with РЕГ '240 (dudka.be:265) and rebuilds the page of
+ * 1024 words.  After 64 words a frame goes to the decoder.
+ */
+static int      gp_niti_on;             /* УВВ '155 bit 22 */
+static int      gp_niti_busy;           /* '166: обмен идёт */
+static unsigned gp_niti_lo;             /* байт из '164 */
+static unsigned gp_niti_hi;             /* байт из '165 */
+static int      gp_niti_got_lo, gp_niti_got_hi;
+static unsigned gp_niti_elem_pending;   /* элементы, ждущие рег '240 */
+static uint64_t gp_niti_echo;           /* элемент для рег '240 */
+static uint32   gp_niti_bytes;          /* счётчик байтов '164+'165 */
+static unsigned gp_niti_word_parts;     /* элементов в текущем слове */
+static uint64_t gp_niti_word_acc;       /* сборка 48-битного слова */
+
 t_stat gp_reset (DEVICE *dptr);
 t_stat gp_attach (UNIT *uptr, CONST char *cptr);
 t_stat gp_detach (UNIT *uptr);
 
 /* Defined below the device table; the SET handler below calls it. */
 static void gp_raise_irq (void);
+static t_value gp_niti_data_read (void);
+static void gp_niti_word (uint64_t elem);
 
 UNIT gp_unit = { UDATA (NULL, UNIT_ATTABLE, 0) };
 
@@ -201,6 +222,14 @@ t_stat gp_reset (DEVICE *dptr)
     gp_finished = 0;
     gp_rk = gp_m17 = gp_m16 = gp_m15 = gp_m20 = 0;
     gp_rmr = 0;
+    gp_niti_on = gp_niti_busy = 0;
+    gp_niti_got_lo = gp_niti_got_hi = 0;
+    gp_niti_lo = gp_niti_hi = 0;
+    gp_niti_elem_pending = 0;
+    gp_niti_echo = 0;
+    gp_niti_bytes = 0;
+    gp_niti_word_parts = 0;
+    gp_niti_word_acc = 0;
     memset (gp_buf, 0, sizeof (gp_buf));
     memset (gp_config, 0, sizeof (gp_config));
     GRP &= ~GRP_GP;
@@ -278,7 +307,16 @@ void gp_config_write (t_value acc)
 /* РЕГ '240': the guest reads the next word that arrived from БЕНСОН. */
 t_value gp_data_read (void)
 {
-    t_value val = (t_value) gp_buf[gp_read_idx % GP_WORDS];
+    t_value val;
+
+    if (gp_niti_on) {
+        /* НИТИ: слово собирается из трёх 16-битных элементов (эхо '164+'165),
+         * каждый элемент приходит со своим 18Р. */
+        val = gp_niti_data_read ();
+        gp_niti_word ((uint64_t) val);
+        return val;
+    }
+    val = (t_value) gp_buf[gp_read_idx % GP_WORDS];
 
     ++gp_read_idx;
     gp_phase ^= 1;                  /* D10156 toggles between words */
@@ -380,5 +418,129 @@ void gp_extra (int addr, t_value acc, t_value *acc_out)
     default:
         sim_debug (DBG_REG, &gp_dev, "GP: unknown ЭК %04o\n", addr);
         break;
+    }
+}
+
+/* ===================== НИТИ (БЕНСОН-501) interface ===================== */
+
+int gp_niti_active (void)
+{
+    return gp_niti_on;
+}
+
+/* УВВ '155: bit 22 включает интерфейс, bit 24 выключает (benson.be:116,346). */
+void gp_niti_control (uint32 acc)
+{
+    if (acc & BITS(22)) {
+        if (! gp_niti_on)
+            sim_debug (DBG_REG, &gp_dev, "НИТИ: УВВ '155 вкл (%016o)\n", acc);
+        gp_niti_on = 1;
+        gp_niti_busy = 1;
+        gp_niti_got_lo = gp_niti_got_hi = 0;
+        gp_niti_elem_pending = 0;
+        gp_niti_bytes = 0;
+    } else if (acc & BITS(24)) {
+        sim_debug (DBG_REG, &gp_dev, "НИТИ: УВВ '155 выкл (%016o)\n", acc);
+        gp_niti_on = 0;
+        gp_niti_busy = 0;
+    }
+}
+
+/*
+ * УВВ '164/'165: байты очередного элемента.  Когда оба байта приняты,
+ * элемент считается выданным БЕНСОНу: поднимаем 18Р и запоминаем слово
+ * для чтения через РЕГ '240 (эхо устройства).  '166 в записи — команда
+ * «выдать слово» без эффекта (состояние читается через '04166).
+ */
+void gp_niti_byte (int addr, t_value acc)
+{
+    if (! gp_niti_on) {
+        /* Интерфейс выключен: байты идут в перфоратор как раньше. */
+        return;
+    }
+    switch (addr & 7) {
+    case 4:
+        gp_niti_lo = (unsigned) (acc & 0377);
+        gp_niti_got_lo = 1;
+        ++gp_niti_bytes;
+        break;
+    case 5:
+        gp_niti_hi = (unsigned) (acc & 0377);
+        gp_niti_got_hi = 1;
+        ++gp_niti_bytes;
+        break;
+    default:
+        return;
+    }
+    if (gp_niti_got_lo && gp_niti_got_hi) {
+        uint64_t elem = ((uint64_t) gp_niti_hi << 8) | gp_niti_lo;
+
+        gp_niti_echo = elem;
+        gp_niti_got_lo = gp_niti_got_hi = 0;
+        ++gp_niti_elem_pending;
+        sim_debug (DBG_REG, &gp_dev,
+                   "НИТИ: элемент %06o (байтов %u), 18Р\n",
+                   (unsigned) elem, gp_niti_bytes);
+        gp_raise_irq ();
+    }
+}
+
+/* РЕГ '240 из НИТИ-контура: элемент, собранный из '164+'165. */
+static t_value gp_niti_data_read (void)
+{
+    t_value val = gp_niti_echo;
+
+    if (gp_niti_elem_pending)
+        --gp_niti_elem_pending;
+    gp_phase ^= 1;
+    sim_debug (DBG_REG, &gp_dev, "РЕГ '240' (НИТИ) = %016llo\n",
+               (unsigned long long) val);
+    return val;
+}
+
+/*
+ * УВВ '4023 (опрос состояния ГП в ТРУБКЕ, trubka.be:106): младшие разряды
+ * — состояние интерфейса.  БЕНСОН «готов», когда НИТИ-контур включён.
+ */
+t_value gp_niti_status (int addr)
+{
+    switch (addr) {
+    case 04023:
+        return gp_niti_on ? (t_value) 1 : 0;
+    case 04164:
+        return (t_value) gp_niti_lo;
+    case 04165:
+        return (t_value) gp_niti_hi;
+    case 04166:
+        return (t_value) (gp_niti_busy ? 1 : 0);
+    default:
+        return 0;
+    }
+}
+
+/* Разряд 13 УВВ '4102: готовность ГП (benson.be:41,251). */
+int gp_niti_ready13 (void)
+{
+    return gp_niti_on;
+}
+
+/*
+ * Кадр для декодера собирается из слов, прочитанных гостем через РЕГ '240':
+ * каждое слово — три 16-битных элемента (печшк3, benson.be:186-227).
+ * 64 слова — кадр; дальше gp_deliver_frame().
+ */
+static void gp_niti_word (uint64_t elem)
+{
+    gp_niti_word_acc |= (elem & 0177777) << (32 - 16 * gp_niti_word_parts);
+    if (++gp_niti_word_parts == 3) {
+        gp_buf[gp_word_count % GP_WORDS] = gp_niti_word_acc;
+        ++gp_word_count;
+        ++gp_words;
+        gp_niti_word_acc = 0;
+        gp_niti_word_parts = 0;
+        sim_debug (DBG_REG, &gp_dev, "НИТИ: слово %u = %016llo\n",
+                   gp_word_count, (unsigned long long) gp_buf[(gp_word_count - 1) % GP_WORDS]);
+        if (gp_word_count >= GP_WORDS)
+            gp_deliver_frame ();
     }
 }
