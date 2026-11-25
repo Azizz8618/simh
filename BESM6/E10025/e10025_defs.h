@@ -125,6 +125,9 @@
 #define CH_TIMING_SCALED  1
 #define CH_SCALE_NS      75                             /* one simulator tick */
 #define CH_TIMEOUT_US    15000                          /* book 4, section 6.6 */
+/* Phase C: the synthetic BR interrupt slot stays 31 on every level. The
+   diagnostic source list is ordered by chain position, not by interrupt bit. */
+#define CH_BR_MAXSRC    8                               /* sources per BR level */
 extern int32 chan_timing_mode (void);
 
 /* Opcode calibration, mechanism from the 1998 article.

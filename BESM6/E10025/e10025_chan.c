@@ -36,6 +36,7 @@ static UNIT chan_unit;                                  /* defined below, used b
 
 static t_stat chan_set_br_req (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat chan_set_br_vec (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static t_stat chan_set_br_dev (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat chan_set_timing (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat chan_show_timing (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 static t_stat chan_set_nosp (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
@@ -112,9 +113,34 @@ static DEBTAB chan_debug[] = {
     {0}
     };
 
+/* Ordered BR source list for each level. ПК passes the chain from slot 0; the
+   first requesting source blocks it (book 4, p.32 section 7.1). Slot 0 is the
+   legacy source driven by BRREQ and BRVEC; BRDEV injects further slots. */
+typedef struct {
+    int32 slot;                                         /* chain position, 0 = nearest */
+    int32 vec;                                          /* interrupt vector */
+    int32 req;                                          /* request held on the BR line */
+    } BR_SRC;
+
+static BR_SRC br_src[IPL_HLVL][CH_BR_MAXSRC];           /* indexed by level 4..7 */
+static int32 br_nsrc[IPL_HLVL];
+static int32 br_active[IPL_HLVL];                       /* source currently holding ПК */
 static int32 br_req = 0;                                /* synthetic BR7..BR4 */
 static int32 br_grant = 0;
 static int32 br_vec = 0060;
+
+static void br_src_reset (void)
+{
+int32 level;
+
+for (level = 4; level <= 7; level++) {
+    br_nsrc[level] = 1;
+    br_active[level] = -1;
+    memset (&br_src[level][0], 0, sizeof (br_src[level][0]));
+    br_src[level][0].slot = 0;
+    br_src[level][0].vec = br_vec;
+    }
+}
 
 static const char *chan_phase_name (int32 phase)
 {
@@ -308,9 +334,22 @@ static int32 (*const br_inta_tab[8]) (void) = {
 
 static t_stat br_ack (int32 level)
 {
+int32 i, vec = br_vec;
+
+if (br_active[level] < 0)
+    return br_vec;                                      /* duplicate acknowledge */
+for (i = 0; i < br_nsrc[level]; i++) {
+    if (i == br_active[level]) {
+        br_src[level][i].req = 0;                       /* grant released after ПВ */
+        vec = br_src[level][i].vec;
+        if (i == 0)
+            br_req &= ~(1 << level);                    /* legacy BRREQ source */
+        break;
+        }
+    }
+br_active[level] = -1;
 int_req[level] &= ~(int32) BR_INT;
-br_req &= ~(1 << level);                                /* BR line released after grant */
-return br_vec;
+return vec;
 }
 
 static t_stat br_inta4 (void) { return br_ack (4); }
@@ -318,23 +357,33 @@ static t_stat br_inta5 (void) { return br_ack (5); }
 static t_stat br_inta6 (void) { return br_ack (6); }
 static t_stat br_inta7 (void) { return br_ack (7); }
 
-/* Level-only arbitration: the daisy chain inside a BR level, grant propagation
-   and sub-priority order are not modelled; each level has one synthetic source.
-   Requests above the real PSW ipl win. Slot 31 keeps BR clear of DMA [7][1],
-   CLK [6][1], TTI [4][1] and PIRQ7 [7][0]. */
+/* Grant propagation inside a BR level. ПК walks the ordered source list from
+   the processor outwards; a source without a request passes it on, the first
+   requesting source blocks it and takes the grant. Its acknowledge clears the
+   request, so the next arbitration serves the following source. Requests above
+   the real PSW ipl win. Slot 31 keeps BR clear of DMA [7][1], CLK [6][1],
+   TTI [4][1] and PIRQ7 [7][0]. The list order is diagnostic only: book 4 gives
+   the daisy-chain rule, not the historical device order on each line. */
 void br_arbitrate (void)
 {
-int32 level;
+int32 level, i;
 
-for (level = 4; level <= 7; level++)
+for (level = 4; level <= 7; level++) {
     int_req[level] &= ~(int32) BR_INT;                  /* drop stale grants */
+    br_active[level] = -1;
+    }
 for (level = 7; level >= 4; level--) {
-    if ((br_req & (1 << level)) && (level > ipl)) {
+    if (level <= ipl)
+        continue;
+    for (i = 0; i < br_nsrc[level]; i++) {
+        if (!br_src[level][i].req)
+            continue;                                   /* ПК passes this source */
         br_grant = level;
-        int_vec[level][31] = br_vec;
+        br_active[level] = i;
+        int_vec[level][31] = br_src[level][i].vec;
         int_ack[level][31] = br_inta_tab[level];
         int_req[level] |= (int32) BR_INT;
-        break;
+        return;
         }
     }
 }
@@ -392,6 +441,8 @@ static MTAB chan_mod[] = {
       &chan_set_br_req, NULL, NULL, "inject BR7..BR4 request" },
     { MTAB_XTD|MTAB_VDV, 0, "BRVEC", "BRVEC",
       &chan_set_br_vec, NULL, NULL, "synthetic BR vector" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "BRDEV", "BRDEV",
+      &chan_set_br_dev, NULL, NULL, "inject BR source level:slot:vector (octal)" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "CYCLE", "CYCLE",
       &chan_set_cycle, NULL, NULL, "cycle opcode:address[:data] (octal)" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "TIMING", "TIMING={logical|scaled}",
@@ -412,6 +463,7 @@ sim_cancel (&chan_unit);
 chan_event_is_timeout = chan_phase_step = 0;
 br_req = br_grant = 0;
 br_vec = 0060;
+br_src_reset ();
 for (level = 4; level <= 7; level++)
     int_req[level] &= ~(int32) BR_INT;
 return SCPE_OK;
@@ -589,14 +641,19 @@ chan_run_cycle (addr, op, data, (op == CH_OP_OUTB)? 1: 0);
 return SCPE_OK;
 }
 
-/* Expose channel phase to simh's BRREQ register writes. */
+/* Expose channel phase to simh's BRREQ register writes. BRREQ drives the
+   legacy source in chain slot 0 on each level. */
 static t_stat chan_set_br_req (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
 t_stat r;
+int32 level;
+
 if (cptr == NULL)
     return SCPE_ARG;
 br_req = get_uint (cptr, DEV_RDX, CH_BRS, &r) & CH_BRS;
 br_grant = 0;                                           /* new injection resets the diagnostic */
+for (level = 4; level <= 7; level++)
+    br_src[level][0].req = (br_req >> level) & 1;
 br_arbitrate ();
 return r;
 }
@@ -604,10 +661,51 @@ return r;
 static t_stat chan_set_br_vec (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
 t_stat r;
+int32 level;
+
 if (cptr == NULL)
     return SCPE_ARG;
 br_vec = get_uint (cptr, DEV_RDX, DMASK, &r) & DMASK;
+for (level = 4; level <= 7; level++)
+    br_src[level][0].vec = br_vec;                      /* legacy source vector */
 return r;
+}
+
+/* Diagnostic injection of one source on a BR daisy chain. Syntax:
+   set CHAN BRDEV=<level>:<slot>:<vec>, all fields octal. <slot> is the chain
+   position inside the level, 0 is closest to the processor. Injecting a slot
+   again replaces its vector; the source list stays ordered by slot. */
+static t_stat chan_set_br_dev (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+int32 level, slot, vec, i, n;
+
+if (cptr == NULL)
+    return SCPE_ARG;
+n = sscanf (cptr, "%o:%o:%o", &level, &slot, &vec);
+if ((n != 3) || (level < 4) || (level > 7) ||
+    (slot < 0) || (slot >= CH_BR_MAXSRC) || (vec < 0) || (vec > DMASK))
+    return sim_messagef (SCPE_ARG,
+               "CHAN BRDEV expects level:slot:vector in octal (level 4..7, slot 0..7)\n");
+for (i = 0; i < br_nsrc[level]; i++)
+    if (br_src[level][i].slot == slot) {
+        br_src[level][i].vec = vec;
+        br_src[level][i].req = 1;                       /* injection holds the request */
+        br_arbitrate ();
+        return SCPE_OK;
+        }
+if (br_nsrc[level] >= CH_BR_MAXSRC)
+    return sim_messagef (SCPE_ARG, "CHAN BRDEV source list is full for level %d\n", level);
+for (i = br_nsrc[level]; i > 0; i--)                    /* keep the chain ordered */
+    if (br_src[level][i - 1].slot > slot)
+        br_src[level][i] = br_src[level][i - 1];
+    else
+        break;
+br_src[level][i].slot = slot;
+br_src[level][i].vec = vec;
+br_src[level][i].req = 1;
+br_nsrc[level]++;
+br_arbitrate ();
+return SCPE_OK;
 }
 
 /* Phase B modifiers. Logical is the default deterministic mode. */

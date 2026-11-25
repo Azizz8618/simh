@@ -404,5 +404,59 @@ expect_fixed "$(journal_line 00)" 'timing=logical scale_ns=75' \
   'logical mode keeps the declared scale in the journal'
 expect_eq "$(reg_val "$out" TIMEOUT 1)" '00000000000' 'logical mode leaves TIMEOUT unchanged'
 
+# 17. Phase C: BR daisy-chain inside one level. Diagnostic syntax:
+#     set CHAN BRDEV=<level>:<slot>:<vec>
+# All three fields are octal. <level> is BR4..BR7, <slot> is the position in
+# the daisy chain inside that level (0 is closest to the processor and receives
+# ПК first), <vec> is the interrupt vector of that source. BR keeps interrupt
+# slot 31; CLK [6][1], TTI [4][1], DMA [7][1] and PIRQ7 [7][0] stay untouched.
+out=$(run_sim \
+  "${rti_setup[@]}" \
+  'deposit 76 01020' 'deposit 78 000000' 'deposit 528 000000' \
+  'deposit 84 01040' 'deposit 86 000000' 'deposit 544 000000' \
+  'set CHAN BRVEC=0114' \
+  'set CHAN BRDEV=4:0:0114' 'set CHAN BRDEV=4:1:0124' \
+  'go' 'examine PC' 'examine CHAN BRGRANT' \
+  'go' 'examine PC' 'examine CHAN BRGRANT' \
+  'go' 'examine PC' \
+  'exit')
+printf '%s\n' "$out" | grep -E 'Simulation stopped|PC:|BRGRANT:'
+expect_no_out "$out" 'SIM-ERROR' 'BRDEV diagnostic syntax is accepted'
+mapfile -t brchain_pcs < <(printf '%s\n' "$out" | sed -n 's/^sim> PC:[[:space:]]*//p')
+expect_eq "${brchain_pcs[0]:-}" '00530' 'BR daisy-chain: nearest BR4 source wins first'
+expect_eq "$(reg_val "$out" BRGRANT 1)" '004' 'BR daisy-chain: first grant is level 4'
+expect_eq "${brchain_pcs[1]:-}" '00546' 'BR daisy-chain: second source gets its own vector'
+expect_eq "$(reg_val "$out" BRGRANT 2)" '004' 'BR daisy-chain: second grant is level 4'
+expect_eq "${brchain_pcs[2]:-}" '00548' 'BR daisy-chain: no storm after both acknowledges'
+
+# The daisy-chain injection must not take the CLK, TTI or DMA slots.
+out=$(run_sim \
+  "${rti_setup[@]}" \
+  'deposit 64 01200' 'deposit 66 000000' 'deposit 640 000000' \
+  'deposit 48 01240' 'deposit 50 000000' 'deposit 672 000000' \
+  'deposit 56 01300' 'deposit 58 000000' 'deposit 704 000000' \
+  'deposit 92 01340' 'deposit 94 000000' 'deposit 736 000000' \
+  'deposit 100 01440' 'deposit 102 000000' 'deposit 800 000000' \
+  'deposit CLK INT 1' 'deposit TTI INT 1' \
+  'set DMA VECTOR=070' 'set DMA AP=020000' 'set DMA WC=1' 'set DMA DATA=12525' 'set DMA GO' \
+  'set CHAN BRDEV=4:0:0134' 'set CHAN BRDEV=4:1:0144' \
+  'go' 'examine PC' \
+  'go' 'examine PC' \
+  'go' 'examine PC' \
+  'go' 'examine PC' \
+  'go' 'examine PC' \
+  'exit')
+printf '%s\n' "$out" | grep -E 'Simulation stopped|PC:'
+mapfile -t brchain_slots < <(printf '%s\n' "$out" | sed -n 's/^sim> PC:[[:space:]]*//p')
+expect_eq "${brchain_slots[0]:-}" '00706' 'BR daisy-chain: DMA vector from [7][1]'
+expect_eq "${brchain_slots[1]:-}" '00642' 'BR daisy-chain: CLK vector from [6][1]'
+expect_eq "${brchain_slots[2]:-}" '00674' 'BR daisy-chain: TTI vector from [4][1]'
+expect_eq "${brchain_slots[3]:-}" '00738' 'BR daisy-chain: first BR4 vector from slot 31'
+expect_eq "${brchain_slots[4]:-}" '00802' 'BR daisy-chain: second BR4 vector from slot 31'
+expect_grep "$here/e10025_chan.c" 'BRDEV' 'BRDEV diagnostic modifier registered'
+expect_grep "$here/e10025_chan.c" 'br_src\[level\]\[i\].req' \
+  'BR daisy-chain source list used by arbitration'
+
 echo 'PASS: E10025 channel DMA/BR arbitration'
 echo 'PASS: E10025 channel Phase B scaled timing and timeout'
+echo 'PASS: E10025 channel BR daisy-chain'
