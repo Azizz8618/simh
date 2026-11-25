@@ -926,6 +926,12 @@ t_stat mba_show_num (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 t_stat build_dib_tab (void);
 
 extern int32 cal_ticks;
+int32 e10025_fop (int32 op, int32 reg);                 /* book 3, section 3.9 */
+extern int32 R[8];
+extern int32 N, Z, V, C;
+extern int32 ReadW (int32 pa);
+extern void WriteW (int32 pa, int32 data);
+
 t_stat e10025_cal_load (const char *fname);
 void e10025_cal_apply (int32 IR);
 t_stat e10025_cal_set_mode (const char *val);

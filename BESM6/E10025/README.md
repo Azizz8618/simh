@@ -17,6 +17,8 @@
   777774 (граница стека), 777776 (РСП), MTAB режимов и файла калибровки.
 - `e10025_cal.c`: таблица поправок по opcode, счётчик `CPU TICKS`, загрузка
   текстового файла при reset/startup и debug-строки калибровки.
+- `e10025_fp.c`: FADD/FSUB/FMUL/FDIV по книге 3, стек через R, одинарная
+  точность; арифметика переиспользована из simh PDP-11 (`pdp11_fp.c`).
 - `e10025_stddev.c`, `e10025_sys.c`: консоль, часы, таблица устройств.
 
 ## Сборка и тесты
@@ -28,10 +30,12 @@ E10025=/tmp/e10025 tests/test_register_map.sh
 E10025=/tmp/e10025 python3 tests/test_kadopam_bridge.py
 E10025=/tmp/e10025 bash tests/test_calibration.sh
 E10025=/tmp/e10025 bash tests/test_flags.sh
+E10025=/tmp/e10025 bash tests/test_fpu.sh
 ```
-Последний успешный прогон: шесть тестов PASS (2026-11-25), логи в
-`../../.localdocs/E10025-PHASE4-EVIDENCE.txt` и
-`../../.localdocs/E10025-FLAGS-EVIDENCE.txt`.
+Последний успешный прогон: семь тестов PASS (2026-11-25), логи в
+`../../.localdocs/E10025-PHASE4-EVIDENCE.txt`,
+`../../.localdocs/E10025-FLAGS-EVIDENCE.txt` и
+`../../.localdocs/E10025-FPU-EVIDENCE.txt`.
 
 ## Калибровка по командам и режимы скорости
 

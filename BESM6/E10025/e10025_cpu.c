@@ -48,7 +48,7 @@ int32 autcon_enb = 1;
 int32 FPS = 0;
 uint32 cpu_model = MOD_1140;
 
-static int32 N = 0, Z = 0, V = 0, C = 0, T = 0;
+int32 N = 0, Z = 0, V = 0, C = 0, T = 0;
 static int32 pm = 0, cm = 0;
 static int32 wait_state = 0;
 static t_stat stop_reason = SCPE_OK;
@@ -145,7 +145,7 @@ static uint32 guest_io_pa (int32 pa)
 return (uint32) IOPAGEBASE | (((uint32) pa) & IOPAGEMASK);
 }
 
-static int32 ReadW (int32 pa)
+int32 ReadW (int32 pa)
 {
 pa &= VAMASK;
 if (pa >= IO_VABASE)
@@ -155,7 +155,7 @@ if ((uint32) pa >= MEMSIZE)
 return mem_read_word (pa);
 }
 
-static void WriteW (int32 pa, int32 data)
+void WriteW (int32 pa, int32 data)
 {
 pa &= VAMASK;
 if (pa >= IO_VABASE) {
@@ -457,6 +457,9 @@ int32 byte = ((IR & 0100000) && (opcode != 016)) ? 1 : 0;
 int32 srcspec = (IR >> 6) & 077;
 int32 dstspec = IR & 077;
 int32 src, dst, ea, src_ea, res, cv[2], tmp;
+
+if ((IR & 0177000) == 075000)                           /* FADD/FSUB/FMUL/FDIV */
+    return e10025_fop ((IR >> 6) & 3, IR & 07);              /* 075x0R: op in bits 8..6 */
 
 /* Byte forms of MOV/CMP/BIT/BIC/BIS occupy opcodes 011..015. */
 if ((opcode >= 01 && opcode <= 06) || (opcode >= 011 && opcode <= 015)) {
