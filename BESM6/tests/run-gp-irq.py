@@ -30,12 +30,15 @@ import tempfile
 import time
 from pathlib import Path
 
+import tmux_shim
+from niti_disks import find_disk
+
 SIMH = Path(__file__).resolve().parents[1]
 BASE_INI = SIMH / "OSZAGR/dispak.ini"
 TESTS = Path(__file__).resolve().parent
 DECK = TESTS / "gp-irq-handler.b6"
 EMU = Path(os.environ.get("SIMH_BIN", str(SIMH / "BIN/besm6")))
-DISK = Path(os.environ.get("NITI_2348", str(Path.home() / ".besm6/2348")))
+DISK = Path(os.environ.get("NITI_2348", str(find_disk("2348"))))
 BOOT = re.compile(r"[ДD]ATA:")
 VECTOR_CELL = 0o04023
 HANDLER_ADDR = 0o077700
@@ -43,16 +46,16 @@ TRACE_AREA = re.compile(r"^\s*0?4023:\s+([0-7 ]+)")
 
 
 def tmux(env, *args, check=True):
-    r = subprocess.run(["tmux", *args], text=True, capture_output=True, env=env)
-    if check and r.returncode:
-        raise RuntimeError("tmux %s: %s" % (" ".join(args), r.stderr.strip()))
-    return r.stdout
+    # The recycled sandbox has no tmux binary; the shim speaks pexpect.
+    return tmux_shim.tmux(env, *args, check=check)
 
 
 def make_ini(work):
     (work / "run").mkdir(parents=True)
+    shutil.copy2(SIMH / "boot_dispak.b6",
+                 work / "run" / "boot_dispak.b6")
     (work / "tmux").mkdir()
-    sys2048 = Path("/usr/local/share/besm6/2148")
+    sys2048 = find_disk("2148")
     disk = work / "2048"
     shutil.copy2(DISK, disk)
     compiler = work / "2148"
@@ -68,17 +71,27 @@ def make_ini(work):
         if re.match(r"\s*attach\s+-n\s+(vu0|pi0|pl0)\b", line):
             out.append("; " + line)
             continue
+        mdr = re.match(r"^\s*attach\s+-n\s+(drum\d+|md06)\s+", line)
+        if mdr:
+            out.append("attach -n %s %s" % (mdr.group(1), work / ("img-" + mdr.group(1))))
+            continue
         if "attach -e md41 " in line:
             out.append("attach -e md41 %s" % compiler)
             continue
         if re.match(r"\s*;?\s*attach\s+-e\s+md00\s+", line):
-            out.append("attach -e md00 /usr/local/share/besm6/2053")
+            sysdisk = work / "img-2053"
+            if not sysdisk.exists():
+                shutil.copy2(find_disk("2053"), sysdisk)
+            out.append("attach -e md00 %s" % sysdisk)
             continue
         if re.match(r"\s*attach\s+-e\s+md45\s+", line):
             out.append("attach -e md45 %s" % disk)
             continue
         if re.match(r"\s*attach\s+-e\s+md07\s+", line):
-            out.append("attach -e md07 %s" % (SIMH / "backup/2253"))
+            sysdisk = work / "img-2053"
+            if not sysdisk.exists():
+                shutil.copy2(find_disk("2053"), sysdisk)
+            out.append("attach -e md07 %s" % sysdisk)
             continue
         if "attach -n prn0 " in line:
             out.append("attach -n prn0 %s" % (work / "output.txt"))
@@ -103,6 +116,9 @@ def make_ini(work):
                     shutil.copy2(src, dst)
                 out.append(am.group(1) + str(dst))
                 continue
+        if "load ~/Yandex.Disk" in line:
+            out.append("load boot_dispak.b6")
+            continue
         out.append(line)
     out += [
         "set gp debug=IRQ",
@@ -110,6 +126,10 @@ def make_ini(work):
     ]
     ini = work / "simh.ini"
     ini.write_text("\n".join(out) + "\n", encoding="utf-8")
+    for unit in ("drum0", "drum1", "md06"):
+        p = work / ("img-" + unit)
+        if not p.exists():
+            p.write_bytes(b"\0" * (8 * 1024 * 1024))
     return ini
 
 

@@ -735,13 +735,24 @@ static uint32 readmap[32768], writemap[32768];
     case 0154: case 0155:
         /*
          * Punchcard output: the two selected bits control the motor
-         * and the culling mechanism.
+         * and the culling mechanism.  With the НИТИ (БЕНСОН-501)
+         * interface enabled (УВВ '155 bit 22, benson.be:116) the same
+         * address switches the plotter line instead.
          */
+        if ((Aex & 1) && gp_niti_active ()) {
+            gp_niti_control ((uint32) ACC);
+            break;
+        }
         pi_control (Aex & 1, (uint32) ACC & 011);
         break;
     case 0160:  case 0161:  case 0162: case 0163:
     case 0164:  case 0165:  case 0166: case 0167:
-        /* Punchcard output: activating the punching solenoids, 20 at a time. */
+        /* Punchcard output: activating the punching solenoids, 20 at a time.
+         * НИТИ: '164/'165 несут байты элемента БЕНСОНа (benson.be:72,80,266,270). */
+        if (gp_niti_active () && (Aex & 7) >= 4 && (Aex & 7) <= 5) {
+            gp_niti_byte (Aex, ACC);
+            break;
+        }
         pi_write (Aex & 7, (uint32) ACC & BITS(20));
         break;
     case 0170: case 0171:
@@ -803,8 +814,15 @@ static uint32 readmap[32768], writemap[32768];
         longjmp (cpu_halt, STOP_UNIMPLEMENTED);
         break;
     case 04020: case 04021: case 04022: case 04023:
-        /* TODO: считывание слога в режиме имитации
-         * внешнего обмена */
+        /*
+         * Считывание слога в режиме имитации внешнего обмена.
+         * '4023 — опрос состояния ГП в ТРУБКЕ (trubka.be:106):
+         * с НИТИ-интерфейсом отвечает готовностью БЕНСОНа.
+         */
+        if (Aex == 04023 && gp_niti_active ()) {
+            ACC = gp_niti_status (04023);
+            break;
+        }
         longjmp (cpu_halt, STOP_UNIMPLEMENTED);
         break;
     case 04030:
@@ -835,9 +853,11 @@ static uint32 readmap[32768], writemap[32768];
         //	readmap[PC]++;	if (++totreads % 10000 == 0) dump("R", readmap);
         break;
     case 04102:
-        /* Опрос сигналов готовности перфокарт и перфолент */
-/*              besm6_debug("Reading punchcard/punchtape READY @%05o", PC);*/
+        /* Опрос сигналов готовности перфокарт и перфолент.
+         * Разряд 13 — готовность ГП (гп1) при НИТИ-интерфейсе. */
         ACC = READY2;
+        if (gp_niti_ready13 ())
+            ACC |= 0100000000;    /* разряд 13 (гп1) */
         break;
     case 04103: case 04104: case 04105: case 04106:
         /* Опрос состояния лентопротяжных механизмов. */
@@ -871,7 +891,12 @@ static uint32 readmap[32768], writemap[32768];
         break;
     case 04160: case 04161: case 04162: case 04163:
     case 04164: case 04165: case 04166: case 04167:
-        /* Punchcard output: reading a punched line for checking, 20 bit at a time */
+        /* Punchcard output: reading a punched line for checking, 20 bit at a time.
+         * НИТИ: '4164/'4165 — эхо байтов, '4166 — состояние ГП (benson.be:129). */
+        if (gp_niti_active () && (Aex & 7) >= 4 && (Aex & 7) <= 6) {
+            ACC = gp_niti_status (Aex);
+            break;
+        }
         ACC = pi_read (Aex & 7);
         break;
     case 04170: case 04171: case 04172: case 04173:
