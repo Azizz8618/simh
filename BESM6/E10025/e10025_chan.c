@@ -32,9 +32,15 @@ extern int32 (*int_ack[IPL_HLVL][32]) (void);
 extern int32 ipl;
 extern int32 PSW;
 extern DEVICE chan_dev;
+static UNIT chan_unit;                                  /* defined below, used by chan_run_cycle */
 
 static t_stat chan_set_br_req (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
 static t_stat chan_set_br_vec (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static t_stat chan_set_timing (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static t_stat chan_show_timing (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+static t_stat chan_set_nosp (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
+static t_stat chan_show_nosp (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
+static t_stat chan_service (UNIT *uptr);
 static t_stat dma_rd (int32 *data, int32 pa, int32 access);
 static t_stat dma_wr (int32 data, int32 pa, int32 access);
 static t_stat dma_go (UNIT *uptr, int32 val, CONST char *cptr, void *desc);
@@ -88,6 +94,18 @@ static struct {
     } chan_journal[CH_JCYCLES];
 static int32 chan_jnext = 0;
 static int32 chan_jused = 0;
+
+/* Phase B timing mode. Logical is the default and keeps the synchronous
+   deterministic cycle. Scaled uses a declared tick of 75 ns. */
+static int32 chan_timing = CH_TIMING_LOGICAL;
+static int32 chan_nosp = 0;
+static int32 chan_event_is_timeout = 0;
+static int32 chan_phase_step = 0;
+
+int32 chan_timing_mode (void)
+{
+return chan_timing;
+}
 
 static DEBTAB chan_debug[] = {
     {"JOURNAL", CH_DEB_JOURNAL, "channel phase and opcode journal"},
@@ -152,10 +170,12 @@ if (chan_jused < CH_JCYCLES)
 cur = (chan_jnext + CH_JCYCLES - 1) % CH_JCYCLES;
 sim_debug (CH_DEB_JOURNAL, &chan_dev,
            "cycle op=%02o addr=%06o adr00=%d phases=%s result=%s vbo_next=%s "
-           "historical_book4_ns=150/75/75/75 repeat=450 full=525 timeout_us=15000 "
+           "timing=%s scale_ns=%d historical_book4_ns=150/75/75/75 "
+           "repeat=450 full=525 timeout_us=15000 "
            "(book-4 historical values, not host ns or simulator clocks)\n",
            chan_journal[cur].op, chan_journal[cur].addr,
-           chan_journal[cur].adr00, phases, ok? "OK": "ERROR", pair);
+           chan_journal[cur].adr00, phases, ok? "OK": "ERROR", pair,
+           (chan_timing == CH_TIMING_SCALED)? "scaled": "logical", CH_SCALE_NS);
 }
 
 #define CH_PHASE(p) do { chan.state = (p); \
@@ -169,6 +189,7 @@ int32 result = 0, stat = SCPE_OK;
 int32 phase[CH_JPHASES], nphase = 0;
 int32 is_byte = byte || (op == CH_OP_OUTB);
 int32 is_input = (op == CH_OP_IN) || (op == CH_OP_INP);
+int32 scaled = (chan_timing == CH_TIMING_SCALED);
 uint32 bank = ((uint32) pa) & ~((uint32) CH_ADDRMASK);
 
 chan.cycles++;
@@ -185,6 +206,10 @@ if ((bank != 0) && (bank != (uint32) CH_IOBANK)) {
     return 0;
     }
 CH_PHASE (CH_SA);                                       /* СА asserted */
+if (scaled) {
+    chan_event_is_timeout = 1;
+    sim_activate_after (&chan_unit, CH_TIMEOUT_US);     /* 15 us, book 4 */
+    }
 CH_PHASE (CH_WAIT_SACK);                                /* wait for СП */
 if (chan.addr >= CH_IOBASE) {
     uint32 pa22 = ((uint32) chan.addr) | ((uint32) CH_IOBANK);
@@ -225,11 +250,28 @@ else if ((uint32) chan.addr < MEMSIZE) {
 else
     stat = SCPE_NXM;
 if (stat != SCPE_OK) {
-    chan.timeouts++;
+    if (scaled)                                         /* NXM is not a no-СП timeout */
+        sim_cancel (&chan_unit);
+    else
+        chan.timeouts++;                                /* inherited NXM diagnostic */
+    chan_event_is_timeout = 0;
     chan.errors++;
     CH_PHASE (CH_ERROR);
     chan_journal_record (phase, nphase, 0);
     return 0;
+    }
+if (scaled) {
+    if (chan_nosp) {
+        /* СП подавлен искусственно: ответа нет, событие таймаута остаётся. */
+        chan.data = result & DMASK;
+        CH_PHASE (CH_ERROR);
+        chan.state = CH_WAIT_SACK;                      /* visible until timeout */
+        chan_phase_step = 0;
+        chan_journal_record (phase, nphase, 0);
+        return result;
+        }
+    sim_cancel (&chan_unit);                            /* К СП Н arrived */
+    chan_event_is_timeout = 0;
     }
 CH_PHASE (CH_STROBE);                                   /* strobe data, drop СА */
 CH_PHASE (CH_RELEASE);                                  /* hold address 75 ns */
@@ -237,6 +279,12 @@ CH_PHASE (CH_CLEANUP);                                  /* passive drops СП */
 CH_PHASE (CH_IDLE);
 chan.data = result & DMASK;
 chan_journal_record (phase, nphase, 1);
+if (scaled) {
+    chan.state = CH_ADDRESS;
+    chan_phase_step = 0;
+    sim_cancel (&chan_unit);                            /* restart the phase chain */
+    sim_activate (&chan_unit, 2);                       /* 150 ns, one tick = 75 ns */
+    }
 return result;
 }
 
@@ -300,8 +348,31 @@ for (level = 0; level < IPL_HLVL; level++)
             int_ack[level][bit] ();
 }
 
+/* Scaled-mode event handler. The phase chain and the no-СП timeout share one
+   unit but are never queued at the same time. */
+static t_stat chan_service (UNIT *uptr)
+{
+static const int32 phase[] = { CH_SA, CH_WAIT_SACK, CH_STROBE,
+                              CH_RELEASE, CH_CLEANUP, CH_IDLE };
+static const int32 tick[6] = { 1, 1, 1, 1, 1, 1 };     /* 75 ns per tick */
+
+if (chan_event_is_timeout) {
+    chan_event_is_timeout = 0;
+    chan.timeouts++;
+    chan.state = CH_ERROR;
+    chan_phase_step = 0;
+    return SCPE_OK;
+    }
+if ((chan_timing == CH_TIMING_SCALED) && (chan_phase_step < 6)) {
+    chan.state = phase[chan_phase_step];
+    sim_activate (uptr, tick[chan_phase_step]);
+    chan_phase_step++;
+    }
+return SCPE_OK;
+}
+
 /* Channel control device: no bus registers, only simh-visible state. */
-static UNIT chan_unit = { UDATA (NULL, 0, 0) };
+static UNIT chan_unit = { UDATA (&chan_service, 0, 0) };
 
 static REG chan_reg[] = {
     { DRDATAD (STATE, chan.state, 8, "channel phase (0=IDLE, 7=ERROR)") },
@@ -323,6 +394,10 @@ static MTAB chan_mod[] = {
       &chan_set_br_vec, NULL, NULL, "synthetic BR vector" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "CYCLE", "CYCLE",
       &chan_set_cycle, NULL, NULL, "cycle opcode:address[:data] (octal)" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "TIMING", "TIMING={logical|scaled}",
+      &chan_set_timing, &chan_show_timing, NULL, "channel timing mode" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "NOSP", "NOSP={0|1}",
+      &chan_set_nosp, &chan_show_nosp, NULL, "suppress СП for timeout diagnostics" },
     { 0 }
     };
 
@@ -333,6 +408,8 @@ int32 level;
 memset (&chan, 0, sizeof (chan));
 memset (&chan_journal, 0, sizeof (chan_journal));
 chan_jnext = chan_jused = 0;
+sim_cancel (&chan_unit);
+chan_event_is_timeout = chan_phase_step = 0;
 br_req = br_grant = 0;
 br_vec = 0060;
 for (level = 4; level <= 7; level++)
@@ -531,4 +608,39 @@ if (cptr == NULL)
     return SCPE_ARG;
 br_vec = get_uint (cptr, DEV_RDX, DMASK, &r) & DMASK;
 return r;
+}
+
+/* Phase B modifiers. Logical is the default deterministic mode. */
+static t_stat chan_set_timing (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+if (cptr == NULL)
+    return SCPE_ARG;
+if (strcasecmp (cptr, "logical") == 0)
+    chan_timing = CH_TIMING_LOGICAL;
+else if (strcasecmp (cptr, "scaled") == 0)
+    chan_timing = CH_TIMING_SCALED;
+else
+    return sim_messagef (SCPE_ARG, "CHAN TIMING expects logical or scaled\n");
+return SCPE_OK;
+}
+
+static t_stat chan_show_timing (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+fprintf (st, "TIMING=%s", (chan_timing == CH_TIMING_SCALED)? "scaled": "logical");
+return SCPE_OK;
+}
+
+static t_stat chan_set_nosp (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+t_stat r;
+if (cptr == NULL)
+    return SCPE_ARG;
+chan_nosp = get_uint (cptr, DEV_RDX, 1, &r) & 1;
+return r;
+}
+
+static t_stat chan_show_nosp (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+fprintf (st, "NOSP=%d", chan_nosp);
+return SCPE_OK;
 }

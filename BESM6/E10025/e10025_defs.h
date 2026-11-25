@@ -118,6 +118,15 @@
 #define DMASK           0177777
 #define BMASK           0377
 
+/* Channel timing modes. The default logical mode keeps the deterministic
+   Phase 3 journal. The scaled mode uses a declared scale of one simulator
+   tick = 75 ns; the numbers are historical book-4 values, not host ns. */
+#define CH_TIMING_LOGICAL 0
+#define CH_TIMING_SCALED  1
+#define CH_SCALE_NS      75                             /* one simulator tick */
+#define CH_TIMEOUT_US    15000                          /* book 4, section 6.6 */
+extern int32 chan_timing_mode (void);
+
 /* Opcode calibration, mechanism from the 1998 article.
    The 75 ns and 150 ns figures are below one SIMH tick and sim_timer rounds
    them up, so deltas are applied as simulator ticks to instruction execution.

@@ -56,6 +56,15 @@ expect_eq () {
   fi
 }
 
+expect_no_out () {
+  local out=$1 pat=$2 label=$3
+  if printf '%s\n' "$out" | grep -Eq "$pat"; then
+    echo "FAIL: $label (unexpected $pat)" >&2
+    printf '%s\n' "$out" >&2
+    exit 1
+  fi
+}
+
 # Phase/opcode journal (book 4, variant B). Durations printed in the journal
 # are historical book-4 values, not host delays or simulator clock ticks.
 debug_log=$(mktemp)
@@ -331,4 +340,69 @@ expect_eq "${addrs[2]:-}" '020004' 'DMA third journal address is AP+4'
 non10=$(grep 'CHAN JOURNAL: cycle op=' "$debug_log" | grep -vc 'op=10 ')
 expect_eq "$non10" 0 'DMA journal contains only opcode 10'
 
+# 13. Phase B modifiers are accepted. Logical is the default; scaled uses a
+# declared scale of one simulator tick = 75 ns, not host nanoseconds.
+out=$(run_sim \
+  'set CHAN TIMING=scaled' 'show CHAN TIMING' \
+  'set CHAN NOSP=1' 'show CHAN NOSP' \
+  'set CHAN TIMING=logical' 'show CHAN TIMING' \
+  'set CHAN NOSP=0' 'show CHAN NOSP' \
+  'exit')
+printf '%s\n' "$out" | grep -E 'TIMING=|NOSP='
+expect_no_out "$out" 'SIM-ERROR' 'TIMING and NOSP modifiers are accepted'
+expect_out "$out" 'TIMING=scaled' 'scaled timing accepted'
+expect_out "$out" 'NOSP=1' 'NOSP=1 diagnostic accepted'
+expect_out "$out" 'TIMING=logical' 'logical timing accepted'
+expect_out "$out" 'NOSP=0' 'NOSP cleared'
+
+# 14. One scaled ВВОД still gives the seven book-4 phases and a successful
+# exchange leaves TIMEOUT unchanged, both at the console and after GO.
+out=$(run_sim_debug \
+  'set CHAN TIMING=scaled' \
+  'deposit 8192 012525' \
+  'examine CHAN TIMEOUT' \
+  'set CHAN CYCLE=00:020000' \
+  'examine CHAN CYCLES' 'examine CHAN TIMEOUT' 'examine CHAN STATE')
+printf '%s\n' "$out" | grep -E 'CYCLES:|TIMEOUT:|STATE:'
+line=$(journal_line 00)
+printf '%s\n' "$line"
+expect_fixed "$line" 'phases=ADDRESS,SA,WAIT_SACK,STROBE,RELEASE,CLEANUP,IDLE' \
+  'scaled ВВОД keeps the seven book-4 phases'
+expect_fixed "$line" 'timing=scaled scale_ns=75' 'scaled journal declares the tick scale'
+expect_fixed "$line" 'historical_book4_ns=150/75/75/75 repeat=450 full=525 timeout_us=15000' \
+  'scaled journal keeps the historical durations'
+expect_eq "$(reg_val "$out" TIMEOUT 2)" '00000000000' 'scaled ВВОД leaves TIMEOUT unchanged'
+
+out=$(run_sim \
+  'set CHAN TIMING=scaled' \
+  'set CHAN CYCLE=00:020000' \
+  'deposit 0 000000' 'go' \
+  'examine CHAN TIMEOUT' 'exit')
+expect_out "$out" 'TIMEOUT:.*00000000000' 'successful scaled exchange has no timeout after GO'
+
+# 15. NOSP=1 suppresses К СП Н: the separate 15 us event fires, TIMEOUT grows
+# and STATE becomes ERROR. CONTINUE is used because GO resets the event queue.
+# Two 65535-iteration SOB loops give enough simulated instructions for 15000 us.
+out=$(run_sim \
+  'set CHAN TIMING=scaled' \
+  'set CHAN NOSP=1' \
+  'set CHAN CYCLE=00:020000' \
+  'deposit 0 012701' 'deposit 2 0177777' 'deposit 4 077101' \
+  'deposit 6 012701' 'deposit 8 0177777' 'deposit 10 077101' \
+  'deposit 12 000000' 'deposit PC 0' 'cont' \
+  'examine CHAN TIMEOUT' 'examine CHAN STATE' 'exit')
+printf '%s\n' "$out" | grep -E 'TIMEOUT:|STATE:'
+expect_out "$out" 'TIMEOUT:.*00000000001' 'NOSP=1 increments TIMEOUT'
+expect_out "$out" 'STATE:.*007' 'NOSP=1 leaves STATE=ERROR'
+
+# 16. Logical mode still produces the book-4 journal with no timeout.
+out=$(run_sim_debug \
+  'set CHAN TIMING=logical' \
+  'set CHAN CYCLE=00:020000' \
+  'examine CHAN TIMEOUT')
+expect_fixed "$(journal_line 00)" 'timing=logical scale_ns=75' \
+  'logical mode keeps the declared scale in the journal'
+expect_eq "$(reg_val "$out" TIMEOUT 1)" '00000000000' 'logical mode leaves TIMEOUT unchanged'
+
 echo 'PASS: E10025 channel DMA/BR arbitration'
+echo 'PASS: E10025 channel Phase B scaled timing and timeout'

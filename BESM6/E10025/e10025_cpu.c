@@ -848,11 +848,19 @@ if (build_dib_tab () != SCPE_OK)
     return SCPE_STOP;
 br_arbitrate ();                                        /* rebuild cleared int_vec/int_ack */
 while (stop_reason == SCPE_OK) {
-    sim_interval = 1000;                                // host events are not used
-    if (sim_interval <= 0) {
-        sim_messagef (SCPE_OK, "DEBUG interval branch interval=%d\n", (int) sim_interval);
-        stop_reason = sim_process_event ();
-        continue;
+    if (chan_timing_mode () == CH_TIMING_SCALED) {
+        if (sim_interval <= 0) {                        /* scaled: service the event queue */
+            stop_reason = sim_process_event ();
+            continue;
+            }
+        }
+    else {
+        sim_interval = 1000;                            // host events are not used
+        if (sim_interval <= 0) {
+            sim_messagef (SCPE_OK, "DEBUG interval branch interval=%d\n", (int) sim_interval);
+            stop_reason = sim_process_event ();
+            continue;
+            }
         }
     trap_req = calc_ints (ipl, trap_req);
     dks_poll ();
