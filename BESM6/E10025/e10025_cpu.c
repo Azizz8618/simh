@@ -31,6 +31,7 @@ extern int32 chan_read_io (int32 pa, int32 byte);
 extern void chan_write_io (int32 pa, int32 data, int32 byte);
 extern void br_arbitrate (void);
 extern void dks_poll (void);
+extern MTAB cpu_mod[];
 int32 e10025_get_psw (void);
 void e10025_put_psw (int32 val);
 static int32 get_PSW (void);
@@ -80,10 +81,14 @@ REG cpu_reg[] = {
     { DRDATAD (R4, R[4], 16, "register 4") },
     { DRDATAD (R5, R[5], 16, "register 5") },
     { DRDATAD (SP, R[6], 16, "stack pointer") },
+    { DRDATAD (TICKS, cal_ticks, 32, "calibration ticks applied") },
     { NULL }
     };
 
-MTAB cpu_mod[] = { { 0 } };
+static DEBTAB cpu_debug[] = {
+    { "CALIB", E10025_DBG_CALIB, "Opcode calibration tick lines" },
+    { NULL, 0, NULL }
+    };
 
 /* 64 KB = 32K words, the full 15-bit КАДОПАМ address space. */
 UNIT cpu_unit = { UDATA (NULL, UNIT_FIX | UNIT_BINK, 0200000) };
@@ -98,7 +103,7 @@ DEVICE cpu_dev = {
     1, 10, 22, 2, 8, 16,
     &cpu_ex, &cpu_dep, &cpu_reset,
     &cpu_boot, NULL, NULL,
-    NULL, DEV_DYNM, 0, NULL,
+    NULL, DEV_DYNM | DEV_DEBUG, 0, cpu_debug,
     NULL, NULL, NULL, NULL, NULL
     };
 
@@ -431,6 +436,7 @@ stop_reason = SCPE_OK;
 put_PSW (0340);
 saved_PC = 0;
 PC = 0;
+e10025_cal_load (NULL);                                 /* reload file at reset and startup */
 return build_dib_tab ();                                /* console registers before first GO */
 }
 
@@ -859,6 +865,9 @@ while (stop_reason == SCPE_OK) {
     IR = ReadW (PC);
     PC = (PC + 2) & 0177777;
     sim_interval--;
+    /* 75 ns and 150 ns are below one SIMH tick, so the article's opcode
+       corrections are simulator ticks here, not host time or channel phases. */
+    e10025_cal_apply (IR);
     stop_reason = execute (IR);
     }
 saved_PC = PC;

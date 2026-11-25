@@ -53,6 +53,38 @@ DEVICE sys_dev = {
     NULL, NULL, NULL, NULL, NULL
     };
 
+/* Speed modes and the opcode correction file from the 1998 article.
+   Corrections are simulator ticks on instruction execution only. */
+static t_stat cpu_set_mode (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+return e10025_cal_set_mode (cptr);
+}
+
+static t_stat cpu_show_mode (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+fprintf (st, "%s", e10025_cal_get_mode ());
+return SCPE_OK;
+}
+
+static t_stat cpu_set_calfile (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+return e10025_cal_set_file (cptr);
+}
+
+static t_stat cpu_show_calfile (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+fprintf (st, "%s", e10025_cal_get_file ());
+return SCPE_OK;
+}
+
+MTAB cpu_mod[] = {
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "MODE", "MODE={historical|fast}",
+      &cpu_set_mode, &cpu_show_mode, NULL, "Set CPU speed mode" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR|MTAB_NC, 0, "CALFILE", "CALFILE=path",
+      &cpu_set_calfile, &cpu_show_calfile, NULL, "Load opcode calibration file" },
+    { 0 }
+    };
+
 /* CPU registers in the channel address space (book 4, figure 11, p.40).
    Book addresses 777700..777707 and 777774..777776 are mapped into simh's
    physical I/O page by adding IOPAGEBASE to the low 14 bits. */

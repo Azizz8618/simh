@@ -118,6 +118,16 @@
 #define DMASK           0177777
 #define BMASK           0377
 
+/* Opcode calibration, mechanism from the 1998 article.
+   The 75 ns and 150 ns figures are below one SIMH tick and sim_timer rounds
+   them up, so deltas are applied as simulator ticks to instruction execution.
+   This is not host nanoseconds and not a channel phase delay. */
+#define E10025_CALFILE_DEFAULT "e10025.cal"
+#define E10025_CAL_MAX  512                             /* table entries */
+#define E10025_MODE_FAST 0                              /* no corrections */
+#define E10025_MODE_HIST 1                              /* apply opcode deltas */
+#define E10025_DBG_CALIB (1u << 0)                      /* CPU debug bit */
+
 /* CPU models */
 
 #define MOD_1103        0
@@ -914,6 +924,14 @@ void mba_set_enbdis (DEVICE *dptr);
 t_stat mba_show_num (FILE *st, UNIT *uptr, int32 val, CONST void *desc);
 
 t_stat build_dib_tab (void);
+
+extern int32 cal_ticks;
+t_stat e10025_cal_load (const char *fname);
+void e10025_cal_apply (int32 IR);
+t_stat e10025_cal_set_mode (const char *val);
+const char *e10025_cal_get_mode (void);
+t_stat e10025_cal_set_file (const char *fname);
+const char *e10025_cal_get_file (void);
 
 void cpu_set_boot (int32 pc);
 
