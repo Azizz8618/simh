@@ -38,6 +38,10 @@ WORK = Path(os.environ.get("DUDKA_WORK", "/var/tmp/dudka-run"))
 TIMEOUT = int(os.environ.get("DUDKA_TIMEOUT", "900"))
 BASE_INI = SIMH / "BESM6/OSZAGR/dispak.ini"
 DISKS = Path("/home/z/my-project/disks")
+# Volume 2048 (ЗС5/МАДЛЕН work volume): the aesc-crypto coordinating
+# project's 2348 image serves as 2048 (proven by run-gp-star).
+VOL2048 = Path(os.environ.get(
+    "NITI_2348", "/home/z/my-project/repos/aesc-crypto-projects/disks/2348"))
 
 
 def make_ini(work: Path) -> Path:
@@ -80,9 +84,8 @@ def make_ini(work: Path) -> Path:
                 out.append("attach -e md41 %s" % (DISKS / "2148"))
                 continue
             if unit == "md45":
-                src = DISKS / "2048"
                 if not (work / "img-2048").exists():
-                    shutil.copy2(src, work / "img-2048")
+                    shutil.copy2(VOL2048, work / "img-2048")
                 out.append("attach -e md45 %s" % (work / "img-2048"))
                 continue
             if local.exists():
@@ -108,10 +111,13 @@ def make_ini(work: Path) -> Path:
     ini = work / "simh.ini"
     ini.write_text("\n".join(out) + "\n", encoding="utf-8")
     shutil.copy2(SIMH / "BESM6/boot_dispak.b6", run_dir / "boot_dispak.b6")
-    # fresh drum images
+    # fresh drum images; MB_DRUM0/MB_DRUM1 override with prebuilt images
     for unit in ("drum0", "drum1"):
         p = work / ("img-" + unit)
-        if not p.exists():
+        override = os.environ.get("MB_DRUM0" if unit == "drum0" else "MB_DRUM1")
+        if override:
+            shutil.copy2(override, p)
+        elif not p.exists():
             p.write_bytes(b"\0" * (8 * 1024 * 1024))
     return ini
 
@@ -175,17 +181,34 @@ def main() -> int:
             wait_prompt(15)
         send("go")
 
-        deadline = time.time() + 420
+        deadline = time.time() + int(os.environ.get("DUDKA_JOB_TIMEOUT",
+                                                    "420"))
         state = "timeout"
+        kz_seen = []
         while time.time() < deadline:
             idx = child.expect(
                 [r"КЗ\s*\(\s*[0-9ооO]+\s*\)", r"КОНЕЦ ЗАДАЧИ",
                  r"ЗАПРЕЩ", r"sim>\s*$", pexpect.TIMEOUT],
                 timeout=30)
-            if idx in (0, 1, 2):
+            if idx in (0, 1):
+                # КЗ(code) is printed for every task, the translator's
+                # КЗ(075) among them; the job itself ends later.
+                kz_seen.append(child.after)
+                state = ";".join(kz_seen[-2:])
+                if len(kz_seen) >= 2:
+                    break
+                continue
+            if idx == 2:
                 state = child.after if isinstance(child.after, str) else "?"
                 break
             if idx == 3:
+                # ОС idle: does the НИТИ chain already show in debug.log?
+                dbgpath = WORK / "run/debug.log"
+                if dbgpath.exists() and "zone = 0576" in \
+                        dbgpath.read_text(encoding="utf-8",
+                                          errors="replace"):
+                    state = "dudka-loaded"
+                    break
                 send("go")
                 continue
         print("job state: %s" % state, flush=True)
