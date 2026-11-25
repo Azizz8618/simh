@@ -81,7 +81,7 @@ REG cpu_reg[] = {
     { DRDATAD (R4, R[4], 16, "register 4") },
     { DRDATAD (R5, R[5], 16, "register 5") },
     { DRDATAD (SP, R[6], 16, "stack pointer") },
-    { DRDATAD (TICKS, cal_ticks, 32, "calibration ticks applied") },
+    { DRDATAD (TICKS, cal_ticks, 32, "opcode ticks or historical delay units") },
     { NULL }
     };
 
@@ -903,8 +903,9 @@ while (stop_reason == SCPE_OK) {
     IR = ReadW (PC);
     PC = (PC + 2) & 0177777;
     sim_interval--;
-    /* 75 ns and 150 ns are below one SIMH tick, so the article's opcode
-       corrections are simulator ticks here, not host time or channel phases. */
+    /* ticks mode applies the 1998 opcode deltas as simulator ticks; historical
+       mode schedules book-3 microseconds on the SIMH clock and consumes the
+       documented simulated time; fast mode does neither. */
     e10025_cal_apply (IR);
     stop_reason = execute (IR);
     }

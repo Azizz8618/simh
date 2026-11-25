@@ -53,8 +53,8 @@ DEVICE sys_dev = {
     NULL, NULL, NULL, NULL, NULL
     };
 
-/* Speed modes and the opcode correction file from the 1998 article.
-   Corrections are simulator ticks on instruction execution only. */
+/* Speed modes: ticks (1998 opcode deltas, the default), historical (book 3
+   microseconds on the SIMH clock) and fast (neither). */
 static t_stat cpu_set_mode (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {
 return e10025_cal_set_mode (cptr);
@@ -74,6 +74,19 @@ return e10025_cal_set_file (cptr);
 static t_stat cpu_show_calfile (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
 {
 fprintf (st, "%s", e10025_cal_get_file ());
+return SCPE_OK;
+}
+
+/* Book 3, printed p.109: the memory dispatcher adds 0.15 us per memory
+   cycle.  It is an optional documented mode and is off by default. */
+static t_stat cpu_set_memdisp (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+return e10025_cal_set_memdisp (cptr);
+}
+
+static t_stat cpu_show_memdisp (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+fprintf (st, "%s", e10025_cal_get_memdisp ());
 return SCPE_OK;
 }
 
@@ -122,8 +135,10 @@ return SCPE_OK;
 MTAB cpu_mod[] = {
     { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "MEMSIZE", "MEMSIZE={64K|124K|125K}",
       &cpu_set_memsize, &cpu_show_memsize, NULL, "Set RAM size (book 4, p.38)" },
-    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "MODE", "MODE={historical|fast}",
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "MODE", "MODE={historical|ticks|fast}",
       &cpu_set_mode, &cpu_show_mode, NULL, "Set CPU speed mode" },
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "MEMDISP", "MEMDISP={on|off}",
+      &cpu_set_memdisp, &cpu_show_memdisp, NULL, "Book 3 memory dispatcher +0.15us/cycle" },
     { MTAB_XTD|MTAB_VDV|MTAB_VALR|MTAB_NC, 0, "CALFILE", "CALFILE=path",
       &cpu_set_calfile, &cpu_show_calfile, NULL, "Load opcode calibration file" },
     { 0 }

@@ -136,15 +136,21 @@
 #define CH_BR_MAXSRC    8                               /* sources per BR level */
 extern int32 chan_timing_mode (void);
 
-/* Opcode calibration, mechanism from the 1998 article.
-   The 75 ns and 150 ns figures are below one SIMH tick and sim_timer rounds
-   them up, so deltas are applied as simulator ticks to instruction execution.
-   This is not host nanoseconds and not a channel phase delay. */
+/* Instruction speed modes.
+   ticks: the 1998 opcode-delta file, applied as simulator ticks (default).
+   historical: Book 3 (printed pp.109-112, tables 5-11) durations in us,
+   scheduled on the SIMH clock with sim_timer_activate_after.
+   fast: neither deltas nor delays.  The 75 ns and 150 ns figures are below
+   one SIMH tick and sim_timer rounds them up, so ticks are not host ns. */
 #define E10025_CALFILE_DEFAULT "e10025.cal"
 #define E10025_CAL_MAX  512                             /* table entries */
 #define E10025_MODE_FAST 0                              /* no corrections */
-#define E10025_MODE_HIST 1                              /* apply opcode deltas */
+#define E10025_MODE_TICKS 1                             /* 1998 opcode deltas as ticks */
+#define E10025_MODE_HIST 2                              /* Book 3 us via SIMH clock */
 #define E10025_DBG_CALIB (1u << 0)                      /* CPU debug bit */
+#define E10025_ODD_US   0.42                            /* book 3, tables 5/6/9 */
+#define E10025_MEMDISP_US 0.15                          /* book 3, p.109, per cycle */
+extern int32 e10025_memdisp;                            /* optional memory dispatcher */
 
 /* CPU models */
 
@@ -956,6 +962,8 @@ t_stat e10025_cal_set_mode (const char *val);
 const char *e10025_cal_get_mode (void);
 t_stat e10025_cal_set_file (const char *fname);
 const char *e10025_cal_get_file (void);
+t_stat e10025_cal_set_memdisp (const char *val);
+const char *e10025_cal_get_memdisp (void);
 
 void cpu_set_boot (int32 pc);
 
