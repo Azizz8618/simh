@@ -458,6 +458,48 @@ expect_grep "$here/e10025_chan.c" 'BRDEV' 'BRDEV diagnostic modifier registered'
 expect_grep "$here/e10025_chan.c" 'br_src\[level\]\[i\].req' \
   'BR daisy-chain source list used by arbitration'
 
+# 18. P1 regression: a phase chain left queued by an earlier successful scaled
+# cycle must not suppress the 15 us timeout of a following NOSP=1 cycle, and a
+# leftover phase event must never be interpreted as that timeout.
+out=$(run_sim \
+  'set CHAN TIMING=scaled' \
+  'set CHAN CYCLE=00:020000' \
+  'set CHAN NOSP=1' \
+  'set CHAN CYCLE=00:020000' \
+  'deposit 0 000240' 'deposit 2 000240' 'deposit 4 000240' \
+  'deposit 6 000240' 'deposit 8 000240' 'deposit 10 000240' \
+  'deposit 12 000240' 'deposit 14 000000' 'deposit PC 0' 'cont' \
+  'examine CHAN TIMEOUT' 'examine CHAN STATE' \
+  'exit')
+printf '%s\n' "$out" | grep -E 'TIMEOUT:|STATE:'
+expect_eq "$(reg_val "$out" TIMEOUT 1)" '00000000000' \
+  'overlapping scaled cycles do not fire an early timeout'
+expect_no_out "$out" 'STATE:.*007' \
+  'overlapping scaled cycles do not inherit a phase event as timeout'
+
+# 19. P1 regression: switching scaled -> logical -> scaled must not carry a
+# pending timeout into a later successful exchange. Lead reproduction.
+out=$(run_sim \
+  'set CHAN TIMING=scaled' \
+  'set CHAN NOSP=1' \
+  'set CHAN CYCLE=00:020000' \
+  'set CHAN TIMING=logical' \
+  'set CHAN NOSP=0' \
+  'set CHAN CYCLE=00:020000' \
+  'set CHAN TIMING=scaled' \
+  'deposit 0 012701' 'deposit 2 0177777' 'deposit 4 077101' \
+  'deposit 6 012701' 'deposit 8 0177777' 'deposit 10 077101' \
+  'deposit 12 000000' 'deposit PC 0' 'cont' \
+  'examine CHAN TIMEOUT' 'examine CHAN STATE' 'examine CHAN CYCLES' \
+  'exit')
+printf '%s\n' "$out" | grep -E 'TIMEOUT:|STATE:|CYCLES:'
+expect_eq "$(reg_val "$out" TIMEOUT 1)" '00000000000' \
+  'mode switch does not leave a stale timeout'
+expect_no_out "$out" 'STATE:.*007' \
+  'successful exchange after a mode switch has no ERROR state'
+expect_eq "$(reg_val "$out" CYCLES 1)" '00000000002' \
+  'mode switch keeps both successful cycles'
+
 echo 'PASS: E10025 channel DMA/BR arbitration'
 echo 'PASS: E10025 channel Phase B scaled timing and timeout'
 echo 'PASS: E10025 channel BR daisy-chain'
