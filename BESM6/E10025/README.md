@@ -24,11 +24,14 @@
 make -f Makefile BIN=/tmp/e10025
 E10025=/tmp/e10025 tests/test_cpu.sh
 E10025=/tmp/e10025 tests/test_channel.sh
+E10025=/tmp/e10025 tests/test_register_map.sh
 E10025=/tmp/e10025 python3 tests/test_kadopam_bridge.py
 E10025=/tmp/e10025 bash tests/test_calibration.sh
+E10025=/tmp/e10025 bash tests/test_flags.sh
 ```
-Последний успешный прогон: четыре теста PASS (2026-11-25), лог в
-`../../.localdocs/E10025-PHASE4-EVIDENCE.txt`.
+Последний успешный прогон: шесть тестов PASS (2026-11-25), логи в
+`../../.localdocs/E10025-PHASE4-EVIDENCE.txt` и
+`../../.localdocs/E10025-FLAGS-EVIDENCE.txt`.
 
 ## Калибровка по командам и режимы скорости
 

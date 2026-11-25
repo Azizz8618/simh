@@ -296,7 +296,7 @@ else {
 static void add_flags (int32 a, int32 b, int32 res, int32 byte, int32 *cv)
 {
 int32 mask = byte ? 0377 : 0177777;
-int32 sign = byte ? 0100 : 010000;
+int32 sign = byte ? 0200 : 0100000;                      /* byte bit 7, word bit 15 */
 *cv = ((~a ^ b) & (a ^ res) & sign) ? 1 : 0;
 cv[1] = ((res & mask) < (a & mask)) ? 1 : 0;
 }
@@ -451,15 +451,16 @@ return SCPE_OK;
 /* Instruction execution. Returns non-zero when the instruction itself stops. */
 static t_stat execute (int32 IR)
 {
-int32 byte = (IR & 0100000) ? 1 : 0;
 int32 opcode = (IR >> 12) & 017;
+/* SUB's opcode already includes bit 15; it is a word-only instruction. */
+int32 byte = ((IR & 0100000) && (opcode != 016)) ? 1 : 0;
 int32 srcspec = (IR >> 6) & 077;
 int32 dstspec = IR & 077;
 int32 src, dst, ea, src_ea, res, cv[2], tmp;
 
-/* Bit 15 marks a byte instruction; the byte form of MOV decodes as 011. */
-if ((opcode >= 01 && opcode <= 06) || (opcode == 011)) { /* two-address */
-    int32 op = (opcode == 011)? 01: opcode;
+/* Byte forms of MOV/CMP/BIT/BIC/BIS occupy opcodes 011..015. */
+if ((opcode >= 01 && opcode <= 06) || (opcode >= 011 && opcode <= 015)) {
+    int32 op = (opcode >= 011)? (opcode & 07): opcode;
     src = get_operand (srcspec, byte, &src_ea);
     dst = get_operand (dstspec, byte, &ea);
     switch (op) {
