@@ -78,3 +78,36 @@ check "$out" 'R1:.*00123' 'T4 high byte read'
 check "$out" '4194240:.*017745' 'T4 high byte write'
 
 echo 'PASS: E10025 register map T1-T4'
+
+# T5: figure-11 registers in the 777xxx group. Their bit formats are [GAP];
+# the model only keeps pass-through storage and invents no flags. 777546 is
+# owned by the legacy CLK device and 777566 by the TTO register block.
+out=$(printf '%s\n' \
+  'examine 777656' 'examine 777640' 'examine 777616' 'examine 777600' \
+  'examine 777576' 'examine 777572' 'examine 777570' 'examine 777550' \
+  'deposit 777656 012345' 'examine 777656' \
+  'exit' | "$sim" 2>&1)
+printf '%s\n' "$out" | grep -E '2620|261992|012345|SIM-ERROR|Address space'
+check "$out" '262062:.*000000' 'T5 777656 initial zero'
+check "$out" '262048:.*000000' 'T5 777640'
+check "$out" '262030:.*000000' 'T5 777616'
+check "$out" '262016:.*000000' 'T5 777600'
+check "$out" '262014:.*000000' 'T5 777576'
+check "$out" '262010:.*000000' 'T5 777572'
+check "$out" '262008:.*000000' 'T5 777570'
+check "$out" '261992:.*000000' 'T5 777550'
+check "$out" '262062:.*012345' 'T5 777656 pass-through write'
+
+# T6: the internal-mode memory dispatcher group 7723xx from figure 11.
+out=$(printf '%s\n' \
+  'examine 772356' 'examine 772340' 'examine 772316' 'examine 772300' \
+  'deposit 772300 067456' 'examine 772300' \
+  'exit' | "$sim" 2>&1)
+printf '%s\n' "$out" | grep -E '259264|259278|259296|259310|067456|SIM-ERROR|Address space'
+check "$out" '259310:.*000000' 'T6 772356'
+check "$out" '259296:.*000000' 'T6 772340'
+check "$out" '259278:.*000000' 'T6 772316'
+check "$out" '259264:.*000000' 'T6 772300'
+check "$out" '259264:.*067456' 'T6 772300 pass-through write'
+
+echo 'PASS: E10025 register map T5-T6 [GAP]'

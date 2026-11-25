@@ -90,8 +90,9 @@ static DEBTAB cpu_debug[] = {
     { NULL, 0, NULL }
     };
 
-/* 64 KB = 32K words, the full 15-bit КАДОПАМ address space. */
-UNIT cpu_unit = { UDATA (NULL, UNIT_FIX | UNIT_BINK, 0200000) };
+/* Default 125K words (128000 decimal), the full 18-bit channel bank space.
+   set CPU MEMSIZE=64K restores the old 64 KB compatibility configuration. */
+UNIT cpu_unit = { UDATA (NULL, UNIT_FIX | UNIT_BINK, MEMSIZE125K) };
 
 static t_stat cpu_reset (DEVICE *dptr);
 static t_stat cpu_boot (int32 unitno, DEVICE *dptr);
@@ -107,7 +108,9 @@ DEVICE cpu_dev = {
     NULL, NULL, NULL, NULL, NULL
     };
 
-/* Memory and channel access */
+/* Memory and channel access. The channel address is a byte address:
+   АДР17..АДР16 select the RAM bank, АДР00 selects the byte. The linear
+   word index therefore covers banks 0..3 when MEMSIZE is 124K. */
 static int32 mem_index (int32 pa)
 {
 return (pa >> 1) & ((MEMSIZE >> 1) - 1);
@@ -389,17 +392,32 @@ if (pa >= IO_VABASE)
 return pa;
 }
 
+/* The console understands three address forms. 0..0157777 is the guest RAM
+   window, 0160000..0177777 is the Phase 2 guest register window, and larger
+   addresses up to MEMSIZE are the 18-bit RAM banks of the 125K default.
+   All registered I/O page addresses are above MEMSIZE, so they stay in the
+   I/O page; the bottom of the page has no registered device. */
 t_stat cpu_ex (t_value *vptr, t_addr addr, UNIT *uptr, int32 sw)
 {
 int32 iodata;
 t_stat stat;
+uint32 a = (uint32) addr;
 
 if (vptr == NULL)
     return SCPE_ARG;
-if ((uint32) addr < IO_VABASE) {
-    if ((uint32) addr >= MEMSIZE)
+if (a < IO_VABASE) {
+    if (a >= MEMSIZE)
         return SCPE_NXM;
-    *vptr = ReadW ((int32) addr) & DMASK;
+    *vptr = ReadW ((int32) a) & DMASK;
+    return SCPE_OK;
+    }
+if (a <= VAMASK) {
+    stat = iopageR (&iodata, guest_io_pa ((int32) a), READC);
+    *vptr = iodata;
+    return stat;
+    }
+if (a < MEMSIZE) {
+    *vptr = mem_read_word ((int32) a) & DMASK;
     return SCPE_OK;
     }
 stat = iopageR (&iodata, console_pa (addr), READC);
@@ -409,10 +427,18 @@ return stat;
 
 t_stat cpu_dep (t_value val, t_addr addr, UNIT *uptr, int32 sw)
 {
-if ((uint32) addr < IO_VABASE) {
-    if ((uint32) addr >= MEMSIZE)
+uint32 a = (uint32) addr;
+
+if (a < IO_VABASE) {
+    if (a >= MEMSIZE)
         return SCPE_NXM;
-    WriteW ((int32) addr, val);
+    WriteW ((int32) a, val);
+    return SCPE_OK;
+    }
+if (a <= VAMASK)
+    return iopageW (val & DMASK, guest_io_pa ((int32) a), WRITEC);
+if (a < MEMSIZE) {
+    mem_write_word ((int32) a, val);
     return SCPE_OK;
     }
 return iopageW (val & DMASK, console_pa (addr), WRITEC);
@@ -422,7 +448,7 @@ static t_stat cpu_reset (DEVICE *dptr)
 {
 sim_vm_parse_addr = cpu_parse_addr;
 if (M == NULL) {
-    M = (uint16 *) calloc (MEMSIZE >> 1, sizeof (uint16));
+    M = (uint16 *) calloc (MEMALLOC_WORDS, sizeof (uint16));
     if (M == NULL)
         return SCPE_MEM;
     auto_config (NULL, 0);                              /* assign device addresses */

@@ -208,6 +208,14 @@ sim_debug (CH_DEB_JOURNAL, &chan_dev,
                          if (nphase < CH_JPHASES) phase[nphase++] = (p); \
                          } while (0)
 
+/* АДР17..АДР16 of a channel address select one of the four RAM banks. The
+   word index is the address divided by two; with MEMSIZE=124K this covers
+   0..0757777, while 0760000 and above remains the I/O page. */
+static int32 chan_mem_index (int32 addr)
+{
+return addr >> 1;
+}
+
 /* Run one complete channel cycle. Returns data for input cycles. */
 static int32 chan_run_cycle (int32 pa, int32 op, int32 data, int32 byte)
 {
@@ -257,7 +265,7 @@ if (chan.addr >= CH_IOBASE) {
                         is_byte? WRITEB: WRITE);
     }
 else if ((uint32) chan.addr < MEMSIZE) {
-    int32 idx = chan.addr >> 1;
+    int32 idx = chan_mem_index (chan.addr);
     if (is_byte) {
         if (is_input)
             result = chan.adr00? ((M[idx] >> 8) & 0377): (M[idx] & 0377);
