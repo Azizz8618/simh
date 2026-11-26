@@ -160,7 +160,12 @@ DEVICE cpu_dev = {
    word index therefore covers banks 0..3 when MEMSIZE is 124K. */
 static int32 mem_index (int32 pa)
 {
-return (pa >> 1) & ((MEMSIZE >> 1) - 1);
+/* MEMSIZE is 125K words, not a power of two. Masking with
+   (MEMSIZE>>1)-1 clears bit 10 of the word index and aliases guest
+   address 0007774 (the boot stack) onto word index 001776, which the
+   RK DMA also writes. All guest addresses fit in MEMSIZE, so no mask
+   is needed; keep the index inside the allocated array instead. */
+return (pa >> 1) & (MEMALLOC_WORDS - 1);
 }
 
 static int32 mem_read_word (int32 pa)
@@ -569,6 +574,18 @@ int32 src, dst, ea, src_ea, res, cv[2], tmp;
 if ((IR & 0177000) == 075000)                           /* FADD/FSUB/FMUL/FDIV */
     return e10025_fop ((IR >> 6) & 3, IR & 07);              /* 075x0R: op in bits 8..6 */
 
+/* CFCC (0170000) copies the floating-point condition codes into the PSW.
+   The RT-11 boot path clears them with CFCC at 001160; without this case
+   opcode 017 fell through to TRAP_ILL and reset the guest to address 0.
+   Reference: PDP11/pdp11_fp.c:311. */
+if (IR == 0170000) {
+    N = (FPS >> 3) & 1;
+    Z = (FPS >> 2) & 1;
+    V = (FPS >> 1) & 1;
+    C = FPS & 1;
+    return SCPE_OK;
+    }
+
 /* Byte forms of MOV/CMP/BIT/BIC/BIS occupy opcodes 011..015. */
 if ((opcode >= 01 && opcode <= 06) || (opcode >= 011 && opcode <= 015)) {
     int32 op = (opcode >= 011)? (opcode & 07): opcode;
@@ -629,13 +646,17 @@ if (opcode == 016) {                                    /* SUB: dst - src */
     return SCPE_OK;
     }
 
-/* Opcode 010 (decimal 8) is the high branch group (BPL/BMI/BHI/...). It must
-   not enter the opcode-0 switch, whose case labels use bits <8:6>. */
-if (opcode == 010) {
+/* Opcode 010 is shared by two groups in the PDP-11 ISA and in book 3:
+   IR<7:6> below 050 selects BPL/BMI/BHI/..., 050..067 selects the byte
+   one-address instructions (CLRB ... TSTB, ASLB). The reference PDP-11
+   (pdp11_cpu.c:1918,2025) decodes both here. Dispatching every opcode-010
+   word to cpu_branch made TSTB (0105711) in the RK bootstrap take TRAP_ILL
+   and reset the guest to PC 0 with PSW 0. */
+if ((opcode == 010) && (((IR >> 6) & 077) < 050)) {
     cpu_branch (IR);
     return SCPE_OK;
     }
-if (opcode == 0) {
+if ((opcode == 0) || ((opcode == 010) && (((IR >> 6) & 077) >= 050))) {
     switch ((IR >> 6) & 077) {
     case 000:                                           /* HALT, WAIT, RTI, ... */
         switch (IR & 07) {
@@ -708,12 +729,6 @@ if (opcode == 0) {
         push (R[tmp]);
         R[tmp] = PC;
         PC = dst & 0177777;
-        break;
-    case 011:                                           /* SOB */
-        tmp = (srcspec >> 3) & 7;
-        R[tmp] = (R[tmp] - 1) & 0177777;
-        if (R[tmp] != 0)
-            PC = (PC - 2 * (srcspec & 077)) & 0177777;
         break;
     case 025:                                           /* CLC/CLV/.../NOP */
         switch (IR & 0377) {
