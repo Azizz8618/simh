@@ -36,6 +36,11 @@
   вектор `0200`. `017550` также более не дублируется в таблице регистров
   диспетчера памяти.
 
+- `e10025_rh.c`, `e10025_rp.c`: контроллер RH11 и диск RP04/05 как прототип
+  20-Мбайт DP-диска из статьи 1998 года. `RHA` по CSR `0176700`, вектор
+  `0254`, BR5. Тождество RP04/05 историческому DP не доказано `[Г]`: register map
+  DP в доступных источниках отсутствует.
+
 ### Карточные устройства и перфолента
 
 Книги 1 и 2 1981 года не упоминают читатель перфокарт, поэтому CR11 это
@@ -60,6 +65,7 @@ E10025=/tmp/e10025 bash tests/test_devices.sh
 E10025=/tmp/e10025 bash tests/test_card_reader.sh
 E10025=/tmp/e10025 bash tests/test_paper_tape.sh
 E10025=/tmp/e10025 bash tests/test_printer.sh
+E10025=/tmp/e10025 bash tests/test_dp_disk.sh
 E10025=/tmp/e10025 bash tests/run_rt11_boot.sh
 E10025=/tmp/e10025 bash tests/run_rt11_c.sh
 ```

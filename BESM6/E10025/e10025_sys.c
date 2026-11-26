@@ -186,6 +186,8 @@ DEVICE *sim_devices[] = {
     &ptr_dev,
     &ptp_dev,
     &lpt_dev,
+    &mba_dev[0],
+    &rp_dev,
     NULL
     };
 
