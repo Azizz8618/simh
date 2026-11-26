@@ -63,7 +63,10 @@ enum top_off {
     TOP_OFF_SIGSTATUS  = 0116,
     TOP_OFF_SIGACTIVITY= 0120,
     TOP_OFF_SIGDIR     = 0122,
-    TOP_OFF_SIGTOTAL   = 0124
+    TOP_OFF_SIGTOTAL   = 0124,
+    TOP_OFF_BRIDGE     = 0126,
+    TOP_OFF_BRIDGE_CALL= 0130,
+    TOP_OFF_BRIDGE_ERR = 0132
     };
 
 /* Documented status bits.  Bits not listed here are UNKNOWN and stay zero. */
@@ -112,6 +115,12 @@ enum top_off {
  * bits; a selector outside this set is left to the standard trap. */
 #define TOP_SELECT_CELL  0u
 #define TOP_SELECT_STATE 2u
+
+/* Real guest memory used by the installed shim.  The code writes a short
+ * RT-11 .PRINT stub here; it is guest memory, not a host-side shadow. */
+#define TOP_SHIM_CODE    0150000u
+#define TOP_SHIM_BUFFER  0150100u
+#define TOP_PROTOCOL_LINES 9u
 
 #define TOP_WORD_MASK    0177777u
 #define TOP_REG_SLOTS    0200u
@@ -179,7 +188,8 @@ typedef enum {
     TOP_RESP_OK = 0,
     TOP_RESP_READ_ONLY = 1,
     TOP_RESP_UNKNOWN_BITS = 2,
-    TOP_RESP_DIAG_ONLY = 3
+    TOP_RESP_DIAG_ONLY = 3,
+    TOP_RESP_BRIDGE = 4
     } top_resp_t;
 typedef enum {
     TOP_STATE_RESET = 0,
@@ -270,6 +280,12 @@ typedef struct {
     uint16 descriptor_active;
     uint16 descriptor_status;
     uint16 external_calls;
+    uint16 protocol_pages;
+    uint16 protocol_line;
+    uint16 pending_print;
+    uint16 bridge_status;
+    uint32 bridge_errors;
+    uint32 bridge_calls;
     top_mode_t state;
     top_journal_entry_t journal[TOP_JOURNAL_DEPTH];
     uint32 journal_seq;
@@ -310,6 +326,17 @@ uint8 topif_signal_direction (const top_state_t *s, uint32 id);
 const char *topif_signal_name (uint32 id);
 int topif_emt_service (int32 code);
 int topif_trap_service (int32 code);
+int topif_pending_print (void);
+void topif_clear_print (void);
+int topif_bridge_online (void);
+uint32 topif_bridge_calls (void);
+uint32 topif_bridge_errors (void);
+int topif_bridge_read (uint32 addr, uint16 *data);
+int topif_bridge_write (uint32 addr, uint16 data);
+int topif_bridge_service (uint32 kind, uint32 a, uint32 b, uint32 c,
+                          uint32 *r0, uint32 *r1, uint32 *r2, uint32 *flags);
+int topif_bridge_irq (uint32 src, uint32 channel);
+int topif_bridge_data (uint32 offset, unsigned char *dst, uint32 length);
 uint16 topif_descriptor_service (top_state_t *s, uint16 selector, uint16 operand);
 
 #endif

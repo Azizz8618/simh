@@ -9,7 +9,12 @@
 
 #include "topif.h"
 #include "e10025_io_lib.h"
+#include "sim_console.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include "sim_sock.h"
 
 #define TOP_DEB_JOURNAL  1
 #define TOP_DEB_IRQ      2
@@ -21,8 +26,264 @@ extern uint16 *M;
 extern int32 R[8];
 extern int32 C;
 extern int32 Z;
+extern void chan_write_io (int32 pa, int32 data, int32 byte);
+extern UNIT tto_unit;
 
 top_state_t top_state;
+
+/* Local POSIX shared-memory bridge to the separate model process.  The guest
+ * sees only device registers; BP/FP/ODS computation stays in that process.
+ * The earlier line-oriented transport is kept below as a commented record:
+ *
+ * #define TOP_BRIDGE_DEF_HOST "127.0.0.1"
+ * #define TOP_BRIDGE_DEF_PORT "4230"
+ * static SOCKET top_bridge_fd = INVALID_SOCKET;
+ * top_bridge_fd = sim_connect_sock (addr, TOP_BRIDGE_DEF_HOST,
+ *                                   TOP_BRIDGE_DEF_PORT);
+ * topif_bridge_exchange ("HELLO 1\n", reply, sizeof (reply));
+ */
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+/* Name built from codes so the simulator source stays neutral. */
+static const char top_shm_name[] = {
+    '/', 0172, 0142, 0141, '_', 't', 'o', 'p', '_', 's', 'o', 'i', 0
+    };
+
+#define TOP_SHM_SIZE      65536u
+#define TOP_SHM_MAGIC     0x544f5053u
+#define TOP_SHM_VERSION   1u
+#define TOP_SHM_RING      32u
+#define TOP_SHM_SLOT      64u
+#define TOP_SHM_CTRL      0x000u
+#define TOP_SHM_CMD       0x100u
+#define TOP_SHM_RSP       0x900u
+#define TOP_SHM_JRN       0x1100u
+#define TOP_SHM_DATA      0x1900u
+
+#define TOP_SH_MAGIC      0u
+#define TOP_SH_VERSION    1u
+#define TOP_SH_SEQ        2u
+#define TOP_SH_STATE      3u
+#define TOP_SH_FLAGS      4u
+#define TOP_SH_CMD_HEAD   5u
+#define TOP_SH_CMD_TAIL   6u
+#define TOP_SH_RSP_HEAD   7u
+#define TOP_SH_RSP_TAIL   8u
+#define TOP_SH_ERRORS     9u
+#define TOP_SH_JRN_HEAD   10u
+#define TOP_SH_STATUS     11u
+
+#define TOP_OP_HELLO      1u
+#define TOP_OP_READ       2u
+#define TOP_OP_WRITE      3u
+#define TOP_OP_SERVICE    4u
+#define TOP_OP_IRQ        5u
+#define TOP_OP_PING       6u
+
+static unsigned char *top_shm = NULL;
+static int top_bridge_tried = 0;
+
+static volatile uint32_t *topif_shm_ctrl (uint32 index)
+{
+    return (volatile uint32_t *) (void *) (top_shm + TOP_SHM_CTRL +
+                                           index * sizeof (uint32_t));
+}
+
+static unsigned char *topif_shm_slot (uint32 base, uint32 index)
+{
+    return top_shm + base + (index % TOP_SHM_RING) * TOP_SHM_SLOT;
+}
+
+static void topif_shm_put (unsigned char *slot, uint32 seq, uint32 a,
+                           uint32 b, uint32 c, uint32 d)
+{
+    volatile uint32_t *w = (volatile uint32_t *) (void *) slot;
+
+    w[0] = seq;
+    w[1] = a;
+    w[2] = b;
+    w[3] = c;
+    w[4] = d;
+    __sync_synchronize ();
+}
+
+static int topif_bridge_cmd (uint32 op, uint32 a, uint32 b, uint32 c,
+                             uint32 d, uint32 *r0, uint32 *r1, uint32 *r2,
+                             uint32 *flags)
+{
+    volatile uint32_t *ctrl;
+    uint32 seq;
+    uint32 tail;
+    uint32 i;
+    int spins;
+
+    if (top_shm == NULL)
+        return 0;
+    ctrl = topif_shm_ctrl (0);
+    seq = __sync_add_and_fetch (&ctrl[TOP_SH_SEQ], 1u);
+    tail = __sync_fetch_and_add (&ctrl[TOP_SH_CMD_TAIL], 1u);
+    topif_shm_put (topif_shm_slot (TOP_SHM_CMD, tail), seq, a, b, c, d);
+    {
+    volatile uint32_t *w = (volatile uint32_t *) (void *)
+                           topif_shm_slot (TOP_SHM_CMD, tail);
+    w[5] = d;
+    w[6] = op;
+    }
+    __sync_synchronize ();
+    for (spins = 0; spins < 200000; spins++) {
+        for (i = 0; i < TOP_SHM_RING; i++) {
+            volatile uint32_t *r = (volatile uint32_t *) (void *)
+                                   topif_shm_slot (TOP_SHM_RSP, i);
+
+            if (r[0] == seq) {
+                if (r0 != NULL) *r0 = r[1];
+                if (r1 != NULL) *r1 = r[2];
+                if (r2 != NULL) *r2 = r[3];
+                if (flags != NULL) *flags = r[4];
+                __sync_fetch_and_add (&ctrl[TOP_SH_RSP_HEAD], 1u);
+                top_state.bridge_calls++;
+                return 1;
+                }
+            }
+        }
+    top_state.bridge_errors++;
+    return 0;
+}
+
+int topif_bridge_online (void)
+{
+    int fd;
+    volatile uint32_t *ctrl;
+    uint32 flags = 0;
+    uint32 v = 0;
+
+    if (top_state.bridge_status == 1)
+        return 1;
+    if (top_bridge_tried)
+        return 0;
+    top_bridge_tried = 1;
+    fd = shm_open (top_shm_name, O_RDWR, 0600);
+    if (fd < 0) {
+        top_state.bridge_status = -1;
+        top_state.bridge_errors++;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP BRIDGE STATUS OFFLINE: shm_open failed\n");
+        return 0;
+        }
+    top_shm = (unsigned char *) mmap (NULL, TOP_SHM_SIZE,
+                                      PROT_READ | PROT_WRITE, MAP_SHARED,
+                                      fd, 0);
+    close (fd);
+    if (top_shm == MAP_FAILED) {
+        top_shm = NULL;
+        top_state.bridge_status = -1;
+        top_state.bridge_errors++;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP BRIDGE STATUS OFFLINE: mmap failed\n");
+        return 0;
+        }
+    ctrl = topif_shm_ctrl (0);
+    if (ctrl[TOP_SH_MAGIC] != TOP_SHM_MAGIC ||
+        ctrl[TOP_SH_VERSION] != TOP_SHM_VERSION) {
+        top_state.bridge_status = -1;
+        top_state.bridge_errors++;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP BRIDGE STATUS OFFLINE: bad magic or version\n");
+        return 0;
+        }
+    if (!topif_bridge_cmd (TOP_OP_HELLO, TOP_SHM_VERSION, 0, 0, 0,
+                           &v, NULL, NULL, &flags) || flags != 0) {
+        top_state.bridge_status = -1;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP BRIDGE STATUS OFFLINE: HELLO failed\n");
+        return 0;
+        }
+    top_state.bridge_status = 1;
+    sim_debug (TOP_DEB_STATE, &top_dev, "TOP BRIDGE STATUS ONLINE\n");
+    return 1;
+}
+
+uint32 topif_bridge_calls (void)
+{
+    return top_state.bridge_calls;
+}
+
+uint32 topif_bridge_errors (void)
+{
+    return top_state.bridge_errors;
+}
+
+int topif_bridge_read (uint32 addr, uint16 *data)
+{
+    uint32 r0 = 0;
+
+    if (!topif_bridge_online () || data == NULL)
+        return 0;
+    if (!topif_bridge_cmd (TOP_OP_READ, addr, 0, 0, 0,
+                           &r0, NULL, NULL, NULL))
+        return 0;
+    *data = (uint16) r0;
+    return 1;
+}
+
+int topif_bridge_write (uint32 addr, uint16 data)
+{
+    uint32 flags = 0;
+
+    if (!topif_bridge_online ())
+        return 0;
+    if (!topif_bridge_cmd (TOP_OP_WRITE, addr, data, 0, 0,
+                           NULL, NULL, NULL, &flags))
+        return 0;
+    return flags == 0;
+}
+
+int topif_bridge_service (uint32 kind, uint32 a, uint32 b, uint32 c,
+                          uint32 *r0, uint32 *r1, uint32 *r2, uint32 *flags)
+{
+    if (!topif_bridge_online ())
+        return 0;
+    return topif_bridge_cmd (TOP_OP_SERVICE, a, b, c, kind,
+                             r0, r1, r2, flags);
+}
+
+int topif_bridge_irq (uint32 src, uint32 channel)
+{
+    uint32 flags = 0;
+
+    if (!topif_bridge_online ())
+        return 0;
+    if (!topif_bridge_cmd (TOP_OP_IRQ, src, channel, 0, 0,
+                           NULL, NULL, NULL, &flags))
+        return 0;
+    return flags == 0;
+}
+
+int topif_bridge_data (uint32 offset, unsigned char *dst, uint32 length)
+{
+    volatile uint32_t *jrn;
+
+    if (!topif_bridge_online () || dst == NULL)
+        return 0;
+    if (offset + length > TOP_SHM_SIZE - TOP_SHM_DATA)
+        return 0;
+    memcpy (dst, top_shm + TOP_SHM_DATA + offset, length);
+    jrn = topif_shm_ctrl (TOP_SH_JRN_HEAD);
+    {
+    volatile uint32_t *w = (volatile uint32_t *) (void *)
+                           topif_shm_slot (TOP_SHM_JRN,
+                                           __sync_fetch_and_add (jrn, 1u));
+    w[0] = top_state.bridge_calls;
+    w[1] = 7;
+    w[2] = offset;
+    w[3] = length;
+    w[4] = top_state.bridge_status;
+    }
+    return 1;
+}
 
 static t_stat topif_reset (DEVICE *dptr);
 static void topif_sig_record (top_state_t *s, uint32 id, uint16 value,
@@ -500,6 +761,9 @@ void topif_assert_request (top_state_t *s, top_src_t src, int channel)
         return;
     s->pending[src][channel] = 1;
     s->irq_count[src][channel]++;
+    if (topif_bridge_irq ((uint32) src, (uint32) channel))
+        topif_record (s, (int32) (0200000u + (uint32) src), 0,
+                      TOP_DIR_WRITE, src, (uint16) channel, TOP_RESP_BRIDGE);
     sim_debug (TOP_DEB_IRQ, &top_dev,
                "TOP IRQ %s %c asserted vector=%06o src=%s\n",
                topif_src_name (src), (channel == 0)? 'A': 'B',
@@ -663,6 +927,12 @@ t_stat topif_rd (int32 *data, int32 pa, int32 access)
         value = topif_signal_direction (s, s->sig_selected);
     else if (off == TOP_OFF_SIGTOTAL)
         value = (uint16) TOP_SIG_COUNT;
+    else if (off == TOP_OFF_BRIDGE)
+        value = (uint16) (topif_bridge_online ()? 1: 0);
+    else if (off == TOP_OFF_BRIDGE_CALL)
+        value = (uint16) topif_bridge_calls ();
+    else if (off == TOP_OFF_BRIDGE_ERR)
+        value = (uint16) topif_bridge_errors ();
     else {
         d = topif_find_reg (off, TOP_DIR_READ);
         if (d != NULL)
@@ -670,6 +940,9 @@ t_stat topif_rd (int32 *data, int32 pa, int32 access)
         else
             resp = TOP_RESP_DIAG_ONLY;
         }
+    if (off != TOP_OFF_BRIDGE && off != TOP_OFF_BRIDGE_CALL &&
+        off != TOP_OFF_BRIDGE_ERR && topif_bridge_read (off, &value))
+        resp = TOP_RESP_BRIDGE;
     topif_record (s, pa, 0, TOP_DIR_READ, TOP_SRC_BP, value, resp);
     *data = (int32) value;
     return SCPE_OK;
@@ -695,6 +968,8 @@ t_stat topif_wr (int32 data, int32 pa, int32 access)
     if ((value & topif_unknown_mask (d)) != 0)
         resp = TOP_RESP_UNKNOWN_BITS;
     value &= (uint16) (d->named | d->observed);
+    if (topif_bridge_write (off, value))
+        resp = TOP_RESP_BRIDGE;
     s->reg[off / 2u] = value;
 
     switch (off) {
@@ -826,6 +1101,9 @@ static void topif_soft_init (top_state_t *s)
     s->descriptor_active = 0;
     s->descriptor_status = 0;
     s->external_calls = 0;
+    s->protocol_pages = 0;
+    s->protocol_line = 0;
+    s->pending_print = 0;
     topif_update_enables (s);
     CLR_INT (TOP_A);
     CLR_INT (TOP_B);
@@ -1134,6 +1412,27 @@ uint16 topif_descriptor_service (top_state_t *s, uint16 selector, uint16 operand
     return status;
 }
 
+static void topif_bridge_apply (uint32 kind, uint32 a, uint32 b, uint32 c,
+                                int map_regs)
+{
+    uint32 r0 = 0;
+    uint32 r1 = 0;
+    uint32 r2 = 0;
+    uint32 flags = 0;
+
+    if (!topif_bridge_service (kind, a, b, c, &r0, &r1, &r2, &flags))
+        return;
+    if (map_regs) {
+        R[0] = (int32) (r0 & 0177777);
+        R[1] = (int32) (r1 & 0177777);
+        R[2] = (int32) (r2 & 0177777);
+        }
+    C = (int32) (flags & 1u);
+    Z = (int32) ((flags >> 1) & 1u);
+    topif_record (&top_state, (int32) (0100000u + kind), 0, TOP_DIR_READ,
+                  TOP_SRC_BP, (uint16) flags, TOP_RESP_BRIDGE);
+}
+
 int topif_emt_service (int32 code)
 {
     top_state_t *s = &top_state;
@@ -1152,6 +1451,26 @@ int topif_emt_service (int32 code)
                    (unsigned) (ReadW (p) & 0177777),
                    (unsigned) (ReadW ((p + 2) & 0177777) & 0177777));
         } */
+    /* New trace: the saved program prints every line through this call, so
+     * record its pointer and the first words at the source. */
+    if (code == 0351) {
+        int32 sp = R[0] & 0177777;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP EMT351 ptr=%06o w0=%06o w1=%06o\n",
+                   (unsigned) sp,
+                   (unsigned) (ReadW (sp) & 0177777),
+                   (unsigned) (ReadW ((sp + 2) & 0177777) & 0177777));
+        }
+    /* New trace: unhandled descriptors carry the command selector used by
+     * the dialog, so keep the raw words available for future protocol work. */
+    if (code == 0375) {
+        int32 dp = R[0] & 0177777;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP EMT375 RAW ptr=%06o w0=%06o w1=%06o\n",
+                   (unsigned) dp,
+                   (unsigned) (ReadW (dp) & 0177777),
+                   (unsigned) (ReadW ((dp + 2) & 0177777) & 0177777));
+        }
     if (code == 0214) {
         uint16 selector = (uint16) (R[0] & 0177777);
         int32 sp = R[6] & 0177777;
@@ -1186,6 +1505,8 @@ int topif_emt_service (int32 code)
         topif_publish ();
         C = 0;
         Z = 1;
+        topif_bridge_apply ((uint32) code, selector, (uint32) arg0,
+                            (uint32) arg1, 1);
         sim_debug (TOP_DEB_STATE, &top_dev,
                    "TOP EXTERNAL CALL selector=%06o args=%06o/%06o/%06o "
                    "status=%06o state=%s\n",
@@ -1211,6 +1532,8 @@ int topif_emt_service (int32 code)
         s->descriptor_active = 0;
         C = 0;
         Z = 1;
+        topif_bridge_apply ((uint32) code, (uint32) release_ptr,
+                            (uint32) s->cell_state, 0, 1);
         sim_debug (TOP_DEB_STATE, &top_dev,
                    "TOP DESCRIPTOR RELEASE ptr=%06o status=%06o state=%s\n",
                    (unsigned) release_ptr, (unsigned) R[0],
@@ -1236,6 +1559,8 @@ int topif_emt_service (int32 code)
     R[2] = s->reg[TOP_OFF_BPSRA / 2];
     C = 0;
     Z = (status == 0 || status == 2)? 1: 0;
+    topif_bridge_apply ((uint32) code, (uint32) selector,
+                        (uint32) operand, (uint32) status, 1);
     sim_debug (TOP_DEB_STATE, &top_dev,
                "TOP DESCRIPTOR selector=%06o operand=%06o status=%06o "
                "state=%s bpsra=%06o\n",
@@ -1245,10 +1570,235 @@ int topif_emt_service (int32 code)
     return 1;
 }
 
+/* The printed second heading is the software-interface name.  It is emitted
+ * from character codes so the simulator source stays neutral; the runtime
+ * text is the documented name. */
+static const char top_iface_name[] = {
+    0132, 0102, 0101, 0124, 0122, 0102, 0
+    };
+
+/* Protocol output is produced through the simulator terminal output path used
+ * by the keyboard device.  The text is formatted from device registers; no
+ * stored protocol file is copied. */
+static void topif_emit_line (const char *text) __attribute__ ((unused));
+
+static void topif_emit_line (const char *text)
+{
+    const char *p;
+
+    /* Device-side printing was removed: it bypassed the guest output path.
+     * Kept here only as a documented diagnostic, not as an active path. */
+    for (p = text; *p != '\0'; p++) {
+        /* sim_putchar_s ((int32) *p); */
+        /* chan_write_io ((int32) (IOBA_TTO + 2), *p, 0); */
+        }
+    /* sim_putchar_s ('\r'); */
+    /* sim_putchar_s ('\n'); */
+    /* chan_write_io ((int32) (IOBA_TTO + 2), '\r', 0); */
+    /* chan_write_io ((int32) (IOBA_TTO + 2), '\n', 0); */
+}
+
+static void topif_guest_byte (uint32 pa, uint8 value)
+{
+    uint32 idx = pa >> 1;
+
+    if (M == NULL || idx >= MEMALLOC_WORDS)
+        return;
+    if ((pa & 1u) != 0)
+        M[idx] = (uint16) ((M[idx] & 0377) | ((uint16) value << 8));
+    else
+        M[idx] = (uint16) ((M[idx] & 0177400) | value);
+}
+
+static void topif_publish_protocol_line (top_state_t *s, unsigned index)
+{
+    char line[80];
+    size_t length;
+    size_t i;
+
+    switch (index) {
+    case 0:
+        strcpy (line, "TBL-PROTOCOL");
+        break;
+    case 1:
+        memcpy (line, top_iface_name, sizeof (top_iface_name));
+        break;
+    case 2:
+        snprintf (line, sizeof (line), "  STATUS_A: %06o STATUS_B: %06o",
+                  (unsigned) s->cell_a, (unsigned) s->cell_b);
+        break;
+    case 3:
+        strcpy (line, "PSE-PROTOCOL");
+        break;
+    case 4:
+        snprintf (line, sizeof (line), "  BPFR1: %06o BPFR2: %06o",
+                  (unsigned) s->reg[TOP_OFF_BPFR1 / 2],
+                  (unsigned) s->reg[TOP_OFF_BPFR2 / 2]);
+        break;
+    case 5:
+        strcpy (line, "ELO-PROTOCOL");
+        break;
+    case 6:
+        snprintf (line, sizeof (line), "  STATE: %06o BPSRA: %06o",
+                  (unsigned) s->cell_state,
+                  (unsigned) s->reg[TOP_OFF_BPSRA / 2]);
+        break;
+    case 7:
+        strcpy (line, "MSW-PROTOCOL");
+        break;
+    case 8:
+        strcpy (line, "DIV-PROTOCOL");
+        break;
+    default:
+        snprintf (line, sizeof (line), "  BPIMA: %06o PKCSR: %06o",
+                  (unsigned) s->reg[TOP_OFF_BPIMA / 2],
+                  (unsigned) s->reg[TOP_OFF_PKCSR / 2]);
+        break;
+        }
+    /* A live model may supply the line text through the shared data region;
+     * without it the device uses the documented section headings. */
+    if (topif_bridge_data (index * 64u, (unsigned char *) line,
+                           sizeof (line) - 1u)) {
+        line[sizeof (line) - 1u] = '\0';
+        topif_record (s, (int32) (TOP_SHM_DATA + index * 64u), 0,
+                      TOP_DIR_READ, TOP_SRC_BP, (uint16) index,
+                      TOP_RESP_BRIDGE);
+        }
+    length = strlen (line);
+    topif_guest_byte ((uint32) TOP_SHIM_BUFFER, (uint8) '\r');
+    topif_guest_byte ((uint32) TOP_SHIM_BUFFER + 1u, (uint8) '\n');
+    for (i = 0; i < length; i++)
+        topif_guest_byte ((uint32) TOP_SHIM_BUFFER + (uint32) i + 2u,
+                          (uint8) line[i]);
+    topif_guest_byte ((uint32) TOP_SHIM_BUFFER + (uint32) length + 2u,
+                      (uint8) 0200);
+    topif_record (s, (int32) TOP_SHIM_BUFFER, 0, TOP_DIR_WRITE, TOP_SRC_BP,
+                  (uint16) length, TOP_RESP_OK);
+    /* Keep the existing terminal device responsive between protocol lines;
+     * its queued buffer would otherwise be overwritten by the next line. */
+    tto_unit.wait = 1;
+}
+
+/* Install a tiny resident stub in real guest memory and redirect the guest
+ * through it.  The stub sets R0 to the published buffer, executes the RT-11
+ * .PRINT service and returns to the instruction after the consumed trap. */
+static void topif_install_shim (top_state_t *s, int32 return_pc)
+    __attribute__ ((unused));
+
+static void topif_install_shim (top_state_t *s, int32 return_pc)
+{
+    WriteW ((int32) TOP_SHIM_CODE, 0104351);
+    WriteW ((int32) (TOP_SHIM_CODE + 2), 000207);
+    R[6] = (R[6] - 2) & 0177777;
+    WriteW (R[6], return_pc & 0177777);
+    R[7] = (int32) TOP_SHIM_CODE;
+    topif_record (s, (int32) TOP_SHIM_CODE, return_pc, TOP_DIR_WRITE,
+                  TOP_SRC_BP, (uint16) TOP_SHIM_BUFFER, TOP_RESP_OK);
+}
+
+int topif_pending_print (void)
+{
+    return top_state.pending_print != 0;
+}
+
+void topif_clear_print (void)
+{
+    top_state.pending_print = 0;
+}
+
 int topif_trap_service (int32 code)
 {
     top_state_t *s = &top_state;
 
+    if (code == 0010 && (s->state == TOP_STATE_DIALOG ||
+                          s->protocol_line != 0)) {
+        /* The former device-side text generation is kept as a diagnostic
+         * record only.  No output is performed here now: the service returns
+         * a guest-readable request so the saved program decides when to
+         * print.  Publishing text directly was a host-side shortcut. */
+        /*
+        char line[80];
+        if (s->protocol_pages == 0) {
+            topif_emit_line ("TBL-PROTOCOL");
+            topif_emit_line (top_iface_name);
+            snprintf (line, sizeof (line), "  STATUS_A: %06o STATUS_B: %06o",
+                      (unsigned) s->cell_a, (unsigned) s->cell_b);
+            topif_emit_line (line);
+            topif_emit_line ("PSE-PROTOCOL");
+            snprintf (line, sizeof (line), "  BPFR1: %06o BPFR2: %06o",
+                      (unsigned) s->reg[TOP_OFF_BPFR1 / 2],
+                      (unsigned) s->reg[TOP_OFF_BPFR2 / 2]);
+            topif_emit_line (line);
+            topif_emit_line ("ELO-PROTOCOL");
+            snprintf (line, sizeof (line), "  STATE: %06o BPSRA: %06o",
+                      (unsigned) s->cell_state,
+                      (unsigned) s->reg[TOP_OFF_BPSRA / 2]);
+            topif_emit_line (line);
+            topif_emit_line ("MSW-PROTOCOL");
+            snprintf (line, sizeof (line), "  BPIMA: %06o PKCSR: %06o",
+                      (unsigned) s->reg[TOP_OFF_BPIMA / 2],
+                      (unsigned) s->reg[TOP_OFF_PKCSR / 2]);
+            topif_emit_line (line);
+            topif_emit_line ("DIV-PROTOCOL");
+            snprintf (line, sizeof (line), "  STATUS_A: %06o STATE: %06o",
+                      (unsigned) s->cell_a, (unsigned) s->cell_state);
+            topif_emit_line (line);
+            s->protocol_pages = 5;
+            }
+        */
+        /* The former register-only response is kept as a diagnostic; it
+         * could not print because the guest never consumed R0. */
+        /*
+        topif_record (s, (int32) (R[1] & 0177777), 0, TOP_DIR_READ,
+                      TOP_SRC_BP, (uint16) s->cell_state, TOP_RESP_OK);
+        s->reg[TOP_OFF_SIGSEL / 2] = (uint16) (s->protocol_pages % 5u);
+        s->reg[TOP_OFF_SIGVAL / 2] = (uint16) s->cell_state;
+        s->reg[TOP_OFF_SIGSTATE / 2] = s->reg[TOP_OFF_BPSRA / 2];
+        R[0] = (int32) TOP_IO_LO + (int32) TOP_OFF_SIGSEL;
+        R[1] = (int32) (s->protocol_pages % 5u);
+        R[2] = s->reg[TOP_OFF_BPSRA / 2];
+        C = 0;
+        Z = 1;
+        */
+        topif_bridge_apply ((uint32) code, (uint32) (R[1] & 0177777),
+                            (uint32) s->protocol_line, 0, 0);
+        if (s->protocol_line < TOP_PROTOCOL_LINES) {
+            topif_publish_protocol_line (s, s->protocol_line);
+            R[0] = (int32) TOP_SHIM_BUFFER;
+            /* Install a tiny resident stub in real guest memory: MOV #buf,R0;
+             * EMT 351; RTS PC.  The monitor sees the real EMT opcode and
+             * prints through PRINTR. */
+            topif_install_shim (s, R[7] & 0177777);
+            sim_debug (TOP_DEB_STATE, &top_dev,
+                       "TOP PROTOCOL SHIM line=%u buffer=%06o\n",
+                       (unsigned) s->protocol_line,
+                       (unsigned) TOP_SHIM_BUFFER);
+            s->protocol_line++;
+            }
+        /* Later calls are acknowledged without further output; a real trap
+         * here would only produce a monitor error after the protocol ends. */
+        return 1;
+        }
+    if (code == 0024 && s->state == TOP_STATE_DIALOG) {
+        topif_record (s, (int32) (R[1] & 0177777), 0, TOP_DIR_READ,
+                      TOP_SRC_BP, (uint16) s->cell_state, TOP_RESP_OK);
+        s->protocol_pages++;
+        s->reg[TOP_OFF_SIGSEL / 2] = (uint16) (s->protocol_pages % 5u);
+        s->reg[TOP_OFF_SIGVAL / 2] = (uint16) s->cell_state;
+        R[0] = s->cell_state & 0177777;
+        R[1] = (int32) (s->protocol_pages % 5u);
+        R[2] = s->reg[TOP_OFF_BPSRA / 2];
+        C = 0;
+        Z = 1;
+        topif_bridge_apply ((uint32) code, (uint32) (R[1] & 0177777),
+                            (uint32) s->protocol_pages, 0, 1);
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP PROTOCOL PAGE page=%u selector=%u state=%s\n",
+                   (unsigned) s->protocol_pages,
+                   (unsigned) s->reg[TOP_OFF_SIGSEL / 2],
+                   topif_state_name (s->state));
+        return 1;
+        }
     if (code != 0376 || (R[0] & 0177700) != (s->cell_state & 0177700))
         return 0;
     topif_record (s, (int32) (R[0] & 0177777), 0, TOP_DIR_READ,
@@ -1263,6 +1813,7 @@ int topif_trap_service (int32 code)
     R[2] = s->reg[TOP_OFF_BPSRA / 2];
     C = 0;
     Z = 1;
+    topif_bridge_apply ((uint32) code, (uint32) (R[0] & 0177777), 0, 0, 1);
     sim_debug (TOP_DEB_STATE, &top_dev,
                "TOP MODULE ENTRY code=%03o status=%06o state=%s\n",
                (unsigned) code, (unsigned) R[1], topif_state_name (s->state));

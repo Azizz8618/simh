@@ -707,6 +707,11 @@ if ((IR & 0177400) == 0104000) {
     return SCPE_OK;
     }
 if ((IR & 0177400) == 0104400) {
+    /* New trace: dialog traps carry their code and R0 selector. */
+    sim_debug (E10025_DBG_EMT, &cpu_dev,
+               "TRAP PC=%06o code=%03o R0=%06o R1=%06o R2=%06o R3=%06o\n",
+               (PC - 2) & 0177777, IR & 0377, R[0] & 0177777,
+               R[1] & 0177777, R[2] & 0177777, R[3] & 0177777);
     /* The saved program uses one trap as its external-module entry.  Only a
      * trap whose operand matches the state returned by the TOP service is
      * consumed; all other traps keep the normal disposition. */
@@ -1048,6 +1053,17 @@ while (stop_reason == SCPE_OK) {
        "STEP PC=%06o IR=%06o C=%d Z=%d R0=%06o R4=%06o\n",
        exec_pc & 0177777, IR, C & 1, Z & 1,
        R[0] & 0177777, R[4] & 0177777); */
+    /* New trace: dialog/protocol loop around the command dispatcher.  The
+     * older near-PC trace above stays available as a commented diagnostic. */
+    if (((exec_pc & 0177777) >= 013000 && (exec_pc & 0177777) <= 013600) ||
+        ((exec_pc & 0177777) >= 011000 && (exec_pc & 0177777) <= 011400) ||
+        ((exec_pc & 0177777) >= 015000 && (exec_pc & 0177777) <= 015020))
+        sim_debug (E10025_DBG_EMT, &cpu_dev,
+                   "DIALOG PC=%06o IR=%06o C=%d Z=%d R0=%06o R1=%06o "
+                   "R2=%06o R3=%06o\n",
+                   exec_pc & 0177777, IR, C & 1, Z & 1,
+                   R[0] & 0177777, R[1] & 0177777,
+                   R[2] & 0177777, R[3] & 0177777);
     PC = (PC + 2) & 0177777;
     sim_debug (E10025_DBG_INSN, &cpu_dev, "PC=%06o IR=%06o\n", exec_pc, IR);
     sim_interval--;
