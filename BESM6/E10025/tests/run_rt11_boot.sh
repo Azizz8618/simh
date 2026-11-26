@@ -28,7 +28,7 @@ echo "PASS[hash]: canonical rtv4_rk.dsk $HASH"
 
 cp "$IMAGE" "$WORK/rtv4_rk_boot.dsk"
 cat > "$WORK/rt11_v4_e10025.ini" <<EOF
-set CHAN TIMING=scaled
+set CPU BOOTEVENTS=on
 set RK enabled
 attach RK0 $WORK/rtv4_rk_boot.dsk
 boot RK0

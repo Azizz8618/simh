@@ -52,6 +52,53 @@ int32 N = 0, Z = 0, V = 0, C = 0, T = 0;
 static int32 pm = 0, cm = 0;
 static int32 wait_state = 0;
 static t_stat stop_reason = SCPE_OK;
+int32 cpu_bootevents = 0;
+
+/* cpu_mod lives in e10025_cpumod.c (outside this phase's write set), so the
+   BOOTEVENTS entry is appended to a private copy at reset. */
+#define CPU_MOD_EXT_MAX 8
+static MTAB cpu_mod_ext[CPU_MOD_EXT_MAX];
+
+static t_stat cpu_set_bootevents (UNIT *uptr, int32 val, CONST char *cptr,
+                                  void *desc)
+{
+if (cptr == NULL)
+    return SCPE_ARG;
+if (strcasecmp (cptr, "on") == 0)
+    cpu_bootevents = 1;
+else if (strcasecmp (cptr, "off") == 0)
+    cpu_bootevents = 0;
+else
+    return sim_messagef (SCPE_ARG, "CPU BOOTEVENTS expects on or off\n");
+return SCPE_OK;
+}
+
+static t_stat cpu_show_bootevents (FILE *st, UNIT *uptr, int32 val,
+                                   CONST void *desc)
+{
+fprintf (st, "%s", cpu_bootevents? "on": "off");
+return SCPE_OK;
+}
+
+static void cpu_extend_modtab (void)
+{
+int32 i;
+if (cpu_mod_ext[0].pstring != NULL)
+    return;
+for (i = 0; (cpu_mod[i].mask != 0) && (i < CPU_MOD_EXT_MAX - 2); i++)
+    cpu_mod_ext[i] = cpu_mod[i];
+cpu_mod_ext[i].mask = MTAB_XTD|MTAB_VDV|MTAB_VALR;
+cpu_mod_ext[i].match = 0;
+cpu_mod_ext[i].pstring = "BOOTEVENTS";
+cpu_mod_ext[i].mstring = "BOOTEVENTS={on|off}";
+cpu_mod_ext[i].valid = cpu_set_bootevents;
+cpu_mod_ext[i].disp = cpu_show_bootevents;
+cpu_mod_ext[i].desc = NULL;
+cpu_mod_ext[i].help = "Let SIMH events run during guest polling";
+i++;
+memset (&cpu_mod_ext[i], 0, sizeof (MTAB));
+cpu_dev.modifiers = cpu_mod_ext;
+}
 
 #define PC R[7]
 #define SP R[6]
@@ -446,6 +493,7 @@ return iopageW (val & DMASK, console_pa (addr), WRITEC);
 
 static t_stat cpu_reset (DEVICE *dptr)
 {
+cpu_extend_modtab ();
 sim_vm_parse_addr = cpu_parse_addr;
 if (M == NULL) {
     M = (uint16 *) calloc (MEMALLOC_WORDS, sizeof (uint16));
@@ -472,6 +520,40 @@ saved_PC = 0;
 put_PSW (0340);
 PC = 0;
 return SCPE_OK;
+}
+
+/* Branch decoder shared by opcode 0 (BR/BNE/...) and opcode 010 (BPL/...).
+   Both groups encode the condition in IR<11:8> and the offset in IR<7:0>. */
+static void cpu_branch (int32 IR)
+{
+int32 bop = (IR >> 8) & 0377;
+int32 off = IR & 0377;
+int32 cond = 0;
+
+if (off & 0200)
+    off |= ~0377;
+switch (bop) {
+case 001: cond = 1; break;                              /* BR */
+case 002: cond = !Z; break;                             /* BNE */
+case 003: cond = Z; break;                              /* BEQ */
+case 004: cond = !(N ^ V); break;                       /* BGE */
+case 005: cond = (N ^ V); break;                        /* BLT */
+case 006: cond = !Z && !(N ^ V); break;                 /* BGT */
+case 007: cond = Z || (N ^ V); break;                   /* BLE */
+case 0200: cond = !N; break;                            /* BPL */
+case 0201: cond = N; break;                             /* BMI */
+case 0202: cond = !C && !Z; break;                      /* BHI */
+case 0203: cond = C || Z; break;                        /* BLOS */
+case 0204: cond = !V; break;                            /* BVC */
+case 0205: cond = V; break;                             /* BVS */
+case 0206: cond = !C; break;                            /* BHIS */
+case 0207: cond = C; break;                             /* BLO */
+default:
+    set_trap (TRAP_ILL);
+    break;
+    }
+if (cond)
+    PC = (PC + 2 * off) & 0177777;
 }
 
 /* Instruction execution. Returns non-zero when the instruction itself stops. */
@@ -542,11 +624,17 @@ if (opcode == 016) {                                    /* SUB: dst - src */
     sub_flags (dst, src, res, byte, cv);
     V = cv[0];
     C = cv[1];
-    set_operand (dstspec, byte, res, ea);
     put_result_flags (res, byte);
+    set_operand (dstspec, byte, res, ea);
     return SCPE_OK;
     }
 
+/* Opcode 010 (decimal 8) is the high branch group (BPL/BMI/BHI/...). It must
+   not enter the opcode-0 switch, whose case labels use bits <8:6>. */
+if (opcode == 010) {
+    cpu_branch (IR);
+    return SCPE_OK;
+    }
 if (opcode == 0) {
     switch ((IR >> 6) & 077) {
     case 000:                                           /* HALT, WAIT, RTI, ... */
@@ -611,9 +699,12 @@ if (opcode == 0) {
         Z = ((tmp & 0377) == 0);
         V = C = 0;
         break;
-    case 040:                                           /* JSR */
-        tmp = dstspec & 07;
-        dst = get_operand (dstspec, 0, &ea);
+    case 040: case 041: case 042: case 043:             /* JSR */
+    case 044: case 045: case 046: case 047:
+        /* JSR jumps to the effective address, not to the word stored there.
+           Reuse the reference PDP-11 rule from pdp11_cpu.c:1246. */
+        tmp = srcspec & 07;                             /* link register */
+        dst = Getea (dstspec, 0);                       /* target address */
         push (R[tmp]);
         R[tmp] = PC;
         PC = dst & 0177777;
@@ -735,35 +826,7 @@ if (opcode == 0) {
         }
         break;
     default:                                            /* branches */
-        {
-        int32 bop = (IR >> 8) & 0377;
-        int32 off = IR & 0377;
-        int32 cond = 0;
-        if (off & 0200)
-            off |= ~0377;
-        switch (bop) {
-        case 001: cond = 1; break;                      /* BR */
-        case 002: cond = !Z; break;                     /* BNE */
-        case 003: cond = Z; break;                      /* BEQ */
-        case 004: cond = !(N ^ V); break;               /* BGE */
-        case 005: cond = (N ^ V); break;                /* BLT */
-        case 006: cond = !Z && !(N ^ V); break;         /* BGT */
-        case 007: cond = Z || (N ^ V); break;           /* BLE */
-        case 0200: cond = !N; break;                    /* BPL */
-        case 0201: cond = N; break;                     /* BMI */
-        case 0202: cond = !C && !Z; break;              /* BHI */
-        case 0203: cond = C || Z; break;                /* BLOS */
-        case 0204: cond = !V; break;                    /* BVC */
-        case 0205: cond = V; break;                     /* BVS */
-        case 0206: cond = !C; break;                    /* BHIS */
-        case 0207: cond = C; break;                     /* BLO */
-        default:
-            set_trap (TRAP_ILL);
-            break;
-            }
-        if (cond)
-            PC = (PC + 2 * off) & 0177777;
-        }
+        cpu_branch (IR);
         break;
         }
     return SCPE_OK;
@@ -874,8 +937,8 @@ if (build_dib_tab () != SCPE_OK)
     return SCPE_STOP;
 br_arbitrate ();                                        /* rebuild cleared int_vec/int_ack */
 while (stop_reason == SCPE_OK) {
-    if (chan_timing_mode () == CH_TIMING_SCALED) {
-        if (sim_interval <= 0) {                        /* scaled: service the event queue */
+    if (cpu_bootevents || (chan_timing_mode () == CH_TIMING_SCALED)) {
+        if (sim_interval <= 0) {                        /* service the event queue */
             stop_reason = sim_process_event ();
             continue;
             }

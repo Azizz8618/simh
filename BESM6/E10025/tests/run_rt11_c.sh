@@ -73,7 +73,7 @@ print(f'PASS[inject]: HELLO.C entry@{entry:03x} block={start}')
 PY
 
 cat > "$WORK/rt11_c_e10025.ini" <<EOF
-set CHAN TIMING=scaled
+set CPU BOOTEVENTS=on
 set RK enabled
 attach RK0 $WORK/rtv4_rk_c.dsk
 attach RK1 $WORK/decusc_c.dsk
