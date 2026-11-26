@@ -22,6 +22,8 @@
 */
 
 #include "e10025_defs.h"
+#include "e10025_bus_sig.h"
+#include "e10025_bus_time.h"
 
 extern t_stat iopageR (int32 *data, uint32 addr, int32 access);
 extern t_stat iopageW (int32 data, uint32 addr, int32 access);
@@ -68,6 +70,8 @@ enum {
 #define CH_BRS        0370                              /* BR request bits 7..4 */
 #define BR_INT        (1u << 31)                        /* synthetic BR slot, never bit 1 */
 #define CH_DEB_JOURNAL 1                                /* phase and opcode journal */
+#define CH_DEB_SIG     2                                /* 56 named bus lines */
+#define CH_DEB_TIME    4                                /* virtual book-4 ns stamps */
 #define CH_JPHASES    8                                 /* seven phases plus ERROR */
 #define CH_JCYCLES    8                                 /* last cycles kept in journal */
 
@@ -104,6 +108,8 @@ static int32 chan_timing = CH_TIMING_LOGICAL;
 static int32 chan_nosp = 0;
 static int32 chan_event_is_timeout = 0;
 static int32 chan_phase_step = 0;
+static BT_TIME chan_bt;
+static char bt_buf[96];
 
 int32 chan_timing_mode (void)
 {
@@ -120,6 +126,8 @@ chan_event_is_timeout = 0;
 
 static DEBTAB chan_debug[] = {
     {"JOURNAL", CH_DEB_JOURNAL, "channel phase and opcode journal"},
+    {"SIG", CH_DEB_SIG, "56 named channel bus lines"},
+    {"TIME", CH_DEB_TIME, "virtual book-4 ns timestamps"},
     {0}
     };
 
@@ -214,8 +222,26 @@ sim_debug (CH_DEB_JOURNAL, &chan_dev,
            (chan_timing == CH_TIMING_SCALED)? "scaled": "logical", CH_SCALE_NS);
 }
 
+/* CH_PHASE expands only inside chan_run_cycle, where result, chan.addr,
+   chan.data and chan.op are in scope. Each sim_debug record stays below 1 KB:
+   scp.c uses a 2048 byte stack buffer and retries a long result with an
+   already consumed va_list. */
 #define CH_PHASE(p) do { chan.state = (p); \
                          if (nphase < CH_JPHASES) phase[nphase++] = (p); \
+                         bus_sig_phase ((p), chan.addr, \
+                                        ((p) == CH_STROBE)? (result & DMASK): chan.data, chan.op); \
+                         sim_debug (CH_DEB_SIG, &chan_dev, "%s", bus_sig_debug_text ()); \
+                         { int li; for (li = 0; li < BUS_SIG_NLINES; li++) \
+                             sim_debug (CH_DEB_SIG, &chan_dev, "%s", bus_sig_debug_line (li)); } \
+                         { int bt_ph = ((p) == CH_IDLE)? BT_PH_IDLE: \
+                                       (((p) >= CH_ADDRESS) && ((p) <= CH_CLEANUP))? \
+                                       ((p) - CH_ADDRESS + BT_PH_ADDRESS): -1; \
+                           if (bt_ph >= 0) { \
+                               bt_advance (&chan_bt, bt_ph); \
+                               bt_debug_line (&chan_bt, bt_buf, sizeof (bt_buf)); \
+                               sim_debug (CH_DEB_TIME, &chan_dev, "CHAN TIME: %s\n", bt_buf); \
+                               } \
+                           } \
                          } while (0)
 
 /* АДР17..АДР16 of a channel address select one of the four RAM banks. The
@@ -236,6 +262,7 @@ int32 is_input = (op == CH_OP_IN) || (op == CH_OP_INP);
 int32 scaled = (chan_timing == CH_TIMING_SCALED);
 uint32 bank = ((uint32) pa) & ~((uint32) CH_ADDRMASK);
 
+bt_cycle_start (&chan_bt);
 if (!scaled)                                            /* logical mode inherits no timeout */
     chan_cancel_timeout ();
 
@@ -430,6 +457,9 @@ chan_event_is_timeout = 0;
 chan.timeouts++;
 chan.state = CH_ERROR;
 chan_phase_step = 0;
+bt_timeout (&chan_bt);
+bt_debug_line (&chan_bt, bt_buf, sizeof (bt_buf));
+sim_debug (CH_DEB_TIME, &chan_dev, "CHAN TIME: %s\n", bt_buf);
 return SCPE_OK;
 }
 
@@ -490,6 +520,8 @@ chan_jnext = chan_jused = 0;
 sim_cancel (&chan_unit);
 chan_cancel_timeout ();
 chan_event_is_timeout = chan_phase_step = 0;
+bus_sig_init ();
+bt_reset (&chan_bt);
 br_req = br_grant = 0;
 br_vec = 0060;
 br_src_reset ();
