@@ -137,6 +137,7 @@ REG cpu_reg[] = {
 
 static DEBTAB cpu_debug[] = {
     { "CALIB", E10025_DBG_CALIB, "Opcode calibration tick lines" },
+    { "INSN", E10025_DBG_INSN, "executed PC/opcode" },
     { NULL, 0, NULL }
     };
 
@@ -1018,8 +1019,10 @@ while (stop_reason == SCPE_OK) {
             continue;
         wait_state = 0;
         }
+    t_addr exec_pc = PC;
     IR = ReadW (PC);
     PC = (PC + 2) & 0177777;
+    sim_debug (E10025_DBG_INSN, &cpu_dev, "PC=%06o IR=%06o\n", exec_pc, IR);
     sim_interval--;
     /* ticks mode applies the 1998 opcode deltas as simulator ticks; historical
        mode schedules book-3 microseconds on the SIMH clock and consumes the

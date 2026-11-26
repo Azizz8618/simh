@@ -149,6 +149,7 @@ extern int32 chan_timing_mode (void);
 #define E10025_MODE_TICKS 1                             /* 1998 opcode deltas as ticks */
 #define E10025_MODE_HIST 2                              /* Book 3 us via SIMH clock */
 #define E10025_DBG_CALIB (1u << 0)                      /* CPU debug bit */
+#define E10025_DBG_INSN (1u << 1)                       /* CPU debug bit */
 #define E10025_ODD_US   0.42                            /* book 3, tables 5/6/9 */
 #define E10025_MEMDISP_US 0.15                          /* book 3, p.109, per cycle */
 extern int32 e10025_memdisp;                            /* optional memory dispatcher */
