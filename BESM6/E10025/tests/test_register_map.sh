@@ -112,3 +112,42 @@ check "$out" '259264:.*000000' 'T6 772300'
 check "$out" '259264:.*067456' 'T6 772300 pass-through write'
 
 echo 'PASS: E10025 register map T5-T6 [GAP]'
+
+# T7: every figure-11 dispatcher address, the control console 777570 and the
+# ownership exclusions. Bit formats are [GAP]: each address must answer
+# without NXM, start at zero, preserve a distinct written word and leave RAM,
+# PSW and the PTR CSR at 777550 untouched. 777546 (CLK) and 777566 (TTO
+# block 017564..017567) are not duplicated in the GAP table.
+t7_book=(777656 777640 777616 777600 777576 777572 777570 \
+         772356 772340 772316 772300)
+t7_ba=(262062 262048 262030 262016 262014 262010 262008 \
+       259310 259296 259278 259264)
+t7_val=(000001 000002 000004 000010 000020 000040 000100 \
+        000200 000400 001000 002000)
+t7_cmd=()
+for a in "${t7_book[@]}"; do
+  t7_cmd+=("examine $a")
+  done
+for i in "${!t7_book[@]}"; do
+  t7_cmd+=("deposit ${t7_book[$i]} ${t7_val[$i]}" "examine ${t7_book[$i]}")
+  done
+out=$(printf '%s\n' \
+  'deposit 01000 012345' 'examine 01000' 'examine PSW' 'examine 777550' \
+  "${t7_cmd[@]}" \
+  'examine 01000' 'examine PSW' 'examine 777550' \
+  'exit' | "$sim" 2>&1)
+printf '%s\n' "$out" | grep -E '262062|262048|262030|262016|262014|262010|262008|259310|259296|259278|259264|1000:|PSW:|261992|SIM-ERROR|Address space'
+if printf '%s\n' "$out" | grep -qE 'Address space exceeded|SIM-ERROR'; then
+  echo 'FAIL[T7]: NXM or SIM-ERROR while accessing dispatcher registers' >&2
+  printf '%s\n' "$out" >&2
+  exit 1
+  fi
+for i in "${!t7_ba[@]}"; do
+  check "$out" "${t7_ba[$i]}:.*000000" "T7 ${t7_book[$i]} initial zero"
+  check "$out" "${t7_ba[$i]}:.*${t7_val[$i]}" "T7 ${t7_book[$i]} pass-through"
+  done
+check "$out" '1000:.*012345' 'T7 RAM sentinel unchanged'
+check "$out" 'PSW:.*00224' 'T7 PSW unchanged'
+check "$out" '261992:.*100000' 'T7 PTR CSR 777550 unchanged'
+
+echo 'PASS: E10025 register map T7 dispatcher pass-through [GAP]'
