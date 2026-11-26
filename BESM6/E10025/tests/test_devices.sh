@@ -17,7 +17,7 @@ fail () {
 out=$(printf '%s\n' 'show devices' 'exit' | "$sim" 2>&1)
 
 # Ровно тот набор устройств, который заявлен как рабочий минимум.
-for dev in CPU SYSTEM CLK TTI TTO CHAN DMA DKSE RK RL CR PTR PTP LPT RHA RP; do
+for dev in CPU SYSTEM CLK TTI TTO CHAN DMA DKSE RK RL CR PTR PTP LPT RR RHA RP; do
   printf '%s\n' "$out" | grep -Eq "^${dev} " || fail "$dev" "device $dev missing from show devices"
   done
 
@@ -42,7 +42,7 @@ for dev in RK RL CHAN DMA DKSE; do
   printf '%s\n' "$d" | grep -q 'SIM-ERROR' && fail "show-$dev" "show $dev returned SIM-ERROR"
   done
 
-echo 'PASS: peripherals CPU/SYSTEM/CLK/TTI/TTO/CHAN/DMA/DKSE/RK/RL/CR/PTR/PTP/LPT/RHA/RP present'
+echo 'PASS: peripherals CPU/SYSTEM/CLK/TTI/TTO/CHAN/DMA/DKSE/RK/RL/CR/PTR/PTP/LPT/RR/RHA/RP present'
 
 #Системный тест: та же конфигурация должна загрузить RT-11 V4.
 if ! timeout 90 bash "$here/tests/run_rt11_boot.sh"; then

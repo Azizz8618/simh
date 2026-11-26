@@ -23,10 +23,14 @@
 */
 
 #include "e10025_defs.h"
+#include "sim_disk.h"
 
 extern int32 R[8];
 extern int32 e10025_get_psw (void);
 extern void e10025_put_psw (int32 val);
+extern DEVICE rr_dev;
+extern DEVICE mba_dev[];
+extern DEVICE rp_dev;
 
 int32 uba_last = 0;
 int32 stklim = 0;
@@ -37,11 +41,97 @@ uint32 cpu_type = 0;
 
 static UNIT sys_unit = { UDATA (NULL, 0, 0) };
 static REG sys_reg[] = { { NULL } };
-static MTAB sys_mod[] = { { 0 } };
+
+/* Disk device selector. RP03 and RP02 use the RP11 controller in e10025_rr.c;
+   RP04 and RM03 use the RH11/RP04 controller pair. Only one pair is enabled
+   at a time because both pairs own CSR 016700 and vector 0254. */
+enum {
+    E10025_DISK_RP03 = 0,
+    E10025_DISK_RP02,
+    E10025_DISK_RP04,
+    E10025_DISK_RM03
+    };
+static int32 e10025_disk_kind = E10025_DISK_RP03;
+
+static void e10025_disk_disable (DEVICE *dptr)
+{
+if (dptr != NULL)
+    dptr->flags |= DEV_DIS;
+}
+
+static void e10025_disk_enable (DEVICE *dptr)
+{
+if (dptr != NULL)
+    dptr->flags &= ~DEV_DIS;
+}
+
+static t_stat e10025_disk_select (const char *type)
+{
+int32 i;
+const char *dt = NULL;
+
+if (type == NULL)
+    return SCPE_ARG;
+if (strcasecmp (type, "RP03") == 0) {
+    e10025_disk_kind = E10025_DISK_RP03;
+    dt = "RP03";
+    }
+else if (strcasecmp (type, "RP02") == 0) {
+    e10025_disk_kind = E10025_DISK_RP02;
+    dt = "RP02";
+    }
+else if (strcasecmp (type, "RP04") == 0) {
+    e10025_disk_kind = E10025_DISK_RP04;
+    dt = "RP04";
+    }
+else if (strcasecmp (type, "RM03") == 0) {
+    e10025_disk_kind = E10025_DISK_RM03;
+    dt = "RM03";
+    }
+else
+    return sim_messagef (SCPE_ARG, "DISK expects RP03, RP02, RP04 or RM03\n");
+
+if ((e10025_disk_kind == E10025_DISK_RP03) ||
+    (e10025_disk_kind == E10025_DISK_RP02)) {
+    e10025_disk_disable (&mba_dev[0]);
+    e10025_disk_disable (&rp_dev);
+    e10025_disk_enable (&rr_dev);
+    for (i = 0; i < rr_dev.numunits; i++)
+        sim_disk_set_drive_type_by_name (&rr_dev.units[i], dt);
+    }
+else {
+    e10025_disk_disable (&rr_dev);
+    e10025_disk_enable (&mba_dev[0]);
+    e10025_disk_enable (&rp_dev);
+    for (i = 0; i < rp_dev.numunits; i++)
+        sim_disk_set_drive_type_by_name (&rp_dev.units[i], dt);
+    }
+return SCPE_OK;
+}
+
+static t_stat sys_set_disk (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
+{
+return e10025_disk_select (cptr);
+}
+
+static t_stat sys_show_disk (FILE *st, UNIT *uptr, int32 val, CONST void *desc)
+{
+CONST char *name = (e10025_disk_kind == E10025_DISK_RP03)? "RP03":
+                   ((e10025_disk_kind == E10025_DISK_RP02)? "RP02":
+                   ((e10025_disk_kind == E10025_DISK_RP04)? "RP04": "RM03"));
+fprintf (st, "DISK=%s", name);
+return SCPE_OK;
+}
+
+static MTAB sys_mod[] = {
+    { MTAB_XTD|MTAB_VDV|MTAB_VALR, 0, "DISK", "DISK={RP03|RP02|RP04|RM03}",
+      &sys_set_disk, &sys_show_disk, NULL, "Disk device type" },
+    { 0 }
+    };
 
 static t_stat sys_reset (DEVICE *dptr)
 {
-return SCPE_OK;
+return e10025_disk_select ("RP03");
 }
 
 DEVICE sys_dev = {
