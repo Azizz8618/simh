@@ -712,6 +712,12 @@ if ((IR & 0177400) == 0104400) {
                "TRAP PC=%06o code=%03o R0=%06o R1=%06o R2=%06o R3=%06o\n",
                (PC - 2) & 0177777, IR & 0377, R[0] & 0177777,
                R[1] & 0177777, R[2] & 0177777, R[3] & 0177777);
+    /* New trace: next-page calls carry arguments on the guest stack. */
+    sim_debug (E10025_DBG_EMT, &cpu_dev,
+               "TRAP STACK SP=%06o S0=%06o S1=%06o S2=%06o\n",
+               R[6] & 0177777, ReadW (R[6]) & 0177777,
+               ReadW ((R[6] + 2) & 0177777) & 0177777,
+               ReadW ((R[6] + 4) & 0177777) & 0177777);
     /* The saved program uses one trap as its external-module entry.  Only a
      * trap whose operand matches the state returned by the TOP service is
      * consumed; all other traps keep the normal disposition. */

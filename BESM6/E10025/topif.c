@@ -262,6 +262,26 @@ int topif_bridge_irq (uint32 src, uint32 channel)
     return flags == 0;
 }
 
+int topif_bridge_next (uint32 page, uint32 index, uint32 *status,
+                       uint32 *length, uint32 *checksum, uint32 *flags)
+{
+    uint32 st = 1;
+    uint32 len = 0;
+    uint32 chk = 0;
+    uint32 fl = 0;
+
+    if (!topif_bridge_online ())
+        return 0;
+    if (!topif_bridge_cmd (TOP_OP_SERVICE, page, index, 0, TOP_SVC_NEXT,
+                           &st, &len, &chk, &fl))
+        return 0;
+    if (status != NULL) *status = st;
+    if (length != NULL) *length = len;
+    if (checksum != NULL) *checksum = chk;
+    if (flags != NULL) *flags = fl;
+    return st == 0;
+}
+
 int topif_bridge_data (uint32 offset, unsigned char *dst, uint32 length)
 {
     volatile uint32_t *jrn;
@@ -1636,18 +1656,44 @@ static void topif_publish_protocol_line (top_state_t *s, unsigned index)
                   (unsigned) s->reg[TOP_OFF_BPFR2 / 2]);
         break;
     case 5:
-        strcpy (line, "ELO-PROTOCOL");
+        snprintf (line, sizeof (line), "  BPIMA: %06o PKCSR: %06o",
+                  (unsigned) s->reg[TOP_OFF_BPIMA / 2],
+                  (unsigned) s->reg[TOP_OFF_PKCSR / 2]);
         break;
     case 6:
+        strcpy (line, "ELO-PROTOCOL");
+        break;
+    case 7:
         snprintf (line, sizeof (line), "  STATE: %06o BPSRA: %06o",
                   (unsigned) s->cell_state,
                   (unsigned) s->reg[TOP_OFF_BPSRA / 2]);
         break;
-    case 7:
+    case 8:
+        snprintf (line, sizeof (line), "  IRQ: %06o STATE: %06o",
+                  (unsigned) s->reg[TOP_OFF_IRQ / 2],
+                  (unsigned) s->cell_state);
+        break;
+    case 9:
         strcpy (line, "MSW-PROTOCOL");
         break;
-    case 8:
+    case 10:
+        snprintf (line, sizeof (line), "  STATUS_B: %06o STATE: %06o",
+                  (unsigned) s->cell_b, (unsigned) s->cell_state);
+        break;
+    case 11:
+        snprintf (line, sizeof (line), "  FLAGS: %06o BPSRA: %06o",
+                  (unsigned) s->cfg.cell_state_value,
+                  (unsigned) s->reg[TOP_OFF_BPSRA / 2]);
+        break;
+    case 12:
         strcpy (line, "DIV-PROTOCOL");
+        break;
+    case 13:
+        snprintf (line, sizeof (line), "  STATUS_A: %06o STATE: %06o",
+                  (unsigned) s->cell_a, (unsigned) s->cell_state);
+        break;
+    case 14:
+        strcpy (line, "  END");
         break;
     default:
         snprintf (line, sizeof (line), "  BPIMA: %06o PKCSR: %06o",
@@ -1710,6 +1756,59 @@ int topif_trap_service (int32 code)
 {
     top_state_t *s = &top_state;
 
+    if (code == 0001 && s->state == TOP_STATE_DIALOG) {
+        uint32 page = (uint32) R[3] & 0377u;
+        uint32 index = ((uint32) R[1] & 0007u);
+        uint32 status = 1;
+        uint32 length = 0;
+        uint32 checksum = 0;
+        uint32 flags = 0;
+        unsigned char raw[80];
+
+        if (topif_bridge_next (page, index, &status, &length, &checksum,
+                               &flags) && status == 0) {
+            if (topif_bridge_data ((page * 8u + index) * 64u, raw,
+                                   sizeof (raw))) {
+                size_t n = (length != 0 && length < sizeof (raw))?
+                           (size_t) length: strnlen ((char *) raw,
+                                                     sizeof (raw));
+                size_t i;
+
+                if (n >= sizeof (raw) - 2u)
+                    n = sizeof (raw) - 3u;
+                topif_guest_byte ((uint32) TOP_SHIM_BUFFER, (uint8) '\r');
+                topif_guest_byte ((uint32) TOP_SHIM_BUFFER + 1u,
+                                  (uint8) '\n');
+                for (i = 0; i < n; i++)
+                    topif_guest_byte ((uint32) TOP_SHIM_BUFFER +
+                                      (uint32) i + 2u, raw[i]);
+                topif_guest_byte ((uint32) TOP_SHIM_BUFFER +
+                                  (uint32) n + 2u, (uint8) 0200);
+                R[0] = (int32) TOP_SHIM_BUFFER;
+                topif_install_shim (s, R[7] & 0177777);
+                topif_record (s, (int32) TOP_SHIM_BUFFER, 0, TOP_DIR_WRITE,
+                              TOP_SRC_BP, (uint16) n, TOP_RESP_BRIDGE);
+                sim_debug (TOP_DEB_STATE, &top_dev,
+                           "TOP NEXT page=%u index=%u len=%u chk=%06o\n",
+                           (unsigned) page, (unsigned) index,
+                           (unsigned) n, (unsigned) checksum);
+                if (s->protocol_line < TOP_PROTOCOL_LINES)
+                    s->protocol_line++;
+                C = (int32) (flags & 1u);
+                Z = (int32) ((flags >> 1) & 1u);
+                return 1;
+                }
+            }
+        /* Unknown page/index or offline: no fabricated line and no print. */
+        topif_record (s, (int32) (page * 8u + index), 0, TOP_DIR_READ,
+                      TOP_SRC_BP, (uint16) status, TOP_RESP_UNKNOWN_BITS);
+        C = 1;
+        Z = 0;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP NEXT UNKNOWN page=%u index=%u status=%u\n",
+                   (unsigned) page, (unsigned) index, (unsigned) status);
+        return 1;
+        }
     if (code == 0010 && (s->state == TOP_STATE_DIALOG ||
                           s->protocol_line != 0)) {
         /* The former device-side text generation is kept as a diagnostic
