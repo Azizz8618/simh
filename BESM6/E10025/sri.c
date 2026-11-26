@@ -24,7 +24,11 @@ sri_state_t sri_state;
 
 /* Named bits are the printed BPSRA table.  The 0x2000 bit was seen in an error
  * snapshot but has no name.  PKCSR enable positions disagree between the
- * printed tables, so no enable bit is named here. */
+ * printed tables, so no enable bit is named here.
+ *
+ * STATUS_INJECTION and REQUEST_INJECTION are emulator-only surrogates for
+ * software-driven emulation.  They are NOT hardware registers and their bit
+ * codes are NOT a hardware register or bit layout; no bus timing is implied. */
 static const sri_reg_desc_t bp_regs[] = {
     { "PKCSR",  SRI_OFF_PKCSR,   0x0000u, 0x8080u, 1, 1 },
     { "BPODR",  SRI_OFF_BPODR_W, 0x0000u, 0x0000u, 1, 1 },
@@ -36,7 +40,9 @@ static const sri_reg_desc_t bp_regs[] = {
     { "BPMTS",  SRI_OFF_BPMTS,   0x0000u, 0x0000u, 1, 1 },
     { "BPODRR", SRI_OFF_BPODR_R, 0x0000u, 0x0000u, 1, 0 },
     { "BPSRA",  SRI_OFF_BPSRA,   0x0FFFu, 0x2000u, 1, 0 },
+    { "STATUS_INJECTION",  SRI_OFF_STATUS_INJECT,  0x0000u, 0x0000u, 1, 1 },
     { "FMTTO",  SRI_OFF_FMTTO,   0x0000u, 0x0000u, 1, 0 },
+    { "REQUEST_INJECTION", SRI_OFF_REQUEST_INJECT, 0x0000u, 0x0000u, 1, 1 },
     { "KXTO",   SRI_OFF_KXTO,    0x0000u, 0x0000u, 1, 0 },
     { "BPCLR",  SRI_OFF_BPCLR_W, 0x0000u, 0x0000u, 0, 1 },
     { "KYTO",   SRI_OFF_KYTO_R,  0x0000u, 0x0000u, 1, 0 }
@@ -192,8 +198,9 @@ void sri_defaults (sri_state_t *s, const sri_config_t *cfg)
     s->cfg.a_over_b = 1;
     s->cfg.bp_ipl = IPL_SRI_BP;
     s->cfg.ib_ipl = IPL_SRI_IB;
-    s->cfg.pkcsr_ie_a = 0;
-    s->cfg.pkcsr_ie_b = 0;
+    /* Surrogate enable positions for the injection path only, not hardware. */
+    s->cfg.pkcsr_ie_a = SRI_SURROGATE_IE_A;
+    s->cfg.pkcsr_ie_b = SRI_SURROGATE_IE_B;
     s->cfg.no_autoinc_bpodr = 1;
     if (cfg != NULL)
         s->cfg = *cfg;
@@ -295,10 +302,33 @@ t_stat sri_wr (int32 data, int32 pa, int32 access)
                 s->enabled[0][1] = (s->cfg.pkcsr_ie_b != 0 &&
                                     (value & s->cfg.pkcsr_ie_b) != 0);
                 }
+            if (src == SRI_SRC_BP && off == SRI_OFF_STATUS_INJECT) {
+                /* Surrogate only: the written word replaces BPSRA and the
+                 * printed TRA marker asserts each enabled BP channel.  This is
+                 * NOT a hardware register effect or bit layout. */
+                s->bp_reg[SRI_OFF_BPSRA / 2u] = value;
+                if ((value & SRI_SURROGATE_STATUS_TRA) != 0) {
+                    if (s->enabled[SRI_SRC_BP][0])
+                        sri_assert_request (s, SRI_SRC_BP, 0);
+                    if (s->enabled[SRI_SRC_BP][1])
+                        sri_assert_request (s, SRI_SRC_BP, 1);
+                    }
+                }
+            if (src == SRI_SRC_BP && off == SRI_OFF_REQUEST_INJECT) {
+                /* Surrogate request decode from low bits, not a hardware map. */
+                sri_src_t inj_src = (value & SRI_SURROGATE_SRC_IB)?
+                                    SRI_SRC_IB: SRI_SRC_BP;
+                int inj_ch = (value & SRI_SURROGATE_CH_B)? 1: 0;
+
+                if (value != 0 && s->enabled[inj_src][inj_ch])
+                    sri_assert_request (s, inj_src, inj_ch);
+                }
             if (src == SRI_SRC_BP && off == SRI_OFF_BPCLR_W) {
                 s->bp_reg[SRI_OFF_BPSRA / 2u] = 0;
                 s->pending[0][0] = 0;
                 s->pending[0][1] = 0;
+                sim_debug (SRI_DEB_IRQ, &sri_dev,
+                           "SRI IRQ BP requests cleared by BPCLR\n");
                 }
             }
         else
@@ -361,7 +391,7 @@ void sri_assert_request (sri_state_t *s, sri_src_t src, int channel)
     s->pending[src][channel] = 1;
     s->irq_count[src][channel]++;
     sim_debug (SRI_DEB_IRQ, &sri_dev,
-               "SRI IRQ %s%c asserted, vector %06o\n",
+               "SRI IRQ %s %c asserted, vector %06o\n",
                sri_src_name (src), (channel == 0)? 'A': 'B',
                (unsigned) sri_vector (src, channel));
     sri_update_int (s);

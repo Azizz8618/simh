@@ -30,6 +30,16 @@
 #define SRI_VEC_I_BP_A   0330u
 #define SRI_VEC_I_BP_B   0334u
 
+/* Emulator-only surrogate codes for software-driven request injection.
+ * These codes are NOT a hardware register or bit layout.  The printed PKCSR
+ * enable positions disagree, so two low-order positions are used only to let
+ * a host or guest select a channel through the existing enable latch. */
+#define SRI_SURROGATE_IE_A        0001u
+#define SRI_SURROGATE_IE_B        0002u
+#define SRI_SURROGATE_SRC_IB      0001u
+#define SRI_SURROGATE_CH_B        0002u
+#define SRI_SURROGATE_STATUS_TRA  0200u
+
 /* Register offsets relative to each window base (octal). */
 enum sri_bp_off {
     SRI_OFF_BTM0     = 0000,
@@ -44,7 +54,11 @@ enum sri_bp_off {
     SRI_OFF_BPMTS    = 0120,
     SRI_OFF_BPODR_R  = 0122,
     SRI_OFF_BPSRA    = 0124,
+    /* Free BP-window slots used only by the emulator-only surrogate.  They are
+     * NOT hardware registers and carry no hardware bit layout or timing. */
+    SRI_OFF_STATUS_INJECT  = 0126,
     SRI_OFF_FMTTO    = 0130,
+    SRI_OFF_REQUEST_INJECT = 0132,
     SRI_OFF_KXTO     = 0134,
     SRI_OFF_BPCLR_W  = 0136,
     SRI_OFF_KYTO_R   = 0136
@@ -78,7 +92,7 @@ typedef struct {
     int a_over_b;
     int bp_ipl;
     int ib_ipl;
-    uint16 pkcsr_ie_a;                          /* zero: still UNKNOWN */
+    uint16 pkcsr_ie_a;                          /* surrogate enable, not hardware */
     uint16 pkcsr_ie_b;
     int no_autoinc_bpodr;
     } sri_config_t;
