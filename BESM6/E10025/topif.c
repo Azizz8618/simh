@@ -824,6 +824,8 @@ static void topif_soft_init (top_state_t *s)
     s->state = TOP_STATE_RESET;
     s->descriptor_ptr = 0;
     s->descriptor_active = 0;
+    s->descriptor_status = 0;
+    s->external_calls = 0;
     topif_update_enables (s);
     CLR_INT (TOP_A);
     CLR_INT (TOP_B);
@@ -1150,22 +1152,50 @@ int topif_emt_service (int32 code)
                    (unsigned) (ReadW (p) & 0177777),
                    (unsigned) (ReadW ((p + 2) & 0177777) & 0177777));
         } */
-    if (code == 0214 && (R[0] & 0177700) ==
-        (int32) (s->cell_state & 0177700)) {
-        topif_record (s, (int32) (R[0] & 0177777), 0, TOP_DIR_READ,
-                      TOP_SRC_BP, (uint16) s->cell_state, TOP_RESP_OK);
+    if (code == 0214) {
+        uint16 selector = (uint16) (R[0] & 0177777);
+        int32 sp = R[6] & 0177777;
+        uint16 arg0;
+        uint16 arg1;
+        uint16 arg2;
+
+        if (selector != TOP_SELECT_CELL && selector != TOP_SELECT_STATE &&
+            selector != (s->reg[TOP_OFF_BPSRA / 2] & 0177777) &&
+            selector != s->cell_a && selector != s->cell_b)
+            return 0;
+        arg0 = (uint16) (ReadW (sp) & 0177777);
+        arg1 = (uint16) (ReadW ((sp + 2) & 0177777) & 0177777);
+        arg2 = (uint16) (ReadW ((sp + 4) & 0177777) & 0177777);
+        topif_record (s, (int32) (0200000u + selector), 0, TOP_DIR_READ,
+                      TOP_SRC_BP, arg0, TOP_RESP_OK);
+        topif_record (s, (int32) (0200002u + selector), 0, TOP_DIR_READ,
+                      TOP_SRC_BP, arg1, TOP_RESP_OK);
+        topif_record (s, (int32) (0200004u + selector), 0, TOP_DIR_READ,
+                      TOP_SRC_BP, arg2, TOP_RESP_OK);
+        if (selector == TOP_SELECT_STATE) {
+            R[0] = s->cell_state & 0177777;
+            R[1] = s->reg[TOP_OFF_BPSRA / 2];
+            }
+        else {
+            R[0] = s->cell_b & 0177777;
+            R[1] = s->cell_a & 0177777;
+            }
+        R[6] = (sp + 6) & 0177777;
+        s->external_calls++;
         topif_step (s);
         topif_publish ();
-        R[1] = s->cell_state & 0177777;
-        R[2] = s->reg[TOP_OFF_BPSRA / 2];
         C = 0;
         Z = 1;
         sim_debug (TOP_DEB_STATE, &top_dev,
-                   "TOP STATE QUERY status=%06o state=%s\n",
-                   (unsigned) R[1], topif_state_name (s->state));
+                   "TOP EXTERNAL CALL selector=%06o args=%06o/%06o/%06o "
+                   "status=%06o state=%s\n",
+                   (unsigned) selector, (unsigned) arg0, (unsigned) arg1,
+                   (unsigned) arg2, (unsigned) R[0],
+                   topif_state_name (s->state));
         return 1;
         }
-    if (code == 0354 && s->descriptor_active) {
+    if (code == 0354 && (s->descriptor_active ||
+        (s->descriptor_ptr != 0 && s->external_calls < 3))) {
         int32 release_ptr = R[0] & 0177777;
 
         topif_record (s, release_ptr, 0, TOP_DIR_WRITE,
@@ -1175,9 +1205,9 @@ int topif_emt_service (int32 code)
         topif_step (s);
         topif_update_int (s);
         topif_publish ();
-        R[1] = s->cell_state & 0177777;
+        R[1] = s->descriptor_status;
         R[2] = R[0] & 0177777;
-        s->descriptor_ptr = 0;
+        s->descriptor_ptr = (uint32) release_ptr;
         s->descriptor_active = 0;
         C = 0;
         Z = 1;
@@ -1201,6 +1231,7 @@ int topif_emt_service (int32 code)
     status = topif_descriptor_service (s, (uint16) selector, (uint16) operand);
     s->descriptor_ptr = (uint32) ptr;
     s->descriptor_active = 1;
+    s->descriptor_status = status & 0177777;
     R[1] = status & 0177777;
     R[2] = s->reg[TOP_OFF_BPSRA / 2];
     C = 0;

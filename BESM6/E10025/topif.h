@@ -107,6 +107,12 @@ enum top_off {
 #define TOP_STATUS_B_DIALOG  040000u
 #define TOP_STATUS_A_NAMED   0177777u
 
+/* Service selectors returned by the descriptor path and consumed by the
+ * external-call path.  They are device service codes, not hardware register
+ * bits; a selector outside this set is left to the standard trap. */
+#define TOP_SELECT_CELL  0u
+#define TOP_SELECT_STATE 2u
+
 #define TOP_WORD_MASK    0177777u
 #define TOP_REG_SLOTS    0200u
 #define TOP_JOURNAL_DEPTH 16u
@@ -262,6 +268,8 @@ typedef struct {
     uint16 irq_level;
     uint32 descriptor_ptr;
     uint16 descriptor_active;
+    uint16 descriptor_status;
+    uint16 external_calls;
     top_mode_t state;
     top_journal_entry_t journal[TOP_JOURNAL_DEPTH];
     uint32 journal_seq;
