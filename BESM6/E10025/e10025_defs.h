@@ -627,6 +627,10 @@ typedef struct pdp_dib DIB;
 #define IOLN_SRI_BP     0140
 #define IOBA_SRI_IB     (IOPAGEBASE + 04000)
 #define IOLN_SRI_IB     0440
+
+/* Autonomous TOP register window, independent of other SR-BUS devices. */
+#define IOBA_TOP        (IOPAGEBASE + 07000)
+#define IOLN_TOP        0200
 #define IOBA_UIPDR      (IOPAGEBASE + 017600)           /* user APR's */
 #define IOLN_UIPDR      020
 #define IOBA_UDPDR      (IOPAGEBASE + 017620)
@@ -659,6 +663,8 @@ typedef struct pdp_dib DIB;
 #define INT_V_SRI_BPB   3
 #define INT_V_SRI_IBA   4
 #define INT_V_SRI_IBB   5
+#define INT_V_TOP_A     6                               /* TOP request channels */
+#define INT_V_TOP_B     7
 
 #define INT_V_PIR6      0                               /* BR6 */
 #define INT_V_CLK       1
@@ -774,6 +780,8 @@ typedef struct pdp_dib DIB;
 #define INT_SRI_BPB     (1u << INT_V_SRI_BPB)
 #define INT_SRI_IBA     (1u << INT_V_SRI_IBA)
 #define INT_SRI_IBB     (1u << INT_V_SRI_IBB)
+#define INT_TOP_A       (1u << INT_V_TOP_A)
+#define INT_TOP_B       (1u << INT_V_TOP_B)
 #define INT_PIR4        (1u << INT_V_PIR4)
 #define INT_TTI         (1u << INT_V_TTI)
 #define INT_TTO         (1u << INT_V_TTO)
@@ -885,6 +893,9 @@ typedef struct pdp_dib DIB;
 #define IPL_SRI_BPB     IPL_SRI_BP
 #define IPL_SRI_IBA     IPL_SRI_IB
 #define IPL_SRI_IBB     IPL_SRI_IB
+#define IPL_TOP         7
+#define IPL_TOP_A       IPL_TOP
+#define IPL_TOP_B       IPL_TOP
 #define IPL_PIR7        7
 #define IPL_PIR6        6
 #define IPL_PIR5        5
@@ -908,6 +919,8 @@ typedef struct pdp_dib DIB;
 #define VEC_SRI_P_BPB   0324
 #define VEC_SRI_I_BPA   0330                            /* I-side KSE-BP name */
 #define VEC_SRI_I_BPB   0334
+#define VEC_TOP_A       0340
+#define VEC_TOP_B       0344
 
 /* Interrupt macros */
 

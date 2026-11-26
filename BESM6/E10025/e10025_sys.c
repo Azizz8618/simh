@@ -83,6 +83,7 @@ extern DEVICE tti_dev;
 extern DEVICE tto_dev;
 extern DEVICE lpt_dev;
 extern DEVICE sri_dev;
+extern DEVICE top_dev;
 extern DEVICE cr_dev;
 extern DEVICE clk_dev;
 extern DEVICE kwv11_dev;
@@ -190,6 +191,7 @@ DEVICE *sim_devices[] = {
     &rr_dev,
     &mba_dev[0],
     &sri_dev,
+    &top_dev,
     &rp_dev,
     NULL
     };
