@@ -620,6 +620,12 @@ typedef struct pdp_dib DIB;
 #define IOLN_CPU        036
 #define IOBA_PSW        (IOPAGEBASE + 017776)           /* PSW */
 #define IOLN_PSW        002
+
+/* SRI register windows, guest I/O-page form (physical = IOPAGEBASE + value). */
+#define IOBA_SRI_BP     (IOPAGEBASE + 06000)
+#define IOLN_SRI_BP     0140
+#define IOBA_SRI_IB     (IOPAGEBASE + 04000)
+#define IOLN_SRI_IB     0440
 #define IOBA_UIPDR      (IOPAGEBASE + 017600)           /* user APR's */
 #define IOLN_UIPDR      020
 #define IOBA_UDPDR      (IOPAGEBASE + 017620)
@@ -648,6 +654,10 @@ typedef struct pdp_dib DIB;
 
 #define INT_V_PIR7      0                               /* BR7 */
 #define INT_V_UCA       1
+#define INT_V_SRI_BPA   2                               /* KSE-BP, before IB */
+#define INT_V_SRI_BPB   3
+#define INT_V_SRI_IBA   4
+#define INT_V_SRI_IBB   5
 
 #define INT_V_PIR6      0                               /* BR6 */
 #define INT_V_CLK       1
@@ -759,6 +769,10 @@ typedef struct pdp_dib DIB;
 #define INT_DUPRX       (1u << INT_V_DUPRX)
 #define INT_DUPTX       (1u << INT_V_DUPTX)
 #define INT_UCA         (1u << INT_V_UCA)
+#define INT_SRI_BPA     (1u << INT_V_SRI_BPA)
+#define INT_SRI_BPB     (1u << INT_V_SRI_BPB)
+#define INT_SRI_IBA     (1u << INT_V_SRI_IBA)
+#define INT_SRI_IBB     (1u << INT_V_SRI_IBB)
 #define INT_PIR4        (1u << INT_V_PIR4)
 #define INT_TTI         (1u << INT_V_TTI)
 #define INT_TTO         (1u << INT_V_TTO)
@@ -864,6 +878,12 @@ typedef struct pdp_dib DIB;
 #define IPL_DKSRX       4                               /* ДКС terminal concentrator */
 #define IPL_DKSATN      4                               /* (BR4, like other terminal input) */
 
+#define IPL_SRI_BP      7
+#define IPL_SRI_IB      7
+#define IPL_SRI_BPA     IPL_SRI_BP
+#define IPL_SRI_BPB     IPL_SRI_BP
+#define IPL_SRI_IBA     IPL_SRI_IB
+#define IPL_SRI_IBB     IPL_SRI_IB
 #define IPL_PIR7        7
 #define IPL_PIR6        6
 #define IPL_PIR5        5
@@ -883,6 +903,10 @@ typedef struct pdp_dib DIB;
 #define VEC_TTO         0064
 #define VEC_UCA         0300
 #define VEC_UCB         0310
+#define VEC_SRI_P_BPA   0320                            /* P-side, delivered */
+#define VEC_SRI_P_BPB   0324
+#define VEC_SRI_I_BPA   0330                            /* I-side KSE-BP name */
+#define VEC_SRI_I_BPB   0334
 
 /* Interrupt macros */
 
