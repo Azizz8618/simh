@@ -227,7 +227,7 @@ static DIB cpu_psw_dib = {
    timer and already owned by the existing CLK device at 017546; address
    777566 lies in the existing TTO register block 017564..017567. Neither is
    duplicated here. */
-#define E10025_GAP_NREG 12
+#define E10025_GAP_NREG 11
 static const uint32 gap_ba[E10025_GAP_NREG] = {
     IOPAGEBASE + 017656,                                /* 777656 ГРАС */
     IOPAGEBASE + 017640,                                /* 777640 */
@@ -236,7 +236,6 @@ static const uint32 gap_ba[E10025_GAP_NREG] = {
     IOPAGEBASE + 017576,                                /* 777576 */
     IOPAGEBASE + 017572,                                /* 777572 */
     IOPAGEBASE + 017570,                                /* 777570 пульт управления */
-    IOPAGEBASE + 017550,                                /* 777550 */
     IOPAGEBASE + 012356,                                /* 772356 БРАС */
     IOPAGEBASE + 012340,                                /* 772340 */
     IOPAGEBASE + 012316,                                /* 772316 БРИС */
@@ -287,7 +286,6 @@ static DIB gap_dib[E10025_GAP_NREG] = {
     { IOPAGEBASE + 017576, 2, &gap_rd, &gap_wr, 0, 0, 0, { NULL }, 0, 0, NULL, NULL },
     { IOPAGEBASE + 017572, 2, &gap_rd, &gap_wr, 0, 0, 0, { NULL }, 0, 0, NULL, NULL },
     { IOPAGEBASE + 017570, 2, &gap_rd, &gap_wr, 0, 0, 0, { NULL }, 0, 0, NULL, NULL },
-    { IOPAGEBASE + 017550, 2, &gap_rd, &gap_wr, 0, 0, 0, { NULL }, 0, 0, NULL, NULL },
     { IOPAGEBASE + 012356, 2, &gap_rd, &gap_wr, 0, 0, 0, { NULL }, 0, 0, NULL, NULL },
     { IOPAGEBASE + 012340, 2, &gap_rd, &gap_wr, 0, 0, 0, { NULL }, 0, 0, NULL, NULL },
     { IOPAGEBASE + 012316, 2, &gap_rd, &gap_wr, 0, 0, 0, { NULL }, 0, 0, NULL, NULL },

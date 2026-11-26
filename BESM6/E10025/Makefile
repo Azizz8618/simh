@@ -15,7 +15,8 @@ SIMCORE = $(ROOT)/scp.c $(ROOT)/sim_console.c $(ROOT)/sim_fio.c \
 
 SIMDEV = e10025_cpu.c e10025_io.c e10025_io_lib.c e10025_stddev.c \
          e10025_sys.c e10025_cpumod.c e10025_chan.c e10025_dks.c \
-         e10025_cal.c e10025_fp.c e10025_rk.c e10025_rl.c
+         e10025_cal.c e10025_fp.c e10025_rk.c e10025_rl.c \
+         e10025_cr.c e10025_pt.c e10025_lp.c
 
 OBJS = $(addprefix $(BUILD)/,$(notdir $(SIMDEV:.c=.o) $(SIMCORE:.c=.o)))
 

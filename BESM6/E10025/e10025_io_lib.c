@@ -705,9 +705,9 @@ AUTO_CON auto_tab[] = {/*c  #v  am vm  fxa   fxv */
     { { "PCLK" },        1,  1,  0, 0, 
         {012540}, {0104} },                             /* KW11P - fx CSR, fx VEC */
     { { "PTR" },         1,  1,  0, 0, 
-        {017550}, {0070} },                             /* PC11 reader - fx CSR, fx VEC */
+        {017550}, {0264} },                             /* PC11 reader, vector moved: DMA owns 0070 */
     { { "PTP" },         1,  1,  0, 0, 
-        {017554}, {0074} },                             /* PC11 punch - fx CSR, fx VEC */
+        {017554}, {0270} },                             /* PC11 punch, next free vector after PTR */
     { { "RK" },          1,  1,  0, 0, 
         {017400}, {0220} },                             /* RK11 - fx CSR, fx VEC */
     { { "TM" },          1,  1,  0, 0, 

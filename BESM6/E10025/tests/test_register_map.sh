@@ -95,7 +95,8 @@ check "$out" '262016:.*000000' 'T5 777600'
 check "$out" '262014:.*000000' 'T5 777576'
 check "$out" '262010:.*000000' 'T5 777572'
 check "$out" '262008:.*000000' 'T5 777570'
-check "$out" '261992:.*000000' 'T5 777550'
+# 777550 is now owned by the PTR controller; its power-up CSR has ERR set.
+check "$out" '261992:.*100000' 'T5 777550 PTR CSR'
 check "$out" '262062:.*012345' 'T5 777656 pass-through write'
 
 # T6: the internal-mode memory dispatcher group 7723xx from figure 11.
