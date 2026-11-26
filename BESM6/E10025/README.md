@@ -81,6 +81,8 @@ E10025=/tmp/e10025 bash tests/test_dp_disk.sh
 E10025=/tmp/e10025 bash tests/run_rt11_boot.sh
 E10025=/tmp/e10025 bash tests/run_rt11_c.sh
 E10025=/tmp/e10025 bash tests/run_ie15_link.sh
+E10025=/tmp/e10025 bash tests/test_ie15_guest_echo.sh
+E10025=/tmp/e10025 bash tests/run_ie15_link.sh
 ```
 Последний прогон с изолированным бинарником Phase F5 (2026-11-26): все восемь
 прежних скриптов PASS, включая `tests/test_memory.sh`. Оба новых раннера тоже
