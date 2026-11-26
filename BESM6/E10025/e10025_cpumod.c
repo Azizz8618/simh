@@ -90,9 +90,9 @@ fprintf (st, "%s", e10025_cal_get_memdisp ());
 return SCPE_OK;
 }
 
-/* The machine starts with 125K words (128000 decimal), the largest config
-   that fits the 128K-word channel bank space. 64K and 124K remain explicit
-   compatibility options. The backing array is always 128K words so that
+/* The machine starts with 124K words (248 KB), the documented maximum.
+   64K and 125K remain explicit compatibility options. The backing array is
+   always 128K words so that
    АДР17..АДР16 can select any bank without out-of-range indexing. */
 static t_stat cpu_set_memsize (UNIT *uptr, int32 val, CONST char *cptr, void *desc)
 {

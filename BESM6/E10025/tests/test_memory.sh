@@ -19,17 +19,17 @@ check () {
     fi
   }
 
-# M1: the machine starts with 125K words (128000 decimal), not 64K. The top
-# word of that RAM is at octal 0763776, decimal 255998.
+# M1: the documented default is 124K words (248 KB), not 64K. The top
+# word of that RAM is at octal 0757776, decimal 253950.
 out=$(printf '%s\n' \
   'show CPU' \
   'show CPU MEMSIZE' \
-  'deposit 0763776 012345' 'examine 0763776' \
+  'deposit 0757776 012345' 'examine 0757776' \
   'exit' | "$sim" 2>&1)
-printf '%s\n' "$out" | grep -E 'MEMSIZE|255998'
-check "$out" 'CPU.*MEMSIZE=125K words' 'M1 show CPU default'
-check "$out" 'MEMSIZE=125K words' 'M1 show CPU MEMSIZE default'
-check "$out" '255998:.*012345' 'M1 top word of 125K RAM'
+printf '%s\n' "$out" | grep -E 'MEMSIZE|253950'
+check "$out" 'CPU.*MEMSIZE=124K words' 'M1 show CPU default'
+check "$out" 'MEMSIZE=124K words' 'M1 show CPU MEMSIZE default'
+check "$out" '253950:.*012345' 'M1 top word of 124K RAM'
 
 # M2: the guest 16-bit RAM area and the Phase 2 register window are unchanged.
 out=$(printf '%s\n' \
@@ -84,4 +84,4 @@ check "$out" 'MEMSIZE=64K words' 'M6 back to 64K'
 check "$out" 'Address space exceeded' 'M6 bank 1 hidden again'
 check "$out" '57342:.*011111' 'M6 old guest RAM boundary works'
 
-echo 'PASS: E10025 memory default 125K words and 64K compatibility'
+echo 'PASS: E10025 memory default 124K words and 64K compatibility'

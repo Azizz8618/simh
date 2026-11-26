@@ -101,8 +101,9 @@
 #define VAMASK          (VASIZE - 1)                    /* 2**16 - 1 */
 #define MEMSIZE64K      0200000                         /* 65536 bytes, 32K words */
 /* Book 4, printed p.38: 18-bit channel addresses reach 128K word cells.
-   The default model now has 125K words (128000 decimal); 64K and 124K stay
-   selectable for the older tests. АДР17..АДР16 select one of four banks. */
+   The documented maximum RAM is 124K words (248 KB); that is the default.
+   64K and 125K stay selectable for compatibility with older tests.
+   АДР17..АДР16 select one of four banks. */
 #define MEMSIZE124K     0760000                         /* 124K words, 126976 words */
 #define MEMSIZE125K     0764000                         /* 125K words, 128000 words */
 #define MEMALLOC_WORDS  0400000                         /* 128K words allocated */

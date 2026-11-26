@@ -34,8 +34,8 @@ printf '%s\n' "$out" | grep -q 'address=17774400-17774411, vector=160' || \
 
 # Память по умолчанию и отсутствие ошибок у отдельного show.
 mem=$(printf '%s\n' 'show CPU MEMSIZE' 'exit' | "$sim" 2>&1)
-printf '%s\n' "$mem" | grep -q 'MEMSIZE=125K words' || \
-  fail memsize 'expected default MEMSIZE=125K words'
+printf '%s\n' "$mem" | grep -q 'MEMSIZE=124K words' || \
+  fail memsize 'expected documented default MEMSIZE=124K words'
 
 for dev in RK RL CHAN DMA DKSE; do
   d=$(printf '%s\n' "show $dev" 'exit' | "$sim" 2>&1)

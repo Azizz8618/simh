@@ -140,9 +140,9 @@ static DEBTAB cpu_debug[] = {
     { NULL, 0, NULL }
     };
 
-/* Default 125K words (128000 decimal), the full 18-bit channel bank space.
-   set CPU MEMSIZE=64K restores the old 64 KB compatibility configuration. */
-UNIT cpu_unit = { UDATA (NULL, UNIT_FIX | UNIT_BINK, MEMSIZE125K) };
+/* Default 124K words (248 KB), the documented maximum from book 4 p.38 and
+   the ОЗУ-248 passport. set CPU MEMSIZE=64K or 125K selects other configs. */
+UNIT cpu_unit = { UDATA (NULL, UNIT_FIX | UNIT_BINK, MEMSIZE124K) };
 
 static t_stat cpu_reset (DEVICE *dptr);
 static t_stat cpu_boot (int32 unitno, DEVICE *dptr);
@@ -163,11 +163,10 @@ DEVICE cpu_dev = {
    word index therefore covers banks 0..3 when MEMSIZE is 124K. */
 static int32 mem_index (int32 pa)
 {
-/* MEMSIZE is 125K words, not a power of two. Masking with
-   (MEMSIZE>>1)-1 clears bit 10 of the word index and aliases guest
-   address 0007774 (the boot stack) onto word index 001776, which the
-   RK DMA also writes. All guest addresses fit in MEMSIZE, so no mask
-   is needed; keep the index inside the allocated array instead. */
+/* MEMSIZE is 124K words by default, not a power of two. Masking with
+   (MEMSIZE>>1)-1 would alias the guest boot stack onto a DMA buffer.
+   All guest addresses fit in MEMSIZE, so no size mask is needed; keep the
+   index inside the always-allocated 128K-word array instead. */
 return (pa >> 1) & (MEMALLOC_WORDS - 1);
 }
 
