@@ -18,6 +18,9 @@
 
 extern DEVICE top_dev;
 extern uint16 *M;
+extern int32 R[8];
+extern int32 C;
+extern int32 Z;
 
 top_state_t top_state;
 
@@ -819,6 +822,8 @@ static void topif_soft_init (top_state_t *s)
     s->pending[0][0] = s->pending[0][1] = 0;
     s->pending[1][0] = s->pending[1][1] = 0;
     s->state = TOP_STATE_RESET;
+    s->descriptor_ptr = 0;
+    s->descriptor_active = 0;
     topif_update_enables (s);
     CLR_INT (TOP_A);
     CLR_INT (TOP_B);
@@ -1070,6 +1075,167 @@ void topif_reset_state (top_state_t *s)
     s->reg[TOP_OFF_BPFR1 / 2] = s->cfg.bpfr1_start;
     s->reg[TOP_OFF_BPFR2 / 2] = s->cfg.bpfr2_start;
     topif_soft_init (s);
+}
+
+uint16 topif_descriptor_service (top_state_t *s, uint16 selector, uint16 operand)
+{
+    uint16 status;
+    top_resp_t resp = TOP_RESP_OK;
+
+    if (s == NULL)
+        return 0;
+    topif_record (s, (int32) operand, 0, TOP_DIR_READ, TOP_SRC_BP,
+                  selector, TOP_RESP_OK);
+    if (selector == 014400u) {
+        uint16 cell;
+
+        if (operand == (uint16) s->cfg.cell_a_start) {
+            cell = s->cell_a;
+            s->reg[TOP_OFF_STATUS_A / 2] = cell;
+            }
+        else if (operand == (uint16) s->cfg.cell_b_start) {
+            cell = s->cell_b;
+            s->reg[TOP_OFF_STATUS_B / 2] = cell;
+            }
+        else if (operand == (uint16) s->cfg.cell_state_start) {
+            cell = s->cell_state;
+            s->reg[TOP_OFF_STATE / 2] = cell;
+            }
+        else {
+            resp = TOP_RESP_UNKNOWN_BITS;
+            cell = s->cell_state;
+            }
+        topif_step (s);
+        status = cell;
+        }
+    else if (selector == 000414u) {
+        top_src_t src;
+        int channel;
+
+        if (topif_top_request (s, &src, &channel)) {
+            status = (uint16) (000400u | ((src == TOP_SRC_IB)? 000020u: 0) |
+                               (uint16) channel);
+            topif_clear_request (s, src, channel);
+            }
+        else
+            status = (uint16) (s->state & 0007u);
+        topif_step (s);
+        topif_update_int (s);
+        }
+    else {
+        resp = TOP_RESP_UNKNOWN_BITS;
+        status = s->cell_state;
+        }
+    topif_record (s, (int32) operand, 0, TOP_DIR_READ, TOP_SRC_BP,
+                  status, resp);
+    topif_publish ();
+    return status;
+}
+
+int topif_emt_service (int32 code)
+{
+    top_state_t *s = &top_state;
+    int32 ptr;
+    int32 selector;
+    int32 operand;
+    uint16 status;
+
+    /* Kept as the raw probe used to locate the close call.  It logs the
+     * descriptor words before any service decision is made. */
+    /* if (code == 0354) {
+        int32 p = R[0] & 0177777;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP EMT354 ptr=%06o w0=%06o w1=%06o\n",
+                   (unsigned) p,
+                   (unsigned) (ReadW (p) & 0177777),
+                   (unsigned) (ReadW ((p + 2) & 0177777) & 0177777));
+        } */
+    if (code == 0214 && (R[0] & 0177700) ==
+        (int32) (s->cell_state & 0177700)) {
+        topif_record (s, (int32) (R[0] & 0177777), 0, TOP_DIR_READ,
+                      TOP_SRC_BP, (uint16) s->cell_state, TOP_RESP_OK);
+        topif_step (s);
+        topif_publish ();
+        R[1] = s->cell_state & 0177777;
+        R[2] = s->reg[TOP_OFF_BPSRA / 2];
+        C = 0;
+        Z = 1;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP STATE QUERY status=%06o state=%s\n",
+                   (unsigned) R[1], topif_state_name (s->state));
+        return 1;
+        }
+    if (code == 0354 && s->descriptor_active) {
+        int32 release_ptr = R[0] & 0177777;
+
+        topif_record (s, release_ptr, 0, TOP_DIR_WRITE,
+                      TOP_SRC_BP, (uint16) s->state, TOP_RESP_OK);
+        s->reg[TOP_OFF_BPSRA / 2] = (uint16) (TOP_BPSRA_FHT | TOP_BPSRA_OHT);
+        s->pending[0][0] = s->pending[0][1] = 0;
+        topif_step (s);
+        topif_update_int (s);
+        topif_publish ();
+        R[1] = s->cell_state & 0177777;
+        R[2] = R[0] & 0177777;
+        s->descriptor_ptr = 0;
+        s->descriptor_active = 0;
+        C = 0;
+        Z = 1;
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP DESCRIPTOR RELEASE ptr=%06o status=%06o state=%s\n",
+                   (unsigned) release_ptr, (unsigned) R[0],
+                   topif_state_name (s->state));
+        return 1;
+        }
+    if (code != 0375)
+        return 0;
+    ptr = R[0] & 0177777;
+    selector = ReadW (ptr) & 0177777;
+    operand = ReadW ((ptr + 2) & 0177777) & 0177777;
+    if (!((selector == 014400 &&
+           (operand == (int32) s->cfg.cell_a_start ||
+            operand == (int32) s->cfg.cell_b_start ||
+            operand == (int32) s->cfg.cell_state_start)) ||
+          (selector == 000414)))
+        return 0;
+    status = topif_descriptor_service (s, (uint16) selector, (uint16) operand);
+    s->descriptor_ptr = (uint32) ptr;
+    s->descriptor_active = 1;
+    R[1] = status & 0177777;
+    R[2] = s->reg[TOP_OFF_BPSRA / 2];
+    C = 0;
+    Z = (status == 0 || status == 2)? 1: 0;
+    sim_debug (TOP_DEB_STATE, &top_dev,
+               "TOP DESCRIPTOR selector=%06o operand=%06o status=%06o "
+               "state=%s bpsra=%06o\n",
+               (unsigned) selector, (unsigned) operand, (unsigned) status,
+               topif_state_name (s->state),
+               (unsigned) s->reg[TOP_OFF_BPSRA / 2]);
+    return 1;
+}
+
+int topif_trap_service (int32 code)
+{
+    top_state_t *s = &top_state;
+
+    if (code != 0376 || (R[0] & 0177700) != (s->cell_state & 0177700))
+        return 0;
+    topif_record (s, (int32) (R[0] & 0177777), 0, TOP_DIR_READ,
+                  TOP_SRC_BP, (uint16) s->cell_state, TOP_RESP_OK);
+    s->cell_b |= TOP_STATUS_B_DIALOG;
+    s->reg[TOP_OFF_STATUS_B / 2] = s->cell_b;
+    topif_set_state (s, TOP_STATE_DIALOG);
+    topif_step (s);
+    topif_update_int (s);
+    topif_publish ();
+    R[1] = s->cell_state & 0177777;
+    R[2] = s->reg[TOP_OFF_BPSRA / 2];
+    C = 0;
+    Z = 1;
+    sim_debug (TOP_DEB_STATE, &top_dev,
+               "TOP MODULE ENTRY code=%03o status=%06o state=%s\n",
+               (unsigned) code, (unsigned) R[1], topif_state_name (s->state));
+    return 1;
 }
 
 static t_stat topif_reset (DEVICE *dptr)

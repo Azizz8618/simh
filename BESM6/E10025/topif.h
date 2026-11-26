@@ -260,6 +260,8 @@ typedef struct {
     uint16 power_saved_state;
     uint16 parity_error;
     uint16 irq_level;
+    uint32 descriptor_ptr;
+    uint16 descriptor_active;
     top_mode_t state;
     top_journal_entry_t journal[TOP_JOURNAL_DEPTH];
     uint32 journal_seq;
@@ -298,5 +300,8 @@ uint8 topif_signal_status (const top_state_t *s, uint32 id);
 uint8 topif_signal_activity (const top_state_t *s, uint32 id);
 uint8 topif_signal_direction (const top_state_t *s, uint32 id);
 const char *topif_signal_name (uint32 id);
+int topif_emt_service (int32 code);
+int topif_trap_service (int32 code);
+uint16 topif_descriptor_service (top_state_t *s, uint16 selector, uint16 operand);
 
 #endif

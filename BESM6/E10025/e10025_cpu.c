@@ -22,6 +22,7 @@
 */
 
 #include "e10025_defs.h"
+#include "topif.h"
 
 extern t_stat iopageR (int32 *data, uint32 addr, int32 access);
 extern t_stat iopageW (int32 data, uint32 addr, int32 access);
@@ -138,6 +139,7 @@ REG cpu_reg[] = {
 static DEBTAB cpu_debug[] = {
     { "CALIB", E10025_DBG_CALIB, "Opcode calibration tick lines" },
     { "INSN", E10025_DBG_INSN, "executed PC/opcode" },
+    { "EMT", E10025_DBG_EMT, "EMT code and dispatch decision" },
     { NULL, 0, NULL }
     };
 
@@ -435,6 +437,9 @@ else if (trap_req & TRAP_INT) {
     }
 if (vec == 0)
     return;
+sim_debug (E10025_DBG_EMT, &cpu_dev,
+           "TRAP vec=%06o pc=%06o req=%06o\n",
+           vec & 0177777, PC & 0177777, trap_req & TRAP_ALL);
 push (get_PSW ());
 push (PC);
 saved_PC = ReadW (vec) & 0177777;
@@ -687,10 +692,26 @@ if (opcode == 016) {                                    /* SUB: dst - src */
    group: their IR<7:6> is below 050, so a branch dispatch would raise
    TRAP_ILL. The RT-11 monitor uses EMT 355 at 002556 for its console path. */
 if ((IR & 0177400) == 0104000) {
+    /* A narrow device path: only a descriptor call that matches the TOP
+     * service contract is consumed here.  Every other EMT keeps the normal
+     * trap disposition, including the console path used by the monitor. */
+    int emt_code = IR & 0377;
+    int emt_taken = topif_emt_service (emt_code);
+    sim_debug (E10025_DBG_EMT, &cpu_dev,
+               "EMT PC=%06o code=%03o R0=%06o next=%06o C=%d route=%s\n",
+               (PC - 2) & 0177777, emt_code, R[0] & 0177777,
+               PC & 0177777, C & 1, emt_taken? "TOP": "TRAP");
+    if (emt_taken)
+        return SCPE_OK;
     set_trap (TRAP_EMT);
     return SCPE_OK;
     }
 if ((IR & 0177400) == 0104400) {
+    /* The saved program uses one trap as its external-module entry.  Only a
+     * trap whose operand matches the state returned by the TOP service is
+     * consumed; all other traps keep the normal disposition. */
+    if (topif_trap_service (IR & 0377))
+        return SCPE_OK;
     set_trap (TRAP_TRAP);
     return SCPE_OK;
     }
@@ -1021,6 +1042,12 @@ while (stop_reason == SCPE_OK) {
         }
     t_addr exec_pc = PC;
     IR = ReadW (PC);
+    /* Kept for a future near-PC trace of descriptor follow-up paths.  Enable
+     * only by uncommenting; EMT debug above already marks each dispatch. */
+    /* sim_debug (E10025_DBG_EMT, &cpu_dev,
+       "STEP PC=%06o IR=%06o C=%d Z=%d R0=%06o R4=%06o\n",
+       exec_pc & 0177777, IR, C & 1, Z & 1,
+       R[0] & 0177777, R[4] & 0177777); */
     PC = (PC + 2) & 0177777;
     sim_debug (E10025_DBG_INSN, &cpu_dev, "PC=%06o IR=%06o\n", exec_pc, IR);
     sim_interval--;
