@@ -32,10 +32,13 @@ extern void chan_write_io (int32 pa, int32 data, int32 byte);
 extern void br_arbitrate (void);
 extern void dks_poll (void);
 extern MTAB cpu_mod[];
+extern t_stat (*iodispR[IOPAGESIZE >> 1])(int32 *dat, int32 ad, int32 md);
+extern t_stat (*iodispW[IOPAGESIZE >> 1])(int32 dat, int32 ad, int32 md);
 int32 e10025_get_psw (void);
 void e10025_put_psw (int32 val);
 static int32 get_PSW (void);
 static void put_PSW (int32 val);
+static void set_trap (int32 t);
 
 uint16 *M = NULL;
 int32 R[8] = { 0 };
@@ -200,11 +203,28 @@ static uint32 guest_io_pa (int32 pa)
 return (uint32) IOPAGEBASE | (((uint32) pa) & IOPAGEMASK);
 }
 
+/* The reference PDP-11 aborts an I/O cycle with TRAP_NXM when no device
+   answers (PWriteW in pdp11_cpu.c:2824-2838, ReadE in pdp11_cpu.c:2653-2659,
+   iopageR in pdp11_io.c:95). The RT-11 boot ROM probes 0160000 with
+   MOV (R4),(R4) to size memory and expects that trap through vector 000004;
+   returning zero silently moved the monitor base. */
+static int32 io_dispatch_missing (int32 pa, int32 write)
+{
+uint32 pa22 = guest_io_pa (pa);
+int32 idx = (int32) ((pa22 & IOPAGEMASK) >> 1);
+return write? (iodispW[idx] == NULL): (iodispR[idx] == NULL);
+}
+
 int32 ReadW (int32 pa)
 {
 pa &= VAMASK;
-if (pa >= IO_VABASE)
+if (pa >= IO_VABASE) {
+    if (io_dispatch_missing (pa, 0)) {
+        set_trap (TRAP_NXM);
+        return 0;
+        }
     return chan_read_io (guest_io_pa (pa), 0) & DMASK;
+    }
 if ((uint32) pa >= MEMSIZE)
     return 0;
 return mem_read_word (pa);
@@ -214,6 +234,10 @@ void WriteW (int32 pa, int32 data)
 {
 pa &= VAMASK;
 if (pa >= IO_VABASE) {
+    if (io_dispatch_missing (pa, 1)) {
+        set_trap (TRAP_NXM);
+        return;
+        }
     chan_write_io (guest_io_pa (pa), data, 0);
     return;
     }
@@ -224,8 +248,13 @@ if ((uint32) pa < MEMSIZE)
 static int32 ReadB (int32 pa)
 {
 pa &= VAMASK;
-if (pa >= IO_VABASE)
+if (pa >= IO_VABASE) {
+    if (io_dispatch_missing (pa, 0)) {
+        set_trap (TRAP_NXM);
+        return 0;
+        }
     return chan_read_io (guest_io_pa (pa), 1) & 0377;
+    }
 if ((uint32) pa >= MEMSIZE)
     return 0;
 return mem_read_byte (pa);
@@ -235,6 +264,10 @@ static void WriteB (int32 pa, int32 data)
 {
 pa &= VAMASK;
 if (pa >= IO_VABASE) {
+    if (io_dispatch_missing (pa, 1)) {
+        set_trap (TRAP_NXM);
+        return;
+        }
     chan_write_io (guest_io_pa (pa), data, 1);
     return;
     }
@@ -595,6 +628,10 @@ if ((opcode >= 01 && opcode <= 06) || (opcode >= 011 && opcode <= 015)) {
     case 01:                                            /* MOV */
         res = src;
         set_operand (dstspec, byte, res, ea);
+        /* MOVB into a register sign-extends (pdp11_cpu.c:2320); the other
+           byte destinations and one-address byte ops keep the high byte. */
+        if (byte && ((dstspec & 070) == 0))
+            R[dstspec & 7] = (res & 0200)? (0177400 | res): res;
         put_result_flags (res, byte);
         V = 0;
         break;

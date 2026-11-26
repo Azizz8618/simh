@@ -61,6 +61,9 @@ def enc(s):
 start = w(8) + sum(w(o+8) for o in range(10, entry, 14))
 text = open(textfile, 'rb').read().replace(b'\r\n', b'\n')
 assert len(text) <= 512 * w(entry+8)
+# RT-11 reads the whole segment; clear the rest of the block so DECUS CC does
+# not see the old INIT.MAC assembly text after the C source.
+text = text.ljust(512 * w(entry+8), b'\0')
 putw(entry, 0o2000)
 putw(entry+2, enc('HEL'))
 putw(entry+4, enc('LO'))
@@ -88,15 +91,17 @@ fi
 echo 'PASS[rk1]: DECUS C copy attached as RK1'
 
 LOG=$WORK/rt11_c_run.log
-(sleep 6; printf 'ASSIGN RK1: C:\n'; sleep 2; \
- printf 'RUN C:CC C:HELLO.C\n'; sleep 4; \
- printf 'RUN C:AS HELLO.S/D\n'; sleep 3; \
- printf 'LINK/BOT:2000 HELLO.OBJ,C:SUPORT,C:CLIB\n'; sleep 3; \
- printf 'DIR HELLO.*\n'; sleep 2; \
- printf 'RUN HELLO\n'; sleep 4; \
- printf '\005quit\n'; sleep 2) | timeout 90 "$sim" "$WORK/rt11_c_e10025.ini" > "$LOG" 2>&1 || true
+# SIMH ignores keyboard input from a pipe (sim_poll_kbd only polls a tty), so
+# run under script(1) to give the guest a real console pty for the C chain.
+(sleep 12; printf 'ASSIGN RK1: C:\n'; sleep 4; \
+ printf 'RUN C:CC C:HELLO.C\n'; sleep 10; \
+ printf 'RUN C:AS HELLO.S/D\n'; sleep 10; \
+ printf 'LINK/BOT:2000 HELLO.OBJ,C:SUPORT,C:CLIB\n'; sleep 10; \
+ printf 'DIR HELLO.*\n'; sleep 4; \
+ printf 'RUN HELLO\n'; sleep 8; \
+ printf '\005quit\n'; sleep 2) | timeout 180 script -q -c "$sim $WORK/rt11_c_e10025.ini" /dev/null > "$LOG" 2>&1 || true
 
-if printf '%s\n' "$LOG" | grep -q 'Hello, RT-11!'; then
+if grep -q 'Hello, RT-11!' "$LOG"; then
   echo "PASS: DECUS C chain printed Hello, RT-11! ($LOG)"
 else
   echo "[GAP] DECUS C chain needs a booted RT-11 V4 in E10025: see $LOG" >&2

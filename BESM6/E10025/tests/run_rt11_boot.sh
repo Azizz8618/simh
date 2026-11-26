@@ -45,14 +45,16 @@ fi
 echo 'PASS[rk]: RK0 attached, CSR 01777400, vector 0220'
 
 LOG=$WORK/rt11_v4_boot.log
-(sleep 6; printf 'DIR\n'; sleep 6; printf '\005quit\n'; sleep 2) | \
-  timeout 60 "$sim" "$WORK/rt11_v4_e10025.ini" > "$LOG" 2>&1 || true
+# SIMH ignores keyboard input from a pipe (sim_poll_kbd only polls a tty), so
+# run under script(1) to give the guest a real console pty for the DIR command.
+(sleep 12; printf 'DIR\n'; sleep 8; printf '\005quit\n'; sleep 2) | \
+  timeout 60 script -q -c "$sim $WORK/rt11_v4_e10025.ini" /dev/null > "$LOG" 2>&1 || true
 
 ok=1
-printf '%s\n' "$LOG" | grep -q 'RT-11SJ  *V04\.00C' || { echo "FAIL[console]: no RT-11SJ V04.00C in $LOG" >&2; ok=0; }
-printf '%s\n' "$LOG" | grep -q 'Welcome to RT-11 Version 4' || { echo "FAIL[console]: no welcome string in $LOG" >&2; ok=0; }
-printf '%s\n' "$LOG" | grep -q '^\.' || { echo "FAIL[console]: no dot prompt in $LOG" >&2; ok=0; }
-printf '%s\n' "$LOG" | grep -qE '[A-Z0-9] +\.[A-Z]+ +[0-9]+' || { echo "FAIL[dir]: no directory listing in $LOG" >&2; ok=0; }
+grep -q 'RT-11SJ  *V04\.00C' "$LOG" || { echo "FAIL[console]: no RT-11SJ V04.00C in $LOG" >&2; ok=0; }
+grep -q 'Welcome to RT-11 Version 4' "$LOG" || { echo "FAIL[console]: no welcome string in $LOG" >&2; ok=0; }
+grep -q '^\.' "$LOG" || { echo "FAIL[console]: no dot prompt in $LOG" >&2; ok=0; }
+grep -qE '[A-Z0-9] +\.[A-Z]+ +[0-9]+' "$LOG" || { echo "FAIL[dir]: no directory listing in $LOG" >&2; ok=0; }
 
 if [ "$ok" -eq 0 ]; then
   echo "[GAP] Guest RT-11 V4 boot in E10025: see $LOG" >&2
