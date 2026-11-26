@@ -646,6 +646,18 @@ if (opcode == 016) {                                    /* SUB: dst - src */
     return SCPE_OK;
     }
 
+/* EMT and TRAP also have opcode 010 and must be decoded before the branch
+   group: their IR<7:6> is below 050, so a branch dispatch would raise
+   TRAP_ILL. The RT-11 monitor uses EMT 355 at 002556 for its console path. */
+if ((IR & 0177400) == 0104000) {
+    set_trap (TRAP_EMT);
+    return SCPE_OK;
+    }
+if ((IR & 0177400) == 0104400) {
+    set_trap (TRAP_TRAP);
+    return SCPE_OK;
+    }
+
 /* Opcode 010 is shared by two groups in the PDP-11 ISA and in book 3:
    IR<7:6> below 050 selects BPL/BMI/BHI/..., 050..067 selects the byte
    one-address instructions (CLRB ... TSTB, ASLB). The reference PDP-11
@@ -847,17 +859,9 @@ if ((opcode == 0) || ((opcode == 010) && (((IR >> 6) & 077) >= 050))) {
     return SCPE_OK;
     }
 
-/* EMT and TRAP encode an 8-bit argument in the low byte. */
-if ((IR & 0177400) == 0104000) {
-    set_trap (TRAP_EMT);
-    return SCPE_OK;
-    }
-if ((IR & 0177400) == 0104400) {
-    set_trap (TRAP_TRAP);
-    return SCPE_OK;
-    }
-
-/* Extended instruction set: MUL, DIV, ASH, ASHC, XOR. */
+/* Extended instruction set: MUL, DIV, ASH, ASHC, XOR.
+   PDP-11 register pairs use reg|1: for an odd register the high half
+   aliases the same register, so the next register must stay untouched. */
 if (opcode == 07) {
     int32 func = (IR >> 9) & 7;
     int32 reg = (IR >> 6) & 7;
@@ -874,7 +878,7 @@ if (opcode == 07) {
             b |= ~0177777;
         prod = a * b;
         R[reg] = (prod >> 16) & 0177777;
-        R[(reg + 1) & 7] = prod & 0177777;
+        R[reg | 1] = prod & 0177777;
         N = (prod < 0);
         Z = (prod == 0);
         V = 0;
@@ -883,7 +887,7 @@ if (opcode == 07) {
         break;
     case 1:                                             /* DIV */
         {
-        long long dividend = ((long long) R[reg] << 16) | R[(reg + 1) & 7];
+        long long dividend = ((long long) R[reg] << 16) | R[reg | 1];
         long long divisor = src;
         long long quot;
         if (divisor & 0100000)
@@ -898,7 +902,7 @@ if (opcode == 07) {
             break;
             }
         R[reg] = (quot >> 16) & 0177777;
-        R[(reg + 1) & 7] = quot & 0177777;
+        R[reg | 1] = quot & 0177777;
         N = (quot < 0);
         Z = (quot == 0);
         V = C = 0;
