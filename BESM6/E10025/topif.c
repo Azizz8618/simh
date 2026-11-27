@@ -2009,6 +2009,52 @@ int topif_role_service (int32 pc)
     return 1;
 }
 
+/* A fatal TRAP at a documented PC is a model status request, not a monitor
+ * error: the bridge resolves the (PC, vector) pair against its FACT table and
+ * publishes a line built from linked model registries and live TOP state.  An
+ * unknown pair, a bridge error or an absent model leaves the trap alone.  The
+ * print and exit path is the same resident guest shim already used by ROLE. */
+int topif_fault_service (int32 vec, int32 pc)
+{
+    top_state_t *s = &top_state;
+    unsigned char raw[256];
+    uint32 status = 1u;
+    uint32 length = 0u;
+    uint32 checksum = 0u;
+    uint32 flags = 0u;
+    size_t n;
+
+    if (!topif_bridge_service (TOP_SVC_FAULT, (uint32) pc & 0177777u,
+                               (uint32) vec & 0177777u,
+                               (uint32) s->state,
+                               &status, &length, &checksum, &flags))
+        return 0;
+    if (status != 0u || (flags & TOP_ROLE_FLAG_ERR) != 0u ||
+        (flags & TOP_ROLE_FLAG_LINE) == 0u)
+        return 0;
+    if (!topif_bridge_line (raw, sizeof (raw), &length))
+        return 0;
+    n = length < sizeof (s->chunk) - 1u? (size_t) length:
+        sizeof (s->chunk) - 2u;
+    memcpy (s->chunk, raw, n);
+    s->chunk[n] = '\0';
+    s->chunk_off = 0;
+    s->chunk_len = (uint16) n;
+    topif_record (s, (int32) ((uint32) pc & 0177777u), (int32) vec,
+                  TOP_DIR_READ, TOP_SRC_BP, (uint16) length,
+                  TOP_RESP_BRIDGE);
+    topif_emit_chunk (s);
+    WriteW ((int32) (TOP_SHIM_CODE + 4), 005000);  /* CLR R0 */
+    WriteW ((int32) (TOP_SHIM_CODE + 6), 0104350); /* EMT 350: guest exit */
+    topif_install_shim (s, (TOP_SHIM_CODE + 4) & 0177777);
+    sim_debug (TOP_DEB_STATE, &top_dev,
+               "TOP FAULT pc=%06o vec=%06o status=%u len=%u sum=%06o "
+               "state=%s\n", (unsigned) pc, (unsigned) vec,
+               (unsigned) status, (unsigned) length, (unsigned) checksum,
+               topif_state_name (s->state));
+    return 1;
+}
+
 int topif_trap_service (int32 code)
 {
     top_state_t *s = &top_state;

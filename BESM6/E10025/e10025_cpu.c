@@ -214,7 +214,15 @@ static int32 io_dispatch_missing (int32 pa, int32 write)
 {
 uint32 pa22 = guest_io_pa (pa);
 int32 idx = (int32) ((pa22 & IOPAGEMASK) >> 1);
-return write? (iodispW[idx] == NULL): (iodispR[idx] == NULL);
+int32 missing = write? (iodispW[idx] == NULL): (iodispR[idx] == NULL);
+
+/* Read-only trace of the unanswered I/O cycle.  The value is a FACT from
+ * the guest access; no device is registered and the trap is unchanged. */
+if (missing)
+    sim_debug (E10025_DBG_EMT, &cpu_dev,
+               "NXM %s pa=%06o pc=%06o\n", write? "W": "R", pa,
+               PC & 0177777);
+return missing;
 }
 
 int32 ReadW (int32 pa)
@@ -403,6 +411,13 @@ static void set_trap (int32 t)
 trap_req |= t;
 }
 
+/* Read-only trace of an unimplemented opcode.  The trap is unchanged. */
+static void ill_trace (int32 ir)
+{
+sim_debug (E10025_DBG_EMT, &cpu_dev,
+           "ILL OP pc=%06o IR=%06o\n", (PC - 2) & 0177777, ir);
+}
+
 static void push (int32 val)
 {
 SP = (SP - 2) & 0177777;
@@ -430,7 +445,17 @@ if (trap_req & TRAP_ALL) {
             break;
             }
         }
-    }
+    /* A fatal TRAP at a documented TOP PC carries a model status request.
+       topif_fault_service resolves the exact (PC, vector) pair against the
+       shm bridge; an unknown pair keeps the normal monitor disposition. */
+    if ((vec == VEC_RED || vec == VEC_ILL) &&
+        topif_fault_service (vec, PC & 0177777)) {
+        /* The shim must not be hijacked by a pending trace trap. */
+        T = 0;
+        trap_req &= ~TRAP_TRC;
+        return;
+        }
+}
 else if (trap_req & TRAP_INT) {
     vec = get_vector (ipl);                             /* get_vector already calls ack */
     trap_req = calc_ints (ipl, 0);
@@ -592,6 +617,7 @@ case 0205: cond = V; break;                             /* BVS */
 case 0206: cond = !C; break;                            /* BHIS */
 case 0207: cond = C; break;                             /* BLO */
 default:
+    ill_trace (IR);
     set_trap (TRAP_ILL);
     break;
     }
@@ -778,6 +804,7 @@ if ((opcode == 0) || ((opcode == 010) && (((IR >> 6) & 077) >= 050))) {
         break;
     case 001:                                           /* JMP */
         if ((dstspec & 070) == 0) {
+            ill_trace (IR);
             set_trap (TRAP_ILL);
             break;
             }
@@ -925,6 +952,7 @@ if ((opcode == 0) || ((opcode == 010) && (((IR >> 6) & 077) >= 050))) {
             V = 0;
             break;
         default:
+            ill_trace (IR);
             set_trap (TRAP_ILL);
             return SCPE_OK;
             }
@@ -1001,6 +1029,7 @@ if (opcode == 07) {
         R[reg] = res;
         break;
     case 3:                                             /* ASHC */
+        ill_trace (IR);
         set_trap (TRAP_ILL);
         break;
     case 4:                                             /* XOR */
@@ -1022,6 +1051,7 @@ if (opcode == 07) {
     return SCPE_OK;
     }
 
+ill_trace (IR);
 set_trap (TRAP_ILL);
 return SCPE_OK;
 }
