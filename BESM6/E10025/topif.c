@@ -111,6 +111,52 @@ static sem_t *topif_shm_sem (uint32 offset)
     return (sem_t *) (void *) (top_shm + TOP_SHM_CTRL + offset);
 }
 
+static uint32_t topif_cap_checksum (void)
+{
+    static const uint32_t values[] = {
+        TOP_SHM_SIZE, TOP_SHM_CMD, TOP_SHM_RING, TOP_SHM_SLOT,
+        TOP_SHM_RSP, TOP_SHM_RING, TOP_SHM_SLOT,
+        TOP_SHM_JRN, 128u, TOP_SHM_V2_JOURNAL_STRIDE,
+        TOP_SHM_DATA, TOP_SHM_DATA_SIZE,
+        TOP_SHM_SIG_MATRIX, TOP_SHM_SIG_MATRIX_SIZE,
+        TOP_SHM_SIG_JOURNAL, TOP_SHM_SIG_JOURNAL_SIZE,
+        TOP_SHM_CAP, TOP_SHM_CAP_SIZE, TOP_SHM_SIG_TOTAL
+        };
+    uint32_t h = 2166136261u;
+    size_t i;
+    unsigned b;
+
+    for (i = 0; i < sizeof (values) / sizeof (values[0]); i++) {
+        for (b = 0; b < 4u; b++) {
+            h ^= (values[i] >> (8u * b)) & 0xFFu;
+            h *= 16777619u;
+            }
+        }
+    return h;
+}
+
+/* The capability block is a static declaration by the TOR model.  A version-1
+ * peer does not read it; the device only records it for diagnostics. */
+int topif_bridge_capability (top_shm_cap_t *cap)
+{
+    const top_shm_cap_t *published;
+
+    if (cap == NULL || top_shm == NULL)
+        return 0;
+    published = (const top_shm_cap_t *) (const void *)
+                (top_shm + TOP_SHM_CAP);
+    if (published->magic != TOP_SHM_CAP_MAGIC ||
+        published->version != TOP_SHM_CAP_VERSION ||
+        (published->features & TOP_SHM_CAP_ADD_ONLY) == 0u ||
+        published->journal_stride != TOP_SHM_V2_JOURNAL_STRIDE ||
+        published->journal_slots != TOP_SHM_V2_JOURNAL_SLOTS ||
+        published->signal_total != TOP_SHM_SIG_TOTAL ||
+        published->layout_checksum != topif_cap_checksum ())
+        return 0;
+    *cap = *published;
+    return 1;
+}
+
 /* Command slot: kind, tag, a, b, c, client_seq, reserved, reserved. */
 static void topif_shm_put (unsigned char *slot, uint32 kind, uint32 tag,
                            uint32 a, uint32 b, uint32 c, uint32 seq)
@@ -266,6 +312,17 @@ int topif_bridge_online (void)
         return 0;
         }
     {
+    top_shm_cap_t cap;
+
+    if (topif_bridge_capability (&cap))
+        sim_debug (TOP_DEB_STATE, &top_dev,
+                   "TOP BRIDGE CAP v2 add-only stride=%u slots=%u "
+                   "signals=%u checksum=%06o\n",
+                   (unsigned) cap.journal_stride, (unsigned) cap.journal_slots,
+                   (unsigned) cap.signal_total,
+                   (unsigned) cap.layout_checksum);
+    }
+    {
     int attempt;
 
     for (attempt = 0; attempt < 4; attempt++) {
@@ -411,21 +468,14 @@ int topif_bridge_next (uint32 page, uint32 index, uint32 *status,
 
 int topif_bridge_data (uint32 offset, unsigned char *dst, uint32 length)
 {
-    volatile uint32_t *jrn;
-
     if (!topif_bridge_online () || dst == NULL)
         return 0;
     if (offset + length > TOP_SHM_DATA_SIZE)
         return 0;
     memcpy (dst, top_shm + TOP_SHM_DATA + offset, length);
-    jrn = topif_shm_ctrl (TOP_SH_JRN_HEAD);
-    {
-    volatile uint32_t *w = (volatile uint32_t *) (void *)
-                           topif_shm_slot (TOP_SHM_JRN,
-                                           __sync_fetch_and_add (jrn, 1u));
-    w[4] = 7;
-    w[5] = top_state.bridge_status;
-    }
+    /* The v1 journal ring belongs to the TOR model.  The device writes no
+     * stride-32 words there; the v2 capability block declares the TOR
+     * stride and keeps signal records in the separate tail region. */
     return 1;
 }
 

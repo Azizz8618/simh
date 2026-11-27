@@ -135,6 +135,36 @@ enum top_off {
 #define TOP_REG_SLOTS    0200u
 #define TOP_JOURNAL_DEPTH 16u
 
+/* Add-only shared-memory ABI v2.  Region offsets, slot sizes, command kinds
+ * and flags from v1 stay frozen.  The capability block sits in the reserved
+ * tail and only declares the strides that the TOR model already publishes. */
+#define TOP_SHM_SIG_MATRIX  33280u
+#define TOP_SHM_SIG_MATRIX_SIZE 8192u
+#define TOP_SHM_SIG_JOURNAL 41728u
+#define TOP_SHM_SIG_JOURNAL_SIZE 8192u
+#define TOP_SHM_CAP         49920u
+#define TOP_SHM_CAP_SIZE    256u
+#define TOP_SHM_CAP_MAGIC   0x43415032u
+#define TOP_SHM_CAP_VERSION 2u
+#define TOP_SHM_CAP_ADD_ONLY 0x01u
+#define TOP_SHM_CAP_JOURNAL_SPLIT 0x02u
+#define TOP_SHM_V2_JOURNAL_STRIDE 152u
+#define TOP_SHM_V2_JOURNAL_SLOTS 128u
+#define TOP_SHM_SIG_TOTAL   91u
+
+typedef struct {
+    uint32 magic;
+    uint32 version;
+    uint32 features;
+    uint32 journal_stride;
+    uint32 journal_slots;
+    uint32 signal_total;
+    uint32 signal_matrix_off;
+    uint32 signal_journal_off;
+    uint32 layout_checksum;
+    uint32 reserved[55];
+    } top_shm_cap_t;
+
 /* The printed SR-BUS line list accounts for 56 logical conductors in the
  * A01-A16 ranges.  Each has an entry below.  Additional entries carry the
  * related interface, request and arbitration names from the other tables;
@@ -349,6 +379,7 @@ int topif_fault_service (int32 vec, int32 pc);
 int topif_pending_print (void);
 void topif_clear_print (void);
 int topif_bridge_online (void);
+int topif_bridge_capability (top_shm_cap_t *cap);
 uint32 topif_bridge_calls (void);
 uint32 topif_bridge_errors (void);
 int topif_bridge_read (uint32 addr, uint16 *data);
