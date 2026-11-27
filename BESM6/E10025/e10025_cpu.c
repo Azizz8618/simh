@@ -746,7 +746,7 @@ if ((opcode == 0) || ((opcode == 010) && (((IR >> 6) & 077) >= 050))) {
                The bridge answers from proven models; otherwise the HALT keeps
                its normal simulator-stop disposition. */
             if (topif_role_service ((PC - 2) & 0177777)) {
-                /* ZBAKRU halts with the PSW trace bit set.  The resident
+                /* One role halts with the PSW trace bit set.  The resident
                  * print stub must not be hijacked by a pending TRC trap. */
                 T = 0;
                 trap_req &= ~TRAP_TRC;
