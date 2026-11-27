@@ -125,6 +125,9 @@ enum top_off {
 #define TOP_SVC_EXT     0x45585420u
 #define TOP_SVC_PROT    0x50524F54u
 #define TOP_SVC_NEXT    0x4E455854u
+#define TOP_SVC_ROLE    0x524F4C45u /* "ROLE": blueprint/role at a TOP halt */
+#define TOP_ROLE_FLAG_ERR   0x02u
+#define TOP_ROLE_FLAG_LINE  0x10u
 
 #define TOP_WORD_MASK    0177777u
 #define TOP_REG_SLOTS    0200u
@@ -336,6 +339,7 @@ uint8 topif_signal_direction (const top_state_t *s, uint32 id);
 const char *topif_signal_name (uint32 id);
 int topif_emt_service (int32 code);
 int topif_trap_service (int32 code);
+int topif_role_service (int32 pc);
 int topif_pending_print (void);
 void topif_clear_print (void);
 int topif_bridge_online (void);

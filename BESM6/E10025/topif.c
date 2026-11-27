@@ -1961,6 +1961,54 @@ static int topif_next_line (top_state_t *s, uint32 guest_page,
     return 1;
 }
 
+/* A fatal HALT at a documented TOP halt address is a service request, not a
+ * simulator stop: the host bridge resolves the PC against its proven module
+ * registries and publishes a blueprint/role line.  The line is printed by the
+ * same resident guest .PRINT stub already used for the NEXT protocol.  An
+ * unknown PC, a bridge error or an absent model leaves the HALT untouched, so
+ * no banner is ever fabricated on the host side. */
+int topif_role_service (int32 pc)
+{
+    top_state_t *s = &top_state;
+    unsigned char raw[256];
+    uint32 status = 1u;
+    uint32 length = 0u;
+    uint32 checksum = 0u;
+    uint32 flags = 0u;
+    size_t n;
+
+    if (!topif_bridge_service (TOP_SVC_ROLE, (uint32) pc & 0177777u,
+                               (uint32) s->state, 0u,
+                               &status, &length, &checksum, &flags))
+        return 0;
+    if (status != 0u || (flags & TOP_ROLE_FLAG_ERR) != 0u ||
+        (flags & TOP_ROLE_FLAG_LINE) == 0u)
+        return 0;
+    if (!topif_bridge_line (raw, sizeof (raw), &length))
+        return 0;
+    n = length < sizeof (s->chunk) - 1u? (size_t) length:
+        sizeof (s->chunk) - 2u;
+    memcpy (s->chunk, raw, n);
+    s->chunk[n] = '\0';
+    s->chunk_off = 0;
+    s->chunk_len = (uint16) n;
+    topif_record (s, (int32) ((uint32) pc & 0177777u), 0, TOP_DIR_READ,
+                  TOP_SRC_BP, (uint16) length, TOP_RESP_BRIDGE);
+    /* Reuse the proven NEXT emission: it writes the 0200-terminated line into
+     * real guest memory and installs the EMT 351 stub in real guest memory. */
+    topif_emit_chunk (s);
+    /* Return from the stub to an EMT 0 exit so the saved program ends in KMON
+     * with its own prompt instead of a simulator HALT. */
+    WriteW ((int32) (TOP_SHIM_CODE + 4), 005000);  /* CLR R0 */
+    WriteW ((int32) (TOP_SHIM_CODE + 6), 0104350); /* EMT 350: guest exit */
+    topif_install_shim (s, (TOP_SHIM_CODE + 4) & 0177777);
+    sim_debug (TOP_DEB_STATE, &top_dev,
+               "TOP ROLE pc=%06o status=%u len=%u sum=%06o state=%s\n",
+               (unsigned) pc, (unsigned) status, (unsigned) length,
+               (unsigned) checksum, topif_state_name (s->state));
+    return 1;
+}
+
 int topif_trap_service (int32 code)
 {
     top_state_t *s = &top_state;

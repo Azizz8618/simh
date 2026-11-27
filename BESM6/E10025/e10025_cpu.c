@@ -742,6 +742,16 @@ if ((opcode == 0) || ((opcode == 010) && (((IR >> 6) & 077) >= 050))) {
     case 000:                                           /* HALT, WAIT, RTI, ... */
         switch (IR & 07) {
         case 0:                                         /* HALT */
+            /* A TOP halt address carries a role/blueprint service request.
+               The bridge answers from proven models; otherwise the HALT keeps
+               its normal simulator-stop disposition. */
+            if (topif_role_service ((PC - 2) & 0177777)) {
+                /* ZBAKRU halts with the PSW trace bit set.  The resident
+                 * print stub must not be hijacked by a pending TRC trap. */
+                T = 0;
+                trap_req &= ~TRAP_TRC;
+                return SCPE_OK;
+                }
             return SCPE_STOP;
         case 1:                                         /* WAIT */
             wait_state = 1;
