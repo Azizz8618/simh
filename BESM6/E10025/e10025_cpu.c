@@ -1029,8 +1029,43 @@ if (opcode == 07) {
         R[reg] = res;
         break;
     case 3:                                             /* ASHC */
-        ill_trace (IR);
-        set_trap (TRAP_ILL);
+        /* EIS pair shift follows the already proven simh PDP-11 semantics;
+           R[reg] is the high word and R[reg|1] the low word. */
+        {
+        int32 cnt = src & 077;
+        int32 sign = (R[reg] & 0100000) ? 1 : 0;
+        uint32 pair = (((uint32) R[reg]) << 16) |
+                      ((uint32) R[reg | 1] & 0177777);
+        uint32 shifted = pair;
+        int32 lost = 0;
+        if (cnt != 0) {
+            if (cnt <= 31) {
+                shifted = pair << cnt;
+                lost = (int32) ((pair >> (32 - cnt)) |
+                                (((uint32) -sign) << cnt));
+                V = lost != ((shifted & 020000000000u) ? -1 : 0);
+                C = lost & 1;
+                }
+            else if (cnt == 32) {
+                shifted = (uint32) -sign;
+                V = 0;
+                C = sign;
+                }
+            else {
+                shifted = ((uint32) ((int32) pair >> (64 - cnt))) |
+                          (((uint32) -sign) << (cnt - 32));
+                V = 0;
+                C = (int32) ((pair >> (63 - cnt)) & 1);
+                }
+            }
+        else {
+            V = C = 0;
+            }
+        R[reg] = (int32) ((shifted >> 16) & 0177777);
+        R[reg | 1] = (int32) (shifted & 0177777);
+        N = (R[reg] & 0100000) ? 1 : 0;
+        Z = ((R[reg] | R[reg | 1]) == 0);
+        }
         break;
     case 4:                                             /* XOR */
         dst = get_operand (dstspec, 0, &ea);
