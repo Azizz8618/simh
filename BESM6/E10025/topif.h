@@ -137,9 +137,10 @@ enum top_off {
 /* The printed SR-BUS line list accounts for 56 logical conductors in the
  * A01-A16 ranges.  Each has an entry below.  Additional entries carry the
  * related interface, request and arbitration names from the other tables;
- * they use the same handler and journal path. */
+ * they use the same handler and journal path.  The last entry is the
+ * IRQ_LEVEL property: 56 printed + 34 related + 1 property = 91 entries. */
 #define TOP_SIG_A_COUNT  56u
-#define TOP_SIG_COUNT    90u
+#define TOP_SIG_COUNT    91u
 
 typedef enum {
     TOP_SIG_UA0 = 0,  TOP_SIG_UA1,  TOP_SIG_UA2,  TOP_SIG_UA3,

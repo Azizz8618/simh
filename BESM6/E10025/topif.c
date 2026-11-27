@@ -434,7 +434,9 @@ static const top_reg_desc_t top_regs[] = {
 
 /* Status codes: 1 FACT, 2 OCR-NOISE, 3 UNKNOWN.  Activity: 1 low, 2 high,
  * 3 UNKNOWN.  Direction: 1 toward the device, 2 toward the system, 3 both,
- * 4 UNKNOWN.  Every line has a handler and is included in the journal. */
+ * 4 UNKNOWN.  Every line has a handler and is included in the journal.
+ * Keep the last property entry: removing it to fit an older counter would
+ * hide an unresolved request-level choice. */
 static const top_signal_t top_signals[TOP_SIG_COUNT] = {
     { "UA00", TOP_SG_ADDRESS, TOP_SH_ADDR_BIT, 1, 1, 4 },
     { "UA01", TOP_SG_ADDRESS, TOP_SH_ADDR_BIT, 1, 1, 4 },
