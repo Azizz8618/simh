@@ -18,6 +18,8 @@
 #define SRI_BP_IO_HI     0166136u
 #define SRI_IB_IO_LO     0164000u
 #define SRI_IB_IO_HI     0164436u
+/* PKCSR has two printable forms, 166100 here and 167012 in the TOP window.
+ * Both are caches of one TOR-owned response with one readback and one seq. */
 #define SRI_PKCSR_ADDR   0166100u
 #define SRI_IKCSR_ADDR   0164400u
 #define SRI_PKCSR_OFF    0100u

@@ -330,6 +330,39 @@ int topif_bridge_service (uint32 kind, uint32 a, uint32 b, uint32 c,
                              r0, r1, r2, flags);
 }
 
+/* Both device windows use this one accessor.  The TOR model owns the CSR
+ * state and its journal seq; each window only caches the returned readback. */
+int topif_csr_access (uint32 form, uint16 value, int write,
+                      uint16 *readback, uint32 *seq)
+{
+    top_state_t *s = &top_state;
+    uint32 r0 = 0;
+    uint32 r1 = 0;
+    uint32 r2 = 0;
+    uint32 flags = 0;
+
+    if (!topif_bridge_online ())
+        return 0;
+    if (!topif_bridge_service (TOP_SVC_CSR, form, (uint32) value,
+                               (uint32) (write != 0), &r0, &r1, &r2, &flags))
+        return 0;
+    /* TOR service FLAG_ERR is bit 1, as in the other service responses. */
+    if ((flags & 0x02u) != 0u)
+        return 0;
+    s->csr_readback = (uint16) r0;
+    s->csr_seq = r1;
+    if (readback != NULL)
+        *readback = s->csr_readback;
+    if (seq != NULL)
+        *seq = s->csr_seq;
+    sim_debug (TOP_DEB_STATE, &top_dev,
+               "TOP CSR form=%06o %s value=%06o readback=%06o seq=%u\n",
+               (unsigned) form, (write != 0)? "WR": "RD",
+               (unsigned) value, (unsigned) s->csr_readback,
+               (unsigned) s->csr_seq);
+    return 1;
+}
+
 int topif_bridge_irq (uint32 src, uint32 channel)
 {
     uint32 flags = 0;
@@ -1005,7 +1038,16 @@ t_stat topif_rd (int32 *data, int32 pa, int32 access)
         topif_record (s, pa, 0, TOP_DIR_READ, TOP_SRC_BP, 0, TOP_RESP_DIAG_ONLY);
         return SCPE_OK;
         }
-    if (off == TOP_OFF_JOURNAL)
+    if (off == TOP_OFF_PKCSR) {
+        uint16 authoritative = 0;
+        uint32 seq = 0;
+
+        if (topif_csr_access (TOP_PKCSR_ADDR, 0, 0, &authoritative, &seq))
+            value = authoritative;
+        else
+            value = s->reg[TOP_OFF_PKCSR / 2u];
+        }
+    else if (off == TOP_OFF_JOURNAL)
         value = (uint16) topif_journal_count (s);
     else if (off == TOP_OFF_SEQUENCE)
         value = (uint16) s->journal_seq;
@@ -1053,8 +1095,9 @@ t_stat topif_rd (int32 *data, int32 pa, int32 access)
         else
             resp = TOP_RESP_DIAG_ONLY;
         }
-    if (off != TOP_OFF_BRIDGE && off != TOP_OFF_BRIDGE_CALL &&
-        off != TOP_OFF_BRIDGE_ERR && topif_bridge_read (off, &value))
+    if (off != TOP_OFF_PKCSR && off != TOP_OFF_BRIDGE &&
+        off != TOP_OFF_BRIDGE_CALL && off != TOP_OFF_BRIDGE_ERR &&
+        topif_bridge_read (off, &value))
         resp = TOP_RESP_BRIDGE;
     topif_record (s, pa, 0, TOP_DIR_READ, TOP_SRC_BP, value, resp);
     *data = (int32) value;
@@ -1081,7 +1124,7 @@ t_stat topif_wr (int32 data, int32 pa, int32 access)
     if ((value & topif_unknown_mask (d)) != 0)
         resp = TOP_RESP_UNKNOWN_BITS;
     value &= (uint16) (d->named | d->observed);
-    if (topif_bridge_write (off, value))
+    if (off != TOP_OFF_PKCSR && topif_bridge_write (off, value))
         resp = TOP_RESP_BRIDGE;
     s->reg[off / 2u] = value;
 
@@ -1095,9 +1138,19 @@ t_stat topif_wr (int32 data, int32 pa, int32 access)
     case TOP_OFF_STATE:
         s->cell_state = (uint16) ((s->cell_state & ~0007u) | (value & 0007u));
         break;
+    case TOP_OFF_PKCSR: {
+        uint16 authoritative = value;
+        uint32 seq = 0;
+
+        if (topif_csr_access (TOP_PKCSR_ADDR, value, 1, &authoritative, &seq)) {
+            s->reg[TOP_OFF_PKCSR / 2u] = authoritative;
+            value = authoritative;
+            resp = TOP_RESP_BRIDGE;
+        }
+        break;
+    }
     case TOP_OFF_REQUEST:
     case TOP_OFF_BPIMA:
-    case TOP_OFF_PKCSR:
     case TOP_OFF_IKCSR:
     case TOP_OFF_BPSRA:
     case TOP_OFF_BPFR1:

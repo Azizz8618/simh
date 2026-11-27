@@ -127,6 +127,7 @@ enum top_off {
 #define TOP_SVC_NEXT    0x4E455854u
 #define TOP_SVC_ROLE    0x524F4C45u /* "ROLE": blueprint/role at a TOP halt */
 #define TOP_SVC_FAULT   0x4641554Cu /* "FAULT": documented fatal TRAP PC */
+#define TOP_SVC_CSR     0x43535220u /* "CSR ": one authoritative PKCSR owner */
 #define TOP_ROLE_FLAG_ERR   0x02u
 #define TOP_ROLE_FLAG_LINE  0x10u
 
@@ -301,6 +302,8 @@ typedef struct {
     uint16 bridge_status;
     uint32 bridge_errors;
     uint32 bridge_calls;
+    uint16 csr_readback;                        /* cache of one TOR response */
+    uint32 csr_seq;                             /* one authoritative seq */
     top_mode_t state;
     top_journal_entry_t journal[TOP_JOURNAL_DEPTH];
     uint32 journal_seq;
@@ -352,6 +355,8 @@ int topif_bridge_read (uint32 addr, uint16 *data);
 int topif_bridge_write (uint32 addr, uint16 data);
 int topif_bridge_service (uint32 kind, uint32 a, uint32 b, uint32 c,
                           uint32 *r0, uint32 *r1, uint32 *r2, uint32 *flags);
+int topif_csr_access (uint32 form, uint16 value, int write,
+                      uint16 *readback, uint32 *seq);
 int topif_bridge_irq (uint32 src, uint32 channel);
 int topif_bridge_data (uint32 offset, unsigned char *dst, uint32 length);
 int topif_bridge_line (unsigned char *dst, uint32 cap, uint32 *length);

@@ -9,6 +9,7 @@
  */
 
 #include "sri.h"
+#include "topif.h"
 #include "e10025_io_lib.h"
 #include <string.h>
 
@@ -249,7 +250,16 @@ t_stat sri_rd (int32 *data, int32 pa, int32 access)
         sri_record (s, pa, SRI_DIR_READ, src, 0, SRI_RESP_DIAG_ONLY);
         return SCPE_OK;
         }
-    if (src == SRI_SRC_BP && off <= SRI_OFF_BTM15) {
+    if (src == SRI_SRC_BP && off == SRI_OFF_PKCSR) {
+        uint16 authoritative = 0;
+        uint32 seq = 0;
+
+        if (topif_csr_access (SRI_PKCSR_ADDR, 0, 0, &authoritative, &seq))
+            value = authoritative;
+        else
+            value = s->bp_reg[off / 2u];
+        }
+    else if (src == SRI_SRC_BP && off <= SRI_OFF_BTM15) {
         value = s->bp_reg[off / 2u];
         }
     else {
@@ -286,7 +296,22 @@ t_stat sri_wr (int32 data, int32 pa, int32 access)
         sri_record (s, pa, SRI_DIR_WRITE, src, value, SRI_RESP_DIAG_ONLY);
         return SCPE_OK;
         }
-    if (src == SRI_SRC_BP && off <= SRI_OFF_BTM15) {
+    if (src == SRI_SRC_BP && off == SRI_OFF_PKCSR) {
+        uint16 authoritative = value;
+        uint32 seq = 0;
+
+        if (topif_csr_access (SRI_PKCSR_ADDR, value, 1, &authoritative, &seq))
+            s->bp_reg[off / 2u] = authoritative;
+        else
+            s->bp_reg[off / 2u] = value;
+        /* The surrogate enable latch is driven by the written word, not by a
+         * CSR bit.  It stays separate from the one authoritative CSR owner. */
+        s->enabled[0][0] = (s->cfg.pkcsr_ie_a != 0 &&
+                            (value & s->cfg.pkcsr_ie_a) != 0);
+        s->enabled[0][1] = (s->cfg.pkcsr_ie_b != 0 &&
+                            (value & s->cfg.pkcsr_ie_b) != 0);
+        }
+    else if (src == SRI_SRC_BP && off <= SRI_OFF_BTM15) {
         s->bp_reg[off / 2u] = value;
         }
     else {
@@ -296,12 +321,6 @@ t_stat sri_wr (int32 data, int32 pa, int32 access)
                 s->bp_reg[off / 2u] = value;
             else
                 s->ib_reg[off / 2u] = value;
-            if (src == SRI_SRC_BP && off == SRI_OFF_PKCSR) {
-                s->enabled[0][0] = (s->cfg.pkcsr_ie_a != 0 &&
-                                    (value & s->cfg.pkcsr_ie_a) != 0);
-                s->enabled[0][1] = (s->cfg.pkcsr_ie_b != 0 &&
-                                    (value & s->cfg.pkcsr_ie_b) != 0);
-                }
             if (src == SRI_SRC_BP && off == SRI_OFF_STATUS_INJECT) {
                 /* Surrogate only: the written word replaces BPSRA and the
                  * printed TRA marker asserts each enabled BP channel.  This is
