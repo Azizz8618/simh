@@ -85,6 +85,8 @@ static const char top_shm_name[] = {
 #define TOP_OP_WRITE      4u
 #define TOP_OP_SERVICE    5u
 #define TOP_OP_IRQ        6u
+/* Add-only signal kind.  Kinds 1..6 stay frozen for a version-1 participant. */
+#define TOP_OP_SIGNAL     8u
 
 static unsigned char *top_shm = NULL;
 static int top_bridge_tried = 0;
@@ -432,6 +434,18 @@ int topif_bridge_irq (uint32 src, uint32 channel)
     return flags == 0;
 }
 
+/* A signal transition travels in the same 32-byte command record as every
+ * other operation.  The id and the written value occupy the two data words;
+ * the atomic control seq is echoed as the response and journal seq.  The TOR
+ * model labels the line SURROGATE because no printed line event exists here. */
+int topif_bridge_signal (uint32 id, uint16 value)
+{
+    if (!topif_bridge_online ())
+        return 0;
+    return topif_bridge_cmd (TOP_OP_SIGNAL, id, value, 0, 0,
+                             NULL, NULL, NULL, NULL);
+}
+
 int topif_bridge_line (unsigned char *dst, uint32 cap, uint32 *length)
 {
     volatile uint32_t *w;
@@ -693,8 +707,29 @@ static const char *topif_resp_name (top_resp_t resp)
     }
 }
 
-static void topif_record (top_state_t *s, int32 addr, int32 pc, top_dir_t dir,
-                          top_src_t src, uint16 data, top_resp_t resp)
+const char *topif_origin_name (top_origin_t origin)
+{
+    switch (origin) {
+    case TOP_ORIGIN_LINE_FACT:   return "LINE_FACT";
+    case TOP_ORIGIN_MODEL_STATE: return "MODEL_STATE";
+    case TOP_ORIGIN_SURROGATE:   return "SURROGATE";
+    default:                     return "UNKNOWN";
+    }
+}
+
+/* A record with no printed source is either a model transition or an unknown
+ * access.  Only the signal record below is a surrogate, and nothing in this
+ * device has a printed line source, so LINE_FACT is never selected here. */
+static top_origin_t topif_origin_for (top_resp_t resp)
+{
+    if (resp == TOP_RESP_DIAG_ONLY || resp == TOP_RESP_UNKNOWN_BITS)
+        return TOP_ORIGIN_UNKNOWN;
+    return TOP_ORIGIN_MODEL_STATE;
+}
+
+static void topif_record_origin (top_state_t *s, int32 addr, int32 pc,
+                                 top_dir_t dir, top_src_t src, uint16 data,
+                                 top_resp_t resp, top_origin_t origin)
 {
     top_journal_entry_t *e;
 
@@ -709,13 +744,22 @@ static void topif_record (top_state_t *s, int32 addr, int32 pc, top_dir_t dir,
     e->data = data;
     e->resp = resp;
     e->state = s->state;
+    e->origin = origin;
     s->journal_head = (s->journal_head + 1u) % TOP_JOURNAL_DEPTH;
     sim_debug (TOP_DEB_JOURNAL, &top_dev,
-               "TOP JRN %u %s %s %06o PC=%06o data=%06o %s state=%s\n",
+               "TOP JRN %u %s %s %06o PC=%06o data=%06o %s state=%s "
+               "origin=%s\n",
                (unsigned) e->seq, (dir == TOP_DIR_READ)? "RD": "WR",
                topif_src_name (src), (unsigned) addr, (unsigned) pc,
                (unsigned) data, topif_resp_name (resp),
-               topif_state_name (s->state));
+               topif_state_name (s->state), topif_origin_name (origin));
+}
+
+static void topif_record (top_state_t *s, int32 addr, int32 pc, top_dir_t dir,
+                          top_src_t src, uint16 data, top_resp_t resp)
+{
+    topif_record_origin (s, addr, pc, dir, src, data, resp,
+                         topif_origin_for (resp));
 }
 
 const char *topif_signal_name (uint32 id)
@@ -792,11 +836,12 @@ static void topif_sig_record (top_state_t *s, uint32 id, uint16 value,
     sig = &s->sig[id];
     sig->value = (uint8) (value & 0xFFu);
     sig->transitions++;
-    topif_record (s, (int32) (0100000u + id), 0, TOP_DIR_WRITE, TOP_SRC_BP,
-                  value, resp);
+    topif_record_origin (s, (int32) (0100000u + id), 0, TOP_DIR_WRITE,
+                         TOP_SRC_BP, value, resp, TOP_ORIGIN_SURROGATE);
     sig->last_seq = s->journal_seq;
     sim_debug (TOP_DEB_JOURNAL, &top_dev,
-               "TOP SIG %s id=%u value=%06o transitions=%u seq=%u\n",
+               "TOP SIG %s id=%u value=%06o transitions=%u seq=%u "
+               "origin=SURROGATE\n",
                sig->name, (unsigned) id, (unsigned) value,
                (unsigned) sig->transitions, (unsigned) sig->last_seq);
 }
@@ -1563,6 +1608,10 @@ void topif_drive_signal (top_state_t *s, uint32 id, uint16 value)
     default:
         break;
         }
+    /* Publish the transition to the TOR model before the local record.  The
+     * command seq is allocated by the shm control word, not by the device
+     * journal, so the two counters stay independent. */
+    (void) topif_bridge_signal (id, value);
     topif_sig_record (s, id, value, TOP_RESP_OK);
     topif_step (s);
     topif_update_int (s);

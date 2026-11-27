@@ -231,6 +231,17 @@ typedef enum {
     TOP_RESP_DIAG_ONLY = 3,
     TOP_RESP_BRIDGE = 4
     } top_resp_t;
+
+/* Journal origin labels.  A surrogate injection can be observed and journaled,
+ * but it is never a printed line event.  LINE_FACT is reserved for a printed
+ * source, which this model does not have, so no record claims it here. */
+typedef enum {
+    TOP_ORIGIN_LINE_FACT = 0,
+    TOP_ORIGIN_MODEL_STATE = 1,
+    TOP_ORIGIN_SURROGATE = 2,
+    TOP_ORIGIN_UNKNOWN = 3
+    } top_origin_t;
+
 typedef enum {
     TOP_STATE_RESET = 0,
     TOP_STATE_INIT = 1,
@@ -275,6 +286,7 @@ typedef struct {
     uint16 data;
     top_resp_t resp;
     top_mode_t state;
+    top_origin_t origin;
     } top_journal_entry_t;
 
 typedef struct {
@@ -361,6 +373,7 @@ const top_reg_desc_t *topif_find_reg (uint16 off, top_dir_t dir);
 uint16 topif_unknown_mask (const top_reg_desc_t *d);
 unsigned topif_journal_count (const top_state_t *s);
 const top_journal_entry_t *topif_journal_at (const top_state_t *s, unsigned i);
+const char *topif_origin_name (top_origin_t origin);
 const char *topif_state_name (top_mode_t state);
 void topif_drive_signal (top_state_t *s, uint32 id, uint16 value);
 uint16 topif_signal_value (const top_state_t *s, uint32 id);
@@ -389,6 +402,7 @@ int topif_bridge_service (uint32 kind, uint32 a, uint32 b, uint32 c,
 int topif_csr_access (uint32 form, uint16 value, int write,
                       uint16 *readback, uint32 *seq);
 int topif_bridge_irq (uint32 src, uint32 channel);
+int topif_bridge_signal (uint32 id, uint16 value);
 int topif_bridge_data (uint32 offset, unsigned char *dst, uint32 length);
 int topif_bridge_line (unsigned char *dst, uint32 cap, uint32 *length);
 int topif_bridge_next (uint32 page, uint32 index, uint32 *status,
