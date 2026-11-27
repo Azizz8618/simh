@@ -121,7 +121,10 @@ enum top_off {
 #define TOP_SHIM_CODE    0150000u
 #define TOP_SHIM_BUFFER  0150100u
 #define TOP_PROTOCOL_LINES 15u
-#define TOP_SVC_NEXT    7u
+#define TOP_SVC_DESC    0x44455343u
+#define TOP_SVC_EXT     0x45585420u
+#define TOP_SVC_PROT    0x50524F54u
+#define TOP_SVC_NEXT    0x4E455854u
 
 #define TOP_WORD_MASK    0177777u
 #define TOP_REG_SLOTS    0200u
@@ -283,6 +286,12 @@ typedef struct {
     uint16 external_calls;
     uint16 protocol_pages;
     uint16 protocol_line;
+    uint16 next_page;
+    uint16 next_index;
+    uint16 chunk_off;
+    uint16 chunk_len;
+    uint16 reg_heading_stage;
+    unsigned char chunk[256];
     uint16 pending_print;
     uint16 bridge_status;
     uint32 bridge_errors;
@@ -338,6 +347,7 @@ int topif_bridge_service (uint32 kind, uint32 a, uint32 b, uint32 c,
                           uint32 *r0, uint32 *r1, uint32 *r2, uint32 *flags);
 int topif_bridge_irq (uint32 src, uint32 channel);
 int topif_bridge_data (uint32 offset, unsigned char *dst, uint32 length);
+int topif_bridge_line (unsigned char *dst, uint32 cap, uint32 *length);
 int topif_bridge_next (uint32 page, uint32 index, uint32 *status,
                        uint32 *length, uint32 *checksum, uint32 *flags);
 uint16 topif_descriptor_service (top_state_t *s, uint16 selector, uint16 operand);
