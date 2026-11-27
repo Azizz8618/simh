@@ -135,6 +135,29 @@ unsigned sri_request_level_fact (void)
     return SRI_REQUEST_LEVEL_FACT;
 }
 
+/* BPSRA is the one TOR-owned status register, not a PVS-owned slot.  The bridge
+ * read reaches the ODS core status through live_bpsra(); while the bridge
+ * object is absent the TOP device's own authoritative slot carries the same
+ * FACT bits.  Both paths are caches only, as with PKCSR in this window. */
+static uint16 sri_bpsra_fact (sri_state_t *s)
+{
+    uint16 bpsra = 0;
+
+    if (s == NULL)
+        return 0;
+    if (topif_bridge_read (TOP_BPSRA_ADDR, &bpsra)) {
+        sim_debug (SRI_DEB_JOURNAL, &sri_dev,
+                   "SRI BPSRA FACT BRIDGE %06o\n", (unsigned) bpsra);
+        }
+    else {
+        bpsra = top_state.reg[TOP_OFF_BPSRA / 2u];
+        sim_debug (SRI_DEB_JOURNAL, &sri_dev,
+                   "SRI BPSRA FACT MODEL %06o\n", (unsigned) bpsra);
+        }
+    s->bp_reg[SRI_OFF_BPSRA / 2u] = bpsra;
+    return bpsra;
+}
+
 static const char *sri_resp_name (sri_resp_t resp)
 {
     if (resp == SRI_RESP_OK)
@@ -271,6 +294,9 @@ t_stat sri_rd (int32 *data, int32 pa, int32 access)
         else
             value = s->bp_reg[off / 2u];
         }
+    else if (src == SRI_SRC_BP && off == SRI_OFF_BPSRA) {
+        value = sri_bpsra_fact (s);
+        }
     else if (src == SRI_SRC_BP && off <= SRI_OFF_BTM15) {
         value = s->bp_reg[off / 2u];
         }
@@ -355,7 +381,9 @@ t_stat sri_wr (int32 data, int32 pa, int32 access)
                     sri_assert_request (s, inj_src, inj_ch);
                 }
             if (src == SRI_SRC_BP && off == SRI_OFF_BPCLR_W) {
-                s->bp_reg[SRI_OFF_BPSRA / 2u] = 0;
+                /* BPCLR drops the pending requests.  BPSRA keeps the TOR-owned
+                 * FACT bits, refreshed through the same one-owner path. */
+                (void) sri_bpsra_fact (s);
                 s->pending[0][0] = 0;
                 s->pending[0][1] = 0;
                 sim_debug (SRI_DEB_IRQ, &sri_dev,
