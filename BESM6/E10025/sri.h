@@ -32,6 +32,11 @@
 #define SRI_VEC_I_BP_A   0330u
 #define SRI_VEC_I_BP_B   0334u
 
+/* Documented request level from the PRIMARY page.  This is a printed FACT in
+ * the model response and journal, not a hardware IPL assignment or a pin. */
+#define SRI_REQUEST_LEVEL_FACT 7u
+unsigned sri_request_level_fact (void);
+
 /* Emulator-only surrogate codes for software-driven request injection.
  * These codes are NOT a hardware register or bit layout.  The printed PKCSR
  * enable positions disagree, so two low-order positions are used only to let

@@ -66,7 +66,10 @@ enum top_off {
     TOP_OFF_SIGTOTAL   = 0124,
     TOP_OFF_BRIDGE     = 0126,
     TOP_OFF_BRIDGE_CALL= 0130,
-    TOP_OFF_BRIDGE_ERR = 0132
+    TOP_OFF_BRIDGE_ERR = 0132,
+    /* Add-only metadata window: select a PRIMARY fact topic, read its value. */
+    TOP_OFF_FACT_SEL   = 0134,
+    TOP_OFF_FACT_VAL   = 0136
     };
 
 /* Documented status bits.  Bits not listed here are UNKNOWN and stay zero. */
@@ -128,6 +131,7 @@ enum top_off {
 #define TOP_SVC_ROLE    0x524F4C45u /* "ROLE": blueprint/role at a TOP halt */
 #define TOP_SVC_FAULT   0x4641554Cu /* "FAULT": documented fatal TRAP PC */
 #define TOP_SVC_CSR     0x43535220u /* "CSR ": one authoritative PKCSR owner */
+#define TOP_SVC_FACT    0x46414354u /* "FACT": PRIMARY-confirmed metadata */
 #define TOP_ROLE_FLAG_ERR   0x02u
 #define TOP_ROLE_FLAG_LINE  0x10u
 
@@ -328,6 +332,7 @@ typedef struct {
     uint16 power_saved_state;
     uint16 parity_error;
     uint16 irq_level;
+    uint16 fact_topic;                          /* selected metadata topic */
     uint32 descriptor_ptr;
     uint16 descriptor_active;
     uint16 descriptor_status;
@@ -401,6 +406,7 @@ int topif_bridge_service (uint32 kind, uint32 a, uint32 b, uint32 c,
                           uint32 *r0, uint32 *r1, uint32 *r2, uint32 *flags);
 int topif_csr_access (uint32 form, uint16 value, int write,
                       uint16 *readback, uint32 *seq);
+int topif_bridge_fact (uint32 topic, uint16 *value);
 int topif_bridge_irq (uint32 src, uint32 channel);
 int topif_bridge_signal (uint32 id, uint16 value);
 int topif_bridge_data (uint32 offset, unsigned char *dst, uint32 length);

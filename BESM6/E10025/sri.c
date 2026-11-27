@@ -130,6 +130,11 @@ static const char *sri_src_name (sri_src_t src)
     return (src == SRI_SRC_BP)? "BP": "IB";
 }
 
+unsigned sri_request_level_fact (void)
+{
+    return SRI_REQUEST_LEVEL_FACT;
+}
+
 static const char *sri_resp_name (sri_resp_t resp)
 {
     if (resp == SRI_RESP_OK)
@@ -205,6 +210,13 @@ void sri_defaults (sri_state_t *s, const sri_config_t *cfg)
     s->cfg.no_autoinc_bpodr = 1;
     if (cfg != NULL)
         s->cfg = *cfg;
+    /* Printed request level and priority order are FACTs.  No IPL line is
+     * assigned and no pin or wire is claimed by this model. */
+    sim_debug (SRI_DEB_JOURNAL, &sri_dev,
+               "SRI FACT REQUEST_LEVEL=%u VEC_A=%06o VEC_B=%06o "
+               "PRIO_A>B PRIO_BP>IB IPL=NONE PIN=NONE\n",
+               (unsigned) SRI_REQUEST_LEVEL_FACT,
+               (unsigned) s->cfg.bp_vec_a, (unsigned) s->cfg.bp_vec_b);
 }
 
 static void sri_update_int (sri_state_t *s)

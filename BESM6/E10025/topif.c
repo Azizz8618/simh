@@ -422,6 +422,23 @@ int topif_csr_access (uint32 form, uint16 value, int write,
     return 1;
 }
 
+/* A metadata topic returns one numeric PRIMARY-confirmed value.  The full
+ * printed record is written by the TOR model to its journal; this device only
+ * caches the value and never derives a level, pin or pulse from it. */
+int topif_bridge_fact (uint32 topic, uint16 *value)
+{
+    uint32 r0 = 0u;
+
+    if (!topif_bridge_online ())
+        return 0;
+    if (!topif_bridge_service (TOP_SVC_FACT, topic, 0u, 0u,
+                               &r0, NULL, NULL, NULL))
+        return 0;
+    if (value != NULL)
+        *value = (uint16) r0;
+    return 1;
+}
+
 int topif_bridge_irq (uint32 src, uint32 channel)
 {
     uint32 flags = 0;
@@ -526,7 +543,9 @@ static const top_reg_desc_t top_regs[] = {
     { "SIGSTATUS", TOP_OFF_SIGSTATUS, 0177777u, 0, 1, 0 },
     { "SIGACTIVITY",TOP_OFF_SIGACTIVITY,0177777u, 0, 1, 0 },
     { "SIGDIR",    TOP_OFF_SIGDIR,    0177777u, 0, 1, 0 },
-    { "SIGTOTAL",  TOP_OFF_SIGTOTAL,  0177777u, 0, 1, 0 }
+    { "SIGTOTAL",  TOP_OFF_SIGTOTAL,  0177777u, 0, 1, 0 },
+    { "FACTSEL",   TOP_OFF_FACT_SEL,  0177777u, 0, 1, 1 },
+    { "FACTVAL",   TOP_OFF_FACT_VAL,  0177777u, 0, 1, 0 }
     };
 
 /* Status codes: 1 FACT, 2 OCR-NOISE, 3 UNKNOWN.  Activity: 1 low, 2 high,
@@ -1177,6 +1196,12 @@ t_stat topif_rd (int32 *data, int32 pa, int32 access)
         value = topif_signal_direction (s, s->sig_selected);
     else if (off == TOP_OFF_SIGTOTAL)
         value = (uint16) TOP_SIG_COUNT;
+    else if (off == TOP_OFF_FACT_VAL) {
+        if (topif_bridge_fact (s->fact_topic, &value))
+            resp = TOP_RESP_BRIDGE;
+        }
+    else if (off == TOP_OFF_FACT_SEL)
+        value = s->fact_topic;
     else if (off == TOP_OFF_BRIDGE)
         value = (uint16) (topif_bridge_online ()? 1: 0);
     else if (off == TOP_OFF_BRIDGE_CALL)
@@ -1192,6 +1217,7 @@ t_stat topif_rd (int32 *data, int32 pa, int32 access)
         }
     if (off != TOP_OFF_PKCSR && off != TOP_OFF_BRIDGE &&
         off != TOP_OFF_BRIDGE_CALL && off != TOP_OFF_BRIDGE_ERR &&
+        off != TOP_OFF_FACT_SEL && off != TOP_OFF_FACT_VAL &&
         topif_bridge_read (off, &value))
         resp = TOP_RESP_BRIDGE;
     topif_record (s, pa, 0, TOP_DIR_READ, TOP_SRC_BP, value, resp);
@@ -1219,7 +1245,8 @@ t_stat topif_wr (int32 data, int32 pa, int32 access)
     if ((value & topif_unknown_mask (d)) != 0)
         resp = TOP_RESP_UNKNOWN_BITS;
     value &= (uint16) (d->named | d->observed);
-    if (off != TOP_OFF_PKCSR && topif_bridge_write (off, value))
+    if (off != TOP_OFF_PKCSR && off != TOP_OFF_FACT_SEL &&
+        off != TOP_OFF_FACT_VAL && topif_bridge_write (off, value))
         resp = TOP_RESP_BRIDGE;
     s->reg[off / 2u] = value;
 
@@ -1268,6 +1295,13 @@ t_stat topif_wr (int32 data, int32 pa, int32 access)
         break;
     case TOP_OFF_SIGVAL:
         topif_drive_signal (s, s->sig_selected, value);
+        break;
+    case TOP_OFF_FACT_SEL:
+        s->fact_topic = value;
+        break;
+    case TOP_OFF_FACT_VAL:
+        /* Read-only from the metadata service; a write only records the try. */
+        resp = TOP_RESP_READ_ONLY;
         break;
     default:
         break;
