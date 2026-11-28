@@ -6,10 +6,11 @@ Rules (inherited from the proven ftgost harness, adapted to this workspace):
   * isolated tmux socket via TMUX_TMPDIR=./runs/tmux (never session 0)
   * console read ONLY via `capture-pane`; input ONLY via `send-keys`
   * boot marker `ДATA:` detected in the pane
-  * `ДАЙ А0` / `ДАЙ А1` / `НОМВ` before the deck
+  * `ДАЙ А0` / `ДАЙ А1` / `НОМВ` before the deck, retried until ACK
   * `at vu0 <deck>` / `go` to feed the deck
   * post-deck `НОМВ` ONLY after a confirmed job-start line
   * stock `attach -n prn0/prn1` semantics, workspace-local capture paths
+  * completion taken from prn0 (where DISPAK prints КОНЕЦ ЗАДАЧИ)
 
 Exit code 0 means HARNESS PLUMBING passed. The product gate verdict is written
 to runs/verdict_<case>.json and printed; it is deliberately NOT the exit code,
@@ -43,8 +44,11 @@ RUNS = WS / "runs"
 BOOT_MARKER = re.compile(r"[ДD]ATA:")
 JOB_START = re.compile(r"B07[0-9]|ОЗ\s*\(|КЗ\s*\(")
 COMPLETION = re.compile(r"КОНЕЦ ЗАДАЧИ|СБО")
+YES = re.compile(r"(?m)^\s*(?:ECTЬ|ЕСТЬ|ECTb|ЕСТЬ)")
+NO = re.compile(r"(?m)^\s*(?:HET|НЕТ|НЕТ)")
 RESULT21 = re.compile(r"(?m)^\s*21\s+\S")
 FATAL = re.compile(r"Fatal|Segmentation|can.t attach|Error opening|backtrace", re.I)
+POLL = 0.2
 
 
 def verify_emulator():
@@ -92,8 +96,13 @@ def main():
         tmux(env, "kill-session", "-t", session, check=False)
 
     def pane(history=2000):
-        return tmux(env, "capture-pane", "-p", "-S", str(-history),
-                    "-t", session, check=False)
+        txt = tmux(env, "capture-pane", "-p", "-S", str(-history),
+                   "-t", session, check=False)
+        if not txt:
+            time.sleep(0.1)
+            txt = tmux(env, "capture-pane", "-p", "-S", str(-history),
+                       "-t", session, check=False)
+        return txt
 
     def send(text, enter=True, slow=False):
         if slow:
@@ -105,25 +114,41 @@ def main():
         if enter:
             tmux(env, "send-keys", "-t", session, "Enter")
 
-    def lastline():
-        lines = [l for l in pane(history=200).splitlines() if l.strip()]
-        return lines[-1].strip() if lines else ""
-
-    def to_sim():
-        for _ in range(20):
-            if lastline().endswith("sim>"):
-                return True
-            time.sleep(0.5)
-        return False
-
-    def wait_for(pred, budget):
+    def wait(pred, budget, label):
         deadline = time.time() + budget
         while time.time() < deadline:
             txt = pane()
             if pred(txt):
-                return txt
-            time.sleep(0.5)
-        return pane()
+                return True, txt
+            time.sleep(POLL)
+        print(f"[{a.case}] TIMEOUT: {label}", flush=True)
+        return False, pane()
+
+    def wait_for(pred, budget):
+        _, txt = wait(pred, budget, "predicate")
+        return txt
+
+    def to_sim():
+        ok, _ = wait(lambda t: t.rstrip().endswith("sim>"), 10, "sim>")
+        return ok
+
+    def send_until_reply(cmd, regex, tries=6, budget=2.0):
+        # The keyboard handler can drop the first character while CM1П is still
+        # settling, so an operator command is retried until its ACK is seen.
+        before = len(regex.findall(pane()))
+        for attempt in range(tries):
+            send(cmd, slow=True)
+            ok, _ = wait(lambda t: len(regex.findall(t)) > before, budget,
+                         f"{cmd} reply (try {attempt + 1})")
+            if ok:
+                return True
+            time.sleep(0.3)
+        return False
+
+    # prn0 is the product artifact; resolve it before the session so a stale
+    # capture cannot be mistaken for this run's completion marker.
+    prn_path = RUNS / f"localprn_{a.case}.txt"
+    prn_path.unlink(missing_ok=True)
 
     booted = sim_ready = deck_sent = job_start = False
     nomv_after = completion = False
@@ -137,12 +162,19 @@ def main():
             raise TimeoutError("no ДATA: boot marker in capture-pane")
         print(f"[{a.case}] BOOT marker ДATA: seen; emulator {sha}", flush=True)
 
-        time.sleep(20.0)
+        # The monitor prints DATA: twice; the second line (CM1П ... DATA:)
+        # is the real readiness marker, replacing the fixed 20 s sleep.
+        ready, _ = wait(lambda t: len(BOOT_MARKER.findall(t)) >= 2
+                        or "СМ1П" in t or "CM1P" in t, a.timeout, "boot ready")
+        if not ready:
+            raise TimeoutError("no monitor-ready DATA:/CM1П marker")
+
         for cmd in ("ДАЙ А0", "ДАЙ А1"):
-            send(cmd, slow=True)
-            time.sleep(2.0)
-        send("НОМВ", slow=True)
-        time.sleep(2.0)
+            if not send_until_reply(cmd, YES):
+                print(f"[{a.case}] warning: no new ECTЬ after {cmd}", flush=True)
+            time.sleep(0.2)
+        if not send_until_reply("НОМВ", NO):
+            print(f"[{a.case}] warning: no new HET after НОМВ", flush=True)
 
         tmux(env, "send-keys", "-t", session, "C-g")
         sim_ready = to_sim()
@@ -150,26 +182,33 @@ def main():
             raise RuntimeError("no sim> prompt after C-g")
 
         for cmd in (f"at vu0 {deck}", "d 6 1", "d 5 10", "set cpu req"):
+            before = pane().count("sim> " + cmd)
             send(cmd)
-            time.sleep(0.8)
+            ok, _ = wait(lambda t: t.count("sim> " + cmd) > before, 10, "echo: " + cmd)
+            if not ok:
+                print(f"[{a.case}] warning: no echo for {cmd}", flush=True)
         deck_sent = True
         send("go")
-        time.sleep(1.0)
         print(f"[{a.case}] deck attached to vu0 and go sent", flush=True)
 
         # Post-deck НОМВ strictly after a confirmed job-start line.
         txt = wait_for(lambda t: bool(JOB_START.search(t)), a.timeout / 2)
         job_start = bool(JOB_START.search(txt))
         if job_start:
-            send("НОМВ", slow=True)
+            ok = send_until_reply("НОМВ", NO, tries=3, budget=2.0)
             nomv_after = True
-            time.sleep(1.0)
-            print(f"[{a.case}] post-deck НОМВ sent after job-start", flush=True)
+            print(f"[{a.case}] post-deck НОМВ sent after job-start, ack={ok}", flush=True)
         else:
             print(f"[{a.case}] no job-start line; post-deck НОМВ NOT sent", flush=True)
 
+        # DISPAK prints КОНЕЦ ЗАДАЧИ into prn0, not into the console pane;
+        # that file is also the artifact the outer product gate compares.
         deadline = time.time() + a.timeout
         while time.time() < deadline:
+            if prn_path.is_file() and COMPLETION.search(
+                    prn_path.read_text(encoding="utf-8", errors="replace")):
+                completion = True
+                break
             txt = pane()
             if COMPLETION.search(txt):
                 completion = True
@@ -178,8 +217,8 @@ def main():
                 send("go")
             if FATAL.search(txt):
                 break
-            time.sleep(1.5)
-        time.sleep(3.0)
+            time.sleep(POLL)
+        time.sleep(0.2)
         console = pane()
     finally:
         (RUNS / f"console_{a.case}.txt").write_text(console, encoding="utf-8")
@@ -190,7 +229,6 @@ def main():
                 shutil.copy2(p, RUNS / f"{name}_{a.case}.txt")
         tmux(env, "kill-session", "-t", session, check=False)
 
-    prn_path = RUNS / f"localprn_{a.case}.txt"
     prn1_path = RUNS / f"localprn1_{a.case}.txt"
     prn = prn_path.read_text(encoding="utf-8", errors="replace") if prn_path.is_file() else ""
     prn1_path = RUNS / f"localprn1_{a.case}.txt"
